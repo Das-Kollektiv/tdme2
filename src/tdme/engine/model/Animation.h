@@ -21,6 +21,11 @@ private:
 	vector<Matrix4x4> transformationsMatrices;
 
 public:
+	/**
+	 * Public constructor
+	 * @param frames frames
+	 */
+	Animation();
 
 	/** 
 	 * @return number of frames
@@ -45,9 +50,4 @@ public:
 		this->transformationsMatrices = transformationsMatrices;
 	}
 
-	/**
-	 * Public constructor
-	 * @param frames frames
-	 */
-	Animation();
 };

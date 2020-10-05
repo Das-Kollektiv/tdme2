@@ -10,7 +10,7 @@ using tdme::math::Matrix4x4;
 
 using std::string;
 
-/** 
+/**
  * Joint / Bone
  * @author andreas.drewke
  */
@@ -20,7 +20,18 @@ private:
 	string groupId;
 	Matrix4x4 bindMatrix;
 public:
-	/** 
+	/**
+	 * Public constructor
+	 */
+	Joint();
+
+	/**
+	 * Public constructor
+	 * @param groupId group id
+	 */
+	Joint(const string& groupId);
+
+	/**
 	 * Associated group or bone id
 	 * @return group id
 	 */
@@ -28,7 +39,7 @@ public:
 		return groupId;
 	}
 
-	/** 
+	/**
 	 * Bind matrix
 	 * @return matrix
 	 */
@@ -44,14 +55,4 @@ public:
 		this->bindMatrix = bindMatrix;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	Joint();
-
-	/**
-	 * Public constructor
-	 * @param groupId group id
-	 */
-	Joint(const string& groupId);
 };

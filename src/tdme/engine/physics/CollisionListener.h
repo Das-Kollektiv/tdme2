@@ -12,7 +12,6 @@ using tdme::engine::physics::Body;
  */
 struct tdme::engine::physics::CollisionListener
 {
-
 	/**
 	 * Destructor
 	 */
@@ -46,4 +45,5 @@ struct tdme::engine::physics::CollisionListener
 	 * @param body2 body 2
 	 */
 	virtual void onCollisionEnd(Body* body1, Body* body2) = 0;
+
 };

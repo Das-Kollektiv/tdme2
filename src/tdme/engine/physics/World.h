@@ -60,6 +60,15 @@ private:
 	void synch(Body* clonedBody, Body* body);
 
 public:
+	/**
+	 * Public constructor
+	 */
+	World();
+
+	/**
+	 * Destructor
+	 */
+	~World();
 
 	/** 
 	 * Resets the physic world
@@ -214,15 +223,5 @@ public:
 	 * @param listener listener
 	 */
 	void removeWorldListener(WorldListener* listener);
-
-	/**
-	 * Public constructor
-	 */
-	World();
-
-	/**
-	 * Destructor
-	 */
-	~World();
 
 };

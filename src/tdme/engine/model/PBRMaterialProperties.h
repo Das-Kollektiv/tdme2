@@ -45,6 +45,15 @@ private:
 	void checkBaseColorTextureTransparency();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	PBRMaterialProperties();
+
+	/**
+	 * Destructor
+	 */
+	~PBRMaterialProperties();
 
 	/**
 	 * @return base color factor
@@ -263,13 +272,4 @@ public:
 		this->exposure = exposure;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	PBRMaterialProperties();
-
-	/**
-	 * Destructor
-	 */
-	~PBRMaterialProperties();
 };

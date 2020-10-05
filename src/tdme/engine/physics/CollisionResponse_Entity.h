@@ -16,7 +16,7 @@ using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Collision response entity
  * @author Andreas Drewke
  * @version $Id$
@@ -31,15 +31,20 @@ private:
 	vector<Vector3> hitPoints;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline CollisionResponse_Entity(): distance(0.0f) {
+	}
 
-	/** 
+	/**
 	 * @return distance
 	 */
 	inline float getDistance() {
 		return distance;
 	}
 
-	/** 
+	/**
 	 * Set distance
 	 * @param distance distance
 	 */
@@ -47,21 +52,21 @@ public:
 		this->distance = distance;
 	}
 
-	/** 
+	/**
 	 * @return penetration
 	 */
 	inline float getPenetration() {
 		return -distance;
 	}
 
-	/** 
+	/**
 	 * @return normal
 	 */
 	inline Vector3& getNormal() {
 		return normal;
 	}
 
-	/** 
+	/**
 	 * Adds a hit point
 	 * @param hitPoint hit point
 	 */
@@ -73,14 +78,14 @@ public:
 		hitPoints.push_back(hitPoint);
 	}
 
-	/** 
+	/**
 	 * @return hit points count
 	 */
 	inline int32_t getHitPointsCount() {
 		return hitPoints.size();
 	}
 
-	/** 
+	/**
 	 * Get hit point of given index 
 	 * @param i i
 	 * @return hit point for given hit points index
@@ -89,9 +94,4 @@ public:
 		return hitPoints[i];
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline CollisionResponse_Entity() {
-	}
 };

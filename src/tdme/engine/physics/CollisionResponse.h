@@ -19,7 +19,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Collision response
  * @author Andreas Drewke
  * @version $Id$
@@ -37,8 +37,13 @@ private:
 	vector<Vector3> fallbackHitPointsVector;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline CollisionResponse() {
+	}
 
-	/** 
+	/**
 	 * Reset
 	 */
 	inline void reset() {
@@ -46,7 +51,7 @@ public:
 		selectedEntity = nullptr;
 	}
 
-	/** 
+	/**
 	 * Adds a collision response entity 
 	 * @param distance distance
 	 * @return Entity or null
@@ -62,21 +67,21 @@ public:
 		return &entity;
 	}
 
-	/** 
+	/**
 	 * @return entity count
 	 */
 	inline int32_t getEntityCount() {
 		return entities.size();
 	}
 
-	/** 
+	/**
 	 * @return selected entity
 	 */
 	inline CollisionResponse_Entity* getSelectedEntity() {
 		return selectedEntity;
 	}
 
-	/** 
+	/**
 	 * Selects entity at given index
 	 * @param idx idx
 	 * @return
@@ -86,7 +91,7 @@ public:
 		return &entities[idx];
 	}
 
-	/** 
+	/**
 	 * Selects entity at given index
 	 * @param idx idx
 	 * @return
@@ -129,7 +134,7 @@ public:
 		return selectedEntity->hitPoints;
 	}
 
-	/** 
+	/**
 	 * @return hit points count
 	 */
 	inline int32_t getHitPointsCount() {
@@ -137,7 +142,7 @@ public:
 		return selectedEntity->hitPoints.size();
 	}
 
-	/** 
+	/**
 	 * Get hit point of given index 
 	 * @param i i
 	 * @return hit point for given hit points index
@@ -145,12 +150,6 @@ public:
 	inline Vector3* getHitPointAt(int32_t i) {
 		if (selectedEntity == nullptr) return nullptr;
 		return &selectedEntity->hitPoints[i];
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline CollisionResponse() {
 	}
 
 };

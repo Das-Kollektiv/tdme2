@@ -79,15 +79,6 @@ private:
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
 public:
-	// overriden methods
-	void setScale(const Vector3& scale) override;
-	BoundingVolume* clone() const override;
-
-	/**
-	 * @return vertices
-	 */
-	const vector<Vector3>& getVertices();
-
 	/**
 	 * Public constructor
 	 */
@@ -104,5 +95,14 @@ public:
 	 * Public denstructor
 	 */
 	~ConvexMesh();
+
+	// overriden methods
+	void setScale(const Vector3& scale) override;
+	BoundingVolume* clone() const override;
+
+	/**
+	 * @return vertices
+	 */
+	const vector<Vector3>& getVertices();
 
 };
