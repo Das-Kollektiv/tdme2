@@ -13,6 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUILayoutNode;
@@ -29,6 +30,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::StringTools;
 
 GUILayoutNode::GUILayoutNode(
@@ -128,11 +130,11 @@ int32_t GUILayoutNode::getContentHeight()
 
 void GUILayoutNode::layoutSubNodes()
 {
+	GUIParentNode::layoutSubNodes();
 	if (conditionsMet == false) {
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
-	GUIParentNode::layoutSubNodes();
 	{
 		auto v = alignment;
 		if (v == GUILayoutNode_Alignment::VERTICAL) {

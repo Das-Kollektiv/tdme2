@@ -190,7 +190,7 @@ void GUIElementNode::setLeft(int32_t left)
 void GUIElementNode::layoutSubNodes()
 {
 	if (conditionsMet == false) {
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUIParentNode::layoutSubNodes();
@@ -214,12 +214,14 @@ void GUIElementNode::layoutSubNodes()
 	}
 	setTop(computedConstraints.top);
 	setLeft(computedConstraints.left);
+	computeHorizontalChildrenAlignment();
+	computeVerticalChildrenAlignment();
 }
 
 void GUIElementNode::layout()
 {
 	if (conditionsMet == false) {
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
@@ -243,10 +245,6 @@ void GUIElementNode::layout()
 		}
 	}
 	GUIParentNode::layout();
-	setTop(computedConstraints.top);
-	setLeft(computedConstraints.left);
-	computeHorizontalChildrenAlignment();
-	computeVerticalChildrenAlignment();
 }
 
 const string& GUIElementNode::getName()

@@ -200,7 +200,7 @@ void GUINode::layout()
 {
 	if (conditionsMet == false) {
 		computedConstraints = GUINode_ComputedConstraints();
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
@@ -472,14 +472,14 @@ void GUINode::setConditionsMet()
 }
 
 void GUINode::layoutOnDemand() {
-	if (conditionsMet == false) return;
-	if (screenNode->layouted == false || layouted == false) {
-		screenNode->layout(this);
-	}
+	if (conditionsMet == false || layouted == true) return;
+	screenNode->forceLayout(this);
 }
 
 void GUINode::render(GUIRenderer* guiRenderer)
 {
+	layoutOnDemand();
+
 	if (shouldRender() == false) return;
 
 	vector<Action*> actions;
@@ -1115,7 +1115,12 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->computedConstraints.contentAlignmentTop) + "; " +
+		StringTools::substring(node->requestedConstraints.leftType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.topType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.widthType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
+		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
@@ -1139,7 +1144,12 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->computedConstraints.contentAlignmentTop) + "; " +
+		StringTools::substring(node->requestedConstraints.leftType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.topType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.widthType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
+		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);

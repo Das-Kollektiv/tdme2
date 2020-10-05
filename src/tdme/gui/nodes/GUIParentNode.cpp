@@ -25,7 +25,6 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::set;
@@ -55,7 +54,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
 GUIParentNode::GUIParentNode(
@@ -95,7 +93,7 @@ void GUIParentNode::clearSubNodes()
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
-	layouted = false;
+	screenNode->forceInvalidateLayout(this);
 
 	//
 	setConditionsMet();
@@ -110,7 +108,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
-	layouted = false;
+	screenNode->forceInvalidateLayout(this);
 	GUIParser::parse(this, xml);
 
 	floatingNodesCache.clear();
@@ -237,12 +235,11 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 void GUIParentNode::layout()
 {
 	if (conditionsMet == false) {
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUINode::layout();
 	layoutSubNodes();
-	invalidateRenderCaches();
 }
 
 void GUIParentNode::layoutSubNodes()
@@ -254,7 +251,6 @@ void GUIParentNode::layoutSubNodes()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}
-	invalidateRenderCaches();
 }
 
 void GUIParentNode::computeHorizontalChildrenAlignment()
@@ -350,17 +346,10 @@ void GUIParentNode::setConditionsMet()
 	}
 }
 
-void GUIParentNode::layoutOnDemand() {
-	if (conditionsMet == false) return;
-	GUINode::layoutOnDemand();
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		guiSubNode->layoutOnDemand();
-	}
-}
-
 void GUIParentNode::render(GUIRenderer* guiRenderer)
 {
+	layoutOnDemand();
+
 	if (shouldRender() == false) return;
 
 	auto renderAreaLeftCurrent = guiRenderer->getRenderAreaLeft();

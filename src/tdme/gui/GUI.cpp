@@ -673,6 +673,12 @@ void GUI::handleEvents()
 	mouseEvents.clear();
 	keyboardEvents.clear();
 	unlockEvents();
+
+	// invalidate layouts
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = renderScreens[i];
+		screen->invalidateLayouts();
+	}
 }
 
 void GUI::onChar(unsigned int key, int x, int y) {

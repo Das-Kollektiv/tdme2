@@ -64,7 +64,6 @@ bool GUINodeConditions::removeAll()
 
 void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
 	node->conditionsMet = node->checkConditions();
-	node->layouted = false;
 	node->onSetConditions(conditions);
 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
 	if (parentNode != nullptr) {
@@ -82,4 +81,5 @@ void GUINodeConditions::updateElementNode(const vector<string>& conditions) cons
 		auto guiSubNode = elementNode->subNodes[i];
 		updateNode(guiSubNode, conditions);
 	}
+	elementNode->getScreenNode()->invalidateLayout(elementNode);
 }

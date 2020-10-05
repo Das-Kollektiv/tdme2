@@ -74,6 +74,7 @@ private:
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
+	set<string> invalidateLayoutNodeIds;
 
 	bool visible;
 	bool popUp;
@@ -243,11 +244,38 @@ public:
 	void layout() override;
 
 	/**
+	 * Mark a node to be invalidated regarding layout
+	 * @param node node
+	 * @return first node that requires a layout in tree
+	 */
+	inline void invalidateLayout(GUINode* node) {
+		invalidateLayoutNodeIds.insert(node->getId());
+	}
+
+	/**
+	 * Actually do the invalidate layout
+	 * @param node node
+	 */
+	GUINode* forceInvalidateLayout(GUINode* node);
+
+	/**
+	 * Actually do the nodes marked for layout invalidation
+	 */
+	void invalidateLayouts();
+
+	/**
 	 * Layout node content (e.g. child nodes or content)
 	 * this does also does call layouted nodes post layout method
 	 * @param node node
 	 */
 	void layout(GUINode* node);
+
+	/**
+	 * Force layout node content (e.g. child nodes or content) without determining parent nodes to be layouted
+	 * this does also does call layouted nodes post layout method
+	 * @param node node
+	 */
+	void forceLayout(GUINode* node);
 
 	/**
 	 * Set screen size

@@ -22,7 +22,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -50,7 +49,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
@@ -161,22 +159,30 @@ void GUIScreenNode::layout()
 	layouted = true;
 }
 
-void GUIScreenNode::layout(GUINode* node)
-{
+GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 	// check if parent nodes have conditions met
 	{
 		auto _node = node;
 		while (_node != nullptr) {
-			if (_node->conditionsMet == false) return;
+			if (_node->conditionsMet == false) {
+				return nullptr;
+			}
 			_node = _node->parentNode;
 		}
 	}
 
 	// first step, make sure all parents up to screen node are layouted
 	auto _node = node;
-	while (_node->parentNode != nullptr && _node->layouted == false) {
-		_node->layouted = false;
+	auto __node = node;
+	while (_node->parentNode != nullptr) {
+		if (_node->layouted == false) __node = _node;
 		_node = _node->parentNode;
+	}
+	_node = __node;
+
+	// invalidate all nodes from node to _node
+	for (__node = node; __node != _node; __node = __node->getParentNode()) {
+		__node->layouted = false;
 	}
 
 	// find a node that is a valid base for layouting from
@@ -203,13 +209,43 @@ void GUIScreenNode::layout(GUINode* node)
 		_node = _node->parentNode;
 	}
 
+	_node->layouted = false;
+
+	//
+	auto parentNode = dynamic_cast<GUIParentNode*>(_node);
+	if (parentNode != nullptr) parentNode->invalidateRenderCaches();
+
+	//
+	return _node;
+}
+
+void GUIScreenNode::invalidateLayouts() {
+	for (auto& nodeId: invalidateLayoutNodeIds) {
+		auto node = getNodeById(nodeId);
+		if (node != nullptr) forceInvalidateLayout(node);
+	}
+	invalidateLayoutNodeIds.clear();
+}
+
+void GUIScreenNode::layout(GUINode* node)
+{
+	auto _node = forceInvalidateLayout(node);
+	if (_node == nullptr) {
+		return;
+	}
+
+	//
+	forceLayout(_node);
+}
+
+void GUIScreenNode::forceLayout(GUINode* node)
+{
 	// do the magic
-	if (dynamic_cast< GUIParentNode* >(_node) != nullptr) {
-		auto parentNode = dynamic_cast<GUIParentNode*>(_node);
-		parentNode->layout();
-		parentNode->layoutSubNodes();
-		parentNode->getScreenNode()->layoutSubNodes();
+	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
+		auto parentNode = dynamic_cast<GUIParentNode*>(node);
 		parentNode->layouted = true;
+		parentNode->layoutSubNodes();
+		parentNode->layoutSubNodes();
 		parentNode->getScreenNode()->getChildControllerNodes(childControllerNodes, true);
 		for (auto i = 0; i < childControllerNodes.size(); i++) {
 			auto childNode = childControllerNodes[i];
@@ -217,11 +253,10 @@ void GUIScreenNode::layout(GUINode* node)
 			if (childController != nullptr) childController->postLayout();
 		}
 	} else {
-		_node->layout();
-		_node->getScreenNode()->layoutSubNodes();
-		_node->computeContentAlignment();
-		_node->layouted = true;
-		auto nodeController = _node->getController();
+		node->layout();
+		node->getScreenNode()->layoutSubNodes();
+		node->computeContentAlignment();
+		auto nodeController = node->getController();
 		if (nodeController != nullptr) nodeController->postLayout();
 	}
 }
