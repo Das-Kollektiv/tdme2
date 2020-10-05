@@ -60,6 +60,16 @@ private:
 	FloatBuffer fbSpriteSheetDimension;
 
 	/**
+	 * Public constructor
+	 */
+	BatchRendererPoints(Renderer* renderer, int32_t id);
+
+	/**
+	 * Destructor
+	 */
+	~BatchRendererPoints();
+
+	/**
 	 * Render
 	 * @param context context
 	 */
@@ -112,16 +122,6 @@ private:
 	inline int getPointCount() {
 		return fbVertices.getPosition() / 3;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	BatchRendererPoints(Renderer* renderer, int32_t id);
-
-	/**
-	 * Destructor
-	 */
-	~BatchRendererPoints();
 
 public:
 

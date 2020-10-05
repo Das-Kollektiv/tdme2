@@ -25,11 +25,7 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
-	virtual const string getId() override;
-	virtual void initialize() override;
-
-/**
+	/**
 	 * Constructor
 	 * @param renderer renderer
 	 */
@@ -39,4 +35,9 @@ public:
 	 * Destructor
 	 */
 	~ShadowMappingShaderPreTreeImplementation();
+
+	// overriden methods
+	virtual const string getId() override;
+	virtual void initialize() override;
+
 };

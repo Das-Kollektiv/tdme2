@@ -33,7 +33,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Transparent render faces group
  * @author andreas.drewke
  * @version $Id$
@@ -59,7 +59,12 @@ private:
 
 	string shader;
 
-	/** 
+	/**
+	 * Public constructor
+	 */
+	TransparentRenderFacesGroup();
+
+	/**
 	 * Set transparent render faces group
 	 * @param object3DRenderer object3D renderer
 	 * @param model model
@@ -73,7 +78,7 @@ private:
 	 */
 	void set(EntityRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
-	/** 
+	/**
 	 * Creates a key for given transparent render faces group attributes
 	 * @param model model
 	 * @param object3DGroup object 3D group
@@ -87,7 +92,7 @@ private:
 	 */
 	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
-	/** 
+	/**
 	 * Adds a vertex to this transparent render faces group
 	 * @param vertex vertex
 	 * @param normal normal
@@ -127,10 +132,5 @@ private:
 	 * @param context context
 	 */
 	void render(Engine* engine, Renderer* renderer, void* context);
-
-	/**
-	 * Public constructor
-	 */
-	TransparentRenderFacesGroup();
 
 };

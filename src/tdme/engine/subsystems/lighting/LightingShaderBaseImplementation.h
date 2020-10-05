@@ -72,6 +72,11 @@ protected:
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderBaseImplementation(Renderer* renderer);
 
 	// overriden methods
 	virtual bool isInitialized() override;
@@ -85,9 +90,4 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderBaseImplementation(Renderer* renderer);
 };

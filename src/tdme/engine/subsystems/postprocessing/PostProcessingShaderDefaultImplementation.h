@@ -23,13 +23,13 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overridden methods
-	virtual void initialize() override;
-
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
 	PostProcessingShaderDefaultImplementation(Renderer* renderer);
+
+	// overridden methods
+	virtual void initialize() override;
 
 };

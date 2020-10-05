@@ -27,16 +27,14 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overridden methods
-	virtual void initialize() override;
-
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
 	PostProcessingShaderSSAOMapImplementation(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
+	virtual void initialize() override;
 	virtual void useProgram(void* context) override;
 
 private:

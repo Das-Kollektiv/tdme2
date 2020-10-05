@@ -44,6 +44,11 @@ private:
 	void reset();
 public:
 	/**
+	 * Public constructor
+	 */
+	Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase);
+
+	/**
 	 * Return iterator ready to iterate
 	 */
 	Object3DBase_TransformedFacesIterator* iterator();
@@ -68,8 +73,4 @@ public:
 		return group;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase);
 };

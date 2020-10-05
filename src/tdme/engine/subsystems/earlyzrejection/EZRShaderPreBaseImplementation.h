@@ -39,6 +39,16 @@ protected:
 	bool initialized { false };
 
 public:
+	/**
+	 * Constructor
+	 * @param renderer renderer
+	 */
+	EZRShaderPreBaseImplementation(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~EZRShaderPreBaseImplementation();
 
 	// overriden methods
 	virtual bool isInitialized() override;
@@ -50,14 +60,4 @@ public:
 	virtual void updateMaterial(Renderer* renderer, void* context) override;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 
-	/**
-	 * Constructor
-	 * @param renderer renderer
-	 */
-	EZRShaderPreBaseImplementation(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~EZRShaderPreBaseImplementation();
 };

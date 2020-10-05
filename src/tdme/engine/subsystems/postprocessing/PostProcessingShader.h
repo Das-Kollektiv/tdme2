@@ -22,6 +22,16 @@ private:
 	bool running { false };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	PostProcessingShader(Renderer* renderer);
+
+	/**
+	 * Public destructor
+	 */
+	~PostProcessingShader();
 
 	/** 
 	 * @return initialized and ready to be used
@@ -75,31 +85,20 @@ public:
 	 * @param context context
 	 * @param textureLightPositionX texture light position x
 	 */
-	virtual void setTextureLightPositionX(void* context, float textureLightPositionX);
+	void setTextureLightPositionX(void* context, float textureLightPositionX);
 
 	/**
 	 * Set texture light position y
 	 * @param context context
 	 * @param textureLightPositionY texture light position y
 	 */
-	virtual void setTextureLightPositionY(void* context, float textureLightPositionY);
+	void setTextureLightPositionY(void* context, float textureLightPositionY);
 
 	/**
 	 * Set intensity
 	 * @param context context
 	 * @param intensity effect intensity
 	 */
-	virtual void setIntensity(void* context, float intensity);
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	PostProcessingShader(Renderer* renderer);
-
-	/**
-	 * Public destructor
-	 */
-	~PostProcessingShader();
+	void setIntensity(void* context, float intensity);
 
 };

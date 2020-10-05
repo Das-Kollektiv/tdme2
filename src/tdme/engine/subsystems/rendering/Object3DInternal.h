@@ -50,6 +50,19 @@ protected:
 	void updateBoundingBox();
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param model model
+	 * @param instances instances to compute and render by duplication
+	 */
+	Object3DInternal(const string& id, Model* model, int instances);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Object3DInternal();
+
 	/** 
 	 * @return object id
 	 */
@@ -208,16 +221,4 @@ public:
 	void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix);
 	void unsetGroupTransformationsMatrix(const string& id);
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param model model
-	 * @param instances instances to compute and render by duplication
-	 */
-	Object3DInternal(const string& id, Model* model, int instances);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Object3DInternal();
 };

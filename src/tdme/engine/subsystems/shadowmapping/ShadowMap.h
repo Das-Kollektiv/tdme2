@@ -85,16 +85,6 @@ private:
 public:
 	static constexpr int32_t TEXTUREUNIT { 8 };
 
-	/**
-	 * @return width
-	 */
-	int32_t getWidth();
-
-	/**
-	 * @return height
-	 */
-	int32_t getHeight();
-
 	/** 
 	 * Public constructor
 	 * @param shadowMapping shadow mapping
@@ -107,6 +97,16 @@ public:
 	 * Destructor
 	 */
 	~ShadowMap();
+
+	/**
+	 * @return width
+	 */
+	int32_t getWidth();
+
+	/**
+	 * @return height
+	 */
+	int32_t getHeight();
 
 	/**
 	 * @return frame buffer

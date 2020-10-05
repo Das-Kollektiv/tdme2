@@ -75,6 +75,22 @@ protected:
 
 public:
 	/**
+	 * Public constructor
+	 * @param id id
+	 * @param lineWidth line width
+	 * @param points points
+	 * @param color color
+	 * @param colors optional colors
+	 * @param texture optional texture
+	 */
+	LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LinesObject3DInternal();
+
+	/**
 	 * @return id
 	 */
 	inline const string& getId() {
@@ -236,19 +252,4 @@ public:
 	 */
 	void dispose();
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param lineWidth line width
-	 * @param points points
-	 * @param color color
-	 * @param colors optional colors
-	 * @param texture optional texture
-	 */
-	LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~LinesObject3DInternal();
 };

@@ -38,6 +38,11 @@ protected:
 	Renderer* renderer { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	PostProcessingShaderBaseImplementation(Renderer* renderer);
 
 	// overridden methods
 	virtual bool isInitialized() override;
@@ -49,11 +54,5 @@ public:
 	virtual void setTextureLightPositionX(void* context, float textureLightPositionX) override;
 	virtual void setTextureLightPositionY(void* context, float textureLightPositionY) override;
 	virtual void setIntensity(void* context, float intensity) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	PostProcessingShaderBaseImplementation(Renderer* renderer);
 
 };

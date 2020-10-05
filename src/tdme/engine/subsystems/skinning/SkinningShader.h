@@ -52,6 +52,11 @@ private:
 	Mutex mutex;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	SkinningShader(Renderer* renderer);
 
 	/** 
 	 * @return initialized and ready to be used
@@ -86,9 +91,4 @@ public:
 	 */
 	void reset();
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	SkinningShader(Renderer* renderer);
 };

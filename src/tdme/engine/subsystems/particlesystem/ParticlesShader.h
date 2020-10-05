@@ -36,6 +36,12 @@ private:
 	array<int32_t, 16> boundTextureIds;
 
 public:
+	/**
+	 * Public constructor
+	 * @param engine engine
+	 * @param renderer renderer
+	 */
+	ParticlesShader(Engine* engine, Renderer* renderer);
 
 	/** 
 	 * @return initialized and ready to be used
@@ -78,10 +84,4 @@ public:
 	 */
 	void setParameters(void* context, const array<int32_t, 16>& textureIds);
 
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 * @param renderer renderer
-	 */
-	ParticlesShader(Engine* engine, Renderer* renderer);
 };

@@ -31,6 +31,16 @@ private:
 	bool isRunning;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	Texture2DRenderShader(Renderer* renderer);
+
+	/**
+	 * Public destructor
+	 */
+	~Texture2DRenderShader();
 
 	/** 
 	 * @return if initialized and ready to use
@@ -51,17 +61,6 @@ public:
 	 * Un use render program
 	 */
 	void unUseProgram();
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	Texture2DRenderShader(Renderer* renderer);
-
-	/**
-	 * Public destructor
-	 */
-	~Texture2DRenderShader();
 
 	/**
 	 * Render texture

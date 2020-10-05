@@ -35,7 +35,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Pool;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Transparent render faces pool
  * @author andreas.drewke
  * @version $Id$
@@ -50,7 +50,12 @@ private:
 	vector<TransparentRenderFace*> transparentRenderFaces;
 	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool;
 
-	/** 
+	/**
+	 * Public constructor
+	 */
+	TransparentRenderFacesPool();
+
+	/**
 	 * Creates an array of transparent render faces from
 	 * @param modelViewMatrix model view matrix
 	 * @param object3DGroup object3D group
@@ -93,7 +98,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Merges given transparent render faces pool into this pool
 	 * @param srcTransparentRenderFacesPool transparent render faces pool
 	 */
@@ -110,15 +115,10 @@ private:
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * @return transparent render faces vector
 	 */
 	vector<TransparentRenderFace*>& getTransparentRenderFaces();
-
-	/**
-	 * Public constructor
-	 */
-	TransparentRenderFacesPool();
 
 public:
 

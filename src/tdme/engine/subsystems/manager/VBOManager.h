@@ -31,6 +31,15 @@ private:
 	ReadWriteLock rwLock;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	VBOManager(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~VBOManager();
 
 	/** 
 	 * Adds a VBO to manager or retrieve VBO if existing
@@ -55,13 +64,4 @@ public:
 	 */
 	void removeVBO(const string& vboId);
 
-	/**
-	 * Public constructor
-	 */
-	VBOManager(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~VBOManager();
 };

@@ -87,6 +87,24 @@ protected:
 
 public:
 	/**
+	 * Public constructor
+	 * @param id id
+	 * @param emitter emitter
+	 * @param maxPoints max points
+	 * @param pointSize point size
+	 * @param texture texture
+	 * @param textureHorizontalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
+	 */
+	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FogParticleSystemInternal();
+
+	/**
 	 * Initialize
 	 */
 	void initialize();
@@ -240,21 +258,4 @@ public:
 		return pointsRenderPool;
 	}
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param emitter emitter
-	 * @param maxPoints max points
-	 * @param pointSize point size
-	 * @param texture texture
-	 * @param textureHorizontalSprites texture horizonal sprites
-	 * @param textureVerticalSprites texture vertical sprites
-	 * @param fps frames per seconds
-	 */
-	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~FogParticleSystemInternal();
 };

@@ -58,6 +58,16 @@ protected:
 	int lightId { -1 };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	ShadowMappingShaderRenderBaseImplementation(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ShadowMappingShaderRenderBaseImplementation();
 
 	// overriden methods
 	virtual bool isInitialized() override;
@@ -72,14 +82,4 @@ public:
 	virtual void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	ShadowMappingShaderRenderBaseImplementation(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ShadowMappingShaderRenderBaseImplementation();
 };

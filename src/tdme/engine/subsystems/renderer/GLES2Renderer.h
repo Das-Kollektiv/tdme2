@@ -41,6 +41,7 @@ public:
 	 */
 	GLES2Renderer();
 
+	// overriden methods
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;

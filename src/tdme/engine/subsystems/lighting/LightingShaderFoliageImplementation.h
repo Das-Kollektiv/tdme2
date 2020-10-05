@@ -19,6 +19,12 @@ class tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation: p
 {
 public:
 	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderFoliageImplementation(Renderer* renderer);
+
+	/**
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
@@ -28,9 +34,4 @@ public:
 	virtual const string getId() override;
 	virtual void initialize() override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderFoliageImplementation(Renderer* renderer);
 };

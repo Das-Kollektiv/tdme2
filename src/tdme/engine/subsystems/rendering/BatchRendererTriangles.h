@@ -91,6 +91,17 @@ private:
 	}
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 * @param id id
+	 */
+	BatchRendererTriangles(Renderer* renderer, int32_t id);
+
+	/**
+	 * Destructor
+	 */
+	~BatchRendererTriangles();
 
 	/** 
 	 * @return acquired
@@ -116,15 +127,5 @@ public:
 	 * Dispose
 	 */
 	void dispose();
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 * @param id id
-	 */
-	BatchRendererTriangles(Renderer* renderer, int32_t id);
 
-	/**
-	 * Destructor
-	 */
-	~BatchRendererTriangles();
 };

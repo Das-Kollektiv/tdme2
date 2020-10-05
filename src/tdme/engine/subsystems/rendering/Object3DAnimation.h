@@ -90,6 +90,18 @@ protected:
 	vector<vector<FlattenedGroup>> groupLists;
 
 	/**
+	 * Public constructor
+	 * @param model model
+	 * @param animationProcessingTarget animation processing target
+	 */
+	Object3DAnimation(Model* model, Engine::AnimationProcessingTarget animationProcessingTarget);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Object3DAnimation();
+
+	/**
 	 * Creates all groups transformation matrices
 	 * @param matrices matrices
 	 * @param groupList flattened group list
@@ -154,18 +166,6 @@ protected:
 	 * @return matrices
 	 */
 	map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
-
-	/**
-	 * Public constructor
-	 * @param model model
-	 * @param animationProcessingTarget animation processing target
-	 */
-	Object3DAnimation(Model* model, Engine::AnimationProcessingTarget animationProcessingTarget);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Object3DAnimation();
 
 public:
 

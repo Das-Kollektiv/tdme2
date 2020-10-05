@@ -37,6 +37,16 @@ private:
 	vector<ShadowMappingShaderPreContext> contexts;
 
 public:
+	/**
+	 * Constructor
+	 * @param renderer renderer
+	 */
+	ShadowMappingShaderPre(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~ShadowMappingShaderPre();
 
 	/** 
 	 * @return if initialized and ready to use
@@ -90,16 +100,5 @@ public:
 	 * @param id shader id
 	 */
 	void setShader(void* context, const string& id);
-
-	/**
-	 * Constructor
-	 * @param renderer renderer
-	 */
-	ShadowMappingShaderPre(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~ShadowMappingShaderPre();
 
 };

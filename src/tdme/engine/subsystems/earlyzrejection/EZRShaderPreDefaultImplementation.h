@@ -20,16 +20,6 @@ class tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementati
 {
 public:
 	/**
-	 * @return if supported by renderer
-	 * @param renderer renderer
-	 */
-	static bool isSupported(Renderer* renderer);
-
-	// overriden methods
-	virtual const string getId() override;
-	virtual void initialize() override;
-
-	/**
 	 * Constructor
 	 * @param renderer renderer
 	 */
@@ -39,4 +29,15 @@ public:
 	 * Destructor
 	 */
 	~EZRShaderPreDefaultImplementation();
+
+	/**
+	 * @return if supported by renderer
+	 * @param renderer renderer
+	 */
+	static bool isSupported(Renderer* renderer);
+
+	// overriden methods
+	virtual const string getId() override;
+	virtual void initialize() override;
+
 };

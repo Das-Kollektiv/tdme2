@@ -32,6 +32,16 @@ private:
 	int32_t poolIdx;
 
 public:
+	/**
+	 * Public constructor
+	 * @param pointsMax points max
+	 */
+	TransparentRenderPointsPool(int32_t pointsMax);
+
+	/**
+	 * Destructor
+	 */
+	~TransparentRenderPointsPool();
 
 	/**
 	 * Creates an transparent render point entity in pool
@@ -80,14 +90,4 @@ public:
 	 */
 	void sort();
 
-	/**
-	 * Public constructor
-	 * @param pointsMax points max
-	 */
-	TransparentRenderPointsPool(int32_t pointsMax);
-
-	/**
-	 * Destructor
-	 */
-	~TransparentRenderPointsPool();
 };

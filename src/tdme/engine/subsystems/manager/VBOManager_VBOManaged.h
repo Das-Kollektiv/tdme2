@@ -25,6 +25,13 @@ private:
 	int32_t referenceCounter { 0 };
 	volatile bool uploaded { false };
 
+	/**
+	 * Private constructor
+	 * @param id id
+	 * @param vboIds VBO ids
+	 */
+	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
+
 public:
 
 	/** 
@@ -82,11 +89,4 @@ public:
 		return uploaded;
 	}
 
-private:
-	/**
-	 * Private constructor
-	 * @param id id
-	 * @param vboIds VBO ids
-	 */
-	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
 };

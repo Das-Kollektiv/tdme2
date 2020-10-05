@@ -18,6 +18,11 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation: public LightingShaderBaseImplementation
 {
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderTerrainImplementation(Renderer* renderer);
 
 	/**
 	 * @return if supported by renderer
@@ -31,12 +36,6 @@ public:
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void unUseProgram(void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderTerrainImplementation(Renderer* renderer);
 
 private:
 	int32_t uniformModelMatrix { -1 };

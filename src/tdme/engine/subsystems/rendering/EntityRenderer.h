@@ -257,6 +257,18 @@ public:
 	static constexpr int32_t RENDERTYPE_ALL { 2047 };
 
 	/**
+	 * Public constructor
+	 * @param engine engine
+	 * @param renderer renderer
+	 */
+	EntityRenderer(Engine* engine, Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~EntityRenderer();
+
+	/**
 	 * Init
 	 */
 	void initialize();
@@ -295,18 +307,6 @@ public:
 	 * @param objects lines objects
 	 */
 	void render(const vector<LinesObject3D*>& objects);
-
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 * @param renderer renderer
-	 */
-	EntityRenderer(Engine* engine, Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~EntityRenderer();
 
 	/**
 	 * Compare entities by distance from camera

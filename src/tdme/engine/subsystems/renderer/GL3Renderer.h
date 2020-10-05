@@ -72,6 +72,12 @@ private:
 	#endif
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GL3Renderer();
+
+	// overriden methods
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
@@ -192,12 +198,4 @@ private:
 	 * Checks if GL error did occour 
 	 */
 	void checkGLError(int line);
-
-	// Generated
-
-public:
-	/**
-	 * Public constructor
-	 */
-	GL3Renderer();
 };

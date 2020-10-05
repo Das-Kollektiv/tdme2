@@ -22,6 +22,12 @@ public:
 	static constexpr int WAVES_MAX { 4 };
 
 	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderWaterImplementation(Renderer* renderer);
+
+	/**
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
@@ -32,12 +38,6 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderWaterImplementation(Renderer* renderer);
 
 protected:
 	int32_t uniformWaterHeight { -1 };

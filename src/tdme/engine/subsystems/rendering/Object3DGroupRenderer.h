@@ -18,7 +18,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
-/** 
+/**
  * Object 3D group VBO renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -40,6 +40,11 @@ private:
 	vector<int32_t>* vboOrigins { nullptr };
 	bool haveVBOs { false };
 public:
+	/**
+	 * Constructor
+	 * @param object3DGroup object 3D group
+	 */
+	Object3DGroupRenderer(Object3DGroup* object3DGroup);
 
 	/**
 	 * @return if preRender call is required
@@ -54,14 +59,9 @@ public:
 	 */
 	void preRender(void* context);
 
-	/** 
+	/**
 	 * Disposes the object 3d group
 	 */
 	void dispose();
 
-	/**
-	 * Constructor
-	 * @param object3DGroup object 3D group
-	 */
-	Object3DGroupRenderer(Object3DGroup* object3DGroup);
 };

@@ -18,6 +18,11 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultImplementation: public LightingShaderBaseImplementation
 {
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderLightScatteringDefaultImplementation(Renderer* renderer);
 
 	/**
 	 * @return if supported by renderer
@@ -29,9 +34,4 @@ public:
 	virtual const string getId() override;
 	virtual void initialize() override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderLightScatteringDefaultImplementation(Renderer* renderer);
 };

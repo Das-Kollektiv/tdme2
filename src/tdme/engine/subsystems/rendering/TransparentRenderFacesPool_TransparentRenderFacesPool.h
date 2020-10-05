@@ -15,11 +15,12 @@ using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool
 	: public Pool<TransparentRenderFace*>
 {
+public:
+	TransparentRenderFacesPool_TransparentRenderFacesPool();
+
 protected:
 	inline TransparentRenderFace* instantiate() override {
 		return new TransparentRenderFace();
 	}
 
-public:
-	TransparentRenderFacesPool_TransparentRenderFacesPool();
 };

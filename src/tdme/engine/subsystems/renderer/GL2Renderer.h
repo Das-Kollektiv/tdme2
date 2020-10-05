@@ -50,6 +50,7 @@ public:
 	 */
 	GL2Renderer();
 
+	// overridden methods
 	bool isDepthTextureAvailable() override;
 	void initialize() override;
 	void initializeFrame() override;
