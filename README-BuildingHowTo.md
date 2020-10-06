@@ -54,7 +54,7 @@ cd tdme2
 Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
-gmake clean && gmake -j7 mains CXX=clang++ CC=clang
+gmake clean && gmake -j HARDWARE_THREADS mains CXX=clang++ CC=clang
 ```
 
 ## 1.3. Ubuntu(tested on XUBUNTU 18.04)
