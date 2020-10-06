@@ -35,7 +35,7 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	static map<string, GUIElement*> elements;
+	static map<string, GUIElement*>* elements;
 
 public:
 

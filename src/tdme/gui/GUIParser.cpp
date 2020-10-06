@@ -125,7 +125,7 @@ using tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-map<string, GUIElement*> GUIParser::elements;
+map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
@@ -986,8 +986,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				);
 			} else {
 				auto nodeTagNameString = nodeTagName;
-				const auto guiElementIt = elements.find(nodeTagNameString);
-				if (guiElementIt == elements.end()) {
+				const auto guiElementIt = elements->find(nodeTagNameString);
+				if (guiElementIt == elements->end()) {
 					throw GUIParserException(
 						"Unknown element '" +
 						(nodeTagNameString) +
@@ -1082,14 +1082,14 @@ const string GUIParser::escapeQuotes(const string& str)
 
 void GUIParser::addElement(GUIElement* guiElement)
 {
-	if (elements.find(guiElement->getName()) != elements.end()) {
+	if (elements->find(guiElement->getName()) != elements->end()) {
 		throw GUIParserException(
 			"Element with given name '" +
 			(guiElement->getName()) +
 			"' already exists"
 		);
 	}
-	elements.emplace(guiElement->getName(), guiElement);
+	elements->emplace(guiElement->getName(), guiElement);
 }
 
 void GUIParser::initialize()
@@ -1258,8 +1258,9 @@ void GUIParser::initialize()
 }
 
 void GUIParser::dispose() {
-	for (auto& elementIt: elements) {
+	for (auto& elementIt: *elements) {
 		delete elementIt.second;
 	}
-	elements.clear();
+	elements->clear();
+	delete elements;
 }
