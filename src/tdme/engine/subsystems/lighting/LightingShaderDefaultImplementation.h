@@ -19,16 +19,16 @@ class tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation: p
 {
 public:
 	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderDefaultImplementation(Renderer* renderer);
-
-	/**
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
 	static bool isSupported(Renderer* renderer);
+
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderDefaultImplementation(Renderer* renderer);
 
 	// overriden methods
 	virtual const string getId() override;
