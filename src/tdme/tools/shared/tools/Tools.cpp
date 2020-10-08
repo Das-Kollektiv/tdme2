@@ -304,7 +304,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// bounding volumes
 	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
+		auto entityBoundingVolume = entity->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);

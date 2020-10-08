@@ -179,7 +179,7 @@ void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorE
 		view->selectBoundingVolumeType(idx, 0);
 		return;
 	}
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	if (entityBoundingVolume == nullptr) {
 		view->selectBoundingVolumeType(idx, 0);
 	} else {
@@ -473,7 +473,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
+		entity->getBoundingVolume(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolume(idx)->getModelMeshFile() : entity->getFileName(),
 		true,
 		new OnBoundingVolumeConvexMeshFileAction(this, idxFinal, entityFinal)
 	);

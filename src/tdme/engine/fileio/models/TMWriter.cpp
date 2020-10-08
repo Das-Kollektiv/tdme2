@@ -104,7 +104,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	os->writeFloatArray(smp->getEmissionColor().getArray());
 	os->writeFloat(smp->getShininess());
 	os->writeInt(smp->getTextureAtlasSize());
-	if (smp->getTextureAtlasSize() > 1) {
+	if (smp->getDiffuseTexture() != nullptr && smp->getTextureAtlasSize() > 1) { // TODO: use a dirty flag or something rather than atlas size
 		if (PNGTextureWriter::write(smp->getDiffuseTexture(), smp->getDiffuseTexturePathName(), smp->getDiffuseTextureFileName(), false, false) == false) {
 			Console::println("TMWriter::writeMaterial(): writing atlas texture: " + smp->getDiffuseTexturePathName() + "/" + smp->getDiffuseTextureFileName() + ": failed!");
 		}

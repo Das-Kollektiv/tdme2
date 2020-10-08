@@ -109,7 +109,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 		Vector3()
 	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }

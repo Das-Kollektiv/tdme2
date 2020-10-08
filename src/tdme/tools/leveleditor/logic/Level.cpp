@@ -372,7 +372,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
-			auto entityBoundingVolume = levelEditorEntity->getBoundingVolumeAt(i);
+			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
@@ -507,7 +507,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
+			auto entityBv = levelEditorEntity->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
@@ -558,7 +558,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	} else {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
+			auto entityBv = levelEditorEntity->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
