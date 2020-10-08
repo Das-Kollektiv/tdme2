@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	}
 	for (auto i = 1; i < argc; i++) {
 		string inputFileName = argv[i];
-		string outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
+		auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 		try {
 			Console::println("Loading model: " + inputFileName);
 			auto model = ModelReader::read(
