@@ -51,7 +51,7 @@ cd tdme2
 
 ### 1.2.3. Build
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores, you can use 2.
 
 ```bash
 gmake clean && gmake -j HARDWARE_THREADS mains CXX=clang++ CC=clang
