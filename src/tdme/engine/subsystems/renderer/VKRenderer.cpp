@@ -5425,7 +5425,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			contextTyped.objects_render_command.vertex_buffers[6],
 			contextTyped.objects_render_command.vertex_buffers[7],
 			contextTyped.objects_render_command.vertex_buffers[8],
-			contextTyped.objects_render_command.vertex_buffers[9]
+			contextTyped.objects_render_command.vertex_buffers[9],
 		};
 		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 

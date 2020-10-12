@@ -226,10 +226,10 @@ private:
 				VkImageView view;
 				VkImageLayout image_layout;
 			};
-			array<VkBuffer, 9> vertex_buffers = {
+			array<VkBuffer, 10> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE
+				VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 			array<VkBuffer, 4> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
