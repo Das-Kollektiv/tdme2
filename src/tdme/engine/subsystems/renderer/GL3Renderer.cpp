@@ -200,7 +200,6 @@ bool GL3Renderer::isSupportingIntegerProgramAttributes() {
 	return true;
 }
 
-
 bool GL3Renderer::isSpecularMappingAvailable()
 {
 	return true;

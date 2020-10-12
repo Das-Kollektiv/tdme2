@@ -95,6 +95,7 @@ private:
 		struct uniform_type {
 			enum uniform_type_enum { NONE, UNIFORM, SAMPLER2D };
 			string name;
+			string newName;
 			uniform_type_enum type;
 			int32_t position;
 			uint32_t size;
@@ -163,6 +164,7 @@ private:
 	};
 
 	struct swapchain_buffer_type {
+		VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
@@ -224,8 +226,10 @@ private:
 				VkImageView view;
 				VkImageLayout image_layout;
 			};
-			array<VkBuffer, 4> vertex_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			array<VkBuffer, 9> vertex_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE
 			};
 			array<VkBuffer, 4> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
@@ -396,11 +400,6 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
-	/**
-	 * Public constructor
-	 */
-	VKRenderer();
-
 	// overridden methods
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel = 0, uint32_t levelCount = 1);
@@ -465,6 +464,11 @@ private:
 	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void recreateContextFences(int contextIdx);
+protected:
+	/**
+	 * Protected constructor
+	 */
+	VKRenderer();
 
 public:
 	const string getShaderVersion() override;
@@ -480,6 +484,7 @@ public:
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
+	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
@@ -487,7 +492,6 @@ public:
 	bool isComputeShaderAvailable() override;
 	bool isGLCLAvailable() override;
 	bool isUsingShortIndices() override;
-	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(void* context, int32_t programId) override;
@@ -545,14 +549,17 @@ public:
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindOrigins(void* context, int32_t bufferObjectId) override;
+	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
+	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectIdd, int32_t divisor) override;
+	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;

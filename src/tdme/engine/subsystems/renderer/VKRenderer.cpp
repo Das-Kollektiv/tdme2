@@ -258,7 +258,6 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	err = vkBeginCommandBuffer(context.draw_cmds[bufferId][context.front_face_index], &cmd_buf_info);
 	assert(!err);
 
-	//
 	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
 	// happens to the previous contents of the image
 	VkImageMemoryBarrier image_memory_barrier = {
@@ -266,7 +265,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		.pNext = nullptr,
 		.srcAccessMask = 0,
 		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		.oldLayout = swapchain_buffers[current_buffer].image_layout,
 		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -277,6 +276,9 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	//
 	context.draw_cmd_started[bufferId][context.front_face_index] = true;
+
+	//
+	swapchain_buffers[current_buffer].image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	//
 	return true;
@@ -680,7 +682,7 @@ void VKRenderer::initializeSwapChain() {
 		height = surfCapabilities.currentExtent.height;
 	}
 
-	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR; // no vsync, VK_PRESENT_MODE_FIFO_KHR: vsync
+	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR; // VK_PRESENT_MODE_IMMEDIATE_KHR: no vsync, VK_PRESENT_MODE_FIFO_KHR: vsync
 
 	// Determine the number of VkImage's to use in the swap chain.
 	// Application desires to only acquire 1 image at a time (which is
@@ -837,16 +839,10 @@ void VKRenderer::initialize()
 	const char *enabled_layers[64];
 
 	char* instance_validation_layers_alt1[] = {
-		"VK_LAYER_LUNARG_standard_validation"
+		"VK_LAYER_KHRONOS_validation"
 	};
 	char* instance_validation_layers_alt2[] = {
-		"VK_LAYER_GOOGLE_threading",
-		"VK_LAYER_LUNARG_parameter_validation",
-		"VK_LAYER_LUNARG_object_tracker",
-		"VK_LAYER_LUNARG_image",
-		"VK_LAYER_LUNARG_core_validation",
-		"VK_LAYER_LUNARG_swapchain",
-		"VK_LAYER_GOOGLE_unique_objects"
+		"VK_LAYER_LUNARG_standard_validation"
 	};
 
 	// Look for validation layers
@@ -1340,8 +1336,7 @@ void VKRenderer::initializeRenderPass() {
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-			// TODO: a.drewke, was: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, check me later, something with changing image layouts is wrong here sometimes
-			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		},
 		[1] = {
@@ -1457,6 +1452,7 @@ void VKRenderer::initializeFrameBuffers() {
 	assert(window_framebuffers);
 
 	for (i = 0; i < swapchain_image_count; i++) {
+		swapchain_buffers[i].image_layout = VK_IMAGE_LAYOUT_UNDEFINED;
 		attachments[0] = swapchain_buffers[i].view;
 		err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
 		assert(!err);
@@ -1582,7 +1578,7 @@ void VKRenderer::finishFrame()
 			.pNext = nullptr,
 			.srcAccessMask = 0,
 			.dstAccessMask = 0,
-			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.oldLayout = swapchain_buffers[current_buffer].image_layout,
 			.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
@@ -1608,6 +1604,9 @@ void VKRenderer::finishFrame()
 			&image_memory_barrier
 		);
 		finishSetupCommandBuffer(0);
+
+		//
+		swapchain_buffers[current_buffer].image_layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 	}
 
 	//
@@ -1677,6 +1676,12 @@ bool VKRenderer::isUsingProgramAttributeLocation()
 	return false;
 }
 
+bool VKRenderer::isSupportingIntegerProgramAttributes() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	return true;
+}
+
+
 bool VKRenderer::isSpecularMappingAvailable()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -1715,11 +1720,6 @@ bool VKRenderer::isUsingShortIndices() {
 	return false;
 }
 
-bool VKRenderer::isGeometryShaderAvailable() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return false;
-}
-
 int32_t VKRenderer::getTextureUnits()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -1753,7 +1753,7 @@ int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& 
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
 		if (uniformType == "vec3") {
-			uint32_t size = sizeof(float) * 3;
+			uint32_t size = sizeof(float) * 4;
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
 		if (uniformType == "vec4") {
@@ -1761,7 +1761,7 @@ int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& 
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
 		if (uniformType == "mat3") {
-			uint32_t size = sizeof(float) * 3;
+			uint32_t size = sizeof(float) * 4;
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
 		if (uniformType == "mat4") {
@@ -1803,14 +1803,23 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
 			arraySize = Integer::parseInt(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
-			uniformArrays.insert(uniformName);
+			if (uniformType != "sampler2D") uniformArrays.insert(uniformName);
 		}
 		if (uniformType == "int") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(int32_t);
-				auto position = align(size, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(int32_t));
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1818,8 +1827,17 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float);
-				auto position = align(size, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float));
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1827,8 +1845,17 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 2;
-				auto position = align(sizeof(float) * 4, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 2);
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1836,8 +1863,17 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 3;
-				auto position = align(sizeof(float) * 4, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1845,8 +1881,17 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 4;
-				auto position = align(size, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1854,8 +1899,17 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 12;
-				auto position = align(sizeof(float) * 4, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
@@ -1863,20 +1917,40 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 16;
-				auto position = align(sizeof(float) * 4, shader.ubo_size);
-				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
+				auto position = align(alignment, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] =
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + suffix,
+						.type = shader_type::uniform_type::UNIFORM,
+						.position = position,
+						.size = size,
+						.texture_unit = -1
+					};
 				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "sampler2D") {
-			shader.uniforms[uniformName] = {.name = uniformName, .type = shader_type::uniform_type::SAMPLER2D, .position = -1, .size = 0, .texture_unit = -1};
+			for (auto i = 0; i < arraySize; i++) {
+				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+				auto newSuffix = isArray == true?"_" + to_string(i):"";
+				shader.uniforms[prefix + uniformName + suffix] = {
+					.name = prefix + uniformName + suffix,
+					.newName = prefix + uniformName + newSuffix,
+					.type = shader_type::uniform_type::SAMPLER2D,
+					.position = -1,
+					.size = 0,
+					.texture_unit = -1
+				};
+			}
 			continue;
 		} else {
 			if (structs.find(uniformType) != structs.end()) {
 				for (auto i = 0; i < arraySize; i++) {
 					auto structPrefix = prefix + uniformName + (isArray == true?"[" + to_string(i) + "]":"") + ".";
 					string uniformsBlockIgnore;
-					auto alignment = determineAlignment(structs, structs.find(uniformType)->second);
+					auto alignment = Math::max(16, determineAlignment(structs, structs.find(uniformType)->second));
 					shader.ubo_size = align(alignment, shader.ubo_size);
 					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformArrays, uniformsBlockIgnore);
 					shader.ubo_size = align(alignment, shader.ubo_size);
@@ -2042,7 +2116,19 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						string uniformName;
 						if (t2.hasMoreTokens() == true) uniformType = t2.nextToken();
 						while (t2.hasMoreTokens() == true) uniformName = t2.nextToken();
-						newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + "_IDX}) " + line);
+						auto isArray = false;
+						auto arraySize = 1;
+						if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+							isArray = true;
+							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
+							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+							arraySize = Integer::parseInt(arraySizeString);
+							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
+						}
+						for (auto i = 0; i < arraySize; i++) {
+							auto suffix = isArray == true?"_" + to_string(i):"";
+							newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
+						}
 						shaderStruct.samplers++;
 					} else {
 						uniform = StringTools::substring(line, string("uniform").size() + 1);
@@ -2089,7 +2175,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		// replace uniforms to use ubo
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(std430, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(std140, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
@@ -2120,13 +2206,22 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				// rename uniforms to ubo uniforms
 			} else {
 				for (auto& uniformIt: shaderStruct.uniforms) {
-					if (uniformIt.second.type == shader_type::uniform_type::SAMPLER2D) continue;
-					auto uniformName = uniformIt.second.name;
-					line = StringTools::regexReplace(
-						line,
-						"(\\b)" + uniformName + "(\\b)",
-						"$1ubo_generated." + uniformName + "$2"
-					);
+					if (uniformIt.second.type == shader_type::uniform_type::SAMPLER2D) {
+						if (uniformIt.second.name != uniformIt.second.newName) {
+							line = StringTools::replace(
+								line,
+								uniformIt.second.name,
+								uniformIt.second.newName
+							);
+						}
+					} else {
+						auto uniformName = uniformIt.second.name;
+						line = StringTools::regexReplace(
+							line,
+							"(\\b)" + uniformName + "(\\b)",
+							"$1ubo_generated." + uniformName + "$2"
+						);
+					}
 				}
 				// rename arrays to ubo uniforms
 				for (auto& uniformName: uniformArrays) {
@@ -2369,7 +2464,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 		VkPipelineDepthStencilStateCreateInfo ds;
 		VkPipelineViewportStateCreateInfo vp;
 		VkPipelineMultisampleStateCreateInfo ms;
-		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+		VkDynamicState dynamicStateEnables[2];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
 		createRasterizationStateCreateInfo(contextIdx, rs);
@@ -2526,7 +2621,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 		vi_attrs[11].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		vi_attrs[11].offset = 0;
 
-		// vertices
+		// origins
 		vi_bindings[9].binding = 9;
 		vi_bindings[9].stride = sizeof(float) * 3;
 		vi_bindings[9].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -2717,7 +2812,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		VkPipelineDepthStencilStateCreateInfo ds;
 		VkPipelineViewportStateCreateInfo vp;
 		VkPipelineMultisampleStateCreateInfo ms;
-		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+		VkDynamicState dynamicStateEnables[2];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
 		createRasterizationStateCreateInfo(contextIdx, rs);
@@ -2757,9 +2852,9 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		ms.pSampleMask = nullptr;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-		VkVertexInputBindingDescription vi_bindings[4];
+		VkVertexInputBindingDescription vi_bindings[9];
 		memset(vi_bindings, 0, sizeof(vi_bindings));
-		VkVertexInputAttributeDescription vi_attrs[4];
+		VkVertexInputAttributeDescription vi_attrs[9];
 		memset(vi_attrs, 0, sizeof(vi_attrs));
 
 		// vertices
@@ -2771,7 +2866,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 		vi_attrs[0].offset = 0;
 
-		// sprite indices
+		// texture indices
 		vi_bindings[1].binding = 1;
 		vi_bindings[1].stride = sizeof(uint16_t);
 		vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -2780,13 +2875,13 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		vi_attrs[1].format = VK_FORMAT_R16_UINT;
 		vi_attrs[1].offset = 0;
 
-		// texture coordinates
+		// sprite indices
 		vi_bindings[2].binding = 2;
-		vi_bindings[2].stride = sizeof(float) * 2;
+		vi_bindings[2].stride = sizeof(uint16_t);
 		vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		vi_attrs[2].binding = 2;
 		vi_attrs[2].location = 2;
-		vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
+		vi_attrs[2].format = VK_FORMAT_R16_UINT;
 		vi_attrs[2].offset = 0;
 
 		// colors
@@ -2798,13 +2893,58 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		vi_attrs[3].offset = 0;
 
+		// not in use
+		vi_bindings[4].binding = 4;
+		vi_bindings[4].stride = sizeof(float);
+		vi_bindings[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[4].binding = 4;
+		vi_attrs[4].location = 4;
+		vi_attrs[4].format = VK_FORMAT_R32_SFLOAT;
+		vi_attrs[4].offset = 0;
 
+		// point size
+		vi_bindings[5].binding = 5;
+		vi_bindings[5].stride = sizeof(float);
+		vi_bindings[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[5].binding = 5;
+		vi_attrs[5].location = 5;
+		vi_attrs[5].format = VK_FORMAT_R32_SFLOAT;
+		vi_attrs[5].offset = 0;
+
+		// sprite sheet dimension
+		vi_bindings[6].binding = 6;
+		vi_bindings[6].stride = sizeof(uint16_t) * 2;
+		vi_bindings[6].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[6].binding = 6;
+		vi_attrs[6].location = 6;
+		vi_attrs[6].format = VK_FORMAT_R16G16_UINT;
+		vi_attrs[6].offset = 0;
+
+		// effect color mul
+		vi_bindings[7].binding = 7;
+		vi_bindings[7].stride = sizeof(float) * 4;
+		vi_bindings[7].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[7].binding = 7;
+		vi_attrs[7].location = 10;
+		vi_attrs[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[7].offset = 0;
+
+		// effect color add
+		vi_bindings[8].binding = 8;
+		vi_bindings[8].stride = sizeof(float) * 4;
+		vi_bindings[8].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[8].binding = 8;
+		vi_attrs[8].location = 11;
+		vi_attrs[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[8].offset = 0;
+
+		//
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vi.pNext = nullptr;
-		vi.vertexBindingDescriptionCount = 4;
+		vi.vertexBindingDescriptionCount = 9;
 		vi.pVertexBindingDescriptions = vi_bindings;
-		vi.vertexAttributeDescriptionCount = 4;
+		vi.vertexAttributeDescriptionCount = 9;
 		vi.pVertexAttributeDescriptions = vi_attrs;
 
 		pipeline.pVertexInputState = &vi;
@@ -2981,7 +3121,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 		VkPipelineDepthStencilStateCreateInfo ds;
 		VkPipelineViewportStateCreateInfo vp;
 		VkPipelineMultisampleStateCreateInfo ms;
-		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+		VkDynamicState dynamicStateEnables[3];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
 		createRasterizationStateCreateInfo(contextIdx, rs);
@@ -3378,7 +3518,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			auto& uniform = uniformIt.second;
 			//
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.name + "_IDX}", to_string(bindingIdx));
+				shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
 				uniform.position = bindingIdx++;
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
@@ -3441,6 +3581,14 @@ bool VKRenderer::linkProgram(int32_t programId)
 		*/
 
 		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
+
+		/*
+		vector<uint8_t> spirv;
+		for (auto i = 0; i < shader->spirv.size() * sizeof(uint32_t); i++) {
+			spirv.push_back(((uint8_t*)shader->spirv.data())[i]);
+		}
+		FileSystem::getInstance()->setContent(".", shader->file + ".spirv", spirv);
+		*/
 
 		// create shader module
 		{
@@ -3532,7 +3680,7 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 			return uniformIt.first;
 		}
 	}
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
 	return -1;
 }
 
@@ -3638,14 +3786,12 @@ void VKRenderer::setProgramUniformFloatMatrices4x4(void* context, int32_t unifor
 
 void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
@@ -3691,7 +3837,10 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	scissor.offset.y = y;
 
 	//
-	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16.0f / 9.0f;
+	this->viewPortX = x;
+	this->viewPortY = y;
+	this->viewPortWidth = width;
+	this->viewPortHeight = height;
 }
 
 void VKRenderer::updateViewPort()
@@ -4209,7 +4358,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 
 		if (texture->isUseMipMap() == true) {
-
 			//
 			auto textureWidth = texture->getTextureWidth();
 			auto textureHeight = texture->getTextureHeight();
@@ -4441,7 +4589,7 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 				contextTyped.idx,
 				textureObject.image,
 				VK_IMAGE_ASPECT_DEPTH_BIT,
-				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+				textureObject.image_layout,
 				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
 				(VkAccessFlagBits)0
 			);
@@ -4455,7 +4603,7 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 			setImageLayout(
 				contextTyped.idx,
 				textureObject.image,
-				VK_IMAGE_ASPECT_COLOR_BIT,
+				textureObject.image_layout,
 				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 				(VkAccessFlagBits)0
@@ -4671,7 +4819,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 						0,
 						depth_buffer_texture.image,
 						VK_IMAGE_ASPECT_DEPTH_BIT,
-						VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+						depth_buffer_texture.image_layout,
 						VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 						(VkAccessFlagBits)0
 					);
@@ -4685,7 +4833,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 						0,
 						color_buffer_texture.image,
 						VK_IMAGE_ASPECT_COLOR_BIT,
-						VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+						color_buffer_texture.image_layout,
 						VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 						(VkAccessFlagBits)0
 					);
@@ -4985,11 +5133,6 @@ void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
 }
 
-void VKRenderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
-}
-
 void VKRenderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
 	(*static_cast<context_type*>(context)).bound_buffers[3] = bufferObjectId;
@@ -5010,18 +5153,35 @@ void VKRenderer::bindModelMatricesBufferObject(void* context, int32_t bufferObje
 	(*static_cast<context_type*>(context)).bound_buffers[6] = bufferObjectId;
 }
 
-void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
 {
 	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
 }
 
-void VKRenderer::bindOrigins(void* context, int32_t bufferObjectId) {
+void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
+{
+	(*static_cast<context_type*>(context)).bound_buffers[8] = bufferObjectId;
+}
+
+void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
 	(*static_cast<context_type*>(context)).bound_buffers[9] = bufferObjectId;
 }
 
-void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
+}
+
+void VKRenderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[8] = bufferObjectId;
+	(*static_cast<context_type*>(context)).bound_buffers[2] = bufferObjectId;
+}
+
+void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+	(*static_cast<context_type*>(context)).bound_buffers[5] = bufferObjectId;
+}
+
+void VKRenderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+	(*static_cast<context_type*>(context)).bound_buffers[6] = bufferObjectId;
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
@@ -5350,17 +5510,22 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
 
 		//
-		#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
+		#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	9
 		VkBuffer vertexBuffersBuffer[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
 			contextTyped.points_render_command.vertex_buffers[0],
 			contextTyped.points_render_command.vertex_buffers[1],
 			contextTyped.points_render_command.vertex_buffers[2],
-			contextTyped.points_render_command.vertex_buffers[3]
+			contextTyped.points_render_command.vertex_buffers[3],
+			contextTyped.points_render_command.vertex_buffers[4],
+			contextTyped.points_render_command.vertex_buffers[5],
+			contextTyped.points_render_command.vertex_buffers[6],
+			contextTyped.points_render_command.vertex_buffers[7],
+			contextTyped.points_render_command.vertex_buffers[8],
 		};
 
 		//
 		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
+		VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.points_render_command.count, 1, contextTyped.points_render_command.offset, 0);
 
