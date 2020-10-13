@@ -38,6 +38,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::to_string;
@@ -72,6 +73,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
 
 Model* GLTFReader::read(const string& pathName, const string& fileName)
 {
@@ -334,7 +336,8 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
-						auto fileName = image.name + ".png";
+						auto fileName = determineTextureFileName(image.name);
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Writing PNG: " + fileName);
 						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
@@ -350,7 +353,8 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 					auto& gltfTexture = gltfModel.textures[gltfMetallicRoughnessTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
-						auto fileName = image.name + ".png";
+						auto fileName = determineTextureFileName(image.name);
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Writing PNG: " + fileName);
 						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
@@ -365,7 +369,8 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 					auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
-						auto fileName = image.name + ".png";
+						auto fileName = determineTextureFileName(image.name);
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Writing PNG: " + fileName);
 						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
@@ -686,4 +691,22 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 	png_destroy_write_struct(&png, &info);
 
 	return true;
+}
+
+string GLTFReader::determineTextureFileName(const string& imageName) {
+	// try to avoid double parts in names that can happen when having 2 maps, 1 for colors and 1 for transparency
+	string doubleFileNamePart = "";
+	for (auto i = 1; i < imageName.size(); i++) {
+		auto doubleFileNamePartTest = StringTools::substring(imageName, 0, i);
+		if (imageName.rfind(doubleFileNamePartTest) > i) {
+			doubleFileNamePart = doubleFileNamePartTest;
+		} else {
+			break;
+		}
+	}
+	if (doubleFileNamePart.empty() == false) {
+		return StringTools::replace(imageName, doubleFileNamePart, "", imageName.rfind(doubleFileNamePart)) + ".png";
+	} else {
+		return imageName + ".png";
+	}
 }

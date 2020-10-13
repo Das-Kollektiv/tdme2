@@ -19,6 +19,7 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -43,6 +44,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -107,23 +109,50 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("importbvs 1.9.9"));
+	Console::println(string("importtmm 1.9.9"));
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
-	if (argc < 3) {
-		Console::println("Usage: importbvs inputfile.tmm bvs-model.tm");
+	if (argc < 4) {
+		Console::println("Usage: importtmm tmmfile.tmm modelfile.ext bvs-model.ext");
 		Application::exit(1);
 	}
 	//
 	string tmmFileName = argv[1];
-	string bvsModelFileName = argv[2];
+	string modelFileName = argv[2];
+	string bvsModelFileName = argv[3];
 	try {
-		// load tmm
-		Console::println("Loading tmm: " + tmmFileName);
-		auto tmm = ModelMetaDataFileImport::doImport(
-			FileSystem::getInstance()->getPathName(tmmFileName),
-			FileSystem::getInstance()->getFileName(tmmFileName)
+		LevelEditorEntity* tmm = nullptr;
+		// load model
+		Console::println("Loading model: " + modelFileName);
+		auto model = ModelReader::read(
+			FileSystem::getInstance()->getPathName(modelFileName),
+			FileSystem::getInstance()->getFileName(modelFileName)
 		);
+		// load tmm
+		if (FileSystem::getInstance()->fileExists(tmmFileName) == false) {
+			Console::println("Creating tmm: " + tmmFileName);
+			auto pathName = FileSystem::getInstance()->getPathName(tmmFileName);
+			auto fileName = FileSystem::getInstance()->getFileName(tmmFileName);
+			auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
+			tmm = new LevelEditorEntity(
+				-1,
+				LevelEditorEntity_EntityType::MODEL,
+				fileNameWithoutExtension,
+				fileNameWithoutExtension,
+				"",
+				FileSystem::getInstance()->getPathName(modelFileName) + "/" + FileSystem::getInstance()->getFileName(modelFileName),
+				StringTools::replace(StringTools::replace(StringTools::replace(FileSystem::getInstance()->getFileName(modelFileName), "\\", "_"), "/", "_"), ":", "_") + ".png",
+				model,
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+		} else {
+			Console::println("Loading tmm: " + tmmFileName);
+			tmm = ModelMetaDataFileImport::doImport(
+				FileSystem::getInstance()->getPathName(tmmFileName),
+				FileSystem::getInstance()->getFileName(tmmFileName)
+			);
+			tmm->setModel(model);
+		}
 		// remove old bv mesh model files
 		for (auto i = 0; i < tmm->getBoundingVolumeCount(); i++) {
 			auto bv = tmm->getBoundingVolume(i);
@@ -169,12 +198,12 @@ int main(int argc, char** argv)
 					": " + convexMeshFileName +
 					", triangles = " + to_string(groupTriangles.size())
 				);
-				auto convexHullModel = createModel(
+				auto convexMeshModel = createModel(
 					meshPathName + "/" + convexMeshFileName,
 					groupTriangles
 				);
-				TMWriter::write(convexHullModel, meshPathName, convexMeshFileName);
-				delete convexHullModel;
+				TMWriter::write(convexMeshModel, meshPathName, convexMeshFileName);
+				delete convexMeshModel;
 				convexMeshFileNames.push_back(meshPathName + "/" + convexMeshFileName);
 
 			}

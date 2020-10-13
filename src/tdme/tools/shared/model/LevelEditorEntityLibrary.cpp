@@ -9,8 +9,8 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utilities/Console.h>

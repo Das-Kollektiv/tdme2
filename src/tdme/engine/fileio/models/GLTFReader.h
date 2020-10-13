@@ -88,4 +88,11 @@ private:
 	 * @param pixels pixels
 	 */
 	static bool writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels);
+
+	/**
+	 * Determine texture file name
+	 * @param fileName
+	 * @return file name
+	 */
+	static string determineTextureFileName(const string& imageName);
 };

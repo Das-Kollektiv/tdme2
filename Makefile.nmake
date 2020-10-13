@@ -637,7 +637,7 @@ all: \
 	copyanimationsetups \
 	create-installer \
 	generatelicenses \
-	importbvs \
+	importtmm \
 	levelfixmodelszup2yup \
 	fixdoxygen \
 	optimizemodel \
@@ -760,8 +760,8 @@ create-installer:
 generatelicenses:
 	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-importbvs:
-	cl /Feimportbvs /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importbvs-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+importtmm:
+	cl /Feimporttmm /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
 	cl /Felevelfixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
