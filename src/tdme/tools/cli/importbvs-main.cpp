@@ -118,16 +118,42 @@ int main(int argc, char** argv)
 	string tmmFileName = argv[1];
 	string bvsModelFileName = argv[2];
 	try {
+		// load tmm
 		Console::println("Loading tmm: " + tmmFileName);
 		auto tmm = ModelMetaDataFileImport::doImport(
 			FileSystem::getInstance()->getPathName(tmmFileName),
 			FileSystem::getInstance()->getFileName(tmmFileName)
 		);
+		// remove old bv mesh model files
+		for (auto i = 0; i < tmm->getBoundingVolumeCount(); i++) {
+			auto bv = tmm->getBoundingVolume(i);
+			auto bvModelMesh = bv->getModelMeshFile();
+			if (bvModelMesh.empty() == false && FileSystem::getInstance()->fileExists(bvModelMesh) == true) {
+				try {
+					Console::println(
+						"Removing old convex mesh model file@" +
+						to_string(i) +
+						": " + bvModelMesh
+					);
+					FileSystem::getInstance()->removeFile(
+						FileSystem::getInstance()->getPathName(bvModelMesh),
+						FileSystem::getInstance()->getFileName(bvModelMesh)
+					);
+				} catch (Exception& exception) {
+					Console::println("An error occurred: " + string(exception.what()));
+				}
+			}
+		}
+		// remove references to it
+		Console::println("Removing old bounding volumes");
+		while (tmm->getBoundingVolumeCount() > 0) tmm->removeBoundingVolume(0);
+		// load new convex meshes bv model
 		Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
 		auto bvsModel = ModelReader::read(
 			FileSystem::getInstance()->getPathName(bvsModelFileName),
 			FileSystem::getInstance()->getFileName(bvsModelFileName)
 		);
+		// create to a single convex meshes
 		vector<string> convexMeshFileNames;
 		{
 			auto meshFileName = FileSystem::getInstance()->getFileName(bvsModelFileName);
@@ -153,27 +179,7 @@ int main(int argc, char** argv)
 
 			}
 		}
-		for (auto i = 0; i < tmm->getBoundingVolumeCount(); i++) {
-			auto bv = tmm->getBoundingVolume(i);
-			auto bvModelMesh = bv->getModelMeshFile();
-			if (bvModelMesh.empty() == false && FileSystem::getInstance()->fileExists(bvModelMesh) == true) {
-				try {
-					Console::println(
-						"Removing old convex mesh model file@" +
-						to_string(i) +
-						": " + bvModelMesh
-					);
-					FileSystem::getInstance()->removeFile(
-						FileSystem::getInstance()->getPathName(bvModelMesh),
-						FileSystem::getInstance()->getFileName(bvModelMesh)
-					);
-				} catch (Exception& exception) {
-					Console::println("An error occurred: " + string(exception.what()));
-				}
-			}
-		}
-		Console::println("Removing old bounding volumes");
-		while (tmm->getBoundingVolumeCount() > 0) tmm->removeBoundingVolume(0);
+		// add to tmm
 		for (auto& convexMeshFileName: convexMeshFileNames) {
 			Console::println(
 				"Adding convex mesh bounding volume@" +
