@@ -694,6 +694,7 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 }
 
 string GLTFReader::determineTextureFileName(const string& imageName) {
+	/*
 	// try to avoid double parts in names that can happen when having 2 maps, 1 for colors and 1 for transparency
 	string doubleFileNamePart = "";
 	for (auto i = 3; i < imageName.size(); i++) {
@@ -709,4 +710,6 @@ string GLTFReader::determineTextureFileName(const string& imageName) {
 	} else {
 		return imageName + ".png";
 	}
+	*/
+	return imageName + ".png";
 }
