@@ -13,7 +13,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 
-/** 
+/**
  * Level editor entity particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -53,7 +53,7 @@ public:
 	 */
 	~LevelEditorEntityParticleSystem();
 
-	/** 
+	/**
 	 * @return particle system type
 	 */
 	inline LevelEditorEntityParticleSystem_Type* getType() {
@@ -66,21 +66,21 @@ public:
 	 */
 	void setType(LevelEditorEntityParticleSystem_Type* type);
 
-	/** 
+	/**
 	 * @return object particle system
 	 */
 	inline LevelEditorEntityParticleSystem_ObjectParticleSystem* getObjectParticleSystem() {
 		return ops;
 	}
 
-	/** 
+	/**
 	 * @return point particle system
 	 */
 	inline LevelEditorEntityParticleSystem_PointParticleSystem* getPointParticleSystem() {
 		return pps;
 	}
 
-	/** 
+	/**
 	 * @return fog particle system
 	 */
 	inline LevelEditorEntityParticleSystem_FogParticleSystem* getFogParticleSystem() {
@@ -100,35 +100,35 @@ public:
 	 */
 	void setEmitter(LevelEditorEntityParticleSystem_Emitter* emitter);
 
-	/** 
+	/**
 	 * @return point particle emitter
 	 */
 	inline LevelEditorEntityParticleSystem_PointParticleEmitter* getPointParticleEmitter() {
 		return ppe;
 	}
 
-	/** 
+	/**
 	 * @return bounding box particle emitter
 	 */
 	inline LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* getBoundingBoxParticleEmitters() {
 		return bbpe;
 	}
 
-	/** 
+	/**
 	 * @return circle particle emitter
 	 */
 	inline LevelEditorEntityParticleSystem_CircleParticleEmitter* getCircleParticleEmitter() {
 		return cpe;
 	}
 
-	/** 
+	/**
 	 * @return circle particle emitter plane velocity
 	 */
 	inline LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* getCircleParticleEmitterPlaneVelocity() {
 		return cpepv;
 	}
 
-	/** 
+	/**
 	 * @return sphere particle emitter
 	 */
 	inline LevelEditorEntityParticleSystem_SphereParticleEmitter* getSphereParticleEmitter() {

@@ -52,7 +52,7 @@ private:
 	int32_t maskTextureId { 0 };
 
 protected:
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;

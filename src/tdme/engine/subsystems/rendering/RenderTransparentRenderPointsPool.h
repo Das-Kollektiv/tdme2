@@ -19,7 +19,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Render transparent render points pool
  * @author andreas.drewke
  * @version $Id$
@@ -42,14 +42,14 @@ public:
 	 */
 	~RenderTransparentRenderPointsPool();
 
-	/** 
+	/**
 	 * Merge another pool into this pool
 	 * @param pool2 pool
 	 * @param cameraMatrix cameraMatrix
 	 */
 	void merge(TransparentRenderPointsPool* pool2, const Matrix4x4& cameraMatrix);
 
-	/** 
+	/**
 	 * Reset
 	 */
 	void reset();
@@ -68,7 +68,7 @@ public:
 		return transparentRenderPoints;
 	}
 
-	/** 
+	/**
 	 * Sort transparent render points
 	 */
 	void sort();

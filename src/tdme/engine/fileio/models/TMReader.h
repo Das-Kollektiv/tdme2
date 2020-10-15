@@ -220,7 +220,7 @@ public:
 };
 };
 
-/** 
+/**
  * TDME model reader
  * @author Andreas Drewke
  * @version $Id$
@@ -229,7 +229,7 @@ class tdme::engine::fileio::models::TMReader
 {
 public:
 
-	/** 
+	/**
 	 * TDME model format reader
 	 * @param pathName path name
 	 * @param fileName file name
@@ -248,7 +248,7 @@ private:
 	 */
 	static const string getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName);
 
-	/** 
+	/**
 	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
@@ -267,7 +267,7 @@ private:
 	 */
 	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version);
 
-	/** 
+	/**
 	 * Read vertices from input stream
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -275,7 +275,7 @@ private:
 	 */
 	static const vector<Vector3> readVertices(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read texture coordinates from input stream
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -283,7 +283,7 @@ private:
 	 */
 	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read indices from input stream
 	 * @param is input stream
 	 * @param indices indices
@@ -292,7 +292,7 @@ private:
 	 */
 	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices);
 
-	/** 
+	/**
 	 * Read animation from input stream into group
 	 * @param is input stream
 	 * @param g group
@@ -301,7 +301,7 @@ private:
 	 */
 	static Animation* readAnimation(TMReaderInputStream* is, Group* g);
 
-	/** 
+	/**
 	 * Read faces entities from input stream
 	 * @param is input stream
 	 * @param g group
@@ -309,7 +309,7 @@ private:
 	 */
 	static void readFacesEntities(TMReaderInputStream* is, Group* g);
 
-	/** 
+	/**
 	 * Read skinning joint
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -317,7 +317,7 @@ private:
 	 */
 	static Joint readSkinningJoint(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read skinning joint weight
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -325,7 +325,7 @@ private:
 	 */
 	static JointWeight readSkinningJointWeight(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read skinning from input stream
 	 * @param is input stream
 	 * @param g group
@@ -333,7 +333,7 @@ private:
 	 */
 	static void readSkinning(TMReaderInputStream* is, Group* g);
 
-	/** 
+	/**
 	 * Read sub groups
 	 * @param is input stream
 	 * @param model model
@@ -345,7 +345,7 @@ private:
 	 */
 	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups);
 
-	/** 
+	/**
 	 * Write group to output stream
 	 * @param is input stream
 	 * @param model model

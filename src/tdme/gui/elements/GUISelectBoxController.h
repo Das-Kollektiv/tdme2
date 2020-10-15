@@ -20,7 +20,7 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box controller
  * @author Andreas Drewke
  * @version $Id$
@@ -47,32 +47,32 @@ public:
 	void postLayout() override;
 
 private:
-	/** 
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Determine select box option controllers
 	 */
 	void determineSelectBoxOptionControllers();
 
-	/** 
+	/**
 	 * Get selected option idx
 	 */
 	int32_t getSelectedOptionIdx();
 
-	/** 
+	/**
 	 * Select current option
 	 */
 	void selectCurrent();
 
-	/** 
+	/**
 	 * Select next node
 	 */
 	void selectNext();
 
-	/** 
+	/**
 	 * Select previous
 	 */
 	void selectPrevious();

@@ -17,7 +17,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node) 
+GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();

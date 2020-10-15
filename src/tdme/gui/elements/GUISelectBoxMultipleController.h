@@ -20,7 +20,7 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box multiple controller
  * @author Andreas Drewke
  * @version $Id$
@@ -43,7 +43,7 @@ private:
 public:
 	bool isDisabled() override;
 
-	/** 
+	/**
 	 * Set disabled
 	 * @param disabled disabled
 	 */
@@ -53,42 +53,42 @@ public:
 	void postLayout() override;
 
 private:
-	/** 
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Unfocus all nodes
 	 */
 	void unfocus();
 
-	/** 
+	/**
 	 * Determine select box option controllers
 	 */
 	void determineSelectBoxMultipleOptionControllers();
 
-	/** 
+	/**
 	 * Get focussed option idx
 	 */
 	int32_t getFocussedOptionIdx();
 
-	/** 
+	/**
 	 * Select current options
 	 */
 	void selectCurrent();
 
-	/** 
+	/**
 	 * Focus next node
 	 */
 	void focusNext();
 
-	/** 
+	/**
 	 * Focus previous
 	 */
 	void focusPrevious();
 
-	/** 
+	/**
 	 * Toggle selected node
 	 */
 	void toggle();

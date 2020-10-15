@@ -10,7 +10,7 @@ using std::array;
 
 using tdme::math::Math;
 
-/** 
+/**
  * Color 4 base definition class
  * @author Andreas Drewke
  * @version $Id$
@@ -69,7 +69,7 @@ public:
 		this->data = color;
 	}
 
-	/** 
+	/**
 	 * Set up color
 	 * @param r red
 	 * @param g green
@@ -83,7 +83,7 @@ public:
 		data[3] = a;
 	}
 
-	/** 
+	/**
 	 * Sets up this color with given color
 	 * @param color color
 	 */
@@ -91,7 +91,7 @@ public:
 		data = color.data;
 	}
 
-	/** 
+	/**
 	 * Add to color
 	 * @param r red
 	 * @param g green
@@ -105,63 +105,63 @@ public:
 		data[3] += a;
 	}
 
-	/** 
+	/**
 	 * @return red component
 	 */
 	inline float getRed() const {
 		return data[0];
 	}
 
-	/** 
+	/**
 	 * @param red red component
 	 */
 	inline void setRed(float red) {
 		data[0] = red;
 	}
 
-	/** 
+	/**
 	 * @return green component
 	 */
 	inline float getGreen() const {
 		return data[1];
 	}
 
-	/** 
+	/**
 	 * @param green green component
 	 */
 	inline void setGreen(float green) {
 		data[1] = green;
 	}
 
-	/** 
+	/**
 	 * @return blue component
 	 */
 	inline float getBlue() const {
 		return data[2];
 	}
 
-	/** 
+	/**
 	 * @param blue blue component
 	 */
 	inline void setBlue(float blue) {
 		data[2] = blue;
 	}
 
-	/** 
+	/**
 	 * @return alpha component
 	 */
 	inline float getAlpha() const {
 		return data[3];
 	}
 
-	/** 
+	/**
 	 * @param alpha alpha component
 	 */
 	inline void setAlpha(float alpha) {
 		data[3] = alpha;
 	}
 
-	/** 
+	/**
 	 * Scale this color
 	 * @param scale scale
 	 * @return this color
@@ -214,13 +214,13 @@ public:
 	}
 
 	/**
-	 * @return rgba as float array 
+	 * @return rgba as float array
 	 */
 	inline array<float, 4>& getArray() const {
 		return (array<float, 4>&)data;
 	}
 
-	/** 
+	/**
 	 * Compares this color with given color
 	 * @return equality
 	 */

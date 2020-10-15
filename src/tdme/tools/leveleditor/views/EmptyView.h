@@ -20,7 +20,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Empty View
  * @author Andreas Drewke
  * @version $Id$
@@ -56,29 +56,29 @@ public:
 	 */
 	virtual ~EmptyView();
 
-	/** 
+	/**
 	 * @return pop up views
 	 */
 	virtual PopUps* getPopUpsViews();
 
-	/** 
+	/**
 	 * @return entity
 	 */
 	virtual LevelEditorEntity* getEntity();
 
-	/** 
+	/**
 	 * @return selected entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
 
 	void handleInputEvents() override;
 
-	/** 
-	 * Renders the scene 
+	/**
+	 * Renders the scene
 	 */
 	void display() override;
 
-	/** 
+	/**
 	 * Init GUI elements
 	 */
 	virtual void updateGUIElements();

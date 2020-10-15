@@ -9,7 +9,7 @@
 using tdme::engine::FrameBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader base implementation
  * @author Andreas Drewke
  * @version $Id$

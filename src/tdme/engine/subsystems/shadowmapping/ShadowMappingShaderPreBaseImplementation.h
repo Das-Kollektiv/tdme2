@@ -13,7 +13,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Shadow mapping shader base class to create shadow map
  * @author Andreas Drewke
  * @version $Id$

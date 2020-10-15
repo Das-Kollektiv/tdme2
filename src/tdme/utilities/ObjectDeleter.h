@@ -12,7 +12,7 @@ using std::find;
 namespace tdme {
 namespace utilities {
 
-/** 
+/**
  * Object deleter
  * @author Andreas Drewke
  * @version $Id$
@@ -25,7 +25,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Adds vector to iterator
 	 * @param vector vector
 	 */

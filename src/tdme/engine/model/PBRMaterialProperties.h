@@ -12,7 +12,7 @@ using std::string;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 
-/** 
+/**
  * Represents specular material properties
  * @author andreas.drewke
  * @version $Id$

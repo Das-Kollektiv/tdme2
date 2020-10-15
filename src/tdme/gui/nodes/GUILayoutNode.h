@@ -29,7 +29,7 @@ private:
 	GUILayoutNode_Alignment* alignment { nullptr };
 
 protected:
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;
@@ -87,7 +87,7 @@ public:
 
 public:
 
-	/** 
+	/**
 	 * Create alignment
 	 * @param alignment alignment
 	 * @return alignment

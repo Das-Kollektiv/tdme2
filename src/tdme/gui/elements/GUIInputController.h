@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI input controller
  * @author Andreas Drewke
  * @version $Id$

@@ -39,7 +39,7 @@ string GUIDropDownController::CONDITION_ENABLED = "enabled";
 string GUIDropDownController::CONDITION_OPENED = "opened";
 string GUIDropDownController::CONDITION_CLOSED = "closed";
 
-GUIDropDownController::GUIDropDownController(GUINode* node) 
+GUIDropDownController::GUIDropDownController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();

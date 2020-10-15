@@ -34,7 +34,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI multi line text node
  * @author Andreas Drewke
  * @version $Id$
@@ -61,7 +61,7 @@ private:
 	int widthLast;
 	int heightLast;
 protected:
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;
@@ -115,7 +115,7 @@ public:
 	int32_t getContentHeight() override;
 	void computeContentAlignment() override;
 
-	/** 
+	/**
 	 * @return text
 	 */
 	inline const MutableString& getText() const {

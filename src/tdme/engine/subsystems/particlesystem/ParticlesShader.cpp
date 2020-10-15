@@ -11,7 +11,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer) 
+ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer)
 {
 	this->engine = engine;
 	this->renderer = renderer;

@@ -19,7 +19,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-/** 
+/**
  * Partition oct tree node
  * @author Andreas Drewke
  * @version $Id$

@@ -16,7 +16,7 @@ using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Entity display sub screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -44,38 +44,38 @@ public:
 	 */
 	virtual ~EntityDisplaySubScreenController();
 
-	/** 
+	/**
 	 * @return view
 	 */
 	virtual EntityDisplayView* getView();
 
-	/** 
+	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
 	virtual void initialize(GUIScreenNode* screenNode);
 
-	/** 
+	/**
 	 * Set up display section
 	 */
 	virtual void setupDisplay();
 
-	/** 
+	/**
 	 * On display apply button event
 	 */
 	virtual void onDisplayApply();
 
-	/** 
+	/**
 	 * @return display shadowing checked
 	 */
 	virtual bool getDisplayShadowing();
 
-	/** 
+	/**
 	 * @return display ground checked
 	 */
 	virtual bool getDisplayGround();
 
-	/** 
+	/**
 	 * @return display bounding volume checked
 	 */
 	virtual bool getDisplayBoundingVolume();

@@ -43,7 +43,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-FileDialogScreenController::FileDialogScreenController() 
+FileDialogScreenController::FileDialogScreenController()
 {
 	this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;

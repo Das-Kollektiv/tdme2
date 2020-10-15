@@ -16,7 +16,7 @@ using tdme::engine::Engine;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Entity display view
  * @author Andreas Drewke
  * @version $Id$
@@ -30,14 +30,14 @@ private:
 	bool displayShadowing;
 
 public:
-	/** 
+	/**
 	 * @return display ground plate
 	 */
 	inline virtual bool isDisplayGroundPlate() {
 		return this->displayGroundPlate;
 	}
 
-	/** 
+	/**
 	 * Set up ground plate visibility
 	 * @param groundPlate ground plate visible
 	 */
@@ -45,14 +45,14 @@ public:
 		this->displayGroundPlate = groundPlate;
 	}
 
-	/** 
+	/**
 	 * @return display shadowing
 	 */
 	inline virtual bool isDisplayShadowing() {
 		return displayShadowing;
 	}
 
-	/** 
+	/**
 	 * Set up shadow rendering
 	 * @param shadowing shadow rendering
 	 */
@@ -60,7 +60,7 @@ public:
 		this->displayShadowing = shadowing;
 	}
 
-	/** 
+	/**
 	 * Display
 	 * @param entity entity
 	 */

@@ -20,7 +20,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * GUI progress bar
  * @author Andreas Drewke
  * @version $Id$

@@ -29,7 +29,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Particle system group, which combines several particle systems into a group, to be used with engine class
  * @author Andreas Drewke
  * @version $Id$

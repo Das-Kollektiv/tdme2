@@ -30,7 +30,7 @@ using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 
-/** 
+/**
  * Object3D base class
  * @author Andreas Drewke
  */
@@ -73,7 +73,7 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * @return model
 	 */
 	inline Model* getModel() {
@@ -94,39 +94,39 @@ public:
 			enabledInstances++;
 		}
 		if (enabledInstances > 0) Object3DGroup::computeTransformations(context, object3dGroups);
-	} 
+	}
 
 	/**
 	 * @return group count
 	 */
 	int getGroupCount() const;
 
-	/** 
+	/**
 	 * Retrieves list of triangles of all or given groups
 	 * @param triangles triangles
 	 * @param groupIdx group index or -1 for all groups
 	 */
 	void getTriangles(vector<Triangle>& triangles, int groupIdx = -1);
 
-	/** 
+	/**
 	 * @return transformed faces iterator
 	 */
 	Object3DBase_TransformedFacesIterator* getTransformedFacesIterator();
 
-	/** 
+	/**
 	 * Returns object3d group mesh object
 	 * @param groupId group id
 	 * @return object3d group mesh object
 	 */
 	Object3DGroupMesh* getMesh(const string& groupId);
 
-	/** 
-	 * Initiates this object3d 
+	/**
+	 * Initiates this object3d
 	 */
 	virtual void initialize();
 
-	/** 
-	 * Disposes this object3d 
+	/**
+	 * Disposes this object3d
 	 */
 	virtual void dispose();
 

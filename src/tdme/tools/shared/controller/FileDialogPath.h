@@ -8,7 +8,7 @@
 using std::string;
 
 
-/** 
+/**
  * File dialog path
  * @author Andreas Drewke
  * @version $Id$
@@ -24,12 +24,12 @@ public:
 	 */
 	FileDialogPath(const string& path);
 
-	/** 
+	/**
 	 * @return path
 	 */
 	virtual const string& getPath();
 
-	/** 
+	/**
 	 * Set path
 	 * @param path path
 	 */

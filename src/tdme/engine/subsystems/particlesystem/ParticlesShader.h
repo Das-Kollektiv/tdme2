@@ -11,7 +11,7 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Particles shader program
  * @author Andreas Drewke
  * @version $Id$
@@ -43,35 +43,35 @@ public:
 	 */
 	ParticlesShader(Engine* engine, Renderer* renderer);
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use lighting program
 	 * @param context context
 	 */
 	void useProgram(void* context);
 
-	/** 
+	/**
 	 * Update effect to program
 	 * @param context context
 	 */
 	void updateEffect(void* context);
 
-	/** 
+	/**
 	 * Unuse particles shader program
 	 * @param context context
 	 */
 	void unUseProgram(void* context);
 
-	/** 
+	/**
 	 * Update matrices to program
 	 * @param context context
 	 */

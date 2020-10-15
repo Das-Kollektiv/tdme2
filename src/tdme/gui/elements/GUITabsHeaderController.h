@@ -17,7 +17,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tabs header controller
  * @author Andreas Drewke
  * @version $Id$
@@ -43,37 +43,37 @@ public:
 	void postLayout() override;
 
 private:
-	/** 
+	/**
 	 * @return has focus
 	 */
 	bool hasFocus();
 
-	/** 
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Determine select box option controllers
 	 */
 	void determineTabControllers();
 
-	/** 
+	/**
 	 * Get selected tab idx
 	 */
 	int32_t getSelectedTabIdx();
 
-	/** 
+	/**
 	 * Select next node
 	 */
 	void selectNext();
 
-	/** 
+	/**
 	 * Select previous
 	 */
 	void selectPrevious();
 
-	/** 
+	/**
 	 * Select current
 	 */
 	void selectCurrent();

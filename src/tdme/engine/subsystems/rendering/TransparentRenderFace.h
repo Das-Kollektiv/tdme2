@@ -5,7 +5,7 @@
 
 using tdme::engine::subsystems::rendering::Object3DGroup;
 
-/** 
+/**
  * Transparent face to be rendered
  * @author Andreas Drewke
  * @version $Id$

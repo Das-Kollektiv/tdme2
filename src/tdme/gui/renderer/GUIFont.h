@@ -50,22 +50,22 @@ private:
 	static MutableString LINEHEIGHT_STRING;
 
 	/**
-	 * The image containing the bitmap font 
+	 * The image containing the bitmap font
 	 */
 	Texture* texture { nullptr };
 
 	/**
-	 * Texture id 
+	 * Texture id
 	 */
 	int32_t textureId { -1 };
 
 	/**
-	 * The characters building up the font 
+	 * The characters building up the font
 	 */
 	map<int32_t, GUIFont_CharacterDefinition*> chars;
 
 	/**
-	 * The height of a line 
+	 * The height of a line
 	 */
 	int32_t lineHeight { 0 };
 

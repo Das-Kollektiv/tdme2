@@ -16,7 +16,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI element controller
  * @author Andreas Drewke
  * @version $Id$

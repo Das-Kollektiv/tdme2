@@ -10,7 +10,7 @@ using std::array;
 
 using tdme::math::Math;
 
-/** 
+/**
  * 2D vector 2 class
  * @author Andreas Drewke
  * @version $Id$
@@ -56,7 +56,7 @@ public:
 		data = v.data;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param x x
 	 * @param y y
@@ -68,7 +68,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param v float array containing x,y values
 	 * @return this vector
@@ -78,7 +78,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param v v
 	 * @return this vector
@@ -88,14 +88,14 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return x
 	 */
 	inline float getX() const {
 		return data[0];
 	}
 
-	/** 
+	/**
 	 * set X
 	 * @param x x
 	 * @return this vector
@@ -105,14 +105,14 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return y
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
-	/** 
+	/**
 	 * set Y
 	 * @param y y
 	 */
@@ -121,7 +121,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Adds a vector
 	 * @param v v
 	 * @return this vector
@@ -132,7 +132,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Subtracts a vector
 	 * @param v v
 	 * @return this vector
@@ -143,7 +143,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scale this vector
 	 * @param scale scale
 	 * @return this vector
@@ -154,10 +154,10 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scale this vector
 	 * @param scale scale
-	 * @return this vector 
+	 * @return this vector
 	 */
 	inline Vector2& scale(const Vector2& scale) {
 		data[0] *= scale.data[0];
@@ -165,7 +165,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return the vectors length
 	 */
 	inline float computeLength() const {
@@ -324,7 +324,7 @@ public:
 		return this->equals(v) == false;
 	}
 
-	/** 
+	/**
 	 * @return vector as array
 	 */
 	inline array<float, 2>& getArray() const {

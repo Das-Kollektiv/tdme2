@@ -11,7 +11,7 @@ using std::string;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
 
-/** 
+/**
  * Early z rejection default shader class
  * @author Andreas Drewke
  * @version $Id$

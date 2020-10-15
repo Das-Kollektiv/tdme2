@@ -83,7 +83,7 @@ MutableString LevelEditorScreenController::CHECKBOX_CHECKED = MutableString("1")
 MutableString LevelEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
 MutableString LevelEditorScreenController::TEXT_EMPTY = MutableString("");
 
-LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view) 
+LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
 	this->mapPath = new FileDialogPath(".");

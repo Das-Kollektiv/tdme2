@@ -19,7 +19,7 @@ using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Entity sounds view
  * @author Andreas Drewke
  * @version $Id$

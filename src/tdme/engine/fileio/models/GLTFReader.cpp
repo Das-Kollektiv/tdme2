@@ -106,14 +106,14 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 
 	// parse nodes aka scene
 	for (auto& gltfScene: gltfModel.scenes) {
-		for (auto gltfNodeIdx: gltfScene.nodes) { 
-			auto& node = gltfModel.nodes[gltfNodeIdx]; 
+		for (auto gltfNodeIdx: gltfScene.nodes) {
+			auto& node = gltfModel.nodes[gltfNodeIdx];
 			auto group = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr);
 			model->getGroups()[group->getId()] = group;
 			model->getSubGroups()[group->getId()] = group;
 			if (node.children.empty() == false) parseNodeChildren(pathName, gltfModel, node.children, group);
-		}	
-	} 
+		}
+	}
 
 	// animations
 	auto maxFrames = 0;
@@ -233,7 +233,7 @@ size_t GLTFReader::getComponentTypeByteSize(int type) {
 	}
 }
 
-void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx) { 
+void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx) {
 	auto tansformationsMatrixLast = &keyFrameMatrices[0];
 	auto keyFrameIdx = 0;
 	auto frameIdx = 0;
@@ -387,9 +387,9 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 		if (gltfPrimitive.mode != 4) {
 			Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid primitive mode: " + to_string(gltfPrimitive.mode));
 			continue;
-		} 
+		}
 		vector<int> indices;
-		{	
+		{
 			auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
 			auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
 			auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
@@ -405,7 +405,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 							indices.push_back(indicesBufferData[i]);
 						}
 						break;
-					} 
+					}
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
 					{
 						// TODO: stride
@@ -414,7 +414,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 							indices.push_back(indicesBufferData[i]);
 						}
 						break;
-					} 
+					}
 				default:
 					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid indices component: " + to_string(indicesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
 			}
@@ -605,17 +605,17 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 
 	//
 	return group;
-} 
+}
 
 void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup) {
-	for (auto gltfNodeIdx: gltfNodeChildrenIdx) { 
+	for (auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		auto& node = gltfModel.nodes[gltfNodeIdx];
 		auto group = parseNode(pathName, gltfModel, gltfNodeIdx, parentGroup->getModel(), parentGroup);
 		parentGroup->getModel()->getGroups()[group->getId()] = group;
 		parentGroup->getSubGroups()[group->getId()] = group;
 		if (node.children.empty() == false) parseNodeChildren(pathName, gltfModel, node.children, group);
-	}	
-} 
+	}
+}
 
 bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels) {
 	// TODO: Use engine/fileio/textures/PNGTextureWriter

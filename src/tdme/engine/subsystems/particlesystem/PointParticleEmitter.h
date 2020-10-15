@@ -16,7 +16,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Point particle emitter
  * @author Andreas Drewke
  * @version $Id$

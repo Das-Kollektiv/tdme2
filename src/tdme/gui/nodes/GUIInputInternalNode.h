@@ -30,7 +30,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI input internal node
  * @author Andreas Drewke
  * @version $Id$
@@ -42,7 +42,7 @@ class tdme::gui::nodes::GUIInputInternalNode final
 
 public:
 
-	/** 
+	/**
 	 * Create max length
 	 * @param s s
 	 * @return max length
@@ -58,7 +58,7 @@ private:
 
 protected:
 
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;
@@ -114,17 +114,17 @@ public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
-	/** 
+	/**
 	 * @return font
 	 */
 	GUIFont* getFont();
 
-	/** 
+	/**
 	 * @return text
 	 */
 	MutableString& getText();
 
-	/** 
+	/**
 	 * @return max length
 	 */
 	int32_t getMaxLength();

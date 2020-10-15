@@ -24,7 +24,7 @@ using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;
 
-/** 
+/**
  * TDME Level Editor File Export
  * @author Andreas Drewke
  * @version $Id$
@@ -34,7 +34,7 @@ class tdme::tools::shared::files::LevelFileImport final
 
 public:
 
-	/** 
+	/**
 	 * Imports a level from a TDME level file to Level Editor
 	 * @param pathName path name
 	 * @param fileName file name
@@ -45,7 +45,7 @@ public:
 	 */
 	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
-	/** 
+	/**
 	 * Imports a level from a TDME level file to Level Editor
 	 * @param pathName path name
 	 * @param fileName file name

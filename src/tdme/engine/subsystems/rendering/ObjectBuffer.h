@@ -14,7 +14,7 @@ using tdme::utilities::ByteBuffer;
 
 using std::vector;
 
-/** 
+/**
  * Buffers used to transfer data between main memory to graphics board memory
  * @author Andreas Drewke
  * @version $Id$
@@ -45,7 +45,7 @@ private:
 	static void dispose();
 
 public:
-	/** 
+	/**
 	 * Get byte buffer for given context
 	 * @param bytes bytes
 	 * @return byte buffer

@@ -32,7 +32,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI text node
  * @author Andreas Drewke
  * @version $Id$
@@ -48,7 +48,7 @@ private:
 	MutableString text;
 
 protected:
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;
@@ -102,7 +102,7 @@ public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
-	/** 
+	/**
 	 * @return text
 	 */
 	inline const MutableString& getText() const {

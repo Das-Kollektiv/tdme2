@@ -31,7 +31,7 @@ class tdme::engine::fileio::models::GLTFReader final
 {
 public:
 
-	/** 
+	/**
 	 * Reads GLTF file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -64,7 +64,7 @@ private:
 	 * @param pathName path name
 	 * @param gltfModel GLTF mode
 	 * @param gltfNodeIdx GLTF node index
-	 * @param model TDME model 
+	 * @param model TDME model
 	 * @param parentGroup TDME parent group
 	 */
 	static Group* parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup);

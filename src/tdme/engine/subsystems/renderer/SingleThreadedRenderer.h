@@ -25,7 +25,7 @@ using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Single threaded renderer
  * @author Andreas Drewke
  * @ersion $Id$

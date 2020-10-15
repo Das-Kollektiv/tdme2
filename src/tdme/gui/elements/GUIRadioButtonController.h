@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI radio button controller
  * @author Andreas Drewke
  * @version $Id$
@@ -42,12 +42,12 @@ private:
 	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
 	MutableString value;
 
-	/** 
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * Select
 	 */
 	void select();

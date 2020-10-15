@@ -12,7 +12,7 @@ using std::array;
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader SSAO map generation implementation
  * @author Andreas Drewke
  * @version $Id$

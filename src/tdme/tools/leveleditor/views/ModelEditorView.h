@@ -16,10 +16,10 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Model editor view
  * @author Andreas Drewke
- * @version $Id$ 
+ * @version $Id$
  */
 class tdme::tools::leveleditor::views::ModelEditorView
 	: public SharedModelEditorView

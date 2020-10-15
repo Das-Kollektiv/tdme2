@@ -15,7 +15,7 @@ using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI scroll bar controller
  * @author Andreas Drewke
  * @version $Id$
@@ -44,24 +44,24 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-	/** 
+	/**
 	 * @return state
 	 */
 	virtual State getState();
 
 private:
 
-	/** 
+	/**
 	 * @return bar width
 	 */
 	virtual float getBarWidth();
 
-	/** 
+	/**
 	 * @return bar left
 	 */
 	virtual float getBarLeft();
 
-	/** 
+	/**
 	 * Set dragged x
 	 * @param draggedX dragged x
 	 */

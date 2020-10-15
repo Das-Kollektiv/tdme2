@@ -98,7 +98,7 @@ public:
 	}
 
 	/**
-	 * Sets up if this group is a joint or not 
+	 * Sets up if this group is a joint or not
 	 * @param isJoint isbone
 	 */
 	inline void setJoint(bool isJoint) {

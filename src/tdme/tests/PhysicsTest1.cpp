@@ -71,7 +71,7 @@ constexpr int32_t PhysicsTest1::CAPSULE_COUNT;
 
 constexpr int32_t PhysicsTest1::SPHERE_COUNT;
 
-PhysicsTest1::PhysicsTest1() 
+PhysicsTest1::PhysicsTest1()
 {
 	Application::setLimitFPS(true);
 	keyLeft = false;

@@ -18,7 +18,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::SharedModelEditorView;
 
-/** 
+/**
  * TDME model editor
  * @author andreas.drewke
  * @version $Id$
@@ -39,7 +39,7 @@ private:
 	SharedModelEditorView* modelEditorView { nullptr };
 
 public:
-	/** 
+	/**
 	 * @param argc argument count
 	 * @param argv argument values
 	 */
@@ -47,7 +47,7 @@ public:
 
 public:
 
-	/** 
+	/**
 	 * @return level editor instance
 	 */
 	static TDMEModelEditor* getInstance();
@@ -68,18 +68,18 @@ public:
 	 */
 	void setView(View* view);
 
-	/** 
+	/**
 	 * @return current view
 	 */
 	View* getView();
 
-	/** 
+	/**
 	 * Request to exit the viewer
 	 */
 	void quit();
 
-	/** 
-	 * Renders the scene 
+	/**
+	 * Renders the scene
 	 */
 	void display();
 
@@ -88,12 +88,12 @@ public:
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Initialize tdme level editor
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Reshape tdme level editor
 	 * @param width width
 	 * @param height height

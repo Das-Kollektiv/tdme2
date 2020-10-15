@@ -7,7 +7,7 @@
 
 using std::array;
 
-/** 
+/**
  * Bean holding light data
  */
 struct tdme::engine::subsystems::renderer::Renderer_Light

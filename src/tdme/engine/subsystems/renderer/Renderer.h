@@ -825,7 +825,7 @@ public:
 	virtual void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/**
-	 * Draw points from buffer objects 
+	 * Draw points from buffer objects
 	 * @param context context
 	 * @param points points
 	 * @param pointsOffset points offset

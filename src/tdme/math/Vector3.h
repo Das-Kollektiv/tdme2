@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Float;
 
-/** 
+/**
  * 3D vector 3 class
  * @author andreas.drewke
  * @version $Id$
@@ -63,7 +63,7 @@ public:
 		data = v.data;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param x x
 	 * @param y y
@@ -77,7 +77,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param v float array containing x,y,z values
 	 * @return this vector
@@ -87,7 +87,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set up vector
 	 * @param v v
 	 * @return this vector
@@ -104,7 +104,7 @@ public:
 		return data[0];
 	}
 
-	/** 
+	/**
 	 * Set X
 	 * @param x x
 	 */
@@ -113,14 +113,14 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return y
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
-	/** 
+	/**
 	 * Set Y
 	 * @param y y
 	 * @return this vector
@@ -130,14 +130,14 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return z
 	 */
 	inline float getZ() const {
 		return data[2];
 	}
 
-	/** 
+	/**
 	 * Set Z
 	 * @param z z
 	 * @return this vector
@@ -165,14 +165,14 @@ public:
 		return data[i];
 	}
 
-	/** 
+	/**
 	 * @return vector as array
 	 */
 	inline array<float,3>& getArray() const {
 		return (array<float,3>&)data;
 	}
 
-	/** 
+	/**
 	 * Compute the cross product of vector v1 and v2
 	 * @param v1 v1
 	 * @param v2 v2
@@ -187,7 +187,7 @@ public:
 		return dest;
 	}
 
-	/** 
+	/**
 	 * Compute the dot product of vector v1 and v2
 	 * @param v1 v1
 	 * @param v2 v2
@@ -197,14 +197,14 @@ public:
 		return (v1.data[0] * v2.data[0]) + (v1.data[1] * v2.data[1]) + (v1.data[2] * v2.data[2]);
 	}
 
-	/** 
+	/**
 	 * @return the vectors length
 	 */
 	inline float computeLength() const {
 		return Math::sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]));
 	}
 
-	/** 
+	/**
 	 * @return the vectors length squared
 	 */
 	inline float computeLengthSquared() const {
@@ -246,7 +246,7 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Computes angle between a and b from 0..180
 	 * @param a vector a, vector to test, must be normalized
 	 * @param b vector b, vector to test against, must be normalized
@@ -295,7 +295,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Adds a vector
 	 * @param v v
 	 * @return this vector
@@ -307,7 +307,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Adds a float to each vector component
 	 * @param value v
 	 * @return this vector
@@ -319,10 +319,10 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Subtracts a vector
 	 * @param v v
-	 * @return this vector 
+	 * @return this vector
 	 */
 	inline Vector3& sub(const Vector3& v) {
 		data[0] -= v.data[0];
@@ -331,7 +331,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Subtracts a float from each vector component
 	 * @param value v
 	 * @return this vector
@@ -343,10 +343,10 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scale this vector
 	 * @param scale scale
-	 * @return this vector 
+	 * @return this vector
 	 */
 	inline Vector3& scale(float scale) {
 		data[0] *= scale;
@@ -355,10 +355,10 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scale this vector
 	 * @param scale scale
-	 * @return this vector 
+	 * @return this vector
 	 */
 	inline Vector3& scale(const Vector3& scale) {
 		data[0] *= scale.data[0];
@@ -384,7 +384,7 @@ public:
 		return equals(v, Math::EPSILON);
 	}
 
-	/** 
+	/**
 	 * Interpolates between vector 1 and vector2 by 0f<=t<=1f linearly
 	 * @param v1 vector 1
 	 * @param v2 vector 2

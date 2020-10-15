@@ -77,7 +77,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 using tdme::utilities::MutableString;
 
-LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
+LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps)
 {
 	this->popUps = popUps;
 	this->modelPath = ".";

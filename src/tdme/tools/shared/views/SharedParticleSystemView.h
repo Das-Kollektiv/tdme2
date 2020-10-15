@@ -32,7 +32,7 @@ using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * TDME particle system view
  * @author Andreas Drewke
  * @version $Id$
@@ -105,17 +105,17 @@ public:
 	 */
 	virtual void updateParticleSystemRequest();
 
-	/** 
+	/**
 	 * @return pop up views
 	 */
 	virtual PopUps* getPopUpsViews();
 
-	/** 
+	/**
 	 * @return entity
 	 */
 	virtual LevelEditorEntity* getEntity();
 
-	/** 
+	/**
 	 * Reset view
 	 */
 	virtual void reset();
@@ -141,38 +141,38 @@ public:
 	 */
 	virtual void initParticleSystem();
 
-	/** 
+	/**
 	 * @return current particle system file name
 	 */
 	virtual const string getFileName();
 
-	/** 
+	/**
 	 * Issue particle system loading
 	 */
 	virtual void loadFile(const string& pathName, const string& fileName);
 
-	/** 
+	/**
 	 * Triggers saving a particle system
 	 */
 	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
-	/** 
+	/**
 	 * Issue file reloading
 	 */
 	virtual void reloadFile();
 	void handleInputEvents() override;
 
-	/** 
-	 * Renders the scene 
+	/**
+	 * Renders the scene
 	 */
 	void display() override;
 
-	/** 
+	/**
 	 * Init GUI elements
 	 */
 	virtual void updateGUIElements();
 
-	/** 
+	/**
 	 * On init additional screens
 	 */
 	virtual void onInitAdditionalScreens();
@@ -183,14 +183,14 @@ public:
 	void deactivate() override;
 	void playSound(const string& soundId) override;
 
-	/** 
+	/**
 	 * On load particle system
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
 	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On set entity data hook
 	 */
 	virtual void onSetEntityData();

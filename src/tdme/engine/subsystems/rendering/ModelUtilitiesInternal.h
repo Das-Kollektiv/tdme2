@@ -21,7 +21,7 @@ using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Model utilities
  * @author Andreas Drewke
  * @version $Id$
@@ -29,7 +29,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::rendering::ModelUtilitiesInternal
 {
 public:
-	/** 
+	/**
 	 * Creates a bounding box from given model
 	 * @param model model
 	 * @param overridenGroupTransformationsMatrices overriden group transformations matrices
@@ -43,21 +43,21 @@ public:
 	 */
 	static void invertNormals(Model* model);
 
-	/** 
+	/**
 	 * Compute model statistics
 	 * @param model model
 	 * @param modelStatistics model statistics
 	 */
 	static void computeModelStatistics(Model* model, ModelStatistics* modelStatistics);
 
-	/** 
+	/**
 	 * Compute model statistics
 	 * @param object3DModelInternal object 3d model internal
 	 * @param modelStatistics model statistics
 	 */
 	static void computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
 
-	/** 
+	/**
 	 * Compute if model 1 equals model 2
 	 * @param model1 model 1
 	 * @param model2 model 2
@@ -65,7 +65,7 @@ public:
 	 */
 	static bool equals(Model* model1, Model* model2);
 
-	/** 
+	/**
 	 * Compute if model 1 equals model 2
 	 * @param object3DModel1Internal model 1
 	 * @param object3DModel2Internal model 2

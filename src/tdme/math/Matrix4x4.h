@@ -15,7 +15,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-/** 
+/**
  * 4x4 3D Matrix class
  * @author Andreas Drewke, Song Ho Ahn <song.ahn@gmail.com>
  * @version $Id$
@@ -72,7 +72,7 @@ public:
 		set(r0c0, r1c0, r2c0, r3c0, r0c1, r1c1, r2c1, r3c1, r0c2, r1c2, r2c2, r3c2, r0c3, r1c3, r2c3, r3c3);
 	}
 
-	/** 
+	/**
 	 * Set up matrix by values
 	 * @param r0c0 row 0, column 0
 	 * @param r1c0 row 1, column 0
@@ -112,7 +112,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Sets up this matrix by matrix m
 	 * @param m m
 	 * @return this matrix
@@ -122,7 +122,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Sets up this matrix by matrix m
 	 * @param m m
 	 * @return
@@ -232,7 +232,7 @@ public:
 		zAxis.set(data[8], data[9], data[10]);
 	}
 
-	/** 
+	/**
 	 * Set coordinate system axes
 	 * @param xAxis x axis
 	 * @param yAxis y axis
@@ -255,7 +255,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Get translation
 	 * @param translation translation
 	 * @return this matrix
@@ -264,7 +264,7 @@ public:
 		translation.set(data[12], data[13], data[14]);
 	}
 
-	/** 
+	/**
 	 * Set translation
 	 * @param translation translation
 	 * @return this matrix
@@ -276,7 +276,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Get scale
 	 * @param scale scale
 	 * @return this matrix
@@ -294,7 +294,7 @@ public:
 		scale.data[2] = tmpVector3.computeLength();
 	}
 
-	/** 
+	/**
 	 * Get scale
 	 * @param scale scale
 	 * @return this matrix
@@ -325,7 +325,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Setup identity matrix
 	 * @return this matrix
 	 */
@@ -349,7 +349,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Multiplies a vector3 with this matrix into destination vector
 	 * @param v vector 3
 	 * @param dest destination vector 3
@@ -363,7 +363,7 @@ public:
 		);
 	}
 
-	/** 
+	/**
 	 * Multiplies a vector3 with this matrix ignoring translation
 	 * @param v vector 3
 	 * @param dest destination vector 3
@@ -377,7 +377,7 @@ public:
 		);
 	}
 
-	/** 
+	/**
 	 * Multiplies a vector4 with this matrix into destination vector
 	 * @param v vector 4
 	 * @param dest destination vector4
@@ -393,7 +393,7 @@ public:
 		return dest;
 	}
 
-	/** 
+	/**
 	 * Multiplies this matrix with another matrix
 	 * @param m m
 	 * @return this matrix
@@ -420,7 +420,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scales this matrix
 	 * @param s s
 	 * @returns this matrix
@@ -441,7 +441,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scales this matrix by given vector
 	 * @param v v
 	 * @return this matrix
@@ -462,7 +462,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Sets up a translation matrix
 	 * @param v v
 	 * @return this matrix
@@ -474,7 +474,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Creates a rotation matrix
 	 * @param angle angle
 	 * @param v vector v
@@ -513,7 +513,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Transposes this matrix
 	 * @return this matrix
 	 */
@@ -539,7 +539,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Inverts the matrix
 	 * @return this matrix
 	 */
@@ -591,7 +591,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Returns if this matrix equals m
 	 * @param m m
 	 * @return equals
@@ -619,7 +619,7 @@ public:
 			);
 	}
 
-	/** 
+	/**
 	 * Returns array data
 	 * @return array data
 	 */
@@ -627,7 +627,7 @@ public:
 		return (array<float, 16>&)data;
 	}
 
-	/** 
+	/**
 	 * Clones this matrix
 	 * @return new cloned matrix
 	 */
@@ -636,8 +636,8 @@ public:
 		return clonedMatrix;
 	}
 
-	/** 
-	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly 
+	/**
+	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly
 	 * @param m1 matrix 1
 	 * @param m2 matrix 2
 	 * @param t t

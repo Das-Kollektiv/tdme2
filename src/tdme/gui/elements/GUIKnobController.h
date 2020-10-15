@@ -12,7 +12,7 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI knob controller
  * @author Andreas Drewke
  * @version $Id$

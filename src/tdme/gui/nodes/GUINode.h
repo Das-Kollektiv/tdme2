@@ -439,7 +439,7 @@ public:
 	/**
 	 * Is event belonging to node
 	 * @param event event
-	 * @param position x,y position in node coordinate system 
+	 * @param position x,y position in node coordinate system
 	 * @return boolean
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
@@ -455,7 +455,7 @@ public:
 	 * Get event off node relative position
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
-	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
+	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
 	 * @return void
 	 */
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);

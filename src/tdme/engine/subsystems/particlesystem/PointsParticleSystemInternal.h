@@ -38,7 +38,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Points particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -222,7 +222,7 @@ public:
 		return textureVerticalSprites;
 	}
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	void update() override;
@@ -238,7 +238,7 @@ public:
 		updateInternal();
 	}
 
-	/** 
+	/**
 	 * @return render points pool
 	 */
 	TransparentRenderPointsPool* getRenderPointsPool();

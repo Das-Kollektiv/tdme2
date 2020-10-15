@@ -6,7 +6,7 @@
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 
-/** 
+/**
  * GUI action listener interface
  * @author Andreas Drewke
  * @version $Id$
@@ -18,7 +18,7 @@ struct tdme::gui::events::GUIActionListener
 	 */
 	virtual ~GUIActionListener() {}
 
-	/** 
+	/**
 	 * On action performed
 	 * @param type type
 	 * @param node element node

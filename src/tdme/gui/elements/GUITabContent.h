@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * GUI tab content element
  * @author Andreas Drewke
  * @version $Id$

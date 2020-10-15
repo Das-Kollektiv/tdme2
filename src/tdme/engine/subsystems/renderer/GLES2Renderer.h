@@ -24,7 +24,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * OpenGL ES2 renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -162,8 +162,8 @@ public:
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
 private:
-	/** 
-	 * Checks if GL error did occour 
+	/**
+	 * Checks if GL error did occour
 	 */
 	void checkGLError();
 

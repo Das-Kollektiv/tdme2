@@ -15,7 +15,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplemen
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Shadow mapping base shader to render shadow maps
  * @author Andreas Drewke
  * @version $Id$

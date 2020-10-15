@@ -27,7 +27,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-InfoDialogScreenController::InfoDialogScreenController() 
+InfoDialogScreenController::InfoDialogScreenController()
 {
 }
 

@@ -6,7 +6,7 @@
 
 using std::string;
 
-/** 
+/**
  * String tools class
  * @author Andreas Drewke
  * @version $Id$

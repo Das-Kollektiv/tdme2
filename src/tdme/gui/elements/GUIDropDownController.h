@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI drop down controller
  * @author Andreas Drewke
  * @version $Id$
@@ -56,37 +56,37 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * @return drop down open state
 	 */
 	bool isOpen();
 
-	/** 
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Toggle open state
 	 */
 	void toggleOpenState();
 
-	/** 
+	/**
 	 * Determine drop down option controllers
 	 */
 	void determineDropDownOptionControllers();
 
-	/** 
+	/**
 	 * Get selected option idx
 	 */
 	int32_t getSelectedOptionIdx();
 
-	/** 
+	/**
 	 * Select next node
 	 */
 	void selectNext();
 
-	/** 
+	/**
 	 * Select previous
 	 */
 	void selectPrevious();

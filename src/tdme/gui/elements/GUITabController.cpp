@@ -36,7 +36,7 @@ string GUITabController::CONDITION_ENABLED = "enabled";
 string GUITabController::CONDITION_SELECTED = "selected";
 string GUITabController::CONDITION_UNSELECTED = "unselected";
 
-GUITabController::GUITabController(GUINode* node) 
+GUITabController::GUITabController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->tabsNode = nullptr;

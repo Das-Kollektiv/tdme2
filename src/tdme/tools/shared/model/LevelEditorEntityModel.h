@@ -13,7 +13,7 @@ using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level editor model properties
  * @author Andreas Drewke
  * @version $Id$

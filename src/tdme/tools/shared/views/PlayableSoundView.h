@@ -6,7 +6,7 @@
 
 using std::string;
 
-/** 
+/**
  * Playable sound view interface, which represents a application view that supports playing sounds additionally
  * @author Andreas Drewke
  * @version $Id$

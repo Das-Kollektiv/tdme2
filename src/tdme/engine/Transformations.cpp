@@ -18,7 +18,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Transformations::Transformations() 
+Transformations::Transformations()
 {
 	transformationsMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);

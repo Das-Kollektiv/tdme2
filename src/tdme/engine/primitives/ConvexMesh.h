@@ -23,7 +23,7 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 
-/** 
+/**
  * Convex mesh physics primitive
  * @author Andreas Drewke
  * @version $Id$

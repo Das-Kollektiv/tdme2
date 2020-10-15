@@ -26,7 +26,7 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Object3D animation class
  * @author Andreas Drewke
  */
@@ -169,7 +169,7 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * Sets up a base animation to play
 	 * @param id id
 	 * @param speed speed whereas 1.0 is default speed
@@ -182,54 +182,54 @@ public:
 	 */
 	void setAnimationSpeed(float speed);
 
-	/** 
+	/**
 	 * Overlays a animation above the base animation
 	 * @param id id
 	 */
 	void addOverlayAnimation(const string& id);
 
-	/** 
+	/**
 	 * Removes a overlay animation
 	 * @param id id
 	 */
 	void removeOverlayAnimation(const string& id);
 
-	/** 
+	/**
 	 * Removes all finished overlay animations
 	 */
 	void removeOverlayAnimationsFinished();
 
-	/** 
+	/**
 	 * Removes all overlay animations
 	 */
 	void removeOverlayAnimations();
 
-	/** 
+	/**
 	 * @return active animation setup id
 	 */
 	const string getAnimation();
 
-	/** 
-	 * Returns current base animation time 
+	/**
+	 * Returns current base animation time
 	 * @return 0.0 <= time <= 1.0
 	 */
 	float getAnimationTime();
 
-	/** 
+	/**
 	 * Returns if there is currently running a overlay animation with given id
 	 * @param id id
 	 * @return animation is running
 	 */
 	bool hasOverlayAnimation(const string& id);
 
-	/** 
+	/**
 	 * Returns current overlay animation time
-	 * @param id id 
+	 * @param id id
 	 * @return 0.0 <= time <= 1.0
 	 */
 	float getOverlayAnimationTime(const string& id);
 
-	/** 
+	/**
 	 * Returns transformation matrix for given group
 	 * @param id group id
 	 * @return transformation matrix or identity matrix if not found

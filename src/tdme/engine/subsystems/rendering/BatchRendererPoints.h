@@ -20,7 +20,7 @@ using tdme::utilities::ShortBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Batch renderer for points
  * @author andreas.drewke
  * @version $Id$
@@ -125,14 +125,14 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return acquired
 	 */
 	inline bool isAcquired() {
 		return acquired;
 	}
 
-	/** 
+	/**
 	 * Acquire
 	 */
 	inline bool acquire() {
@@ -141,19 +141,19 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Release
 	 */
 	inline void release() {
 		acquired = false;
 	}
 
-	/** 
+	/**
 	 * Init
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	void dispose();

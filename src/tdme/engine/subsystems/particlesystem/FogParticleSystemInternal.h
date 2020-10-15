@@ -35,7 +35,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Fog particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -251,7 +251,7 @@ public:
 		updateInternal();
 	}
 
-	/** 
+	/**
 	 * @return render points pool
 	 */
 	inline TransparentRenderPointsPool* getRenderPointsPool() {

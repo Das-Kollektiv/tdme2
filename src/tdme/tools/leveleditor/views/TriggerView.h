@@ -69,7 +69,7 @@ public:
 	virtual void setEntity(LevelEditorEntity* entity);
 
 	/**
-	 * Renders the scene 
+	 * Renders the scene
 	 */
 	void display() override;
 

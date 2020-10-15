@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI vertical scroll bar internal node
  * @author Andreas Drewke
  * @version $Id$

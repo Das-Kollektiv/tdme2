@@ -21,17 +21,17 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return file dialog screen controller
 	 */
 	virtual FileDialogScreenController* getFileDialogScreenController();
 
-	/** 
+	/**
 	 * @return info dialog screen controller
 	 */
 	virtual InfoDialogScreenController* getInfoDialogScreenController();
 
-	/** 
+	/**
 	 * @return progress bar screen controller
 	 */
 	virtual ProgressBarScreenController* getProgressBarScreenController();
@@ -41,7 +41,7 @@ public:
 	 */
 	virtual void initialize();
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	virtual void dispose();

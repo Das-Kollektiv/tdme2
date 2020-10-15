@@ -23,7 +23,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::math::Matrix2D3x3;
 
-/** 
+/**
  * Object 3D
  * @author Andreas Drewke
  * @version $Id$
@@ -63,21 +63,21 @@ public:
 	 */
 	virtual ~Object3DInternal();
 
-	/** 
+	/**
 	 * @return object id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return true if enabled to be rendered
 	 */
 	inline bool isEnabled() {
 		return enabled;
 	}
 
-	/** 
+	/**
 	 * Enable/disable rendering
 	 * @param enabled enabled
 	 */
@@ -85,14 +85,14 @@ public:
 		this->enabled = enabled;
 	}
 
-	/** 
+	/**
 	 * @return if object is pickable
 	 */
 	inline bool isPickable() {
 		return pickable;
 	}
 
-	/** 
+	/**
 	 * Set this object pickable
 	 * @param pickable pickable
 	 */
@@ -130,7 +130,7 @@ public:
 		this->receivesShadows = receivesShadows;
 	}
 
-	/** 
+	/**
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
@@ -138,7 +138,7 @@ public:
 		return effectColorMul;
 	}
 
-	/** 
+	/**
 	 * The effect color that will be multiplied with fragment color
 	 * @param effectColorMul effect color
 	 */
@@ -162,14 +162,14 @@ public:
 		this->effectColorAdd = effectColorAdd;
 	}
 
-	/** 
+	/**
 	 * @return bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
-	/** 
+	/**
 	 * Retrieves bounding sphere with transformations applied
 	 * @return bounding sphere
 	 */
@@ -185,7 +185,7 @@ public:
 	 */
 	void bindDiffuseTexture(int32_t textureId, const string& groupId = string(), const string& facesEntityId = string());
 
-	/** 
+	/**
 	 * Bind frame buffer color texture to a group and faces entity of this object
 	 * @param frameBuffer frame buffer
 	 * @param groupId group id or empty string for all
@@ -193,7 +193,7 @@ public:
 	 */
 	void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
 
-	/** 
+	/**
 	 * Unbind dynamic texture to a group and faces entity of this object
 	 * @param groupId group id or empty string for all
 	 * @param facesEntityId faces entity id orempty string for all

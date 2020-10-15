@@ -37,7 +37,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
 
-/** 
+/**
  * Oct tree partition implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -65,7 +65,7 @@ private:
 	}
 	void removeEntity(Entity* entity) override;
 
-	/** 
+	/**
 	 * Update partition tree
 	 * @param parent parent
 	 * @param x x
@@ -141,7 +141,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Is partition empty
 	 * @param node node
 	 * @return partition empty
@@ -160,7 +160,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Remove partition node, should be empty
 	 * @param node node
 	 */
@@ -179,7 +179,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Do partition tree lookup
 	 * @param frustum frustum
 	 * @param node node

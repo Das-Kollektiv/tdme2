@@ -14,7 +14,7 @@ using std::string;
 using tdme::audio::AudioEntity;
 using tdme::utilities::ByteBuffer;
 
-/** 
+/**
  * Audio stream
  * @author Andreas Drewke
  * @version $Id$
@@ -79,7 +79,7 @@ private:
 	 */
 	bool isPlayingBuffers();
 
-	/** 
+	/**
 	 * Updates properties to Open AL
 	 */
 	void updateProperties();

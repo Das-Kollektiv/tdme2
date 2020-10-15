@@ -22,7 +22,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Entity physics view
  * @author Andreas Drewke
  * @version $Id$

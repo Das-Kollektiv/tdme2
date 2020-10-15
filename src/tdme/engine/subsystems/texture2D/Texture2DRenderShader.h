@@ -11,7 +11,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Vector2;
 
-/** 
+/**
  * Texture 2D render shader
  * @author Andreas Drewke
  * @version $Id$
@@ -42,22 +42,22 @@ public:
 	 */
 	~Texture2DRenderShader();
 
-	/** 
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use render program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Un use render program
 	 */
 	void unUseProgram();

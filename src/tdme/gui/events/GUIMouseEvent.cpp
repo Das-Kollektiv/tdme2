@@ -5,7 +5,7 @@
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 
-GUIMouseEvent::GUIMouseEvent() 
+GUIMouseEvent::GUIMouseEvent()
 {
 	this->time = -1;
 	this->type = GUIMouseEvent_Type::MOUSEEVENT_NONE;

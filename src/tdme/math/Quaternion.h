@@ -14,7 +14,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Quaternion class
  * @author Andreas Drewke
  */
@@ -58,7 +58,7 @@ public:
 		data[2] = v.data[2];
 		data[3] = w;
 	}
-	/** 
+	/**
 	 * Set up this quaternion by components
 	 * @param x x
 	 * @param y y
@@ -73,7 +73,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Sets up this quaternion by quaternion q
 	 * @param q q
 	 * @return
@@ -83,7 +83,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set quaternion
 	 * @param v vector
 	 * @param w w
@@ -164,7 +164,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Set up quaternion identity
 	 * @return this quaternion
 	 */
@@ -176,7 +176,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Inverts this quaternion
 	 * @return this quaternion
 	 */
@@ -187,7 +187,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Creates a rotation quaternion
 	 * @param angle angle
 	 * @param v axis
@@ -207,7 +207,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Normalize quaternion
 	 */
 	inline Quaternion& normalize() {
@@ -219,7 +219,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Multiplies this quaternion with quaternion q
 	 * @param q quaterion q
 	 * @return this quaternion
@@ -234,7 +234,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Adds given quaternion q to this quaternion
 	 * @param q quaterion q
 	 * @return this quaternion
@@ -260,7 +260,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Scales this quaternion with given value
 	 * @param value value
 	 * @return this quaternion
@@ -273,7 +273,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * Multiplies a quaternion with given vector v
 	 * @param v vector v
 	 * @param dest destination vector
@@ -294,10 +294,10 @@ public:
 		return dest;
 	}
 
-	/** 
+	/**
 	 * Computes a matrix from given
 	 * @param matrix destination matrix
-	 * @return destination matrix  
+	 * @return destination matrix
 	 */
 	inline Matrix4x4& computeMatrix(Matrix4x4& matrix) const {
 		matrix.set(
@@ -321,7 +321,7 @@ public:
 		return matrix;
 	}
 
-	/** 
+	/**
 	 * Returns array data
 	 * @return array data
 	 */

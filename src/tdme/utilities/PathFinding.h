@@ -96,7 +96,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @param stepSize step size  
+	 * @param stepSize step size
 	 * @return string representation
 	 */
 	inline string toId(float x, float y, float z) {

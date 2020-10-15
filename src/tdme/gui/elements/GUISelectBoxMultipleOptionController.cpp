@@ -30,7 +30,7 @@ string GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED = "unfocussed"
 string GUISelectBoxMultipleOptionController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleOptionController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
+GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->initialPostLayout = true;

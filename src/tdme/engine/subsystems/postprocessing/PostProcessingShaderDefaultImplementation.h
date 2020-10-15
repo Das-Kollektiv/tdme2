@@ -8,7 +8,7 @@
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader default implementation
  * @author Andreas Drewke
  * @version $Id$

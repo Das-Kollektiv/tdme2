@@ -17,7 +17,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tab content controller
  * @author Andreas Drewke
  * @version $Id$
@@ -34,12 +34,12 @@ private:
 	bool selected;
 	MutableString value;
 
-	/** 
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * Set checked
 	 * @param selected selected
 	 */

@@ -30,7 +30,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Point particle system entity to be used with engine class
  * @author Andreas Drewke
  * @version $Id$

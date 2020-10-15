@@ -70,7 +70,7 @@ public:
 	}
 
 	/**
-	 * Sets up vertices joints weights 
+	 * Sets up vertices joints weights
 	 * @param verticesJointsWeights verticesJointsWeights
 	 */
 	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);

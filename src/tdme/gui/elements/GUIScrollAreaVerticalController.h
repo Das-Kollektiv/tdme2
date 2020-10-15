@@ -14,7 +14,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI scroll area vertical controller
  * @author Andreas Drewke
  * @version $Id$

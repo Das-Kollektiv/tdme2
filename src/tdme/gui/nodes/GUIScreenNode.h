@@ -338,7 +338,7 @@ public:
 	GUIInputEventHandler* getInputEventHandler();
 
 	/**
-	 * Set input event handler 
+	 * Set input event handler
 	 * @param inputEventHandler input event handler
 	 */
 	void setInputEventHandler(GUIInputEventHandler* inputEventHandler);

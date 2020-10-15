@@ -30,7 +30,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Lines object internal
  * @author Andreas Drewke
  * @version $Id$
@@ -231,7 +231,7 @@ public:
 		return textureId;
 	}
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	void update() override;

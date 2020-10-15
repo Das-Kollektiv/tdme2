@@ -8,7 +8,7 @@
 using tdme::engine::FrameBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader
  * @author Andreas Drewke
  * @version $Id$
@@ -33,22 +33,22 @@ public:
 	 */
 	~PostProcessingShader();
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Unuse program
 	 */
 	void unUseProgram();

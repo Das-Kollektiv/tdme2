@@ -196,7 +196,7 @@ public:
 	void handleInputEvents() override;
 
 	/**
-	 * Renders the scene 
+	 * Renders the scene
 	 */
 	void display() override;
 

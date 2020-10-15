@@ -7,7 +7,7 @@
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 
-/** 
+/**
  * GUI button controller
  * @author Andreas Drewke
  * @version $Id$

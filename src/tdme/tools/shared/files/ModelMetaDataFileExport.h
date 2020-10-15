@@ -21,7 +21,7 @@ using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using rapidjson::Document;
 using rapidjson::Value;
 
-/** 
+/**
  * TDME Model meta data file export
  * @author Andreas Drewke
  * @version $Id$
@@ -30,7 +30,7 @@ class tdme::tools::shared::files::ModelMetaDataFileExport final
 {
 private:
 
-	/** 
+	/**
 	 * Copy file
 	 * @param source source
 	 * @param dest dest
@@ -49,7 +49,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Exports a level to a TDME level file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -59,7 +59,7 @@ public:
 	 */
 	static void doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * Export model meta data file to JSON node
 	 * @param document JSON document
 	 * @param jEntityRoot JSON value to store data in

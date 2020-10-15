@@ -15,7 +15,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 
-/** 
+/**
  * Particle System View
  * @author Andreas Drewke
  * @version $Id$

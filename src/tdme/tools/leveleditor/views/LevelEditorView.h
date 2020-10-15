@@ -174,7 +174,7 @@ public:
 	float getGridY();
 
 	/**
-	 * Set grid y position 
+	 * Set grid y position
 	 * @param gridY grid y
 	 */
 	void setGridY(float gridY);
@@ -203,7 +203,7 @@ public:
 	void handleInputEvents() override;
 
 	/**
-	 * Renders the scene 
+	 * Renders the scene
 	 */
 	void display() override;
 

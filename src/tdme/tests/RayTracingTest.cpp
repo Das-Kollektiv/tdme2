@@ -93,7 +93,7 @@ RayTracingTest::RayTracingTest()
 RayTracingTest::~RayTracingTest()
 {
 	delete world;
-} 
+}
 
 void RayTracingTest::main(int argc, char** argv)
 {

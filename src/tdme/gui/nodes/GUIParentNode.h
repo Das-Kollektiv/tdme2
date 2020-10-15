@@ -33,7 +33,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUIParserException;
 
-/** 
+/**
  * GUI parent node base class thats supporting child nodes
  * @author Andreas Drewke
  * @version $Id$
@@ -125,12 +125,12 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * Clear sub nodes
 	 */
 	virtual void clearSubNodes();
 
-	/** 
+	/**
 	 * Replace sub nodes with given XML
 	 * @param xml xml
 	 * @param resetScrollOffsets reset scroll offsets
@@ -145,17 +145,17 @@ public:
 	 */
 	virtual void addSubNode(GUINode* node);
 
-	/** 
+	/**
 	 * @return overflow x
 	 */
 	virtual GUIParentNode_Overflow* getOverflowX();
 
-	/** 
+	/**
 	 * @return overflow y
 	 */
 	virtual GUIParentNode_Overflow* getOverflowY();
 
-	/** 
+	/**
 	 * Create over flow
 	 * @param overflow over flow
 	 * @return over flow
@@ -163,29 +163,29 @@ public:
 	 */
 	static GUIParentNode_Overflow* createOverflow(const string& overflow);
 
-	/** 
+	/**
 	 * @return children render offset x
 	 */
 	virtual float getChildrenRenderOffsetX();
 
-	/** 
+	/**
 	 * Set children render offset x
 	 * @param childrenRenderOffSetX children render offset x
 	 */
 	virtual void setChildrenRenderOffsetX(float childrenRenderOffSetX);
 
-	/** 
+	/**
 	 * @return children render offset y
 	 */
 	virtual float getChildrenRenderOffsetY();
 
-	/** 
+	/**
 	 * Set children render offset y
 	 * @param childrenRenderOffSetY children render offset y
 	 */
 	virtual void setChildrenRenderOffsetY(float childrenRenderOffSetY);
 
-	/** 
+	/**
 	 * Create requested constraints
 	 * @param left left
 	 * @param top top
@@ -195,7 +195,7 @@ public:
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
-	/** 
+	/**
 	 * Get child controller nodes
 	 * @param childControllerNodes child controller nodes
 	 * @param requireConditionsMet require conditions met

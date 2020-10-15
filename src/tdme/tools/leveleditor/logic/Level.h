@@ -27,7 +27,7 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Level Editor Level Logic
  * @author Andreas Drewke
  * @version $Id$
@@ -204,7 +204,7 @@ public:
 		Level::enableEarlyZRejection = enableEarlyZRejection;
 	}
 
-	/** 
+	/**
 	 * Set lights from level
 	 * @param engine engine
 	 * @param level level
@@ -212,7 +212,7 @@ public:
 	 */
 	static void setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
-	/** 
+	/**
 	 * Create particle system
 	 * @param particleSystem level editor entity particle system
 	 * @param id id
@@ -293,21 +293,21 @@ public:
 	 */
 	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
-	/** 
+	/**
 	 * Disable level in engine
 	 * @param engine engine
 	 * @param level level
 	 */
 	static void disableLevel(Engine* engine, LevelEditorLevel* level);
 
-	/** 
+	/**
 	 * Disable level in physics world
 	 * @param world world
 	 * @param level level
 	 */
 	static void disableLevel(World* world, LevelEditorLevel* level);
 
-	/** 
+	/**
 	 * Enable disabled level in engine
 	 * @param engine engine
 	 * @param level level
@@ -315,7 +315,7 @@ public:
 	 */
 	static void enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
-	/** 
+	/**
 	 * Enable disabled level in physics world
 	 * @param world world
 	 * @param level level

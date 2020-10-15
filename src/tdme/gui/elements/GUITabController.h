@@ -20,7 +20,7 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tab controller
  * @author Andreas Drewke
  * @version $Id$
@@ -45,12 +45,12 @@ private:
 	bool disabled;
 	MutableString value;
 
-	/** 
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * Set checked
 	 * @param selected selected
 	 */
@@ -73,7 +73,7 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-	/** 
+	/**
 	 * Select this tab
 	 */
 	void selectTab();

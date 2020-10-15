@@ -20,7 +20,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax) 
+TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 {
 	poolIdx = 0;
 	transparentRenderPoints.resize(pointsMax);

@@ -5,7 +5,7 @@
 
 using tdme::engine::Entity;
 
-/** 
+/**
  * Entity picking filter
  * @author Andreas Drewke
  * @version $Id$
@@ -18,7 +18,7 @@ struct tdme::engine::EntityPickingFilter
 	 */
 	virtual ~EntityPickingFilter() {};
 
-	/** 
+	/**
 	 * Filter entity
 	 * @param entity entity
 	 * @return if allowed or not

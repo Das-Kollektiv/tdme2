@@ -12,7 +12,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Early z rejection shader base class
  * @author Andreas Drewke
  * @version $Id$

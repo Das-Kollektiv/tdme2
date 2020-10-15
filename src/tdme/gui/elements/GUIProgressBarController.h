@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI progress bar controller
  * @author Andreas Drewke
  * @version $Id$

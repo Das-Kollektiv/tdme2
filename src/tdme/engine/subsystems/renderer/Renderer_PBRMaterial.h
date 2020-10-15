@@ -7,7 +7,7 @@
 
 using std::array;
 
-/** 
+/**
  * Renderer PBR material data entity
  */
 struct tdme::engine::subsystems::renderer::Renderer_PBRMaterial

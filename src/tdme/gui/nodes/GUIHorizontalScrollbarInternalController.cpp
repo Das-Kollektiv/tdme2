@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(GUINode* node) 
+GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(GUINode* node)
 	: GUINodeController(node)
 {
 	state = STATE_NONE;

@@ -37,7 +37,7 @@ using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EmptyScreenController::EmptyScreenController(EmptyView* view) 
+EmptyScreenController::EmptyScreenController(EmptyView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{

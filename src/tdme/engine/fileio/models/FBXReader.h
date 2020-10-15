@@ -20,7 +20,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * FBX model reader
  * @author Andreas Drewke
  * @version $Id$
@@ -29,7 +29,7 @@ class tdme::engine::fileio::models::FBXReader final
 {
 public:
 
-	/** 
+	/**
 	 * Reads FBX file
 	 * @param pathName path name
 	 * @param fileName file name

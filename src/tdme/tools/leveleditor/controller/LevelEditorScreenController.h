@@ -361,7 +361,7 @@ public:
 	void onSnappingApply();
 
 	/**
-	 * On object property preset apply 
+	 * On object property preset apply
 	 */
 	void onObjectPropertyPresetApply();
 
@@ -447,27 +447,27 @@ public:
 	void onLightPresetApply(int32_t lightIdx);
 
 	/**
-	 * On Light 0 spot direction compute 
+	 * On Light 0 spot direction compute
 	 */
 	void onLight0SpotDirectionCompute();
 
 	/**
-	 * On Light 1 spot direction compute 
+	 * On Light 1 spot direction compute
 	 */
 	void onLight1SpotDirectionCompute();
 
 	/**
-	 * On Light 2 spot direction compute 
+	 * On Light 2 spot direction compute
 	 */
 	void onLight2SpotDirectionCompute();
 
 	/**
-	 * On Light 3 spot direction compute 
+	 * On Light 3 spot direction compute
 	 */
 	void onLight3SpotDirectionCompute();
 
 	/**
-	 * On Light spot direction compute for given light idx 
+	 * On Light spot direction compute for given light idx
 	 */
 	void onLightSpotDirectionCompute(int32_t lightIdx);
 	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;

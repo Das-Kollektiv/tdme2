@@ -19,7 +19,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-/** 
+/**
  * Point particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -48,14 +48,14 @@ public:
 	 */
 	~LevelEditorEntityParticleSystem_PointParticleSystem();
 
-	/** 
+	/**
 	 * @return max points
 	 */
 	inline int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
-	/** 
+	/**
 	 * Set max points
 	 * @param maxPoints max points
 	 */
@@ -63,7 +63,7 @@ public:
 		this->maxPoints = maxPoints;
 	}
 
-	/** 
+	/**
 	 * @return point size
 	 */
 	inline float getPointSize() {
@@ -158,7 +158,7 @@ public:
 		return autoEmit;
 	}
 
-	/** 
+	/**
 	 * Set auto emit
 	 * @param autoEmit auto emit
 	 */

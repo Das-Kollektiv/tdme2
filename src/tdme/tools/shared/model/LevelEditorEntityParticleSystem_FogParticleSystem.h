@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 
-/** 
+/**
  * Point particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -38,14 +38,14 @@ public:
 	 */
 	~LevelEditorEntityParticleSystem_FogParticleSystem();
 
-	/** 
+	/**
 	 * @return max points
 	 */
 	inline int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
-	/** 
+	/**
 	 * Set max points
 	 * @param maxPoints max points
 	 */
@@ -53,7 +53,7 @@ public:
 		this->maxPoints = maxPoints;
 	}
 
-	/** 
+	/**
 	 * @return point size
 	 */
 	inline float getPointSize() {

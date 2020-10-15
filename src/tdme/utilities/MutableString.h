@@ -8,7 +8,7 @@
 
 using std::string;
 
-/** 
+/**
  * Mutable string class
  * @author Andreas Drewke
  * @version $Id$

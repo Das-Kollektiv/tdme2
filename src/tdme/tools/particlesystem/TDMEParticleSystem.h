@@ -80,7 +80,7 @@ public:
 	void quit();
 
 	/**
-	 * Renders the scene 
+	 * Renders the scene
 	 */
 	void display();
 

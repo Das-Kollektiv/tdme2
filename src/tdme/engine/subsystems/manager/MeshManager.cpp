@@ -15,7 +15,7 @@ using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::utilities::Console;
 
-MeshManager::MeshManager() 
+MeshManager::MeshManager()
 {
 }
 

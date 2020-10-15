@@ -27,7 +27,7 @@ using tdme::math::Matrix4x4;
 using tdme::utilities::Key;
 using tdme::utilities::Console;
 
-TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
+TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 {
 	this->object3DRenderer = nullptr;
 	this->model = nullptr;

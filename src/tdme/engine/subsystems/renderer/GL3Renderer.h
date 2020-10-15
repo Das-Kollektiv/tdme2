@@ -26,7 +26,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
-/** 
+/**
  * OpenGL 3 renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -194,8 +194,8 @@ public:
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 private:
 
-	/** 
-	 * Checks if GL error did occour 
+	/**
+	 * Checks if GL error did occour
 	 */
 	void checkGLError(int line);
 };

@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box option controller
  * @author Andreas Drewke
  * @version $Id$

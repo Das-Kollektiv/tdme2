@@ -23,7 +23,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::tools::shared::views::PopUps;
 
 
-/** 
+/**
  * GUI Test
  * @author Andreas Drewke
  * @version $Id$
@@ -56,7 +56,7 @@ public:
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

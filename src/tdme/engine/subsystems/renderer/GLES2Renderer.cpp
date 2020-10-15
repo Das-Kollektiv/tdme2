@@ -45,7 +45,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
-GLES2Renderer::GLES2Renderer() 
+GLES2Renderer::GLES2Renderer()
 {
 	// setup GLES2 consts
 	ID_NONE = 0;

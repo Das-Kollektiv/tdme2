@@ -20,7 +20,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utilities::VectorIteratorMultiple;
 
-/** 
+/**
  * Bogus partition implementation
  * @author Andreas Drewke
  * @version $Id$

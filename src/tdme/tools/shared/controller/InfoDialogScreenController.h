@@ -21,7 +21,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Info dialog screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -47,11 +47,11 @@ public:
 	void dispose() override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	/** 
+	/**
 	 * Shows the pop up
 	 */
 	void show(const string& caption, const string& message);
-	/** 
+	/**
 	 * Closes the pop up
 	 */
 	void close();

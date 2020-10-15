@@ -52,7 +52,7 @@ using tdme::utilities::Exception;
 
 MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
 
-TriggerScreenController::TriggerScreenController(TriggerView* view) 
+TriggerScreenController::TriggerScreenController(TriggerView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{

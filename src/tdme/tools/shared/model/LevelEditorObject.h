@@ -13,7 +13,7 @@ using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level Editor Object
  * @author Andreas Drewke
  * @version $Id$
@@ -42,14 +42,14 @@ public:
 	 */
 	~LevelEditorObject();
 
-	/** 
+	/**
 	 * @return id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * Set id
 	 * @param id id
 	 */
@@ -57,14 +57,14 @@ public:
 		this->id = id;
 	}
 
-	/** 
+	/**
 	 * @return description
 	 */
 	inline const string& getDescription() {
 		return description;
 	}
 
-	/** 
+	/**
 	 * Set description
 	 * @param description description
 	 */
@@ -72,21 +72,21 @@ public:
 		this->description = description;
 	}
 
-	/** 
+	/**
 	 * @return transformations
 	 */
 	inline Transformations& getTransformations() {
 		return transformations;
 	}
 
-	/** 
+	/**
 	 * @return entity
 	 */
 	inline LevelEditorEntity* getEntity() {
 		return entity;
 	}
 
-	/** 
+	/**
 	 * Set up entity
 	 * @param entity entity
 	 */
@@ -94,7 +94,7 @@ public:
 		this->entity = entity;
 	}
 
-	/** 
+	/**
 	 * @return merged properties from entity and object
 	 */
 	ModelProperties* getTotalProperties();

@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * File dialog screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -55,12 +55,12 @@ private:
 public:
 	GUIScreenNode* getScreenNode() override;
 
-	/** 
+	/**
 	 * @return path name
 	 */
 	const string& getPathName();
 
-	/** 
+	/**
 	 * @return file name
 	 */
 	const string getFileName();
@@ -70,7 +70,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Set up file dialog list box
 	 * @return success
 	 */
@@ -85,7 +85,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Shows the file dialog pop up
 	 * @param cwd current working directory
 	 * @param captionText caption text
@@ -93,11 +93,11 @@ public:
 	 * @param fileName file name
 	 * @param enableFilter enable filter
 	 * @param applyAction apply action
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
 
-	/** 
+	/**
 	 * Abort the file dialog pop up
 	 */
 	void close();

@@ -32,7 +32,7 @@ using tdme::utilities::MutableString;
 string GUISelectBoxController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxController::GUISelectBoxController(GUINode* node) 
+GUISelectBoxController::GUISelectBoxController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();

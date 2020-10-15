@@ -9,7 +9,7 @@ using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Rotation::Rotation() 
+Rotation::Rotation()
 {
 	this->angle = 0.0f;
 	this->axis.set(0.0f, 0.0f, 0.0f);

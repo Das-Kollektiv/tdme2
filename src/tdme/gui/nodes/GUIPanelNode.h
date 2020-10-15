@@ -28,7 +28,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-/** 
+/**
  * GUI panel node
  * @author Andreas Drewke
  * @version $Id$

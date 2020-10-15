@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * GUI scroll area vertical element
  * @author Andreas Drewke
  * @version $Id$

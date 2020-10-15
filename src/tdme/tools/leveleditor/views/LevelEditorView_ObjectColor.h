@@ -5,7 +5,7 @@
 
 using tdme::tools::leveleditor::views::LevelEditorView;
 
-/** 
+/**
  * Object Color
  * @author Andreas Drewke
  * @version $Id$

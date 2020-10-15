@@ -20,7 +20,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Shadow map
  * @author Andreas Drewke
  * @version $Id$
@@ -37,46 +37,46 @@ private:
 	Matrix4x4 biasMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
 
-	/** 
+	/**
 	 * Init frame buffer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Reshape frame buffer
 	 * @param width width
 	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	/** 
+	/**
 	 * Disposes this shadow mapping
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Binds frame buffer depth texture
 	 * @param context context
 	 */
 	void bindDepthBufferTexture(void* context);
 
-	/** 
+	/**
 	 * @return lightCamera
 	 */
 	Camera* getCamera();
 
-	/** 
+	/**
 	 * Renders given objects to shadow map
 	 * @param light light
 	 */
 	void render(Light* light);
 
-	/** 
+	/**
 	 * Computes shadow texture matrix and stores it
 	 */
 	void computeDepthBiasMVPMatrix();
 
-	/** 
+	/**
 	 * Set up shadow texture matrix computed and stored before
 	 * @param context context
 	 */
@@ -85,7 +85,7 @@ private:
 public:
 	static constexpr int32_t TEXTUREUNIT { 8 };
 
-	/** 
+	/**
 	 * Public constructor
 	 * @param shadowMapping shadow mapping
 	 * @param width width

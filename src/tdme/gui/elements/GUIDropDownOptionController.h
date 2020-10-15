@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI drop down option controller
  * @author Andreas Drewke
  * @version $Id$
@@ -38,17 +38,17 @@ private:
 	bool selected;
 	MutableString value;
 
-	/** 
+	/**
 	 * @return is selected
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * Select
 	 */
 	void select();
 
-	/** 
+	/**
 	 * Unselect
 	 */
 	void unselect();

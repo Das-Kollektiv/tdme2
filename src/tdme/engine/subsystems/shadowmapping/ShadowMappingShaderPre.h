@@ -19,7 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Shadow mapping shader to create a shadow map
  * @author Andreas Drewke
  * @version $Id$
@@ -48,28 +48,28 @@ public:
 	 */
 	~ShadowMappingShaderPre();
 
-	/** 
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Init shadow mapping
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use pre render shadow mapping program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
-	/** 
+	/**
 	 * Un use pre render shadow mapping program
 	 */
 	void unUseProgram();
 
-	/** 
+	/**
 	 * Set up pre program mvp matrix
 	 * @param context context
 	 */

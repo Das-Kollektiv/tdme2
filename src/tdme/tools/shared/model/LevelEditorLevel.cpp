@@ -41,7 +41,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::Console;
 
-LevelEditorLevel::LevelEditorLevel() 
+LevelEditorLevel::LevelEditorLevel()
 {
 	applicationRoot = "";
 	pathName = ".";

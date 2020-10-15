@@ -50,7 +50,7 @@ constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
 
 constexpr int32_t PhysicsTest2::BOX_COUNT;
 
-PhysicsTest2::PhysicsTest2() 
+PhysicsTest2::PhysicsTest2()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();

@@ -28,7 +28,7 @@ string GUISelectBoxOptionController::CONDITION_UNSELECTED = "unselected";
 string GUISelectBoxOptionController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxOptionController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node) 
+GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->initialPostLayout = true;

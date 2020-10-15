@@ -6,7 +6,7 @@
 
 using std::string;
 
-/** 
+/**
  * Property model class
  * @author Andreas Drewke
  * @version $Id$
@@ -30,29 +30,29 @@ public:
 	 */
 	~PropertyModelClass();
 
-	/** 
+	/**
 	 * @return name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
-	/** 
-	 * Set up name 
+	/**
+	 * Set up name
 	 * @param name name
 	 */
 	inline void setName(const string& name) {
 		this->name = name;
 	}
 
-	/** 
+	/**
 	 * @return value
 	 */
 	inline const string& getValue() {
 		return value;
 	}
 
-	/** 
+	/**
 	 * Set up value
 	 * @param value value
 	 */
@@ -60,7 +60,7 @@ public:
 		this->value = value;
 	}
 
-	/** 
+	/**
 	 * Clones this property model entity
 	 */
 	inline PropertyModelClass* clone() {

@@ -49,7 +49,7 @@ using tdme::utilities::Console;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
-GL2Renderer::GL2Renderer() 
+GL2Renderer::GL2Renderer()
 {
 	// setup GL2 consts
 	ID_NONE = 0;

@@ -19,7 +19,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tabs controller
  * @author Andreas Drewke
  * @version $Id$
@@ -35,12 +35,12 @@ private:
 	vector<GUINode*> childControllerNodes;
 	MutableString value;
 
-	/** 
+	/**
 	 * Unselect all tab nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Set tab content selected
 	 * @param id id
 	 */

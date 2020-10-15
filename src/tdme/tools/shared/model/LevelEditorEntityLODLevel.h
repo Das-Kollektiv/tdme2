@@ -14,7 +14,7 @@ using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
 using tdme::engine::model::Color4;
 
-/** 
+/**
  * Level Editor Entity LOD Level
  * @author Andreas Drewke
  * @version $Id$

@@ -13,7 +13,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Camera
  * @author Andreas Drewke
  * @version $Id$
@@ -82,14 +82,14 @@ public:
 		this->cameraMode = cameraMode;
 	}
 
-	/** 
+	/**
 	 * @return field of view Y
 	 */
 	inline float getFovY() const {
 		return fovY;
 	}
 
-	/** 
+	/**
 	 * Set field of view Y
 	 * @param fovY field of view y
 	 */
@@ -97,7 +97,7 @@ public:
 		this->fovY = fovY;
 	}
 
-	/** 
+	/**
 	 * @return float
 	 */
 	inline float getZNear() const {
@@ -112,14 +112,14 @@ public:
 		this->zNear = zNear;
 	}
 
-	/** 
+	/**
 	 * @return float
 	 */
 	inline float getZFar() const {
 		return zFar;
 	}
 
-	/** 
+	/**
 	 * Set z far
 	 * @param zFar zFar
 	 */
@@ -127,7 +127,7 @@ public:
 		this->zFar = zFar;
 	}
 
-	/** 
+	/**
 	 * @return up vector
 	 */
 	inline const Vector3& getUpVector() const {
@@ -142,7 +142,7 @@ public:
 		this->upVector = upVector;
 	}
 
-	/** 
+	/**
 	 * @return forward vector
 	 */
 	inline const Vector3& getForwardVector() const {
@@ -187,7 +187,7 @@ public:
 		this->lookFrom = lookFrom;
 	}
 
-	/** 
+	/**
 	 * @return look at vector
 	 */
 	inline const Vector3& getLookAt() const {
@@ -230,14 +230,14 @@ public:
 		return mvpInvertedMatrix;
 	}
 
-	/** 
+	/**
 	 * @return frustum
 	 */
 	inline Frustum* getFrustum() {
 		return frustum;
 	}
 
-	/** 
+	/**
 	 * Computes the up vector for given look from and look at vectors
 	 * @param lookFrom look from
 	 * @param lookAt look at
@@ -316,13 +316,13 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Computes the projection matrix
 	 * @return projection matrix
 	 */
 	Matrix4x4& computeProjectionMatrix();
 
-	/** 
+	/**
 	 * Computes frustum matrix
 	 * @param left left
 	 * @param right right
@@ -334,7 +334,7 @@ private:
 	 */
 	Matrix4x4& computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
 
-	/** 
+	/**
 	 * Computes projection matrix for given look from, look at and up vector
 	 * @return model view matrix
 	 */

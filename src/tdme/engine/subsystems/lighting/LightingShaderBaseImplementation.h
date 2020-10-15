@@ -20,7 +20,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Lighting shader implementation
  * @author Andreas Drewke
  * @version $Id$

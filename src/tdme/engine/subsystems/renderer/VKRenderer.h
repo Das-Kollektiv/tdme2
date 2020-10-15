@@ -48,7 +48,7 @@ using tdme::utilities::ShortBuffer;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::ReadWriteLock;
 
-/** 
+/**
  * Vulkan renderer
  * @author Andreas Drewke
  * @version $Id$

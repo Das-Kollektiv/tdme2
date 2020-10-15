@@ -10,7 +10,7 @@
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Lighting shader implementation
  * @author Andreas Drewke
  * @version $Id$

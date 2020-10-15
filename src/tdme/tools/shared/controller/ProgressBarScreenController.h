@@ -17,7 +17,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Progress bar screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -45,7 +45,7 @@ public:
 	void initialize() override;
 	void dispose() override;
 
-	/** 
+	/**
 	 * Shows the pop up
 	 */
 	void show();
@@ -56,7 +56,7 @@ public:
 	 */
 	void progress(float value);
 
-	/** 
+	/**
 	 * Closes the pop up
 	 */
 	void close();

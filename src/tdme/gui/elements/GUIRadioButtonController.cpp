@@ -32,7 +32,7 @@ string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
 
 map<string, vector<GUIElementNode*>>* GUIRadioButtonController::radioButtonGroupNodesByName = new map<string, vector<GUIElementNode*>>();
 
-GUIRadioButtonController::GUIRadioButtonController(GUINode* node) 
+GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();

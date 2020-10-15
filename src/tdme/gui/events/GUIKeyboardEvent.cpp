@@ -27,7 +27,7 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 	#endif
 }
 
-GUIKeyboardEvent::GUIKeyboardEvent() 
+GUIKeyboardEvent::GUIKeyboardEvent()
 {
 	this->time = -1LL;
 	this->type = GUIKeyboardEvent_Type::KEYBOARDEVENT_NONE;

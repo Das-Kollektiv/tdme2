@@ -90,7 +90,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 
-ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view) 
+ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{

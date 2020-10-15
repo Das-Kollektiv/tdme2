@@ -29,7 +29,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Dynamic physics world class
  * @author Andreas Drewke
  * @version $Id$
@@ -70,12 +70,12 @@ public:
 	 */
 	~World();
 
-	/** 
+	/**
 	 * Resets the physic world
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * Add a rigid body
 	 * @param id id
 	 * @param enabled enabled
@@ -90,7 +90,7 @@ public:
 	 */
 	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
-	/** 
+	/**
 	 * Add a collision body
 	 * @param id id
 	 * @param enabled enabled
@@ -113,14 +113,14 @@ public:
 	 */
 	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
 
-	/** 
+	/**
 	 * Returns body identified by id
 	 * @param id id
 	 * @return ridig body
 	 */
 	Body* getBody(const string& id);
 
-	/** 
+	/**
 	 * Removes body identified by id
 	 * @param id id
 	 */
@@ -132,13 +132,13 @@ public:
 	 */
 	void update(float deltaTime);
 
-	/** 
+	/**
 	 * Synch physics world with engine
 	 * @param engine engine
 	 */
 	void synch(Engine* engine);
 
-	/** 
+	/**
 	 * Determine height on x,y,u while respecting step up max
 	 * @param collisionTypeId collision type ids
 	 * @param stepUpMax step up max
@@ -199,13 +199,13 @@ public:
 	 */
 	bool getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision);
 
-	/** 
+	/**
 	 * Clone this world
 	 * @param collisionTypeIds collision type ids to clone
 	 */
 	World* clone(uint16_t collisionTypeIds = ~0);
 
-	/** 
+	/**
 	 * Updates given world with this world
 	 * Given world should be a clone of this world
 	 * @param world world

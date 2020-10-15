@@ -24,7 +24,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * OpenGL 2 renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -38,7 +38,7 @@ private:
 
 private:
 
-	/** 
+	/**
 	 * Checks if VBO is available
 	 * @return vbo availability
 	 */

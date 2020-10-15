@@ -32,7 +32,7 @@ using tdme::utilities::MutableString;
 string GUIDropDownOptionController::CONDITION_SELECTED = "selected";
 string GUIDropDownOptionController::CONDITION_UNSELECTED = "unselected";
 
-GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node) 
+GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->initialPostLayout = true;

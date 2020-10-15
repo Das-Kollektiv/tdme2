@@ -29,7 +29,7 @@ using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Entity sounds sub screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -72,7 +72,7 @@ public:
 	 */
 	virtual ~EntitySoundsSubScreenController();
 
-	/** 
+	/**
 	 * @return view
 	 */
 	virtual EntitySoundsView* getView();
@@ -82,7 +82,7 @@ public:
 	 */
 	virtual GUIScreenNode* getScreenNode();
 
-	/** 
+	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
@@ -143,7 +143,7 @@ public:
 	 */
 	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node

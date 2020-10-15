@@ -18,7 +18,7 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Transformed faces iterator
  * @author Andreas Drewke
  * @version $Id$
@@ -38,7 +38,7 @@ private:
 
 private:
 
-	/** 
+	/**
 	 * Reset
 	 */
 	void reset();

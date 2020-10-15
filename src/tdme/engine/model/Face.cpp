@@ -9,7 +9,7 @@ Face::Face()
 {
 }
 
-Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2) 
+Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2)
 {
 	this->group = group;
 	vertexIndices[0] = vi0;
@@ -20,7 +20,7 @@ Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int
 	normalIndices[2] = ni2;
 }
 
-Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2) 
+Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2)
 {
 	this->group = group;
 	vertexIndices[0] = vi0;

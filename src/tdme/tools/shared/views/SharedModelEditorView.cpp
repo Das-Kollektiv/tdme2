@@ -93,7 +93,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-SharedModelEditorView::SharedModelEditorView(PopUps* popUps) 
+SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();

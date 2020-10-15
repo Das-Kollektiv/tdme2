@@ -30,7 +30,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 
-/** 
+/**
  * Object 3d group specifically for rendering
  * @author Andreas Drewke
  * @version $Id$
@@ -71,7 +71,7 @@ private:
 	Object3DGroupMesh* mesh { nullptr };
 	Matrix4x4* groupTransformationsMatrix { nullptr };
 
-	/** 
+	/**
 	 * Creates object 3d groups from given object3d base object
 	 * @param object object 3d base
 	 * @param useManagers use mesh and object 3d renderer group managers
@@ -81,14 +81,14 @@ private:
 	 */
 	static void createGroups(Object3DBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups);
 
-	/** 
+	/**
 	 * Applies transformations to meshes for given object 3d groups
 	 * @param context context
 	 * @param object3DGroups group render data list
 	 */
 	static void computeTransformations(void* context, vector<Object3DGroup*>& object3DGroups);
 
-	/** 
+	/**
 	 * Set up textures for given object3d group and faces entity
 	 * @param renderer renderer
 	 * @param context context
@@ -108,7 +108,7 @@ private:
 	 */
 	static void createGroups(Object3DBase* object3D, const map<string, Group*>& groups, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups);
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	void dispose();

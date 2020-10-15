@@ -34,7 +34,7 @@ constexpr char GUISelectBoxMultipleController::VALUE_DELIMITER;
 string GUISelectBoxMultipleController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
+GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();

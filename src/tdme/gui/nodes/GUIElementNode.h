@@ -30,7 +30,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 
-/** 
+/**
  * GUI element node
  * @author Andreas Drewke
  * @version $Id$
@@ -64,19 +64,19 @@ private:
 	string onChangeExpression;
 
 protected:
-	/** 
+	/**
 	 * @return node type
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
 
-	/** 
+	/**
 	 * Set computed top
 	 * @param top top
 	 */
 	void setTop(int32_t top) override;
 
-	/** 
+	/**
 	 * Set computed left
 	 * @param left left
 	 */
@@ -157,22 +157,22 @@ public:
 	 */
 	bool isFocusable();
 
-	/** 
+	/**
 	 * @return name
 	 */
 	const string& getName();
 
-	/** 
+	/**
 	 * @return value
 	 */
 	const string& getValue();
 
-	/** 
+	/**
 	 * @return is selected
 	 */
 	bool isSelected();
 
-	/** 
+	/**
 	 * @return is disabled
 	 */
 	bool isDisabled();
@@ -220,7 +220,7 @@ public:
 	 */
 	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
 
-	/** 
+	/**
 	 * @return active conditions
 	 */
 	GUINodeConditions& getActiveConditions();

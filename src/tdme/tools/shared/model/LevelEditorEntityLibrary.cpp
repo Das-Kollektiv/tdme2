@@ -38,7 +38,7 @@ using tdme::utilities::StringTools;
 
 constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
 
-LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level) 
+LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level)
 {
 	this->level = level;
 	this->entityIdx = 0;

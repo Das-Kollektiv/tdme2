@@ -25,7 +25,7 @@ using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Entity base sub screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -62,37 +62,37 @@ public:
 	 */
 	virtual ~EntityBaseSubScreenController();
 
-	/** 
+	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
 	virtual void initialize(GUIScreenNode* screenNode);
 
-	/** 
+	/**
 	 * Set up general entity data
 	 * @param name name
 	 * @param description description
 	 */
 	virtual void setEntityData(const string& name, const string& description);
 
-	/** 
+	/**
 	 * Unset entity data
 	 */
 	virtual void unsetEntityData();
 
-	/** 
+	/**
 	 * On entity data apply
 	 * @param model model
 	 */
 	virtual void onEntityDataApply(LevelEditorEntity* model);
 
-	/** 
+	/**
 	 * Set up entity property preset ids
 	 * @param entityPresetIds entity property preset ids
 	 */
 	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds); // TODO: std container: maybe use call by reference
 
-	/** 
+	/**
 	 * Set up entity properties
 	 * @param entity entity
 	 * @param presetId preset id
@@ -100,54 +100,54 @@ public:
 	 */
 	virtual void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
 
-	/** 
+	/**
 	 * Unset entity properties
 	 */
 	virtual void unsetEntityProperties();
 
-	/** 
+	/**
 	 * On entity property save
 	 * @param entity entity
 	 */
 	virtual void onEntityPropertySave(LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On entity property add
 	 * @param entity entity
 	 */
 	virtual void onEntityPropertyAdd(LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On entity property remove
 	 * @param entity entity
 	 */
 	virtual void onEntityPropertyRemove(LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * Shows the error pop up
 	 */
 	virtual void showErrorPopUp(const string& caption, const string& message);
 
-	/** 
+	/**
 	 * On entity property preset apply
-	 * @param model model 
+	 * @param model model
 	 */
 	virtual void onEntityPropertyPresetApply(LevelEditorEntity* model);
 
-	/** 
+	/**
 	 * Event callback for entity properties selection
 	 * @param entity
 	 */
 	virtual void onEntityPropertiesSelectionChanged(LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On value changed
 	 * @param node node
 	 * @param model model
 	 */
 	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* model);
 
-	/** 
+	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node

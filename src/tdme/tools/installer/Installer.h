@@ -28,7 +28,7 @@ using tdme::os::threading::Mutex;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Properties;
 
-/** 
+/**
  * Installer
  * @author Andreas Drewke
  * @version $Id$
@@ -94,7 +94,7 @@ public:
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

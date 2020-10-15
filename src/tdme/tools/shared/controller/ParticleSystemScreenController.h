@@ -35,7 +35,7 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
-/** 
+/**
  * Particle system screen controller
  * @author Andreas Drewke
  * @version $Id$

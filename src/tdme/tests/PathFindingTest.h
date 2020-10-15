@@ -24,7 +24,7 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utilities::PathFinding;
 
-/** 
+/**
  * Engine with physics test 2
  * @author andreas.drewke
  * @version $Id$
@@ -69,7 +69,7 @@ private:
 	void doPathFinding();
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

@@ -30,7 +30,7 @@ using tdme::engine::model::Skinning;
 using tdme::math::Vector3;
 using tdme::tools::shared::files::ProgressCallback;
 
-/** 
+/**
  * Model tools functions class
  * @author Andreas Drewke
  */
@@ -40,14 +40,14 @@ class tdme::utilities::ModelTools final
 public:
 	enum VertexOrder { VERTEXORDER_CLOCKWISE, VERTEXORDER_COUNTERCLOCKWISE };
 
-	/** 
+	/**
 	 * Determines vertex order of face
 	 * @param vertices vertices
 	 * @return vertex order
 	 */
 	static VertexOrder determineVertexOrder(const vector<Vector3>& vertices);
 
-	/** 
+	/**
 	 * Computes face normal for given face vertices
 	 * @param vertices face vertices
 	 * @param normal face normal
@@ -70,7 +70,7 @@ public:
 		}
 	}
 
-	/** 
+	/**
 	 * Computes face normals for given face vertices
 	 * these normals will not be smooth
 	 * @param vertices face vertices
@@ -87,7 +87,7 @@ public:
 		}
 	}
 
-	/** 
+	/**
 	 * Prepare for indexed rendering
 	 * @param model model
 	 */
@@ -95,13 +95,13 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Prepares this group for indexed rendering
 	 * @param groups groups
 	 */
 	static void prepareForIndexedRendering(const map<string, Group*>& groups);
 
-	/** 
+	/**
 	 * Maps original vertices to new vertice mapping
 	 * @param skinning skinning
 	 * @param vertexMapping vertice mapping / new vertex index to old vertex index
@@ -111,7 +111,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Set up joints for skinning groups
 	 * @param model model
 	 */
@@ -119,7 +119,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Sets up a group as joint taking all subgroups into account
 	 * @param root group
 	 */
@@ -127,7 +127,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Fix animation length
 	 * @param model model
 	 */
@@ -135,7 +135,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Fixes animation length as sometimes they are only given partially, which is not supported by engine
 	 * @param root group
 	 * @param frames frames
@@ -144,7 +144,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Check default animation
 	 * @param model model
 	 * @return if animation exists

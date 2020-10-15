@@ -32,7 +32,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-GUIElementController::GUIElementController(GUINode* node) 
+GUIElementController::GUIElementController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->isActionPerforming = false;

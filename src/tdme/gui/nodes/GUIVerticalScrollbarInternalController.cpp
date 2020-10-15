@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 
-GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node) 
+GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));

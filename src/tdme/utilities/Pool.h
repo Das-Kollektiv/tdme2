@@ -11,7 +11,7 @@ using std::vector;
 namespace tdme {
 namespace utilities {
 
-/** 
+/**
  * Pool template class
  * @author Andreas Drewke
  * @version $Id$
@@ -32,7 +32,7 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * Allocate a new element from pool
 	 * @return element
 	 */
@@ -48,7 +48,7 @@ public:
 		return element;
 	}
 
-	/** 
+	/**
 	 * Release element in pool for being reused
 	 * @param element element
 	 */
@@ -62,21 +62,21 @@ public:
 		}
 	}
 
-	/** 
+	/**
 	 * @return element capacity
 	 */
 	int32_t capacity() {
 		return usedElements.size() + freeElements.size();
 	}
 
-	/** 
+	/**
 	 * @return elements in use
 	 */
 	int32_t size() {
 		return usedElements.size();
 	}
 
-	/** 
+	/**
 	 * Reset this pool
 	 */
 	void reset() {

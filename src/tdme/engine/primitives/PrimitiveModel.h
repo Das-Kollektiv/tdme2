@@ -24,7 +24,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 
-/** 
+/**
  * Helper class to create models from physics primitive bounding volumes
  * @author Andreas Drewke
  * @version $Id$
@@ -79,7 +79,7 @@ private:
 	static void setupConvexMeshMaterial(const map<string, Group*>& groups, Material* material);
 
 public:
-	/** 
+	/**
 	 * Creates a model from bounding box
 	 * @param boundingBox bounding box
 	 * @param id id
@@ -87,7 +87,7 @@ public:
 	 */
 	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const string& id);
 
-	/** 
+	/**
 	 * Creates a model from oriented bounding box
 	 * @param orientedBoundingBox bounding box
 	 * @param id id
@@ -95,7 +95,7 @@ public:
 	 */
 	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id);
 
-	/** 
+	/**
 	 * Creates a model from oriented bounding box
 	 * @param sphere sphere
 	 * @param id id
@@ -105,7 +105,7 @@ public:
 	 */
 	static Model* createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY);
 
-	/** 
+	/**
 	 * Creates a model from capsule
 	 * @param capsule sphere
 	 * @param id id
@@ -115,7 +115,7 @@ public:
 	 */
 	static Model* createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY);
 
-	/** 
+	/**
 	 * Creates a model from convex mesh
 	 * @param mesh convex mesh
 	 * @param id id
@@ -130,7 +130,7 @@ public:
 	static void setupConvexMeshModel(Model* model);
 
 public:
-	/** 
+	/**
 	 * Creates a model from bounding volume
 	 * @param boundingVolume bounding volume
 	 * @param id id

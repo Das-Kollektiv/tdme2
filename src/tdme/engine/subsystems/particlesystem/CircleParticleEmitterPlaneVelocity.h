@@ -16,8 +16,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
- * Circle particle emitter with velocity that lives in plane only 
+/**
+ * Circle particle emitter with velocity that lives in plane only
  * @author Andreas Drewke
  * @version $Id$
  */

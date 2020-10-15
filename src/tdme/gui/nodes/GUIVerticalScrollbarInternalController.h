@@ -14,7 +14,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI vertical scroll bar internal controller
  * @author Andreas Drewke
  * @version $Id$
@@ -40,24 +40,24 @@ public:
 	void dispose() override;
 	void postLayout() override;
 
-	/** 
+	/**
 	 * @return state
 	 */
 	virtual State getState();
 
 private:
 
-	/** 
+	/**
 	 * @return bar height
 	 */
 	virtual float getBarHeight();
 
-	/** 
+	/**
 	 * @return bar top
 	 */
 	virtual float getBarTop();
 
-	/** 
+	/**
 	 * Set dragged y
 	 * @param draggedY dragged y
 	 */

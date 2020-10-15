@@ -52,7 +52,7 @@ using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Pool;
 
-/** 
+/**
  * Rendering class
  * @author Andreas Drewke
  * @version $Id$
@@ -92,7 +92,7 @@ private:
 	int threadCount;
 	vector<Object3DRenderContext> contexts;
 
-	/** 
+	/**
 	 * Renders transparent faces
 	 * TODO:	guess this should be optimized regarding GL commands
 	 * skinned mesh is not supported when using GPU
@@ -100,18 +100,18 @@ private:
 	 */
 	void prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces);
 
-	/** 
+	/**
 	 * Render transparent faces groups
 	 * @param context context
 	 */
 	void renderTransparentFacesGroups(void* context);
 
-	/** 
+	/**
 	 * Release transparent faces groups
 	 */
 	void releaseTransparentFacesGroups();
 
-	/** 
+	/**
 	 * Renders multiple objects of same type(with same model)
 	 * @param threadIdx thread idx
 	 * @param objects objects of same type/ with same models
@@ -127,7 +127,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Renders multiple objects of same type(with same model) not using instancing
 	 * @param objects objects of same type/ with same models
 	 * @param collectTransparentFaces collect render faces
@@ -166,7 +166,7 @@ private:
 	 */
 	void setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
-	/** 
+	/**
 	 * Clear material for rendering
 	 * @param context context
 	 */
@@ -296,7 +296,7 @@ public:
 	 */
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
-	/** 
+	/**
 	 * Render points particle system entities
 	 * @param pses points particle system entities
 	 */

@@ -15,7 +15,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 
-Skinning::Skinning() 
+Skinning::Skinning()
 {
 }
 

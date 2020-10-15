@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIScrollAreaVerticalController::GUIScrollAreaVerticalController(GUINode* node) 
+GUIScrollAreaVerticalController::GUIScrollAreaVerticalController(GUINode* node)
 	: GUINodeController(node), actionListener(nullptr)
 {
 }

@@ -52,7 +52,7 @@ public:
 	}
 
 	/**
-	 * Adds a collision response entity 
+	 * Adds a collision response entity
 	 * @param distance distance
 	 * @return Entity or null
 	 */
@@ -143,7 +143,7 @@ public:
 	}
 
 	/**
-	 * Get hit point of given index 
+	 * Get hit point of given index
 	 * @param i i
 	 * @return hit point for given hit points index
 	 */

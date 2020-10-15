@@ -268,7 +268,7 @@ void SharedParticleSystemView::handleInputEvents()
 							}
 						} else {
 							setParticleSystemIndex(0);
-						} 
+						}
 						event.setProcessed(true);
 					}
 				} else

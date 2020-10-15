@@ -22,7 +22,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-/** 
+/**
  * Object particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -53,21 +53,21 @@ public:
 	 */
 	~LevelEditorEntityParticleSystem_ObjectParticleSystem();
 
-	/** 
+	/**
 	 * @return scale
 	 */
 	inline Vector3& getScale() {
 		return scale;
 	}
 
-	/** 
+	/**
 	 * @return max count
 	 */
 	inline int32_t getMaxCount() {
 		return maxCount;
 	}
 
-	/** 
+	/**
 	 * Set max count
 	 * @param maxCount max count
 	 */
@@ -75,36 +75,36 @@ public:
 		this->maxCount = maxCount;
 	}
 
-	/** 
+	/**
 	 * @return is auto emit
 	 */
 	inline bool isAutoEmit() {
 		return autoEmit;
 	}
 
-	/** 
-	 * Set auto emit 
+	/**
+	 * Set auto emit
 	 * @param autoEmit autoEmit
 	 */
 	inline void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
 
-	/** 
+	/**
 	 * @return model
 	 */
 	inline Model* getModel() {
 		return model;
 	}
 
-	/** 
+	/**
 	 * @return model file
 	 */
 	inline const string& getModelFile() {
 		return modelFileName;
 	}
 
-	/** 
+	/**
 	 * Set model file
 	 * @param modelFileName model file name
 	 */

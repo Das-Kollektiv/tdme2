@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUITabsHeaderController::GUITabsHeaderController(GUINode* node) 
+GUITabsHeaderController::GUITabsHeaderController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->focus = false;

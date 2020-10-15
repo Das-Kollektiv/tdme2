@@ -21,7 +21,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;
 
-/** 
+/**
  * Interface to compute shader skinning shader program
  * @author Andreas Drewke
  * @version $Id$
@@ -58,22 +58,22 @@ public:
 	 */
 	SkinningShader(Renderer* renderer);
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use skinning program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Unuse skinning program
 	 */
 	void unUseProgram();

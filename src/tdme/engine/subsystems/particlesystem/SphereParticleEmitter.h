@@ -18,7 +18,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Sphere particle emitter
  * @author Andreas Drewke
  * @version $Id$

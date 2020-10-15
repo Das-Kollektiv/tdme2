@@ -16,7 +16,7 @@ using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::ReadWriteLock;
 
-/** 
+/**
  * VBO manager
  * @author Andreas Drewke
  * @version $Id$
@@ -41,7 +41,7 @@ public:
 	 */
 	~VBOManager();
 
-	/** 
+	/**
 	 * Adds a VBO to manager or retrieve VBO if existing
 	 * @param vboId VBO id
 	 * @param ids VBOs to allocate
@@ -51,7 +51,7 @@ public:
 	 */
 	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared, bool& created);
 
-	/** 
+	/**
 	 * Retrieves a VBO managed from manager
 	 * @param vboId VBO id
 	 * @return VBO managed or nullptr

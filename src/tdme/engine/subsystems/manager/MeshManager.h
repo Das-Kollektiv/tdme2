@@ -13,7 +13,7 @@ using std::string;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 
-/** 
+/**
  * Mesh manager
  * @author Andreas Drewke
  * @version $Id$
@@ -34,21 +34,21 @@ public:
 	 */
 	~MeshManager();
 
-	/** 
+	/**
 	 * Get mesh from managed meshes
 	 * @param meshId mesh id
 	 * @return object 3d group mesh or null
 	 */
 	Object3DGroupMesh* getMesh(const string& meshId);
 
-	/** 
+	/**
 	 * Adds a mesh to manager
 	 * @param meshId mesh id
 	 * @param mesh mesh
 	 */
 	void addMesh(const string& meshId, Object3DGroupMesh* mesh);
 
-	/** 
+	/**
 	 * Removes a mesh from manager
 	 * @param meshId mesh id
 	 */

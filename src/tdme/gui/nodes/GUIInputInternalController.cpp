@@ -43,7 +43,7 @@ using tdme::utilities::Time;
 constexpr int64_t GUIInputInternalController::CURSOR_MODE_DURATION;
 constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
 
-GUIInputInternalController::GUIInputInternalController(GUINode* node) 
+GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->cursorModeStarted = -1LL;

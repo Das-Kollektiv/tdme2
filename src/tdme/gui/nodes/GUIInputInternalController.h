@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI input internal controller
  * @author Andreas Drewke
  * @version $Id$
@@ -52,22 +52,22 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * @return index
 	 */
 	int32_t getIndex();
 
-	/** 
+	/**
 	 * @return offset
 	 */
 	int32_t getOffset();
 
-	/** 
+	/**
 	 * Reset cursor mode
 	 */
 	void resetCursorMode();
 
-	/** 
+	/**
 	 * @return cursor mode
 	 */
 	CursorMode getCursorMode();
@@ -77,7 +77,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Check and correct offset
 	 */
 	void checkOffset();

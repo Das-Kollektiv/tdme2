@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::utilities::ExceptionBase;
 
-/** 
+/**
  * GUI parser exception
  * @author Andreas Drewke
  * @version $Id$

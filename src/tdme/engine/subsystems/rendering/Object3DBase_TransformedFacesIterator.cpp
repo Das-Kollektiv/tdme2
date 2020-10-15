@@ -19,7 +19,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase) 
+Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase)
 {
 	this->object3DBase = object3DBase;
 	reset();

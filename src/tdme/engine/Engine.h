@@ -1005,7 +1005,7 @@ public:
 	/**
 	 * Creates a PNG file from current screen(
 	 * 	This does not seem to work with GLES2 and offscreen engines
-	 * @param pathName path name 
+	 * @param pathName path name
 	 * @param fileName file name
 	 * @return success
 	 */

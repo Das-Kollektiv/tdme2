@@ -33,7 +33,7 @@ using tdme::utilities::Console;
 
 constexpr int32_t TransparentRenderFacesPool::FACES_MAX;
 
-TransparentRenderFacesPool::TransparentRenderFacesPool() 
+TransparentRenderFacesPool::TransparentRenderFacesPool()
 {
 }
 

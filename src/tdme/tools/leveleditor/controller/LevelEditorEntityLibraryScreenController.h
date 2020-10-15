@@ -21,7 +21,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Level editor model library screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -50,12 +50,12 @@ public:
 	// overriden methods
 	GUIScreenNode* getScreenNode() override;
 
-	/** 
+	/**
 	 * @return model path
 	 */
 	virtual const string& getModelPath();
 
-	/** 
+	/**
 	 * Set model path
 	 * @param modelPath model path
 	 */
@@ -63,38 +63,38 @@ public:
 	void initialize() override;
 	void dispose() override;
 
-	/** 
+	/**
 	 * Select entity by entity id
 	 * @param entityId entity id
 	 */
 	virtual void selectEntity(int32_t entityId);
 
-	/** 
+	/**
 	 * Set up complete entity library
 	 */
 	virtual void setEntityLibrary();
 
-	/** 
+	/**
 	 * On entity selection changed
 	 */
 	virtual void onEntitySelectionChanged();
 
-	/** 
+	/**
 	 * On edit entity
 	 */
 	virtual void onEditEntity();
 
-	/** 
+	/**
 	 * On edit level
 	 */
 	virtual void onEditLevel();
 
-	/** 
+	/**
 	 * place object button clicked
 	 */
 	virtual void onPlaceEntity();
 
-	/** 
+	/**
 	 * place model entity clicked
 	 */
 	virtual void onDeleteEntity();
