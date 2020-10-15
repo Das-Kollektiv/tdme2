@@ -48,14 +48,14 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 
 private:
 	int instances;
-	Object3DGroupRenderer* object3DGroupRenderer;
+	Object3DGroupRenderer* object3DGroupRenderer { nullptr };
 	Group* group;
 	int32_t faceCount;
-	const vector<Vector3>* vertices;
-	const vector<Vector3>* normals;
-	const vector<Vector3>* tangents;
-	const vector<Vector3>* bitangents;
-	const vector<TextureCoordinate>* textureCoordinates;
+	const vector<Vector3>* vertices { nullptr };
+	const vector<Vector3>* normals { nullptr };
+	const vector<Vector3>* tangents { nullptr };
+	const vector<Vector3>* bitangents { nullptr };
+	const vector<TextureCoordinate>* textureCoordinates { nullptr };
 	vector<int32_t> indices;
 	vector<Vector3> transformedVertices;
 	vector<Vector3> transformedNormals;
@@ -79,11 +79,6 @@ private:
 	bool recreatedBuffers;
 
 	/**
-	 * Public constructor
-	 */
-	Object3DGroupMesh();
-
-	/** 
 	 * Creates a object3d group mesh from group
 	 * @param object3DGroupRenderer object 3D group renderer
 	 * @param animationProcessingTarget animation processing target
@@ -91,18 +86,17 @@ private:
 	 * @param transformationMatrices instances transformationm matrices
 	 * @param skinningMatrices instances skinning matrices
 	 * @param instances instances
-	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
+	Object3DGroupMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
-	/** 
+	/**
 	 * Computes mesh transformations
 	 * @param context context
 	 * @param object3DBase object 3d base
 	 */
 	void computeTransformations(void* context, Object3DBase* object3DBase);
 
-	/** 
+	/**
 	 * Recreates group float buffers
 	 */
 	void recreateBuffers();
@@ -114,12 +108,12 @@ private:
 		return recreatedBuffers == true;
 	}
 
-	/** 
+	/**
 	 * @return if buffers has been recreated and unsets state
 	 */
 	bool getRecreatedBuffers();
 
-	/** 
+	/**
 	 * Set up vertex indices buffer
 	 * @param renderer renderer
 	 * @param context context
@@ -127,7 +121,7 @@ private:
 	 */
 	void setupVertexIndicesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	/** 
+	/**
 	 * Set up texture coordinates buffer
 	 * @param renderer renderer
 	 * @param context context
@@ -135,7 +129,7 @@ private:
 	 */
 	void setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	/** 
+	/**
 	 * Set up vertices buffer
 	 * @param renderer renderer
 	 * @param context context
@@ -143,7 +137,7 @@ private:
 	 */
 	void setupVerticesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	/** 
+	/**
 	 * Set up normals buffer
 	 * @param renderer renderer
 	 * @param context context
@@ -151,7 +145,7 @@ private:
 	 */
 	void setupNormalsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	/** 
+	/**
 	 * Set up tangents buffer
 	 * @param renderer renderer
 	 * @param context context
@@ -159,7 +153,7 @@ private:
 	 */
 	void setupTangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	/** 
+	/**
 	 * Set up bitangents buffer
 	 * @param renderer renderer
 	 * @param context context

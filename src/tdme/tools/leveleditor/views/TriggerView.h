@@ -22,7 +22,7 @@ using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Trigger view
  * @author Andreas Drewke
  * @version $Id$
@@ -42,30 +42,38 @@ private:
 	Vector3 objectScale;
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups view
+	 */
+	TriggerView(PopUps* popUps);
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~TriggerView();
+
+	/**
 	 * @return pop up views
 	 */
 	virtual PopUps* getPopUpsViews();
 
-	/** 
+	/**
 	 * @return entity
 	 */
 	virtual LevelEditorEntity* getEntity();
 
-	/** 
+	/**
 	 * @return selected entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
 
-	void handleInputEvents() override;
-
-	/** 
+	/**
 	 * Renders the scene 
 	 */
 	void display() override;
 
-	/** 
+	/**
 	 * Init GUI elements
 	 */
 	virtual void updateGUIElements();
@@ -75,6 +83,7 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void dispose() override;
+	void handleInputEvents() override;
 
 	/**
 	 * On rotation event to be overloaded
@@ -86,14 +95,4 @@ public:
 	 */
 	virtual void onScale() override;
 
-	/**
-	 * Public constructor
-	 * @param popUps pop ups view
-	 */
-	TriggerView(PopUps* popUps);
-
-	/**
-	 * Destructor
-	 */
-	~TriggerView();
 };

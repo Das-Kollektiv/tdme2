@@ -15,6 +15,12 @@ using tdme::engine::Engine;
 class tdme::engine::EngineVKRenderer: public VKRenderer
 {
 public:
+	/**
+	 * Public constructor
+	 * @param engine engine
+	 */
+	EngineVKRenderer(Engine* engine);
+
 	// overriden methods
 	void onUpdateProjectionMatrix(void* context) override;
 	void onUpdateCameraMatrix(void* context) override;
@@ -27,11 +33,6 @@ public:
 	void onUpdateShader(void* context) override;
 	void onUpdateShaderParameters(void* context) override;
 
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 */
-	EngineVKRenderer(Engine* engine);
 private:
 	Engine* engine { nullptr };
 };

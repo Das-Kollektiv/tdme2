@@ -30,13 +30,13 @@ class tdme::tools::viewer::TDMEModelEditor final
 private:
 	static string VERSION;
 	static TDMEModelEditor* instance;
-	Engine* engine {  };
-	View* view {  };
-	bool viewInitialized {  };
-	View* viewNew {  };
-	bool quitRequested {  };
-	PopUps* popUps {  };
-	SharedModelEditorView* modelEditorView;
+	Engine* engine { nullptr };
+	View* view { nullptr };
+	bool viewInitialized;
+	View* viewNew { nullptr };
+	bool quitRequested;
+	PopUps* popUps { nullptr };
+	SharedModelEditorView* modelEditorView { nullptr };
 
 public:
 	/** 
@@ -51,6 +51,16 @@ public:
 	 * @return level editor instance
 	 */
 	static TDMEModelEditor* getInstance();
+
+	/**
+	 * Public constructor
+	 */
+	TDMEModelEditor();
+
+	/**
+	 * Destructor
+	 */
+	~TDMEModelEditor();
 
 	/**
 	 * Set up new view
@@ -90,13 +100,4 @@ public:
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	/**
-	 * Public constructor
-	 */
-	TDMEModelEditor();
-
-	/**
-	 * Destructor
-	 */
-	~TDMEModelEditor();
 };

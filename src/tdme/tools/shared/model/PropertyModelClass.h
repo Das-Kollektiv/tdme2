@@ -18,6 +18,18 @@ private:
 	string value;
 
 public:
+	/**
+	 * Constructor
+	 * @param name name
+	 * @param value value
+	 */
+	inline PropertyModelClass(const string& name, const string& value): name(name), value(value) {}
+
+	/**
+	 * Destructor
+	 */
+	~PropertyModelClass();
+
 	/** 
 	 * @return name
 	 */
@@ -54,17 +66,5 @@ public:
 	inline PropertyModelClass* clone() {
 		return new PropertyModelClass(name, value);
 	}
-
-	/**
-	 * Constructor
-	 * @param name name
-	 * @param value value
-	 */
-	inline PropertyModelClass(const string& name, const string& value): name(name), value(value) {}
-
-	/**
-	 * Destructor
-	 */
-	~PropertyModelClass();
 
 };

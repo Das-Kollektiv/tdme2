@@ -93,6 +93,18 @@ private:
 	int boundingVolumeIdxActivated;
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups
+	 * @param modelPath model editor screen controller
+	 * @param isModelBoundingVolumes is model bounding volumes
+	 */
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityPhysicsSubScreenController();
 
 	/** 
 	 * @return view
@@ -335,16 +347,4 @@ public:
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
-	/**
-	 * Public constructor
-	 * @param popUps pop ups
-	 * @param modelPath model editor screen controller
-	 * @param isModelBoundingVolumes is model bounding volumes
-	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~EntityPhysicsSubScreenController();
 };

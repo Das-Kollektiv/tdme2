@@ -34,7 +34,6 @@ private:
 	Timing();
 
 public:
-
 	/** 
 	 * @return frames that have been rendered
 	 */

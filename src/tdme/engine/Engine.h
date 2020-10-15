@@ -365,6 +365,11 @@ private:
 	}
 
 	/**
+	 * Private constructor
+	 */
+	Engine();
+
+	/**
 	 * Determine entity types
 	 * @param entities given entities to investigate
 	 * @param objects object
@@ -420,11 +425,18 @@ private:
 	 */
 	void initRendering();
 
-	/**
-	 * Private constructor
-	 */
-	Engine();
 public:
+	/**
+	 * Destructor
+	 */
+	~Engine();
+
+	/**
+	 * Returns engine instance
+	 * @return
+	 */
+	static Engine* getInstance();
+
 	/**
 	 * @return texture manager
 	 */
@@ -597,12 +609,6 @@ public:
 	 * @return shader parameter defaults
 	 */
 	static const map<string, string> getShaderParameterDefaults(const string& shaderId);
-
-	/**
-	 * Returns engine instance
-	 * @return
-	 */
-	static Engine* getInstance();
 
 	/**
 	 * Creates an offscreen rendering instance
@@ -808,7 +814,7 @@ public:
 	 * @param lightScatteringItensityValue light scattering intensity base value
 	 */
 	inline void setLightScatteringItensityValue(float lightScatteringItensityValue) {
-		lightScatteringItensityValue = lightScatteringItensityValue;
+		this->lightScatteringItensityValue = lightScatteringItensityValue;
 	}
 
 	/**
@@ -1015,11 +1021,6 @@ public:
 	 * @param programId program id
 	 */
 	void addPostProcessingProgram(const string& programId);
-
-	/**
-	 * Destructor
-	 */
-	~Engine();
 
 private:
 	/**

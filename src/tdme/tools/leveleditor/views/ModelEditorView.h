@@ -25,6 +25,13 @@ class tdme::tools::leveleditor::views::ModelEditorView
 	: public SharedModelEditorView
 {
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups view
+	 */
+	ModelEditorView(PopUps* popUps);
+
+	// overriden methods
 	void onSetEntityData() override;
 	void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity) override;
 	void onInitAdditionalScreens() override;
@@ -32,10 +39,4 @@ public:
 private:
 	LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */ override;
 
-public:
-	/**
-	 * Public constructor
-	 * @param popUps pop ups view
-	 */
-	ModelEditorView(PopUps* popUps);
 };

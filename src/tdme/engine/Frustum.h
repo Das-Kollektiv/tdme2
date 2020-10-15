@@ -46,6 +46,11 @@ private:
 	array<Plane, 6> planes;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	Frustum(Renderer* renderer);
+
 	/** 
 	 * Setups frustum, should be called if frustum did change 
 	 */
@@ -113,8 +118,4 @@ public:
 		return true;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	Frustum(Renderer* renderer);
 };

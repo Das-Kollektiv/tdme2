@@ -33,15 +33,6 @@ private:
 	vector<LevelEditorEntity*> entities;
 	int32_t entityIdx;
 
-public:
-
-	/** 
-	 * Clears this model library
-	 */
-	void clear();
-
-private:
-
 	/** 
 	 * Allocata a unique entity idx
 	 * @return
@@ -49,8 +40,22 @@ private:
 	int32_t allocateEntityId();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityLibrary(LevelEditorLevel* level);
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityLibrary();
 
 	/** 
+	 * Clears this model library
+	 */
+	void clear();
+
+	/**
 	 * Adds a model
 	 * @param id id
 	 * @param name name
@@ -126,13 +131,4 @@ public:
 	 */
 	int32_t getEntityCount();
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityLibrary(LevelEditorLevel* level);
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityLibrary();
 };

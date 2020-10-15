@@ -154,7 +154,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		throw GUIParserException("XML root node must be <screen>");
 	}
 
-	auto applicationRootPath = Tools::getGameRootPath(pathName);
+	auto applicationRootPath = Tools::getApplicationRootPath(pathName);
 	guiScreenNode = new GUIScreenNode(
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),

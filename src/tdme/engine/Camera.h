@@ -56,6 +56,16 @@ private:
 	int viewPortHeight;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	Camera(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~Camera();
 
 	/**
 	 * @return camera mode
@@ -289,6 +299,21 @@ public:
 		return viewPortHeight;
 	}
 
+	/**
+	 * @return if frustum has changed
+	 */
+	inline bool hasFrustumChanged() {
+		return frustumChanged;
+	}
+
+	/**
+	 * Sets up camera while resizing the view port
+	 * @param context context
+	 * @param width width
+	 * @param height height
+	 */
+	void update(void* context, int32_t width, int32_t height);
+
 private:
 
 	/** 
@@ -314,33 +339,5 @@ private:
 	 * @return model view matrix
 	 */
 	Matrix4x4& computeModelViewMatrix();
-
-public:
-
-	/** 
-	 * Sets up camera while resizing the view port
-	 * @param context context
-	 * @param width width
-	 * @param height height
-	 */
-	void update(void* context, int32_t width, int32_t height);
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	Camera(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~Camera();
-
-	/**
-	 * @return if frustum has changed
-	 */
-	inline bool hasFrustumChanged() {
-		return frustumChanged;
-	}
 
 };

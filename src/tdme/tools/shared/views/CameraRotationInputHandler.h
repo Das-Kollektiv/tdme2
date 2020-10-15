@@ -18,7 +18,7 @@ using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::CameraRotationInputHandler
+class tdme::tools::shared::views::CameraRotationInputHandler final
 	: public virtual GUIInputEventHandler
 {
 private:

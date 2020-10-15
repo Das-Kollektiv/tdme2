@@ -28,6 +28,20 @@ private:
 	LevelEditorEntity* entity { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param description description
+	 * @param transformations transformations
+	 * @param entity entity
+	 */
+	LevelEditorObject(const string& id, const string& description, const Transformations& transformations, LevelEditorEntity* entity);
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorObject();
+
 	/** 
 	 * @return id
 	 */
@@ -84,20 +98,5 @@ public:
 	 * @return merged properties from entity and object
 	 */
 	ModelProperties* getTotalProperties();
-
-public:
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param description description
-	 * @param transformations transformations
-	 * @param entity entity
-	 */
-	LevelEditorObject(const string& id, const string& description, const Transformations& transformations, LevelEditorEntity* entity);
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorObject();
 
 };

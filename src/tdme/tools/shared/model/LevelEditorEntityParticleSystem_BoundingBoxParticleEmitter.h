@@ -34,6 +34,10 @@ private:
 	Vector3 obbAxis2;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter();
 
 	/** 
 	 * @return count
@@ -245,8 +249,4 @@ public:
 		this->obbAxis2 = obbAxis2;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter();
 };

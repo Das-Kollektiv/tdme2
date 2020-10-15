@@ -80,6 +80,12 @@ private:
 	 */
 	static void createPathRecursively(const string& pathName);
 public:
+	/**
+	 * Public constructor
+	 */
+	Installer();
+
+	// overriden methods
 	void initialize() override;
 	void dispose() override;
 	void reshape(int32_t width, int32_t height) override;
@@ -95,8 +101,4 @@ public:
 	 */
 	static void main(int argc, char** argv);
 
-	/**
-	 * Public constructor
-	 */
-	Installer();
 };

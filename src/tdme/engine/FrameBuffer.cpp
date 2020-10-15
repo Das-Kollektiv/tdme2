@@ -31,16 +31,6 @@ constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
 
 constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
 
-int32_t FrameBuffer::getWidth()
-{
-	return width;
-}
-
-int32_t FrameBuffer::getHeight()
-{
-	return height;
-}
-
 void FrameBuffer::initialize()
 {
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)

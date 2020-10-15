@@ -229,6 +229,11 @@ private:
 	void dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent);
 
 public:
+	/**
+	 * Public constructor
+	 */
+	PartitionOctTree();
+
 	// overriden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 
@@ -237,8 +242,4 @@ public:
 	 */
 	void dump();
 
-	/**
-	 * Public constructor
-	 */
-	PartitionOctTree();
 };

@@ -50,6 +50,17 @@ private:
 	Action* onSetEntityDataAction { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps view
+	 * @param onSetEntityDataAction on set entity data action
+	 */
+	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityBaseSubScreenController();
 
 	/** 
 	 * Init
@@ -144,15 +155,4 @@ public:
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
-	/**
-	 * Public constructor
-	 * @param popUps view
-	 * @param onSetEntityDataAction on set entity data action
-	 */
-	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~EntityBaseSubScreenController();
 };

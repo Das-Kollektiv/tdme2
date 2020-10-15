@@ -89,7 +89,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
-	level->setGameRoot(Tools::getGameRootPath(pathName));
+	level->setApplicationRoot(Tools::getApplicationRootPath(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
 	level->clearProperties();

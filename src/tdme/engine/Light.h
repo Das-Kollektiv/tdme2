@@ -36,6 +36,17 @@ private:
 	float quadraticAttenuation;
 	Renderer* renderer { nullptr };
 public:
+	/**
+	 * Public default constructor
+	 */
+	Light();
+
+	/**
+	 * Public default constructor
+	 * @param renderer renderer
+	 * @param id id
+	 */
+	Light(Renderer* renderer, int32_t id);
 
 	/** 
 	 * @return light id
@@ -215,16 +226,4 @@ public:
 	 */
 	void update(void* context);
 
-
-	/**
-	 * Public default constructor
-	 */
-	Light();
-
-	/**
-	 * Public default constructor
-	 * @param renderer renderer
-	 * @param id id
-	 */
-	Light(Renderer* renderer, int32_t id);
 };

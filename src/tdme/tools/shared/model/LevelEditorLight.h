@@ -35,6 +35,11 @@ private:
 	float quadraticAttenuation;
 
 public:
+	/**
+	 * Public default constructor
+	 * @param id id
+	 */
+	LevelEditorLight(int32_t id);
 
 	/** 
 	 * @return light id
@@ -176,9 +181,4 @@ public:
 		this->quadraticAttenuation = quadraticAttenuation;
 	}
 
-	/**
-	 * Public default constructor
-	 * @param id id
-	 */
-	LevelEditorLight(int32_t id);
 };

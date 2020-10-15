@@ -44,6 +44,13 @@ private:
 	GUIElementNode* viewPort { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	EmptyScreenController(EmptyView* view);
+
+	// overriden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
@@ -99,9 +106,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	EmptyScreenController(EmptyView* view);
 };

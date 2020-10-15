@@ -436,7 +436,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	delete entityBoundingBoxFallback;
 }
 
-const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
+const string Tools::getRelativeResourcesFileName(const string& applicationRoot, const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto cutFileNameIdx = -1;
@@ -455,7 +455,7 @@ const string Tools::getRelativeResourcesFileName(const string& gameRoot, const s
 	return newFileName;
 }
 
-const string Tools::getGameRootPath(const string& fileName)
+const string Tools::getApplicationRootPath(const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto filesRootIdx = -1;

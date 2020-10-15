@@ -54,7 +54,6 @@ int64_t Object3DGroup::counter = 0;
 
 Object3DGroup::Object3DGroup()
 {
-	groupTransformationsMatrix = nullptr;
 }
 
 Object3DGroup::~Object3DGroup()
@@ -113,7 +112,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 				auto meshManager = Engine::getInstance()->getMeshManager();
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(
+					object3DGroup->mesh = new Object3DGroupMesh(
 						object3DGroup->renderer,
 						animationProcessingTarget,
 						group,
@@ -124,7 +123,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(
+				object3DGroup->mesh = new Object3DGroupMesh(
 					object3DGroup->renderer,
 					animationProcessingTarget,
 					group,

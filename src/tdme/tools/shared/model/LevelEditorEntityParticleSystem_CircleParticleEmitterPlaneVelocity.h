@@ -33,6 +33,10 @@ private:
 	Vector3 axis1;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity();
 
 	/** 
 	 * @return count
@@ -229,8 +233,4 @@ public:
 		this->axis1 = axis1;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity();
 };

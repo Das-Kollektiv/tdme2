@@ -165,7 +165,7 @@ void Object3DBase::initialize()
 			if (usesManagers == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(
+					object3DGroup->mesh = new Object3DGroupMesh(
 						object3DGroup->renderer,
 						animationProcessingTarget,
 						object3DGroup->group,
@@ -175,7 +175,7 @@ void Object3DBase::initialize()
 					);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(
+				object3DGroup->mesh = new Object3DGroupMesh(
 					object3DGroup->renderer,
 					animationProcessingTarget,
 					object3DGroup->group,

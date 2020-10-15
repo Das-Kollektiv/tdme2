@@ -33,6 +33,16 @@ private:
 	EntityPhysicsView* physicsView { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param physicsView physics view
+	 */
+	EntityDisplaySubScreenController(EntityPhysicsView* physicsView);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityDisplaySubScreenController();
 
 	/** 
 	 * @return view
@@ -71,14 +81,4 @@ public:
 	virtual bool getDisplayBoundingVolume();
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
 
-	/**
-	 * Public constructor
-	 * @param physicsView physics view
-	 */
-	EntityDisplaySubScreenController(EntityPhysicsView* physicsView);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~EntityDisplaySubScreenController();
 };

@@ -26,6 +26,15 @@ private:
 	vector<PropertyModelClass*> properties;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	ModelProperties();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ModelProperties();
 
 	/** 
 	 * Clears properties
@@ -84,13 +93,4 @@ public:
 	 */
 	bool removeProperty(const string& name);
 
-	/**
-	 * Public constructor
-	 */
-	ModelProperties();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ModelProperties();
 };

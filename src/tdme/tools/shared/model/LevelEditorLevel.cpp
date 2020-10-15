@@ -43,7 +43,7 @@ using tdme::utilities::Console;
 
 LevelEditorLevel::LevelEditorLevel() 
 {
-	gameRoot = "";
+	applicationRoot = "";
 	pathName = ".";
 	fileName = "untitled.tl";
 	rotationOrder = RotationOrder::XYZ;

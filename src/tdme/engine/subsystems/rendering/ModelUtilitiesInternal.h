@@ -43,29 +43,6 @@ public:
 	 */
 	static void invertNormals(Model* model);
 
-private:
-	/**
-	 * Creates a bounding box from given object3d model
-	 * @param object3DModelInternal model
-	 * @return axis aligned bounding box
-	 */
-	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
-
-	/**
-	 * Creates a bounding box from given object3d model without mesh
-	 * @param object3DModelInternal model
-	 * @return boundingBox axis aligned bounding box
-	 */
-	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
-
-	/** 
-	 * Invert normals recursive
-	 * @param groups groups
-	 */
-	static void invertNormals(const map<string, Group*>& groups);
-
-public:
-
 	/** 
 	 * Compute model statistics
 	 * @param model model
@@ -95,4 +72,26 @@ public:
 	 * @return model1 equals model2
 	 */
 	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);
+
+private:
+	/**
+	 * Creates a bounding box from given object3d model
+	 * @param object3DModelInternal model
+	 * @return axis aligned bounding box
+	 */
+	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
+
+	/**
+	 * Creates a bounding box from given object3d model without mesh
+	 * @param object3DModelInternal model
+	 * @return boundingBox axis aligned bounding box
+	 */
+	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
+
+	/**
+	 * Invert normals recursive
+	 * @param groups groups
+	 */
+	static void invertNormals(const map<string, Group*>& groups);
+
 };

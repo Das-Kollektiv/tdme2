@@ -42,6 +42,12 @@ private:
 	string modelPath {  };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityLibraryScreenController(PopUps* popUps);
+
+	// overriden methods
 	GUIScreenNode* getScreenNode() override;
 
 	/** 
@@ -102,8 +108,4 @@ public:
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityLibraryScreenController(PopUps* popUps);
 };

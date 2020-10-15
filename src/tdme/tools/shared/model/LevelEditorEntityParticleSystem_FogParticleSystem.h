@@ -28,6 +28,15 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_FogParticleSystem();
+
+	/**
+	 * Public destructor
+	 */
+	~LevelEditorEntityParticleSystem_FogParticleSystem();
 
 	/** 
 	 * @return max points
@@ -131,15 +140,5 @@ public:
 	inline void setTextureSpritesFPS(float textureSpritesFPS) {
 		this->textureSpritesFPS = textureSpritesFPS;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_FogParticleSystem();
-
-	/**
-	 * Public destructor
-	 */
-	~LevelEditorEntityParticleSystem_FogParticleSystem();
 
 };

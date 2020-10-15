@@ -151,15 +151,6 @@ private:
 	}
 
 public:
-
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -175,8 +166,21 @@ public:
 	 */
 	Object3D(const string& id, Model* model);
 
-	// overriden methods
+	// overriden methds
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return Object3DInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return Object3DInternal::getBoundingBox();
@@ -206,8 +210,6 @@ public:
 		return Object3DInternal::getId();
 	}
 
-	void initialize() override;
-
 	inline bool isContributesShadows() override {
 		return Object3DInternal::isContributesShadows();
 	}
@@ -222,10 +224,6 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		Object3DInternal::setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return Object3DInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

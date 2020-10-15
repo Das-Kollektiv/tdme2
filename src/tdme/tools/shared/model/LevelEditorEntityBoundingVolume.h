@@ -32,6 +32,17 @@ private:
 	BoundingVolume* boundingVolume { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param levelEditorEntity level editor entity
+	 */
+	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityBoundingVolume();
 
 	/** 
 	 * @return id
@@ -123,18 +134,5 @@ private:
 	 * Update level editor entity
 	 */
 	void updateLevelEditorEntity();
-
-public:
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param levelEditorEntity level editor entity
-	 */
-	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityBoundingVolume();
 
 };

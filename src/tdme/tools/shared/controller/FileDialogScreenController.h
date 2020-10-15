@@ -32,7 +32,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::FileDialogScreenController
+class tdme::tools::shared::controller::FileDialogScreenController final
 	: public ScreenController
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
@@ -40,17 +40,17 @@ class tdme::tools::shared::controller::FileDialogScreenController
 {
 
 private:
-	GUIScreenNode* screenNode {  };
-	string cwd {  };
-	vector<string> extensions {  };
-	string captionText {  };
-	GUITextNode* caption {  };
-	GUIElementNode* fileName {  };
-	GUIElementNode* files {  };
-	Action* applyAction {  };
+	GUIScreenNode* screenNode { nullptr };
+	string cwd;
+	vector<string> extensions;
+	string captionText;
+	GUITextNode* caption { nullptr };
+	GUIElementNode* fileName { nullptr };
+	GUIElementNode* files { nullptr };
+	Action* applyAction { nullptr };
 	vector<string> fileList;
-	bool enableFilter { false };
-	bool filtered {  };
+	bool enableFilter;
+	bool filtered;
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -58,12 +58,12 @@ public:
 	/** 
 	 * @return path name
 	 */
-	virtual const string& getPathName();
+	const string& getPathName();
 
 	/** 
 	 * @return file name
 	 */
-	virtual const string getFileName();
+	const string getFileName();
 
 	void initialize() override;
 	void dispose() override;
@@ -95,12 +95,12 @@ public:
 	 * @param applyAction apply action
 	 * @throws IOException 
 	 */
-	virtual void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
+	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up
 	 */
-	virtual void close();
+	void close();
 
 	// overriden methods
 	void onValueChanged(GUIElementNode* node) override;

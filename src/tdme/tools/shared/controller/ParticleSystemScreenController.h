@@ -164,6 +164,16 @@ private:
 	FileDialogPath* audioPath { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	ParticleSystemScreenController(SharedParticleSystemView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ParticleSystemScreenController();
 
 	/**
 	 * @return entity display sub screen controller
@@ -370,14 +380,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	ParticleSystemScreenController(SharedParticleSystemView* view);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ParticleSystemScreenController();
 };

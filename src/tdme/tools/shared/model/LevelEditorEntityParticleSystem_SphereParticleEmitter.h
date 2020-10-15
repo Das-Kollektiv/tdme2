@@ -31,6 +31,10 @@ private:
 	float radius;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_SphereParticleEmitter();
 
 	/** 
 	 * @return count
@@ -197,8 +201,4 @@ public:
 		this->radius = radius;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_SphereParticleEmitter();
 };

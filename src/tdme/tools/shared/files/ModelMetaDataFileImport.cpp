@@ -229,9 +229,9 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 		 ),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
-	auto gameRoot = Tools::getGameRootPath(pathName);
-	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
-	return (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
+	auto applicationRoot = Tools::getApplicationRootPath(pathName);
+	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
+	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
 LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)

@@ -45,6 +45,16 @@ private:
 	virtual void initModel();
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups view
+	 */
+	EmptyView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EmptyView();
 
 	/** 
 	 * @return pop up views
@@ -72,19 +82,11 @@ public:
 	 * Init GUI elements
 	 */
 	virtual void updateGUIElements();
+
+	// overriden methods
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;
 	void dispose() override;
 
-	/**
-	 * Public constructor
-	 * @param popUps pop ups view
-	 */
-	EmptyView(PopUps* popUps);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~EmptyView();
 };

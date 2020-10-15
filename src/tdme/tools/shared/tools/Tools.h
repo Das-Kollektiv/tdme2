@@ -172,18 +172,18 @@ public:
 
 	/** 
 	 * Get relative resources file name
-	 * @param gameRoot game root
+	 * @param applicationRoot application root
 	 * @param fileName file name
 	 * @return relative resources file name
 	 */
-	static const string getRelativeResourcesFileName(const string& gameRoot, const string& fileName);
+	static const string getRelativeResourcesFileName(const string& applicationRoot, const string& fileName);
 
 	/** 
-	 * Get game root path
+	 * Get application root path
 	 * @param fileName file name
-	 * @return game root path
+	 * @return application root path
 	 */
-	static const string getGameRootPath(const string& fileName);
+	static const string getApplicationRootPath(const string& fileName);
 
 	/** 
 	 * Get path

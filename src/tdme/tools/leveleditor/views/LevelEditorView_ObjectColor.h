@@ -15,7 +15,7 @@ class tdme::tools::leveleditor::views::LevelEditorView_ObjectColor
 	friend class LevelEditorView;
 
 private:
-	LevelEditorView* levelEditorView;
+	LevelEditorView* levelEditorView { nullptr };
 
 	float colorMulR;
 	float colorMulG;

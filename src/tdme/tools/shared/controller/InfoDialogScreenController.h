@@ -32,28 +32,28 @@ class tdme::tools::shared::controller::InfoDialogScreenController
 {
 
 private:
-	GUIScreenNode* screenNode {  };
-	GUITextNode* captionNode {  };
-	GUIMultilineTextNode* messageNode {  };
+	GUIScreenNode* screenNode { nullptr };
+	GUITextNode* captionNode { nullptr };
+	GUIMultilineTextNode* messageNode { nullptr };
 
 public:
-	GUIScreenNode* getScreenNode() override;
-	void initialize() override;
-	void dispose() override;
-
-	/** 
-	 * Shows the pop up
-	 */
-	virtual void show(const string& caption, const string& message);
-
-	/** 
-	 * Closes the pop up
-	 */
-	virtual void close();
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
-
 	/**
 	 * Public constructor
 	 */
 	InfoDialogScreenController();
+
+	GUIScreenNode* getScreenNode() override;
+	void initialize() override;
+	void dispose() override;
+	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+
+	/** 
+	 * Shows the pop up
+	 */
+	void show(const string& caption, const string& message);
+	/** 
+	 * Closes the pop up
+	 */
+	void close();
+
 };

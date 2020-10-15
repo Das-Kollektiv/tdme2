@@ -46,6 +46,7 @@ private:
 	 * @return json root
 	 */
 	static void exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel);
+
 public:
 
 	/** 

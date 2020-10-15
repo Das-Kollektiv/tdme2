@@ -30,6 +30,10 @@ private:
 	Color4 colorEnd;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_PointParticleEmitter();
 
 	/** 
 	 * @return count
@@ -181,8 +185,4 @@ public:
 		this->colorEnd = colorEnd;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_PointParticleEmitter();
 };

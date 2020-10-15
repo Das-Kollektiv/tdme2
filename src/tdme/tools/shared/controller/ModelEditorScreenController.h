@@ -149,6 +149,16 @@ private:
 	 */
 	Material* getSelectedMaterial();
 public:
+	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	ModelEditorScreenController(SharedModelEditorView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ModelEditorScreenController();
 
 	/**
 	 * Get view
@@ -485,14 +495,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	ModelEditorScreenController(SharedModelEditorView* view);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ModelEditorScreenController();
 };

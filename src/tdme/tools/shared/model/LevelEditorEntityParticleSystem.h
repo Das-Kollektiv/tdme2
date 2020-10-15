@@ -43,6 +43,15 @@ private:
 	void unsetEmitter();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem();
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityParticleSystem();
 
 	/** 
 	 * @return particle system type
@@ -126,13 +135,4 @@ public:
 		return spe;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem();
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityParticleSystem();
 };

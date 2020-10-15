@@ -38,6 +38,15 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_PointParticleSystem();
+
+	/**
+	 * Public destructor
+	 */
+	~LevelEditorEntityParticleSystem_PointParticleSystem();
 
 	/** 
 	 * @return max points
@@ -156,15 +165,5 @@ public:
 	inline void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_PointParticleSystem();
-
-	/**
-	 * Public destructor
-	 */
-	~LevelEditorEntityParticleSystem_PointParticleSystem();
 
 };

@@ -37,6 +37,21 @@ private:
 	string modelFileName;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline LevelEditorEntityParticleSystem_ObjectParticleSystem() {
+		scale.set(1.0f, 1.0f, 1.0f);
+		maxCount = 10;
+		autoEmit = true;
+		model = nullptr;
+		modelFileName = "";
+	}
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityParticleSystem_ObjectParticleSystem();
 
 	/** 
 	 * @return scale
@@ -94,21 +109,5 @@ public:
 	 * @param modelFileName model file name
 	 */
 	void setModelFile(const string& modelFileName) /* throws(Exception) */;
-
-	/**
-	 * Public constructor
-	 */
-	inline LevelEditorEntityParticleSystem_ObjectParticleSystem() {
-		scale.set(1.0f, 1.0f, 1.0f);
-		maxCount = 10;
-		autoEmit = true;
-		model = nullptr;
-		modelFileName = "";
-	}
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityParticleSystem_ObjectParticleSystem();
 
 };

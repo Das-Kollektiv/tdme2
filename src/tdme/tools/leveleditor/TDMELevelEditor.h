@@ -39,17 +39,17 @@ class tdme::tools::leveleditor::TDMELevelEditor final
 private:
 	static string VERSION;
 	static TDMELevelEditor* instance;
-	Engine* engine {  };
-	View* view {  };
-	bool quitRequested {  };
-	LevelEditorLevel level {  };
-	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController {  };
-	PopUps* popUps {  };
-	LevelEditorView* levelEditorView {  };
-	ModelEditorView* modelEditorView {  };
-	TriggerView* triggerView {  };
-	EmptyView* emptyView {  };
-	ParticleSystemView* particleSystemView {  };
+	Engine* engine { nullptr };
+	View* view { nullptr };
+	bool quitRequested;
+	LevelEditorLevel level;
+	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController { nullptr };
+	PopUps* popUps { nullptr };
+	LevelEditorView* levelEditorView { nullptr };
+	ModelEditorView* modelEditorView { nullptr };
+	TriggerView* triggerView { nullptr };
+	EmptyView* emptyView { nullptr };
+	ParticleSystemView* particleSystemView { nullptr };
 
 public:
 
@@ -61,11 +61,20 @@ public:
 	static void main(int argc, char** argv);
 
 public:
-
 	/** 
 	 * @return level editor instance
 	 */
 	static TDMELevelEditor* getInstance();
+
+	/**
+	 * Public constructor
+	 */
+	TDMELevelEditor();
+
+	/**
+	 * Destructor
+	 */
+	~TDMELevelEditor();
 
 	/** 
 	 * @return level editor entity library screen controller
@@ -143,13 +152,4 @@ public:
 	 */
 	void switchToParticleSystemView();
 
-	/**
-	 * Public constructor
-	 */
-	TDMELevelEditor();
-
-	/**
-	 * Destructor
-	 */
-	~TDMELevelEditor();
 };

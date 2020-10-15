@@ -13,6 +13,11 @@ using tdme::engine::Entity;
 struct tdme::engine::EntityPickingFilter
 {
 
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityPickingFilter() {};
+
 	/** 
 	 * Filter entity
 	 * @param entity entity
@@ -20,8 +25,4 @@ struct tdme::engine::EntityPickingFilter
 	 */
 	virtual bool filterEntity(Entity* entity) = 0;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~EntityPickingFilter() {};
 };

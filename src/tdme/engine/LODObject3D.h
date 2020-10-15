@@ -109,14 +109,6 @@ private:
 	}
 
 public:
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -146,7 +138,6 @@ public:
 	 */
 	~LODObject3D();
 
-public:
 	/**
 	 * @return LOD object
 	 */
@@ -293,7 +284,20 @@ public:
 	}
 
 	// overriden methods
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return enabled;
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return objectLOD1->getBoundingBox();
@@ -321,12 +325,6 @@ public:
 
 	inline const string& getId() override {
 		return id;
-	}
-
-	void initialize() override;
-
-	inline bool isEnabled() override {
-		return enabled;
 	}
 
 	inline bool isPickable() override {

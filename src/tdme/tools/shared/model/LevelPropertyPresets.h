@@ -35,6 +35,17 @@ private:
 	static LevelPropertyPresets* instance;
 
 public:
+	/**
+	 * Constructor
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	LevelPropertyPresets(const string& pathName, const string& fileName);
+
+	/**
+	 * Destructor
+	 */
+	~LevelPropertyPresets();
 
 	/** 
 	 * @return level editor presets instance
@@ -46,8 +57,6 @@ public:
 	 * @param level level
 	 */
 	void setDefaultLevelProperties(LevelEditorLevel* level);
-
-public:
 
 	/** 
 	 * @return map properties preset
@@ -80,16 +89,4 @@ private:
 	 */
 	const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
-public:
-	/**
-	 * Constructor
-	 * @param pathName path name
-	 * @param fileName file name
-	 */
-	LevelPropertyPresets(const string& pathName, const string& fileName);
-
-	/**
-	 * Destructor
-	 */
-	~LevelPropertyPresets();
 };

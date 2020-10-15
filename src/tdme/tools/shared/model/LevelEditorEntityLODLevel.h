@@ -28,6 +28,7 @@ private:
 	float minDistance;
 	Color4 colorMul;
 	Color4 colorAdd;
+
 public:
 	/**
 	 * Public constructor

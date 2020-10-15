@@ -52,6 +52,12 @@ private:
 
 public:
 	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	TriggerScreenController(TriggerView* view);
+
+	/**
 	 * @return entity physics sub screen controller
 	 */
 	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
@@ -112,9 +118,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	TriggerScreenController(TriggerView* view);
 };

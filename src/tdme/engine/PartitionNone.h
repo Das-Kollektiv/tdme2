@@ -40,11 +40,12 @@ private:
 	void removeEntity(Entity* entity) override;
 
 public:
-	// overriden methods
-	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
-
 	/**
 	 * Public constructor
 	 */
 	PartitionNone();
+
+	// overriden methods
+	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
+
 };

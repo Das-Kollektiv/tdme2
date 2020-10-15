@@ -42,23 +42,35 @@ class tdme::tools::shared::controller::EntitySoundsSubScreenController
 	friend class EntitySoundsSubScreenController_onBoundingVolumeConvexMeshFile;
 
 private:
-	GUIScreenNode* screenNode {  };
-	FileDialogPath* audioPath {  };
-	EntitySoundsView* view {  };
-	PlayableSoundView* playableSoundView {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundKey {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFile {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLoad {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundClear {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundGain {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundPitch {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundOffset {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLooping {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFixed {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundApply {  };
+	GUIScreenNode* screenNode { nullptr };
+	FileDialogPath* audioPath { nullptr };
+	EntitySoundsView* view { nullptr };
+	PlayableSoundView* playableSoundView { nullptr };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundKey;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFile;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLoad;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundClear;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundGain;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundPitch;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundOffset;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLooping;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFixed;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundApply;
 
 public:
+	/**
+	 * Public constructor
+	 * @param playableSoundView view that supports playing sounds
+	 * @param popUps pop ups
+	 * @param audioPath audio path
+	 */
+	EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntitySoundsSubScreenController();
 
 	/** 
 	 * @return view
@@ -139,16 +151,4 @@ public:
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
-	/**
-	 * Public constructor
-	 * @param playableSoundView view that supports playing sounds
-	 * @param popUps pop ups
-	 * @param audioPath audio path
-	 */
-	EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~EntitySoundsSubScreenController();
 };

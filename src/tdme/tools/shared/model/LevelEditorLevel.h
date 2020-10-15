@@ -35,7 +35,7 @@ class tdme::tools::shared::model::LevelEditorLevel final
 	: public ModelProperties
 {
 private:
-	string gameRoot;
+	string applicationRoot;
 	string pathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
@@ -60,20 +60,29 @@ private:
 	void computeCenter();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorLevel();
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorLevel();
 
 	/** 
 	 * @return game root
 	 */
-	inline const string& getGameRoot() {
-		return gameRoot;
+	inline const string& getApplicationRoot() {
+		return applicationRoot;
 	}
 
 	/** 
 	 * Set game root
 	 * @param gameRoot gameRoot
 	 */
-	inline void setGameRoot(const string& gameRoot) {
-		this->gameRoot = gameRoot;
+	inline void setApplicationRoot(const string& applicationRoot) {
+		this->applicationRoot = applicationRoot;
 	}
 
 	/** 
@@ -259,13 +268,4 @@ public:
 	 */
 	void update();
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorLevel();
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorLevel();
 };

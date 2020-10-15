@@ -16,9 +16,13 @@ using std::string;
 class tdme::tools::shared::controller::FileDialogPath
 {
 private:
-	string path {  };
+	string path;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	FileDialogPath(const string& path);
 
 	/** 
 	 * @return path
@@ -31,8 +35,4 @@ public:
 	 */
 	virtual void setPath(const string& path);
 
-	/**
-	 * Public constructor
-	 */
-	FileDialogPath(const string& path);
 };

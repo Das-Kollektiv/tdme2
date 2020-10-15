@@ -24,18 +24,18 @@ class tdme::tools::leveleditor::views::ParticleSystemView
 	: public SharedParticleSystemView
 {
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups
+	 */
+	ParticleSystemView(PopUps* popUps);
+
+	// overriden methods
+	void onInitAdditionalScreens() override;
 	void onSetEntityData() override;
 	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
 private:
 	LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */ override;
 
-public:
-	void onInitAdditionalScreens() override;
-
-	/**
-	 * Public constructor
-	 * @param popUps pop ups
-	 */
-	ParticleSystemView(PopUps* popUps);
 };
