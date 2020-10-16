@@ -20,7 +20,7 @@ using std::string;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -107,7 +107,7 @@ public:
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Get viewport rectangle

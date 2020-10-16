@@ -21,7 +21,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityDisplayView
+class tdme::tools::shared::views::EntityDisplayView final
 {
 private:
 	Engine* engine { nullptr };
@@ -31,42 +31,6 @@ private:
 
 public:
 	/**
-	 * @return display ground plate
-	 */
-	inline virtual bool isDisplayGroundPlate() {
-		return this->displayGroundPlate;
-	}
-
-	/**
-	 * Set up ground plate visibility
-	 * @param groundPlate ground plate visible
-	 */
-	inline virtual void setDisplayGroundPlate(bool groundPlate) {
-		this->displayGroundPlate = groundPlate;
-	}
-
-	/**
-	 * @return display shadowing
-	 */
-	inline virtual bool isDisplayShadowing() {
-		return displayShadowing;
-	}
-
-	/**
-	 * Set up shadow rendering
-	 * @param shadowing shadow rendering
-	 */
-	inline virtual void setDisplayShadowing(bool shadowing) {
-		this->displayShadowing = shadowing;
-	}
-
-	/**
-	 * Display
-	 * @param entity entity
-	 */
-	virtual void display(LevelEditorEntity* entity);
-
-	/**
 	 * Public constructor
 	 * @param entityDisplaySubScreenController entity display sub screen controller
 	 */
@@ -75,6 +39,42 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EntityDisplayView();
+	 ~EntityDisplayView();
+
+	/**
+	 * @return display ground plate
+	 */
+	inline bool isDisplayGroundPlate() {
+		return this->displayGroundPlate;
+	}
+
+	/**
+	 * Set up ground plate visibility
+	 * @param groundPlate ground plate visible
+	 */
+	inline void setDisplayGroundPlate(bool groundPlate) {
+		this->displayGroundPlate = groundPlate;
+	}
+
+	/**
+	 * @return display shadowing
+	 */
+	inline bool isDisplayShadowing() {
+		return displayShadowing;
+	}
+
+	/**
+	 * Set up shadow rendering
+	 * @param shadowing shadow rendering
+	 */
+	inline void setDisplayShadowing(bool shadowing) {
+		this->displayShadowing = shadowing;
+	}
+
+	/**
+	 * Display
+	 * @param entity entity
+	 */
+	 void display(LevelEditorEntity* entity);
 
 };

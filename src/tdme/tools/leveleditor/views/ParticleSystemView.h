@@ -20,7 +20,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::ParticleSystemView
+class tdme::tools::leveleditor::views::ParticleSystemView final
 	: public SharedParticleSystemView
 {
 public:
@@ -31,11 +31,12 @@ public:
 	ParticleSystemView(PopUps* popUps);
 
 	// overriden methods
-	void onInitAdditionalScreens() override;
-	void onSetEntityData() override;
-	void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
+	virtual void onInitAdditionalScreens() override;
+	virtual void onSetEntityData() override;
+	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
 private:
-	LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */ override;
+	// overriden methods
+	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) override;
 
 };

@@ -2,7 +2,6 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -14,7 +13,6 @@
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleController;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -146,7 +144,7 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			(dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->unfocus();
 			toggle();
 			focus();

@@ -4,8 +4,6 @@
 #include <tdme/application/InputDefinitions.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
-using tdme::gui::events::GUIMouseEvent_Type;
-
 /**
  * GUI mouse event
  * @author Andreas Drewke
@@ -13,10 +11,19 @@ using tdme::gui::events::GUIMouseEvent_Type;
  */
 class tdme::gui::events::GUIMouseEvent final
 {
+public:
+	enum GUIMouseEventType {
+		MOUSEEVENT_NONE,
+		MOUSEEVENT_WHEEL_MOVED,
+		MOUSEEVENT_PRESSED,
+		MOUSEEVENT_RELEASED,
+		MOUSEEVENT_MOVED,
+		MOUSEEVENT_DRAGGED
+	};
 
 private:
 	int64_t time;
-	GUIMouseEvent_Type* type;
+	GUIMouseEventType type { MOUSEEVENT_NONE };
 	int32_t xUnscaled;
 	int32_t yUnscaled;
 	int32_t x;
@@ -55,7 +62,7 @@ public:
 	/**
 	 * @return type
 	 */
-	inline GUIMouseEvent_Type* getType() {
+	inline GUIMouseEventType getType() {
 		return type;
 	}
 
@@ -63,7 +70,7 @@ public:
 	 * Set type
 	 * @param type type
 	 */
-	inline void setType(GUIMouseEvent_Type* type) {
+	inline void setType(GUIMouseEventType type) {
 		this->type = type;
 	}
 

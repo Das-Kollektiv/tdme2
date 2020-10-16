@@ -27,10 +27,10 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::TriggerView
-	: public virtual View
-	, public virtual GUIInputEventHandler
-	, protected virtual CameraRotationInputHandlerEventHandler
+class tdme::tools::leveleditor::views::TriggerView final
+	: public View
+	, public GUIInputEventHandler
+	, protected CameraRotationInputHandlerEventHandler
 {
 private:
 	Engine* engine { nullptr };
@@ -56,17 +56,17 @@ public:
 	/**
 	 * @return pop up views
 	 */
-	virtual PopUps* getPopUpsViews();
+	PopUps* getPopUpsViews();
 
 	/**
 	 * @return entity
 	 */
-	virtual LevelEditorEntity* getEntity();
+	LevelEditorEntity* getEntity();
 
 	/**
 	 * @return selected entity
 	 */
-	virtual void setEntity(LevelEditorEntity* entity);
+	void setEntity(LevelEditorEntity* entity);
 
 	/**
 	 * Renders the scene
@@ -76,7 +76,7 @@ public:
 	/**
 	 * Init GUI elements
 	 */
-	virtual void updateGUIElements();
+	void updateGUIElements();
 
 	// overridden methods
 	void initialize() override;
@@ -88,11 +88,11 @@ public:
 	/**
 	 * On rotation event to be overloaded
 	 */
-	virtual void onRotation() override;
+	void onRotation() override;
 
 	/**
 	 * On scale event to be overloaded
 	 */
-	virtual void onScale() override;
+	void onScale() override;
 
 };

@@ -31,6 +31,20 @@ protected:
 	virtual T instantiate() = 0;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	Pool() {
+	}
+
+	virtual ~Pool() {
+		for (auto element: usedElements) {
+			delete element;
+		}
+		for (auto element: freeElements) {
+			delete element;
+		}
+	}
 
 	/**
 	 * Allocate a new element from pool
@@ -84,21 +98,6 @@ public:
 			freeElements.push_back(usedElements[i]);
 		}
 		usedElements.clear();
-	}
-
-	/**
-	 * Public constructor
-	 */
-	Pool() {
-	}
-
-	virtual ~Pool() {
-		for (auto element: usedElements) {
-			delete element;
-		}
-		for (auto element: freeElements) {
-			delete element;
-		}
 	}
 
 };

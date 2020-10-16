@@ -2,9 +2,7 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -17,9 +15,7 @@
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxOptionController;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -154,7 +150,7 @@ void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* even
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(this->node->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
@@ -167,7 +163,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					selectPrevious();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}
@@ -175,7 +171,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					selectNext();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}

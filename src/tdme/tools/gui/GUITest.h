@@ -18,7 +18,7 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::tools::shared::views::PopUps;
 
@@ -53,7 +53,7 @@ public:
 	void dispose() override;
 	void reshape(int32_t width, int32_t height) override;
 	void display() override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;
 
 	/**

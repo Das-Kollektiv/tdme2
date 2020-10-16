@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -18,7 +19,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::model::Model;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
@@ -34,7 +35,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntitySoundsSubScreenController
+class tdme::tools::shared::controller::EntitySoundsSubScreenController final
 {
 	friend class EntitySoundsSubScreenController_BoundingVolumeType;
 	friend class EntitySoundsSubScreenController_GenerateConvexMeshes;
@@ -70,23 +71,23 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EntitySoundsSubScreenController();
+	~EntitySoundsSubScreenController();
 
 	/**
 	 * @return view
 	 */
-	virtual EntitySoundsView* getView();
+	EntitySoundsView* getView();
 
 	/**
 	 * @return screen node
 	 */
-	virtual GUIScreenNode* getScreenNode();
+	GUIScreenNode* getScreenNode();
 
 	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
-	virtual void initialize(GUIScreenNode* screenNode);
+	void initialize(GUIScreenNode* screenNode);
 
 	/**
 	 * Set sound animation drop down
@@ -99,49 +100,49 @@ public:
 	 * Unset sound by index
 	 * @param soundIdx sound index
 	 */
-	virtual void unsetSound(int soundIdx);
+	void unsetSound(int soundIdx);
 
 	/**
 	 * Unset sounds
 	 */
-	virtual void unsetSounds();
+	void unsetSounds();
 
 	/**
 	 * Set physics
 	 * @param entity entity
 	 */
-	virtual void setSounds(LevelEditorEntity* entity);
+	void setSounds(LevelEditorEntity* entity);
 
 	/**
 	 * On sound apply
 	 * @param soundIdx sound index
 	 * @param levelEditorEntity entity
 	 */
-	virtual void onSoundApply(int soundIdx, LevelEditorEntity* entity);
+	void onSoundApply(int soundIdx, LevelEditorEntity* entity);
 
 	/**
 	 * On sound clear
 	 * @param soundIdx sound index
 	 */
-	virtual void onSoundClear(int soundIdx);
+	void onSoundClear(int soundIdx);
 
 	/**
 	 * On sound load
 	 * @param soundIdx sound index
 	 */
-	virtual void onSoundLoad(int soundIdx);
+	void onSoundLoad(int soundIdx);
 
 	/**
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(const string& caption, const string& message);
+	void showErrorPopUp(const string& caption, const string& message);
 
 	/**
 	 * On value changed
 	 * @param node node
 	 * @param entity entity
 	 */
-	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
+	void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
 
 	/**
 	 * On action performed
@@ -149,6 +150,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
 
 };

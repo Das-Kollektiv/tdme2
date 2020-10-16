@@ -3,7 +3,6 @@
 #include <string>
 
 #include <tdme/gui/elements/GUIDropDownController.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -18,7 +17,6 @@ using std::string;
 
 using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::elements::GUIDropDownController;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -114,7 +112,7 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
 			select();
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();

@@ -21,7 +21,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
@@ -91,7 +91,7 @@ public:
 	void reshape(int32_t width, int32_t height) override;
 	void display() override;
 	void onClose() override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;
 
 	/**

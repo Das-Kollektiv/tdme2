@@ -18,24 +18,29 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityBaseView
+class tdme::tools::shared::views::EntityBaseView final
 {
 private:
-	EntityBaseSubScreenController* entityBaseSubScreenController {  };
+	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param entityBaseSubScreenController model base sub screen controller
+	 */
+	EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController);
 
 	/**
 	 * Init
 	 */
-	virtual void initialize();
+	void initialize();
 
 	/**
 	 * Apply entity property preset
 	 * @param entity entity
 	 * @param presetId preset id
 	 */
-	virtual void entityPropertiesPreset(LevelEditorEntity* entity, const string& presetId);
+	void entityPropertiesPreset(LevelEditorEntity* entity, const string& presetId);
 
 	/**
 	 * Save a entity property
@@ -45,14 +50,14 @@ public:
 	 * @param value value
 	 * @return success
 	 */
-	virtual bool entityPropertySave(LevelEditorEntity* entity, const string& oldName, const string& name, const string& value);
+	bool entityPropertySave(LevelEditorEntity* entity, const string& oldName, const string& name, const string& value);
 
 	/**
 	 * Add a entity property
 	 * @param entity entity
 	 * @return success
 	 */
-	virtual bool entityPropertyAdd(LevelEditorEntity* entity);
+	bool entityPropertyAdd(LevelEditorEntity* entity);
 
 	/**
 	 * Remove a entity property from model properties
@@ -60,7 +65,7 @@ public:
 	 * @param name name
 	 * @return success
 	 */
-	virtual bool entityPropertyRemove(LevelEditorEntity* entity, const string& name);
+	bool entityPropertyRemove(LevelEditorEntity* entity, const string& name);
 
 	/**
 	 * Update current model data
@@ -68,11 +73,6 @@ public:
 	 * @param name name
 	 * @param description description
 	 */
-	virtual void setEntityData(LevelEditorEntity* entity, const string& name, const string& description);
+	void setEntityData(LevelEditorEntity* entity, const string& name, const string& description);
 
-	/**
-	 * Public constructor
-	 * @param entityBaseSubScreenController model base sub screen controller
-	 */
-	EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController);
 };

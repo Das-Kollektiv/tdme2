@@ -2,7 +2,6 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -14,7 +13,6 @@
 using tdme::gui::elements::GUISelectBoxOptionController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxController;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -113,7 +111,7 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			(dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->unselect();
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(selectBoxNode));

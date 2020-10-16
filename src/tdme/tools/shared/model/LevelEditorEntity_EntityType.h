@@ -17,10 +17,10 @@ class tdme::tools::shared::model::LevelEditorEntity_EntityType final
 	friend class LevelEditorEntity;
 
 public:
-	static LevelEditorEntity_EntityType *TRIGGER;
-	static LevelEditorEntity_EntityType *MODEL;
-	static LevelEditorEntity_EntityType *EMPTY;
-	static LevelEditorEntity_EntityType *PARTICLESYSTEM;
+	static LevelEditorEntity_EntityType* TRIGGER;
+	static LevelEditorEntity_EntityType* MODEL;
+	static LevelEditorEntity_EntityType* EMPTY;
+	static LevelEditorEntity_EntityType* PARTICLESYSTEM;
 
 	/**
 	 * Public constructor

@@ -30,7 +30,7 @@ using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::engine::model::Color4;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
@@ -473,7 +473,7 @@ public:
 	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Shows the error pop up

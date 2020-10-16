@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -18,7 +19,7 @@ using std::array;
 using std::vector;
 using std::string;
 
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
@@ -36,7 +37,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityPhysicsSubScreenController
+class tdme::tools::shared::controller::EntityPhysicsSubScreenController final
 {
 	friend class EntityPhysicsSubScreenController_BoundingVolumeType;
 	friend class EntityPhysicsSubScreenController_GenerateConvexMeshes;
@@ -104,54 +105,54 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EntityPhysicsSubScreenController();
+	~EntityPhysicsSubScreenController();
 
 	/**
 	 * @return view
 	 */
-	virtual EntityPhysicsView* getView();
+	EntityPhysicsView* getView();
 
 	/**
 	 * @return screen node
 	 */
-	virtual GUIScreenNode* getScreenNode();
+	GUIScreenNode* getScreenNode();
 
 	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
-	virtual void initialize(GUIScreenNode* screenNode);
+	void initialize(GUIScreenNode* screenNode);
 
 	/**
 	 * Disable bounding volume
 	 */
-	virtual void disableBoundingVolume(int32_t idx);
+	void disableBoundingVolume(int32_t idx);
 
 	/**
 	 * Enable bounding volume
 	 * @param idx idx
 	 */
-	virtual void enableBoundingVolume(int32_t idx);
+	void enableBoundingVolume(int32_t idx);
 
 	/**
 	 * Set up model bounding volume type
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx);
+	void setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * Set up bounding volume types
 	 * @param idx idx
 	 */
-	virtual void setupBoundingVolumeTypes(int32_t idx);
+	void setupBoundingVolumeTypes(int32_t idx);
 
 	/**
 	 * Display given bounding volume GUI elements
 	 * @param idx idx
 	 * @param bvType bounding volume type
 	 */
-	virtual void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
+	void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
 
 	/**
 	 * Setup sphere bounding volume
@@ -159,7 +160,7 @@ public:
 	 * @param center center
 	 * @param radius radius
 	 */
-	virtual void setupSphere(int32_t idx, const Vector3& center, float radius);
+	void setupSphere(int32_t idx, const Vector3& center, float radius);
 
 	/**
 	 * Setup capsule bounding volume
@@ -168,7 +169,7 @@ public:
 	 * @param b b
 	 * @param radius radius
 	 */
-	virtual void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);
+	void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
 	/**
 	 * Setup AABB bounding volume
@@ -176,7 +177,7 @@ public:
 	 * @param min min
 	 * @param max max
 	 */
-	virtual void setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max);
+	void setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max);
 
 	/**
 	 * Setup oriented bounding box
@@ -187,157 +188,157 @@ public:
 	 * @param axis2 axis 2
 	 * @param halfExtension half extension
 	 */
-	virtual void setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	void setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
 	 * Setup convex mesh bounding volume
 	 * @param idx idx
 	 * @param file file
 	 */
-	virtual void setupConvexMesh(int32_t idx, const string& file);
+	void setupConvexMesh(int32_t idx, const string& file);
 
 	/**
 	 * On pivot apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume none apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume sphere apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume capsule apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume AABB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume OBB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume convex mesh apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume convex mesh file clicked
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	virtual void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
 
 	/**
 	 * On bounding volume convex meshes file
 	 * @param entity entity
 	 */
-	virtual void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
 
 	/**
 	 * On bounding volume convex meshes remove
 	 * @param entity entity
 	 */
-	virtual void onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity);
 
 	/**
 	 * On bounding volume convex meshes generate
 	 * @param entity entity
 	 */
-	virtual void onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity);
 
 	/**
 	 * Set terrain mesh
 	 * @param entity entity
 	 */
-	virtual void setTerrainMesh(LevelEditorEntity* entity);
+	void setTerrainMesh(LevelEditorEntity* entity);
 
 	/**
 	 * Shows the error pop up
 	 * @param entity entity
 	 */
-	virtual void onSetTerrainMesh(LevelEditorEntity* entity);
+	void onSetTerrainMesh(LevelEditorEntity* entity);
 
 	/**
 	 * Unset terrain mesh
 	 */
-	virtual void unsetTerrainMesh();
+	void unsetTerrainMesh();
 
 	/**
 	 * Set convex meshes
 	 * @param entity entity
 	 */
-	virtual void setConvexMeshes(LevelEditorEntity* entity);
+	void setConvexMeshes(LevelEditorEntity* entity);
 
 	/**
 	 * Unset convex meshes
 	 */
-	virtual void unsetConvexMeshes();
+	void unsetConvexMeshes();
 
 	/**
 	 * Unset physics
 	 */
-	virtual void unsetPhysics();
+	void unsetPhysics();
 
 	/**
 	 * Set physics
 	 * @param entity entity
 	 */
-	virtual void setPhysics(LevelEditorEntity* entity);
+	void setPhysics(LevelEditorEntity* entity);
 
 	/**
 	 * On physics body type apply
 	 * @param entity entity
 	 */
-	virtual void onPhysicsBodyTypeApply(LevelEditorEntity* entity);
+	void onPhysicsBodyTypeApply(LevelEditorEntity* entity);
 
 	/**
 	 * On physics body apply
 	 * @param entity entity
 	 */
-	virtual void onPhysicsBodyApply(LevelEditorEntity* entity);
+	void onPhysicsBodyApply(LevelEditorEntity* entity);
 
 	/**
 	 * On convex mesh mode changed
 	 * @param disabled disabled
 	 */
-	virtual void onConvexMeshModeChanged(bool disabled);
+	void onConvexMeshModeChanged(bool disabled);
 
 	/**
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(const string& caption, const string& message);
+	void showErrorPopUp(const string& caption, const string& message);
 
 	/**
 	 * On value changed
 	 * @param node node
 	 * @param entity entity
 	 */
-	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
+	void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
 
 	/**
 	 * On action performed
@@ -345,6 +346,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
 
 };

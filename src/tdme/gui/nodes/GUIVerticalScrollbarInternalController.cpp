@@ -1,7 +1,6 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
@@ -13,7 +12,6 @@
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
 using tdme::gui::GUI;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUINode_Border;
@@ -96,7 +94,7 @@ void GUIVerticalScrollbarInternalController::setDraggedY(float draggedY)
 
 void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 		if (this->node->isEventBelongingToNode(event) == true) {
 			state = STATE_MOUSEOVER;
 			this->node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(this->node);
@@ -106,7 +104,7 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 		event->setProcessed(true);
 	} else
 	if (this->node == node && event->getButton() == MOUSE_BUTTON_LEFT) {
-		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			auto barOffsetY = node->computeParentChildrenRenderOffsetYTotal();
 			auto barTop = getBarTop();
 			auto barHeight = getBarHeight();
@@ -126,12 +124,12 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 			}
 			event->setProcessed(true);
 		} else
-		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			mouseYOffset = -1;
 			state = STATE_NONE;
 			event->setProcessed(true);
 		} else
-		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			auto barTop = getBarTop();
 			auto draggedY = event->getY() - barTop - mouseYOffset;
 			setDraggedY(draggedY);

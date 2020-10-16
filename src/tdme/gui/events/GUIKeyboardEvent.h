@@ -4,8 +4,6 @@
 #include <tdme/application/InputDefinitions.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
-using tdme::gui::events::GUIKeyboardEvent_Type;
-
 /**
  * GUI keyboard event
  * @author Andreas Drewke
@@ -41,9 +39,16 @@ public:
 	static constexpr int32_t KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
 	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
+	enum GUIKeyboardEventType {
+		KEYBOARDEVENT_NONE,
+		KEYBOARDEVENT_KEY_PRESSED,
+		KEYBOARDEVENT_KEY_RELEASED,
+		KEYBOARDEVENT_KEY_TYPED
+	};
+
 private:
 	int64_t time;
-	GUIKeyboardEvent_Type* type;
+	GUIKeyboardEventType type { KEYBOARDEVENT_NONE };
 	int32_t keyCode;
 	char keyChar;
 	bool metaDown;
@@ -83,7 +88,7 @@ public:
 	/**
 	 * @return type
 	 */
-	inline GUIKeyboardEvent_Type* getType() {
+	inline GUIKeyboardEventType getType() {
 		return type;
 	}
 
@@ -91,7 +96,7 @@ public:
 	 * Set type
 	 * @param type type
 	 */
-	inline void setType(GUIKeyboardEvent_Type* type) {
+	inline void setType(GUIKeyboardEventType type) {
 		this->type = type;
 	}
 

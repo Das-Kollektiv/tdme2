@@ -406,7 +406,7 @@ void GUIScreenNode::setInputEventHandler(GUIInputEventHandler* inputEventHandler
 	this->inputEventHandler = inputEventHandler;
 }
 
-void GUIScreenNode::delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void GUIScreenNode::delegateActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	for (auto i = 0; i < actionListener.size(); i++) {
 		actionListener[i]->onActionPerformed(type, node);

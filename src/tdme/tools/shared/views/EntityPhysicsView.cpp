@@ -18,9 +18,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -54,9 +52,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -432,7 +428,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
@@ -444,7 +440,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
 				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(entity, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
@@ -454,7 +450,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 				totalDeltaScale.set(0.0, 0.0f, 0.0f);
 				event.setProcessed(true);
 			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 				Group* selectedEntityGroup = nullptr;
 				Entity* selectedEntity = nullptr;
 				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup);
@@ -474,7 +470,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 					event.setProcessed(true);
 				}
 			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;

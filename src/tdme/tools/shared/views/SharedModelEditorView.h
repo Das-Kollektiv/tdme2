@@ -37,10 +37,10 @@ using tdme::tools::shared::views::View;
  * @version $Id$
  */
 class tdme::tools::shared::views::SharedModelEditorView
-	: public virtual View
-	, public virtual PlayableSoundView
-	, public virtual GUIInputEventHandler
-	, protected virtual CameraRotationInputHandlerEventHandler
+	: public View
+	, public PlayableSoundView
+	, public GUIInputEventHandler
+	, protected CameraRotationInputHandlerEventHandler
 {
 protected:
 	Engine* engine { nullptr };
@@ -66,7 +66,7 @@ private:
 	/**
 	 * Init model
 	 */
-	virtual void initModel();
+	void initModel();
 
 	/**
 	 * Load settings
@@ -98,44 +98,54 @@ private:
 	/**
 	 * On rotation event to be overloaded
 	 */
-	virtual void onRotation() override;
+	void onRotation() override;
 
 	/**
 	 * On scale event to be overloaded
 	 */
-	virtual void onScale() override;
+	void onScale() override;
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups
+	 */
+	SharedModelEditorView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~SharedModelEditorView();
 
 	/**
 	 * @return pop up views
 	 */
-	virtual PopUps* getPopUpsViews();
+	PopUps* getPopUpsViews();
 
 	/**
 	 * @return entity
 	 */
-	virtual LevelEditorEntity* getEntity();
+	LevelEditorEntity* getEntity();
 
 	/**
 	 * Set entity
 	 */
-	virtual void setEntity(LevelEditorEntity* entity);
+	void setEntity(LevelEditorEntity* entity);
 
 	/**
 	 * Reset entity
 	 */
-	virtual void resetEntity();
+	void resetEntity();
 
 	/**
 	 * Reimport entity
 	 */
-	virtual void reimportEntity();
+	void reimportEntity();
 
 	/**
 	 * @return current model file name
 	 */
-	virtual const string& getFileName();
+	const string& getFileName();
 
 	/**
 	 * @return LOD level
@@ -153,26 +163,26 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	virtual void loadFile(const string& pathName, const string& fileName);
+	void loadFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Issue reimport model file
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	virtual void reimportModel(const string& pathName, const string& fileName);
+	void reimportModel(const string& pathName, const string& fileName);
 
 	/**
 	 * Triggers saving a map
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	virtual void saveFile(const string& pathName, const string& fileName);
+	void saveFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Issue file reloading
 	 */
-	virtual void reloadFile();
+	void reloadFile();
 
 	/**
 	 * Apply pivot
@@ -180,7 +190,7 @@ public:
 	 * @param y y
 	 * @param z z
 	 */
-	virtual void pivotApply(float x, float y, float z);
+	void pivotApply(float x, float y, float z);
 
 	/**
 	 * Compute normals
@@ -203,12 +213,7 @@ public:
 	/**
 	 * Init GUI elements
 	 */
-	virtual void updateGUIElements();
-
-	/**
-	 * On init additional screens
-	 */
-	virtual void onInitAdditionalScreens();
+	void updateGUIElements();
 
 	// overriden methods
 	void initialize() override;
@@ -216,6 +221,11 @@ public:
 	void deactivate() override;
 	void dispose() override;
 	void playSound(const string& soundId) override;
+
+	/**
+	 * On init additional screens
+	 */
+	virtual void onInitAdditionalScreens();
 
 	/**
 	 * On load model
@@ -232,21 +242,11 @@ public:
 	/**
 	 * Play animation
 	 */
-	virtual void playAnimation(const string& animationId);
+	void playAnimation(const string& animationId);
 
 	/**
 	 * Update rendering options
 	 */
-	virtual void updateRendering();
+	void updateRendering();
 
-	/**
-	 * Public constructor
-	 * @param popUps pop ups
-	 */
-	SharedModelEditorView(PopUps* popUps);
-
-	/**
-	 * Destructor
-	 */
-	~SharedModelEditorView();
 };

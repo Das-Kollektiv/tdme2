@@ -24,7 +24,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntitySoundsView
+class tdme::tools::shared::views::EntitySoundsView final
 {
 private:
 	Engine* engine {  };

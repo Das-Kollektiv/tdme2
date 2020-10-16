@@ -4,9 +4,7 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -22,9 +20,7 @@ using std::to_string;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUIDropDownOptionController;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -187,7 +183,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	auto elementNode  = dynamic_cast< GUIElementNode* >(this->node);
 	if (event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node == this->node && node->isEventBelongingToNode(event) == true) {
-			if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				event->setProcessed(true);
 				toggleOpenState();
 				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
@@ -211,7 +207,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					if (isOpen() == false) {
 						toggleOpenState();
 					} else {
@@ -222,7 +218,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					if (isOpen() == false) {
 						toggleOpenState();
 					} else {
@@ -233,7 +229,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					toggleOpenState();
 				}
 				if (open == false) {

@@ -16,7 +16,7 @@ using std::string;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PopUps;
@@ -26,20 +26,18 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController
+class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController final
 	: public ScreenController
-	, public virtual GUIActionListener
-	, public virtual GUIChangeListener
+	, public GUIActionListener
+	, public GUIChangeListener
 {
-	friend class LevelEditorEntityLibraryScreenController_onValueChanged_1;
-
 private:
-	GUIScreenNode* screenNode {  };
-	GUIElementNode* entityLibraryListBox {  };
-	GUIElementNode* buttonEntityPlace {  };
-	GUIElementNode* buttonLevelEdit {  };
-	PopUps* popUps {  };
-	string modelPath {  };
+	GUIScreenNode* screenNode { nullptr };
+	GUIElementNode* entityLibraryListBox { nullptr };
+	GUIElementNode* buttonEntityPlace { nullptr };
+	GUIElementNode* buttonLevelEdit { nullptr };
+	PopUps* popUps { nullptr };
+	string modelPath;
 
 public:
 	/**
@@ -53,13 +51,13 @@ public:
 	/**
 	 * @return model path
 	 */
-	virtual const string& getModelPath();
+	const string& getModelPath();
 
 	/**
 	 * Set model path
 	 * @param modelPath model path
 	 */
-	virtual void setModelPath(const string& modelPath);
+	void setModelPath(const string& modelPath);
 	void initialize() override;
 	void dispose() override;
 
@@ -67,45 +65,45 @@ public:
 	 * Select entity by entity id
 	 * @param entityId entity id
 	 */
-	virtual void selectEntity(int32_t entityId);
+	void selectEntity(int32_t entityId);
 
 	/**
 	 * Set up complete entity library
 	 */
-	virtual void setEntityLibrary();
+	void setEntityLibrary();
 
 	/**
 	 * On entity selection changed
 	 */
-	virtual void onEntitySelectionChanged();
+	void onEntitySelectionChanged();
 
 	/**
 	 * On edit entity
 	 */
-	virtual void onEditEntity();
+	void onEditEntity();
 
 	/**
 	 * On edit level
 	 */
-	virtual void onEditLevel();
+	void onEditLevel();
 
 	/**
 	 * place object button clicked
 	 */
-	virtual void onPlaceEntity();
+	void onPlaceEntity();
 
 	/**
 	 * place model entity clicked
 	 */
-	virtual void onDeleteEntity();
+	void onDeleteEntity();
 
 	/**
 	 * partition entity
 	 */
-	virtual void onPartitionEntity();
+	void onPartitionEntity();
 
 	// overriden methods
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 };

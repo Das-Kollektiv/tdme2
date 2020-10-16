@@ -129,7 +129,7 @@ void EmptyScreenController::onValueChanged(GUIElementNode* node)
 	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
 }
 
-void EmptyScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void EmptyScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 }

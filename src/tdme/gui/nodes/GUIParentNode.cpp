@@ -7,7 +7,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
@@ -36,7 +35,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -459,7 +457,7 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 		return;
 
 	if (isEventBelongingToNode(event) == true || flow == GUINode_Flow::FLOATING) {
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
 				childrenRenderOffsetX -= event->getWheelX() * 10.0f;
 				float elementWidth = this->computedConstraints.width;

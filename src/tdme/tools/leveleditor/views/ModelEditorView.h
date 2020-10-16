@@ -21,7 +21,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::ModelEditorView
+class tdme::tools::leveleditor::views::ModelEditorView final
 	: public SharedModelEditorView
 {
 public:
@@ -32,11 +32,12 @@ public:
 	ModelEditorView(PopUps* popUps);
 
 	// overriden methods
-	void onSetEntityData() override;
-	void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity) override;
-	void onInitAdditionalScreens() override;
+	virtual void onSetEntityData() override;
+	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity) override;
+	virtual void onInitAdditionalScreens() override;
 
 private:
-	LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */ override;
+	// overriden methods
+	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) override;
 
 };

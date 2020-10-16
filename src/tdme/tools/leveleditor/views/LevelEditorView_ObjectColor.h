@@ -10,7 +10,7 @@ using tdme::tools::leveleditor::views::LevelEditorView;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::LevelEditorView_ObjectColor
+class tdme::tools::leveleditor::views::LevelEditorView_ObjectColor final
 {
 	friend class LevelEditorView;
 

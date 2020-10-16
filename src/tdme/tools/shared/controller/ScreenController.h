@@ -14,6 +14,10 @@ using tdme::gui::nodes::GUIScreenNode;
 class tdme::tools::shared::controller::ScreenController
 {
 public:
+	/**
+	 * Destructor
+	 */
+	virtual ~ScreenController() {}
 
 	/**
 	 * @return screen node

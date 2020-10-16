@@ -29,10 +29,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -103,10 +101,8 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::math::Quaternion;
@@ -363,8 +359,8 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		#if defined(GLFW3) || defined(VUKAN)
 			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) keyShift = isKeyDown;
 			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
@@ -401,8 +397,8 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 
-		if ((event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
-			event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) &&
+		if ((event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED ||
+			event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) &&
 			event.getXUnscaled() >= 0 &&
 			event.getYUnscaled() >= 0) {
 			placeEntityMouseX = event.getXUnscaled();
@@ -411,7 +407,7 @@ void LevelEditorView::handleInputEvents()
 
 		if (event.isProcessed() == true) continue;
 
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (mouseDragging == false) {
 				mouseDragging = true;
 				mouseDownLastX = event.getXUnscaled();
@@ -427,7 +423,7 @@ void LevelEditorView::handleInputEvents()
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				if (pasteMode == true && pasteModeValid == true) {
 					pasteObjects(false);
 					if (keyShift == false) unsetPasteMode();

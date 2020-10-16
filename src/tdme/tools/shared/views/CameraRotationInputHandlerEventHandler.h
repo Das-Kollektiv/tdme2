@@ -10,6 +10,9 @@
  */
 struct tdme::tools::shared::views::CameraRotationInputHandlerEventHandler
 {
+	/**
+	 * Destructor
+	 */
 	virtual ~CameraRotationInputHandlerEventHandler() {}
 
 	/**

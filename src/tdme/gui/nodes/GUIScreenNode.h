@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -21,8 +22,8 @@ using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
@@ -348,7 +349,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 */
-	void delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
+	void delegateActionPerformed(GUIActionListenerType type, GUIElementNode* node);
 
 	/**
 	 * Add change listener

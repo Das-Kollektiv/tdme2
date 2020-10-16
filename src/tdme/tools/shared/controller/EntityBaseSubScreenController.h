@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -16,7 +17,7 @@ using std::string;
 using std::vector;
 
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -30,7 +31,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityBaseSubScreenController
+class tdme::tools::shared::controller::EntityBaseSubScreenController final
 {
 private:
 	static MutableString TEXT_EMPTY;
@@ -60,37 +61,37 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EntityBaseSubScreenController();
+	~EntityBaseSubScreenController();
 
 	/**
 	 * Init
 	 * @param screenNode screen node
 	 */
-	virtual void initialize(GUIScreenNode* screenNode);
+	void initialize(GUIScreenNode* screenNode);
 
 	/**
 	 * Set up general entity data
 	 * @param name name
 	 * @param description description
 	 */
-	virtual void setEntityData(const string& name, const string& description);
+	void setEntityData(const string& name, const string& description);
 
 	/**
 	 * Unset entity data
 	 */
-	virtual void unsetEntityData();
+	void unsetEntityData();
 
 	/**
 	 * On entity data apply
 	 * @param model model
 	 */
-	virtual void onEntityDataApply(LevelEditorEntity* model);
+	void onEntityDataApply(LevelEditorEntity* model);
 
 	/**
 	 * Set up entity property preset ids
 	 * @param entityPresetIds entity property preset ids
 	 */
-	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds); // TODO: std container: maybe use call by reference
+	void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Set up entity properties
@@ -98,54 +99,54 @@ public:
 	 * @param presetId preset id
 	 * @param selectedName selected name
 	 */
-	virtual void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
+	void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
 
 	/**
 	 * Unset entity properties
 	 */
-	virtual void unsetEntityProperties();
+	void unsetEntityProperties();
 
 	/**
 	 * On entity property save
 	 * @param entity entity
 	 */
-	virtual void onEntityPropertySave(LevelEditorEntity* entity);
+	void onEntityPropertySave(LevelEditorEntity* entity);
 
 	/**
 	 * On entity property add
 	 * @param entity entity
 	 */
-	virtual void onEntityPropertyAdd(LevelEditorEntity* entity);
+	void onEntityPropertyAdd(LevelEditorEntity* entity);
 
 	/**
 	 * On entity property remove
 	 * @param entity entity
 	 */
-	virtual void onEntityPropertyRemove(LevelEditorEntity* entity);
+	void onEntityPropertyRemove(LevelEditorEntity* entity);
 
 	/**
 	 * Shows the error pop up
 	 */
-	virtual void showErrorPopUp(const string& caption, const string& message);
+	void showErrorPopUp(const string& caption, const string& message);
 
 	/**
 	 * On entity property preset apply
 	 * @param model model
 	 */
-	virtual void onEntityPropertyPresetApply(LevelEditorEntity* model);
+	void onEntityPropertyPresetApply(LevelEditorEntity* model);
 
 	/**
 	 * Event callback for entity properties selection
 	 * @param entity
 	 */
-	virtual void onEntityPropertiesSelectionChanged(LevelEditorEntity* entity);
+	void onEntityPropertiesSelectionChanged(LevelEditorEntity* entity);
 
 	/**
 	 * On value changed
 	 * @param node node
 	 * @param model model
 	 */
-	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* model);
+	void onValueChanged(GUIElementNode* node, LevelEditorEntity* model);
 
 	/**
 	 * On action performed
@@ -153,6 +154,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
 
 };

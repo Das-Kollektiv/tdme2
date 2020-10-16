@@ -21,7 +21,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -104,7 +104,7 @@ public:
 
 	// overriden methods
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 

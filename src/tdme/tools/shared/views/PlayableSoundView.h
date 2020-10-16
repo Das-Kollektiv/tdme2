@@ -13,6 +13,10 @@ using std::string;
  */
 struct tdme::tools::shared::views::PlayableSoundView
 {
+	/**
+	 * Destructor
+	 */
+	virtual ~PlayableSoundView() {}
 
 	/**
 	 * Play sound
@@ -20,9 +24,4 @@ struct tdme::tools::shared::views::PlayableSoundView
 	 */
 	virtual void playSound(const string& soundId) = 0;
 
-
-	/**
-	 * Destructor
-	 */
-	virtual ~PlayableSoundView() {}
 };

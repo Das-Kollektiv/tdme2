@@ -3,9 +3,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/elements/GUITabsController.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -17,9 +15,7 @@ using tdme::gui::elements::GUITabsHeaderController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUITabController;
 using tdme::gui::elements::GUITabsController;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -151,7 +147,7 @@ void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 {
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
@@ -163,14 +159,14 @@ void GUITabsHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					selectPrevious();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_RIGHT: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					selectNext();
 				}
 			}

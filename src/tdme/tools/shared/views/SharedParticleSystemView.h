@@ -38,14 +38,14 @@ using tdme::tools::shared::views::PopUps;
  * @version $Id$
  */
 class tdme::tools::shared::views::SharedParticleSystemView
-	: public virtual View
-	, public virtual PlayableSoundView
-	, public virtual GUIInputEventHandler
+	: public View
+	, public PlayableSoundView
+	, public GUIInputEventHandler
 	, protected Gizmo
 {
 protected:
-	Engine* engine {  };
-	Audio* audio {  };
+	Engine* engine { nullptr };
+	Audio* audio { nullptr };
 
 private:
 	PopUps* popUps { nullptr };
@@ -91,75 +91,85 @@ private:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups view
+	 */
+	SharedParticleSystemView(PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	~SharedParticleSystemView();
 
 	/**
 	 * Request init particle system
 	 */
-	virtual void initParticleSystemRequest();
+	void initParticleSystemRequest();
 
 	/**
 	 * Request update particle system
 	 */
-	virtual void updateParticleSystemRequest();
+	void updateParticleSystemRequest();
 
 	/**
 	 * @return pop up views
 	 */
-	virtual PopUps* getPopUpsViews();
+	PopUps* getPopUpsViews();
 
 	/**
 	 * @return entity
 	 */
-	virtual LevelEditorEntity* getEntity();
+	LevelEditorEntity* getEntity();
 
 	/**
 	 * Reset view
 	 */
-	virtual void reset();
+	void reset();
 
 	/**
 	 * Set entity
 	 */
-	virtual void setEntity(LevelEditorEntity* entity);
+	void setEntity(LevelEditorEntity* entity);
 
 	/**
 	 * @return particle system index
 	 */
-	virtual int getParticleSystemIndex();
+	int getParticleSystemIndex();
 
 	/**
 	 * Set particle system index, the particle system to edit
 	 * @param idx index
 	 */
-	virtual void setParticleSystemIndex(int idx);
+	void setParticleSystemIndex(int idx);
 
 	/**
 	 * Init particle system
 	 */
-	virtual void initParticleSystem();
+	void initParticleSystem();
 
 	/**
 	 * @return current particle system file name
 	 */
-	virtual const string getFileName();
+	const string getFileName();
 
 	/**
 	 * Issue particle system loading
 	 */
-	virtual void loadFile(const string& pathName, const string& fileName);
+	void loadFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Triggers saving a particle system
 	 */
-	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/**
 	 * Issue file reloading
 	 */
-	virtual void reloadFile();
+	void reloadFile();
 	void handleInputEvents() override;
 
 	/**
@@ -170,18 +180,19 @@ public:
 	/**
 	 * Init GUI elements
 	 */
-	virtual void updateGUIElements();
+	void updateGUIElements();
 
-	/**
-	 * On init additional screens
-	 */
-	virtual void onInitAdditionalScreens();
-
+	// overriden methods
 	void initialize() override;
 	void activate() override;
 	void dispose() override;
 	void deactivate() override;
 	void playSound(const string& soundId) override;
+
+	/**
+	 * On init additional screens
+	 */
+	virtual void onInitAdditionalScreens();
 
 	/**
 	 * On load particle system
@@ -199,14 +210,14 @@ public:
 	 * Update GIZMO
 	 * @param entity level editor entity
 	 */
-	virtual void updateGizmo(LevelEditorEntity* entity);
+	void updateGizmo(LevelEditorEntity* entity);
 
 	/**
 	 * Set GIZMO rotation
 	 * @param entity level editor entity
 	 * @param transformations transformations
 	 */
-	virtual void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+	void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
 
 	/**
 	 * Apply particle system transformations
@@ -215,14 +226,4 @@ public:
 	 */
 	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
 
-	/**
-	 * Public constructor
-	 * @param popUps pop ups view
-	 */
-	SharedParticleSystemView(PopUps* popUps);
-
-	/**
-	 * Destructor
-	 */
-	~SharedParticleSystemView();
 };

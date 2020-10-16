@@ -3,7 +3,6 @@
 #include <set>
 #include <string>
 
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
@@ -31,7 +30,6 @@
 using std::set;
 using std::to_string;
 
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementIgnoreEventsController;

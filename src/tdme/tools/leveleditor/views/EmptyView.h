@@ -25,9 +25,9 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::EmptyView
-	: public virtual View
-	, public virtual GUIInputEventHandler
+class tdme::tools::leveleditor::views::EmptyView final
+	: public View
+	, public GUIInputEventHandler
 {
 private:
 	Engine* engine {  };
@@ -42,7 +42,7 @@ private:
 	/**
 	 * Init entity
 	 */
-	virtual void initModel();
+	void initModel();
 
 public:
 	/**
@@ -54,22 +54,22 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EmptyView();
+	~EmptyView();
 
 	/**
 	 * @return pop up views
 	 */
-	virtual PopUps* getPopUpsViews();
+	PopUps* getPopUpsViews();
 
 	/**
 	 * @return entity
 	 */
-	virtual LevelEditorEntity* getEntity();
+	LevelEditorEntity* getEntity();
 
 	/**
 	 * @return selected entity
 	 */
-	virtual void setEntity(LevelEditorEntity* entity);
+	void setEntity(LevelEditorEntity* entity);
 
 	void handleInputEvents() override;
 
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Init GUI elements
 	 */
-	virtual void updateGUIElements();
+	void updateGUIElements();
 
 	// overriden methods
 	void initialize() override;

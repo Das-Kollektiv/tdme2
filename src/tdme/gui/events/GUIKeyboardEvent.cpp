@@ -1,9 +1,6 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
-
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 
 int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 	#if defined(VULKAN) || defined(GLFW3)
@@ -30,7 +27,7 @@ int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 GUIKeyboardEvent::GUIKeyboardEvent()
 {
 	this->time = -1LL;
-	this->type = GUIKeyboardEvent_Type::KEYBOARDEVENT_NONE;
+	this->type = GUIKeyboardEventType::KEYBOARDEVENT_NONE;
 	this->keyCode = -1;
 	this->keyChar = 0;
 	this->metaDown = false;

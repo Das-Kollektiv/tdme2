@@ -13,7 +13,7 @@ using std::string;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::FileDialogPath
+class tdme::tools::shared::controller::FileDialogPath final
 {
 private:
 	string path;
@@ -27,12 +27,12 @@ public:
 	/**
 	 * @return path
 	 */
-	virtual const string& getPath();
+	const string& getPath();
 
 	/**
 	 * Set path
 	 * @param path path
 	 */
-	virtual void setPath(const string& path);
+	void setPath(const string& path);
 
 };
