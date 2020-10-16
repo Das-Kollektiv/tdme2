@@ -112,14 +112,14 @@ int main(int argc, char** argv)
 	Console::println(string("importtmm 1.9.9"));
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
-	if (argc < 4) {
-		Console::println("Usage: importtmm tmmfile.tmm modelfile.ext bvs-model.ext");
+	if (argc < 3) {
+		Console::println("Usage: importtmm tmmfile.tmm modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	//
 	string tmmFileName = argv[1];
 	string modelFileName = argv[2];
-	string bvsModelFileName = argv[3];
+	string bvsModelFileName = argc >= 4?argv[3]:"";
 	try {
 		LevelEditorEntity* tmm = nullptr;
 		// load model
@@ -176,50 +176,53 @@ int main(int argc, char** argv)
 		// remove references to it
 		Console::println("Removing old bounding volumes");
 		while (tmm->getBoundingVolumeCount() > 0) tmm->removeBoundingVolume(0);
-		// load new convex meshes bv model
-		Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
-		auto bvsModel = ModelReader::read(
-			FileSystem::getInstance()->getPathName(bvsModelFileName),
-			FileSystem::getInstance()->getFileName(bvsModelFileName)
-		);
-		// create to a single convex meshes
-		vector<string> convexMeshFileNames;
-		{
-			auto meshFileName = FileSystem::getInstance()->getFileName(bvsModelFileName);
-			auto meshPathName = FileSystem::getInstance()->getPathName(bvsModelFileName);
-			Object3DModel meshObject3DModel(bvsModel);
-			for (auto i = 0; i < meshObject3DModel.getGroupCount(); i++) {
-				vector<Triangle> groupTriangles;
-				meshObject3DModel.getTriangles(groupTriangles, i);
-				auto convexMeshFileName = StringTools::substring(meshFileName, 0, meshFileName.rfind('.')) + "_cm" + to_string(i) + ".tm";
-				Console::println(
-					"Saving convex mesh model file@" +
-					to_string(i) +
-					": " + convexMeshFileName +
-					", triangles = " + to_string(groupTriangles.size())
-				);
-				auto convexMeshModel = createModel(
-					meshPathName + "/" + convexMeshFileName,
-					groupTriangles
-				);
-				TMWriter::write(convexMeshModel, meshPathName, convexMeshFileName);
-				delete convexMeshModel;
-				convexMeshFileNames.push_back(meshPathName + "/" + convexMeshFileName);
 
+		// load new convex meshes bv model
+		if (bvsModelFileName.empty() == false) {
+			Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
+			auto bvsModel = ModelReader::read(
+				FileSystem::getInstance()->getPathName(bvsModelFileName),
+				FileSystem::getInstance()->getFileName(bvsModelFileName)
+			);
+			// create to a single convex meshes
+			vector<string> convexMeshFileNames;
+			{
+				auto meshFileName = FileSystem::getInstance()->getFileName(bvsModelFileName);
+				auto meshPathName = FileSystem::getInstance()->getPathName(bvsModelFileName);
+				Object3DModel meshObject3DModel(bvsModel);
+				for (auto i = 0; i < meshObject3DModel.getGroupCount(); i++) {
+					vector<Triangle> groupTriangles;
+					meshObject3DModel.getTriangles(groupTriangles, i);
+					auto convexMeshFileName = StringTools::substring(meshFileName, 0, meshFileName.rfind('.')) + "_cm" + to_string(i) + ".tm";
+					Console::println(
+						"Saving convex mesh model file@" +
+						to_string(i) +
+						": " + convexMeshFileName +
+						", triangles = " + to_string(groupTriangles.size())
+					);
+					auto convexMeshModel = createModel(
+						meshPathName + "/" + convexMeshFileName,
+						groupTriangles
+					);
+					TMWriter::write(convexMeshModel, meshPathName, convexMeshFileName);
+					delete convexMeshModel;
+					convexMeshFileNames.push_back(meshPathName + "/" + convexMeshFileName);
+
+				}
 			}
-		}
-		// add to tmm
-		for (auto& convexMeshFileName: convexMeshFileNames) {
-			Console::println(
-				"Adding convex mesh bounding volume@" +
-				to_string(tmm->getBoundingVolumeCount()) +
-				": " + convexMeshFileName
-			);
-			tmm->addBoundingVolume(tmm->getBoundingVolumeCount(), new LevelEditorEntityBoundingVolume(tmm->getBoundingVolumeCount(), tmm));
-			tmm->getBoundingVolume(tmm->getBoundingVolumeCount() - 1)->setupConvexMesh(
-				FileSystem::getInstance()->getPathName(convexMeshFileName),
-				FileSystem::getInstance()->getFileName(convexMeshFileName)
-			);
+			// add to tmm
+			for (auto& convexMeshFileName: convexMeshFileNames) {
+				Console::println(
+					"Adding convex mesh bounding volume@" +
+					to_string(tmm->getBoundingVolumeCount()) +
+					": " + convexMeshFileName
+				);
+				tmm->addBoundingVolume(tmm->getBoundingVolumeCount(), new LevelEditorEntityBoundingVolume(tmm->getBoundingVolumeCount(), tmm));
+				tmm->getBoundingVolume(tmm->getBoundingVolumeCount() - 1)->setupConvexMesh(
+					FileSystem::getInstance()->getPathName(convexMeshFileName),
+					FileSystem::getInstance()->getFileName(convexMeshFileName)
+				);
+			}
 		}
 		Console::println("Saving tmm: " + tmmFileName);
 		ModelMetaDataFileExport::doExport(
