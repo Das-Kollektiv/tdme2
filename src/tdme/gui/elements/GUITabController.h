@@ -27,6 +27,7 @@ using tdme::utilities::MutableString;
  */
 class tdme::gui::elements::GUITabController final: public GUIElementController
 {
+	friend class GUITab;
 	friend class GUITabsController;
 	friend class GUITabsHeaderController;
 
@@ -46,6 +47,11 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 */
+	GUITabController(GUINode* node);
+
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
@@ -56,11 +62,15 @@ private:
 	 */
 	void setSelected(bool selected);
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
+	/**
+	 * Select this tab
+	 */
+	void selectTab();
 
 public:
+	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
@@ -72,13 +82,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-	/**
-	 * Select this tab
-	 */
-	void selectTab();
-
-public:
-	GUITabController(GUINode* node);
 
 };

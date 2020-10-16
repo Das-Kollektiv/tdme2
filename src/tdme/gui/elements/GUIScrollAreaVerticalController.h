@@ -24,7 +24,18 @@ class tdme::gui::elements::GUIScrollAreaVerticalController final
 {
 	friend class GUIScrollAreaVertical;
 
+private:
+	MutableString value;
+	GUIActionListener* actionListener { nullptr };
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIScrollAreaVerticalController(GUINode* node);
+
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -38,15 +49,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-private:
-	MutableString value;
-	GUIActionListener* actionListener { nullptr };
-
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIScrollAreaVerticalController(GUINode* node);
 
 };

@@ -19,5 +19,8 @@ class tdme::gui::elements::GUIButtonController final
 	friend class GUIImageButton;
 
 private:
+	/**
+	 * Constructor
+	 */
 	GUIButtonController(GUINode* node);
 };

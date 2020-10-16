@@ -25,6 +25,16 @@ class tdme::gui::elements::GUIScrollAreaHorizontalController final
 	friend class GUIScrollAreaHorizontal;
 	friend class GUIScrollAreaHorizontalController_initialize_1;
 
+private:
+	MutableString value;
+	GUIActionListener* actionListener { nullptr };
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIScrollAreaHorizontalController(GUINode* node);
+
 public:
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
@@ -40,13 +50,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	MutableString value;
-	GUIActionListener* actionListener { nullptr };
-
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIScrollAreaHorizontalController(GUINode* node);
 };

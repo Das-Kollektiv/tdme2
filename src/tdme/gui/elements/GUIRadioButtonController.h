@@ -43,6 +43,17 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIRadioButtonController(GUINode* node);
+
+	/**
+	 * Initialize
+	 */
+	void init();
+
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
@@ -52,13 +63,8 @@ private:
 	 */
 	void select();
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIRadioButtonController(GUINode* node);
-
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -73,6 +79,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	void init();
 };

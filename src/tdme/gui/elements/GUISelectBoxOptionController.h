@@ -41,6 +41,12 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUISelectBoxOptionController(GUINode* node);
+
+	/**
 	 * @return is selected
 	 */
 	bool isSelected();
@@ -55,17 +61,10 @@ private:
 	 */
 	void unselect();
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUISelectBoxOptionController(GUINode* node);
-
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
-
-public:
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

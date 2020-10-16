@@ -32,14 +32,14 @@ private:
 	static string NAME;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIScrollAreaVertical();
+
+	// overriden methods
 	const string& getName() override;
 	const string getTemplate(const string& pathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
-
-	/**
-	 * Public constructor
-	 * @throws tdme::os::filesystem::FileSystemException
-	 */
-	GUIScrollAreaVertical();
 };

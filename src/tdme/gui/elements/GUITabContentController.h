@@ -35,6 +35,12 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUITabContentController(GUINode* node);
+
+	/**
 	 * @return is checked
 	 */
 	bool isSelected();
@@ -45,17 +51,10 @@ private:
 	 */
 	void setSelected(bool selected);
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUITabContentController(GUINode* node);
-
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
-
-	// overridden methods
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

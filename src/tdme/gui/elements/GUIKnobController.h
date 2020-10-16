@@ -21,7 +21,26 @@ class tdme::gui::elements::GUIKnobController final: public GUIElementController
 {
 	friend class GUIKnob;
 
+private:
+	GUINode* knobNode { nullptr };
+	bool disabled { false };
+	float valueFloat { 0.0f };
+	MutableString value;
+	int mouseLastX;
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIKnobController(GUINode* node);
+
+	/**
+	 * Update knob
+	 */
+	void updateKnob();
+
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -36,17 +55,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	GUIKnobController(GUINode* node);
-
-	/**
-	 * Update knob
-	 */
-	void updateKnob();
-
-	GUINode* knobNode { nullptr };
-	bool disabled { false };
-	float valueFloat { 0.0f };
-	MutableString value;
-	int mouseLastX;
 };

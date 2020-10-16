@@ -43,6 +43,12 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUISelectBoxMultipleOptionController(GUINode* node);
+
+	/**
 	 * @return is selected
 	 */
 	bool isSelected();
@@ -62,6 +68,10 @@ private:
 	 */
 	void toggle();
 
+	/**
+	 * @return is focussed
+	 */
+	bool isFocussed();
 
 	/**
 	 * Focus
@@ -73,22 +83,10 @@ private:
 	 */
 	void unfocus();
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUISelectBoxMultipleOptionController(GUINode* node);
-
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
-
-	/**
-	 * @return is focussed
-	 */
-	bool isFocussed();
-
-	// overriden methods
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

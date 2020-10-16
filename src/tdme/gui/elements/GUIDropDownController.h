@@ -40,21 +40,24 @@ private:
 	static string CONDITION_CLOSED;
 	vector<GUINode*> childControllerNodes;
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
-	bool isOpen_;
+	bool open;
 	bool disabled;
 	GUIParentNode* dropDownNode { nullptr };
 	GUIElementNode* arrowNode { nullptr };
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
 private:
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIDropDownController(GUINode* node);
+
+	/**
+	 * Initialize
+	 */
+	void init();
 
 	/**
 	 * @return drop down open state
@@ -91,13 +94,13 @@ private:
 	 */
 	void selectPrevious();
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIDropDownController(GUINode* node);
-
 public:
+	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -107,6 +110,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	void init();
 };

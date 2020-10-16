@@ -48,7 +48,7 @@ GUIDropDownController::GUIDropDownController(GUINode* node)
 
 void GUIDropDownController::init()
 {
-	isOpen_ = false;
+	open = false;
 	dropDownNode = nullptr;
 	arrowNode = nullptr;
 	textElementNode = nullptr;
@@ -78,8 +78,8 @@ void GUIDropDownController::initialize()
 	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
 	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
 	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
 
 	//
 	GUIElementController::initialize();
@@ -96,7 +96,7 @@ void GUIDropDownController::postLayout()
 
 bool GUIDropDownController::isOpen()
 {
-	return isOpen_;
+	return open;
 }
 
 void GUIDropDownController::unselect()
@@ -113,11 +113,11 @@ void GUIDropDownController::unselect()
 
 void GUIDropDownController::toggleOpenState()
 {
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().remove(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	isOpen_ = isOpen_ == true ? false : true;
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().remove(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().remove(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	open = open == true ? false : true;
+	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
 }
 
 void GUIDropDownController::determineDropDownOptionControllers()
@@ -193,7 +193,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
 			}
 		} else {
-			if (isOpen_ == true) {
+			if (open == true) {
 				auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
 				if (node == this->node && innerNode->isEventBelongingToNode(event) == false) {
 					event->setProcessed(true);
@@ -236,7 +236,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 					toggleOpenState();
 				}
-				if (isOpen_ == false) {
+				if (open == false) {
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}
 			}
@@ -249,7 +249,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 void GUIDropDownController::tick()
 {
 	GUIElementController::tick();
-	if (isOpen_ == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast< GUIElementNode* >(this->node));
+	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast< GUIElementNode* >(this->node));
 }
 
 void GUIDropDownController::onFocusGained()

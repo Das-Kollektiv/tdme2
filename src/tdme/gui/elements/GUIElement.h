@@ -23,6 +23,15 @@ class tdme::gui::elements::GUIElement
 {
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIElement();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUIElement();
 
 	/**
 	 * @return name
@@ -52,13 +61,4 @@ public:
 	 */
 	virtual GUINodeController* createController(GUINode* node) = 0;
 
-	/**
-	 * Public constructor
-	 */
-	GUIElement();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~GUIElement();
 };

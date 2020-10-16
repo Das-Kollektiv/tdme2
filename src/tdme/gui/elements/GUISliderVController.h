@@ -21,7 +21,25 @@ class tdme::gui::elements::GUISliderVController final: public GUIElementControll
 {
 	friend class GUISliderV;
 
+private:
+	GUINode* sliderNode { nullptr };
+	bool disabled { false };
+	float valueFloat { 0.0f };
+	MutableString value { };
+
+	/**
+	 * Public constructor
+	 * @param node node
+	 */
+	GUISliderVController(GUINode* node);
+
+	/**
+	 * Update slider
+	 */
+	void updateSlider();
+
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -36,20 +54,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	/**
-	 * Public constructor
-	 * @param node node
-	 */
-	GUISliderVController(GUINode* node);
-
-	/**
-	 * Update slider
-	 */
-	void updateSlider();
-
-	GUINode* sliderNode { nullptr };
-	bool disabled { false };
-	float valueFloat { 0.0f };
-	MutableString value { };
 };

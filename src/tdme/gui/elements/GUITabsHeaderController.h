@@ -35,14 +35,12 @@ private:
 	bool focus;
 	MutableString value;
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUITabsHeaderController(GUINode* node);
 
-private:
 	/**
 	 * @return has focus
 	 */
@@ -78,13 +76,13 @@ private:
 	 */
 	void selectCurrent();
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUITabsHeaderController(GUINode* node);
-
 public:
+	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;

@@ -40,19 +40,17 @@ private:
 	bool disabled;
 	MutableString value;
 
-public:
-	bool isDisabled() override;
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUISelectBoxMultipleController(GUINode* node);
 
 	/**
-	 * Set disabled
-	 * @param disabled disabled
+	 * Init
 	 */
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
+	void init();
 
-private:
 	/**
 	 * Unselect all nodes
 	 */
@@ -94,6 +92,12 @@ private:
 	void toggle();
 
 public:
+	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -103,15 +107,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUISelectBoxMultipleController(GUINode* node);
-
-	/**
-	 * Init
-	 */
-	void init();
 };

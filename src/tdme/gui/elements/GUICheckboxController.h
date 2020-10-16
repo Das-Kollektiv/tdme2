@@ -38,6 +38,12 @@ private:
 	MutableString value;
 
 	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUICheckboxController(GUINode* node);
+
+	/**
 	 * @return is checked
 	 */
 	bool isChecked();
@@ -48,13 +54,8 @@ private:
 	 */
 	void setChecked(bool checked);
 
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUICheckboxController(GUINode* node);
-
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
