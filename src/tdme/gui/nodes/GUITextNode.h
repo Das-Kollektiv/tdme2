@@ -49,12 +49,6 @@ private:
 
 protected:
 	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
-	/**
 	 * Constructor
 	 * @param screenNode screen node
 	 * @param parentNode parent node
@@ -96,6 +90,10 @@ protected:
 		const string& color,
 		const MutableString& text
 	);
+
+	// overridden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
 
 public:
 	// overriden methods

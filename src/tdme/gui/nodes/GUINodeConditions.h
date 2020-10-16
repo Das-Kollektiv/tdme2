@@ -38,6 +38,11 @@ private:
 	void updateElementNode(const vector<string>& conditions) const;
 
 public:
+	/**
+	 * Public constructor
+	 * @param node node
+	 */
+	GUINodeConditions(GUIElementNode* node = nullptr);
 
 	/**
 	 * @return conditions
@@ -83,9 +88,4 @@ public:
 	 */
 	bool removeAll();
 
-	/**
-	 * Public constructor
-	 * @param node node
-	 */
-	GUINodeConditions(GUIElementNode* node = nullptr);
 };

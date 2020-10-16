@@ -33,12 +33,27 @@ private:
 	int32_t mouseYOffset;
 	MutableString value;
 
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIVerticalScrollbarInternalController(GUINode* node);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
+	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void tick() override;
+	void onFocusGained() override;
+	void onFocusLost() override;
+	bool hasValue() override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
 
 	/**
 	 * @return state
@@ -62,22 +77,5 @@ private:
 	 * @param draggedY dragged y
 	 */
 	virtual void setDraggedY(float draggedY);
-
-public:
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
-	void tick() override;
-	void onFocusGained() override;
-	void onFocusLost() override;
-	bool hasValue() override;
-	const MutableString& getValue() override;
-	void setValue(const MutableString& value) override;
-
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIVerticalScrollbarInternalController(GUINode* node);
 
 };

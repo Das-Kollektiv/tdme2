@@ -44,12 +44,6 @@ protected:
 	bool isContentNode() override;
 
 public:
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
-
-	// overriden methods
-	void render(GUIRenderer* guiRenderer) override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -92,4 +86,10 @@ public:
 		const GUIColor& barColorMouseOver,
 		const GUIColor& barColorDragging
 	);
+
+	// overriden methods
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
+	void render(GUIRenderer* guiRenderer) override;
+
 };

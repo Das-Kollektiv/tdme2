@@ -33,14 +33,12 @@ using tdme::gui::nodes::GUIScreenNode;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUIPanelNode
+class tdme::gui::nodes::GUIPanelNode final
 	: public GUILayoutNode
 {
 	friend class tdme::gui::GUIParser;
 
 protected:
-	const string getNodeType() override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -82,6 +80,9 @@ protected:
 		const GUINodeConditions& hideOn,
 		GUILayoutNode_Alignment* alignment
 	);
+
+	// overriden methods
+	const string getNodeType() override;
 
 public:
 	// overriden methods

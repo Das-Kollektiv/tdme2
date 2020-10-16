@@ -57,13 +57,6 @@ private:
 	int32_t maxLength;
 
 protected:
-
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -110,9 +103,16 @@ protected:
 		int32_t maxLength
 	);
 
+	// overriden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
+
 public:
+	// overriden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
+	void dispose() override;
+	void render(GUIRenderer* guiRenderer) override;
 
 	/**
 	 * @return font
@@ -128,9 +128,5 @@ public:
 	 * @return max length
 	 */
 	int32_t getMaxLength();
-
-	// overriden methods
-	void dispose() override;
-	void render(GUIRenderer* guiRenderer) override;
 
 };

@@ -43,14 +43,11 @@ private:
 	int64_t draggingTickLast;
 	MutableString value;
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
-private:
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIInputInternalController(GUINode* node);
 
 	/**
 	 * @return index
@@ -72,18 +69,24 @@ private:
 	 */
 	CursorMode getCursorMode();
 
-public:
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-
-private:
-
 	/**
 	 * Check and correct offset
 	 */
 	void checkOffset();
 
 public:
+	/**
+	 * Reset cursor index and offset
+	 */
+	void reset();
+
 	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
 	void onFocusGained() override;
@@ -91,17 +94,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-	/**
-	 * Reset cursor index and offset
-	 */
-	void reset();
-
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIInputInternalController(GUINode* node);
 
 };

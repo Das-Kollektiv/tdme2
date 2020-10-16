@@ -37,7 +37,15 @@ private:
 	MutableString value;
 	int64_t timeLastClicked { -1LL };
 
+protected:
+	/**
+	 * Constructor
+	 * @param node node
+	 */
+	GUIElementController(GUINode* node);
+
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -51,7 +59,4 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-protected:
-	GUIElementController(GUINode* node);
 };

@@ -62,12 +62,6 @@ private:
 	int heightLast;
 protected:
 	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
-	/**
 	 * Constructor
 	 * @param screenNode screen node
 	 * @param parentNode parent node
@@ -110,10 +104,17 @@ protected:
 		const MutableString& text
 	);
 
+	// overriden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
+
 public:
+	// overriden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void computeContentAlignment() override;
+	void dispose() override;
+	void render(GUIRenderer* guiRenderer) override;
 
 	/**
 	 * @return text
@@ -128,7 +129,4 @@ public:
 	 */
 	void setText(const MutableString& text);
 
-	// overriden methods
-	void dispose() override;
-	void render(GUIRenderer* guiRenderer) override;
 };

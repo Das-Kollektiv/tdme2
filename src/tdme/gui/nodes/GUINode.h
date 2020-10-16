@@ -140,6 +140,46 @@ protected:
 	bool haveOutEffect;
 
 	/**
+	 * Public constructor
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param backgroundImageEffectColorMul background image effect color mul
+	 * @param backgroundImageEffectColorAdd background image effect color add
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 */
+	GUINode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUIColor& backgroundImageEffectColorMul,
+		const GUIColor& backgroundImageEffectColorAdd,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn
+	);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUINode();
+	/**
 	 * @return node type
 	 */
 	virtual const string getNodeType() = 0;
@@ -220,47 +260,6 @@ protected:
 	 * @return compute children render offset Y total
 	 */
 	virtual float computeParentChildrenRenderOffsetYTotal();
-
-	/**
-	 * Public constructor
-	 * @param screenNode screen node
-	 * @param parentNode parent node
-	 * @param id id
-	 * @param flow flow
-	 * @param alignments alignments
-	 * @param requestedConstraints requested constraints
-	 * @param backgroundColor background color
-	 * @param backgroundImage background image
-	 * @param backgroundImageScale9Grid background image scale 9 grid
-	 * @param backgroundImageEffectColorMul background image effect color mul
-	 * @param backgroundImageEffectColorAdd background image effect color add
-	 * @param border border
-	 * @param padding padding
-	 * @param showOn show on
-	 * @param hideOn hide on
-	 */
-	GUINode(
-		GUIScreenNode* screenNode,
-		GUIParentNode* parentNode,
-		const string& id,
-		GUINode_Flow* flow,
-		const GUINode_Alignments& alignments,
-		const GUINode_RequestedConstraints& requestedConstraints,
-		const GUIColor& backgroundColor,
-		const string& backgroundImage,
-		const GUINode_Scale9Grid& backgroundImageScale9Grid,
-		const GUIColor& backgroundImageEffectColorMul,
-		const GUIColor& backgroundImageEffectColorAdd,
-		const GUINode_Border& border,
-		const GUINode_Padding& padding,
-		const GUINodeConditions& showOn,
-		const GUINodeConditions& hideOn
-	);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~GUINode();
 
 	/**
 	 * On set condition

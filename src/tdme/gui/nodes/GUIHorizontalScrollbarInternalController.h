@@ -34,23 +34,6 @@ private:
 	int32_t mouseXOffset;
 	MutableString value;
 
-protected:
-	GUIHorizontalScrollbarInternalController(GUINode* node);
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
-	/**
-	 * @return state
-	 */
-	virtual State getState();
-
-private:
-
 	/**
 	 * @return bar width
 	 */
@@ -67,7 +50,25 @@ private:
 	 */
 	virtual void setDraggedX(float draggedX);
 
+protected:
+	/**
+	 * Constructor
+	 * @param node node
+	 */
+	GUIHorizontalScrollbarInternalController(GUINode* node);
+
 public:
+	/**
+	 * @return state
+	 */
+	virtual State getState();
+
+	// overriden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;

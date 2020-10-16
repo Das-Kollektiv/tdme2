@@ -35,13 +35,6 @@ class tdme::gui::nodes::GUISpaceNode final
 	friend class tdme::gui::GUIParser;
 
 protected:
-
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -77,6 +70,10 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn
 	);
+
+	// overridden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
 
 public:
 	// overriden methods

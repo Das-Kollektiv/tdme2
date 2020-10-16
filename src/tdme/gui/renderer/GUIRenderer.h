@@ -74,7 +74,21 @@ private:
 	float guiEffectOffsetX;
 	float guiEffectOffsetY;
 
+	/**
+	 * Initialize
+	 */
+	void init();
+
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIRenderer(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~GUIRenderer();
 
 	/**
 	 * Set GUI
@@ -399,15 +413,4 @@ public:
 	 */
 	void render();
 
-	/**
-	 * Public constructor
-	 */
-	GUIRenderer(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~GUIRenderer();
-private:
-	void init();
 };

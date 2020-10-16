@@ -31,6 +31,11 @@ private:
 	bool isRunning;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	GUIShader(Renderer* renderer);
 
 	/**
 	 * @return if initialized and ready to use
@@ -68,9 +73,4 @@ public:
 	 */
 	void updateTextureMatrix();
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	GUIShader(Renderer* renderer);
 };

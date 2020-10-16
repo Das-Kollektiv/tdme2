@@ -63,26 +63,6 @@ protected:
 	GUIParentNode_Overflow* overflowY;
 
 	/**
-	 * Layout
-	 */
-	void layout() override;
-
-	/**
-	 * Layout sub nodes
-	 */
-	virtual void layoutSubNodes();
-
-	/**
-	 * Compute horizontal children alignment
-	 */
-	virtual void computeHorizontalChildrenAlignment();
-
-	/**
-	 * Compute vertical children alignment
-	 */
-	virtual void computeVerticalChildrenAlignment();
-
-	/**
 	 * Constructor
 	 * @param screenNode screen node
 	 * @param parentNode parent node
@@ -122,6 +102,26 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn
 	);
+
+	/**
+	 * Layout
+	 */
+	void layout() override;
+
+	/**
+	 * Layout sub nodes
+	 */
+	virtual void layoutSubNodes();
+
+	/**
+	 * Compute horizontal children alignment
+	 */
+	virtual void computeHorizontalChildrenAlignment();
+
+	/**
+	 * Compute vertical children alignment
+	 */
+	virtual void computeVerticalChildrenAlignment();
 
 public:
 

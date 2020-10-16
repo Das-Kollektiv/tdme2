@@ -30,15 +30,6 @@ private:
 
 protected:
 	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-	void layoutSubNodes() override;
-	void setTop(int32_t top) override;
-	void setLeft(int32_t left) override;
-
-	/**
 	 * Constructor
 	 * @param screenNode screen node
 	 * @param parentNode parent node
@@ -81,11 +72,18 @@ protected:
 		GUILayoutNode_Alignment* alignment
 	);
 
+	/**
+	 * @return node type
+	 */
+	const string getNodeType() override;
+	bool isContentNode() override;
+	void layoutSubNodes() override;
+	void setTop(int32_t top) override;
+	void setLeft(int32_t left) override;
+
 public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
-
-public:
 
 	/**
 	 * Create alignment
@@ -94,6 +92,4 @@ public:
 	 */
 	static GUILayoutNode_Alignment* createAlignment(const string& alignment);
 
-private:
-	friend class GUILayoutNode_Alignment;
 };

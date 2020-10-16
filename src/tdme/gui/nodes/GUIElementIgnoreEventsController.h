@@ -32,7 +32,14 @@ private:
 	bool disabled;
 	MutableString value;
 
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIElementIgnoreEventsController(GUINode* node);
+
 public:
+	// overriden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -47,10 +54,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIElementIgnoreEventsController(GUINode* node);
 };

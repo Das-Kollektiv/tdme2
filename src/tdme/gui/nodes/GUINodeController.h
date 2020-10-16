@@ -18,7 +18,7 @@ using tdme::utilities::MutableString;
 class tdme::gui::nodes::GUINodeController
 {
 protected:
-	GUINode* node {  };
+	GUINode* node { nullptr };
 
 	/**
 	 * Private constructor

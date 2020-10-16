@@ -150,13 +150,6 @@ public:
 	const vector<GUINode*>& getFloatingNodes();
 
 protected:
-	bool isContentNode() override;
-
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-
 	/**
 	 * Constructor
 	 * @param applicationRootPath application root path
@@ -206,6 +199,10 @@ protected:
 	 * Destructor
 	 */
 	~GUIScreenNode();
+
+	// overriden methods
+	bool isContentNode() override;
+	const string getNodeType() override;
 
 private:
 	/**
