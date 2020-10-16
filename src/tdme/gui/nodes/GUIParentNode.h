@@ -202,7 +202,7 @@ public:
 	 */
 	virtual void getChildControllerNodes(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
 
-	// overriden methods
+	// overridden methods
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;

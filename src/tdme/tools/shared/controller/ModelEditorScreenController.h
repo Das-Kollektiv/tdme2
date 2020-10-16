@@ -181,7 +181,7 @@ public:
 	 */
 	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
 
-	// overriden method
+	// overridden method
 	GUIScreenNode* getScreenNode() override;
 
 	/**

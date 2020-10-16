@@ -58,7 +58,7 @@ public:
 	 */
 	virtual ~SingleThreadedRenderer();
 
-	// overriden methods
+	// overridden methods
 	virtual int32_t getLighting(void* context) override;
 	virtual void setLighting(void* context, int32_t lighting) override;
 	virtual Matrix2D3x3& getTextureMatrix(void* context) override;

@@ -78,7 +78,7 @@ public:
 	 */
 	LightingShaderBaseImplementation(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;

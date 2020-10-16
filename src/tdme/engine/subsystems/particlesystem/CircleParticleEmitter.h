@@ -60,7 +60,7 @@ public:
 	 */
 	CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
 
-	// overriden methods
+	// overridden methods
 	inline const Vector3& getCenter() const override {
 		return centerTransformed;
 	}

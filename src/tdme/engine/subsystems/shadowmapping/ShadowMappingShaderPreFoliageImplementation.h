@@ -36,7 +36,7 @@ public:
 	 */
 	~ShadowMappingShaderPreFoliageImplementation();
 
-	// overriden methods
+	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
 

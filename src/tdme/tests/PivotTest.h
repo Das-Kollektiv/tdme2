@@ -42,7 +42,7 @@ public:
 	 */
 	PivotTest();
 
-	// overriden methods
+	// overridden methods
 	void display();
 	void dispose();
 	void initialize();

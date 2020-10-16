@@ -77,7 +77,7 @@ public:
 	 */
 	GL3Renderer();
 
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;

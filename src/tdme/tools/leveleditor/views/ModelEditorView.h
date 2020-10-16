@@ -31,13 +31,13 @@ public:
 	 */
 	ModelEditorView(PopUps* popUps);
 
-	// overriden methods
+	// overridden methods
 	virtual void onSetEntityData() override;
 	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity) override;
 	virtual void onInitAdditionalScreens() override;
 
 private:
-	// overriden methods
+	// overridden methods
 	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) override;
 
 };

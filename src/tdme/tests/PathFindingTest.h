@@ -86,7 +86,7 @@ public:
 	 */
 	~PathFindingTest();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

@@ -162,7 +162,7 @@ public:
 		return entities;
 	}
 
-	// overriden methods
+	// overridden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void initialize() override;

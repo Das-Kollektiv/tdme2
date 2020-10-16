@@ -41,7 +41,7 @@ public:
 	 */
 	GLES2Renderer();
 
-	// overriden methods
+	// overridden methods
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;
@@ -142,7 +142,7 @@ public:
 	void initGuiMode() override;
 	void doneGuiMode() override;
 
-	// overriden methods for skinning on GPU via compute shader
+	// overridden methods for skinning on GPU via compute shader
 	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
 	void memoryBarrier() override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;

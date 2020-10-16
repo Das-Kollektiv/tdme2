@@ -145,7 +145,7 @@ public:
 		this->atlasSize = atlasSize;
 	}
 
-	// overriden methods
+	// overridden methods
 	inline virtual void onDelete() override;
 
 private:

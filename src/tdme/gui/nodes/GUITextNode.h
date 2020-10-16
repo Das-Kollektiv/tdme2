@@ -96,7 +96,7 @@ protected:
 	bool isContentNode() override;
 
 public:
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
@@ -113,7 +113,7 @@ public:
 	 */
 	void setText(const MutableString& text);
 
-	// overriden methods
+	// overridden methods
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 };

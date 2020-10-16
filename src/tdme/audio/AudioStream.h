@@ -46,7 +46,7 @@ protected:
 	 */
 	virtual ~AudioStream();
 
-	// overriden methods
+	// overridden methods
 	virtual bool initialize() override;
 	virtual void update() override;
 	virtual void dispose() override;
@@ -66,7 +66,7 @@ public:
 	 */
 	virtual void setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize = 32768);
 
-	// overriden methods
+	// overridden methods
 	virtual bool isPlaying() override;
 	virtual void rewind() override;
 	virtual void play() override;

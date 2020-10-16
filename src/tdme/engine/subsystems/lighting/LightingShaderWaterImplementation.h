@@ -33,7 +33,7 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;

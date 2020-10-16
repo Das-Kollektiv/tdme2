@@ -92,7 +92,7 @@ public:
 		this->colorMulEnd = colorMulEnd;
 	}
 
-	// overriden methods
+	// overridden methods
 	void apply(GUIRenderer* guiRenderer) override;
 
 };

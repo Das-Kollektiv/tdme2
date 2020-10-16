@@ -208,7 +208,7 @@ public:
 	 */
 	void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
 
-	// overriden methods
+	// overridden methods
 	inline void initialize() override {
 		Object3DBase::initialize();
 	}

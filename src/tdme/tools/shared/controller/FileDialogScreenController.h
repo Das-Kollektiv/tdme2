@@ -102,7 +102,7 @@ public:
 	 */
 	void close();
 
-	// overriden methods
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;

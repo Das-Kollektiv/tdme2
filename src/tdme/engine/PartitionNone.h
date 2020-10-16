@@ -33,7 +33,7 @@ private:
 	VectorIteratorMultiple<Entity*> arrayListIteratorMultiple;
 
 private:
-	// overriden methods
+	// overridden methods
 	void reset() override;
 	void addEntity(Entity* entity) override;
 	void updateEntity(Entity* entity) override;
@@ -45,7 +45,7 @@ public:
 	 */
 	PartitionNone();
 
-	// overriden methods
+	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 
 };

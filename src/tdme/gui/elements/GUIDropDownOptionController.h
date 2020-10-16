@@ -60,7 +60,7 @@ private:
 	void unselect();
 
 public:
-	// overriden methods
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;

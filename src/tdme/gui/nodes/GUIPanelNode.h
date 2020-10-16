@@ -81,11 +81,11 @@ protected:
 		GUILayoutNode_Alignment* alignment
 	);
 
-	// overriden methods
+	// overridden methods
 	const string getNodeType() override;
 
 public:
-	// overriden methods
+	// overridden methods
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 

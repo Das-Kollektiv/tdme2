@@ -62,7 +62,7 @@ public:
 	 */
 	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
 
-	// overriden methods
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;

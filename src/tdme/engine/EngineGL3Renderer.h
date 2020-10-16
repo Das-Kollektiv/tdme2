@@ -21,7 +21,7 @@ public:
 	 */
 	EngineGL3Renderer(Engine* engine);
 
-	// overriden methods
+	// overridden methods
 	void onUpdateProjectionMatrix(void* context) override;
 	void onUpdateCameraMatrix(void* context) override;
 	void onUpdateModelViewMatrix(void* context) override;

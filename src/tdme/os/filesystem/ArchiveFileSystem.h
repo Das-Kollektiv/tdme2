@@ -65,7 +65,7 @@ public:
 	 */
 	const string& getArchiveFileName();
 
-	// overriden methods
+	// overridden methods
 	const string getFileName(const string& path, const string& fileName) override;
 	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
 	bool isPath(const string& pathName) override;

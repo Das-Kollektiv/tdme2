@@ -59,7 +59,7 @@ public:
 	 */
 	virtual ~SphereParticleEmitter();
 
-	// overriden methods
+	// overridden methods
 	inline const Vector3& getCenter() const override {
 		return sphereTransformed->getCenter();
 	}

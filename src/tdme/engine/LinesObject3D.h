@@ -73,7 +73,7 @@ public:
 	 */
 	LinesObject3D(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
-	// overriden methods
+	// overridden methods
 	void setEngine(Engine* engine) override;
 
 	inline void setRenderer(Renderer* renderer) override {

@@ -58,7 +58,7 @@ public:
 	 */
 	virtual ~BoundingBoxParticleEmitter();
 
-	// overriden methods
+	// overridden methods
 	inline const Vector3& getCenter() const override {
 		return obbTransformed->getCenter();
 	}

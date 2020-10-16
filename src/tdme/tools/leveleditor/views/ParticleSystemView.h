@@ -30,13 +30,13 @@ public:
 	 */
 	ParticleSystemView(PopUps* popUps);
 
-	// overriden methods
+	// overridden methods
 	virtual void onInitAdditionalScreens() override;
 	virtual void onSetEntityData() override;
 	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
 
 private:
-	// overriden methods
+	// overridden methods
 	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) override;
 
 };

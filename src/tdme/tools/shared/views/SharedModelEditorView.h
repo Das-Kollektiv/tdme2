@@ -202,7 +202,7 @@ public:
 	 */
 	void optimizeModel();
 
-	// overriden methods
+	// overridden methods
 	void handleInputEvents() override;
 
 	/**
@@ -215,7 +215,7 @@ public:
 	 */
 	void updateGUIElements();
 
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;

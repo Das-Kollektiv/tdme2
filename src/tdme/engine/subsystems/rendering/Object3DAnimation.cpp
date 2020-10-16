@@ -102,8 +102,8 @@ Object3DAnimation::~Object3DAnimation() {
 			delete it.second;
 		}
 	}
-	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
-		delete overridenTransformationsMatrixIt.second;
+	for (auto overriddenTransformationsMatrixIt: overriddenTransformationsMatrices) {
+		delete overriddenTransformationsMatrixIt.second;
 	}
 }
 
@@ -251,9 +251,9 @@ float Object3DAnimation::getOverlayAnimationTime(const string& id)
 
 const Matrix4x4 Object3DAnimation::getGroupTransformationsMatrix(const string& id)
 {
-	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
-	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
-		return *overridenTransformationsMatrixIt->second;
+	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
+	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
+		return *overriddenTransformationsMatrixIt->second;
 	} else {
 		auto transformationMatrixIt = transformationsMatrices[0].find(id);
 		if (transformationMatrixIt != transformationsMatrices[0].end()) {
@@ -266,11 +266,11 @@ const Matrix4x4 Object3DAnimation::getGroupTransformationsMatrix(const string& i
 
 void Object3DAnimation::setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix)
 {
-	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
-	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
-		*overridenTransformationsMatrixIt->second = matrix;
+	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
+	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
+		*overriddenTransformationsMatrixIt->second = matrix;
 	} else {
-		overridenTransformationsMatrices[id] = new Matrix4x4(matrix);
+		overriddenTransformationsMatrices[id] = new Matrix4x4(matrix);
 	}
 	//
 	updateGroupLists();
@@ -278,10 +278,10 @@ void Object3DAnimation::setGroupTransformationsMatrix(const string& id, const Ma
 
 void Object3DAnimation::unsetGroupTransformationsMatrix(const string& id)
 {
-	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
-	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
-		delete overridenTransformationsMatrixIt->second;
-		overridenTransformationsMatrices.erase(overridenTransformationsMatrixIt);
+	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
+	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
+		delete overriddenTransformationsMatrixIt->second;
+		overriddenTransformationsMatrices.erase(overriddenTransformationsMatrixIt);
 	}
 	//
 	updateGroupLists();
@@ -296,10 +296,10 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 		auto matrix = new Matrix4x4();
 		matrix->identity();
 		matrices[group->getId()] = matrix;
-		// overriden matrix
-		Matrix4x4* overridenTransformationsMatrix = nullptr;
-		auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(group->getId());
-		if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) overridenTransformationsMatrix = overridenTransformationsMatrixIt->second;
+		// overridden matrix
+		Matrix4x4* overriddenTransformationsMatrix = nullptr;
+		auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(group->getId());
+		if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) overriddenTransformationsMatrix = overriddenTransformationsMatrixIt->second;
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
@@ -308,7 +308,7 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 		groupList.push_back({
 			.groupId = group->getId(),
 			.groupTransformationsMatrix = &group->getTransformationsMatrix(),
-			.groupOverridenTransformationsMatrix = overridenTransformationsMatrix,
+			.groupOverriddenTransformationsMatrix = overriddenTransformationsMatrix,
 			.groupAnimation = group->getAnimation(),
 			.groupAnimationState = animationState,
 			.parentTransformationsMatrix = parentTransformationsMatrix,
@@ -327,17 +327,17 @@ void Object3DAnimation::updateGroupList(vector<FlattenedGroup>& groupList, int& 
 	for (auto it: groups) {
 		// put and associate transformation matrices with group
 		auto group = it.second;
-		// overriden matrix
-		Matrix4x4* overridenTransformationsMatrix = nullptr;
-		auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(group->getId());
-		if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) overridenTransformationsMatrix = overridenTransformationsMatrixIt->second;
+		// overridden matrix
+		Matrix4x4* overriddenTransformationsMatrix = nullptr;
+		auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(group->getId());
+		if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) overriddenTransformationsMatrix = overriddenTransformationsMatrixIt->second;
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
 			animationState = overlayAnimationIt->second;
 		}
 		// update group list
-		groupList[groupIdx].groupOverridenTransformationsMatrix = overridenTransformationsMatrix;
+		groupList[groupIdx].groupOverriddenTransformationsMatrix = overriddenTransformationsMatrix;
 		groupList[groupIdx].groupAnimationState = animationState;
 		groupIdx++;
 		// do sub groups
@@ -396,8 +396,8 @@ void Object3DAnimation::computeTransformationsMatrices(vector<FlattenedGroup>& g
 				transformationsMatrix.set(animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
-			if (flattenedGroup.groupOverridenTransformationsMatrix != nullptr) {
-				transformationsMatrix.set(*flattenedGroup.groupOverridenTransformationsMatrix);
+			if (flattenedGroup.groupOverriddenTransformationsMatrix != nullptr) {
+				transformationsMatrix.set(*flattenedGroup.groupOverriddenTransformationsMatrix);
 			} else {
 				// no animation matrix, set up local transformation matrix up as group matrix
 				transformationsMatrix.set(*flattenedGroup.groupTransformationsMatrix);

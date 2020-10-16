@@ -32,10 +32,10 @@ public:
 	/**
 	 * Creates a bounding box from given model
 	 * @param model model
-	 * @param overridenGroupTransformationsMatrices overriden group transformations matrices
+	 * @param overriddenGroupTransformationsMatrices overridden group transformations matrices
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overridenGroupTransformationsMatrices = map<string, Matrix4x4*>());
+	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenGroupTransformationsMatrices = map<string, Matrix4x4*>());
 
 	/**
 	 * Invert normals of a model

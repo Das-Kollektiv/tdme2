@@ -182,7 +182,7 @@ public:
 	 */
 	void updateGUIElements();
 
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void activate() override;
 	void dispose() override;

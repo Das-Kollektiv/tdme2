@@ -87,7 +87,7 @@ public:
 		const GUIColor& barColorDragging
 	);
 
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void render(GUIRenderer* guiRenderer) override;

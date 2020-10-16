@@ -166,7 +166,7 @@ public:
 	 */
 	Object3D(const string& id, Model* model);
 
-	// overriden methds
+	// overridden methds
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void initialize() override;

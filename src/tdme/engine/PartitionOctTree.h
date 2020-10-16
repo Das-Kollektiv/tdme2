@@ -57,7 +57,7 @@ private:
 	unordered_set<string> visibleEntitiesById;
 	PartitionOctTree_PartitionTreeNode treeRoot;
 
-	// overriden methods
+	// overridden methods
 	void reset() override;
 	void addEntity(Entity* entity) override;
 	inline void updateEntity(Entity* entity) override {
@@ -234,7 +234,7 @@ public:
 	 */
 	PartitionOctTree();
 
-	// overriden methods
+	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 
 	/**

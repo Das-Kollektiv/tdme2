@@ -45,7 +45,7 @@ public:
 	void stop() override;
 
 protected:
-	// overriden methods
+	// overridden methods
 	bool initialize() override;
 	void update() override;
 	void dispose() override;

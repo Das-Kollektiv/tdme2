@@ -108,7 +108,7 @@ public:
 	 */
 	virtual ~ObjectParticleSystemInternal();
 
-	// overriden methods
+	// overridden methods
 	inline ParticleEmitter* getEmitter() override {
 		return emitter;
 	}

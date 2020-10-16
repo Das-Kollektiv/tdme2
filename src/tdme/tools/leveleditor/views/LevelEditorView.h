@@ -228,7 +228,7 @@ public:
 	 */
 	void unselectLightPresets();
 
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;

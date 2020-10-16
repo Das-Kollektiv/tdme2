@@ -58,7 +58,7 @@ private:
 	void setTabContentSelected(const string& id);
 
 public:
-	// overriden methods
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;

@@ -103,12 +103,12 @@ protected:
 		int32_t maxLength
 	);
 
-	// overriden methods
+	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;

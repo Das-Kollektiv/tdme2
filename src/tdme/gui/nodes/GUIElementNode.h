@@ -225,7 +225,7 @@ public:
 	 */
 	GUINodeConditions& getActiveConditions();
 
-	// overriden methods
+	// overridden methods
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	/**

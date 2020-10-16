@@ -116,7 +116,7 @@ public:
 	 */
 	void initialize();
 
-	// overriden methods
+	// overridden methods
 	inline ParticleEmitter* getEmitter() override {
 		return emitter;
 	}

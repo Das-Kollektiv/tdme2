@@ -45,7 +45,7 @@ public:
 	 */
 	LevelEditorEntityLibraryScreenController(PopUps* popUps);
 
-	// overriden methods
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 
 	/**
@@ -102,7 +102,7 @@ public:
 	 */
 	void onPartitionEntity();
 
-	// overriden methods
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 

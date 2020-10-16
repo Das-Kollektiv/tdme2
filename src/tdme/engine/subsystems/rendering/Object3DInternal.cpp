@@ -99,22 +99,22 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 
 void Object3DInternal::setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
 	Object3DBase::setGroupTransformationsMatrix(id, matrix);
-	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
-		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
+	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
+		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }
 
 void Object3DInternal::unsetGroupTransformationsMatrix(const string& id) {
 	Object3DBase::unsetGroupTransformationsMatrix(id);
-	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
-		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
+	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
+		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }

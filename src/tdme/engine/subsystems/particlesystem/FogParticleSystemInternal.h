@@ -235,7 +235,7 @@ public:
 		return textureVerticalSprites;
 	}
 
-	// overriden methods
+	// overridden methods
 	void update() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;

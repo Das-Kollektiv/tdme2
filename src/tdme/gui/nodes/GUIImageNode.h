@@ -115,7 +115,7 @@ protected:
 	bool isContentNode() override;
 
 public:
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;

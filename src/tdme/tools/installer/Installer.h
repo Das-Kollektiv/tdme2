@@ -85,7 +85,7 @@ public:
 	 */
 	Installer();
 
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void dispose() override;
 	void reshape(int32_t width, int32_t height) override;

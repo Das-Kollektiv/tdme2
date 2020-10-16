@@ -62,7 +62,7 @@ protected:
 	struct FlattenedGroup {
 		const string groupId;
 		const Matrix4x4* groupTransformationsMatrix;
-		Matrix4x4* groupOverridenTransformationsMatrix;
+		Matrix4x4* groupOverriddenTransformationsMatrix;
 		const Animation* groupAnimation;
 		AnimationState* groupAnimationState;
 		const Matrix4x4* parentTransformationsMatrix;
@@ -76,7 +76,7 @@ protected:
 
 	Model* model;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
-	map<string, Matrix4x4*> overridenTransformationsMatrices;
+	map<string, Matrix4x4*> overriddenTransformationsMatrices;
 	vector<map<string, Matrix4x4*>> transformationsMatrices;
 	bool hasSkinning;
 	bool hasAnimations;

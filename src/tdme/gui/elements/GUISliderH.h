@@ -38,7 +38,7 @@ public:
 	 */
 	GUISliderH();
 
-	// overriden methods
+	// overridden methods
 	const string& getName() override;
 	const string getTemplate(const string& pathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
