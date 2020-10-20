@@ -433,7 +433,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 			} else {
 				if (gltfBufferType == "POSITION") {
 					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": POSITION: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 						continue;
 					}
 					haveVertices = true;
@@ -446,7 +446,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				} else
 				if (gltfBufferType == "NORMAL") {
 					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": NORMAL: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 						continue;
 					}
 					haveNormals = true;
@@ -459,7 +459,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				} else
 				if (gltfBufferType == "TEXCOORD_0") {
 					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": TEXTCOORD_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 						continue;
 					}
 					haveTextureCoordinates = true;
@@ -475,7 +475,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				} else
 				if (gltfBufferType == "WEIGHTS_0") {
 					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": WEIGHTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 						continue;
 					}
 					auto start = weights.size();
@@ -486,15 +486,24 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 					}
 				} else
 				if (gltfBufferType == "JOINTS_0") {
-					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+						auto start = joints.size();
+						if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
+						const uint8_t* bufferData = (const uint8_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+						for (auto i = 0; i < attributeAccessor.count * 4; i++) {
+							joints[start + i] = bufferData[i];
+						}
+					} else
+					if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+						auto start = joints.size();
+						if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
+						const uint16_t* bufferData = (const uint16_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+						for (auto i = 0; i < attributeAccessor.count * 4; i++) {
+							joints[start + i] = bufferData[i];
+						}
+					} else {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": JOINTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 						continue;
-					}
-					auto start = joints.size();
-					if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
-					const uint16_t* bufferData = (const uint16_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
-					for (auto i = 0; i < attributeAccessor.count * 4; i++) {
-						joints[start + i] = bufferData[i];
 					}
 				} else {
 					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid buffer type: " + gltfBufferType);
