@@ -241,8 +241,12 @@ public:
 
 	/**
 	 * Play animation
+	 * @param baseAnimationId base animation id
+	 * @param overlay1AnimationId overlay 1 animation id
+	 * @param overlay2AnimationId overlay 2 animation id
+	 * @param overlay3AnimationId overlay 3 animation id
 	 */
-	void playAnimation(const string& animationId);
+	void playAnimation(const string& baseAnimationId, const string& overlay1AnimationId = string(), const string& overlay2AnimationId = string(), const string& overlay3AnimationId = string());
 
 	/**
 	 * Update rendering options

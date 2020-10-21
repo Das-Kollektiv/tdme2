@@ -245,6 +245,11 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationSpeed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_speed"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
+		previewAnimationsBaseDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_base_dropdown"));
+		previewAnimationsOverlay1DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay1_dropdown"));
+		previewAnimationsOverlay2DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay2_dropdown"));
+		previewAnimationsOverlay3DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay3_dropdown"));
+		buttonPreviewApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_preview_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
 		buttonToolsOptimizeModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_optimizemodel"));
@@ -1455,6 +1460,132 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationApply->getController()->setDisabled(true);
 }
 
+void ModelEditorScreenController::setPreview() {
+	previewAnimationsBaseDropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
+	buttonPreviewApply->getController()->setDisabled(false);
+
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetPreview();
+		return;
+	}
+
+	{
+		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsBaseDropDown->getScreenNode()->getNodeById(previewAnimationsBaseDropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML =
+			animationsDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			previewAnimationsBaseDropDown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		auto animationsDropDownInnerNode1 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay1DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay1DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode2 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay2DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay2DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode3 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay3DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay3DropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			animationsDropDownInnerNode1->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay1DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode2->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay2DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode3->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay3DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+}
+
+void ModelEditorScreenController::onPreviewApply() {
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto baseAnimationName = previewAnimationsBaseDropDown->getController()->getValue().getString();
+	auto overlay1AnimationName = previewAnimationsOverlay1DropDown->getController()->getValue().getString();
+	auto overlay2AnimationName = previewAnimationsOverlay2DropDown->getController()->getValue().getString();
+	auto overlay3AnimationName = previewAnimationsOverlay3DropDown->getController()->getValue().getString();
+	try {
+		view->playAnimation(baseAnimationName, overlay1AnimationName, overlay2AnimationName, overlay3AnimationName);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorScreenController::unsetPreview() {
+	previewAnimationsBaseDropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay1DropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay2DropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay3DropDown->getController()->setDisabled(true);
+	buttonPreviewApply->getController()->setDisabled(true);
+}
+
+
 void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
 {
 	this->statsOpaqueFaces->getController()->setValue(MutableString(statsOpaqueFaces));
@@ -1814,6 +1945,9 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_animations_animation_apply") == 0) {
 			onAnimationApply();
+		} else
+		if (node->getId().compare("button_preview_apply") == 0) {
+			onPreviewApply();
 		} else
 		if (node->getId().compare("button_tools_computenormals") == 0) {
 			onToolsComputeNormal();

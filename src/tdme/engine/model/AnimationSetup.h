@@ -56,6 +56,13 @@ public:
 	}
 
 	/**
+	 * @return if animation set up is a overlay animation setup
+	 */
+	inline bool isOverlayAnimationSetup() {
+		return overlayFromGroupId.empty() == false;
+	}
+
+	/**
 	 * @return start frame
 	 */
 	inline int32_t getStartFrame() {

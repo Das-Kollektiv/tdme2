@@ -130,6 +130,11 @@ private:
 	GUIElementNode* animationsAnimationSpeed { nullptr };
 	GUIElementNode* animationsAnimationName { nullptr };
 	GUIElementNode* animationsAnimationApply { nullptr };
+	GUIElementNode* previewAnimationsBaseDropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay1DropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay2DropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay3DropDown { nullptr };
+	GUIElementNode* buttonPreviewApply { nullptr };
 	GUIElementNode* buttonToolsComputeNormals { nullptr };
 	GUIElementNode* buttonToolsOptimizeModel { nullptr };
 	GUIElementNode* statsOpaqueFaces { nullptr };
@@ -386,6 +391,21 @@ public:
 	 * Unset animations
 	 */
 	void unsetAnimations();
+
+	/**
+	 * Set preview
+	 */
+	void setPreview();
+
+	/**
+	 * On preview apply
+	 */
+	void onPreviewApply();
+
+	/**
+	 * Unset preview
+	 */
+	void unsetPreview();
 
 	/**
 	 * Set up model statistics

@@ -358,6 +358,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
+		modelEditorScreenController->setPreview();
 		modelEditorScreenController->setTools();
 		entitySoundsView->setSounds(entity);
 	} else {
@@ -373,6 +374,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();
+		modelEditorScreenController->unsetPreview();
 		modelEditorScreenController->unsetTools();
 		entitySoundsView->unsetSounds();
 	}
@@ -516,11 +518,15 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 	return nullptr;
 }
 
-void SharedModelEditorView::playAnimation(const string& animationId) {
+void SharedModelEditorView::playAnimation(const string& baseAnimationId, const string& overlay1AnimationId, const string& overlay2AnimationId, const string& overlay3AnimationId) {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object != nullptr) {
 		audio->removeEntity("sound");
-		object->setAnimation(animationId);
+		object->removeOverlayAnimations();
+		object->setAnimation(baseAnimationId);
+		if (overlay1AnimationId.empty() == false) object->addOverlayAnimation(overlay1AnimationId);
+		if (overlay2AnimationId.empty() == false) object->addOverlayAnimation(overlay2AnimationId);
+		if (overlay3AnimationId.empty() == false) object->addOverlayAnimation(overlay3AnimationId);
 	}
 }
 
