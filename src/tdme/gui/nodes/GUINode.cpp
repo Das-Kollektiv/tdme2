@@ -482,6 +482,23 @@ void GUINode::render(GUIRenderer* guiRenderer)
 
 	if (shouldRender() == false) return;
 
+	// floating nodes should always be in screen constraints
+	// if this does not seem to be feasible we can add a property for this
+	if (flow == GUINode_Flow::FLOATING) {
+		if (computedConstraints.left < 0) {
+			setLeft(0);
+		} else
+		if (computedConstraints.left + computedConstraints.width > screenNode->getScreenWidth()) {
+			setLeft(screenNode->getScreenWidth() - computedConstraints.width);
+		}
+		if (computedConstraints.top < 0) {
+			setTop(0);
+		} else
+		if (computedConstraints.top + computedConstraints.height > screenNode->getScreenHeight()) {
+			setTop(screenNode->getScreenHeight() - computedConstraints.height);
+		}
+	}
+
 	vector<Action*> actions;
 	for (auto& effectIt: effects) {
 		auto effect = effectIt.second;
