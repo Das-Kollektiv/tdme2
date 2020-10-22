@@ -501,9 +501,10 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index) {
+Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
 
+	auto physicsType = overrideType != nullptr?overrideType:levelEditorEntity->getPhysics()->getType();
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
@@ -523,7 +524,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 		levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
 		Object3DModel terrainModel(levelEditorEntity->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -532,7 +533,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -542,7 +543,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -562,7 +563,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -571,7 +572,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -581,7 +582,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -598,14 +599,14 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	return nullptr;
 }
 
-Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index) {
+Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index);
+	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
 void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

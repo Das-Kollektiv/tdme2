@@ -23,6 +23,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::MutableString;
@@ -268,9 +269,10 @@ public:
 	 * @param transformations transformations
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
+	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1);
+	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1, LevelEditorEntityPhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
@@ -279,9 +281,10 @@ public:
 	 * @param translation translation
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
+	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1);
+	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, LevelEditorEntityPhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Add level to physics world
