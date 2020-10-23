@@ -2,10 +2,10 @@
 
 uniform sampler2D diffuseTextureUnits[16];
 
-flat in int vsTextureIndex;
-flat in int vsSpriteIndex;
+flat in uint vsTextureIndex;
+flat in uint vsSpriteIndex;
 flat in vec4 vsColor;
-flat in ivec2 vsSpriteSheetDimension;
+flat in uvec2 vsSpriteSheetDimension;
 flat in vec4 vsEffectColorMul;
 flat in vec4 vsEffectColorAdd;
 

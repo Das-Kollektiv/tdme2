@@ -263,6 +263,7 @@
             - Vulkan
               - glslang
               - OGLCompilersDLL
+              - simple_vulkan_synchronization
               - spirv
               - VulkanMemoryAllocator
             - zlib

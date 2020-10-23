@@ -5,11 +5,11 @@ precision highp int;
 
 // layout
 layout (location = 0) in vec3 inVertex;
-layout (location = 1) in int inTextureIndex;
-layout (location = 2) in int inSpriteIndex;
+layout (location = 1) in uint inTextureIndex;
+layout (location = 2) in uint inSpriteIndex;
 layout (location = 3) in vec4 inColor;
 layout (location = 5) in float inPointSize;
-layout (location = 6) in ivec2 inSpriteSheetDimensions;
+layout (location = 6) in uvec2 inSpriteSheetDimensions;
 layout (location = 10) in vec4 inEffectColorMul;
 layout (location = 11) in vec4 inEffectColorAdd;
 
@@ -21,10 +21,10 @@ uniform float projectionMatrixXx;
 uniform float projectionMatrixYy;
 
 // will be passed to fragment shader
-flat out int vsTextureIndex;
-flat out int vsSpriteIndex;
+flat out uint vsTextureIndex;
+flat out uint vsSpriteIndex;
 flat out vec4 vsColor;
-flat out ivec2 vsSpriteSheetDimension;
+flat out uvec2 vsSpriteSheetDimension;
 flat out vec4 vsEffectColorMul;
 flat out vec4 vsEffectColorAdd;
 

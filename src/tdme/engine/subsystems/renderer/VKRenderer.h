@@ -5,6 +5,7 @@
 
 #include <ext/vulkan/spirv/GlslangToSpv.h>
 #include <ext/vulkan/vma/src/VmaUsage.h>
+#include <ext/vulkan/svs/thsvs_simpler_vulkan_synchronization.h>
 
 #include <array>
 #include <list>
@@ -101,7 +102,7 @@ private:
 			uint32_t size;
 			int32_t texture_unit;
 		};
-		map<string, uniform_type> uniforms;
+		unordered_map<string, uniform_type*> uniforms;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
@@ -126,7 +127,7 @@ private:
 		unordered_map<string, pipeline_struct> pipelines;
 		vector<int32_t> shader_ids;
 		vector<shader_type*> shaders;
-		map<int32_t, string> uniforms;
+		unordered_map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
 		vector<bool> uniform_buffers_stored;
 		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
@@ -150,7 +151,10 @@ private:
 		VkFormat format { VK_FORMAT_UNDEFINED };
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
-		VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
+		VkImageAspectFlags aspect_mask { 0 };
+		array<ThsvsAccessType, 2> access_types { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
+		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
@@ -164,7 +168,7 @@ private:
 	};
 
 	struct swapchain_buffer_type {
-		VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
+		ThsvsImageLayout image_layout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
@@ -202,7 +206,7 @@ private:
 			struct texture {
 				VkSampler sampler;
 				VkImageView view;
-				VkImageLayout image_layout;
+				VkImageLayout layout;
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
 			array<VkBuffer, 10> vertex_buffers = {
@@ -224,7 +228,7 @@ private:
 			struct texture {
 				VkSampler sampler;
 				VkImageView view;
-				VkImageLayout image_layout;
+				VkImageLayout layout;
 			};
 			array<VkBuffer, 10> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -244,7 +248,7 @@ private:
 			struct texture {
 				VkSampler sampler;
 				VkImageView view;
-				VkImageLayout image_layout;
+				VkImageLayout layout;
 			};
 			array<VkBuffer, 4> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
@@ -344,11 +348,11 @@ private:
 	int32_t buffer_idx { 1 };
 	int32_t texture_idx { 1 };
 	int32_t framebuffer_idx { 1 };
-	map<int32_t, program_type> programs;
-	map<int32_t, shader_type> shaders;
-	map<int32_t, buffer_object> buffers;
-	map<int32_t, texture_object> textures;
-	map<int32_t, framebuffer_object> framebuffers;
+	unordered_map<int32_t, program_type*> programs;
+	unordered_map<int32_t, shader_type*> shaders;
+	unordered_map<int32_t, buffer_object*> buffers;
+	unordered_map<int32_t, texture_object*> textures;
+	unordered_map<int32_t, framebuffer_object*> framebuffers;
 
 	ReadWriteLock buffers_rwlock;
 	ReadWriteLock textures_rwlock;
@@ -367,7 +371,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -400,11 +404,11 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
-	// overridden methods
+	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel = 0, uint32_t levelCount = 1);
-	uint32_t getMipLevels(int32_t textureWidth, int32_t textureHeight);
-	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
+	void setImageLayout(int contextIdx, texture_object* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel = 0, uint32_t levelCount = 1);
+	uint32_t getMipLevels(Texture* texture);
+	void prepareTextureImage(int contextIdx, struct texture_object* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(buffer_object* bufferObject, uint32_t& size);
