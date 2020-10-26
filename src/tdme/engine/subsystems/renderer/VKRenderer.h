@@ -168,7 +168,8 @@ private:
 	};
 
 	struct swapchain_buffer_type {
-		ThsvsImageLayout image_layout { THSVS_IMAGE_LAYOUT_OPTIMAL };
+		array<ThsvsAccessType, 2> access_types { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};

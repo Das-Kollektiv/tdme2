@@ -54,7 +54,6 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
-#include <tdme/utilities/HexEncDec.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
@@ -119,7 +118,6 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::Buffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
-using tdme::utilities::HexEncDec;
 using tdme::utilities::Integer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
@@ -263,21 +261,50 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	err = vkBeginCommandBuffer(context.draw_cmds[bufferId][context.front_face_index], &cmd_buf_info);
 	assert(!err);
 
-	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
-	// happens to the previous contents of the image
-	VkImageMemoryBarrier image_memory_barrier = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = nullptr,
-		.srcAccessMask = 0,
-		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, // swapchain_buffers[current_buffer].image_layout, // TODO: a.drewke
-		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = swapchain_buffers[current_buffer].image,
-		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
-	};
-	vkCmdPipelineBarrier(context.draw_cmds[bufferId][context.front_face_index], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0, nullptr, 1, &image_memory_barrier);
+	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_COLOR_ATTACHMENT_WRITE, THSVS_ACCESS_NONE };
+	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
+
+	// check if we need a change at all
+	if (swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout) {
+		ThsvsImageBarrier svsImageBarrier = {
+			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = swapchain_buffers[current_buffer].access_types.data(),
+			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pNextAccesses = nextAccessTypes.data(),
+			.prevLayout = swapchain_buffers[current_buffer].svsLayout,
+			.nextLayout = nextLayout,
+			.discardContents = true,
+			.srcQueueFamilyIndex = 0,
+			.dstQueueFamilyIndex = 0,
+			.image = swapchain_buffers[current_buffer].image,
+			.subresourceRange = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			}
+		};
+		VkImageMemoryBarrier vkImageMemoryBarrier;
+		VkPipelineStageFlags srcStages;
+		VkPipelineStageFlags dstStages;
+		thsvsGetVulkanImageMemoryBarrier(
+			svsImageBarrier,
+			&srcStages,
+			&dstStages,
+			&vkImageMemoryBarrier
+		);
+
+		//
+		VkResult err;
+
+		//
+		vkCmdPipelineBarrier(context.draw_cmds[bufferId][context.front_face_index], srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+
+		//
+		swapchain_buffers[current_buffer].access_types = nextAccessTypes;
+		swapchain_buffers[current_buffer].svsLayout = nextLayout;
+	}
 
 	//
 	context.draw_cmd_started[bufferId][context.front_face_index] = true;
@@ -392,21 +419,6 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_object* textureOb
 	// check if we need a change at all
 	if (textureObject->access_types == nextAccessTypes && textureObject->svsLayout == nextLayout) return;
 
-	/*
-	string imageHex;
-	HexEncDec::encodeInt((uint64_t)textureObject->image, imageHex);
-
-	Console::println(
-		to_string(textureObject->id) + "| " +
-		imageHex + ": svs: " +
-		to_string(static_cast<uint32_t>(textureObject->access_types[1] != THSVS_ACCESS_NONE?2:1)) + " | " +
-		to_string(static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1)) + " | " +
-		to_string(textureObject->access_types[0]) + " / " + to_string(textureObject->access_types[1]) + " | " +
-		to_string(nextAccessTypes[0]) + " / " + to_string(nextAccessTypes[1]) + ": " +
-		to_string(textureObject->type)
-	);
-	*/
-
 	ThsvsImageBarrier svsImageBarrier = {
 		.prevAccessCount = static_cast<uint32_t>(textureObject->access_types[1] != THSVS_ACCESS_NONE?2:1),
 		.pPrevAccesses = textureObject->access_types.data(),
@@ -414,7 +426,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_object* textureOb
 		.pNextAccesses = nextAccessTypes.data(),
 		.prevLayout = textureObject->svsLayout,
 		.nextLayout = nextLayout,
-		.discardContents = false, //discardContent,
+		.discardContents = discardContent,
 		.srcQueueFamilyIndex = 0,
 		.dstQueueFamilyIndex = 0,
 		.image = textureObject->image,
@@ -435,23 +447,6 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_object* textureOb
 		&dstStages,
 		&vkImageMemoryBarrier
 	);
-
-	/*
-	string srcStagesHex;
-	HexEncDec::encodeInt(srcStages, srcStagesHex);
-	string dstStagesHex;
-	HexEncDec::encodeInt(dstStages, dstStagesHex);
-
-	Console::println(
-		imageHex + ": vk: " +
-		to_string(static_cast<uint32_t>(vkImageMemoryBarrier.oldLayout)) + " -> " +
-		to_string(static_cast<uint32_t>(vkImageMemoryBarrier.newLayout)) + " | " +
-		to_string(static_cast<uint32_t>(vkImageMemoryBarrier.srcAccessMask)) + " -> " +
-		to_string(static_cast<uint32_t>(vkImageMemoryBarrier.dstAccessMask)) + " | " +
-		srcStagesHex + " -> " +
-		dstStagesHex
-	);
-	*/
 
 	//
 	VkResult err;
@@ -1506,7 +1501,6 @@ void VKRenderer::initializeFrameBuffers() {
 	assert(window_framebuffers);
 
 	for (i = 0; i < swapchain_image_count; i++) {
-		swapchain_buffers[i].image_layout = THSVS_IMAGE_LAYOUT_GENERAL;
 		attachments[0] = swapchain_buffers[i].view;
 		err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
 		assert(!err);
@@ -1625,15 +1619,21 @@ void VKRenderer::finishFrame()
 	}
 
 	// transitition to present
-	{
-		prepareSetupCommandBuffer(0);
-		VkImageMemoryBarrier image_memory_barrier = {
-			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-			.pNext = nullptr,
-			.srcAccessMask = 0,
-			.dstAccessMask = 0,
-			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, // TODO: a.drewke, swapchain_buffers[current_buffer].image_layout,
-			.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+	prepareSetupCommandBuffer(0);
+
+	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_PRESENT, THSVS_ACCESS_NONE };
+	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
+
+	// check if we need a change at all
+	if (swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout) {
+		ThsvsImageBarrier svsImageBarrier = {
+			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = swapchain_buffers[current_buffer].access_types.data(),
+			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pNextAccesses = nextAccessTypes.data(),
+			.prevLayout = swapchain_buffers[current_buffer].svsLayout,
+			.nextLayout = nextLayout,
+			.discardContents = false,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
 			.image = swapchain_buffers[current_buffer].image,
@@ -1645,22 +1645,27 @@ void VKRenderer::finishFrame()
 				.layerCount = 1
 			}
 		};
-		vkCmdPipelineBarrier(
-			contexts[0].setup_cmd_inuse,
-			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-			0,
-			0,
-			nullptr,
-			0,
-			nullptr,
-			1,
-			&image_memory_barrier
+		VkImageMemoryBarrier vkImageMemoryBarrier;
+		VkPipelineStageFlags srcStages;
+		VkPipelineStageFlags dstStages;
+		thsvsGetVulkanImageMemoryBarrier(
+			svsImageBarrier,
+			&srcStages,
+			&dstStages,
+			&vkImageMemoryBarrier
 		);
+
+		//
+		VkResult err;
+
+		//
+		prepareSetupCommandBuffer(0);
+		vkCmdPipelineBarrier(contexts[0].setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 		finishSetupCommandBuffer(0);
 
 		//
-		// TODO: a.drewke, swapchain_buffers[current_buffer].image_layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		swapchain_buffers[current_buffer].access_types = nextAccessTypes;
+		swapchain_buffers[current_buffer].svsLayout = nextLayout;
 	}
 
 	//
