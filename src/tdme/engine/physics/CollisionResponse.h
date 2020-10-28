@@ -86,7 +86,7 @@ public:
 	 * @param idx idx
 	 * @return
 	 */
-	inline CollisionResponse_Entity* getEntityAt(int32_t idx) {
+	inline CollisionResponse_Entity* getEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return nullptr;
 		return &entities[idx];
 	}
@@ -96,7 +96,7 @@ public:
 	 * @param idx idx
 	 * @return
 	 */
-	inline CollisionResponse* selectEntityAt(int32_t idx) {
+	inline CollisionResponse* selectEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return this;
 		selectedEntity = &entities[idx];
 		return this;
@@ -135,9 +135,9 @@ public:
 	}
 
 	/**
-	 * @return hit points count
+	 * @return hit point count
 	 */
-	inline int32_t getHitPointsCount() {
+	inline int32_t getHitPointCount() {
 		if (selectedEntity == nullptr) return 0;
 		return selectedEntity->hitPoints.size();
 	}
@@ -147,7 +147,7 @@ public:
 	 * @param i i
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3* getHitPointAt(int32_t i) {
+	inline Vector3* getHitPoint(int32_t i) {
 		if (selectedEntity == nullptr) return nullptr;
 		return &selectedEntity->hitPoints[i];
 	}

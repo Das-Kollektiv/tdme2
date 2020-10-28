@@ -90,7 +90,7 @@ public:
 	 * @param i i
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3& getHitPointAt(int32_t i) {
+	inline Vector3& getHitPoint(int32_t i) {
 		return hitPoints[i];
 	}
 
