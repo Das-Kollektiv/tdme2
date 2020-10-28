@@ -110,7 +110,7 @@ public:
 	 * @param angle angle
 	 */
 	inline void addRotation(const Vector3& axis, const float angle) {
-		rotations.push_back(Rotation(angle, axis));
+		rotations.push_back(Rotation(axis, angle));
 	}
 
 	/**

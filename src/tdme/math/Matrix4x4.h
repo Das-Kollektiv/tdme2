@@ -476,13 +476,13 @@ public:
 
 	/**
 	 * Creates a rotation matrix
+	 * @param axis axis
 	 * @param angle angle
-	 * @param v vector v
 	 * @return this matrix
 	 */
-	inline Matrix4x4& rotate(float angle, const Vector3& v) {
+	inline Matrix4x4& rotate(const Vector3& axis, float angle) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
-		auto& vXYZ = v.getArray();
+		auto& vXYZ = axis.getArray();
 		float c = Math::cos(angle * Math::DEG2RAD);    // cosine
 		float s = Math::sin(angle * Math::DEG2RAD);    // sine
 		float c1 = 1.0f - c;                // 1 - c

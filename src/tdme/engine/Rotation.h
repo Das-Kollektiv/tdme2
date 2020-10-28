@@ -35,10 +35,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param angle angle
 	 * @param axis axis
+	 * @param angle angle
 	 */
-	Rotation(float angle, const Vector3& axis);
+	Rotation(const Vector3& axis, float angle);
 
 	/**
 	 * Interpolate from given rotation to target rotation taking time passed in seconds and rotation degrees per second into account

@@ -16,7 +16,7 @@ Rotation::Rotation()
 	this->quaternion.identity();
 }
 
-Rotation::Rotation(float angle, const Vector3& axis)
+Rotation::Rotation(const Vector3& axis, float angle)
 {
 	this->angle = angle;
 	this->axis.set(axis);

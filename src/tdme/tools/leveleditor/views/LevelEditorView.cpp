@@ -154,8 +154,8 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	snappingX = 1.0f;
 	snappingZ = 1.0f;
 	snappingEnabled = false;
-	camLookRotationX = new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f));
-	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
+	camLookRotationX = new Rotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
+	camLookRotationY = new Rotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	camScaleMax = 15.0f;
 	camScaleMin = 0.05f;
 	mouseDownLastX = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
