@@ -46,11 +46,11 @@ private:
 
 	reactphysics3d::DynamicsWorld world;
 
-	vector<Body*> bodies {  };
-	vector<Body*> rigidBodiesDynamic {  };
-	map<string, Body*> bodiesById {  };
+	vector<Body*> bodies;
+	vector<Body*> rigidBodiesDynamic;
+	map<string, Body*> bodiesById;
 	map<string, BodyCollisionStruct> bodyCollisionsLastFrame;
-	vector<WorldListener*> worldListeners { };
+	vector<WorldListener*> worldListeners;
 
 	/**
 	 * Synch into cloned body from body
