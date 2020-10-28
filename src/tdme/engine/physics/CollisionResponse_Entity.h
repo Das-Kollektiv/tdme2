@@ -79,9 +79,9 @@ public:
 	}
 
 	/**
-	 * @return hit points count
+	 * @return hit point count
 	 */
-	inline int32_t getHitPointsCount() {
+	inline int32_t getHitPointCount() {
 		return hitPoints.size();
 	}
 
