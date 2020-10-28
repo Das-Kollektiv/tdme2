@@ -63,18 +63,18 @@ private:
 	reactphysics3d::RigidBody* rigidBody { nullptr };
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	bool cloned { false };
-	string id {  };
-	string rootId {  };
-	int32_t type {  };
-	float mass {  };
-	uint16_t collideTypeIds {  };
-	uint16_t collisionTypeId {  };
-	Vector3 inertiaTensor {  };
-	Transformations transformations {  };
-	Vector3 transformationsScale {  };
-	vector<BoundingVolume*> boundingVolumes {  };
-	vector<reactphysics3d::ProxyShape*> proxyShapes {  };
-	vector<CollisionListener*> collisionListener {  };
+	string id;
+	string rootId;
+	int32_t type;
+	float mass;
+	uint16_t collideTypeIds;
+	uint16_t collisionTypeId;
+	Vector3 inertiaTensor;
+	Transformations transformations;
+	Vector3 transformationsScale;
+	vector<BoundingVolume*> boundingVolumes;
+	vector<reactphysics3d::ProxyShape*> proxyShapes;
+	vector<CollisionListener*> collisionListener;
 
 	/**
 	 * Protected constructor
