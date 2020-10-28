@@ -102,26 +102,41 @@ public:
 		return this;
 	}
 
+	/**
+	 * @return if collision entity is selected
+	 */
 	inline bool hasEntitySelected() {
 		return selectedEntity != nullptr;
 	}
 
+	/**
+	 * @return collision distance or negative penetration
+	 */
 	inline float getDistance() {
 		if (selectedEntity == nullptr) return 0.0f;
 		return selectedEntity->distance;
 	}
 
+	/**
+	 * @return if we have a penetration
+	 */
 	inline bool hasPenetration() {
 		if (selectedEntity == nullptr) return false;
 		return selectedEntity->distance < -Math::EPSILON;
 	}
 
+	/**
+	 * @return penetration
+	 */
 	inline float getPenetration() {
 		if (selectedEntity == nullptr) return 0.0f;
 		return -selectedEntity->distance;
 	}
 
-	inline Vector3* getNormal() {
+	/**
+	 * @return normal
+	 */
+	inline const Vector3* getNormal() {
 		if (selectedEntity == nullptr) return nullptr;
 		return &selectedEntity->normal;
 	}
@@ -147,9 +162,10 @@ public:
 	 * @param i i
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3* getHitPoint(int32_t i) {
+	inline Vector3* getHitPoint(int32_t idx) {
 		if (selectedEntity == nullptr) return nullptr;
-		return &selectedEntity->hitPoints[i];
+		if (idx < 0 || idx >= selectedEntity->hitPoints.size()) return nullptr;
+		return &selectedEntity->hitPoints[idx];
 	}
 
 };

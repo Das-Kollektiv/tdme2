@@ -174,7 +174,7 @@ void World::update(float deltaTime)
 					// construct collision
 					auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
 					auto normal = contactPoint->getNormal();
-					entity->getNormal().set(normal.x, normal.y, normal.z);
+					entity->setNormal(Vector3(normal.x, normal.y, normal.z));
 					auto shape1 = manifold->getShape1();
 					auto shape2 = manifold->getShape2();
 					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
@@ -425,7 +425,7 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 						// construct collision
 						auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
 						auto normal = contactPoint->getNormal();
-						entity->getNormal().set(normal.x, normal.y, normal.z);
+						entity->setNormal(Vector3(normal.x, normal.y, normal.z));
 						auto shape1 = manifold->getContactManifold()->getShape1();
 						auto shape2 = manifold->getContactManifold()->getShape2();
 						auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();

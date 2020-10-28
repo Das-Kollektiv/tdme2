@@ -62,8 +62,16 @@ public:
 	/**
 	 * @return normal
 	 */
-	inline Vector3& getNormal() {
+	inline const Vector3& getNormal() {
 		return normal;
+	}
+
+	/**
+	 * Set normal
+	 * @param normal normal
+	 */
+	inline void setNormal(const Vector3& normal) {
+		this->normal = normal;
 	}
 
 	/**
@@ -87,11 +95,11 @@ public:
 
 	/**
 	 * Get hit point of given index
-	 * @param i i
+	 * @param idx index
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3& getHitPoint(int32_t i) {
-		return hitPoints[i];
+	inline Vector3& getHitPoint(int32_t idx) {
+		return hitPoints[idx];
 	}
 
 };
