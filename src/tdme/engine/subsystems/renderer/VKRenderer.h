@@ -72,6 +72,8 @@ private:
 	struct delete_image_type {
 		VkImage image;
 		VmaAllocation allocation;
+		VkImageView image_view;
+		VkSampler sampler;
 	};
 
 	struct buffer_object {

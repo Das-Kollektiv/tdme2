@@ -265,7 +265,8 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout) {
+	if (bound_frame_buffer == 0 &&
+		(swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout)) {
 		ThsvsImageBarrier svsImageBarrier = {
 			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
 			.pPrevAccesses = swapchain_buffers[current_buffer].access_types.data(),
@@ -691,7 +692,7 @@ void VKRenderer::initializeSwapChain() {
 	uint32_t presentModeCount;
 	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, nullptr);
 	assert(err == VK_SUCCESS);
-	VkPresentModeKHR *presentModes = (VkPresentModeKHR *) malloc(presentModeCount * sizeof(VkPresentModeKHR));
+	VkPresentModeKHR *presentModes = new VkPresentModeKHR[presentModeCount];
 	assert(presentModes);
 	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, presentModes);
 	assert(err == VK_SUCCESS);
@@ -782,12 +783,12 @@ void VKRenderer::initializeSwapChain() {
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, nullptr);
 	assert(err == VK_SUCCESS);
 
-	VkImage* swapchainImages = (VkImage*)malloc(swapchain_image_count * sizeof(VkImage));
+	VkImage* swapchainImages = new VkImage[swapchain_image_count];
 	assert(swapchainImages != nullptr);
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, swapchainImages);
 	assert(err == VK_SUCCESS);
 
-	swapchain_buffers = (swapchain_buffer_type*)malloc(sizeof(swapchain_buffer_type) * swapchain_image_count);
+	swapchain_buffers = new swapchain_buffer_type[swapchain_image_count];
 	assert(swapchain_buffers != nullptr);
 
 	for (i = 0; i < swapchain_image_count; i++) {
@@ -819,7 +820,7 @@ void VKRenderer::initializeSwapChain() {
 
 	current_buffer = 0;
 
-	if (nullptr != presentModes) free(presentModes);
+	if (nullptr != presentModes) delete [] presentModes;
 }
 
 const string VKRenderer::getShaderVersion()
@@ -894,7 +895,7 @@ void VKRenderer::initialize()
 
 		instance_validation_layers = (const char**) instance_validation_layers_alt1;
 		if (instance_layer_count > 0) {
-			VkLayerProperties* instance_layers = (VkLayerProperties*)malloc(sizeof(VkLayerProperties) * instance_layer_count);
+			VkLayerProperties* instance_layers = new VkLayerProperties[instance_layer_count];
 			err = vkEnumerateInstanceLayerProperties(&instance_layer_count, instance_layers);
 			assert(!err);
 
@@ -923,7 +924,7 @@ void VKRenderer::initialize()
 					enabled_layers[i] = instance_validation_layers[i];
 				}
 			}
-			free(instance_layers);
+			delete [] instance_layers;
 		}
 
 		if (!validation_found) {
@@ -955,7 +956,7 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	if (instance_extension_count > 0) {
-		VkExtensionProperties* instance_extensions = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * instance_extension_count);
+		VkExtensionProperties* instance_extensions = new VkExtensionProperties[instance_extension_count];
 		err = vkEnumerateInstanceExtensionProperties(nullptr, &instance_extension_count, instance_extensions);
 		assert(!err);
 		for (i = 0; i < instance_extension_count; i++) {
@@ -966,7 +967,7 @@ void VKRenderer::initialize()
 			}
 			assert(enabled_extension_count < 64);
 		}
-		free(instance_extensions);
+		delete [] instance_extensions;
 	}
 
 	const VkApplicationInfo app = {
@@ -1013,12 +1014,12 @@ void VKRenderer::initialize()
 	assert(!err && gpu_count > 0);
 
 	if (gpu_count > 0) {
-		VkPhysicalDevice* physical_devices = (VkPhysicalDevice*)malloc(sizeof(VkPhysicalDevice) * gpu_count);
+		VkPhysicalDevice* physical_devices = new VkPhysicalDevice[gpu_count];
 		err = vkEnumeratePhysicalDevices(inst, &gpu_count, physical_devices);
 		assert(!err);
 		// For tri demo we just grab the first physical device
 		gpu = physical_devices[0];
-		free(physical_devices);
+		delete [] physical_devices;
 	} else {
 		ERR_EXIT(
 			"vkEnumeratePhysicalDevices reported zero accessible devices."
@@ -1038,7 +1039,7 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	if (device_extension_count > 0) {
-		VkExtensionProperties* device_extensions = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * device_extension_count);
+		VkExtensionProperties* device_extensions = new VkExtensionProperties[device_extension_count];
 		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, device_extensions);
 		assert(!err);
 
@@ -1050,7 +1051,7 @@ void VKRenderer::initialize()
 			assert(enabled_extension_count < 64);
 		}
 
-		free(device_extensions);
+		delete [] device_extensions;
 	}
 
 	if (!swapchainExtFound) {
@@ -1076,7 +1077,7 @@ void VKRenderer::initialize()
 	// Query with nullptr data to get count
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, nullptr);
 
-	queue_props = (VkQueueFamilyProperties *) malloc(queue_count * sizeof(VkQueueFamilyProperties));
+	queue_props = new VkQueueFamilyProperties[queue_count];
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, queue_props);
 	assert(queue_count >= 1);
 
@@ -1087,7 +1088,7 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
-	VkBool32 *supportsPresent = (VkBool32 *) malloc(queue_count * sizeof(VkBool32));
+	VkBool32 *supportsPresent = new VkBool32[queue_count];
 	for (i = 0; i < queue_count; i++) {
 		fpGetPhysicalDeviceSurfaceSupportKHR(gpu, i, surface, &supportsPresent[i]);
 	}
@@ -1119,7 +1120,7 @@ void VKRenderer::initialize()
 			}
 		}
 	}
-	free(supportsPresent);
+	delete [] supportsPresent;
 
 	// Generate error if could not find both a graphics and a present queue
 	if (graphicsQueueNodeIndex == UINT32_MAX || presentQueueNodeIndex == UINT32_MAX) {
@@ -1187,7 +1188,7 @@ void VKRenderer::initialize()
 	uint32_t formatCount;
 	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, nullptr);
 	assert(!err);
-	VkSurfaceFormatKHR *surfFormats = (VkSurfaceFormatKHR *) malloc(formatCount * sizeof(VkSurfaceFormatKHR));
+	VkSurfaceFormatKHR *surfFormats = new VkSurfaceFormatKHR[formatCount];
 	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, surfFormats);
 
 	assert(!err);
@@ -1497,7 +1498,7 @@ void VKRenderer::initializeFrameBuffers() {
 	VkResult err;
 	uint32_t i;
 
-	window_framebuffers = (VkFramebuffer*)malloc(swapchain_image_count * sizeof(VkFramebuffer));
+	window_framebuffers = new VkFramebuffer[swapchain_image_count];
 	assert(window_framebuffers);
 
 	for (i = 0; i < swapchain_image_count; i++) {
@@ -1508,11 +1509,6 @@ void VKRenderer::initializeFrameBuffers() {
 }
 
 void VKRenderer::reshape() {
-	// TODO: this crashes MoltenVK currently, need to fix
-	#if defined(__APPLE__)
-		return;
-	#endif
-
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
@@ -1703,7 +1699,11 @@ void VKRenderer::finishFrame()
 		vmaUnmapMemory(allocator, delete_buffer.allocation);
 		vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
 	}
-	for (auto& delete_image: delete_images) vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
+	for (auto& delete_image: delete_images) {
+		if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
+		if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
+		vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
+	}
 	delete_buffers.clear();
 	delete_images.clear();
 	delete_mutex.unlock();
@@ -4090,11 +4090,18 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	depthBufferTexture.width = width;
 	depthBufferTexture.height = height;
 
-	if (depthBufferTexture.view != VK_NULL_HANDLE) vkDestroyImageView(device, depthBufferTexture.view, nullptr);
-	if (depthBufferTexture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, depthBufferTexture.sampler, nullptr);
-	if (depthBufferTexture.image != VK_NULL_HANDLE &&
-		depthBufferTexture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, depthBufferTexture.image, depthBufferTexture.allocation);
+	// mark for deletion
+	delete_mutex.lock();
+	delete_images.push_back(
+		{
+			.image = depthBufferTexture.image,
+			.allocation = depthBufferTexture.allocation,
+			.image_view = depthBufferTexture.view,
+			.sampler = depthBufferTexture.sampler
+		});
+	delete_mutex.unlock();
 
+	//
 	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
@@ -4197,11 +4204,18 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
 
-	if (colorBufferTexture.view != VK_NULL_HANDLE) vkDestroyImageView(device, colorBufferTexture.view, nullptr);
-	if (colorBufferTexture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, colorBufferTexture.sampler, nullptr);
-	if (colorBufferTexture.image != VK_NULL_HANDLE &&
-		colorBufferTexture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, colorBufferTexture.image, colorBufferTexture.allocation);
+	// mark for deletion
+	delete_mutex.lock();
+	delete_images.push_back(
+		{
+			.image = colorBufferTexture.image,
+			.allocation = colorBufferTexture.allocation,
+			.image_view = colorBufferTexture.view,
+			.sampler = colorBufferTexture.sampler
+		});
+	delete_mutex.unlock();
 
+	//
 	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
@@ -4478,7 +4492,14 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 		// mark for deletion
 		delete_mutex.lock();
-		delete_images.push_back({.image = staging_texture.image, .allocation = staging_texture.allocation});
+		delete_images.push_back(
+			{
+				.image = staging_texture.image,
+				.allocation = staging_texture.allocation,
+				.image_view = VK_NULL_HANDLE,
+				.sampler = VK_NULL_HANDLE
+			}
+		);
 		delete_mutex.unlock();
 
 		//
@@ -4563,6 +4584,11 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
+	// end render passes
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
+		endRenderPass(i, __LINE__);
+	}
+
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4577,6 +4603,11 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+
+	// end render passes
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
+		endRenderPass(i, __LINE__);
+	}
 
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
@@ -4665,11 +4696,18 @@ void VKRenderer::disposeTexture(int32_t textureId)
 
 	auto& texture = *textureObjectIt->second;
 
-	if (texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, texture.view, nullptr);
-	if (texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, texture.sampler, nullptr);
-	if (texture.image != VK_NULL_HANDLE &&
-		texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, texture.image, texture.allocation);
+	// mark for deletion
+	delete_mutex.lock();
+	delete_images.push_back(
+		{
+			.image = texture.image,
+			.allocation = texture.allocation,
+			.image_view = texture.view,
+			.sampler = texture.sampler
+		});
+	delete_mutex.unlock();
 
+	//
 	delete textureObjectIt->second;
 	textures.erase(textureObjectIt);
 	textures_rwlock.unlock();
@@ -5051,7 +5089,12 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
 		delete_mutex.lock();
-		delete_buffers.push_back({.buffer = stagingBuffer, .allocation = stagingBufferAllocation});
+		delete_buffers.push_back(
+			{
+				.buffer = stagingBuffer,
+				.allocation = stagingBufferAllocation
+			}
+		);
 		delete_mutex.unlock();
 
 
@@ -5878,6 +5921,7 @@ void VKRenderer::unbindBufferObjects(void* context)
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	delete_mutex.lock();
 	for (auto bufferObjectId: bufferObjectIds) {
 		auto bufferIt = buffers.find(bufferObjectId);
 		if (bufferIt == buffers.end()) {
@@ -5888,12 +5932,19 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 		for (auto& bufferIt: buffer->buffers) {
 			for (auto& reusableBuffer: bufferIt.second) {
 				if (reusableBuffer.size == 0) continue;
-				vmaDestroyBuffer(allocator, reusableBuffer.buf, reusableBuffer.allocation);
+				// mark staging buffer for deletion when finishing frame
+				delete_buffers.push_back(
+					{
+						.buffer = reusableBuffer.buf,
+						.allocation = reusableBuffer.allocation
+					}
+				);
 			}
 		}
 		delete bufferIt->second;
 		buffers.erase(bufferIt);
 	}
+	delete_mutex.unlock();
 }
 
 int32_t VKRenderer::getTextureUnit(void* context)
