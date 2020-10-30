@@ -265,9 +265,6 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	err = vkBeginCommandBuffer(context.draw_cmds[bufferId][context.front_face_index], &cmd_buf_info);
 	assert(!err);
 
-	//
-	AtomicOperations::increment(statistics.drawCommands);
-
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_COLOR_ATTACHMENT_WRITE, THSVS_ACCESS_NONE };
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
