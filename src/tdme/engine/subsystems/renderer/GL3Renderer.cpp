@@ -587,6 +587,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	statistics.textureUploads++;
 }
 
 void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
@@ -655,6 +656,7 @@ void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	statistics.textureUploads+= 6;
 }
 
 void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -740,6 +742,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -747,6 +750,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -754,6 +758,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -766,6 +771,7 @@ void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
@@ -1045,10 +1051,12 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#endif
 }
 
@@ -1057,10 +1065,12 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#endif
 }
 

@@ -91,10 +91,14 @@ void TreeTest::display()
 		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
 		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
 		"compute calls: " + to_string(rendererStatistics.computeCalls) + ", " +
-		"triangles: " + to_string(rendererStatistics.triangles) + ", " +
+		"tris: " + to_string(rendererStatistics.triangles) + ", " +
 		"points: " + to_string(rendererStatistics.points) + ", " +
 		"line points: " + to_string(rendererStatistics.linePoints) + ", " +
-		"queue submits: " + to_string(rendererStatistics.queueSubmits)
+		"buffer up: " + to_string(rendererStatistics.bufferUploads) + ", " +
+		"texture up: " + to_string(rendererStatistics.textureUploads) + ", " +
+		"render passes: " + to_string(rendererStatistics.renderPasses) + ", " +
+		"draw cmds: " + to_string(rendererStatistics.drawCommands) + ", " +
+		"submits: " + to_string(rendererStatistics.submits)
 	);
 }
 

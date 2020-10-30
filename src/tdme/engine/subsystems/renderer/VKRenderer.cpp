@@ -182,6 +182,9 @@ inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
 		VkResult err;
 		err = vkBeginCommandBuffer(context.setup_cmd_inuse, &cmd_buf_info);
 		assert(!err);
+
+		//
+		AtomicOperations::increment(statistics.drawCommands);
 	}
 }
 
@@ -217,6 +220,9 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 
 		//
 		queue_mutex.unlock();
+
+		//
+		AtomicOperations::increment(statistics.submits);
 
 		//
 		VkResult fence_result;
@@ -258,6 +264,9 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	VkResult err;
 	err = vkBeginCommandBuffer(context.draw_cmds[bufferId][context.front_face_index], &cmd_buf_info);
 	assert(!err);
+
+	//
+	AtomicOperations::increment(statistics.drawCommands);
 
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_COLOR_ATTACHMENT_WRITE, THSVS_ACCESS_NONE };
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
@@ -307,6 +316,9 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	//
 	context.draw_cmd_started[bufferId][context.front_face_index] = true;
+
+	//
+	AtomicOperations::increment(statistics.drawCommands);
 
 	//
 	return true;
@@ -396,6 +408,9 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 	assert(!err);
 
 	queue_mutex.unlock();
+
+	//
+	AtomicOperations::increment(statistics.submits);
 
 	//
 	if (waitUntilSubmitted == true) {
@@ -1462,6 +1477,9 @@ inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 		.pClearValues = nullptr
 	};
 	vkCmdBeginRenderPass(context.draw_cmds[context.draw_cmd_current][context.front_face_index], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+
+	//
+	AtomicOperations::increment(statistics.renderPasses);
 }
 
 inline void VKRenderer::endRenderPass(int contextIdx, int line) {
@@ -1534,7 +1552,7 @@ void VKRenderer::reshape() {
 
 void VKRenderer::initializeFrame()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// work around for AMD drivers not telling if window needs to be reshaped
 	{
@@ -4056,6 +4074,7 @@ void VKRenderer::clear(int32_t mask)
 			submitDrawCommandBuffers(1, &commandBuffers[commandBufferIdx], contexts[0].draw_fences[currentBufferIdx][commandBufferIdx], true, false);
 		}
 	}
+	AtomicOperations::increment(statistics.clearCalls);
 }
 
 int32_t VKRenderer::createTexture()
@@ -4576,6 +4595,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	//
 	textures_rwlock.unlock();
+
+	//
+	AtomicOperations::increment(statistics.textureUploads);
 }
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -4858,7 +4880,7 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 
 	// if unsetting program flush command buffers
 	endDrawCommandsAllContexts();
@@ -5151,6 +5173,9 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		}
 		buffer->frame_cleaned_last = frame;
 	}
+
+	//
+	AtomicOperations::increment(statistics.bufferUploads);
 }
 
 void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
@@ -5332,6 +5357,10 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	//
 	contextTyped.command_type = context_type::COMMAND_OBJECTS;
 	executeCommand(contextTyped.idx);
+
+	//
+	AtomicOperations::increment(statistics.renderCalls);
+	AtomicOperations::increment(statistics.triangles, triangles * instances);
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
@@ -5343,7 +5372,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(GetCurrentThreadId()));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(GetCurrentThreadId()));
 	VkResult err;
 
 	// end render passes
@@ -5354,7 +5383,7 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
 			if (commandBuffers[commandBufferIdx] != VK_NULL_HANDLE) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): submitting: " + to_string(i) + ": " + to_string((uint64_t)commandBuffers[commandBufferIdx]));
+				// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): submitting: " + to_string(i) + ": " + to_string((uint64_t)commandBuffers[commandBufferIdx]));
 				submitDrawCommandBuffers(1, &commandBuffers[commandBufferIdx], contextTyped.draw_fences[currentBufferIdx][commandBufferIdx], false, false);
 			}
 		}
@@ -5865,6 +5894,10 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	//
 	contextTyped.command_type = context_type::COMMAND_POINTS;
 	executeCommand(contextTyped.idx);
+
+	//
+	AtomicOperations::increment(statistics.renderCalls);
+	AtomicOperations::increment(statistics.points, points);
 }
 
 void VKRenderer::setLineWidth(float lineWidth)
@@ -5919,6 +5952,10 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	//
 	contextTyped.command_type = context_type::COMMAND_LINES;
 	executeCommand(contextTyped.idx);
+
+	//
+	AtomicOperations::increment(statistics.renderCalls);
+	AtomicOperations::increment(statistics.linePoints, points);
 }
 
 void VKRenderer::unbindBufferObjects(void* context)
@@ -6035,6 +6072,9 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	//
 	contextTyped.command_type = context_type::COMMAND_COMPUTE;
 	executeCommand(contextTyped.idx);
+
+	//
+	AtomicOperations::increment(statistics.computeCalls);
 }
 
 void VKRenderer::memoryBarrier() {

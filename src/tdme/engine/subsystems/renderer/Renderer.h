@@ -96,7 +96,11 @@ public:
 		uint32_t triangles { 0 };
 		uint32_t points { 0 };
 		uint32_t linePoints { 0 };
-		uint32_t queueSubmits { 0 };
+		uint32_t bufferUploads { 0 };
+		uint32_t textureUploads { 0 };
+		uint32_t renderPasses { 0 };
+		uint32_t drawCommands { 0 };
+		uint32_t submits { 0 };
 	};
 
 	int32_t ID_NONE;

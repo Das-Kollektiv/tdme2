@@ -135,7 +135,11 @@ const Renderer::Renderer_Statistics Renderer::getStatistics() {
 	statistics.triangles = 0;
 	statistics.points = 0;
 	statistics.linePoints = 0;
-	statistics.queueSubmits = 0;
+	statistics.bufferUploads = 0;
+	statistics.textureUploads = 0;
+	statistics.renderPasses = 0;
+	statistics.drawCommands = 0;
+	statistics.submits = 0;
 	return stats;
 }
 
