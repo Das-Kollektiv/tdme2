@@ -5,8 +5,6 @@
 
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Math;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 
 SingleThreadedRenderer::SingleThreadedRenderer()

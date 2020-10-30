@@ -106,8 +106,6 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

@@ -23,9 +23,6 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 

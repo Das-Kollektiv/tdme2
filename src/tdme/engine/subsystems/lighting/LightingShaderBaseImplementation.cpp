@@ -16,8 +16,6 @@ using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;

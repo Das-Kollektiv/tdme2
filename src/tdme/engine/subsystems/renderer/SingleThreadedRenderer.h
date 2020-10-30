@@ -16,9 +16,6 @@ using std::map;
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 

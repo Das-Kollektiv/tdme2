@@ -13,8 +13,6 @@ using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
