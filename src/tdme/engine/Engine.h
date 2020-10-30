@@ -18,6 +18,7 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
@@ -69,6 +70,7 @@ using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
@@ -1021,6 +1023,13 @@ public:
 	 * @param programId program id
 	 */
 	void addPostProcessingProgram(const string& programId);
+
+	/**
+	 * @return renderer statistics
+	 */
+	inline Renderer::Renderer_Statistics getRendererStatistics() {
+		return renderer->getStatistics();
+	}
 
 private:
 	/**

@@ -498,6 +498,7 @@ void GL3Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GL3Renderer::clear(int32_t mask)
 {
 	glClear(mask);
+	statistics.clearCalls++;
 }
 
 int32_t GL3Renderer::createTexture()
@@ -880,26 +881,36 @@ void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, 
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL), instances);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles * instances;
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL3Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles * instances;
 }
 
 void GL3Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL3Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.points+= points;
 }
 
 void GL3Renderer::setLineWidth(float lineWidth)
@@ -910,6 +921,8 @@ void GL3Renderer::setLineWidth(float lineWidth)
 void GL3Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.linePoints+= points;
 }
 
 void GL3Renderer::unbindBufferObjects(void* context)
@@ -1015,6 +1028,7 @@ void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t num
 	#else
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif
+	statistics.computeCalls++;
 }
 
 void GL3Renderer::memoryBarrier() {

@@ -46,6 +46,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/Buffer.h>
@@ -110,6 +111,7 @@ using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::ReadWriteLock;
 using tdme::os::threading::Mutex;
 using tdme::utilities::ByteBuffer;

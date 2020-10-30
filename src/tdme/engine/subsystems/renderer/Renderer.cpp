@@ -6,6 +6,7 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -17,6 +18,7 @@ using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Time;
 
 Renderer::Renderer()
 {
@@ -123,6 +125,20 @@ const string& Renderer::getShaderPrefix() {
 
 void Renderer::setShaderPrefix(const string& shaderPrefix) {
 	this->shaderPrefix = shaderPrefix;
+}
+
+const Renderer::Renderer_Statistics Renderer::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.gpuMemory = 0LL;
+	statistics.clearCalls = 0;
+	statistics.renderCalls = 0;
+	statistics.computeCalls = 0;
+	statistics.triangles = 0;
+	statistics.points = 0;
+	statistics.linePoints = 0;
+	statistics.queueSubmits = 0;
+	return stats;
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {

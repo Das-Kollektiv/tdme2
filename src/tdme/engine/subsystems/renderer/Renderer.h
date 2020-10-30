@@ -86,6 +86,22 @@ public:
 		array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
 	};
 
+	/**
+	 * Bean holding light properties
+	 */
+	struct Renderer_Statistics
+	{
+		int64_t time { -1LL };
+		uint64_t gpuMemory { 0LL };
+		uint32_t clearCalls { 0 };
+		uint32_t renderCalls { 0 };
+		uint32_t computeCalls { 0 };
+		uint32_t triangles { 0 };
+		uint32_t points { 0 };
+		uint32_t linePoints { 0 };
+		uint32_t queueSubmits { 0 };
+	};
+
 	int32_t ID_NONE;
 	int32_t CLEAR_DEPTH_BUFFER_BIT;
 	int32_t CLEAR_COLOR_BUFFER_BIT;
@@ -120,6 +136,7 @@ protected:
 	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
+	Renderer_Statistics statistics;
 private:
 	Vector3 cameraPosition;
 	Matrix4x4 projectionMatrix;
@@ -1164,6 +1181,11 @@ public:
 	 * Set up renderer for 3d rendering
 	 */
 	virtual void doneGuiMode() = 0;
+
+	/**
+	 * @return renderer statistics
+	 */
+	const Renderer_Statistics getStatistics();
 
 	/**
 	 * Generate mip map for atlas texture currently

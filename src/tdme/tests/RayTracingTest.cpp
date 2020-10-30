@@ -209,12 +209,10 @@ void RayTracingTest::display()
 	if (keyInfo == true) keyInfo = false;
 
 	// update world, display engine
-	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
 	engine->getEntity("player")->fromTransformations(transformations);
 	engine->display();
 	engine->getGUI()->render();
-	auto end = Time::getCurrentMillis();
 }
 
 void RayTracingTest::dispose()

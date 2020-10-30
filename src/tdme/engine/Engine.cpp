@@ -2098,3 +2098,4 @@ bool Engine::renderLightSource(int width, int height) {
 	}
 	return visible;
 }
+

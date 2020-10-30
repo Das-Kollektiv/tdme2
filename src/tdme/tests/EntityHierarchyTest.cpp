@@ -77,7 +77,17 @@ void EntityHierarchyTest::display()
 	entity->update();
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("EntityHierarchyTest::display::" + to_string(end - start) + "ms"));
+	auto rendererStatistics = engine->getRendererStatistics();
+	Console::println(
+		string("EntityHierarchyTest::display::") + to_string(end - start) + "ms; " +
+		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
+		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
+		"compute calls: " + to_string(rendererStatistics.computeCalls) + ", " +
+		"triangles: " + to_string(rendererStatistics.triangles) + ", " +
+		"points: " + to_string(rendererStatistics.points) + ", " +
+		"line points: " + to_string(rendererStatistics.linePoints) + ", " +
+		"queue submits: " + to_string(rendererStatistics.queueSubmits)
+	);
 }
 
 void EntityHierarchyTest::dispose()

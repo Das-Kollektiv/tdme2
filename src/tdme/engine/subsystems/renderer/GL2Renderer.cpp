@@ -437,6 +437,7 @@ void GL2Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GL2Renderer::clear(int32_t mask)
 {
 	glClear(mask);
+	statistics.clearCalls++;
 }
 
 int32_t GL2Renderer::createTexture()
@@ -811,6 +812,8 @@ void GL2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t t
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
@@ -820,11 +823,15 @@ void GL2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t
 void GL2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.points+= points;
 }
 
 void GL2Renderer::setLineWidth(float lineWidth)
@@ -835,6 +842,8 @@ void GL2Renderer::setLineWidth(float lineWidth)
 void GL2Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.linePoints+= points;
 }
 
 void GL2Renderer::unbindBufferObjects(void* context)
