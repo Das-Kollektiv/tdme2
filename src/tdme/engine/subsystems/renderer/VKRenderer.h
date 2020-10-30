@@ -20,8 +20,6 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Mutex.h>

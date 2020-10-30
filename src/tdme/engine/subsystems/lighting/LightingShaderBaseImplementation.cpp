@@ -5,8 +5,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>

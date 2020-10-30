@@ -9,9 +9,6 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -40,6 +37,55 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::renderer::Renderer
 {
 public:
+
+	/**
+	 * Bean holding light properties
+	 */
+	struct Renderer_Light
+	{
+		int32_t enabled { 0 };
+		array<float, 4> ambient {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		array<float, 4> diffuse {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> specular {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> position {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		array<float, 3> spotDirection {{ 0.0f, 0.0f, -1.0f }};
+		float spotExponent { 0.0f };
+		float spotCosCutoff { 0.0f };
+		float constantAttenuation { 1.0f };
+		float linearAttenuation { 0.0f };
+		float quadraticAttenuation { 0.0f };
+	};
+
+	/**
+	 * Bean holding PBR material properties
+	 */
+	struct Renderer_PBRMaterial
+	{
+		array<float, 4> baseColorFactor {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		float metallicFactor { 1.0f };
+		float roughnessFactor { 1.0f };
+		float normalScale { 1.0f };
+		float exposure { 1.0f };
+		int baseColorTextureMaskedTransparency { 0 };
+		float baseColorTextureMaskedTransparencyThreshold { 0.0f };
+	};
+
+	/**
+	 *  Bean holding specular material properties
+	 */
+	struct Renderer_SpecularMaterial
+	{
+		array<float, 4> ambient {{ 0.2f, 0.2f, 0.2f, 1.0f }};
+		array<float, 4> diffuse {{ 0.8f, 0.8f, 0.8f, 1.0f }};
+		array<float, 4> specular {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		array<float, 4> emission {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		float shininess { 0.0f };
+		int diffuseTextureMaskedTransparency { 0 };
+		float diffuseTextureMaskedTransparencyThreshold { 0.0f };
+		int textureAtlasSize { 1 };
+		array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
+	};
+
 	int32_t ID_NONE;
 	int32_t CLEAR_DEPTH_BUFFER_BIT;
 	int32_t CLEAR_COLOR_BUFFER_BIT;

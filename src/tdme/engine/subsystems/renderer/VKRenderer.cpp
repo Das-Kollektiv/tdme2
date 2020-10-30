@@ -41,8 +41,6 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
@@ -1536,7 +1534,7 @@ void VKRenderer::reshape() {
 
 void VKRenderer::initializeFrame()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// work around for AMD drivers not telling if window needs to be reshaped
 	{
@@ -1604,7 +1602,7 @@ void VKRenderer::finishFrame()
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
-	endDrawCommandsAllContexts();
+	memoryBarrier();
 
 	// flush command buffers
 	for (auto& context: contexts) {
@@ -4860,7 +4858,7 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 
 	// if unsetting program flush command buffers
 	endDrawCommandsAllContexts();
@@ -4873,9 +4871,6 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 			frameBufferId = 0;
 		}
 	}
-
-	//
-	memoryBarrier();
 
 	//
 	bound_frame_buffer = frameBufferId;
@@ -5348,8 +5343,23 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	memoryBarrier();
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(GetCurrentThreadId()));
+	VkResult err;
+
+	// end render passes
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
+		auto& contextTyped = contexts[i];
+		endRenderPass(contextTyped.idx, __LINE__);
+		auto currentBufferIdx = contextTyped.draw_cmd_current;
+		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
+		for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
+			if (commandBuffers[commandBufferIdx] != VK_NULL_HANDLE) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): submitting: " + to_string(i) + ": " + to_string((uint64_t)commandBuffers[commandBufferIdx]));
+				submitDrawCommandBuffers(1, &commandBuffers[commandBufferIdx], contextTyped.draw_fences[currentBufferIdx][commandBufferIdx], false, false);
+			}
+		}
+		finishPipeline(contextTyped.idx);
+	}
 }
 
 inline void VKRenderer::endDrawCommands(int contextIdx) {
@@ -6116,7 +6126,7 @@ Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
 	return contextTyped.texture_matrix;
 }
 
-Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
+Renderer::Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.lights[lightId];
 }
@@ -6131,12 +6141,12 @@ array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
 	return contextTyped.effect_color_add;
 }
 
-Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
+Renderer::Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.specularMaterial;
 }
 
-Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
+Renderer::Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.pbrMaterial;
 }

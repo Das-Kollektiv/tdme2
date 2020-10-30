@@ -4,8 +4,6 @@
 
 #include <tdme/math/Math.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/ByteBuffer.h>
 

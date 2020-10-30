@@ -1,8 +1,6 @@
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
 #include <tdme/math/Math.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
@@ -34,7 +32,7 @@ Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
 	return textureMatrix;
 }
 
-Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
+Renderer::Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
 	return lights[lightId];
 }
 
@@ -46,11 +44,11 @@ array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(void* context) {
 	return effectColorAdd;
 }
 
-Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* context) {
+Renderer::Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* context) {
 	return specularMaterial;
 }
 
-Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
+Renderer::Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
 	return pbrMaterial;
 }
 
