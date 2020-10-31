@@ -5089,9 +5089,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	if (reusableBuffer->memoryMappable == true) {
 		// copy to buffer
 		memcpy(reusableBuffer->data, data, size);
-
-		//
-		vmaFlushAllocation(allocator, reusableBuffer->allocation, 0, VK_WHOLE_SIZE);
 	} else {
 		prepareSetupCommandBuffer(contextIdx);
 
