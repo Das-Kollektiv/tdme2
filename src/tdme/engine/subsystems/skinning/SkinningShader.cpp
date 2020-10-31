@@ -63,7 +63,7 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(VULKAN)
 		uniformMatrixCount = renderer->UNIFORM_CL_SKINNING_MATRIX_COUNT;
 		uniformInstanceCount = renderer->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
 		uniformVertexCount = renderer->UNIFORM_CL_SKINNING_VERTEX_COUNT;

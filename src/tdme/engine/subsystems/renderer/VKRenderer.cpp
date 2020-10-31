@@ -4982,12 +4982,7 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 		buffers[buffer_idx] = bufferPtr;
 		auto& buffer = *bufferPtr;
 		buffer.id = buffer_idx++;
-		#if defined(__APPLE__)
-			// TODO: fix me, with my Intel Iris 655 GPU memory uploading is not working, however these cards have no GPU memory I guess
-			buffer.useGPUMemory = false;
-		#else
-			buffer.useGPUMemory = useGPUMemory;
-		#endif
+		buffer.useGPUMemory = useGPUMemory;
 		buffer.shared = shared;
 		bufferIds.push_back(buffer.id);
 	}
@@ -5477,7 +5472,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(GetCurrentThreadId()));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	VkResult err;
 
 	// end render passes
@@ -6058,7 +6053,7 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	for (auto bufferObjectId: bufferObjectIds) {
 		dispose_buffers.push_back(bufferObjectId);
 	}
-	delete_mutex.unlock();
+	dispose_mutex.unlock();
 }
 
 int32_t VKRenderer::getTextureUnit(void* context)
