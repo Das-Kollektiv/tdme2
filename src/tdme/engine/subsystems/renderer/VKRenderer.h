@@ -72,7 +72,7 @@ private:
 		VkSampler sampler;
 	};
 
-	struct buffer_object {
+	struct buffer_object_type {
 		struct reusable_buffer {
 			bool memoryMappable { false };
 			int64_t frame_used_last { -1 };
@@ -88,6 +88,7 @@ private:
 		uint32_t buffer_count { 0 };
 		int64_t frame_cleaned_last { 0 };
 		reusable_buffer* current_buffer { nullptr };
+		volatile bool uploading { false };
 	};
 
 	struct shader_type {
@@ -105,7 +106,7 @@ private:
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
 		vector<int32_t> ubo_ids;
-		vector<buffer_object*> ubo;
+		vector<buffer_object_type*> ubo;
 		int32_t ubo_binding_idx { -1 };
 		string definitions;
  		string source;
@@ -116,13 +117,14 @@ private:
 		VkShaderModule module { VK_NULL_HANDLE };
 	};
 
+	struct pipeline_type {
+		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
+		VkPipeline pipeline { VK_NULL_HANDLE };
+	};
+
 	struct program_type {
-		struct pipeline_struct {
-			VkPipelineCache pipelineCache { VK_NULL_HANDLE };
-			VkPipeline pipeline { VK_NULL_HANDLE };
-		};
 		int type { 0 };
-		unordered_map<string, pipeline_struct> pipelines;
+		unordered_map<string, pipeline_type> pipelines;
 		vector<int32_t> shader_ids;
 		vector<shader_type*> shaders;
 		unordered_map<int32_t, string> uniforms;
@@ -138,7 +140,7 @@ private:
 		int32_t id { 0 };
 	};
 
-	struct texture_object {
+	struct texture_type {
 		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_FRAMEBUFFER_COLORBUFFER, TYPE_FRAMEBUFFER_DEPTHBUFFER };
 		volatile bool uploaded { false };
 		type type { TYPE_NONE };
@@ -157,7 +159,7 @@ private:
 		VkImageView view { VK_NULL_HANDLE };
 	};
 
-	struct framebuffer_object {
+	struct framebuffer_object_type {
 		int32_t id { 0 };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
@@ -174,6 +176,9 @@ private:
 
 	struct context_type {
 		int32_t idx { 0 };
+
+		unordered_map<int32_t, buffer_object_type*> buffers;
+		unordered_map<int32_t, texture_type*> textures;
 
 		VkCommandPool cmd_setup_pool;
 		VkCommandBuffer setup_cmd_inuse;
@@ -349,9 +354,9 @@ private:
 	int32_t framebuffer_idx { 1 };
 	unordered_map<int32_t, program_type*> programs;
 	unordered_map<int32_t, shader_type*> shaders;
-	unordered_map<int32_t, buffer_object*> buffers;
-	unordered_map<int32_t, texture_object*> textures;
-	unordered_map<int32_t, framebuffer_object*> framebuffers;
+	unordered_map<int32_t, buffer_object_type*> buffers;
+	unordered_map<int32_t, texture_type*> textures;
+	unordered_map<int32_t, framebuffer_object_type*> framebuffers;
 
 	ReadWriteLock buffers_rwlock;
 	ReadWriteLock textures_rwlock;
@@ -361,11 +366,11 @@ private:
 	VkFormat format { VK_FORMAT_UNDEFINED };
 	VkColorSpaceKHR color_space { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
-	buffer_object* empty_vertex_buffer { nullptr };
+	buffer_object_type* empty_vertex_buffer { nullptr };
 	int empty_vertex_buffer_id { 0 };
 	int depth_buffer_default { 0 };
 	int white_texture_default_id { 0 };
-	texture_object* white_texture_default { nullptr };
+	texture_type* white_texture_default { nullptr };
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
@@ -400,21 +405,26 @@ private:
 	vector<delete_buffer_type> delete_buffers;
 	vector<delete_image_type> delete_images;
 
+	Mutex dispose_mutex;
+	vector<int32_t> dispose_textures;
+	vector<int32_t> dispose_buffers;
+
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
 	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(int contextIdx, texture_object* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel = 0, uint32_t levelCount = 1);
+	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	uint32_t getMipLevels(Texture* texture);
-	void prepareTextureImage(int contextIdx, struct texture_object* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
-	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
-	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
-	VkBuffer getBufferObjectInternalNoLock(buffer_object* bufferObject, uint32_t& size);
+	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
+	VkBuffer getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId, uint32_t& size);
+	VkBuffer getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
-	buffer_object* getBufferObjectInternal(int32_t bufferObjectId);
-	void uploadBufferObjectInternal(int contextIdx,  buffer_object* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	buffer_object_type* getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId);
+	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	texture_type* getTextureObjectInternal(int contextIdx, int32_t textureId);
+	pipeline_type* getPipelineObjectInternal(int contextIdx, program_type* program, const string& pipelineId);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
