@@ -435,8 +435,8 @@ private:
 	void endDrawCommandsAllContexts();
 	void executeCommand(int contextIdx);
 	void initializeRenderPass();
-	void startRenderPass(int contextIdx, int line);
-	void endRenderPass(int contextIdx, int line);
+	void startRenderPass(int contextIdx);
+	void endRenderPass(int contextIdx);
 	void preparePipeline(int contextIdx, program_type* program);
 	void createObjectsRenderingProgram(program_type* program);
 	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);

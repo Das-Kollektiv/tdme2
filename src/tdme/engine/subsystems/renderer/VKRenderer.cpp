@@ -194,6 +194,8 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 
 	//
 	if (context.setup_cmd_inuse != VK_NULL_HANDLE) {
+		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx));
+
 		VkResult err;
 
 		//
@@ -338,6 +340,8 @@ inline array<VkCommandBuffer, 3> VKRenderer::endDrawCommandBuffer(int contextIdx
 			commandBuffers[i] = VK_NULL_HANDLE;
 			continue;
 		}
+
+		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "@" + to_string(i));
 
 		//
 		VkResult err;
@@ -1447,7 +1451,7 @@ void VKRenderer::initializeRenderPass() {
 	assert(!err);
 }
 
-inline void VKRenderer::startRenderPass(int contextIdx, int line) {
+inline void VKRenderer::startRenderPass(int contextIdx) {
 	auto& context = contexts[contextIdx];
 
 	if (context.render_pass_started[context.front_face_index] == true) return;
@@ -1480,7 +1484,7 @@ inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 	AtomicOperations::increment(statistics.renderPasses);
 }
 
-inline void VKRenderer::endRenderPass(int contextIdx, int line) {
+inline void VKRenderer::endRenderPass(int contextIdx) {
 	auto& context = contexts[contextIdx];
 	for (auto i = 0; i < 3; i++) {
 		if (context.render_pass_started[i] == false) continue;
@@ -1586,7 +1590,7 @@ void VKRenderer::initializeFrame()
 		// TODO: a.drewke
 		//
 		finishSetupCommandBuffers();
-		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i, __LINE__);
+		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
 		vkDestroySemaphore(device, image_acquired_semaphore, nullptr);
 		vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
 
@@ -3543,7 +3547,7 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 
 	// if unsetting program flush command buffers
 	if (contextTyped.program_id != 0) {
-		endRenderPass(contextTyped.idx, __LINE__);
+		endRenderPass(contextTyped.idx);
 		auto currentBufferIdx = contextTyped.draw_cmd_current;
 		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
@@ -4091,8 +4095,11 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
 	beginDrawCommandBuffer(0);
-	startRenderPass(0, __LINE__);
+	startRenderPass(0);
 
 	auto attachmentIdx = 0;
 	VkClearAttachment attachments[2];
@@ -4120,7 +4127,7 @@ void VKRenderer::clear(int32_t mask)
 		1,
 		&clearRect
 	);
-	endRenderPass(0, __LINE__);
+	endRenderPass(0);
 	auto currentBufferIdx = contexts[0].draw_cmd_current;
 	auto commandBuffers = endDrawCommandBuffer(0, currentBufferIdx, true);
 	for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
@@ -4660,7 +4667,7 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		endRenderPass(i, __LINE__);
+		endRenderPass(i);
 	}
 
 	auto textureIt = textures.find(textureId);
@@ -4680,7 +4687,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		endRenderPass(i, __LINE__);
+		endRenderPass(i);
 	}
 
 	auto textureIt = textures.find(textureId);
@@ -4726,28 +4733,6 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 
 	//
 	auto& textureObject = *textureObjectPtr;
-
-	//
-	if (textureObject.type == texture_type::TYPE_FRAMEBUFFER_DEPTHBUFFER) {
-		setImageLayout(
-			contextTyped.idx,
-			&textureObject,
-			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
-			THSVS_IMAGE_LAYOUT_OPTIMAL,
-			false
-		);
-		finishSetupCommandBuffer(contextTyped.idx);
-	} else
-	if (textureObject.type == texture_type::TYPE_FRAMEBUFFER_COLORBUFFER) {
-		setImageLayout(
-			contextTyped.idx,
-			&textureObject,
-			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
-			THSVS_IMAGE_LAYOUT_OPTIMAL,
-			false
-		);
-		finishSetupCommandBuffer(contextTyped.idx);
-	}
 
 	// done
 	onBindTexture(context, textureId);
@@ -4916,6 +4901,38 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	endDrawCommandsAllContexts();
 
 	//
+	if (bound_frame_buffer != 0) {
+		auto frameBufferIt = framebuffers.find(bound_frame_buffer);
+		if (frameBufferIt == framebuffers.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
+		} else {
+			auto depthBufferTextureId = frameBufferIt->second->depth_texture_id;
+			auto colorBufferTextureId = frameBufferIt->second->color_texture_id;
+			if (depthBufferTextureId != 0) {
+				auto& depth_buffer_texture = *textures[depthBufferTextureId];
+				setImageLayout(
+					0,
+					&depth_buffer_texture,
+					{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+					THSVS_IMAGE_LAYOUT_OPTIMAL,
+					false
+				);
+			}
+			if (colorBufferTextureId != 0) {
+				auto& color_buffer_texture = *textures[colorBufferTextureId];
+				setImageLayout(
+					0,
+					&color_buffer_texture,
+					{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+					THSVS_IMAGE_LAYOUT_OPTIMAL,
+					false
+				);
+			}
+			finishSetupCommandBuffer(0);
+		}
+	}
+
+	//
 	if (frameBufferId != 0) {
 		auto frameBufferIt = framebuffers.find(frameBufferId);
 		if (frameBufferIt == framebuffers.end()) {
@@ -4933,7 +4950,6 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 		} else {
 			auto depthBufferTextureId = frameBufferIt->second->depth_texture_id;
 			auto colorBufferTextureId = frameBufferIt->second->color_texture_id;
-			prepareSetupCommandBuffer(0);
 			if (depthBufferTextureId != 0) {
 				auto& depth_buffer_texture = *textures[depthBufferTextureId];
 				setImageLayout(
@@ -5267,12 +5283,7 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 		auto textureIt = contextTyped.textures.find(textureId);
 		texture = textureIt != contextTyped.textures.end()?textureIt->second:nullptr;
 		if (texture != nullptr) {
-			/*
-			// TODO
-			while (texture->uploaded == false) {
-				// spin lock
-			}
-			*/
+			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return white_texture_default;
 			return texture;
 		}
 
@@ -5282,7 +5293,7 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 	if (textureIt == textures.end()) {
 		textures_rwlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture with id " + to_string(textureId) + " does not exist");
-		return nullptr;
+		return white_texture_default;
 	}
 	// we have a texture, also place it in context
 	texture = textureIt->second;
@@ -5412,11 +5423,12 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			contextTyped.objects_render_command.textures.erase(i);
 			continue;
 		}
-		auto& texture_type = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
+		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
+		//
 		contextTyped.objects_render_command.textures[i] = {
-			.sampler = texture_type.sampler,
-			.view = texture_type.view,
-			.layout = texture_type.vkLayout
+			.sampler = textureObject.sampler,
+			.view = textureObject.view,
+			.layout = textureObject.vkLayout
 		};
 	}
 
@@ -5472,18 +5484,16 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	VkResult err;
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		auto& contextTyped = contexts[i];
-		endRenderPass(contextTyped.idx, __LINE__);
+		endRenderPass(contextTyped.idx);
 		auto currentBufferIdx = contextTyped.draw_cmd_current;
 		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
 			if (commandBuffers[commandBufferIdx] != VK_NULL_HANDLE) {
-				// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): submitting: " + to_string(i) + ": " + to_string((uint64_t)commandBuffers[commandBufferIdx]));
 				submitDrawCommandBuffers(1, &commandBuffers[commandBufferIdx], contextTyped.draw_fences[currentBufferIdx][commandBufferIdx], false, false);
 			}
 		}
@@ -5497,7 +5507,7 @@ inline void VKRenderer::endDrawCommands(int contextIdx) {
 
 	// end render passes
 	finishSetupCommandBuffer(contextIdx);
-	endRenderPass(contextIdx, __LINE__);
+	endRenderPass(contextIdx);
 
 	//
 	auto submitted_command_buffers_count = 0;
@@ -5537,19 +5547,19 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 	// create pipeline
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		startRenderPass(contextTyped.idx, __LINE__);
+		startRenderPass(contextTyped.idx);
 		setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		startRenderPass(contextTyped.idx, __LINE__);
+		startRenderPass(contextTyped.idx);
 		setupPointsRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_LINES) {
-		startRenderPass(contextTyped.idx, __LINE__);
+		startRenderPass(contextTyped.idx);
 		setupLinesRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		endRenderPass(contextTyped.idx, __LINE__);
+		endRenderPass(contextTyped.idx);
 		setupSkinningComputingPipeline(contextTyped.idx, contextTyped.program);
 	} else {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(contextTyped.program_id));
@@ -5906,7 +5916,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	};
 	if ((haveTooLess == true && haveTooMuch == true) ||
 		(haveTooLess == false && haveOk == true)) {
-		endRenderPass(contextTyped.idx, __LINE__);
+		endRenderPass(contextTyped.idx);
 		auto currentBufferIdx = contextTyped.draw_cmd_current;
 		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		for (auto commandBufferIdx = 0; commandBufferIdx < commandBuffers.size(); commandBufferIdx++) {
@@ -5939,11 +5949,12 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		if (textureId == 0) continue;
-		auto& texture_type = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
+		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
+		//
 		contextTyped.points_render_command.textures[i] = {
-			.sampler = texture_type.sampler,
-			.view = texture_type.view,
-			.layout = texture_type.vkLayout
+			.sampler = textureObject.sampler,
+			.view = textureObject.view,
+			.layout = textureObject.vkLayout
 		};
 	}
 
@@ -6142,7 +6153,7 @@ void VKRenderer::memoryBarrier() {
 	VkCommandBuffer submitted_command_buffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
-		endRenderPass(i, __LINE__); // TODO: draw cmd cycling
+		endRenderPass(i); // TODO: draw cmd cycling
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
 			auto command_buffers = endDrawCommandBuffer(i, j, false);
 			for (auto command_buffer: command_buffers) {
