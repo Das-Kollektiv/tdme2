@@ -27,37 +27,37 @@ void main(void) {
 			(1.0 / float(vsSpriteSheetDimension.x)) * int(vsSpriteIndex % vsSpriteSheetDimension.x), 
 			1.0 - ((1.0 / float(vsSpriteSheetDimension.y)) * int(vsSpriteIndex / vsSpriteSheetDimension.y))
 		);
-	if (vsTextureIndex == 0)
+	if (vsTextureIndex == uint(0))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[0], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 1)
+	if (vsTextureIndex == uint(1))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[1], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 2)
+	if (vsTextureIndex == uint(2))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[2], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 3)
+	if (vsTextureIndex == uint(3))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[3], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 4)
+	if (vsTextureIndex == uint(4))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[4], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 5)
+	if (vsTextureIndex == uint(5))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[5], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 6)
+	if (vsTextureIndex == uint(6))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[6], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 7)
+	if (vsTextureIndex == uint(7))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[7], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 8)
+	if (vsTextureIndex == uint(8))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[8], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 9)
+	if (vsTextureIndex == uint(9))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[9], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 10)
+	if (vsTextureIndex == uint(10))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[10], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 11)
+	if (vsTextureIndex == uint(11))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[11], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 12)
+	if (vsTextureIndex == uint(12))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[12], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 13)
+	if (vsTextureIndex == uint(13))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[13], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 14)
+	if (vsTextureIndex == uint(14))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[14], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0); else
-	if (vsTextureIndex == 15)
+	if (vsTextureIndex == uint(15))
 		outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[15], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {
