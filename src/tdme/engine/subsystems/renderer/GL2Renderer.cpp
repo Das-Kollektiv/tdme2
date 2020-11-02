@@ -503,7 +503,7 @@ void GL2Renderer::uploadTexture(void* context, Texture* texture)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
 			auto borderSize = 32;
 			auto maxLevel = 0;
-			while (borderSize >= 4) {
+			while (borderSize > 4) {
 				maxLevel++;
 				borderSize/= 2;
 			}

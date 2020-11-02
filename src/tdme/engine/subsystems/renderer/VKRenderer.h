@@ -84,7 +84,7 @@ private:
 		int32_t id { 0 };
 		bool useGPUMemory { false };
 		bool shared { false };
-		unordered_map<uint32_t, list<reusable_buffer>> buffers;
+		list<reusable_buffer> buffers;
 		uint32_t buffer_count { 0 };
 		int64_t frame_cleaned_last { 0 };
 		reusable_buffer* current_buffer { nullptr };
@@ -102,6 +102,7 @@ private:
 			int32_t texture_unit;
 		};
 		unordered_map<string, uniform_type*> uniforms;
+		vector<uniform_type*> uniformList;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
@@ -118,6 +119,7 @@ private:
 	};
 
 	struct pipeline_type {
+		string id;
 		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 		VkPipeline pipeline { VK_NULL_HANDLE };
 	};
@@ -177,9 +179,9 @@ private:
 	struct context_type {
 		int32_t idx { 0 };
 
-		unordered_map<string, pipeline_type*> pipelines;
-		unordered_map<int32_t, buffer_object_type*> buffers;
-		unordered_map<int32_t, texture_type*> textures;
+		vector<pipeline_type*> pipelineVector;
+		vector<buffer_object_type*> bufferVector;
+		vector<texture_type*> textureVector;
 
 		VkCommandPool cmd_setup_pool;
 		VkCommandBuffer setup_cmd_inuse;
@@ -209,6 +211,7 @@ private:
 
 		struct objects_render_command {
 			struct texture {
+				bool inUse;
 				VkSampler sampler;
 				VkImageView view;
 				VkImageLayout layout;
@@ -223,7 +226,7 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			unordered_map<int, texture> textures;
+			array<texture, 16> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
 			int32_t instances { 0 };
@@ -231,6 +234,7 @@ private:
 
 		struct points_render_command {
 			struct texture {
+				bool inUse;
 				VkSampler sampler;
 				VkImageView view;
 				VkImageLayout layout;
@@ -244,13 +248,14 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			unordered_map<uint8_t, texture> textures;
+			array<texture, 16> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
 		};
 
 		struct lines_render_command {
 			struct texture {
+				bool inUse;
 				VkSampler sampler;
 				VkImageView view;
 				VkImageLayout layout;
@@ -262,7 +267,7 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			unordered_map<uint8_t, texture> textures;
+			array<texture, 16> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
 		};
@@ -349,15 +354,13 @@ private:
 	VkRenderPass render_pass { VK_NULL_HANDLE };
 
 	int32_t shader_idx { 1 };
-	int32_t program_idx { 1 };
 	int32_t buffer_idx { 1 };
 	int32_t texture_idx { 1 };
-	int32_t framebuffer_idx { 1 };
-	unordered_map<int32_t, program_type*> programs;
+	vector<program_type*> programList { nullptr };
 	unordered_map<int32_t, shader_type*> shaders;
 	unordered_map<int32_t, buffer_object_type*> buffers;
 	unordered_map<int32_t, texture_type*> textures;
-	unordered_map<int32_t, framebuffer_object_type*> framebuffers;
+	vector<framebuffer_object_type*> framebuffers { nullptr };
 
 	ReadWriteLock buffers_rwlock;
 	ReadWriteLock textures_rwlock;

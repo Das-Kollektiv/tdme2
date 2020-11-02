@@ -11,7 +11,7 @@
 #if defined(GLFW3)
 	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
-#else
+#elif !defined(VULKAN)
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
