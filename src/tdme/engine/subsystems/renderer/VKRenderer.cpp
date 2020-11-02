@@ -1954,7 +1954,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -1972,7 +1972,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -1990,7 +1990,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -2008,7 +2008,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -2026,7 +2026,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -2044,7 +2044,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -2062,7 +2062,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + suffix,
-						.type = shader_type::uniform_type::UNIFORM,
+						.type = shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
 						.texture_unit = -1
@@ -2078,7 +2078,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					{
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + newSuffix,
-						.type = shader_type::uniform_type::SAMPLER2D,
+						.type = shader_type::uniform_type::TYPE_SAMPLER2D,
 						.position = -1,
 						.size = 0,
 						.texture_unit = -1
@@ -2348,7 +2348,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				// rename uniforms to ubo uniforms
 			} else {
 				for (auto& uniformIt: shader.uniforms) {
-					if (uniformIt.second->type == shader_type::uniform_type::SAMPLER2D) {
+					if (uniformIt.second->type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 						if (uniformIt.second->name != uniformIt.second->newName) {
 							line = StringTools::replace(
 								line,
@@ -2519,17 +2519,15 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		for (auto uniformIt: shader->uniforms) {
-			auto& uniform = *uniformIt.second;
-			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				layout_bindings[uniform.position] = {
-					.binding = static_cast<uint32_t>(uniform.position),
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.descriptorCount = 1,
-					.stageFlags = shader->type,
-					.pImmutableSamplers = nullptr
-				};
-			}
+		// sampler2D
+		for (auto uniform: shader->sampler2DUniformList) {
+			layout_bindings[uniform->position] = {
+				.binding = static_cast<uint32_t>(uniform->position),
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = 1,
+				.stageFlags = shader->type,
+				.pImmutableSamplers = nullptr
+			};
 		}
 		shaderIdx++;
 	}
@@ -2854,17 +2852,15 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		for (auto uniformIt: shader->uniforms) {
-			auto& uniform = *uniformIt.second;
-			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				layout_bindings[uniform.position] = {
-					.binding = static_cast<uint32_t>(uniform.position),
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.descriptorCount = 1,
-					.stageFlags = shader->type,
-					.pImmutableSamplers = nullptr
-				};
-			}
+		// sampler2D
+		for (auto uniform: shader->sampler2DUniformList) {
+			layout_bindings[uniform->position] = {
+				.binding = static_cast<uint32_t>(uniform->position),
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = 1,
+				.stageFlags = shader->type,
+				.pImmutableSamplers = nullptr
+			};
 		}
 		shaderIdx++;
 	}
@@ -3165,17 +3161,15 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		for (auto uniformIt: shader->uniforms) {
-			auto& uniform = *uniformIt.second;
-			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				layout_bindings[uniform.position] = {
-					.binding = static_cast<uint32_t>(uniform.position),
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.descriptorCount = 1,
-					.stageFlags = shader->type,
-					.pImmutableSamplers = nullptr
-				};
-			}
+		// sampler2D
+		for (auto uniform: shader->sampler2DUniformList) {
+			layout_bindings[uniform->position] = {
+				.binding = static_cast<uint32_t>(uniform->position),
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = 1,
+				.stageFlags = shader->type,
+				.pImmutableSamplers = nullptr
+			};
 		}
 		shaderIdx++;
 	}
@@ -3660,13 +3654,11 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 	// bind samplers, compile shaders
 	for (auto shader: program->shaders) {
-		auto shaderSamplerIdx = 0;
-
 		//
 		for (auto& uniformIt: shader->uniforms) {
 			auto& uniform = *uniformIt.second;
 			//
-			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
+			if (uniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 				shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
 				uniform.position = bindingIdx++;
 			}
@@ -3797,13 +3789,21 @@ bool VKRenderer::linkProgram(int32_t programId)
 		auto uniformName = it.second;
 
 		//
+		auto samplerIdx = 0;
 		for (auto shader: program->shaders) {
 			auto shaderUniformIt = shader->uniforms.find(uniformName);
 			if (shaderUniformIt == shader->uniforms.end()) {
 				continue;
 			}
-			shader->uniformList[uniformId] = shaderUniformIt->second;
+			auto uniform = shaderUniformIt->second;
+			shader->uniformList[uniformId] = uniform;
+			if (uniform->type == shader_type::uniform_type::TYPE_SAMPLER2D) shader->sampler2DUniformList.push_back(uniform);
 		}
+	}
+
+	//
+	for (auto shader: program->shaders) {
+		shader->sampler2DUniformList.shrink_to_fit();
 	}
 
 	// total bindings of program
@@ -3869,7 +3869,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 			continue;
 		}
 		auto& shaderUniform = *shaderUniformPtr;
-		if (shaderUniform.type == shader_type::uniform_type::SAMPLER2D) {
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 			shaderUniform.texture_unit = *((int32_t*)data);
 		} else {
 			if (contextTyped.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
@@ -4955,7 +4955,6 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
-			finishSetupCommandBuffer(0);
 		}
 	}
 
@@ -4997,9 +4996,11 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
-			finishSetupCommandBuffer(0);
 		}
 	}
+
+	//
+	finishSetupCommandBuffer(0);
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -5418,16 +5419,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.objects_render_command.textures[i];
-		if (textureId == 0) {
-			texture.inUse = false;
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-			continue;
-		}
 		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		//
-		texture.inUse = true;
 		texture.sampler = textureObject.sampler;
 		texture.view = textureObject.view;
 		texture.layout = textureObject.vkLayout;
@@ -5579,28 +5571,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniformIt: shader->uniforms) {
-				auto& uniform = *uniformIt.second;
-				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-				auto& texture = contextTyped.objects_render_command.textures[uniform.texture_unit];
-				if (texture.inUse == true) {
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
-				} else {
+			for (auto uniform: shader->sampler2DUniformList) {
+				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
 						.imageView = white_texture_default->view,
 						.imageLayout = white_texture_default->vkLayout
 					};
+				} else {
+					auto& texture = contextTyped.objects_render_command.textures[uniform->texture_unit];
+					texDescs[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
 				}
-				descriptorSetWrites[uniform.position] = {
+				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform.position),
+					.dstBinding = static_cast<uint32_t>(uniform->position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -5674,29 +5664,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniformIt: shader->uniforms) {
-				auto& uniform = *uniformIt.second;
-				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-				auto& texture = contextTyped.points_render_command.textures[uniform.texture_unit];
-				if (texture.inUse == true) {
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
-				} else {
+			for (auto uniform: shader->sampler2DUniformList) {
+				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
 						.imageView = white_texture_default->view,
 						.imageLayout = white_texture_default->vkLayout
 					};
+				} else {
+					auto& texture = contextTyped.points_render_command.textures[uniform->texture_unit];
+					texDescs[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
 				}
-
-				descriptorSetWrites[uniform.position] = {
+				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform.position),
+					.dstBinding = static_cast<uint32_t>(uniform->position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -5764,29 +5751,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniformIt: shader->uniforms) {
-				auto& uniform = *uniformIt.second;
-				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-				auto& texture = contextTyped.lines_render_command.textures[uniform.texture_unit];
-				if (texture.inUse == true) {
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
-				} else {
+			for (auto uniform: shader->sampler2DUniformList) {
+				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
 						.imageView = white_texture_default->view,
 						.imageLayout = white_texture_default->vkLayout
 					};
+				} else {
+					auto& texture = contextTyped.lines_render_command.textures[uniform->texture_unit];
+					texDescs[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
 				}
-
-				descriptorSetWrites[uniform.position] = {
+				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform.position),
+					.dstBinding = static_cast<uint32_t>(uniform->position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -5951,16 +5935,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.points_render_command.textures[i];
-		if (textureId == 0) {
-			texture.inUse = false;
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-			continue;
-		}
 		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		//
-		texture.inUse = true;
 		texture.sampler = textureObject.sampler;
 		texture.view = textureObject.view;
 		texture.layout = textureObject.vkLayout;
@@ -6022,16 +5997,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.lines_render_command.textures[i];
-		if (textureId == 0) {
-			texture.inUse = false;
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-			continue;
-		}
 		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		//
-		texture.inUse = true;
 		texture.sampler = textureObject.sampler;
 		texture.view = textureObject.view;
 		texture.layout = textureObject.vkLayout;

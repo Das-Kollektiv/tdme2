@@ -93,7 +93,7 @@ private:
 
 	struct shader_type {
 		struct uniform_type {
-			enum uniform_type_enum { NONE, UNIFORM, SAMPLER2D };
+			enum uniform_type_enum { TYPE_NONE, TYPE_UNIFORM, TYPE_SAMPLER2D };
 			string name;
 			string newName;
 			uniform_type_enum type;
@@ -103,6 +103,7 @@ private:
 		};
 		unordered_map<string, uniform_type*> uniforms;
 		vector<uniform_type*> uniformList;
+		vector<uniform_type*> sampler2DUniformList;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
@@ -211,10 +212,9 @@ private:
 
 		struct objects_render_command {
 			struct texture {
-				bool inUse;
-				VkSampler sampler;
-				VkImageView view;
-				VkImageLayout layout;
+				VkSampler sampler { VK_NULL_HANDLE };
+				VkImageView view { VK_NULL_HANDLE };
+				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
 			array<VkBuffer, 10> vertex_buffers = {
@@ -234,10 +234,9 @@ private:
 
 		struct points_render_command {
 			struct texture {
-				bool inUse;
-				VkSampler sampler;
-				VkImageView view;
-				VkImageLayout layout;
+				VkSampler sampler { VK_NULL_HANDLE };
+				VkImageView view { VK_NULL_HANDLE };
+				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
 			};
 			array<VkBuffer, 10> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -255,10 +254,9 @@ private:
 
 		struct lines_render_command {
 			struct texture {
-				bool inUse;
-				VkSampler sampler;
-				VkImageView view;
-				VkImageLayout layout;
+				VkSampler sampler { VK_NULL_HANDLE };
+				VkImageView view { VK_NULL_HANDLE };
+				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
 			};
 			array<VkBuffer, 4> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
