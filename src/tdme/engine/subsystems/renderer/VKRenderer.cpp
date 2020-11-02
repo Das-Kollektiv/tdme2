@@ -4907,16 +4907,28 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureGlId) + ",  " + to_string(colorBufferTextureGlId));
 
+	// try to reuse a frame buffer id
+	auto reuseIndex = -1;
+	for (auto i = 1; i < framebuffers.size(); i++) {
+		if (framebuffers[i] == nullptr) {
+			reuseIndex = i;
+			break;
+		}
+	}
+
 	auto frameBufferPtr = new framebuffer_object_type;
 	auto& frameBuffer = *frameBufferPtr;
-	frameBuffer.id = framebuffers.size();
+	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
 	frameBuffer.depth_texture_id = depthBufferTextureGlId;
 	frameBuffer.color_texture_id = colorBufferTextureGlId;
-	framebuffers.push_back(frameBufferPtr);
+	if (reuseIndex != -1) {
+		framebuffers[reuseIndex] = frameBufferPtr;
+	} else {
+		framebuffers.push_back(frameBufferPtr);
+	}
 
 	//
 	createFramebufferObject(frameBuffer.id);
-
 	return frameBuffer.id;
 }
 
@@ -5006,11 +5018,13 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
-	auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	auto frameBuffer = frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 	if (frameBuffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 		return;
 	}
+	vkDestroyRenderPass(device, frameBuffer->render_pass, nullptr);
+	vkDestroyFramebuffer(device, frameBuffer->frame_buffer, nullptr);
 	delete frameBuffer;
 	framebuffers[frameBufferId] = nullptr;
 }
