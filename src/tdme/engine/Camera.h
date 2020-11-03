@@ -324,15 +324,15 @@ private:
 
 	/**
 	 * Computes frustum matrix
-	 * @param left left
-	 * @param right right
-	 * @param bottom top
-	 * @param top bottom
-	 * @param near near
-	 * @param far far
+	 * @param leftPlane left plane
+	 * @param rightPlane right plane
+	 * @param bottomPlane top plane
+	 * @param topPlane bottom plane
+	 * @param nearPlane near plane
+	 * @param farPlane far plane
 	 * @return frustum matrix
 	 */
-	Matrix4x4& computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
+	Matrix4x4& computeFrustumMatrix(float leftPlane, float rightPlane, float bottomPlane, float topPlane, float nearPlane, float farPlane);
 
 	/**
 	 * Computes projection matrix for given look from, look at and up vector

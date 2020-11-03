@@ -19,7 +19,6 @@
 using std::string;
 
 using tdme::os::threading::Thread;
-using tdme::utilities::Console;
 
 Thread::Thread(const string& name, size_t stackSize): name(name), pThreadCreated(false), stopRequested(false), stackSize(stackSize) {
 }

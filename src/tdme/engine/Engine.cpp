@@ -216,7 +216,7 @@ void Engine::EngineThread::run() {
 	while (isStopRequested() == false) {
 		switch(state) {
 			case STATE_WAITING:
-				while (state == STATE_WAITING) Thread::nanoSleep(10000LL);
+				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
 				break;
 			case STATE_TRANSFORMATIONS:
 				engine->computeTransformationsFunction(threadCount, idx);
@@ -229,7 +229,10 @@ void Engine::EngineThread::run() {
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
-				while (state == STATE_SPINNING) Thread::nanoSleep(100LL);
+				{
+					volatile auto i = 0LL;
+					while (state == STATE_SPINNING) i++;
+				}
 				break;
 		}
 	}
