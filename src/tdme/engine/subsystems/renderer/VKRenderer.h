@@ -21,8 +21,9 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/ReadWriteLock.h>
+#include <tdme/os/threading/SpinLock.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -44,6 +45,7 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::ReadWriteLock;
+using tdme::os::threading::SpinLock;
 
 /**
  * Vulkan renderer
@@ -322,7 +324,7 @@ private:
 	VkInstance inst { VK_NULL_HANDLE };
 	VkPhysicalDevice gpu { VK_NULL_HANDLE };
 	VkDevice device { VK_NULL_HANDLE };
-	Mutex queue_mutex;
+	SpinLock queue_spinlock;
 	VkQueue queue { VK_NULL_HANDLE };
 	VkPhysicalDeviceProperties gpu_props;
 	VkPhysicalDeviceFeatures gpu_features;
@@ -416,7 +418,7 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
-	VkPresentModeKHR swapchainPresentMode = { VK_PRESENT_MODE_FIFO_KHR };
+	VkPresentModeKHR swapchainPresentMode = { VK_PRESENT_MODE_IMMEDIATE_KHR };
 
 	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);

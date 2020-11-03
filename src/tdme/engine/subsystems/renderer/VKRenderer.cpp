@@ -123,7 +123,7 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
 VKRenderer::VKRenderer():
-	queue_mutex("queue-mutex"),
+	queue_spinlock("queue-spinlock"),
 	buffers_rwlock("buffers_rwlock"),
 	textures_rwlock("textures_rwlock"),
 	delete_mutex("delete_mutex"),
@@ -216,13 +216,13 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 			.pSignalSemaphores = nullptr
 		};
 
-		queue_mutex.lock();
+		queue_spinlock.lock();
 
 		err = vkQueueSubmit(queue, 1, &submit_info, context.setup_fence);
 		assert(!err);
 
 		//
-		queue_mutex.unlock();
+		queue_spinlock.unlock();
 
 		//
 		AtomicOperations::increment(statistics.submits);
@@ -404,12 +404,12 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 	};
 
 	//
-	queue_mutex.lock();
+	queue_spinlock.lock();
 
 	err = vkQueueSubmit(queue, 1, &submit_info, fence);
 	assert(!err);
 
-	queue_mutex.unlock();
+	queue_spinlock.unlock();
 
 	//
 	AtomicOperations::increment(statistics.submits);
@@ -1715,77 +1715,83 @@ void VKRenderer::finishFrame()
 	vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
 
 	// dispose renderer mapped resources
-	delete_mutex.lock();
-	dispose_mutex.lock();
-	// disposing textures
-	textures_rwlock.writeLock();
-	for (auto textureId: dispose_textures) {
-		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
-			continue;
-		}
-		auto& texture = *textureObjectIt->second;
-		// mark for deletion
-		delete_images.push_back(
-			{
-				.image = texture.image,
-				.allocation = texture.allocation,
-				.image_view = texture.view,
-				.sampler = texture.sampler
+	if (dispose_textures.empty() == false ||
+		dispose_buffers.empty() == false ||
+		delete_buffers.empty() == false ||
+		delete_images.empty() == false) {
+		delete_mutex.lock();
+		dispose_mutex.lock();
+		// disposing textures
+		textures_rwlock.writeLock();
+		for (auto textureId: dispose_textures) {
+			auto textureObjectIt = textures.find(textureId);
+			if (textureObjectIt == textures.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
+				continue;
 			}
-		);
-		//
-		delete textureObjectIt->second;
-		textures.erase(textureObjectIt);
-		for (auto& context: contexts) context.textureVector[textureId] = nullptr;
-		free_texture_ids.push_back(textureId);
-	}
-	textures_rwlock.unlock();
-	dispose_textures.clear();
-	// disposing buffer objects
-	buffers_rwlock.writeLock();
-	for (auto bufferObjectId: dispose_buffers) {
-		auto bufferIt = buffers.find(bufferObjectId);
-		if (bufferIt == buffers.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
-			continue;
-		}
-		auto& buffer = bufferIt->second;
-		for (auto& reusableBufferIt: buffer->buffers) {
-			auto& reusableBuffer = reusableBufferIt;
-			if (reusableBuffer.size == 0) continue;
-			// mark staging buffer for deletion when finishing frame
-			delete_buffers.push_back(
+			auto& texture = *textureObjectIt->second;
+			// mark for deletion
+			delete_images.push_back(
 				{
-					.buffer = reusableBuffer.buf,
-					.allocation = reusableBuffer.allocation
+					.image = texture.image,
+					.allocation = texture.allocation,
+					.image_view = texture.view,
+					.sampler = texture.sampler
 				}
 			);
+			//
+			delete textureObjectIt->second;
+			textures.erase(textureObjectIt);
+			for (auto& context: contexts) context.textureVector[textureId] = nullptr;
+			free_texture_ids.push_back(textureId);
 		}
-		delete bufferIt->second;
-		buffers.erase(bufferIt);
-		for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
-		free_buffer_ids.push_back(bufferObjectId);
-	}
-	buffers_rwlock.unlock();
-	dispose_buffers.clear();
-	dispose_mutex.unlock();
-	delete_mutex.unlock();
+		textures_rwlock.unlock();
+		dispose_textures.clear();
+		// disposing buffer objects
+		buffers_rwlock.writeLock();
+		for (auto bufferObjectId: dispose_buffers) {
+			auto bufferIt = buffers.find(bufferObjectId);
+			if (bufferIt == buffers.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
+				continue;
+			}
+			auto& buffer = bufferIt->second;
+			for (auto& reusableBufferIt: buffer->buffers) {
+				auto& reusableBuffer = reusableBufferIt;
+				if (reusableBuffer.size == 0) continue;
+				// mark staging buffer for deletion when finishing frame
+				delete_buffers.push_back(
+					{
+						.buffer = reusableBuffer.buf,
+						.allocation = reusableBuffer.allocation
+					}
+				);
+			}
+			delete bufferIt->second;
+			buffers.erase(bufferIt);
+			for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
+			free_buffer_ids.push_back(bufferObjectId);
+		}
+		buffers_rwlock.unlock();
+		dispose_buffers.clear();
+		dispose_mutex.unlock();
 
-	// remove marked vulkan resources
-	for (auto& delete_buffer: delete_buffers) {
-		vmaUnmapMemory(allocator, delete_buffer.allocation);
-		vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
+		// remove marked vulkan resources
+		for (auto& delete_buffer: delete_buffers) {
+			vmaUnmapMemory(allocator, delete_buffer.allocation);
+			vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
+		}
+		delete_buffers.clear();
+		for (auto& delete_image: delete_images) {
+			if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
+			if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
+			vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
+		}
+		delete_images.clear();
+
+		//
+		delete_mutex.unlock();
 	}
-	for (auto& delete_image: delete_images) {
-		if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
-		if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
-		vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
-	}
-	delete_buffers.clear();
-	delete_images.clear();
-	delete_mutex.unlock();
 
 	// reset desc index
 	for (auto program: programList) {

@@ -7,13 +7,9 @@
 #include "ReadWriteLock.h"
 #include "ThreadingError.h"
 
-#include <tdme/utilities/Console.h>
-
 using std::string;
 
 using tdme::os::threading::ReadWriteLock;
-
-using tdme::utilities::Console;
 
 ReadWriteLock::ReadWriteLock(const string& name) {
 	this->name = name;
