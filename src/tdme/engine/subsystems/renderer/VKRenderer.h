@@ -617,19 +617,20 @@ public:
 	//
 	int32_t getTextureUnit(void* context) override;
 	void setTextureUnit(void* context, int32_t textureUnit) override;
-	virtual Matrix2D3x3& getTextureMatrix(void* context) override;
-	virtual Renderer_Light& getLight(void* context, int32_t lightId) override;
-	virtual array<float, 4>& getEffectColorMul(void* context) override;
-	virtual array<float, 4>& getEffectColorAdd(void* context) override;
-	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
-	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
-	virtual const string& getShader(void* context) override;
-	virtual void setShader(void* context, const string& id) override;
-	virtual const string& getShaderParametersHash(void* context) override;
-	virtual const map<string, string>& getShaderParameters(void* context) override;
-	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
-	virtual float getMaskMaxValue(void* context) override;
-	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
+	Matrix2D3x3& getTextureMatrix(void* context) override;
+	Renderer_Light& getLight(void* context, int32_t lightId) override;
+	array<float, 4>& getEffectColorMul(void* context) override;
+	array<float, 4>& getEffectColorAdd(void* context) override;
+	Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
+	Renderer_PBRMaterial& getPBRMaterial(void* context) override;
+	const string& getShader(void* context) override;
+	void setShader(void* context, const string& id) override;
+	const string& getShaderParametersHash(void* context) override;
+	const map<string, string>& getShaderParameters(void* context) override;
+	void setShaderParameters(void* context, const map<string, string>& parameters) override;
+	float getMaskMaxValue(void* context) override;
+	void setMaskMaxValue(void* context, float maskMaxValue) override;
+	const Renderer_Statistics getStatistics() override;
 
 	/**
 	 * Enable/Disable v-sync

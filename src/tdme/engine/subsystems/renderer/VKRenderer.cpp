@@ -5,6 +5,7 @@
  * 	https://vulkan-tutorial.com
  * 	https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
  * 	https://github.com/SaschaWillems/Vulkan
+ * 	...
  */
 
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
@@ -58,6 +59,7 @@
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::to_string;
 using std::floor;
@@ -121,6 +123,7 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
 	queue_spinlock("queue-spinlock"),
@@ -6320,7 +6323,6 @@ void VKRenderer::setShaderParameters(void* context, const map<string, string>& p
 	contextTyped.shaderParameters = parameters;
 }
 
-
 float VKRenderer::getMaskMaxValue(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.maskMaxValue;
@@ -6334,4 +6336,26 @@ void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
 void VKRenderer::setVSyncEnabled(bool vSync) {
 	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;
 	reshape();
+}
+
+const Renderer::Renderer_Statistics VKRenderer::getStatistics() {
+	VmaBudget budget[3];
+	memset(budget, 0, sizeof(budget));
+	vmaGetBudget(allocator, budget);
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.memoryUsageGPU = budget[0].allocationBytes;
+	statistics.memoryUsageShared = budget[1].allocationBytes;
+	statistics.clearCalls = 0;
+	statistics.renderCalls = 0;
+	statistics.computeCalls = 0;
+	statistics.triangles = 0;
+	statistics.points = 0;
+	statistics.linePoints = 0;
+	statistics.bufferUploads = 0;
+	statistics.textureUploads = 0;
+	statistics.renderPasses = 0;
+	statistics.drawCommands = 0;
+	statistics.submits = 0;
+	return stats;
 }

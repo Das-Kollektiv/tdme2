@@ -68,6 +68,7 @@ public:
 	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
+	virtual const Renderer_Statistics getStatistics() override;
 
 private:
 

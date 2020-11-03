@@ -89,7 +89,8 @@ public:
 	struct Renderer_Statistics
 	{
 		int64_t time { -1LL };
-		uint64_t gpuMemory { 0LL };
+		int64_t memoryUsageGPU { -1LL };
+		int64_t memoryUsageShared { -1LL };
 		uint32_t clearCalls { 0 };
 		uint32_t renderCalls { 0 };
 		uint32_t computeCalls { 0 };
@@ -1186,7 +1187,7 @@ public:
 	/**
 	 * @return renderer statistics
 	 */
-	const Renderer_Statistics getStatistics();
+	virtual const Renderer_Statistics getStatistics() = 0;
 
 	/**
 	 * Generate mip map for atlas texture currently
