@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Light.h>
@@ -115,6 +116,7 @@ class tdme::engine::Engine final
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class SkinnedObject3DRenderGroup;
+	friend class tdme::application::Application;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;

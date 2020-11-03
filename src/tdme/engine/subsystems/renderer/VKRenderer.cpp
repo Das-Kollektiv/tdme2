@@ -739,8 +739,6 @@ void VKRenderer::initializeSwapChain() {
 		height = surfCapabilities.currentExtent.height;
 	}
 
-	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR; // VK_PRESENT_MODE_IMMEDIATE_KHR: no vsync, VK_PRESENT_MODE_FIFO_KHR: vsync
-
 	// Determine the number of VkImage's to use in the swap chain.
 	// Application desires to only acquire 1 image at a time (which is
 	// "surfCapabilities.minImageCount").
@@ -6325,4 +6323,9 @@ float VKRenderer::getMaskMaxValue(void* context) {
 void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	contextTyped.maskMaxValue = maskMaxValue;
+}
+
+void VKRenderer::setVSyncEnabled(bool vSync) {
+	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;
+	reshape();
 }

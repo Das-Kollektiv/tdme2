@@ -416,6 +416,8 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
+	VkPresentModeKHR swapchainPresentMode = { VK_PRESENT_MODE_FIFO_KHR };
+
 	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel = 0, uint32_t levelCount = 1);
@@ -626,5 +628,11 @@ public:
 	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
+
+	/**
+	 * Enable/Disable v-sync
+	 * @param vSync V-sync enabled
+	 */
+	void setVSyncEnabled(bool vSync);
 
 };
