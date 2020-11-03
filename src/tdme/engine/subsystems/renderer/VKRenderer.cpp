@@ -6343,9 +6343,11 @@ const Renderer::Renderer_Statistics VKRenderer::getStatistics() {
 	memset(budget, 0, sizeof(budget));
 	vmaGetBudget(allocator, budget);
 	auto stats = statistics;
+	stats.memoryUsageGPU = budget[0].allocationBytes;
+	stats.memoryUsageShared = budget[1].allocationBytes;
 	statistics.time = Time::getCurrentMillis();
-	statistics.memoryUsageGPU = budget[0].allocationBytes;
-	statistics.memoryUsageShared = budget[1].allocationBytes;
+	statistics.memoryUsageGPU = -1LL;
+	statistics.memoryUsageShared = -1LL;
 	statistics.clearCalls = 0;
 	statistics.renderCalls = 0;
 	statistics.computeCalls = 0;
