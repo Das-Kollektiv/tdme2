@@ -348,8 +348,10 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	#if defined(VULKAN) || defined(GLFW3)
+	#if defined(VULKAN)
 		static_cast<VKRenderer*>(Engine::renderer)->setVSyncEnabled(vSync);
+	#elif defined(GLFW3)
+		glfwSwapInterval(vSync == true?1:0);
 	#else
 		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 			// TODO: a.drewke: vsync
