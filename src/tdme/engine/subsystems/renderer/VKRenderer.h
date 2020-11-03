@@ -358,6 +358,8 @@ private:
 	unordered_map<int32_t, shader_type*> shaders;
 	unordered_map<int32_t, buffer_object_type*> buffers;
 	unordered_map<int32_t, texture_type*> textures;
+	vector<int32_t> free_texture_ids;
+	vector<int32_t> free_buffer_ids;
 	vector<framebuffer_object_type*> framebuffers { nullptr };
 
 	ReadWriteLock buffers_rwlock;

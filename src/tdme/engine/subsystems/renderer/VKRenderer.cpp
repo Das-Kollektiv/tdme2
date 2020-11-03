@@ -1741,6 +1741,7 @@ void VKRenderer::finishFrame()
 		delete textureObjectIt->second;
 		textures.erase(textureObjectIt);
 		for (auto& context: contexts) context.textureVector[textureId] = nullptr;
+		free_texture_ids.push_back(textureId);
 	}
 	textures_rwlock.unlock();
 	dispose_textures.clear();
@@ -1767,6 +1768,7 @@ void VKRenderer::finishFrame()
 		delete bufferIt->second;
 		buffers.erase(bufferIt);
 		for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
+		free_buffer_ids.push_back(bufferObjectId);
 	}
 	buffers_rwlock.unlock();
 	dispose_buffers.clear();
@@ -4169,23 +4171,35 @@ void VKRenderer::clear(int32_t mask)
 int32_t VKRenderer::createTexture()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
-	auto texture_type_ptr = new texture_type;
-	auto& texture_type = *texture_type_ptr;
-	texture_type.id = texture_idx++;
-	textures[texture_type.id] = texture_type_ptr;
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	textures[texture.id] = texturePtr;
 	textures_rwlock.unlock();
-	return texture_type.id;
+	return texture.id;
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
-	auto depthBufferTexturePtr = new texture_type;
-	auto& depthBufferTexture = *depthBufferTexturePtr;
-	depthBufferTexture.id = texture_idx++;
-	textures[depthBufferTexture.id] = depthBufferTexturePtr;
-	createDepthBufferTexture(depthBufferTexture.id, width, height);
-	return depthBufferTexture.id;
+	auto texturePtr = new texture_type();
+	textures_rwlock.writeLock();
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	textures[texture.id] = texturePtr;
+	textures_rwlock.unlock();
+	createDepthBufferTexture(texture.id, width, height);
+	return texture.id;
 }
 
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -4294,12 +4308,19 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
-	auto colorBufferTexturePtr = new texture_type;
-	auto& colorBufferTexture = *colorBufferTexturePtr;
-	colorBufferTexture.id = texture_idx++;
-	textures[colorBufferTexture.id] = colorBufferTexturePtr;
-	createColorBufferTexture(colorBufferTexture.id, width, height);
-	return colorBufferTexture.id;
+	auto texturePtr = new texture_type();
+	textures_rwlock.writeLock();
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	textures[texture.id] = texturePtr;
+	textures_rwlock.unlock();
+	createColorBufferTexture(texture.id, width, height);
+	return texture.id;
 }
 
 void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -5036,11 +5057,16 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 	buffers_rwlock.writeLock();
 	for (auto i = 0; i < bufferCount; i++) {
 		auto bufferPtr = new buffer_object_type;
-		buffers[buffer_idx] = bufferPtr;
 		auto& buffer = *bufferPtr;
-		buffer.id = buffer_idx++;
+		auto reuseBufferId = -1;
+		if (free_buffer_ids.empty() == false) {
+			reuseBufferId = free_buffer_ids[0];
+			free_buffer_ids.erase(free_buffer_ids.begin());
+		}
+		buffer.id = reuseBufferId != -1?reuseBufferId:buffer_idx++;
 		buffer.useGPUMemory = useGPUMemory;
 		buffer.shared = shared;
+		buffers[buffer.id] = bufferPtr;
 		bufferIds.push_back(buffer.id);
 	}
 	buffers_rwlock.unlock();
@@ -5334,7 +5360,6 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 	auto pipelineIt = program->pipelines.find(pipelineId);
 	if (pipelineIt == program->pipelines.end()) {
 		pipeline_rwlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): pipeline with id " + pipelineId + " does not exist");
 		return nullptr;
 	}
 	// we have a pipeline, also place it in context
