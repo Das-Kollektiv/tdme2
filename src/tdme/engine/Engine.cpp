@@ -1177,7 +1177,10 @@ void Engine::display()
 	renderingComputedTransformations = false;
 
 	//
-	for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
+	if (renderer->isSupportingMultithreadedRendering() == true) {
+		for (auto engineThread: engineThreads) while (engineThread->state != EngineThread::STATE_SPINNING && engineThread->state != EngineThread::STATE_WAITING);
+		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
+	}
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)

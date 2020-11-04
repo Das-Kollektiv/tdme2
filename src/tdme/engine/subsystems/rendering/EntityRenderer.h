@@ -192,7 +192,6 @@ private:
 		// reset shader
 		renderer->setShader(renderer->getContext(threadIdx), string());
 		auto effectPass = renderer->getEffectPass();
-
 		// sort objects by model
 		Vector3 objectCamFromAxis;
 		auto camera = engine->getCamera();
