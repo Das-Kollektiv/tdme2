@@ -828,18 +828,11 @@ public:
 	virtual void bindOriginsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
-	 * Bind texture indices buffer object
+	 * Bind texture and sprite indices buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
-
-	/**
-	 * Bind sprite indices buffer object
-	 * @param context context
-	 * @param bufferObjectId buffer object id
-	 */
-	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind point sizes buffer object

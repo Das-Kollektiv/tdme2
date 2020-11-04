@@ -857,17 +857,10 @@ void GL3Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId)
 	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
-}
-
-void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(2);
-	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribIPointer(1, 2, GL_UNSIGNED_SHORT, 0, 0LL);
 }
 
 void GL3Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {

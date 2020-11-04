@@ -122,8 +122,7 @@ public:
 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
 	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;

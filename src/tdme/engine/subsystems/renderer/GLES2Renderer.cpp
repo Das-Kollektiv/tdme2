@@ -727,17 +727,10 @@ void GLES2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectI
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+void GLES2Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0LL);
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {

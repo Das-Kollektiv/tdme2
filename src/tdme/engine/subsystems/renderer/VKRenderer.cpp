@@ -3022,22 +3022,22 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 	vi_attrs[0].offset = 0;
 
-	// texture indices
+	// texture + sprite indices
 	vi_bindings[1].binding = 1;
-	vi_bindings[1].stride = sizeof(uint16_t);
+	vi_bindings[1].stride = sizeof(uint16_t) * 2;
 	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 	vi_attrs[1].binding = 1;
 	vi_attrs[1].location = 1;
-	vi_attrs[1].format = VK_FORMAT_R16_UINT;
+	vi_attrs[1].format = VK_FORMAT_R16G16_UINT;
 	vi_attrs[1].offset = 0;
 
-	// sprite indices
+	// not in use
 	vi_bindings[2].binding = 2;
-	vi_bindings[2].stride = sizeof(uint16_t);
+	vi_bindings[2].stride = sizeof(float);
 	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 	vi_attrs[2].binding = 2;
 	vi_attrs[2].location = 2;
-	vi_attrs[2].format = VK_FORMAT_R16_UINT;
+	vi_attrs[2].format = VK_FORMAT_R32_SFLOAT;
 	vi_attrs[2].offset = 0;
 
 	// colors
@@ -5082,6 +5082,15 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 
 inline VkBuffer VKRenderer::getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size) {
 	auto buffer = bufferObject->current_buffer;
+	if (buffer == nullptr) {
+		size = 0;
+		return VK_NULL_HANDLE;
+	}
+	//
+	while (bufferObject->uploading == true) {
+		// spin lock
+	}
+	//
 	size = buffer->size;
 	buffer->frame_used_last = frame;
 	return buffer->buf;
@@ -5126,6 +5135,11 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 	buffers_rwlock.unlock();
 
 	//
+	while (buffer->uploading == true) {
+		// spin lock
+	}
+
+	// done
 	return buffer;
 }
 
@@ -5260,6 +5274,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	buffer->current_buffer = reusableBuffer;
 
 	// clean up
+	/*
 	vector<int> buffersToRemove;
 	if (buffer->buffer_count > 1 && frame >= buffer->frame_cleaned_last + 60) {
 		int i = 0;
@@ -5280,6 +5295,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		}
 		buffer->frame_cleaned_last = frame;
 	}
+	*/
 
 	//
 	buffer->uploading = false;
@@ -5433,13 +5449,8 @@ void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) 
 	(*static_cast<context_type*>(context)).bound_buffers[9] = bufferObjectId;
 }
 
-void VKRenderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+void VKRenderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
 	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
-}
-
-void VKRenderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	(*static_cast<context_type*>(context)).bound_buffers[2] = bufferObjectId;
 }
 
 void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {

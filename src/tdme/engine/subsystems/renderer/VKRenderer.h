@@ -381,7 +381,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -577,8 +577,7 @@ public:
 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectIdd, int32_t divisor) override;
 	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;

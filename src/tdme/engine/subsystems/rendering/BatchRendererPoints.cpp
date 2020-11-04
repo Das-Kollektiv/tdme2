@@ -41,12 +41,10 @@ BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
 	fbEffectColorMul = (fbEffectColorMulByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 	fbEffectColorAdd = (fbEffectColorAddByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		sbTextureIndices = (sbTexureIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(uint16_t)))->asShortBuffer();
-		sbSpriteIndices = (sbSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(uint16_t)))->asShortBuffer();
+		sbTextureSpriteIndices = (sbTextureSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t)))->asShortBuffer();
 		sbSpriteSheetDimension = (sbSpriteSheetDimensionByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t)))->asShortBuffer();
 	} else {
-		fbTextureIndices = (fbTexureIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(float)))->asFloatBuffer();
-		fbSpriteIndices = (fbSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(float)))->asFloatBuffer();
+		fbTextureSpriteIndices = (fbTextureSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float)))->asFloatBuffer();
 		fbSpriteSheetDimension = (fbSpriteSheetDimensionByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float)))->asFloatBuffer();
 	}
 }
@@ -59,12 +57,10 @@ BatchRendererPoints::~BatchRendererPoints()
 	delete fbEffectColorMulByteBuffer;
 	delete fbEffectColorAddByteBuffer;
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		delete sbTexureIndicesByteBuffer;
-		delete sbSpriteIndicesByteBuffer;
+		delete sbTextureSpriteIndicesByteBuffer;
 		delete sbSpriteSheetDimensionByteBuffer;
 	} else {
-		delete fbTexureIndicesByteBuffer;
-		delete fbSpriteIndicesByteBuffer;
+		delete fbTextureSpriteIndicesByteBuffer;
 		delete fbSpriteSheetDimensionByteBuffer;
 	}
 }
@@ -74,7 +70,7 @@ void BatchRendererPoints::initialize()
 	// initialize if not yet done
 	if (vboIds == nullptr) {
 		auto created = false;
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 8, false, false, created);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 7, false, false, created);
 		vboIds = vboManaged->getVBOIds();
 	}
 }
@@ -89,35 +85,31 @@ void BatchRendererPoints::render(void* context)
 	auto points = fbVertices.getPosition() / 3;
 	// upload
 	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject(context, (*vboIds)[3], fbColors.getPosition() * sizeof(float), &fbColors);
-	renderer->uploadBufferObject(context, (*vboIds)[5], fbPointSizes.getPosition() * sizeof(float), &fbPointSizes);
-	renderer->uploadBufferObject(context, (*vboIds)[6], fbEffectColorMul.getPosition() * sizeof(float), &fbEffectColorMul);
-	renderer->uploadBufferObject(context, (*vboIds)[7], fbEffectColorAdd.getPosition() * sizeof(float), &fbEffectColorAdd);
+	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(context, (*vboIds)[4], fbPointSizes.getPosition() * sizeof(float), &fbPointSizes);
+	renderer->uploadBufferObject(context, (*vboIds)[5], fbEffectColorMul.getPosition() * sizeof(float), &fbEffectColorMul);
+	renderer->uploadBufferObject(context, (*vboIds)[6], fbEffectColorAdd.getPosition() * sizeof(float), &fbEffectColorAdd);
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		renderer->uploadBufferObject(context, (*vboIds)[1], sbTextureIndices.getPosition() * sizeof(uint16_t), &sbTextureIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[2], sbSpriteIndices.getPosition() * sizeof(uint16_t), &sbSpriteIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[4], sbSpriteSheetDimension.getPosition() * sizeof(uint16_t), &sbSpriteSheetDimension);
+		renderer->uploadBufferObject(context, (*vboIds)[1], sbTextureSpriteIndices.getPosition() * sizeof(uint16_t), &sbTextureSpriteIndices);
+		renderer->uploadBufferObject(context, (*vboIds)[3], sbSpriteSheetDimension.getPosition() * sizeof(uint16_t), &sbSpriteSheetDimension);
 	} else {
-		renderer->uploadBufferObject(context, (*vboIds)[1], fbTextureIndices.getPosition() * sizeof(float), &fbTextureIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[2], fbSpriteIndices.getPosition() * sizeof(float), &fbSpriteIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[4], fbSpriteSheetDimension.getPosition() * sizeof(float), &fbSpriteSheetDimension);
+		renderer->uploadBufferObject(context, (*vboIds)[1], fbTextureSpriteIndices.getPosition() * sizeof(float), &fbTextureSpriteIndices);
+		renderer->uploadBufferObject(context, (*vboIds)[3], fbSpriteSheetDimension.getPosition() * sizeof(float), &fbSpriteSheetDimension);
 	}
 	// bind vertices
 	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
-	// bind texture indices
-	renderer->bindTextureIndicesBufferObject(context, (*vboIds)[1]);
-	// bind sprite indices
-	renderer->bindSpriteIndicesBufferObject(context, (*vboIds)[2]);
+	// bind texture and sprite indices
+	renderer->bindTextureSpriteIndicesBufferObject(context, (*vboIds)[1]);
 	// bind colors
-	renderer->bindColorsBufferObject(context, (*vboIds)[3]);
+	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
 	// bind sprite sheet dimension
-	renderer->bindSpriteSheetDimensionBufferObject(context, (*vboIds)[4]);
+	renderer->bindSpriteSheetDimensionBufferObject(context, (*vboIds)[3]);
 	// bind point sizes
-	renderer->bindPointSizesBufferObject(context, (*vboIds)[5]);
+	renderer->bindPointSizesBufferObject(context, (*vboIds)[4]);
 	// bind effect color mul
-	renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[6], 0);
+	renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[5], 0);
 	// bind effect color add
-	renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[7], 0);
+	renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[6], 0);
 	// draw
 	renderer->drawPointsFromBufferObjects(context, points, 0);
 }
@@ -138,12 +130,10 @@ void BatchRendererPoints::clear()
 	fbEffectColorMul.clear();
 	fbEffectColorAdd.clear();
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		sbTextureIndices.clear();
-		sbSpriteIndices.clear();
+		sbTextureSpriteIndices.clear();
 		sbSpriteSheetDimension.clear();
 	} else {
-		fbTextureIndices.clear();
-		fbSpriteIndices.clear();
+		fbTextureSpriteIndices.clear();
 		fbSpriteSheetDimension.clear();
 	}
 }

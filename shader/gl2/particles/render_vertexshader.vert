@@ -4,8 +4,7 @@ precision highp float;
 
 // attributes
 attribute vec3 inVertex;
-attribute float inTextureIndex;
-attribute float inSpriteIndex;
+attribute vec2 inTextureSpriteIndex;
 attribute vec4 inColor;
 attribute float inPointSize;
 attribute vec2 inSpriteSheetDimensions;
@@ -29,8 +28,8 @@ varying vec4 vsEffectColorAdd;
 
 void main(void) {
 	//
-	vsTextureIndex = inTextureIndex;
-	vsSpriteIndex = inSpriteIndex;
+	vsTextureIndex = inTextureSpriteIndex[0];
+	vsSpriteIndex = inTextureSpriteIndex[1];
 	vsColor = inColor;
 	vsSpriteSheetDimension = inSpriteSheetDimensions;
 	vsEffectColorMul = inEffectColorMul;

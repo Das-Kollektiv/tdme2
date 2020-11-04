@@ -5,8 +5,7 @@ precision highp int;
 
 // layout
 layout (location = 0) in vec3 inVertex;
-layout (location = 1) in uint inTextureIndex;
-layout (location = 2) in uint inSpriteIndex;
+layout (location = 1) in uvec2 inTextureSpriteIndex;
 layout (location = 3) in vec4 inColor;
 layout (location = 5) in float inPointSize;
 layout (location = 6) in uvec2 inSpriteSheetDimensions;
@@ -34,8 +33,8 @@ flat out vec4 vsEffectColorAdd;
 
 void main(void) {
 	//
-	vsTextureIndex = inTextureIndex;
-	vsSpriteIndex = inSpriteIndex;
+	vsTextureIndex = inTextureSpriteIndex[0];
+	vsSpriteIndex = inTextureSpriteIndex[1];
 	vsColor = inColor;
 	vsSpriteSheetDimension = inSpriteSheetDimensions;
 	vsEffectColorMul = inEffectColorMul;

@@ -37,10 +37,8 @@ private:
 	bool acquired;
 	ByteBuffer* fbVerticesByteBuffer { nullptr };
 	FloatBuffer fbVertices;
-	ByteBuffer* sbTexureIndicesByteBuffer { nullptr };
-	ShortBuffer sbTextureIndices;
-	ByteBuffer* sbSpriteIndicesByteBuffer { nullptr };
-	ShortBuffer sbSpriteIndices;
+	ByteBuffer* sbTextureSpriteIndicesByteBuffer { nullptr };
+	ShortBuffer sbTextureSpriteIndices;
 	ByteBuffer* fbColorsByteBuffer { nullptr };
 	FloatBuffer fbColors;
 	ByteBuffer* fbPointSizesByteBuffer { nullptr };
@@ -52,10 +50,8 @@ private:
 	ByteBuffer* fbEffectColorAddByteBuffer { nullptr };
 	FloatBuffer fbEffectColorAdd;
 
-	ByteBuffer* fbTexureIndicesByteBuffer { nullptr };
-	FloatBuffer fbTextureIndices;
-	ByteBuffer* fbSpriteIndicesByteBuffer { nullptr };
-	FloatBuffer fbSpriteIndices;
+	ByteBuffer* fbTextureSpriteIndicesByteBuffer { nullptr };
+	FloatBuffer fbTextureSpriteIndices;
 	ByteBuffer* fbSpriteSheetDimensionByteBuffer { nullptr };
 	FloatBuffer fbSpriteSheetDimension;
 
@@ -86,8 +82,8 @@ private:
 	 */
 	inline void addPoint(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
 		fbVertices.put(point->point.getArray());
-		sbTextureIndices.put(textureIndex);
-		sbSpriteIndices.put(point->spriteIndex);
+		sbTextureSpriteIndices.put(textureIndex);
+		sbTextureSpriteIndices.put(point->spriteIndex);
 		fbColors.put(point->color.getArray());
 		fbPointSizes.put(pointSize);
 		sbSpriteSheetDimension.put(textureHorizontalSprites);
@@ -102,8 +98,8 @@ private:
 	 */
 	inline void addPointNoInteger(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
 		fbVertices.put(point->point.getArray());
-		fbTextureIndices.put(static_cast<float>(textureIndex + 0.1f));
-		fbSpriteIndices.put(static_cast<float>(point->spriteIndex + 0.1f));
+		fbTextureSpriteIndices.put(static_cast<float>(textureIndex + 0.1f));
+		fbTextureSpriteIndices.put(static_cast<float>(point->spriteIndex + 0.1f));
 		fbColors.put(point->color.getArray());
 		fbPointSizes.put(pointSize);
 		fbSpriteSheetDimension.put(static_cast<float>(textureHorizontalSprites + 0.1f));
