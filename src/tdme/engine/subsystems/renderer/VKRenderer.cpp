@@ -4975,6 +4975,9 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 
+	//
+	if (frameBufferId == bound_frame_buffer) return;
+
 	// if unsetting program flush command buffers
 	endDrawCommandsAllContexts();
 
