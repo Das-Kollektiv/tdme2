@@ -1432,6 +1432,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
+		setPreview();
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
