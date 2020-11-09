@@ -2473,7 +2473,7 @@ inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAtta
 	att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	att_state.colorBlendOp = VK_BLEND_OP_ADD;
 	att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-	att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 

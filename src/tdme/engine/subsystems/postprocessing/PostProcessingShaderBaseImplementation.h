@@ -32,7 +32,6 @@ protected:
 	int32_t uniformTextureLightPositionY { -1 };
 	int32_t uniformIntensity { -1 };
 
-
 	bool isRunning { false };
 	bool initialized { false };
 	Renderer* renderer { nullptr };
