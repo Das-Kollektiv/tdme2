@@ -155,6 +155,21 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* conte
 
 void LightingShaderPBRBaseImplementation::unUseProgram(void* context)
 {
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	#if !defined (__APPLE__)
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+		renderer->bindTexture(context, renderer->ID_NONE);
+	#endif
+	renderer->setTextureUnit(context, 0);
 }
 
 void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, void* context)

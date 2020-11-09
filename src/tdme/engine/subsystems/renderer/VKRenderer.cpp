@@ -4774,7 +4774,7 @@ void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
 
 void VKRenderer::bindTexture(void* context, int32_t textureId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId));
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
@@ -5009,6 +5009,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
+			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 		}
 	}
 
@@ -5050,6 +5051,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
+			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 		}
 	}
 

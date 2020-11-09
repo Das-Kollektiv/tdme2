@@ -150,6 +150,13 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
 {
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 0);
 }
 
 void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* context)
