@@ -2,10 +2,10 @@
 
 #include "fwd-tdme.h"
 
-#include <pthread.h>
-
+#include <atomic>
 #include <string>
 
+using std::atomic_flag;
 using std::string;
 
 /**
@@ -42,10 +42,5 @@ public:
 
 private:
 	string name;
-	#if defined(CPPTHREADS)
-		spin lock spin lock;
-	#else
-		pthread_spinlock_t pThreadSpinLock;
-	#endif
-
+	atomic_flag locked = ATOMIC_FLAG_INIT;
 };
