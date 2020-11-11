@@ -291,6 +291,8 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 {
 	// iterate through groups
 	for (auto it: groups) {
+		//
+		auto groupAnimationState = animationState;
 		// put and associate transformation matrices with group
 		auto group = it.second;
 		auto matrix = new Matrix4x4();
@@ -303,7 +305,7 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
-			animationState = overlayAnimationIt->second;
+			groupAnimationState = overlayAnimationIt->second;
 		}
 		groupList.push_back({
 			.groupId = group->getId(),
@@ -317,7 +319,7 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 		// do sub groups
 		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
-			createTransformationsMatrices(matrices, groupList, subGroups, matrix, animationState);
+			createTransformationsMatrices(matrices, groupList, subGroups, matrix, groupAnimationState);
 		}
 	}
 }
@@ -325,6 +327,8 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 void Object3DAnimation::updateGroupList(vector<FlattenedGroup>& groupList, int& groupIdx, const map<string, Group*>& groups, AnimationState* animationState) {
 	// iterate through groups
 	for (auto it: groups) {
+		//
+		auto groupAnimationState = animationState;
 		// put and associate transformation matrices with group
 		auto group = it.second;
 		// overridden matrix
@@ -334,16 +338,16 @@ void Object3DAnimation::updateGroupList(vector<FlattenedGroup>& groupList, int& 
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
-			animationState = overlayAnimationIt->second;
+			groupAnimationState = overlayAnimationIt->second;
 		}
 		// update group list
 		groupList[groupIdx].groupOverriddenTransformationsMatrix = overriddenTransformationsMatrix;
-		groupList[groupIdx].groupAnimationState = animationState;
+		groupList[groupIdx].groupAnimationState = groupAnimationState;
 		groupIdx++;
 		// do sub groups
 		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
-			updateGroupList(groupList, groupIdx, subGroups, animationState);
+			updateGroupList(groupList, groupIdx, subGroups, groupAnimationState);
 		}
 	}
 }
