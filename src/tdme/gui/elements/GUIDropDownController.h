@@ -46,6 +46,7 @@ private:
 	GUIElementNode* arrowNode { nullptr };
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
+	string search;
 
 private:
 	/**
@@ -93,6 +94,11 @@ private:
 	 * Select previous
 	 */
 	void selectPrevious();
+
+	/**
+	 * Do search
+	 */
+	void doSearch();
 
 public:
 	// overridden methods

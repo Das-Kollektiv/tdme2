@@ -33,6 +33,7 @@ class tdme::gui::elements::GUIDropDownOptionController final
 private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
+	static string CONDITION_HIDDEN;
 	GUIParentNode* dropDownNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
@@ -58,6 +59,13 @@ private:
 	 * Unselect
 	 */
 	void unselect();
+
+	/**
+	 * Search by string
+	 * @param value value
+	 * @return search did match
+	 */
+	bool search(const string& value);
 
 public:
 	// overridden methods

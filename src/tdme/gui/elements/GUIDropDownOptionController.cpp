@@ -12,6 +12,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -26,9 +27,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 string GUIDropDownOptionController::CONDITION_SELECTED = "selected";
 string GUIDropDownOptionController::CONDITION_UNSELECTED = "unselected";
+string GUIDropDownOptionController::CONDITION_HIDDEN = "hidden";
 
 GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node)
 	: GUIElementController(node)
@@ -70,6 +73,23 @@ void GUIDropDownOptionController::unselect()
 	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
 	this->selected = false;
 	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+}
+
+bool GUIDropDownOptionController::search(const string& value) {
+	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	if (value.empty() == true) {
+		nodeConditions.remove(CONDITION_HIDDEN);
+		return true;
+	}
+	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
+	auto nodeTextLowerCase = StringTools::toLowerCase(dropDownOptionTextNode->getText().getString());
+	if (nodeTextLowerCase.find(value) == string::npos) {
+		nodeConditions.add(CONDITION_HIDDEN);
+		return false;
+	} else {
+		nodeConditions.remove(CONDITION_HIDDEN);
+		return true;
+	}
 }
 
 void GUIDropDownOptionController::initialize()

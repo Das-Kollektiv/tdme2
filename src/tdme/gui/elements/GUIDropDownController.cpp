@@ -13,6 +13,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -29,6 +30,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 string GUIDropDownController::CONDITION_DISABLED = "disabled";
 string GUIDropDownController::CONDITION_ENABLED = "enabled";
@@ -114,6 +116,8 @@ void GUIDropDownController::toggleOpenState()
 	open = open == true ? false : true;
 	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	search.clear();
+	doSearch();
 }
 
 void GUIDropDownController::determineDropDownOptionControllers()
@@ -176,6 +180,24 @@ void GUIDropDownController::selectPrevious()
 	dropDownOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
+void GUIDropDownController::doSearch() {
+	determineDropDownOptionControllers();
+	if (dropDownOptionControllers.size() > 0) {
+		auto firstVisibleDropDown = -1;
+		auto searchLowerCase = StringTools::toLowerCase(search);
+		auto i = 0;
+		for (auto dropDownOptionController: dropDownOptionControllers) {
+			auto match = dropDownOptionController->search(searchLowerCase);
+			if (firstVisibleDropDown == -1 && match == true) firstVisibleDropDown = i;
+			i++;
+		}
+		if (firstVisibleDropDown != -1) {
+			dropDownOptionControllers[firstVisibleDropDown]->getNode()->scrollToNodeX(dropDownNode);
+			dropDownOptionControllers[firstVisibleDropDown]->getNode()->scrollToNodeY(dropDownNode);
+		}
+	}
+}
+
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
@@ -204,41 +226,60 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 {
 	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
-		switch (event->getKeyCode()) {
-		case GUIKeyboardEvent::KEYCODE_UP: {
-				event->setProcessed(true);
+		auto keyChar = event->getKeyChar();
+		if (keyChar >= 32 && keyChar < 127) {
+			event->setProcessed(true);
+			#if defined(VULKAN) || defined(GLFW3)
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
+			#else
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					if (isOpen() == false) {
-						toggleOpenState();
-					} else {
-						selectPrevious();
+			#endif
+				search+= event->getKeyChar();
+			}
+		} else {
+			switch (event->getKeyCode()) {
+				case GUIKeyboardEvent::KEYCODE_BACKSPACE:
+				case GUIKeyboardEvent::KEYCODE_DELETE: {
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						search.clear();
 					}
-				}
-			}
-			break;
-		case GUIKeyboardEvent::KEYCODE_DOWN: {
-				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					if (isOpen() == false) {
-						toggleOpenState();
-					} else {
-						selectNext();
+					break;
+				case GUIKeyboardEvent::KEYCODE_UP: {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (isOpen() == false) {
+								toggleOpenState();
+							} else {
+								selectPrevious();
+							}
+						}
 					}
+					break;
+				case GUIKeyboardEvent::KEYCODE_DOWN: {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (isOpen() == false) {
+								toggleOpenState();
+							} else {
+								selectNext();
+							}
+						}
+					}
+					break;
+				case GUIKeyboardEvent::KEYCODE_SPACE: {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							toggleOpenState();
+						}
+						if (open == false) {
+							node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
+						}
+					}
+					break;
 				}
 			}
-			break;
-		case GUIKeyboardEvent::KEYCODE_SPACE: {
-				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					toggleOpenState();
-				}
-				if (open == false) {
-					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
-				}
-			}
-			break;
 		}
-
+		doSearch();
 	}
 }
 
