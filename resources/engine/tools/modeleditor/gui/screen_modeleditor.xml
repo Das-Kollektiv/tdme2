@@ -17,8 +17,8 @@
 					<tab id="tab_properties_lod" text="LOD" />
 					<tab id="tab_properties_materials" text="Materials" /> 
 					<tab id="tab_properties_animations" text="Animations" />
-					<tab id="tab_properties_sounds" text="Sounds" />
 					<tab id="tab_properties_preview" text="Preview" />
+					<tab id="tab_properties_sounds" text="Sounds" />
 					<tab id="tab_properties_tools" text="Tools" />
 					<tab id="tab_properties_stats" text="Statistics" />
 				</tabs-header>
