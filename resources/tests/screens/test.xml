@@ -1,5 +1,21 @@
 <screen id="test" background-color="#202020" min-width="1024" min-height="768" max-width="2048" max-height="1536">
 	<panel left="5%" top="5%" width="90%" height="90%" alignment="vertical" horizontal-align="center"> 
+		<menu-header>
+			<menu-header-item text="File">
+				<menu-item text="Quit"/>
+			</menu-header-item>
+			<menu-header-item text="Edit">
+				<menu-item text="Cut"/>
+				<menu-item text="Copy"/>
+				<menu-item text="Paste"/>
+				<menu-item text="Delete"/>
+				<menu-item text="Select All"/>I
+			</menu-header-item>
+			<space width="*"/>
+			<menu-header-item text="Help">
+				<menu-item text="About"/>
+			</menu-header-item>
+		</menu-header>
 		<space height="5%" />
 		<layout width="80%" padding="10" border="1" border-color="red" alignment="none" horizontal-align="center" vertical-align="center" background-color="#909090">
 			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="test headline" color="#ffffff" />

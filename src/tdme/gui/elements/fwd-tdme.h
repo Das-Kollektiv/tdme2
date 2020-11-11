@@ -18,6 +18,12 @@ namespace elements {
 	class GUIImageButton;
 	class GUIKnob;
 	class GUIKnobController;
+	class GUIMenuHeader;
+	class GUIMenuHeaderController;
+	class GUIMenuHeaderItem;
+	class GUIMenuHeaderItemController;
+	class GUIMenuItem;
+	class GUIMenuItemController;
 	class GUIProgressBar;
 	class GUIProgressBarController;
 	class GUIRadioButton;

@@ -14,6 +14,9 @@
 #include <tdme/gui/elements/GUIImageButton.h>
 #include <tdme/gui/elements/GUIInput.h>
 #include <tdme/gui/elements/GUIKnob.h>
+#include <tdme/gui/elements/GUIMenuHeader.h>
+#include <tdme/gui/elements/GUIMenuHeaderItem.h>
+#include <tdme/gui/elements/GUIMenuItem.h>
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
@@ -76,6 +79,9 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIInput;
 using tdme::gui::elements::GUIKnob;
+using tdme::gui::elements::GUIMenuHeader;
+using tdme::gui::elements::GUIMenuHeaderItem;
+using tdme::gui::elements::GUIMenuItem;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
@@ -1250,6 +1256,27 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIProgressBar();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuHeader();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuHeaderItem();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

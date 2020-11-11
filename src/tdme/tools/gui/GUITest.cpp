@@ -160,6 +160,7 @@ void GUITest::reshape(int32_t width, int32_t height)
 }
 
 void GUITest::onActionPerformed(GUIActionListenerType type, GUIElementNode* node) {
+	Console::println(node->getId() + ": onActionPerformed(): " + node->getId() + ", type: " + to_string(type));
 }
 
 void GUITest::onValueChanged(GUIElementNode* node) {

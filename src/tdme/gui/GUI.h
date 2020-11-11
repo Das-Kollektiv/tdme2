@@ -48,6 +48,7 @@ using tdme::utilities::Time;
 class tdme::gui::GUI final: public virtual InputEventHandler
 {
 	friend class tdme::gui::elements::GUIDropDownController;
+	friend class tdme::gui::elements::GUIMenuHeaderItemController;
 	friend class tdme::gui::nodes::GUIElementController;
 	friend class tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;

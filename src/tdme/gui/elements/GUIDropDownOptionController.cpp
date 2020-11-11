@@ -56,23 +56,23 @@ void GUIDropDownOptionController::setDisabled(bool disabled)
 
 void GUIDropDownOptionController::select()
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
+	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = true;
-	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
-	auto dropDownOptionTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
-	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_enabled"));
+	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
+	auto dropDownOptionTextNode = dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
+	auto dropDownTextNodeEnabled = dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_enabled"));
 	dropDownTextNodeEnabled->setText(dropDownOptionTextNode->getText());
-	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_disabled"));
+	auto dropDownTextNodeDisabled = dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(dropDownNode->getId() + "_text_disabled"));
 	dropDownTextNodeDisabled->setText(dropDownOptionTextNode->getText());
 }
 
 void GUIDropDownOptionController::unselect()
 {
 	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = false;
-	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 }
 
 bool GUIDropDownOptionController::search(const string& value) {
@@ -133,9 +133,9 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();
+			(dynamic_cast<GUIDropDownController*>(dropDownNode->getController()))->unselect();
 			select();
-			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->toggleOpenState();
+			(dynamic_cast<GUIDropDownController*>(dropDownNode->getController()))->toggleOpenState();
 			node->scrollToNodeX(dropDownNode);
 			node->scrollToNodeY(dropDownNode);
 			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(dropDownNode));
