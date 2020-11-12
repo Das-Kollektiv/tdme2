@@ -45,19 +45,15 @@ private:
 	bool hasFocus();
 
 	/**
-	 * Unselect all nodes
-	 */
-	void unselect();
-
-	/**
 	 * Determine menu header item controllers
 	 */
 	void determineMenuHeaderItemControllers();
 
 	/**
 	 * Get selected header item idx
+	 * @return selected header item index
 	 */
-	int32_t getSelectedHeaderItemIdx();
+	int getSelectedHeaderItemIdx();
 
 	/**
 	 * Select next node

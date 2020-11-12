@@ -94,8 +94,9 @@ private:
 
 	/**
 	 * Get selected option idx
+	 * @return selected menu item controller index
 	 */
-	int32_t getSelectedMenuItemControllerIdx();
+	int getSelectedMenuItemControllerIdx();
 
 	/**
 	 * Select next node

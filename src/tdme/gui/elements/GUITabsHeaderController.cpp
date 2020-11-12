@@ -92,7 +92,7 @@ void GUITabsHeaderController::determineTabControllers()
 	}
 }
 
-int32_t GUITabsHeaderController::getSelectedTabIdx()
+int GUITabsHeaderController::getSelectedTabIdx()
 {
 	auto tabControllerIdx = -1;
 	for (auto i = 0; i < tabControllers.size(); i++) {

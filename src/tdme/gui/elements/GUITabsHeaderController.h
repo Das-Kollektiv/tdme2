@@ -58,8 +58,9 @@ private:
 
 	/**
 	 * Get selected tab idx
+	 * @return selected tab index
 	 */
-	int32_t getSelectedTabIdx();
+	int getSelectedTabIdx();
 
 	/**
 	 * Select next node

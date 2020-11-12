@@ -57,19 +57,6 @@ bool GUIMenuHeaderController::hasFocus()
 	return focus;
 }
 
-void GUIMenuHeaderController::unselect()
-{
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
-			auto menuHeaderItemController = dynamic_cast< GUIMenuHeaderItemController* >(childController);
-			if (menuHeaderItemController != nullptr) menuHeaderItemController->unselect();
-		}
-	}
-}
-
 void GUIMenuHeaderController::determineMenuHeaderItemControllers()
 {
 	menuHeaderItemControllers.clear();
@@ -77,60 +64,58 @@ void GUIMenuHeaderController::determineMenuHeaderItemControllers()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUIMenuHeaderItemController* >(childController) != nullptr) {
-			auto guiTabController = dynamic_cast< GUIMenuHeaderItemController* >(childController);
-			if (static_cast< GUINode* >(guiTabController->getNode()->getParentControllerNode()) != node)
+		if (dynamic_cast<GUIMenuHeaderItemController*>(childController) != nullptr) {
+			auto menuHeaderItemController = dynamic_cast< GUIMenuHeaderItemController* >(childController);
+			if (menuHeaderItemController->isDisabled() == true)
 				continue;
-
-			if (guiTabController->isDisabled() == true)
-				continue;
-
-			menuHeaderItemControllers.push_back(guiTabController);
+			menuHeaderItemControllers.push_back(menuHeaderItemController);
 		}
 	}
 }
 
-int32_t GUIMenuHeaderController::getSelectedHeaderItemIdx()
+int GUIMenuHeaderController::getSelectedHeaderItemIdx()
 {
-	auto tabControllerIdx = 0;
+	auto menuHeaderItemControllerIdx = -1;
 	for (auto i = 0; i < menuHeaderItemControllers.size(); i++) {
-		auto tabController = menuHeaderItemControllers[i];
-		if (tabController->isSelected() == true) {
-			tabControllerIdx = i;
+		auto menuHeaderItemController = menuHeaderItemControllers[i];
+		if (menuHeaderItemController->isSelected() == true) {
+			menuHeaderItemControllerIdx = i;
 			break;
 		}
 	}
-	return tabControllerIdx;
+	return menuHeaderItemControllerIdx;
 }
 
 void GUIMenuHeaderController::selectNext()
 {
 	determineMenuHeaderItemControllers();
-	auto tabControllerIdx = getSelectedHeaderItemIdx();
-	unselect();
-	tabControllerIdx = (tabControllerIdx + 1) % menuHeaderItemControllers.size();
-	if (tabControllerIdx < 0)
-		tabControllerIdx += menuHeaderItemControllers.size();
+	auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
+	menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx + 1) % (int)menuHeaderItemControllers.size();
+	if (menuHeaderItemControllerIdx < 0)
+		menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
 
 	for (auto menuHeaderItemController: menuHeaderItemControllers) {
-		if (menuHeaderItemController->isOpen() == true) menuHeaderItemControllers[tabControllerIdx]->toggleOpenState();
+		menuHeaderItemController->unselect();
+		if (menuHeaderItemController->isOpen() == true) menuHeaderItemController->toggleOpenState();
 	}
-	if (menuHeaderItemControllers[tabControllerIdx]->isOpen() == false) menuHeaderItemControllers[tabControllerIdx]->toggleOpenState();
+	menuHeaderItemControllers[menuHeaderItemControllerIdx]->select();
+	if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();
 }
 
 void GUIMenuHeaderController::selectPrevious()
 {
 	determineMenuHeaderItemControllers();
-	auto tabControllerIdx = getSelectedHeaderItemIdx();
-	unselect();
-	tabControllerIdx = (tabControllerIdx - 1) % menuHeaderItemControllers.size();
-	if (tabControllerIdx < 0)
-		tabControllerIdx += menuHeaderItemControllers.size();
+	auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
+	menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx - 1) % (int)menuHeaderItemControllers.size();
+	if (menuHeaderItemControllerIdx < 0)
+		menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
 
 	for (auto menuHeaderItemController: menuHeaderItemControllers) {
-		if (menuHeaderItemController->isOpen() == true) menuHeaderItemControllers[tabControllerIdx]->toggleOpenState();
+		menuHeaderItemController->unselect();
+		if (menuHeaderItemController->isOpen() == true) menuHeaderItemController->toggleOpenState();
 	}
-	if (menuHeaderItemControllers[tabControllerIdx]->isOpen() == false) menuHeaderItemControllers[tabControllerIdx]->toggleOpenState();
+	menuHeaderItemControllers[menuHeaderItemControllerIdx]->select();
+	if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();
 }
 
 void GUIMenuHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -138,7 +123,7 @@ void GUIMenuHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }
