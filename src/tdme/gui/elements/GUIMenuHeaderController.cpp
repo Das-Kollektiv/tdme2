@@ -135,7 +135,6 @@ void GUIMenuHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 	if (node == this->node) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_ESCAPE: {
-				Console::println("GUIMenuHeaderController::handleKeyboardEvent(): ESCAPE");
 				determineMenuHeaderItemControllers();
 				auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
 				if (menuHeaderItemControllerIdx == -1) return;
@@ -146,7 +145,6 @@ void GUIMenuHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					Console::println("GUIMenuHeaderController::handleKeyboardEvent(): left");
 					selectPrevious();
 				}
 			}
@@ -154,7 +152,6 @@ void GUIMenuHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 		case GUIKeyboardEvent::KEYCODE_RIGHT: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					Console::println("GUIMenuHeaderController::handleKeyboardEvent(): right");
 					selectNext();
 				}
 			}
@@ -162,22 +159,32 @@ void GUIMenuHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					Console::println("GUIMenuHeaderController::handleKeyboardEvent(): up");
 					determineMenuHeaderItemControllers();
+					if (menuHeaderItemControllers.size() == 0) return;
 					auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
-					if (menuHeaderItemControllerIdx == -1) return;
-					menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectPrevious();
+					if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = 0;
+					if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) {
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectFirst();
+					} else {
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectPrevious();
+					}
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					Console::println("GUIMenuHeaderController::handleKeyboardEvent(): down");
 					determineMenuHeaderItemControllers();
+					if (menuHeaderItemControllers.size() == 0) return;
 					auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
-					if (menuHeaderItemControllerIdx == -1) return;
-					menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectNext();
+					if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = 0;
+					if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) {
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectFirst();
+					} else {
+						menuHeaderItemControllers[menuHeaderItemControllerIdx]->selectNext();
+					}
 				}
 			}
 			break;

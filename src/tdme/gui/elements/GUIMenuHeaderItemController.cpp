@@ -202,7 +202,6 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				event->setProcessed(true);
 				toggleOpenState();
-				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
 			}
 		} else {
 			if (open == true) {

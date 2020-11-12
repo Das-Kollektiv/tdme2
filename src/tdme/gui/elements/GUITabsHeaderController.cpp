@@ -110,7 +110,7 @@ void GUITabsHeaderController::selectNext()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	tabControllerIdx = (tabControllerIdx + 1) % tabControllers.size();
+	tabControllerIdx = (tabControllerIdx + 1) % (int)tabControllers.size();
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 
@@ -124,7 +124,7 @@ void GUITabsHeaderController::selectPrevious()
 	determineTabControllers();
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
-	tabControllerIdx = (tabControllerIdx - 1) % tabControllers.size();
+	tabControllerIdx = (tabControllerIdx - 1) % (int)tabControllers.size();
 	if (tabControllerIdx < 0)
 		tabControllerIdx += tabControllers.size();
 

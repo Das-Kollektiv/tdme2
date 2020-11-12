@@ -151,6 +151,7 @@
                 - image button
                 - input
                 - knob
+                - menu
                 - progress bar
                 - radio button
                 - scrollarea both
