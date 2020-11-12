@@ -99,12 +99,17 @@ private:
 	int getSelectedMenuItemControllerIdx();
 
 	/**
-	 * Select next node
+	 * Select first menu item
+	 */
+	void selectFirst();
+
+	/**
+	 * Select next menu item
 	 */
 	void selectNext();
 
 	/**
-	 * Select previous
+	 * Select previous menu item
 	 */
 	void selectPrevious();
 

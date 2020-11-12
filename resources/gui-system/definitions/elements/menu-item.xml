@@ -1,4 +1,4 @@
-<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+<element id="{$id}" width="100%" height="auto" value="{$value}" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
 	<!-- unselected, no mouse over -->
 	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,selected,mouseover" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#000000" background-color="#FFFFFF" />
 	<!-- unselected, mouse over -->
@@ -8,7 +8,7 @@
 	<!-- selected, mouse over -->
 	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,unselected" show-on="mouseover" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" background-color="#B0B0FF" />
 	<!-- unselected, disabled -->
-	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#808080" />
+	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#FFFFFF" />
 	<!-- selected, disabled -->
-	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#FFFFFF" />
+	<text padding-left="25" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#B0B0FF" />
 </element>

@@ -9,8 +9,10 @@
 				<menu-item text="Copy"/>
 				<menu-item text="Paste"/>
 				<menu-item text="Delete"/>
-				<menu-item text="Select All"/>I
+				<menu-item text="Disabled Item" disabled="true"/>
+				<menu-item text="Select All"/>
 			</menu-header-item>
+			<menu-header-item text="Disabled Item" disabled="true" />
 			<space width="*"/>
 			<menu-header-item text="Help">
 				<menu-item text="About"/>

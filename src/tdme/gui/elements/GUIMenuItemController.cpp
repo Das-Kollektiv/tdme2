@@ -30,23 +30,29 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
+string GUIMenuItemController::CONDITION_DISABLED = "disabled";
+string GUIMenuItemController::CONDITION_ENABLED = "enabled";
 string GUIMenuItemController::CONDITION_SELECTED = "selected";
 string GUIMenuItemController::CONDITION_UNSELECTED = "unselected";
 
 GUIMenuItemController::GUIMenuItemController(GUINode* node)
 	: GUIElementController(node)
 {
-	this->initialPostLayout = true;
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->selected = (dynamic_cast<GUIElementNode*>(node))->isSelected();
+	this->disabled = (dynamic_cast<GUIElementNode*>(node))->isDisabled();
 }
 
 bool GUIMenuItemController::isDisabled()
 {
-	return false;
+	return disabled;
 }
 
 void GUIMenuItemController::setDisabled(bool disabled)
 {
+	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
+	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
+	this->disabled = disabled;
+	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 }
 
 bool GUIMenuItemController::isSelected()
@@ -85,6 +91,7 @@ void GUIMenuItemController::initialize()
 	} else {
 		unselect();
 	}
+	setDisabled(disabled);
 
 	//
 	GUIElementController::initialize();
