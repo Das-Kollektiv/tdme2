@@ -36,8 +36,6 @@ class tdme::gui::elements::GUIMenuHeaderItemController final
 	friend class GUIMenuItemController;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
 	static string CONDITION_OPENED;
 	static string CONDITION_CLOSED;
 	static string CONDITION_SELECTED;
@@ -45,7 +43,6 @@ private:
 	vector<GUINode*> childControllerNodes;
 	vector<GUIMenuItemController*> menuItemControllers;
 	bool open;
-	bool disabled;
 	bool selected;
 	MutableString value;
 	GUINode* itemNode { nullptr };
@@ -115,7 +112,6 @@ private:
 
 public:
 	// overridden methods
-	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;

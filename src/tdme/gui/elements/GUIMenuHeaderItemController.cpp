@@ -32,8 +32,6 @@ using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-string GUIMenuHeaderItemController::CONDITION_DISABLED = "disabled";
-string GUIMenuHeaderItemController::CONDITION_ENABLED = "enabled";
 string GUIMenuHeaderItemController::CONDITION_OPENED = "opened";
 string GUIMenuHeaderItemController::CONDITION_CLOSED = "closed";
 string GUIMenuHeaderItemController::CONDITION_SELECTED = "selected";
@@ -44,7 +42,6 @@ GUIMenuHeaderItemController::GUIMenuHeaderItemController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
 
@@ -53,21 +50,13 @@ void GUIMenuHeaderItemController::init()
 	open = false;
 }
 
-bool GUIMenuHeaderItemController::isDisabled()
-{
-	return disabled;
-}
-
 void GUIMenuHeaderItemController::setDisabled(bool disabled)
 {
-	if (itemNode == nullptr) {
-		this->disabled = disabled;
-		return;
-	}
+	if (itemNode == nullptr) return;
 	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(itemNode))->getActiveConditions();
-	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
-	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
+	nodeConditions.remove(isDisabled() == true?GUIElementController::CONDITION_DISABLED:GUIElementController::CONDITION_ENABLED);
+	GUIElementController::setDisabled(disabled);
+	nodeConditions.add(isDisabled() == true?GUIElementController::CONDITION_DISABLED:GUIElementController::CONDITION_ENABLED);
 }
 
 bool GUIMenuHeaderItemController::isSelected()
@@ -100,7 +89,7 @@ void GUIMenuHeaderItemController::initialize()
 
 	//
 	this->itemNode = node->getScreenNode()->getNodeById(node->getId() + "_item");
-	setDisabled(this->disabled);
+	setDisabled(isDisabled());
 	if (this->selected == true) select(); else unselect();
 }
 
@@ -194,7 +183,7 @@ void GUIMenuHeaderItemController::selectPrevious()
 void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (disabled == true) return;
+	if (isDisabled() == true) return;
 	auto elementNode  = dynamic_cast<GUIElementNode*>(this->node);
 	if (event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node == this->node && node->isEventBelongingToNode(event) == true) {

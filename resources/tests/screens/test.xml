@@ -2,20 +2,20 @@
 	<panel left="5%" top="5%" width="90%" height="90%" alignment="vertical" horizontal-align="center"> 
 		<menu-header>
 			<menu-header-item text="File">
-				<menu-item text="Quit"/>
+				<menu-item text="Quit" id="menu_file_quit" />
 			</menu-header-item>
 			<menu-header-item text="Edit">
-				<menu-item text="Cut"/>
-				<menu-item text="Copy"/>
-				<menu-item text="Paste"/>
-				<menu-item text="Delete"/>
-				<menu-item text="Disabled Item" disabled="true"/>
-				<menu-item text="Select All"/>
+				<menu-item text="Cut" id="menu_edit_cut" />
+				<menu-item text="Copy" id="menu_edit_copy" />
+				<menu-item text="Paste" id="menu_edit_paste" />
+				<menu-item text="Delete" id="menu_edit_delete" />
+				<menu-item text="Disabled Item" disabled="true" />
+				<menu-item text="Select All" id="menu_edit_select_all" />
 			</menu-header-item>
 			<menu-header-item text="Disabled Item" disabled="true" />
 			<space width="*"/>
 			<menu-header-item text="Help">
-				<menu-item text="About"/>
+				<menu-item text="About" id="menu_help_about" />
 			</menu-header-item>
 		</menu-header>
 		<space height="5%" />

@@ -31,12 +31,9 @@ class tdme::gui::elements::GUIMenuItemController final
 	friend class GUIMenuHeaderItemController;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
 	bool selected;
-	bool disabled;
 	MutableString value;
 	GUIParentNode* menuHeaderItemNode { nullptr };
 
@@ -63,8 +60,6 @@ private:
 
 public:
 	// overridden methods
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void postLayout() override;
 	void dispose() override;

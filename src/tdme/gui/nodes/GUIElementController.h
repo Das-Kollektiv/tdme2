@@ -29,8 +29,6 @@ class tdme::gui::nodes::GUIElementController
 private:
 	static constexpr int64_t TIME_DOUBLECLICK { 200LL };
 
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
 	bool disabled;
 	bool isActionPerforming;
 	bool initialized;
@@ -38,6 +36,9 @@ private:
 	int64_t timeLastClicked { -1LL };
 
 protected:
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
+
 	/**
 	 * Constructor
 	 * @param node node
