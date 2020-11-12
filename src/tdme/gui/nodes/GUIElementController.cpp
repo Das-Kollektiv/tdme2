@@ -70,7 +70,7 @@ void GUIElementController::postLayout()
 void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == true) return;
-	auto elementNode = dynamic_cast< GUIElementNode* >(this->node);
+	auto elementNode = dynamic_cast<GUIElementNode*>(this->node);
 	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
