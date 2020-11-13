@@ -62,6 +62,7 @@ class tdme::gui::nodes::GUINode
 	friend class tdme::gui::GUI;
 	friend class GUIElementNode;
 	friend class GUIImageNode;
+	friend class GUILayerNode;
 	friend class GUILayoutNode;
 	friend class GUIParentNode;
 	friend class GUIScreenNode;

@@ -43,6 +43,7 @@ class tdme::gui::nodes::GUIParentNode
 {
 	friend class tdme::gui::GUIParser;
 	friend class GUIElementNode;
+	friend class GUILayerNode;
 	friend class GUILayoutNode;
 	friend class GUINode;
 	friend class GUINodeConditions;

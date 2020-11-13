@@ -138,6 +138,7 @@
             - element
             - image
             - input
+            - layer
             - layout
             - panel
             - scrollbars

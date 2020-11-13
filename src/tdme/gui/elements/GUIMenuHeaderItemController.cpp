@@ -50,15 +50,6 @@ void GUIMenuHeaderItemController::init()
 	open = false;
 }
 
-void GUIMenuHeaderItemController::setDisabled(bool disabled)
-{
-	if (itemNode == nullptr) return;
-	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(itemNode))->getActiveConditions();
-	nodeConditions.remove(isDisabled() == true?GUIElementController::CONDITION_DISABLED:GUIElementController::CONDITION_ENABLED);
-	GUIElementController::setDisabled(disabled);
-	nodeConditions.add(isDisabled() == true?GUIElementController::CONDITION_DISABLED:GUIElementController::CONDITION_ENABLED);
-}
-
 bool GUIMenuHeaderItemController::isSelected()
 {
 	return selected;
@@ -66,7 +57,7 @@ bool GUIMenuHeaderItemController::isSelected()
 
 void GUIMenuHeaderItemController::select()
 {
-	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(itemNode))->getActiveConditions();
+	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
 	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -74,7 +65,7 @@ void GUIMenuHeaderItemController::select()
 
 void GUIMenuHeaderItemController::unselect()
 {
-	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(itemNode))->getActiveConditions();
+	auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
 	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = false;
 	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -88,8 +79,6 @@ void GUIMenuHeaderItemController::initialize()
 	GUIElementController::initialize();
 
 	//
-	this->itemNode = node->getScreenNode()->getNodeById(node->getId() + "_item");
-	setDisabled(isDisabled());
 	if (this->selected == true) select(); else unselect();
 }
 
@@ -187,7 +176,7 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	auto elementNode  = dynamic_cast<GUIElementNode*>(this->node);
 	if (event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node == this->node && node->isEventBelongingToNode(event) == true) {
-			auto& nodeConditions = (dynamic_cast<GUIElementNode*>(itemNode))->getActiveConditions();
+			auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
 			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				event->setProcessed(true);
 				toggleOpenState();
@@ -212,7 +201,7 @@ void GUIMenuHeaderItemController::handleKeyboardEvent(GUINode* node, GUIKeyboard
 void GUIMenuHeaderItemController::tick()
 {
 	GUIElementController::tick();
-	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast< GUIElementNode* >(this->node));
+	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast<GUIElementNode*>(this->node));
 }
 
 void GUIMenuHeaderItemController::onFocusGained()

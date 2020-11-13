@@ -45,7 +45,6 @@ private:
 	bool open;
 	bool selected;
 	MutableString value;
-	GUINode* itemNode { nullptr };
 
 private:
 	/**
@@ -112,7 +111,6 @@ private:
 
 public:
 	// overridden methods
-	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

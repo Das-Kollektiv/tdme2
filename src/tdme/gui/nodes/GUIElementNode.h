@@ -7,16 +7,13 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
-#include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/gui/nodes/GUILayerNode.h>
 
 using std::set;
 using std::string;
 
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -28,6 +25,8 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
+using tdme::gui::nodes::GUILayerNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 /**
@@ -35,8 +34,7 @@ using tdme::gui::nodes::GUIScreenNode;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUIElementNode final
-	: public GUIParentNode
+class tdme::gui::nodes::GUIElementNode final: public GUILayerNode
 {
 	friend class tdme::gui::GUIParser;
 	friend class GUINode;
@@ -69,20 +67,6 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-
-	/**
-	 * Set computed top
-	 * @param top top
-	 */
-	void setTop(int32_t top) override;
-
-	/**
-	 * Set computed left
-	 * @param left left
-	 */
-	void setLeft(int32_t left) override;
-	void layoutSubNodes() override;
-	void layout() override;
 
 	/**
 	 * Constructor
@@ -149,9 +133,6 @@ protected:
 	);
 
 public:
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
-
 	/**
 	 * @return focusable
 	 */
@@ -228,14 +209,4 @@ public:
 	// overridden methods
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
-	/**
-	 * Create alignments
-	 * @param horizontal horizontal
-	 * @param vertical vertical
-	 * @return alignments
-	 */
-	static GUINode_Alignments createAlignments(const string& horizontal, const string& vertical);
-
-private:
-	void init();
 };

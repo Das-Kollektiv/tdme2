@@ -461,6 +461,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIImageNode.cpp \
 	src/tdme/gui/nodes/GUIInputInternalController.cpp \
 	src/tdme/gui/nodes/GUIInputInternalNode.cpp \
+	src/tdme/gui/nodes/GUILayerNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
 	src/tdme/gui/nodes/GUIMultilineTextNode.cpp \
