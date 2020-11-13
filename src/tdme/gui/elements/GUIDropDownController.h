@@ -56,11 +56,6 @@ private:
 	GUIDropDownController(GUINode* node);
 
 	/**
-	 * Initialize
-	 */
-	void init();
-
-	/**
 	 * @return drop down open state
 	 */
 	bool isOpen();

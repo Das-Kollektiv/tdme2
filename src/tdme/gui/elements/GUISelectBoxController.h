@@ -30,6 +30,7 @@ class tdme::gui::elements::GUISelectBoxController final
 {
 	friend class GUISelectBox;
 	friend class GUISelectBoxOptionController;
+	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_DISABLED;

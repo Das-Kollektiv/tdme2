@@ -26,6 +26,7 @@
 #include <tdme/gui/elements/GUISelectBoxMultiple.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
+#include <tdme/gui/elements/GUISelectBoxParentOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
 #include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
@@ -92,6 +93,7 @@ using tdme::gui::elements::GUISelectBox;
 using tdme::gui::elements::GUISelectBoxMultiple;
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using tdme::gui::elements::GUISelectBoxOption;
+using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
@@ -1340,6 +1342,13 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIMenuItem();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISelectBoxParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

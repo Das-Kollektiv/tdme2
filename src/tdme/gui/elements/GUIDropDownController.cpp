@@ -42,16 +42,8 @@ string GUIDropDownController::CONDITION_CLOSED = "closed";
 GUIDropDownController::GUIDropDownController(GUINode* node)
 	: GUIElementController(node)
 {
-	init();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-}
-
-void GUIDropDownController::init()
-{
 	open = false;
-	dropDownNode = nullptr;
-	arrowNode = nullptr;
-	textElementNode = nullptr;
+	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
 }
 
 bool GUIDropDownController::isDisabled()

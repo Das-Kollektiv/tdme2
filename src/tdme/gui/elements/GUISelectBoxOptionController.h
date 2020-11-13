@@ -24,11 +24,11 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxOptionController final
-	: public GUIElementController
+class tdme::gui::elements::GUISelectBoxOptionController: public GUIElementController
 {
 	friend class GUISelectBoxOption;
 	friend class GUISelectBoxController;
+	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_SELECTED;

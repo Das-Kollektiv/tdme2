@@ -42,6 +42,8 @@ namespace elements {
 	class GUISelectBoxMultipleOptionController;
 	class GUISelectBoxOption;
 	class GUISelectBoxOptionController;
+	class GUISelectBoxParentOption;
+	class GUISelectBoxParentOptionController;
 	class GUISliderH;
 	class GUISliderHController;
 	class GUISliderV;
