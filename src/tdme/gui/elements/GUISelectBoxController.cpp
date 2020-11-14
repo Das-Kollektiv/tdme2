@@ -153,6 +153,8 @@ void GUISelectBoxController::toggleOpenState() {
 	if (selectBoxOptionControllers.size() == 0)
 		return;
 
+	if (selectBoxOptionControllerIdx == -1) return;
+
 	auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxOptionControllers[selectBoxOptionControllerIdx]);
 	if (selectBoxParentOptionController != nullptr) selectBoxParentOptionController->toggleOpenState();
 }
