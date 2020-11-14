@@ -89,7 +89,7 @@
 						<space height="10" />
 						<layout horizontal-align="center" alignment="none" width="80%">
 							<selectbox name="select">
-								<scrollarea-vertical id="sasb" width="100%" height="350">
+								<scrollarea-vertical id="sasb" width="100%" height="200">
 									<selectbox-parent-option text="Option A,B,C,D" value="1">
 										<selectbox-option text="Option A" value="1.1" />
 										<selectbox-option text="Option B" value="1.2" />
@@ -124,7 +124,7 @@
 						<space height="10" />
 						<layout horizontal-align="center" alignment="none" width="80%">
 							<selectbox-multiple name="selectmultiple">
-								<scrollarea-vertical id="sasbm" width="100%" height="140">
+								<scrollarea-vertical id="sasbm" width="100%" height="200">
 									<selectbox-multiple-option text="Option A" value="1" />
 									<selectbox-multiple-option text="Option B" value="2" selected="true" />
 									<selectbox-multiple-option text="Option C" value="3" />
