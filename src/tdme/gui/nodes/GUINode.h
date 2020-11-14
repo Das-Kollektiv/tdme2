@@ -80,6 +80,12 @@ private:
 	GUINode_Flow* flow;
 
 	/**
+	 * Determine element node dependencies
+	 * @param elementNodeDependencies element node dependencies
+	 */
+	void cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies);
+
+	/**
 	 * Parse condition function term
 	 * @param term term
 	 * @param function function
@@ -95,6 +101,14 @@ private:
 	 * @return condition met
 	 */
 	bool cfCall(GUIElementNode* elementNode, const string& function, const vector<string>& arguments);
+
+	/**
+	 * Determine element node dependencies - Call condition function with arguments
+	 * @param function function to be called
+	 * @param arguments function arguments
+	 * @param elementNodeDependencies element node dependencies
+	 */
+	void cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies);
 
 	/**
 	 * Condition function: empty
@@ -114,6 +128,14 @@ private:
 	 * @return if 1 condition has been met
 	 */
 	bool cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments);
+
+	/**
+	 * Determine element node dependencies - Condition function: has condition
+	 * @param arguments arguments
+	 *	Format of arguments: [elementid.]condition
+	 *	Arguments or OR connected
+	 */
+	void cfHasConditionDetermineElementNodeDependencies(const vector<string>& arguments, vector<string>& elementNodeDependencies);
 
 protected:
 	GUIScreenNode* screenNode { nullptr };

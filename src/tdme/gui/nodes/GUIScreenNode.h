@@ -57,6 +57,7 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class tdme::gui::GUIParser;
 	friend class GUIElementNode;
 	friend class GUINode;
+	friend class GUINodeConditions;
 	friend class GUIParentNode;
 
 private:
@@ -76,6 +77,7 @@ private:
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
 	set<string> invalidateLayoutNodeIds;
+	map<string, set<string>> elementNodeToNodeMapping;
 
 	bool visible;
 	bool popUp;
@@ -446,4 +448,11 @@ public:
 	 * @param expression expression
 	 */
 	void addTimedExpression(int64_t time, const string& expression);
+
+	/**
+	 * Add node to element node dependency
+	 * @param elementNodeId element node id
+	 * @param nodeId node id that depends on element node condition changes
+	 */
+	void addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId);
 };

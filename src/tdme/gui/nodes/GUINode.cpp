@@ -117,6 +117,10 @@ GUINode::GUINode(
 	this->conditionsMet = false;
 	this->layouted = false;
 	this->haveOutEffect = false;
+	// register this id with related element nodes
+	vector<string> elementNodeDependencies;
+	cfDetermineElementNodeDependencies(elementNodeDependencies);
+	for (auto elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
 }
 
 GUINode::~GUINode() {
@@ -1173,6 +1177,25 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 2);
 }
 
+void GUINode::cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies) {
+	auto& showOn = this->showOn.conditions;
+	auto& hideOn = this->hideOn.conditions;
+
+	StringTokenizer t;
+	string function;
+	vector<string> arguments;
+	for (auto i = 0; i < hideOn.size(); i++) {
+		auto conditionTerm = hideOn[i];
+		cfParse(hideOn[i], function, arguments);
+		cfCallDetermineElementNodeDependencies(function, arguments, elementNodeDependencies);
+	}
+	for (auto i = 0; i < showOn.size(); i++) {
+		cfParse(showOn[i], function, arguments);
+		cfCallDetermineElementNodeDependencies(function, arguments, elementNodeDependencies);
+	}
+
+}
+
 void GUINode::cfParse(const string& term, string& function, vector<string>& arguments) {
 	auto leftParenthesis = term.find('(');
 	auto rightParenthesis = term.find_last_of(')');
@@ -1229,6 +1252,18 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 	}
 }
 
+void GUINode::cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies) {
+	if (function == "empty") {
+		// no op
+	} else
+	if (function == "hasCondition") {
+		cfHasConditionDetermineElementNodeDependencies(arguments, elementNodeDependencies);
+	} else {
+		Console::println("GUINode::cfCallDetermineElementNodeDependencies(): Unknown function: " + function + ": returning false");
+	}
+
+}
+
 bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments) {
 	StringTokenizer t;
 	for (auto& argument: arguments) {
@@ -1247,6 +1282,20 @@ bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& 
 		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;
 	}
 	return false;
+}
+
+void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string>& arguments, vector<string>& elementNodeDependencies) {
+	StringTokenizer t;
+	for (auto& argument: arguments) {
+		string elementNodeId;
+		auto condition = argument;
+		if (condition.find('.') != -1) {
+			t.tokenize(condition, ".");
+			elementNodeId = t.nextToken();
+			condition = t.nextToken();
+		}
+		if (elementNodeId.empty() == false) elementNodeDependencies.push_back(elementNodeId);
+	}
 }
 
 bool GUINode::cfEmpty(const vector<string>& arguments) {

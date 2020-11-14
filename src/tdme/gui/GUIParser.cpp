@@ -345,7 +345,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiPanelNode = new GUIPanelNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -407,7 +407,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiLayerNode = new GUILayerNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -468,7 +468,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiLayoutNode = new GUILayoutNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -530,7 +530,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiSpaceNode = new GUISpaceNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -588,7 +588,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiElementNode = new GUIElementNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -661,7 +661,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiImageNode = new GUIImageNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -738,7 +738,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiTextNode = new GUITextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -799,7 +799,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiTextNode = new GUIMultilineTextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -860,7 +860,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiInputInternalNode = new GUIInputInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -923,7 +923,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiVerticalScrollbarInternalNode = new GUIVerticalScrollbarInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -984,7 +984,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiHorizontalScrollbarInternalNode = new GUIHorizontalScrollbarInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),

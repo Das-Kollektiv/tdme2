@@ -298,11 +298,6 @@ const string GUIScreenNode::allocateNodeId()
 
 bool GUIScreenNode::addNode(GUINode* node)
 {
-	// allocate node id if not given
-	if (node->id.length() == 0) {
-		node->id = allocateNodeId();
-	}
-
 	// if node does exist do not insert it and return
 	if (nodesById.find(node->id) != nodesById.end()) {
 		return false;
@@ -318,6 +313,17 @@ bool GUIScreenNode::addNode(GUINode* node)
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
+	{
+		auto elementNodeToNodeMappingIt = elementNodeToNodeMapping.find(node->getId());
+		if (elementNodeToNodeMappingIt != elementNodeToNodeMapping.end()) {
+			elementNodeToNodeMapping.erase(elementNodeToNodeMappingIt);
+		}
+	}
+	{
+		for (auto& elementNodeToNodeMappingIt: elementNodeToNodeMapping) {
+			elementNodeToNodeMappingIt.second.erase(node->getId());
+		}
+	}
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -554,4 +560,8 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 
 void GUIScreenNode::addTimedExpression(int64_t time, const string& expression) {
 	timedExpressions[time]+= timedExpressions[time].empty() == false?";" + expression:expression;
+}
+
+void GUIScreenNode::addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId) {
+	elementNodeToNodeMapping[elementNodeId].insert(nodeId);
 }
