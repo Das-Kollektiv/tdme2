@@ -158,7 +158,7 @@
                 - scrollarea both
                 - scrollarea horizontal
                 - scrollarea vertical
-                - selectbox (including tree like view which is WIP)
+                - selectbox + tree like tree view
                 - selectbox multiple
                 - slider horizontal
                 - slider vertical
