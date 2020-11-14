@@ -11,8 +11,6 @@
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
@@ -25,8 +23,9 @@ using tdme::utilities::MutableString;
 class tdme::gui::elements::GUISelectBoxParentOptionController final
 	: public GUISelectBoxOptionController
 {
-	friend class GUISelectBoxParentOption;
 	friend class GUISelectBoxController;
+	friend class GUISelectBoxOptionController;
+	friend class GUISelectBoxParentOption;
 
 private:
 	static string CONDITION_OPENED;
@@ -46,6 +45,7 @@ private:
 	 * Toggle open state
 	 */
 	void toggleOpenState();
+
 public:
 	// overriden methods
 	void initialize() override;

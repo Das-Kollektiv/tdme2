@@ -30,7 +30,7 @@ GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->initialPostLayout = true;
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->selected = (dynamic_cast<GUIElementNode*>(node))->isSelected();
 }
 
 bool GUISelectBoxOptionController::isDisabled()
@@ -70,6 +70,16 @@ void GUISelectBoxOptionController::unselect()
 	nodeConditions.remove(CONDITION_ENABLED);
 	nodeConditions.add(disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
 }
+
+bool GUISelectBoxOptionController::isCollapsed() {
+	auto _node = node->getParentNode();
+	while(_node != nullptr && _node != selectBoxNode) {
+		if (_node->isConditionsMet() == false) return true;
+		_node = _node->getParentNode();
+	}
+	return false;
+}
+
 
 void GUISelectBoxOptionController::initialize()
 {

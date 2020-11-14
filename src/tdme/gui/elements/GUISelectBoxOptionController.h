@@ -61,6 +61,10 @@ private:
 	 */
 	void unselect();
 
+	/**
+	 * @return if is collapsed in tree view
+	 */
+	bool isCollapsed();
 public:
 	// overridden methods
 	bool isDisabled() override;

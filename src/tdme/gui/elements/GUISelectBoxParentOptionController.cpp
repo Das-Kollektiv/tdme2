@@ -3,7 +3,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -17,7 +16,6 @@ using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

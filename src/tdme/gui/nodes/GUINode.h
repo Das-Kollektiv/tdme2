@@ -275,6 +275,7 @@ protected:
 
 	/**
 	 * Determine if to render
+	 * @return if node will be rendered
 	 */
 	inline virtual bool shouldRender() {
 		return conditionsMet == true || haveActiveOutEffect() == true;
@@ -418,6 +419,14 @@ public:
 	 * Dispose node
 	 */
 	virtual void dispose();
+
+	/**
+	 * Determine if conditions are set
+	 * @return if conditions are set
+	 */
+	inline bool isConditionsMet() {
+		return conditionsMet;
+	}
 
 	/**
 	 * Set conditions met for this node and its subnodes

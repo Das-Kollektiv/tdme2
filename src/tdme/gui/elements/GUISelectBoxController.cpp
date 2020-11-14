@@ -2,6 +2,7 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
+#include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -15,6 +16,7 @@
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxOptionController;
+using tdme::gui::elements::GUISelectBoxParentOptionController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -86,8 +88,9 @@ void GUISelectBoxController::determineSelectBoxOptionControllers()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxOptionController* >(childController) != nullptr) {
-			selectBoxOptionControllers.push_back(dynamic_cast< GUISelectBoxOptionController* >(childController));
+		auto selectBoxOptionController = dynamic_cast<GUISelectBoxOptionController*>(childController);
+		if (selectBoxOptionController != nullptr && selectBoxOptionController->isCollapsed() == false) {
+			selectBoxOptionControllers.push_back(selectBoxOptionController);
 		}
 	}
 }
@@ -118,7 +121,7 @@ void GUISelectBoxController::selectNext()
 	if (selectBoxOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % selectBoxOptionControllers.size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx + 1) % (int)selectBoxOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += selectBoxOptionControllers.size();
 
@@ -135,13 +138,23 @@ void GUISelectBoxController::selectPrevious()
 	if (selectBoxOptionControllers.size() == 0)
 		return;
 
-	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % selectBoxOptionControllers.size();
+	selectBoxOptionControllerIdx = (selectBoxOptionControllerIdx - 1) % (int)selectBoxOptionControllers.size();
 	if (selectBoxOptionControllerIdx < 0)
 		selectBoxOptionControllerIdx += selectBoxOptionControllers.size();
 
 	selectBoxOptionControllers[selectBoxOptionControllerIdx]->select();
 	selectBoxOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeX(dynamic_cast< GUIParentNode* >(node));
 	selectBoxOptionControllers[selectBoxOptionControllerIdx]->getNode()->scrollToNodeY(dynamic_cast< GUIParentNode* >(node));
+}
+
+void GUISelectBoxController::toggleOpenState() {
+	determineSelectBoxOptionControllers();
+	auto selectBoxOptionControllerIdx = getSelectedOptionIdx();
+	if (selectBoxOptionControllers.size() == 0)
+		return;
+
+	auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxOptionControllers[selectBoxOptionControllerIdx]);
+	if (selectBoxParentOptionController != nullptr) selectBoxParentOptionController->toggleOpenState();
 }
 
 void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -177,8 +190,13 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 				}
 			}
 			break;
+		case GUIKeyboardEvent::KEYCODE_RIGHT:
+		case GUIKeyboardEvent::KEYCODE_LEFT: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) toggleOpenState();
+			}
+			break;
 		}
-
 	}
 }
 
