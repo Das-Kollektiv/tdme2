@@ -91,6 +91,11 @@ private:
 	 */
 	void toggle();
 
+	/**
+	 * Toggle open state of current parent option
+	 */
+	void toggleOpenState();
+
 public:
 	// overridden methods
 	bool isDisabled() override;

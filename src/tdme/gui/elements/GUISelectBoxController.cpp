@@ -84,7 +84,7 @@ void GUISelectBoxController::unselect()
 void GUISelectBoxController::determineSelectBoxOptionControllers()
 {
 	selectBoxOptionControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	(dynamic_cast<GUIParentNode*>(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -200,11 +200,6 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 			break;
 		}
 	}
-}
-
-void GUISelectBoxController::tick()
-{
-	GUIElementController::tick();
 }
 
 void GUISelectBoxController::onFocusGained()

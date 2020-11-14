@@ -23,11 +23,11 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxMultipleOptionController final
-	: public GUIElementController
+class tdme::gui::elements::GUISelectBoxMultipleOptionController: public GUIElementController
 {
 	friend class GUISelectBoxMultipleOption;
 	friend class GUISelectBoxMultipleController;
+	friend class GUISelectBoxMultipleParentOptionController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -83,6 +83,10 @@ private:
 	 */
 	void unfocus();
 
+	/**
+	 * @return if is collapsed in tree view
+	 */
+	bool isCollapsed();
 public:
 	// overridden methods
 	bool isDisabled() override;
@@ -92,7 +96,6 @@ public:
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
-	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;

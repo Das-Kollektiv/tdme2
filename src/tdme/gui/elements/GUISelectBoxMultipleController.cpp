@@ -2,6 +2,7 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
+#include <tdme/gui/elements/GUISelectBoxMultipleParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -15,6 +16,7 @@
 using tdme::gui::elements::GUISelectBoxMultipleController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
+using tdme::gui::elements::GUISelectBoxMultipleParentOptionController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -79,9 +81,8 @@ void GUISelectBoxMultipleController::unselect()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController))->unselect();
-		}
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unselect();
 	}
 }
 
@@ -91,9 +92,8 @@ void GUISelectBoxMultipleController::unfocus()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController))->unfocus();
-		}
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unfocus();
 	}
 }
 
@@ -104,8 +104,9 @@ void GUISelectBoxMultipleController::determineSelectBoxMultipleOptionControllers
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			selectBoxMultipleOptionControllers.push_back(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController));
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr && selectBoxMultipleOptionController->isCollapsed() == false) {
+			selectBoxMultipleOptionControllers.push_back(selectBoxMultipleOptionController);
 		}
 	}
 }
@@ -171,6 +172,17 @@ void GUISelectBoxMultipleController::toggle()
 	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(dynamic_cast< GUIParentNode* >(node));
 }
 
+void GUISelectBoxMultipleController::toggleOpenState() {
+	determineSelectBoxMultipleOptionControllers();
+	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
+	if (selectBoxMultipleOptionControllers.size() == 0)
+		return;
+
+	if (selectBoxMultipleOptionControllerIdx == -1) return;
+
+	auto selectBoxMultipleParentOptionController = dynamic_cast<GUISelectBoxMultipleParentOptionController*>(selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]);
+	if (selectBoxMultipleParentOptionController != nullptr) selectBoxMultipleParentOptionController->toggleOpenState();
+}
 void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
@@ -202,6 +214,12 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 				}
 			}
 			break;
+		case GUIKeyboardEvent::KEYCODE_RIGHT:
+		case GUIKeyboardEvent::KEYCODE_LEFT: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) toggleOpenState();
+			}
+			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
@@ -210,7 +228,6 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 			}
 			break;
 		}
-
 	}
 }
 

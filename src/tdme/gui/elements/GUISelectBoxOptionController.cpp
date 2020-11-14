@@ -80,7 +80,6 @@ bool GUISelectBoxOptionController::isCollapsed() {
 	return false;
 }
 
-
 void GUISelectBoxOptionController::initialize()
 {
 	selectBoxNode = node->getParentControllerNode();

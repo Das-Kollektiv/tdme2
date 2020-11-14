@@ -104,6 +104,15 @@ void GUISelectBoxMultipleOptionController::unfocus()
 	nodeConditions.add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 }
 
+bool GUISelectBoxMultipleOptionController::isCollapsed() {
+	auto _node = node->getParentNode();
+	while(_node != nullptr && _node != selectBoxMultipleNode) {
+		if (_node->isConditionsMet() == false) return true;
+		_node = _node->getParentNode();
+	}
+	return false;
+}
+
 void GUISelectBoxMultipleOptionController::initialize()
 {
 	selectBoxMultipleNode = node->getParentControllerNode();
@@ -159,11 +168,6 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 void GUISelectBoxMultipleOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
 	GUIElementController::handleKeyboardEvent(node, event);
-}
-
-void GUISelectBoxMultipleOptionController::tick()
-{
-	GUIElementController::tick();
 }
 
 void GUISelectBoxMultipleOptionController::onFocusGained()

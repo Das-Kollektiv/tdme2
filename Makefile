@@ -435,6 +435,8 @@ SRCS = \
 	src/tdme/gui/elements/GUISelectBoxMultipleController.cpp \
 	src/tdme/gui/elements/GUISelectBoxMultipleOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxMultipleOptionController.cpp \
+	src/tdme/gui/elements/GUISelectBoxMultipleParentOption.cpp \
+	src/tdme/gui/elements/GUISelectBoxMultipleParentOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxParentOption.cpp \

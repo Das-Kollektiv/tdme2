@@ -158,8 +158,8 @@
                 - scrollarea both
                 - scrollarea horizontal
                 - scrollarea vertical
-                - selectbox + tree like tree view
-                - selectbox multiple
+                - selectbox including tree view
+                - selectbox with multiple selection including tree view
                 - slider horizontal
                 - slider vertical
                 - tabs
