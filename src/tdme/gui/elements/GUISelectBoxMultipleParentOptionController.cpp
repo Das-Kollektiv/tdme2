@@ -62,7 +62,7 @@ void GUISelectBoxMultipleParentOptionController::initialize()
 
 void GUISelectBoxMultipleParentOptionController::dispose() {
 	if (arrowNodeActionListener != nullptr) {
-		arrowNode->getScreenNode()->removeActionListener(arrowNodeActionListener);
+		node->getScreenNode()->removeActionListener(arrowNodeActionListener);
 		delete arrowNodeActionListener;
 		arrowNodeActionListener = nullptr;
 	}
