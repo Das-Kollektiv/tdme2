@@ -34,7 +34,7 @@
     - 3d engine
         - model reader
             - DAE
-                - group names/ids must not have whitespace characters
+                - node names/ids must not have whitespace characters
                 - requires baked matrices
                 - requires triangulated meshes for now
             - FBX via FBX SDK
@@ -219,7 +219,7 @@
     - documentation
 
 - What is WIP or planned
-    - Optimizing models with specular lighting regarding render calls by reducing groups and materials to a minumum
+    - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
     - Simple script language
