@@ -292,7 +292,7 @@ SRCS = \
 	src/tdme/engine/model/AnimationSetup.cpp \
 	src/tdme/engine/model/Face.cpp \
 	src/tdme/engine/model/FacesEntity.cpp \
-	src/tdme/engine/model/Group.cpp \
+	src/tdme/engine/model/Node.cpp \
 	src/tdme/engine/model/Joint.cpp \
 	src/tdme/engine/model/JointWeight.cpp \
 	src/tdme/engine/model/Material.cpp \
@@ -347,9 +347,9 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroup.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNode.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNodeMesh.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNodeRenderer.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \

@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/model/Face.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Vector3.h>

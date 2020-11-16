@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/utilities/Console.h>
 
 using std::map;

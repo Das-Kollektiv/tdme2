@@ -8,7 +8,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>

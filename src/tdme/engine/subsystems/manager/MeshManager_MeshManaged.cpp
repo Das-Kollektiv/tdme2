@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/MeshManager.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 
 using std::string;
 

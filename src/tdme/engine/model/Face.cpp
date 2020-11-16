@@ -1,6 +1,6 @@
 #include <tdme/engine/model/Face.h>
 
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 
 using tdme::engine::model::Face;
 using tdme::engine::model::Group;
