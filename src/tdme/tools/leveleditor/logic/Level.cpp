@@ -463,7 +463,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		}
 	}
 	for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
-		Console::println("Level::addLevel(): adding render node: " + itShader.first);
+		Console::println("Level::addLevel(): adding render group: " + itShader.first);
 		for (auto& itPartition: itShader.second) {
 			auto object3DRenderNode = new Object3DRenderGroup(
 				"tdme.rendernode." + itPartition.first + "." + to_string(renderNodeIdx++),
