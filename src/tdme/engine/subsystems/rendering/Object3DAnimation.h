@@ -20,7 +20,7 @@ using std::string;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::AnimationState;
@@ -34,44 +34,44 @@ class tdme::engine::subsystems::rendering::Object3DAnimation
 {
 	friend class tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
-	friend class tdme::engine::subsystems::rendering::Object3DGroup;
+	friend class tdme::engine::subsystems::rendering::Object3DNode;
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 private:
 	/**
-	 * Determine skinned group count
-	 * @param groups groups
+	 * Determine skinned node count
+	 * @param nodes nodes
 	 */
-	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups);
+	int32_t determineSkinnedNodeCount(const map<string, Node*>& nodes);
 
 	/**
-	 * Determine skinned group count
-	 * @param groups groups
+	 * Determine skinned node count
+	 * @param nodes nodes
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups, int32_t count);
+	int32_t determineSkinnedNodeCount(const map<string, Node*>& nodes, int32_t count);
 
 	/**
-	 * Determine skinned groups
-	 * @param groups groups
-	 * @param skinningGroups skinning groups
+	 * Determine skinned nodes
+	 * @param nodes nodes
+	 * @param skinningNodes skinning nodes
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(const map<string, Group*>& groups, vector<Group*>& skinningGroups, int32_t idx);
+	int32_t determineSkinnedNodes(const map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx);
 
 protected:
-	struct FlattenedGroup {
-		const string groupId;
-		const Matrix4x4* groupTransformationsMatrix;
-		Matrix4x4* groupOverriddenTransformationsMatrix;
-		const Animation* groupAnimation;
-		AnimationState* groupAnimationState;
+	struct FlattenedNode {
+		const string nodeId;
+		const Matrix4x4* nodeTransformationsMatrix;
+		Matrix4x4* nodeOverriddenTransformationsMatrix;
+		const Animation* nodeAnimation;
+		AnimationState* nodeAnimationState;
 		const Matrix4x4* parentTransformationsMatrix;
 		Matrix4x4* transformationsMatrix;
 	};
-	struct GroupSkinningJoint {
+	struct NodeSkinningJoint {
 		const Joint* joint;
-		const Matrix4x4* groupTransformationsMatrix;
-		Matrix4x4* skinningGroupTransformationsMatrix;
+		const Matrix4x4* nodeTransformationsMatrix;
+		Matrix4x4* skinningNodeTransformationsMatrix;
 	};
 
 	Model* model;
@@ -80,14 +80,14 @@ protected:
 	vector<map<string, Matrix4x4*>> transformationsMatrices;
 	bool hasSkinning;
 	bool hasAnimations;
-	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
-	vector<Group*> skinningGroups;
-	vector<vector<GroupSkinningJoint>> skinningGroupsGroupSkinningJoints;
+	vector<map<string, Matrix4x4*>> skinningNodesMatrices;
+	vector<Node*> skinningNodes;
+	vector<vector<NodeSkinningJoint>> skinningNodesNodeSkinningJoints;
 	vector<AnimationState> baseAnimations;
 	int baseAnimationIdx;
 	map<string, AnimationState*> overlayAnimationsById;
 	map<string, AnimationState*> overlayAnimationsByJointId;
-	vector<vector<FlattenedGroup>> groupLists;
+	vector<vector<FlattenedNode>> nodeLists;
 
 	/**
 	 * Public constructor
@@ -102,58 +102,58 @@ protected:
 	virtual ~Object3DAnimation();
 
 	/**
-	 * Creates all groups transformation matrices
+	 * Creates all nodes transformation matrices
 	 * @param matrices matrices
-	 * @param groupList flattened group list
-	 * @param groups groups
+	 * @param nodeList flattened node list
+	 * @param nodes nodes
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param animationState animation state
 	 */
-	void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedGroup>& groupList, const map<string, Group*>& groups, Matrix4x4* parentTransformationsMatrix = nullptr, AnimationState* animationState = nullptr);
+	void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformationsMatrix = nullptr, AnimationState* animationState = nullptr);
 
 	/**
-	 * Update group list
-	 * @param groupList flattened group list
-	 * @param groupIdx group index
-	 * @param groups groups
+	 * Update node list
+	 * @param nodeList flattened node list
+	 * @param nodeIdx node index
+	 * @param nodes nodes
 	 * @param animationState animation state
 	 */
-	void updateGroupList(vector<FlattenedGroup>& groupList, int& groupIdx, const map<string, Group*>& groups, AnimationState* animationState = nullptr);
+	void updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const map<string, Node*>& nodes, AnimationState* animationState = nullptr);
 
 	/**
-	 * Update group list
-	 * @param groupList flattened group list
+	 * Update node list
+	 * @param nodeList flattened node list
 	 */
-	inline void updateGroupList(vector<FlattenedGroup>& groupList) {
-		auto groupIdx = 0;
-		updateGroupList(groupList, groupIdx, model->getSubGroups());
+	inline void updateNodeList(vector<FlattenedNode>& nodeList) {
+		auto nodeIdx = 0;
+		updateNodeList(nodeList, nodeIdx, model->getSubNodes());
 	}
 
 	/**
-	 * Update group lists
+	 * Update node lists
 	 */
-	inline void updateGroupLists() {
-		for (auto& groupList: groupLists) updateGroupList(groupList);
+	inline void updateNodeLists() {
+		for (auto& nodeList: nodeLists) updateNodeList(nodeList);
 	}
 
 	/**
-	 * Calculates all groups transformation matrices
-	 * @param groupList flattened group list
+	 * Calculates all nodes transformation matrices
+	 * @param nodeList flattened node list
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param animationState animation state
 	 */
-	void computeTransformationsMatrices(vector<FlattenedGroup>& groupList, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState);
+	void computeTransformationsMatrices(vector<FlattenedNode>& nodeList, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState);
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
-	 * @param groupList flattened group list
+	 * @param nodeList flattened node list
 	 * @param instanceTransformationsMatrix object transformations matrix
 	 * @param baseAnimation base animation
 	 * @param context context
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(vector<FlattenedGroup>& groupList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * Update skinning transformations matrices
@@ -161,11 +161,11 @@ protected:
 	void updateSkinningTransformationsMatrices();
 
 	/**
-	 * Get skinning groups matrices
-	 * @param group group
+	 * Get skinning nodes matrices
+	 * @param node node
 	 * @return matrices
 	 */
-	map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
+	map<string, Matrix4x4*>* getSkinningNodesMatrices(Node* node);
 
 public:
 
@@ -230,24 +230,24 @@ public:
 	float getOverlayAnimationTime(const string& id);
 
 	/**
-	 * Returns transformation matrix for given group
-	 * @param id group id
+	 * Returns transformation matrix for given node
+	 * @param id node id
 	 * @return transformation matrix or identity matrix if not found
 	 */
-	const Matrix4x4 getGroupTransformationsMatrix(const string& id);
+	const Matrix4x4 getNodeTransformationsMatrix(const string& id);
 
 	/**
-	 * Set transformation matrix for given group
-	 * @param id group id
+	 * Set transformation matrix for given node
+	 * @param id node id
 	 * @param matrix transformation matrix
 	 */
-	void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+	void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix);
 
 	/**
-	 * Unset transformation matrix for given group
-	 * @param id group id
+	 * Unset transformation matrix for given node
+	 * @param id node id
 	 */
-	void unsetGroupTransformationsMatrix(const string& id);
+	void unsetNodeTransformationsMatrix(const string& id);
 
 	/**
 	 * Pre render step, computes transformations

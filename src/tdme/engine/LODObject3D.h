@@ -357,8 +357,8 @@ public:
 		this->pickable = pickable;
 	}
 
-	inline const Matrix4x4 getGroupTransformationsMatrix(const string& id) {
-		return objectLOD1->getGroupTransformationsMatrix(id);
+	inline const Matrix4x4 getNodeTransformationsMatrix(const string& id) {
+		return objectLOD1->getNodeTransformationsMatrix(id);
 	}
 
 	inline const Vector3& getTranslation() const override {

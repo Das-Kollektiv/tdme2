@@ -14,7 +14,7 @@
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
@@ -83,28 +83,28 @@ private:
 	 * Process FBX node
 	 * @param fbxNode FBX scene
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param pathName path name
 	 */
-	static void processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
+	static void processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName);
 
 	/**
 	 * Process FBX mesh node
 	 * @param fbxNode FBX node
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param pathName path name
 	 */
-	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
+	static Node* processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName);
 
 	/**
 	 * Process FBX skeleton node
 	 * @param fbxNode FBX node
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param pathName path name
 	 */
-	static Group* processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
+	static Node* processSkeletonNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName);
 
 	/**
 	 * Process animation

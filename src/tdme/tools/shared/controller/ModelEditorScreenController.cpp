@@ -52,7 +52,7 @@ using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::PBRMaterialProperties;
@@ -182,7 +182,7 @@ void ModelEditorScreenController::initialize()
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
 		renderingContributesShadows = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_contributes_shadows"));
 		renderingReceivesShadows = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_receives_shadows"));
-		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
+		renderingRenderNodes = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_nodes"));
 		renderingShader = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_shader"));
 		renderingDistanceShader = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader"));
 		renderingDistanceShaderDistance = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader_distance"));
@@ -240,7 +240,7 @@ void ModelEditorScreenController::initialize()
 		animationsDropDownDelete = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_delete"));
 		animationsAnimationStartFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_startframe"));
 		animationsAnimationEndFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_endframe"));
-		animationsAnimationOverlayFromGroupIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromgroupidanimations_dropdown"));
+		animationsAnimationOverlayFromNodeIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromnodeidanimations_dropdown"));
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
 		animationsAnimationSpeed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_speed"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
@@ -369,8 +369,8 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 	renderingContributesShadows->getController()->setValue(MutableString(entity->isContributesShadows() == true?"1":""));
 	renderingReceivesShadows->getController()->setDisabled(false);
 	renderingReceivesShadows->getController()->setValue(MutableString(entity->isReceivesShadows() == true?"1":""));
-	renderingRenderGroups->getController()->setDisabled(false);
-	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
+	renderingRenderNodes->getController()->setDisabled(false);
+	renderingRenderNodes->getController()->setValue(MutableString(entity->isRenderNodes() == true?"1":""));
 	renderingShader->getController()->setDisabled(false);
 	renderingShader->getController()->setValue(MutableString(entity->getShader()));
 	renderingDistanceShader->getController()->setDisabled(false);
@@ -386,8 +386,8 @@ void ModelEditorScreenController::unsetRendering()
 	renderingContributesShadows->getController()->setValue(MutableString("1"));
 	renderingReceivesShadows->getController()->setDisabled(true);
 	renderingReceivesShadows->getController()->setValue(MutableString("1"));
-	renderingRenderGroups->getController()->setDisabled(true);
-	renderingRenderGroups->getController()->setValue(MutableString("0"));
+	renderingRenderNodes->getController()->setDisabled(true);
+	renderingRenderNodes->getController()->setValue(MutableString("0"));
 	renderingShader->getController()->setDisabled(true);
 	renderingShader->getController()->setValue(MutableString("default"));
 	renderingDistanceShader->getController()->setDisabled(true);
@@ -1289,41 +1289,41 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 	}
 
 	{
-		auto animationsAnimationOverlayFromGroupIdDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->getNodeById(animationsAnimationOverlayFromGroupIdDropDown->getId() + "_inner")));
+		auto animationsAnimationOverlayFromNodeIdDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsAnimationOverlayFromNodeIdDropDown->getScreenNode()->getNodeById(animationsAnimationOverlayFromNodeIdDropDown->getId() + "_inner")));
 		auto idx = 0;
-		string animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = "";
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = "";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 			"<scrollarea-vertical id=\"" +
-			animationsAnimationOverlayFromGroupIdDropDown->getId() +
+			animationsAnimationOverlayFromNodeIdDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"70\">\n";
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 			"<dropdown-option text=\"\" value=\"\"" +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (auto it: model->getGroups()) {
-			auto groupId = it.second->getId();
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-				animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		for (auto it: model->getNodes()) {
+			auto nodeId = it.second->getId();
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+				animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 				"<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(groupId) +
+				GUIParser::escapeQuotes(nodeId) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(groupId) +
+				GUIParser::escapeQuotes(nodeId) +
 				"\" " +
 				(idx == 0 ? "selected=\"true\" " : "") +
 				" />\n";
 			idx++;
 		}
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
 		try {
-			animationsAnimationOverlayFromGroupIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML, true);
+			animationsAnimationOverlayFromNodeIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
 			Console::print(string("ModelEditorScreenController::setAnimations(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
-		// animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->layout(animationsAnimationOverlayFromGroupIdDropDown);
+		// animationsAnimationOverlayFromNodeIdDropDown->getScreenNode()->layout(animationsAnimationOverlayFromNodeIdDropDown);
 	}
 
 	// select default animation
@@ -1367,8 +1367,8 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 	animationsAnimationStartFrame->getController()->setDisabled(defaultAnimation);
 	animationsAnimationEndFrame->getController()->setValue(MutableString(animationSetup->getEndFrame()));
 	animationsAnimationEndFrame->getController()->setDisabled(defaultAnimation);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(animationSetup->getOverlayFromGroupId()));
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setValue(MutableString(animationSetup->getOverlayFromNodeId()));
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setDisabled(defaultAnimation);
 	animationsAnimationLoop->getController()->setValue(MutableString(animationSetup->isLoop() == true?"1":""));
 	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
 	animationsAnimationSpeed->getController()->setValue(MutableString(animationSetup->getSpeed(), 4));
@@ -1426,7 +1426,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		}
 		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue().getString()));
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
-		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
+		animationSetup->setOverlayFromNodeId(animationsAnimationOverlayFromNodeIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		animationSetup->setSpeed(Float::parseFloat(animationsAnimationSpeed->getController()->getValue().getString()));
 		setAnimations(view->getEntity());
@@ -1450,8 +1450,8 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationStartFrame->getController()->setDisabled(true);
 	animationsAnimationEndFrame->getController()->setValue(MutableString(""));
 	animationsAnimationEndFrame->getController()->setDisabled(true);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(""));
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setValue(MutableString(""));
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setDisabled(true);
 	animationsAnimationLoop->getController()->setValue(MutableString(""));
 	animationsAnimationLoop->getController()->setDisabled(true);
 	animationsAnimationSpeed->getController()->setValue(MutableString(""));
@@ -1783,7 +1783,7 @@ void ModelEditorScreenController::onRenderingApply()
 	try {
 		view->getEntity()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
 		view->getEntity()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
+		view->getEntity()->setRenderNodes(renderingRenderNodes->getController()->getValue().equals("1"));
 		view->getEntity()->setShader(renderingShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));

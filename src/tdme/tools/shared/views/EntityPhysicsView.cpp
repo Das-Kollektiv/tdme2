@@ -451,15 +451,15 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-				Group* selectedEntityGroup = nullptr;
+				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup);
+				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityNode);
 				if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
 					removeGizmo();
 					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
 				} else
-				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 					mouseDownLastX = event.getXUnscaled();
 					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);

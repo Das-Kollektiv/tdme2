@@ -90,7 +90,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
@@ -435,9 +435,9 @@ void LevelEditorView::handleInputEvents()
 					setGizmoMode(GIZMOMODE_NONE);
 				}
 			} else {
-				Group* selectedEntityGroup = nullptr;
+				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityGroup);
+				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityNode);
 				if (mouseDragging == true) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
@@ -494,7 +494,7 @@ void LevelEditorView::handleInputEvents()
 						updateGUITransformationsElements();
 					}
 				} else
-				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 					// no op
 					if (selectedEntityIds.size() == 1) {
 						for (auto selectedEntityId: selectedEntityIds) {
@@ -1057,7 +1057,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
-	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
+	auto groundNode = new Node(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
@@ -1071,19 +1071,19 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
 	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
 	vector<Face> groundFacesGround;
-	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.grid.facesentity");
-	groupFacesEntityGround.setMaterial(groundPlateMaterial);
-	groupFacesEntityGround.setFaces(groundFacesGround);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntityGround);
-	groundGroup->setVertices(groundVertices);
-	groundGroup->setNormals(groundNormals);
-	groundGroup->setTextureCoordinates(groundTextureCoordinates);
-	groundGroup->setFacesEntities(groupFacesEntities);
-	groundPlate->getGroups()[groundGroup->getId()] = groundGroup;
-	groundPlate->getSubGroups()[groundGroup->getId()] = groundGroup;
+	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityGround(groundNode, "tdme.leveleditor.grid.facesentity");
+	nodeFacesEntityGround.setMaterial(groundPlateMaterial);
+	nodeFacesEntityGround.setFaces(groundFacesGround);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntityGround);
+	groundNode->setVertices(groundVertices);
+	groundNode->setNormals(groundNormals);
+	groundNode->setTextureCoordinates(groundTextureCoordinates);
+	groundNode->setFacesEntities(nodeFacesEntities);
+	groundPlate->getNodes()[groundNode->getId()] = groundNode;
+	groundPlate->getSubNodes()[groundNode->getId()] = groundNode;
 	ModelTools::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }

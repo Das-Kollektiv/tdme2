@@ -19,7 +19,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 
 /**
- * Skinning definition for groups
+ * Skinning definition for nodes
  * @author andreas.drewke
  * @version $Id$
  */

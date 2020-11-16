@@ -17,7 +17,7 @@ using std::string;
 class tdme::engine::model::Joint final
 {
 private:
-	string groupId;
+	string nodeId;
 	Matrix4x4 bindMatrix;
 public:
 	/**
@@ -27,16 +27,16 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param groupId group id
+	 * @param nodeId node id
 	 */
-	Joint(const string& groupId);
+	Joint(const string& nodeId);
 
 	/**
-	 * Associated group or bone id
-	 * @return group id
+	 * Associated node or bone id
+	 * @return node id
 	 */
-	inline const string& getGroupId() const {
-		return groupId;
+	inline const string& getNodeId() const {
+		return nodeId;
 	}
 
 	/**

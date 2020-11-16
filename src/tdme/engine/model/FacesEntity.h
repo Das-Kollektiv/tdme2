@@ -13,14 +13,14 @@ using std::vector;
 using std::string;
 
 using tdme::engine::model::Face;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 
 /**
- * Group faces entity
- * A group can have multiple entities containing faces and a applied material
+ * Node faces entity
+ * A node can have multiple entities containing faces and a applied material
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -28,7 +28,7 @@ class tdme::engine::model::FacesEntity final
 {
 private:
 	string id;
-	Group* group;
+	Node* node;
 	Material* material;
 	vector<Face> faces;
 	bool textureCoordinatesAvailable;
@@ -47,10 +47,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param group group
+	 * @param node node
 	 * @param id id
 	 */
-	FacesEntity(Group* group, const string& id);
+	FacesEntity(Node* node, const string& id);
 
 	/**
 	 * @return faces entity id
@@ -91,14 +91,14 @@ public:
 	 * @return if texture coordinates are available for the whole entity
 	 */
 	inline bool isTextureCoordinatesAvailable() const {
-		return textureCoordinatesAvailable == true && group->getTextureCoordinates().size() > 0;
+		return textureCoordinatesAvailable == true && node->getTextureCoordinates().size() > 0;
 	}
 
 	/**
 	 * @return if tangents and bitangents are available for the whole entity
 	 */
 	inline bool isTangentBitangentAvailable() const {
-		return tangentBitangentAvailable == true && group->getTangents().size() > 0 && group->getBitangents().size() > 0;
+		return tangentBitangentAvailable == true && node->getTangents().size() > 0 && node->getBitangents().size() > 0;
 	}
 
 };

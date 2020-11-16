@@ -23,7 +23,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
@@ -92,51 +92,51 @@ private:
 	 * Read a DAE visual scene node
 	 * @param pathName path name
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per second
-	 * @return group
+	 * @return node
 	 */
-	static Group* readVisualSceneNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Node* readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/**
-	 * Reads a DAE visual scene group node
+	 * Reads a DAE visual scene node node
 	 * @param pathName path name
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per seconds
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return group
+	 * @return node
 	 */
-	static Group* readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Node* readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/**
 	 * Reads a instance controller
 	 * @param pathName path name
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param xmlRoot xml root
 	 * @param xmlNode xml node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return Group
+	 * @return Node
 	 * @throws tdme::utilities::Exception
 	 */
-	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
+	static Node* readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
 
 	/**
 	 * Reads a geometry
 	 * @param pathName path name
 	 * @param model model
-	 * @param group group
+	 * @param node node
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
 	 * @param materialSymbols material symbols
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols);
+	static void readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols);
 
 	/**
 	 * Reads a material

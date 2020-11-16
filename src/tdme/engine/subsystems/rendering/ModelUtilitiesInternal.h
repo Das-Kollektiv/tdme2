@@ -15,7 +15,7 @@ using std::map;
 using std::string;
 
 using tdme::engine::model::Model;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
@@ -32,10 +32,10 @@ public:
 	/**
 	 * Creates a bounding box from given model
 	 * @param model model
-	 * @param overriddenGroupTransformationsMatrices overridden group transformations matrices
+	 * @param overriddenNodeTransformationsMatrices overridden node transformations matrices
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenGroupTransformationsMatrices = map<string, Matrix4x4*>());
+	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformationsMatrices = map<string, Matrix4x4*>());
 
 	/**
 	 * Invert normals of a model
@@ -90,8 +90,8 @@ private:
 
 	/**
 	 * Invert normals recursive
-	 * @param groups groups
+	 * @param nodes nodes
 	 */
-	static void invertNormals(const map<string, Group*>& groups);
+	static void invertNormals(const map<string, Node*>& nodes);
 
 };

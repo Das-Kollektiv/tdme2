@@ -3,7 +3,7 @@
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
  * 	https://vulkan-tutorial.com
- * 	https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+ * 	https://github.com/KhronosNode/Vulkan-Docs/wiki/Synchronization-Examples
  * 	https://github.com/SaschaWillems/Vulkan
  * 	...
  */
@@ -595,12 +595,12 @@ void VKRenderer::shaderInitResources(TBuiltInResource &resources) {
     resources.minProgramTexelOffset = -8;
     resources.maxProgramTexelOffset = 7;
     resources.maxClipDistances = 8;
-    resources.maxComputeWorkGroupCountX = 65535;
-    resources.maxComputeWorkGroupCountY = 65535;
-    resources.maxComputeWorkGroupCountZ = 65535;
-    resources.maxComputeWorkGroupSizeX = 1024;
-    resources.maxComputeWorkGroupSizeY = 1024;
-    resources.maxComputeWorkGroupSizeZ = 64;
+    resources.maxComputeWorkNodeCountX = 65535;
+    resources.maxComputeWorkNodeCountY = 65535;
+    resources.maxComputeWorkNodeCountZ = 65535;
+    resources.maxComputeWorkNodeSizeX = 1024;
+    resources.maxComputeWorkNodeSizeY = 1024;
+    resources.maxComputeWorkNodeSizeZ = 64;
     resources.maxComputeUniformComponents = 1024;
     resources.maxComputeTextureImageUnits = 16;
     resources.maxComputeImageUniforms = 8;
@@ -660,12 +660,12 @@ void VKRenderer::shaderInitResources(TBuiltInResource &resources) {
     resources.maxSamples = 4;
     resources.maxMeshOutputVerticesNV = 256;
     resources.maxMeshOutputPrimitivesNV = 512;
-    resources.maxMeshWorkGroupSizeX_NV = 32;
-    resources.maxMeshWorkGroupSizeY_NV = 1;
-    resources.maxMeshWorkGroupSizeZ_NV = 1;
-    resources.maxTaskWorkGroupSizeX_NV = 32;
-    resources.maxTaskWorkGroupSizeY_NV = 1;
-    resources.maxTaskWorkGroupSizeZ_NV = 1;
+    resources.maxMeshWorkNodeSizeX_NV = 32;
+    resources.maxMeshWorkNodeSizeY_NV = 1;
+    resources.maxMeshWorkNodeSizeZ_NV = 1;
+    resources.maxTaskWorkNodeSizeX_NV = 32;
+    resources.maxTaskWorkNodeSizeY_NV = 1;
+    resources.maxTaskWorkNodeSizeZ_NV = 1;
     resources.maxMeshViewCountNV = 4;
     resources.limits.nonInductiveForLoops = 1;
     resources.limits.whileLoops = 1;
@@ -5955,7 +5955,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 		//
 		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.compute_command.num_groups_x, contextTyped.compute_command.num_groups_y, contextTyped.compute_command.num_groups_z);
+		vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.compute_command.num_nodes_x, contextTyped.compute_command.num_nodes_y, contextTyped.compute_command.num_nodes_z);
 
 		//
 		contextTyped.program->desc_idxs[contextTyped.idx]++;
@@ -6170,7 +6170,7 @@ void VKRenderer::doneGuiMode()
 	enableCulling(&contexts[0]);
 }
 
-void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void VKRenderer::dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) {
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
@@ -6196,9 +6196,9 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 		if (contextTyped.bound_buffers[i] != 0) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], contextTyped.compute_command.storage_buffer_sizes[i]);
 		if (contextTyped.compute_command.storage_buffers[i] == VK_NULL_HANDLE) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, contextTyped.compute_command.storage_buffer_sizes[i]);
 	}
-	contextTyped.compute_command.num_groups_x = numGroupsX;
-	contextTyped.compute_command.num_groups_y = numGroupsY;
-	contextTyped.compute_command.num_groups_z = numGroupsZ;
+	contextTyped.compute_command.num_nodes_x = numNodesX;
+	contextTyped.compute_command.num_nodes_y = numNodesY;
+	contextTyped.compute_command.num_nodes_z = numNodesZ;
 
 	//
 	contextTyped.uniform_buffers_changed.fill(false);

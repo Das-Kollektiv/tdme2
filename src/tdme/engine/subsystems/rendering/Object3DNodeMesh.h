@@ -24,32 +24,32 @@ using std::string;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::engine::Engine;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * Object 3D group mesh specifically for rendering
+ * Object 3D node mesh specifically for rendering
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::rendering::Object3DGroupMesh final
+class tdme::engine::subsystems::rendering::Object3DNodeMesh final
 {
 	friend class ModelUtilitiesInternal;
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;
-	friend class Object3DGroup;
-	friend class Object3DGroupRenderer;
+	friend class Object3DNode;
+	friend class Object3DNodeRenderer;
 	friend class EntityRenderer;
 	friend class TransparentRenderFacesPool;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
 	int instances;
-	Object3DGroupRenderer* object3DGroupRenderer { nullptr };
-	Group* group;
+	Object3DNodeRenderer* object3DNodeRenderer { nullptr };
+	Node* node;
 	int32_t faceCount;
 	const vector<Vector3>* vertices { nullptr };
 	const vector<Vector3>* normals { nullptr };
@@ -69,7 +69,7 @@ private:
 	int32_t cSkinningMaxVertexWeights;
 	vector<vector<float>> cSkinningJointWeight;
 
-	Matrix4x4* cGroupTransformationsMatrix;
+	Matrix4x4* cNodeTransformationsMatrix;
 
 	vector<vector<vector<Matrix4x4*>>> cSkinningJointTransformationsMatrices;
 
@@ -79,15 +79,15 @@ private:
 	bool recreatedBuffers;
 
 	/**
-	 * Creates a object3d group mesh from group
-	 * @param object3DGroupRenderer object 3D group renderer
+	 * Creates a object3d node mesh from node
+	 * @param object3DNodeRenderer object 3D node renderer
 	 * @param animationProcessingTarget animation processing target
-	 * @param group group
+	 * @param node node
 	 * @param transformationMatrices instances transformationm matrices
 	 * @param skinningMatrices instances skinning matrices
 	 * @param instances instances
 	 */
-	Object3DGroupMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
+	Object3DNodeMesh(Object3DNodeRenderer* object3DNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
 	/**
 	 * Computes mesh transformations
@@ -97,7 +97,7 @@ private:
 	void computeTransformations(void* context, Object3DBase* object3DBase);
 
 	/**
-	 * Recreates group float buffers
+	 * Recreates node float buffers
 	 */
 	void recreateBuffers();
 
@@ -162,7 +162,7 @@ private:
 	void setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/**
-	 * Set up render group object origins data buffer
+	 * Set up render node object origins data buffer
 	 * @param renderer renderer
 	 * @param context context
 	 * @param vboId vbo id

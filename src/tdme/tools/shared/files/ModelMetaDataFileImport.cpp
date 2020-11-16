@@ -212,7 +212,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		levelEditorEntity->setContributesShadows(jEntityRoot["cs"].GetBool());
 		levelEditorEntity->setReceivesShadows(jEntityRoot["rs"].GetBool());
 	}
-	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
+	levelEditorEntity->setRenderNodes(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);

@@ -124,7 +124,7 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 		this->modelSettings = new LevelEditorEntityModel(this);
 		this->physics = new LevelEditorEntityPhysics();
 	}
-	renderGroups = false;
+	renderNodes = false;
 	distanceShaderDistance = 10000.0f;
 	contributesShadows = true;
 	receivesShadows = true;

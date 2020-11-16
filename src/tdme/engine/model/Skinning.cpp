@@ -53,7 +53,7 @@ void Skinning::setupJointsByName()
 {
 	for (auto i = 0; i < joints.size(); i++) {
 		auto& joint = joints[i];
-		jointsByName[joint.getGroupId()] = &joint;
+		jointsByName[joint.getNodeId()] = &joint;
 	}
 }
 

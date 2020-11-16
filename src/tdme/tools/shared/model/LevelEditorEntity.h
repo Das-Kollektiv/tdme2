@@ -66,7 +66,7 @@ private:
 	LevelEditorEntityPhysics* physics { nullptr };
 	vector<LevelEditorEntityParticleSystem*> particleSystems;
 	LevelEditorEntityModel* modelSettings { nullptr };
-	bool renderGroups;
+	bool renderNodes;
 	string shaderId { "default"};
 	string distanceShaderId { "default"};
 	float distanceShaderDistance;
@@ -341,19 +341,19 @@ public:
 	}
 
 	/**
-	 * Is using render groups
-	 * @return render groups enabled
+	 * Is using render nodes
+	 * @return render nodes enabled
 	 */
-	inline bool isRenderGroups() {
-		return renderGroups;
+	inline bool isRenderNodes() {
+		return renderNodes;
 	}
 
 	/**
-	 * Set using render groups
-	 * @param renderGroups use render groups
+	 * Set using render nodes
+	 * @param renderNodes use render nodes
 	 */
-	inline void setRenderGroups(bool renderGroups) {
-		this->renderGroups = renderGroups;
+	inline void setRenderNodes(bool renderNodes) {
+		this->renderNodes = renderNodes;
 	}
 
 	/**

@@ -16,7 +16,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::math::Matrix4x4;
 using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -69,20 +69,20 @@ public:
 	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
 private:
-	struct LevelEditorEntityMeshGroup {
+	struct LevelEditorEntityMeshNode {
 		string id;
 		string name;
 		Matrix4x4 transformationsMatrix;
-		Group* group;
+		Node* node;
 	};
 
 	/**
-	 * Determine mesh groups in group hierarchy
+	 * Determine mesh nodes in node hierarchy
 	 * @param level level
-	 * @param group group
+	 * @param node node
 	 * @param parentName parent node
 	 * @param parentTransformationsMatrix parent transformations matrix
-	 * @param meshGroups mesh groups
+	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups);
+	static void determineMeshNodes(LevelEditorLevel* level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes);
 };

@@ -201,7 +201,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 	engine->removeEntity("model");
 	struct AnimationSetupStruct {
 		bool loop;
-		string overlayFromGroupId;
+		string overlayFromNodeId;
 		float speed;
 	};
 	// store old animation setups
@@ -210,7 +210,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 		auto animationSetup = animationSetupIt.second;
 		originalAnimationSetups[animationSetup->getId()] = {
 			.loop = animationSetup->isLoop(),
-			.overlayFromGroupId = animationSetup->getOverlayFromGroupId(),
+			.overlayFromNodeId = animationSetup->getOverlayFromNodeId(),
 			.speed = animationSetup->getSpeed()
 		};
 	}
@@ -235,7 +235,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 			}
 			Console::println("SharedModelEditorView::reimportModel(): reimport animation setup: " + originalAnimationSetupId);
 			animationSetup->setLoop(originalAnimationSetup.loop);
-			animationSetup->setOverlayFromGroupId(originalAnimationSetup.overlayFromGroupId);
+			animationSetup->setOverlayFromNodeId(originalAnimationSetup.overlayFromNodeId);
 			animationSetup->setSpeed(originalAnimationSetup.speed);
 		}
 		// set model in entity

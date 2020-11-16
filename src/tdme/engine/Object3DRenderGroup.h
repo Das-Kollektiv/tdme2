@@ -34,7 +34,7 @@ using tdme::engine::LODObject3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -87,14 +87,14 @@ private:
 	}
 
 	/**
-	 * Combine group into given combined model
-	 * @param sourceGroup source group to combine into current model
+	 * Combine node into given combined model
+	 * @param sourceNode source node to combine into current model
 	 * @param origins origins
 	 * @param objectParentTransformationsMatrices object parent transformations matrix
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
+	static void combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model
@@ -144,9 +144,9 @@ public:
 	~Object3DRenderGroup();
 
 	/**
-	 * Update render group model and bounding box
+	 * Update render node model and bounding box
 	 */
-	void updateRenderGroup();
+	void updateRenderNode();
 
 	/**
 	 * @return entity
@@ -156,7 +156,7 @@ public:
 	}
 
 	/**
-	 * Adds a instance this render group
+	 * Adds a instance this render node
 	 * @param model model
 	 * @param transformations transformations
 	 */

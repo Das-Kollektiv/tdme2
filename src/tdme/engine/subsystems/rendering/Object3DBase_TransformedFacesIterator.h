@@ -12,9 +12,9 @@
 
 using std::array;
 
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -27,13 +27,13 @@ class tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator
 {
 private:
 	Object3DBase* object3DBase { nullptr };
-	Group* group { nullptr };
+	Node* node { nullptr };
 	array<Vector3, 3> vertices;
 	Matrix4x4 matrix;
 	int32_t faceCount;
 	int32_t faceIdxTotal;
 	int32_t faceIdx;
-	int32_t object3DGroupIdx;
+	int32_t object3DNodeIdx;
 	int32_t facesEntityIdx;
 
 private:
@@ -67,10 +67,10 @@ public:
 	const array<Vector3, 3>& next();
 
 	/**
-	 * @return current group
+	 * @return current node
 	 */
-	inline Group* getGroup() {
-		return group;
+	inline Node* getNode() {
+		return node;
 	}
 
 };

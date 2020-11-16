@@ -25,9 +25,9 @@ using std::string;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::model::Node;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool;
 using tdme::math::Matrix4x4;
@@ -58,16 +58,16 @@ private:
 	/**
 	 * Creates an array of transparent render faces from
 	 * @param modelViewMatrix model view matrix
-	 * @param object3DGroup object3D group
+	 * @param object3DNode object3D node
 	 * @param facesEntityIdx faces entity index
 	 * @param faceIdx face index
 	 */
-	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx) {
+	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need
-		auto& facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DNode->node->getFacesEntities();
 		auto& facesEntity = facesEntities[facesEntityIdx];
 		auto& faces = facesEntity.getFaces();
-		auto groupTransformedVertices = object3DGroup->mesh->vertices;
+		auto nodeTransformedVertices = object3DNode->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;
 		Vector3 tmpVector3;
@@ -81,15 +81,15 @@ private:
 			// set up face
 			auto faceVertexIndices = faces[i].getVertexIndices();
 			tmpVector3.set(0.0f, 0.0f, 0.0f);
-			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[0]]);
-			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[1]]);
-			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[2]]);
+			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[0]]);
+			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[1]]);
+			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[2]]);
 			tmpVector3.scale(1.0f / 3.0f);
 			modelViewMatrix.multiply(tmpVector3, tmpVector3);
 			distanceFromCamera = -tmpVector3.getZ();
 			// create transparent render face
 			auto transparentRenderFace = transparentRenderFacesPool.allocate();
-			transparentRenderFace->object3DGroup = object3DGroup;
+			transparentRenderFace->object3DNode = object3DNode;
 			transparentRenderFace->facesEntityIdx = facesEntityIdx;
 			transparentRenderFace->faceIdx = faceIdx;
 			transparentRenderFace->distanceFromCamera = distanceFromCamera;

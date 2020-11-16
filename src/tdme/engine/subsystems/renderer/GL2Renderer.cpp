@@ -907,7 +907,7 @@ void GL2Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GL2Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void GL2Renderer::dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) {
 	Console::println("GL2Renderer::dispatchCompute(): Not implemented");
 }
 

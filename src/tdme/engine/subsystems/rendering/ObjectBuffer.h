@@ -21,14 +21,14 @@ using std::vector;
  */
 class tdme::engine::subsystems::rendering::ObjectBuffer final
 {
-	friend class Object3DGroupMesh;
+	friend class Object3DNodeMesh;
 	friend class EntityRenderer;
 	friend class BatchRendererTriangles;
 	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
-	friend class tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+	friend class tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:

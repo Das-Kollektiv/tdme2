@@ -22,7 +22,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -293,21 +293,21 @@ private:
 	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices);
 
 	/**
-	 * Read animation from input stream into group
+	 * Read animation from input stream into node
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Animation
 	 */
-	static Animation* readAnimation(TMReaderInputStream* is, Group* g);
+	static Animation* readAnimation(TMReaderInputStream* is, Node* g);
 
 	/**
 	 * Read faces entities from input stream
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readFacesEntities(TMReaderInputStream* is, Group* g);
+	static void readFacesEntities(TMReaderInputStream* is, Node* g);
 
 	/**
 	 * Read skinning joint
@@ -328,30 +328,30 @@ private:
 	/**
 	 * Read skinning from input stream
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readSkinning(TMReaderInputStream* is, Group* g);
+	static void readSkinning(TMReaderInputStream* is, Node* g);
 
 	/**
-	 * Read sub groups
+	 * Read sub nodes
 	 * @param is input stream
 	 * @param model model
-	 * @param parentGroup parent group
-	 * @param subGroups sub groups
+	 * @param parentNode parent node
+	 * @param subNodes sub nodes
 	 * @throws IOException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return group
+	 * @return node
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups);
+	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes);
 
 	/**
-	 * Write group to output stream
+	 * Write node to output stream
 	 * @param is input stream
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return group
+	 * @return node
 	 */
-	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup);
+	static Node* readNode(TMReaderInputStream* is, Model* model, Node* parentNode);
 };

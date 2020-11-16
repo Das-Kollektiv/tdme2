@@ -285,9 +285,9 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			int32_t num_groups_x { 0 };
-			int32_t num_groups_y { 0 };
-			int32_t num_groups_z { 0 };
+			int32_t num_nodes_x { 0 };
+			int32_t num_nodes_y { 0 };
+			int32_t num_nodes_z { 0 };
 		};
 
 		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_LINES, COMMAND_COMPUTE };
@@ -595,7 +595,7 @@ public:
 	void doneGuiMode() override;
 
 	// overridden methods for skinning on GPU via compute shader
-	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
+	void dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) override;
 	void memoryBarrier() override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;

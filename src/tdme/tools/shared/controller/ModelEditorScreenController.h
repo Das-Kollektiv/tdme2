@@ -67,7 +67,7 @@ private:
 	GUIElementNode* pivotApply { nullptr };
 	GUIElementNode* renderingContributesShadows { nullptr };
 	GUIElementNode* renderingReceivesShadows { nullptr };
-	GUIElementNode* renderingRenderGroups { nullptr };
+	GUIElementNode* renderingRenderNodes { nullptr };
 	GUIElementNode* renderingShader { nullptr };
 	GUIElementNode* renderingDistanceShader { nullptr };
 	GUIElementNode* renderingDistanceShaderDistance { nullptr };
@@ -125,7 +125,7 @@ private:
 	GUIElementNode* animationsDropDownDelete { nullptr };
 	GUIElementNode* animationsAnimationStartFrame { nullptr };
 	GUIElementNode* animationsAnimationEndFrame { nullptr };
-	GUIElementNode* animationsAnimationOverlayFromGroupIdDropDown { nullptr };
+	GUIElementNode* animationsAnimationOverlayFromNodeIdDropDown { nullptr };
 	GUIElementNode* animationsAnimationLoop { nullptr };
 	GUIElementNode* animationsAnimationSpeed { nullptr };
 	GUIElementNode* animationsAnimationName { nullptr };

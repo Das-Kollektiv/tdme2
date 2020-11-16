@@ -126,7 +126,7 @@ using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
@@ -830,7 +830,7 @@ void Engine::determineEntityTypes(
 	vector<Entity*>& ppses,
 	vector<ParticleSystemGroup*>& psgs,
 	vector<LinesObject3D*>& linesObjects,
-	vector<Object3DRenderGroup*>& objectRenderGroups,
+	vector<Object3DRenderGroup*>& objectRenderNodes,
 	vector<EntityHierarchy*>& entityHierarchies
 	) {
 	Object3D* object = nullptr;
@@ -904,7 +904,7 @@ void Engine::determineEntityTypes(
 	for (auto entity: entities) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
-			objectRenderGroups.push_back(org);
+			objectRenderNodes.push_back(org);
 			if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 		} else
 		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
@@ -917,7 +917,7 @@ void Engine::determineEntityTypes(
 				if (entityEh->isEnabled() == false) continue;
 				// compute transformations and add to lists
 				if ((org = dynamic_cast<Object3DRenderGroup*>(entityEh)) != nullptr) {
-					objectRenderGroups.push_back(org);
+					objectRenderNodes.push_back(org);
 					if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 				} else
 				if ((psg = dynamic_cast<ParticleSystemGroup*>(entityEh)) != nullptr) {
@@ -1246,7 +1246,7 @@ Entity* Engine::getEntityByMousePosition(
 	const vector<LinesObject3D*>& linesObjects,
 	const vector<EntityHierarchy*>& entityHierarchies,
 	EntityPickingFilter* filter,
-	Group** object3DGroup,
+	Node** object3DNode,
 	ParticleSystemEntity** particleSystemEntity
 )
 {
@@ -1262,7 +1262,7 @@ Entity* Engine::getEntityByMousePosition(
 	// selected entity
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
-	Group* selectedObject3DGroup = nullptr;
+	Node* selectedObject3DNode = nullptr;
 	ParticleSystemEntity* selectedParticleSystem = nullptr;
 
 	// iterate visible objects that have no depth test, check if ray with given mouse position from near plane to far plane collides with each object's triangles
@@ -1280,7 +1280,7 @@ Entity* Engine::getEntityByMousePosition(
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
 						selectedEntityDistance = entityDistance;
-						selectedObject3DGroup = it->getGroup();
+						selectedObject3DNode = it->getNode();
 						selectedParticleSystem = nullptr;
 					}
 				}
@@ -1289,7 +1289,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 	// they have first priority right now
 	if (selectedEntity != nullptr) {
-		if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
+		if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
 			if (_entity->getParentEntity() == nullptr) return _entity;
 		}
@@ -1308,7 +1308,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DGroup = nullptr;
+				selectedObject3DNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
@@ -1326,13 +1326,13 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DGroup = nullptr;
+				selectedObject3DNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
 	}
 
-	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	// iterate visible particle system nodes, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: psgs) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
@@ -1344,7 +1344,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DGroup = nullptr;
+				selectedObject3DNode = nullptr;
 				selectedParticleSystem = nullptr;
 				auto selectedSubEntityDistance = Float::MAX_VALUE;
 				// iterate sub partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
@@ -1374,7 +1374,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DGroup = nullptr;
+				selectedObject3DNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
@@ -1395,7 +1395,7 @@ Entity* Engine::getEntityByMousePosition(
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
 						selectedEntityDistance = entityDistance;
-						selectedObject3DGroup = it->getGroup();
+						selectedObject3DNode = it->getNode();
 						selectedParticleSystem = nullptr;
 					}
 				}
@@ -1418,7 +1418,7 @@ Entity* Engine::getEntityByMousePosition(
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
 						selectedEntityDistance = entityDistance;
-						selectedObject3DGroup = it->getGroup();
+						selectedObject3DNode = it->getNode();
 						selectedParticleSystem = nullptr;
 					}
 				}
@@ -1445,7 +1445,7 @@ Entity* Engine::getEntityByMousePosition(
 							selectedEntityDistance = entityDistance;
 						}
 					}
-					selectedObject3DGroup = it->getGroup();
+					selectedObject3DNode = it->getNode();
 					selectedParticleSystem = nullptr;
 				}
 			}
@@ -1467,9 +1467,9 @@ Entity* Engine::getEntityByMousePosition(
 			vector<Entity*> ppsesEH;
 			vector<ParticleSystemGroup*> psgsEH;
 			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderGroupsEH;
+			vector<Object3DRenderGroup*> objectRenderNodesEH;
 			vector<EntityHierarchy*> entityHierarchiesEH;
-			Group* object3DGroupEH = nullptr;
+			Node* object3DNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
 			determineEntityTypes(
 				entity->getEntities(),
@@ -1481,7 +1481,7 @@ Entity* Engine::getEntityByMousePosition(
 				ppsesEH,
 				psgsEH,
 				linesObjectsEH,
-				objectRenderGroupsEH,
+				objectRenderNodesEH,
 				entityHierarchiesEH
 			);
 			auto subEntity = getEntityByMousePosition(
@@ -1498,7 +1498,7 @@ Entity* Engine::getEntityByMousePosition(
 				linesObjectsEH,
 				entityHierarchiesEH,
 				filter,
-				&object3DGroupEH,
+				&object3DNodeEH,
 				&particleSystemEntityEH
 			);
 			if (subEntity != nullptr) {
@@ -1507,15 +1507,15 @@ Entity* Engine::getEntityByMousePosition(
 				if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 					selectedEntity = entity;
 					selectedEntityDistance = entityDistance;
-					selectedObject3DGroup = object3DGroupEH;
+					selectedObject3DNode = object3DNodeEH;
 					selectedParticleSystem = particleSystemEntityEH;
 				}
 			}
 		}
 	}
 
-	// store group
-	if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
+	// store node
+	if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
 
 	// store particle system entity
 	if (particleSystemEntity != nullptr) {
@@ -1533,7 +1533,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 }
 
-Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Group** object3DGroup, ParticleSystemEntity** particleSystemEntity) {
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** object3DNode, ParticleSystemEntity** particleSystemEntity) {
 	// get world position of mouse position at near and far plane
 	Vector3 startPoint;
 	Vector3 endPoint;
@@ -1541,7 +1541,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, endPoint);
 
 	//
-	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object 3d group, particle system entity
+	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object 3d node, particle system entity
 }
 
 Entity* Engine::doRayCasting(
@@ -1673,7 +1673,7 @@ Entity* Engine::doRayCasting(
 			vector<Entity*> ppsesEH;
 			vector<ParticleSystemGroup*> psgsEH;
 			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderGroupsEH;
+			vector<Object3DRenderGroup*> objectRenderNodesEH;
 			vector<EntityHierarchy*> entityHierarchiesEH;
 			determineEntityTypes(
 				entity->getEntities(),
@@ -1685,7 +1685,7 @@ Entity* Engine::doRayCasting(
 				ppsesEH,
 				psgsEH,
 				linesObjectsEH,
-				objectRenderGroupsEH,
+				objectRenderNodesEH,
 				entityHierarchiesEH
 			);
 			Vector3 contactPointEH;

@@ -30,7 +30,7 @@ using tdme::application::Application;
 using tdme::engine::Object3DModel;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
@@ -59,7 +59,7 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	model->getMaterials()[material->getId()] = material;
-	auto group = new Group(model, nullptr, "group", "group");
+	auto node = new Node(model, nullptr, "node", "node");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Face> faces;
@@ -82,7 +82,7 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 		}
 		faces.push_back(
 			Face(
-				group,
+				node,
 				index + 0,
 				index + 1,
 				index + 2,
@@ -93,16 +93,16 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 		);
 		index+= 3;
 	}
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	ModelTools::prepareForIndexedRendering(model);
 	return model;
 }
@@ -190,19 +190,19 @@ int main(int argc, char** argv)
 				auto meshFileName = FileSystem::getInstance()->getFileName(bvsModelFileName);
 				auto meshPathName = FileSystem::getInstance()->getPathName(bvsModelFileName);
 				Object3DModel meshObject3DModel(bvsModel);
-				for (auto i = 0; i < meshObject3DModel.getGroupCount(); i++) {
-					vector<Triangle> groupTriangles;
-					meshObject3DModel.getTriangles(groupTriangles, i);
+				for (auto i = 0; i < meshObject3DModel.getNodeCount(); i++) {
+					vector<Triangle> nodeTriangles;
+					meshObject3DModel.getTriangles(nodeTriangles, i);
 					auto convexMeshFileName = StringTools::substring(meshFileName, 0, meshFileName.rfind('.')) + "_cm" + to_string(i) + ".tm";
 					Console::println(
 						"Saving convex mesh model file@" +
 						to_string(i) +
 						": " + convexMeshFileName +
-						", triangles = " + to_string(groupTriangles.size())
+						", triangles = " + to_string(nodeTriangles.size())
 					);
 					auto convexMeshModel = createModel(
 						meshPathName + "/" + convexMeshFileName,
-						groupTriangles
+						nodeTriangles
 					);
 					TMWriter::write(convexMeshModel, meshPathName, convexMeshFileName);
 					delete convexMeshModel;

@@ -39,8 +39,8 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
@@ -123,9 +123,9 @@ private:
 	 * @param context context
 	 */
 	inline void preRender(void* context) {
-		for (auto object3DGroup: object3dGroups) {
-			if (object3DGroup->renderer->needsPreRender() == true) {
-				object3DGroup->renderer->preRender(context);
+		for (auto object3DNode: object3dNodes) {
+			if (object3DNode->renderer->needsPreRender() == true) {
+				object3DNode->renderer->preRender(context);
 			}
 		}
 	}

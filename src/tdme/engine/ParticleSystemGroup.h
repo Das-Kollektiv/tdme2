@@ -30,7 +30,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * Particle system group, which combines several particle systems into a group, to be used with engine class
+ * Particle system node, which combines several particle systems into a node, to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */

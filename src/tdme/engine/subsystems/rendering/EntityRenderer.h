@@ -41,7 +41,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -58,7 +58,7 @@ using tdme::utilities::Pool;
  * @version $Id$
  */
 class tdme::engine::subsystems::rendering::EntityRenderer final {
-	friend class Object3DGroupRenderer;
+	friend class Object3DNodeRenderer;
 	friend class TransparentRenderFacesGroup;
 	friend class tdme::engine::Engine;
 
@@ -83,7 +83,7 @@ private:
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
 	unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
-	vector<TransparentRenderFace*> groupTransparentRenderFaces;
+	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
@@ -101,15 +101,15 @@ private:
 	void prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces);
 
 	/**
-	 * Render transparent faces groups
+	 * Render transparent faces nodes
 	 * @param context context
 	 */
-	void renderTransparentFacesGroups(void* context);
+	void renderTransparentFacesNodes(void* context);
 
 	/**
-	 * Release transparent faces groups
+	 * Release transparent faces nodes
 	 */
-	void releaseTransparentFacesGroups();
+	void releaseTransparentFacesNodes();
 
 	/**
 	 * Renders multiple objects of same type(with same model)
@@ -146,25 +146,25 @@ private:
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model
-	 * @param object3DGroup object 3d group
+	 * @param object3DNode object 3d node
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
 	 */
-	inline bool checkMaterialChangable(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes) {
-		return object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE;
+	inline bool checkMaterialChangable(Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes) {
+		return object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DNode::TEXTUREID_NONE;
 	}
 
 	/**
 	 * Set ups a material for rendering
 	 * @param context context
-	 * @param object3DGroup object 3d group
+	 * @param object3DNode object 3d node
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
 	 * @param updateOnly update only, means material has been set up already, only do changes
 	 * @param materialKey material key
 	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
+	void setupMaterial(void* context, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/**
 	 * Clear material for rendering

@@ -17,7 +17,7 @@ using std::string;
 
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
@@ -73,10 +73,10 @@ private:
 
 	/**
 	 * Set up convex mesh material
-	 * @param groups groups
+	 * @param nodes nodes
 	 * @param material material
 	 */
-	static void setupConvexMeshMaterial(const map<string, Group*>& groups, Material* material);
+	static void setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material);
 
 public:
 	/**

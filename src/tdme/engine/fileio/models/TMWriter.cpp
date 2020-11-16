@@ -44,7 +44,7 @@ using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -84,7 +84,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 		Material* material = it.second;
 		writeMaterial(&os, material);
 	}
-	writeSubGroups(&os, model->getSubGroups());
+	writeSubNodes(&os, model->getSubNodes());
 	os.writeInt(model->getAnimationSetups().size());
 	for (auto it: model->getAnimationSetups()) {
 		AnimationSetup* animationSetup = it.second;
@@ -143,7 +143,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 
 void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) {
 	os->writeString(animationSetup->getId());
-	os->writeString(animationSetup->getOverlayFromGroupId());
+	os->writeString(animationSetup->getOverlayFromNodeId());
 	os->writeInt(animationSetup->getStartFrame());
 	os->writeInt(animationSetup->getEndFrame());
 	os->writeBoolean(animationSetup->isLoop());
@@ -224,7 +224,7 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEn
 
 void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, const Joint& joint)
 {
-	os->writeString(joint.getGroupId());
+	os->writeString(joint.getNodeId());
 	os->writeFloatArray(joint.getBindMatrix().getArray());
 }
 
@@ -255,16 +255,16 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 	}
 }
 
-void TMWriter::writeSubGroups(TMWriterOutputStream* os, const map<string, Group*>& subGroups)
+void TMWriter::writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes)
 {
-	os->writeInt(subGroups.size());
-	for (auto it: subGroups) {
-		Group* subGroup = it.second;
-		writeGroup(os, subGroup);
+	os->writeInt(subNodes.size());
+	for (auto it: subNodes) {
+		Node* subNode = it.second;
+		writeNode(os, subNode);
 	}
 }
 
-void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g)
+void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 {
 	os->writeString(g->getId());
 	os->writeString(g->getName());
@@ -278,5 +278,5 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g)
 	writeAnimation(os, g->getAnimation());
 	writeSkinning(os, g->getSkinning());
 	writeFacesEntities(os, g->getFacesEntities());
-	writeSubGroups(os, g->getSubGroups());
+	writeSubNodes(os, g->getSubNodes());
 }

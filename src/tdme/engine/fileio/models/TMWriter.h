@@ -24,7 +24,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -301,18 +301,18 @@ private:
 	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning);
 
 	/**
-	 * Write sub groups
+	 * Write sub nodes
 	 * @param os output stream
-	 * @param subGroups sub groups
+	 * @param subNodes sub nodes
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, const map<string, Group*>& subGroups);
+	static void writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes);
 
 	/**
-	 * Write group to output stream
+	 * Write node to output stream
 	 * @param os output stream
-	 * @param g group
+	 * @param g node
 	 * @throws model file IO exception
 	 */
-	static void writeGroup(TMWriterOutputStream* os, Group* g);
+	static void writeNode(TMWriterOutputStream* os, Node* g);
 };
