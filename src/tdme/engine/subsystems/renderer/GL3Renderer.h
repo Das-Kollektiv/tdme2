@@ -44,8 +44,8 @@ private:
 			int32_t matrixCount { 0 };
 			int32_t instanceCount { 0 };
 			int32_t vertexCount { 0 };
-			int32_t numNodesX { 0 };
-			int32_t numNodesY { 0 };
+			int32_t numGroupsX { 0 };
+			int32_t numGroupsY { 0 };
 		};
 		cl_context clContext;
 		cl_program clSkinningKernelProgram;
