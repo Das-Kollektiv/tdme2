@@ -383,7 +383,7 @@ private:
 	 * @param ppses point particle systems
 	 * @param psgs particle system groups
 	 * @param linesObjects lines objects
-	 * @param objectRenderNodes object render nodes
+	 * @param objectRenderGroups object render groups
 	 * @param entityHierarchies entity hierarchies
 	 */
 	void determineEntityTypes(
@@ -396,7 +396,7 @@ private:
 		vector<Entity*>& ppses,
 		vector<ParticleSystemGroup*>& psgs,
 		vector<LinesObject3D*>& linesObjects,
-		vector<Object3DRenderGroup*>& objectRenderNodes,
+		vector<Object3DRenderGroup*>& objectRenderGroups,
 		vector<EntityHierarchy*>& entityHierarchies
 	);
 
@@ -916,7 +916,7 @@ public:
 	 * @param mouseY mouse y
 	 * @param filter filter
 	 * @param object3DNode pointer to store node of Object3D to if appliable
-	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system node
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
 	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
@@ -947,7 +947,7 @@ public:
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
 	 * @param object3DNode pointer to store node of Object3D to if appliable
-	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system node
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
@@ -1049,7 +1049,7 @@ private:
 	 * @param entityHierarchies entity hierarchies
 	 * @param filter filter
 	 * @param object3DNode pointer to store node of Object3D to if appliable
-	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system node
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(
@@ -1098,13 +1098,13 @@ private:
 	);
 
 	/**
-	 * Removes a entity from internal lists, those entities can also be sub entities from entity hierarchy or particle system nodes and such
+	 * Removes a entity from internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
 	 * @param entity entity
 	 */
 	void deregisterEntity(Entity* entity);
 
 	/**
-	 * Adds a entity to internal lists, those entities can also be sub entities from entity hierarchy or particle system nodes and such
+	 * Adds a entity to internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
 	 * @param entity entity
 	 */
 	void registerEntity(Entity* entity);

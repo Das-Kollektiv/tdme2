@@ -1052,11 +1052,11 @@ public:
 	/**
 	 * Dispatch compute
 	 * @param context context
-	 * @param numNodesX num nodes x
-	 * @param numNodesY num nodes y
-	 * @param numNodesZ num nodes z
+	 * @param numGroupsX num groups x
+	 * @param numGroupsY num groups y
+	 * @param numGroupsZ num groups z
 	 */
-	virtual void dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) = 0;
+	virtual void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
 
 	/**
 	 * Memory barrier

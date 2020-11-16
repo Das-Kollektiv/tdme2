@@ -843,7 +843,7 @@ void GLES2Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GLES2Renderer::dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) {
+void GLES2Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	Console::println("GLES2Renderer::dispatchCompute(): Not implemented");
 }
 

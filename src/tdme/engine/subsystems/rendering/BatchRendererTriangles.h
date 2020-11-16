@@ -70,7 +70,7 @@ private:
 	void render();
 
 	/**
-	 * Adds a vertex to this transparent render faces node
+	 * Adds a vertex to this transparent render faces group
 	 * @param vertex vertex
 	 * @param normal normal
 	 * @param textureCoordinate texture coordinate

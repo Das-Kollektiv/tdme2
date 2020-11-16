@@ -568,7 +568,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 	jEntityRoot.AddMember("properties", jModelProperties, jAllocator);
 	jEntityRoot.AddMember("cs", Value(entity->isContributesShadows()), jAllocator);
 	jEntityRoot.AddMember("rs", Value(entity->isReceivesShadows()), jAllocator);
-	jEntityRoot.AddMember("rg", Value(entity->isRenderNodes()), jAllocator);
+	jEntityRoot.AddMember("rg", Value(entity->isRenderGroups()), jAllocator);
 	jEntityRoot.AddMember("s", Value(entity->getShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sds", Value(entity->getDistanceShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sdsd", Value(entity->getDistanceShaderDistance()), jAllocator);

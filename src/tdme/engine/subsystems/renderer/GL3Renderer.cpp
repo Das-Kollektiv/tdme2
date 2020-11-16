@@ -144,8 +144,8 @@ void GL3Renderer::initialize()
 		cl_int clError = 0;
 		cl_device_id clDeviceId = 0;
 		auto clCurrentContext = CGLGetCurrentContext();
-		auto clShareNode = CGLGetShareNode(clCurrentContext);
-		gcl_gl_set_sharenode(clShareNode);
+		auto clShareGroup = CGLGetShareGroup(clCurrentContext);
+		gcl_gl_set_sharegroup(clShareGroup);
 		auto clDispatchQueue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, nullptr);
 		clDeviceId = gcl_get_device_id_with_dispatch_queue(clDispatchQueue);
 
@@ -160,7 +160,7 @@ void GL3Renderer::initialize()
 		// CL context, skinning kernel
 		cl_context_properties properties[] = {
 			CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE,
-			(cl_context_properties)clShareNode,
+			(cl_context_properties)clShareGroup,
 			0
 		};
 		clContext = clCreateContext(properties, 1, &clDeviceId, clErrorCallback, nullptr, &clError);
@@ -1002,10 +1002,10 @@ void GL3Renderer::checkGLError(int line)
 	}
 }
 
-void GL3Renderer::dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) {
+void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	#if defined (__APPLE__)
-		clSkinningParameters.numNodesX = numNodesX;
-		clSkinningParameters.numNodesY = numNodesY;
+		clSkinningParameters.numGroupsX = numGroupsX;
+		clSkinningParameters.numGroupsY = numGroupsY;
 		glFinish();
 		auto& _clSkinningParameters = clSkinningParameters;
 		cl_int clError;
@@ -1018,14 +1018,14 @@ void GL3Renderer::dispatchCompute(void* context, int32_t numNodesX, int32_t numN
 		clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &_clSkinningParameters.matrixCount);
 		clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &_clSkinningParameters.instanceCount);
 		size_t local_size[] = {(size_t)16, (size_t)16};
-		size_t global_size[] = {(size_t)_clSkinningParameters.numNodesX * local_size[0], (size_t)_clSkinningParameters.numNodesY  * local_size[1]};
+		size_t global_size[] = {(size_t)_clSkinningParameters.numGroupsX * local_size[0], (size_t)_clSkinningParameters.numGroupsY  * local_size[1]};
 		clEnqueueAcquireGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
 		clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
 		clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
 		clFinish(clCommandQueue);
 		clSkinningParameters = CLSkinningParameters();
 	#else
-		glDispatchCompute(numNodesX, numNodesY, numNodesZ);
+		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif
 	statistics.computeCalls++;
 }

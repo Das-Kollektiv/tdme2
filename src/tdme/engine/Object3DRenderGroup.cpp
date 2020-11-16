@@ -272,7 +272,7 @@ void Object3DRenderGroup::combineObjects(Model* model, const vector<Transformati
 	}
 }
 
-void Object3DRenderGroup::updateRenderNode() {
+void Object3DRenderGroup::updateRenderGroup() {
 	// dispose old object and combined model
 	if (combinedEntity != nullptr) {
 		combinedEntity->dispose();

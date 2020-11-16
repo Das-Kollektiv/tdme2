@@ -182,7 +182,7 @@ void ModelEditorScreenController::initialize()
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
 		renderingContributesShadows = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_contributes_shadows"));
 		renderingReceivesShadows = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_receives_shadows"));
-		renderingRenderNodes = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_nodes"));
+		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
 		renderingShader = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_shader"));
 		renderingDistanceShader = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader"));
 		renderingDistanceShaderDistance = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader_distance"));
@@ -369,8 +369,8 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 	renderingContributesShadows->getController()->setValue(MutableString(entity->isContributesShadows() == true?"1":""));
 	renderingReceivesShadows->getController()->setDisabled(false);
 	renderingReceivesShadows->getController()->setValue(MutableString(entity->isReceivesShadows() == true?"1":""));
-	renderingRenderNodes->getController()->setDisabled(false);
-	renderingRenderNodes->getController()->setValue(MutableString(entity->isRenderNodes() == true?"1":""));
+	renderingRenderGroups->getController()->setDisabled(false);
+	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
 	renderingShader->getController()->setDisabled(false);
 	renderingShader->getController()->setValue(MutableString(entity->getShader()));
 	renderingDistanceShader->getController()->setDisabled(false);
@@ -386,8 +386,8 @@ void ModelEditorScreenController::unsetRendering()
 	renderingContributesShadows->getController()->setValue(MutableString("1"));
 	renderingReceivesShadows->getController()->setDisabled(true);
 	renderingReceivesShadows->getController()->setValue(MutableString("1"));
-	renderingRenderNodes->getController()->setDisabled(true);
-	renderingRenderNodes->getController()->setValue(MutableString("0"));
+	renderingRenderGroups->getController()->setDisabled(true);
+	renderingRenderGroups->getController()->setValue(MutableString("0"));
 	renderingShader->getController()->setDisabled(true);
 	renderingShader->getController()->setValue(MutableString("default"));
 	renderingDistanceShader->getController()->setDisabled(true);
@@ -1783,7 +1783,7 @@ void ModelEditorScreenController::onRenderingApply()
 	try {
 		view->getEntity()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
 		view->getEntity()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setRenderNodes(renderingRenderNodes->getController()->getValue().equals("1"));
+		view->getEntity()->setRenderNodes(renderingRenderGroups->getController()->getValue().equals("1"));
 		view->getEntity()->setShader(renderingShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));

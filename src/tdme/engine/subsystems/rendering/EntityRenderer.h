@@ -101,15 +101,15 @@ private:
 	void prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces);
 
 	/**
-	 * Render transparent faces nodes
+	 * Render transparent faces groups
 	 * @param context context
 	 */
-	void renderTransparentFacesNodes(void* context);
+	void renderTransparentFacesGroups(void* context);
 
 	/**
-	 * Release transparent faces nodes
+	 * Release transparent faces groups
 	 */
-	void releaseTransparentFacesNodes();
+	void releaseTransparentFacesGroups();
 
 	/**
 	 * Renders multiple objects of same type(with same model)

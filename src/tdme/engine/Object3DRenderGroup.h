@@ -144,9 +144,9 @@ public:
 	~Object3DRenderGroup();
 
 	/**
-	 * Update render node model and bounding box
+	 * Update render group model and bounding box
 	 */
-	void updateRenderNode();
+	void updateRenderGroup();
 
 	/**
 	 * @return entity
@@ -156,7 +156,7 @@ public:
 	}
 
 	/**
-	 * Adds a instance this render node
+	 * Adds a instance to this render group
 	 * @param model model
 	 * @param transformations transformations
 	 */

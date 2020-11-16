@@ -39,7 +39,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer_transparentRenderFacesGroupPool.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
@@ -223,7 +223,7 @@ void EntityRenderer::render(const vector<Object3D*>& objects, bool renderTranspa
 {
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
-	releaseTransparentFacesNodes();
+	releaseTransparentFacesGroups();
 
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		renderFunction(1, 0, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
@@ -296,7 +296,7 @@ void EntityRenderer::render(const vector<Object3D*>& objects, bool renderTranspa
 			nodeTransparentRenderFaces.clear();
 		}
 		// render transparent faces nodes
-		renderTransparentFacesNodes(context);
+		renderTransparentFacesGroups(context);
 		//	no blending, but culling and depth buffer
 		renderer->disableBlending();
 		renderer->enableCulling(context);
@@ -370,13 +370,13 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 	}
 }
 
-void EntityRenderer::renderTransparentFacesNodes(void* context) {
+void EntityRenderer::renderTransparentFacesGroups(void* context) {
 	for (auto it: transparentRenderFacesGroups) {
 		it.second->render(engine, renderer, context);
 	}
 }
 
-void EntityRenderer::releaseTransparentFacesNodes()
+void EntityRenderer::releaseTransparentFacesGroups()
 {
 	for (auto it: transparentRenderFacesGroups) {
 		transparentRenderFacesGroupPool->release(it.second);

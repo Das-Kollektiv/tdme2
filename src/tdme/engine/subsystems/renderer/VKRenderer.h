@@ -285,9 +285,9 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			int32_t num_nodes_x { 0 };
-			int32_t num_nodes_y { 0 };
-			int32_t num_nodes_z { 0 };
+			int32_t num_groups_x { 0 };
+			int32_t num_groups_y { 0 };
+			int32_t num_groups_z { 0 };
 		};
 
 		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_LINES, COMMAND_COMPUTE };

@@ -830,7 +830,7 @@ void Engine::determineEntityTypes(
 	vector<Entity*>& ppses,
 	vector<ParticleSystemGroup*>& psgs,
 	vector<LinesObject3D*>& linesObjects,
-	vector<Object3DRenderGroup*>& objectRenderNodes,
+	vector<Object3DRenderGroup*>& objectRenderGroups,
 	vector<EntityHierarchy*>& entityHierarchies
 	) {
 	Object3D* object = nullptr;
@@ -904,7 +904,7 @@ void Engine::determineEntityTypes(
 	for (auto entity: entities) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
-			objectRenderNodes.push_back(org);
+			objectRenderGroups.push_back(org);
 			if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 		} else
 		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
@@ -917,7 +917,7 @@ void Engine::determineEntityTypes(
 				if (entityEh->isEnabled() == false) continue;
 				// compute transformations and add to lists
 				if ((org = dynamic_cast<Object3DRenderGroup*>(entityEh)) != nullptr) {
-					objectRenderNodes.push_back(org);
+					objectRenderGroups.push_back(org);
 					if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 				} else
 				if ((psg = dynamic_cast<ParticleSystemGroup*>(entityEh)) != nullptr) {
@@ -1467,7 +1467,7 @@ Entity* Engine::getEntityByMousePosition(
 			vector<Entity*> ppsesEH;
 			vector<ParticleSystemGroup*> psgsEH;
 			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderNodesEH;
+			vector<Object3DRenderGroup*> objectRenderGroupsEH;
 			vector<EntityHierarchy*> entityHierarchiesEH;
 			Node* object3DNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
@@ -1481,7 +1481,7 @@ Entity* Engine::getEntityByMousePosition(
 				ppsesEH,
 				psgsEH,
 				linesObjectsEH,
-				objectRenderNodesEH,
+				objectRenderGroupsEH,
 				entityHierarchiesEH
 			);
 			auto subEntity = getEntityByMousePosition(
@@ -1673,7 +1673,7 @@ Entity* Engine::doRayCasting(
 			vector<Entity*> ppsesEH;
 			vector<ParticleSystemGroup*> psgsEH;
 			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderNodesEH;
+			vector<Object3DRenderGroup*> objectRenderGroupsEH;
 			vector<EntityHierarchy*> entityHierarchiesEH;
 			determineEntityTypes(
 				entity->getEntities(),
@@ -1685,7 +1685,7 @@ Entity* Engine::doRayCasting(
 				ppsesEH,
 				psgsEH,
 				linesObjectsEH,
-				objectRenderNodesEH,
+				objectRenderGroupsEH,
 				entityHierarchiesEH
 			);
 			Vector3 contactPointEH;

@@ -34,7 +34,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 
 /**
- * Transparent render faces node
+ * Transparent render faces group
  * @author andreas.drewke
  * @version $Id$
  */
@@ -65,7 +65,7 @@ private:
 	TransparentRenderFacesGroup();
 
 	/**
-	 * Set transparent render faces node
+	 * Set transparent render faces group
 	 * @param object3DRenderer object3D renderer
 	 * @param model model
 	 * @param object3DNode object 3D node
@@ -79,7 +79,7 @@ private:
 	void set(EntityRenderer* object3DRenderer, Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
-	 * Creates a key for given transparent render faces node attributes
+	 * Creates a key for given transparent render faces group attributes
 	 * @param model model
 	 * @param object3DNode object 3D node
 	 * @param facesEntityIdx faces entity idx
@@ -93,7 +93,7 @@ private:
 	static const string createKey(Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
-	 * Adds a vertex to this transparent render faces node
+	 * Adds a vertex to this transparent render faces group
 	 * @param vertex vertex
 	 * @param normal normal
 	 * @param textureCoordinate texture coordinate

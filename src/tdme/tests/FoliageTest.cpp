@@ -170,7 +170,7 @@ void FoliageTest::initialize()
 	foliageObject->setShader("foliage");
 	foliageObject->setContributesShadows(true);
 	foliageObject->setReceivesShadows(true);
-	foliageObject->updateRenderNode();
+	foliageObject->updateRenderGroup();
 	engine->addEntity(foliageObject);
 }
 

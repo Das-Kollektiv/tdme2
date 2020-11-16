@@ -279,7 +279,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 			break;
 		}
 		auto object = level->getObjectAt(i);
-		if (object->getEntity()->isRenderNodes() == true) continue;
+		if (object->getEntity()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =
 			objectsListBoxSubNodesXML +

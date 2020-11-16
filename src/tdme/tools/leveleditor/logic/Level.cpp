@@ -150,15 +150,15 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 
 Model* Level::emptyModel = nullptr;
-float Level::renderNodesPartitionWidth = 64.0f;
-float Level::renderNodesPartitionHeight = 64.0f;
-float Level::renderNodesPartitionDepth = 64.0f;
-int Level::renderNodesReduceBy = 1;
-int Level::renderNodesLODLevels = 3;
-float Level::renderNodesLOD2MinDistance = 25.0;
-float Level::renderNodesLOD3MinDistance = 50.0;
-int Level::renderNodesLOD2ReduceBy = 4;
-int Level::renderNodesLOD3ReduceBy = 16;
+float Level::renderGroupsPartitionWidth = 64.0f;
+float Level::renderGroupsPartitionHeight = 64.0f;
+float Level::renderGroupsPartitionDepth = 64.0f;
+int Level::renderGroupsReduceBy = 1;
+int Level::renderGroupsLODLevels = 3;
+float Level::renderGroupsLOD2MinDistance = 25.0;
+float Level::renderGroupsLOD3MinDistance = 50.0;
+int Level::renderGroupsLOD2ReduceBy = 4;
+int Level::renderGroupsLOD3ReduceBy = 16;
 bool Level::enableEarlyZRejection = false;
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
@@ -411,8 +411,8 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
-	map<string, map<string, map<string, vector<Transformations*>>>> renderNodeEntitiesByShaderPartitionModel;
-	map<string, LevelEditorEntity*> renderNodeLevelEditorEntities;
+	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
+	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
@@ -423,15 +423,15 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
 		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
 
-		if (object->getEntity()->isRenderNodes() == true) {
+		if (object->getEntity()->isRenderGroups() == true) {
 			auto minX = object->getTransformations().getTranslation().getX();
 			auto minY = object->getTransformations().getTranslation().getY();
 			auto minZ = object->getTransformations().getTranslation().getZ();
-			auto partitionX = (int)(minX / renderNodesPartitionWidth);
-			auto partitionY = (int)(minY / renderNodesPartitionHeight);
-			auto partitionZ = (int)(minZ / renderNodesPartitionDepth);
-			renderNodeLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
-			renderNodeEntitiesByShaderPartitionModel[object->getEntity()->getShader() + "." + object->getEntity()->getDistanceShader() + "." + to_string(static_cast<int>(object->getEntity()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getEntity()->getModel()->getId()].push_back(&object->getTransformations());
+			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
+			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
+			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
+			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
+			renderGroupEntitiesByShaderPartitionModel[object->getEntity()->getShader() + "." + object->getEntity()->getDistanceShader() + "." + to_string(static_cast<int>(object->getEntity()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getEntity()->getModel()->getId()].push_back(&object->getTransformations());
 		} else {
 			Entity* entity = createEntity(object);
 			if (entity == nullptr) continue;
@@ -454,7 +454,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	progressStepCurrent = 0;
 	auto progressStepMax = 0;
 	if (progressCallback != nullptr) {
-		for (auto& itShader: renderNodeEntitiesByShaderPartitionModel) {
+		for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 			for (auto& itPartition: itShader.second) {
 				for (auto& itModel: itPartition.second) {
 					progressStepMax++;
@@ -462,34 +462,34 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			}
 		}
 	}
-	for (auto& itShader: renderNodeEntitiesByShaderPartitionModel) {
+	for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 		Console::println("Level::addLevel(): adding render node: " + itShader.first);
 		for (auto& itPartition: itShader.second) {
 			auto object3DRenderNode = new Object3DRenderGroup(
 				"tdme.rendernode." + itPartition.first + "." + to_string(renderNodeIdx++),
-				renderNodesLODLevels,
-				renderNodesLOD2MinDistance,
-				renderNodesLOD3MinDistance,
-				renderNodesLOD2ReduceBy,
-				renderNodesLOD3ReduceBy
+				renderGroupsLODLevels,
+				renderGroupsLOD2MinDistance,
+				renderGroupsLOD3MinDistance,
+				renderGroupsLOD2ReduceBy,
+				renderGroupsLOD3ReduceBy
 			);
 			for (auto& itModel: itPartition.second) {
 				if (progressCallback != nullptr) {
 					progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 				}
 				progressStepCurrent++;
-				auto levelEditorEntity = renderNodeLevelEditorEntities[itModel.first];
+				auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 				object3DRenderNode->setShader(levelEditorEntity->getShader());
 				object3DRenderNode->setDistanceShader(levelEditorEntity->getDistanceShader());
 				object3DRenderNode->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
 				auto objectIdx = -1;
 				for (auto transformation: itModel.second) {
 					objectIdx++;
-					if (objectIdx % renderNodesReduceBy != 0) continue;
+					if (objectIdx % renderGroupsReduceBy != 0) continue;
 					object3DRenderNode->addObject(levelEditorEntity->getModel(), *transformation);
 				}
 			}
-			object3DRenderNode->updateRenderNode();
+			object3DRenderNode->updateRenderGroup();
 			engine->addEntity(object3DRenderNode);
 		}
 	}

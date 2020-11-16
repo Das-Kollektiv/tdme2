@@ -176,7 +176,7 @@ public:
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void initGuiMode() override;
 	void doneGuiMode() override;
-	void dispatchCompute(void* context, int32_t numNodesX, int32_t numNodesY, int32_t numNodesZ) override;
+	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
 	void memoryBarrier() override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;

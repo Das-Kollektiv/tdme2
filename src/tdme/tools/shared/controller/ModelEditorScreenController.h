@@ -67,7 +67,7 @@ private:
 	GUIElementNode* pivotApply { nullptr };
 	GUIElementNode* renderingContributesShadows { nullptr };
 	GUIElementNode* renderingReceivesShadows { nullptr };
-	GUIElementNode* renderingRenderNodes { nullptr };
+	GUIElementNode* renderingRenderGroups { nullptr };
 	GUIElementNode* renderingShader { nullptr };
 	GUIElementNode* renderingDistanceShader { nullptr };
 	GUIElementNode* renderingDistanceShaderDistance { nullptr };
