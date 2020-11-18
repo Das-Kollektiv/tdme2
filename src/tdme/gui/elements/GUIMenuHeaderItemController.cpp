@@ -169,6 +169,14 @@ void GUIMenuHeaderItemController::selectPrevious()
 	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
+void GUIMenuHeaderItemController::handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event)
+{
+	determineMenuItemControllers();
+	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
+	if (menuItemControllers.size() == 0) return;
+	menuItemControllers[selectedMenuItemControllerIdx]->handleKeyboardEvent(menuItemControllers[selectedMenuItemControllerIdx]->getNode(), event);
+}
+
 void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
