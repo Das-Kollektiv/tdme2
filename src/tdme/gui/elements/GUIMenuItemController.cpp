@@ -93,7 +93,10 @@ void GUIMenuItemController::dispose()
 void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
+	if (node == this->node &&
+		node->isEventBelongingToNode(event) &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
 		event->setProcessed(true);
 	}
