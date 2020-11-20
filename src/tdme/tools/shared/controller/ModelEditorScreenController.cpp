@@ -249,6 +249,10 @@ void ModelEditorScreenController::initialize()
 		previewAnimationsOverlay1DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay1_dropdown"));
 		previewAnimationsOverlay2DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay2_dropdown"));
 		previewAnimationsOverlay3DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay3_dropdown"));
+		previewAnimationsAttachment1BoneDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_attachment1_bone_dropdown"));
+		previewAnimationsAttachment1ModelModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_attachment1_model_model"));
+		previewAnimationsAttachment1ModelLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_attachment1_model_load"));
+		previewAnimationsAttachment1ModelClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_attachment1_model_clear"));
 		buttonPreviewApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_preview_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
@@ -1466,6 +1470,10 @@ void ModelEditorScreenController::setPreview() {
 	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
 	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
 	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
+	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelModel->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelClear->getController()->setDisabled(false);
 	buttonPreviewApply->getController()->setDisabled(false);
 
 	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
@@ -1561,6 +1569,77 @@ void ModelEditorScreenController::setPreview() {
 		}
 	}
 
+	{
+		auto animationsAttachment1BoneDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsAttachment1BoneDropdown->getScreenNode()->getNodeById(previewAnimationsAttachment1BoneDropdown->getId() + "_inner")));
+		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
+			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			previewAnimationsAttachment1BoneDropdown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getNodes()) {
+			auto node = it.second;
+			animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
+				animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" " +
+				" />\n";
+		}
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+}
+
+void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelLoad() {
+	class OnPreviewAnimationsAttachment1ModelLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			modelEditorScreenController->previewAnimationsAttachment1ModelModel->getController()->setValue(
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorScreenController->modelPath->setPath(
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
+		OnPreviewAnimationsAttachment1ModelLoad(ModelEditorScreenController* modelEditorScreenController): modelEditorScreenController(modelEditorScreenController) {
+		}
+
+	private:
+		ModelEditorScreenController *modelEditorScreenController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
+		true,
+		new OnPreviewAnimationsAttachment1ModelLoad(this)
+	);
+}
+
+void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelClear() {
+	previewAnimationsAttachment1ModelModel->getController()->setValue(MutableString());
 }
 
 void ModelEditorScreenController::onPreviewApply() {
@@ -1573,6 +1652,7 @@ void ModelEditorScreenController::onPreviewApply() {
 	auto overlay3AnimationName = previewAnimationsOverlay3DropDown->getController()->getValue().getString();
 	try {
 		view->playAnimation(baseAnimationName, overlay1AnimationName, overlay2AnimationName, overlay3AnimationName);
+		view->addAttachment1(previewAnimationsAttachment1BoneDropdown->getController()->getValue().getString(), previewAnimationsAttachment1ModelModel->getController()->getValue().getString());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -1583,6 +1663,12 @@ void ModelEditorScreenController::unsetPreview() {
 	previewAnimationsOverlay1DropDown->getController()->setDisabled(true);
 	previewAnimationsOverlay2DropDown->getController()->setDisabled(true);
 	previewAnimationsOverlay3DropDown->getController()->setDisabled(true);
+	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(true);
+	previewAnimationsAttachment1BoneDropdown->getController()->setValue(MutableString());
+	previewAnimationsAttachment1ModelModel->getController()->setDisabled(true);
+	previewAnimationsAttachment1ModelModel->getController()->setValue(MutableString());
+	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(true);
+	previewAnimationsAttachment1ModelClear->getController()->setDisabled(true);
 	buttonPreviewApply->getController()->setDisabled(true);
 }
 
@@ -1946,6 +2032,12 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_animations_animation_apply") == 0) {
 			onAnimationApply();
+		} else
+		if (node->getId().compare("preview_animations_attachment1_model_load") == 0) {
+			onPreviewAnimationsAttachment1ModelLoad();
+		} else
+		if (node->getId().compare("preview_animations_attachment1_model_clear") == 0) {
+			onPreviewAnimationsAttachment1ModelClear();
 		} else
 		if (node->getId().compare("button_preview_apply") == 0) {
 			onPreviewApply();
