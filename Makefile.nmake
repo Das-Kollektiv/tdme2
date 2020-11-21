@@ -6,6 +6,7 @@ SRCS_PLATFORM = \
 	src/tdme/engine/EngineGL3Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
@@ -331,7 +332,7 @@ SRCS = \
 	src/tdme/os/network/NetworkException.cpp \
 	src/tdme/os/network/NetworkIOException.cpp \
 	src/tdme/os/network/NetworkSocketClosedException.cpp \
-	src/tdme/os/network/KEMException.cpp \
+	src/tdme/os/network/NetworkKEMException.cpp \
 	src/tdme/os/network/NetworkSocket.cpp \
 	src/tdme/os/network/NetworkSocketException.cpp \
 	src/tdme/os/network/UDPSocket.cpp \
@@ -708,6 +709,9 @@ HTTPDownloadClientTest:
 
 LODTest: 
 	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+FlowMapTest:
+	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 FoliageTest: 
 	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

@@ -1188,7 +1188,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		Vector4 optimizedMaterialAmbient(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialDiffuse(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialSpecular(0.0f, 0.0f, 0.0f, 0.0f);
-		float optimizedMaterialShininess;
+		float optimizedMaterialShininess = 0.0f;
 		for (auto& atlasMaterialsIt: atlasMaterials) {
 			auto material = atlasMaterialsIt.second;
 			optimizedMaterialEmission+= Vector4(material->getSpecularMaterialProperties()->getEmissionColor().getArray());
