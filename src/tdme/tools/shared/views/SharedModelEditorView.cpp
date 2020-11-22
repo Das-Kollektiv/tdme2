@@ -156,6 +156,10 @@ void SharedModelEditorView::initModel()
 	if (entity == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
+	if (attachment1Model != nullptr) {
+		delete attachment1Model;
+		attachment1Model = nullptr;
+	}
 	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(entity);
@@ -201,6 +205,10 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 	if (entity == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
+	if (attachment1Model != nullptr) {
+		delete attachment1Model;
+		attachment1Model = nullptr;
+	}
 	struct AnimationSetupStruct {
 		bool loop;
 		string overlayFromNodeId;
