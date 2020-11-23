@@ -351,7 +351,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		determineMeshNodes(level, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
 		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
-				modelPathName,
+				modelPathName + "/" + meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,
 				upVector,
 				rotationOrder,
