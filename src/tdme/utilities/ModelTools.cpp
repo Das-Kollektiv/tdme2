@@ -328,7 +328,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 		clonedNode->setBitangents(sourceNode->getBitangents());
 		clonedNode->setOrigins(sourceNode->getOrigins());
 		auto facesEntities = clonedNode->getFacesEntities();
-		for (auto& facesEntity: facesEntities) {
+		for (auto& facesEntity: sourceNode->getFacesEntities()) {
 			if (facesEntity.getMaterial() == nullptr) continue;
 			Material* material = nullptr;
 			auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
@@ -338,7 +338,10 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 			} else {
 				material = materialIt->second;
 			}
-			facesEntity.setMaterial(material);
+			auto clonedFacesEntity = FacesEntity(clonedNode, facesEntity.getId());
+			clonedFacesEntity.setMaterial(material);
+			clonedFacesEntity.setFaces(facesEntity.getFaces());
+			facesEntities.push_back(clonedFacesEntity);
 		}
 		clonedNode->setFacesEntities(facesEntities);
 	}

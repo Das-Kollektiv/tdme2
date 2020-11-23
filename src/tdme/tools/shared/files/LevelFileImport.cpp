@@ -475,7 +475,6 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				levelEditorEntity
 			);
 			level->addObject(object);
-
 		}
 		//
 		progressIdx++;
