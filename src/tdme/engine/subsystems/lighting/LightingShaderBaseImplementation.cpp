@@ -70,12 +70,6 @@ void LightingShaderBaseImplementation::initialize()
 
 	// matrices as uniform only if not using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
-		uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
-		if (uniformMVPMatrix == -1) return;
-
-		uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvMatrix");
-		if (uniformMVMatrix == -1) return;
-
 		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
 		if (uniformNormalMatrix == -1) return;
 
@@ -84,12 +78,13 @@ void LightingShaderBaseImplementation::initialize()
 
 		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
 		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
-	} else {
-		uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
-		if (uniformCameraMatrix == -1) return;
-		uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
-		if (uniformProjectionMatrix == -1) return;
 	}
+
+	// camera, projection matrix
+	uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
+	if (uniformCameraMatrix == -1) return;
+	uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
+	if (uniformProjectionMatrix == -1) return;
 
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
@@ -232,24 +227,14 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
 	// set up camera and projection matrices if using instanced rendering
-	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
-	} else
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		// matrices
-		Matrix4x4 mvMatrix;
-		Matrix4x4 mvpMatrix;
 		Matrix4x4 normalMatrix;
-		// model view matrix
-		mvMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getCameraMatrix());
-		// object to screen matrix
-		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
 		// normal matrix
 		normalMatrix.set(renderer->getModelViewMatrix()).invert().transpose();
 		// upload matrices
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, mvMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformNormalMatrix, normalMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 	}

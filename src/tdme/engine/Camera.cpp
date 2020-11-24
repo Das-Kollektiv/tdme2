@@ -65,7 +65,7 @@ Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 Matrix4x4& Camera::computeProjectionMatrix()
 {
 	// see: see http://www.songho.ca/opengl/gl_transform.html
-	auto tangent = static_cast< float >(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
+	auto tangent = static_cast<float>(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
 	auto height = zNear * tangent;
 	auto width = height * aspect;
 	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);

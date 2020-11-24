@@ -12,6 +12,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Time.h>
 
@@ -31,7 +32,9 @@ using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
+using tdme::utilities::ModelTools;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 WaterTest::WaterTest()
 {
@@ -95,7 +98,9 @@ void WaterTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto entity = new Object3D("ground", modelDeleter.add(ModelReader::read("resources/tests/water", "Water.tm")));
+	auto water = modelDeleter.add(ModelReader::read("resources/tests/water", "Water.tm"));
+	ModelTools::prepareForShader(water, "water");
+	auto entity = new Object3D("ground", water);
 	entity->setShader("water");
 	engine->addEntity(entity);
 }

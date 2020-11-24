@@ -119,7 +119,7 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 	LightingShaderBaseImplementation::useProgram(engine, context);
 
 	//
-	renderer->setProgramUniformFloat(context, uniformWaterHeight, 5.0f);
+	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.25f);
 	renderer->setProgramUniformFloat(context, uniformTime, time);
 	renderer->setProgramUniformInteger(context, uniformNumWaves, 4);
 	for (auto i = 0; i < 4; i++) {

@@ -717,6 +717,11 @@ void ModelTools::prepareForShader(Model* model, const string& shader) {
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
 		model->setImportTransformationsMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
+	} else
+	if (shader == "water") {
+		for (auto nodeIt: model->getSubNodes()) prepareForWaterShader(nodeIt.second, model->getImportTransformationsMatrix());
+		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		model->setUpVector(UpVector::Y_UP);
 	} else {
 		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second);
 	}
@@ -772,6 +777,46 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	node->setOrigins(objectOrigins);
 	for (auto nodeIt: node->getSubNodes()) {
 		prepareForFoliageTreeShader(nodeIt.second, transformationsMatrix, shader);
+	}
+}
+
+void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix) {
+	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	{
+		auto vertices = node->getVertices();
+		auto vertexIdx = 0;
+		for (auto& vertex: vertices) {
+			transformationsMatrix.multiply(vertex, vertex);
+		}
+		node->setVertices(vertices);
+	}
+	{
+		auto normals = node->getNormals();
+		for (auto& normal: normals) {
+			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal.normalize();
+		}
+		node->setNormals(normals);
+	}
+	{
+		auto tangents = node->getTangents();
+		for (auto& tangent: tangents) {
+			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent.normalize();
+		}
+		node->setTangents(tangents);
+	}
+	{
+		auto bitangents = node->getBitangents();
+		for (auto& bitangent: bitangents) {
+			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent.normalize();
+		}
+		node->setBitangents(bitangents);
+	}
+	node->setTransformationsMatrix(Matrix4x4().identity());
+	for (auto nodeIt: node->getSubNodes()) {
+		prepareForWaterShader(nodeIt.second, transformationsMatrix);
 	}
 }
 
