@@ -8,11 +8,15 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
+#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
@@ -31,11 +35,15 @@ using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::LevelFileImport;
+using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
@@ -57,6 +65,19 @@ void WaterTest::main(int argc, char** argv)
 
 void WaterTest::display()
 {
+	// animate sky dome
+	{
+		auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
+		skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+
+		auto skyPanorama = engine->getEntity("sky_panorama");
+		skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
+		skyPanorama->update();
+
+		skyDomeTranslation+= 1.0f / 60.0;
+	}
+
+	//
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
@@ -85,15 +106,61 @@ void WaterTest::dispose()
 void WaterTest::initialize()
 {
 	engine->initialize();
-	engine->addPostProcessingProgram("ssao");
 
 	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", &level);
 	Level::setLight(engine, &level);
 	Level::addLevel(engine, &level, false, false, false);
 
+	// load sky
+	skySphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+	skyDomeEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+	skyPanoramaEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+
+	// add sky
+	{
+		// sky sphere
+		auto skySphere = new Object3D("sky_sphere", skySphereEntity->getModel());
+		skySphere->setShader("sky");
+		skySphere->setFrustumCulling(false);
+		skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+		skySphere->setScale(Vector3(300.0f/200.0f, 300.0f/200.0f, 300.0f/200.0f));
+		skySphere->update();
+		skySphere->setContributesShadows(false);
+		skySphere->setReceivesShadows(false);
+		skySphere->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+		engine->addEntity(skySphere);
+
+		// sky dome
+		auto skyDome = new Object3D("sky_dome", skyDomeEntity->getModel());
+		skyDome->setShader("sky");
+		skyDome->setFrustumCulling(false);
+		skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+		skyDome->setScale(Vector3(295.0f/190.0f, 295.0f/190.0f, 295.0f/190.0f));
+		skyDome->getModel()->getMaterials().begin()->second->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+		skyDome->update();
+		skyDome->setContributesShadows(false);
+		skyDome->setReceivesShadows(false);
+		skyDome->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.7f));
+		skyDome->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+		engine->addEntity(skyDome);
+
+		// sky panorama
+		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaEntity->getModel());
+		skyPanorama->setShader("sky");
+		skyPanorama->setFrustumCulling(false);
+		skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+		skyPanorama->setScale(Vector3(280.0f/190.0f, 280.0f/180.0f, 280.0f/180.0f));
+		skyPanorama->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+		skyPanorama->update();
+		skyPanorama->setContributesShadows(false);
+		skyPanorama->setReceivesShadows(false);
+		skyPanorama->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+		engine->addEntity(skyPanorama);
+	}
+
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
+	cam->setZFar(150.0f);
 	cam->setLookFrom(Vector3(0.0f, 30.0f, -50.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

@@ -15,6 +15,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
+#include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
@@ -65,6 +66,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -116,6 +118,7 @@ class tdme::engine::Engine final
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class tdme::application::Application;
+	friend class tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -217,6 +220,7 @@ private:
 	array<FrameBuffer*, EFFECTPASS_COUNT - 1> effectPassFrameBuffers;
 	array<bool, EFFECTPASS_COUNT - 1> effectPassSkip;
 	ShadowMapping* shadowMapping { nullptr };
+	EnvironmentMapping* environmentMapping { nullptr };
 
 	map<string, Entity*> entitiesById;
 	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
@@ -258,6 +262,10 @@ private:
 		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
 
 		Engine* engine;
+
+		struct {
+			bool computeTransformations;
+		} transformations;
 
 		struct {
 			EntityRenderer_InstancedRenderFunctionParameters parameters;
@@ -404,13 +412,17 @@ private:
 	 * Computes visibility and transformations
 	 * @param threadCount thread count
 	 * @param threadIdx thread idx
+	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformationsFunction(int threadCount, int threadIdx);
+	void computeTransformationsFunction(int threadCount, int threadIdx, bool computeTransformations);
 
 	/**
 	 * Computes visibility and transformations
+	 * @param frustum frustum
+	 * @param autoEmit auto emit particle systems
+	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformations();
+	void computeTransformations(Frustum* frustum, bool autoEmit, bool computeTransformations);
 
 	/**
 	 * Set up GUI mode rendering
@@ -421,6 +433,11 @@ private:
 	 * Set up GUI mode rendering
 	 */
 	void doneGUIMode();
+
+	/**
+	 * Reset lists
+	 */
+	void resetLists();
 
 	/**
 	 * Initiates the rendering process
@@ -1030,6 +1047,13 @@ public:
 	 */
 	inline Renderer::Renderer_Statistics getRendererStatistics() {
 		return renderer->getStatistics();
+	}
+
+	/**
+	 * @return environment mapping
+	 */
+	inline EnvironmentMapping* getEnvironmentMapping() {
+		return environmentMapping;
 	}
 
 private:

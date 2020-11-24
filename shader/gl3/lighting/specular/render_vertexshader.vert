@@ -91,7 +91,7 @@ void main(void) {
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices
 		vec4 worldPosition4 = _modelMatrix * vec4(inVertex, 1.0);
-		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
+		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 1.0;
 		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
 		_modelMatrix[1][1] = 1.0;
 		shaderTransformMatrix =

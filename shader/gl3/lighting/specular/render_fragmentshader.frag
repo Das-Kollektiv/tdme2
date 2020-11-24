@@ -154,6 +154,7 @@ vec4 fragColor;
 	}
 
 #elif defined(HAVE_WATER_SHADER)
+	uniform samplerCube environmentTextureUnit;
 	in float height;
 #else
 	uniform sampler2D diffuseTextureUnit;
@@ -375,10 +376,11 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		outColor = vec4(0.25, 0.25, 0.8, 0.5);
-		outColor+= vsEffectColorAdd;
-		outColor*= fragColor;
-		outColor = clamp(outColor, 0.0, 1.0);
+		vec4 envColor = textureCube(environmentTextureUnit, reflect(vec3(0.0, 1.0, 0.0), normal));
+		outColor = vec4(envColor.rgb, 0.0);
+		//outColor+= vsEffectColorAdd;
+		//outColor*= fragColor;
+		//outColor = clamp(outColor, 0.0, 1.0);
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +

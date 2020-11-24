@@ -220,8 +220,8 @@ void ShadowMap::render(Light* light)
 	camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * 0.5f) - 1.0f,
-			1.0f - (2.0f * 0.5f),
-			2.0f * 0.8f - 1.0f,
+			1.0f - (2.0f * 1.0f),
+			2.0f * 0.5f - 1.0f,
 			1.0f
 		),
 		center4
@@ -255,7 +255,7 @@ void ShadowMap::render(Light* light)
 	lightCamera->setSideVector(lightCameraSideVector);
 	lightCamera->setUpVector(lightCameraUpVector);
 	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
-	// Bind frame buffer to shadow map fbo id
+	// bind frame buffer
 	frameBuffer->enableFrameBuffer();
 	// clear depth buffer
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);

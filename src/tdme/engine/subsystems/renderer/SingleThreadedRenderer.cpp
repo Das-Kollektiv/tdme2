@@ -5,6 +5,7 @@
 #include <tdme/utilities/Time.h>
 
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
+
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Time;

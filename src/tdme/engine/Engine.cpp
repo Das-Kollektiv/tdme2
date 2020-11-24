@@ -54,6 +54,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -131,6 +132,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -219,7 +221,7 @@ void Engine::EngineThread::run() {
 				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(threadCount, idx);
+				engine->computeTransformationsFunction(threadCount, idx, transformations.computeTransformations);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
@@ -252,6 +254,7 @@ Engine::Engine() {
 	// shadow mapping
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
+	environmentMapping = nullptr;
 	// render process state
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
@@ -278,6 +281,7 @@ Engine::~Engine() {
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMapping != nullptr) delete shadowMapping;
+	if (environmentMapping != nullptr) delete environmentMapping;
 	delete entityRenderer;
 	if (instance == this) {
 		delete renderer;
@@ -336,6 +340,8 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
+	offScreenEngine->environmentMapping = new EnvironmentMapping(offScreenEngine, 512, 512);
+	offScreenEngine->environmentMapping->initialize();
 	//
 	offScreenEngine->reshape(width, height);
 	return offScreenEngine;
@@ -639,6 +645,10 @@ void Engine::initialize()
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
 
+	// environment mapping
+	environmentMapping = new EnvironmentMapping(this, 512, 512);
+	environmentMapping->initialize();
+
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
 		Console::println(string("TDME::Using skinning compute shader"));
@@ -719,6 +729,9 @@ void Engine::reshape(int32_t width, int32_t height)
 	// update shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
 
+	// update environment mapping
+	if (environmentMapping != nullptr) environmentMapping->reshape(width, height);
+
 	// unset scaling frame buffer if width and height matches scaling
 	if (this == Engine::instance && scaledWidth != -1 && scaledHeight != -1) {
 		if (this->width == scaledWidth && this->height == scaledHeight) {
@@ -765,11 +778,7 @@ void Engine::renderToScreen() {
 	if (this == Engine::instance && frameBuffer != nullptr) frameBuffer->renderToScreen();
 }
 
-void Engine::initRendering()
-{
-	// update timing
-	timing->updateTiming();
-
+void Engine::resetLists() {
 	// clear lists of visible objects
 	visibleObjects.clear();
 	visibleObjectsPostPostProcessing.clear();
@@ -783,12 +792,21 @@ void Engine::initRendering()
 	visibleObjectEntityHierarchies.clear();
 	visibleEZRObjects.clear();
 	noFrustumCullingEntities.clear();
+}
+
+void Engine::initRendering()
+{
+	// update timing
+	timing->updateTiming();
+
+	//
+	resetLists();
 
 	//
 	renderingInitiated = true;
 }
 
-void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
+void Engine::computeTransformationsFunction(int threadCount, int threadIdx, bool computeTransformations) {
 	auto context = renderer->getContext(threadIdx);
 	auto objectIdx = 0;
 	for (auto object: visibleObjects) {
@@ -797,7 +815,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 			continue;
 		}
 		object->preRender(context);
-		object->computeTransformations(context);
+		if (computeTransformations == true) object->computeTransformations(context);
 		objectIdx++;
 	}
 	for (auto object: visibleObjectsPostPostProcessing) {
@@ -806,7 +824,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 			continue;
 		}
 		object->preRender(context);
-		object->computeTransformations(context);
+		if (computeTransformations == true) object->computeTransformations(context);
 		objectIdx++;
 	}
 	for (auto object: visibleObjectsNoDepthTest) {
@@ -815,7 +833,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 			continue;
 		}
 		object->preRender(context);
-		object->computeTransformations(context);
+		if (computeTransformations == true) object->computeTransformations(context);
 		objectIdx++;
 	}
 }
@@ -860,7 +878,7 @@ void Engine::determineEntityTypes(
 			}; \
 		} else \
 		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
-			auto object = lodObject->determineLODObject(camera); \
+			auto object = lodObject->determineLODObject(camera); /* TODO: use a variable camera */ \
 			if (object != nullptr) { \
 				lodObjects.push_back(lodObject); \
 				if (object->isDisableDepthTest() == true) { \
@@ -933,7 +951,7 @@ void Engine::determineEntityTypes(
 	}
 }
 
-void Engine::computeTransformations()
+void Engine::computeTransformations(Frustum* frustum, bool autoEmit, bool computeTransformations)
 {
 	// init rendering if not yet done
 	if (renderingInitiated == false) initRendering();
@@ -941,22 +959,24 @@ void Engine::computeTransformations()
 	ParticleSystemEntity* pse = nullptr;
 
 	// do particle systems auto emit
-	for (auto it: autoEmitParticleSystemEntities) {
-		auto entity = it.second;
+	if (autoEmit == true) {
+		for (auto it: autoEmitParticleSystemEntities) {
+			auto entity = it.second;
 
-		// skip on disabled entities
-		if (entity->isEnabled() == false) continue;
+			// skip on disabled entities
+			if (entity->isEnabled() == false) continue;
 
-		// do auto emit
-		if ((pse = dynamic_cast<ParticleSystemEntity*>(entity)) != nullptr) {
-			pse->emitParticles();
-			pse->updateParticles();
+			// do auto emit
+			if ((pse = dynamic_cast<ParticleSystemEntity*>(entity)) != nullptr) {
+				pse->emitParticles();
+				pse->updateParticles();
+			}
 		}
 	}
 
 	// determine entity types and store them
 	determineEntityTypes(
-		partition->getVisibleEntities(camera->getFrustum()),
+		partition->getVisibleEntities(frustum),
 		visibleObjects,
 		visibleObjectsPostPostProcessing,
 		visibleObjectsNoDepthTest,
@@ -998,11 +1018,12 @@ void Engine::computeTransformations()
 	//
 	if (skinningShaderEnabled == true) skinningShader->useProgram();
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		computeTransformationsFunction(1, 0);
+		computeTransformationsFunction(1, 0, computeTransformations);
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
+		for (auto engineThread: engineThreads) engineThread->transformations.computeTransformations = computeTransformations;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		computeTransformationsFunction(threadCount, 0);
+		computeTransformationsFunction(threadCount, 0, computeTransformations);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
@@ -1022,22 +1043,35 @@ void Engine::display()
 	// set current engine
 	currentEngine = this;
 
+	if (renderingInitiated == false) initRendering();
+
+	// default context
+	auto context = Engine::renderer->getDefaultContext();
+	auto _width = scaledWidth != -1?scaledWidth:width;
+	auto _height = scaledHeight != -1?scaledHeight:height;
+
+	// camera
+	camera->update(context, _width, _height);
+
+	// create environment maps
+	environmentMapping->render();
+
+	// camera
+	camera->update(context, _width, _height);
+
+	// clear pre render states
+	renderingInitiated = false;
+	renderingComputedTransformations = false;
+
 	// do pre rendering steps
 	if (renderingInitiated == false) initRendering();
-	if (renderingComputedTransformations == false) computeTransformations();
+	if (renderingComputedTransformations == false) computeTransformations(camera->getFrustum(), true, true);
 
 	// init frame
 	if (this == Engine::instance) Engine::renderer->initializeFrame();
 
-	// default context
-	auto context = Engine::renderer->getDefaultContext();
-
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
-
-	//
-	auto _width = scaledWidth != -1?scaledWidth:width;
-	auto _height = scaledHeight != -1?scaledHeight:height;
 
 	// do post processing programs effect passes
 	array<bool, EFFECTPASS_COUNT - 1> effectPassFrameBuffersInUse;
@@ -1749,6 +1783,9 @@ void Engine::dispose()
 
 	// dispose shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->dispose();
+
+	// environment mapping
+	if (environmentMapping != nullptr) environmentMapping->dispose();
 
 	// dispose frame buffers
 	if (frameBuffer != nullptr) frameBuffer->dispose();

@@ -4,6 +4,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -14,6 +15,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -63,6 +65,9 @@ void LightingShaderBaseImplementation::initialize()
 		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureUnit");
 		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
 	}
+
+	// environment mapping
+	uniformEnvironmentTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentTextureUnit");
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
@@ -133,6 +138,15 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
+	if (uniformEnvironmentTextureUnit != -1) {
+		renderer->setProgramUniformInteger(context, uniformEnvironmentTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+		//
+		auto currentTextureUnit = renderer->getTextureUnit(context);
+		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+		renderer->bindCubeMapTexture(context, engine->getEnvironmentMapping()->getCubeMapTextureId());
+		renderer->setTextureUnit(context, currentTextureUnit);
+	}
+
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
 	updateMaterial(renderer, context);

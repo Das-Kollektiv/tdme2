@@ -6,11 +6,13 @@
 #include <tdme/application/Application.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/tests/fwd-tdme.h>
+#include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::model::Model;
+using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::ObjectDeleter;
 
@@ -24,7 +26,14 @@ class tdme::tests::WaterTest final
 {
 private:
 	Engine* engine { nullptr };
+
+	LevelEditorEntity* skySphereEntity { nullptr };
+	LevelEditorEntity* skyDomeEntity { nullptr };
+	LevelEditorEntity* skyPanoramaEntity { nullptr };
+
 	LevelEditorLevel level;
+
+	float skyDomeTranslation { 0.0f };
 
 public:
 
