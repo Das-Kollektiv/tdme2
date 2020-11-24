@@ -11,6 +11,9 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/tools/shared/files/LevelFileImport.h>
+#include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -31,6 +34,9 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::tools::leveleditor::logic::Level;
+using tdme::tools::shared::files::LevelFileImport;
+using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::ObjectDeleter;
@@ -80,10 +86,15 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
+
+	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", &level);
+	Level::setLight(engine, &level);
+	Level::addLevel(engine, &level, false, false, false);
+
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
-	cam->setLookFrom(Vector3(0.0f, 2.5f, 5.0f));
+	cam->setLookFrom(Vector3(0.0f, 30.0f, -50.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
@@ -98,11 +109,6 @@ void WaterTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto water = modelDeleter.add(ModelReader::read("resources/tests/water", "Water.tm"));
-	ModelTools::prepareForShader(water, "water");
-	auto entity = new Object3D("ground", water);
-	entity->setShader("water");
-	engine->addEntity(entity);
 }
 
 void WaterTest::reshape(int32_t width, int32_t height)

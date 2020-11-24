@@ -4,12 +4,14 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/tests/fwd-tdme.h>
+#include <tdme/tools/shared/model/LevelEditorLevel.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::model::Model;
+using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::ObjectDeleter;
 
 /**
@@ -22,7 +24,7 @@ class tdme::tests::WaterTest final
 {
 private:
 	Engine* engine { nullptr };
-	ObjectDeleter<Model> modelDeleter;
+	LevelEditorLevel level;
 
 public:
 
