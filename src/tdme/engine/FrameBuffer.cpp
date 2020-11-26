@@ -35,7 +35,6 @@ constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
 
 void FrameBuffer::initialize()
 {
-	Console::println(string(__FUNCTION__) + ": " + to_string(width) + " / " + to_string(height));
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height);
 
@@ -54,13 +53,10 @@ void FrameBuffer::initialize()
 	}
 
 	frameBufferId = Engine::renderer->createFramebufferObject(depthBufferTextureId, colorBufferTextureId, cubeMapTextureId, rendererCubeMapTexureIndex);
-
-	Console::println("xxx: " + to_string(depthBufferTextureId) + " / " + to_string(colorBufferTextureId) + " / " + " / " + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + " / " + to_string(frameBufferId));
 }
 
 void FrameBuffer::reshape(int32_t width, int32_t height)
 {
-	Console::println(string(__FUNCTION__) + ": " + to_string(width) + " / " + to_string(height));
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		Engine::renderer->resizeDepthBufferTexture(depthBufferTextureId, width, height);
 

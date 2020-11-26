@@ -45,7 +45,6 @@ using tdme::math::Vector3;
 
 EnvironmentMapping::EnvironmentMapping(Engine* engine, int32_t width, int32_t height)
 {
-	Console::println("EnvironmentMapping::EnvironmentMapping(): " + to_string(width) + " x " + to_string(height));
 	this->engine = engine;
 	this->width = width;
 	this->height = height;
@@ -54,15 +53,12 @@ EnvironmentMapping::EnvironmentMapping(Engine* engine, int32_t width, int32_t he
 }
 
 EnvironmentMapping::~EnvironmentMapping() {
-	Console::println("EnvironmentMapping::~EnvironmentMapping()");
 	delete camera;
 }
 
 void EnvironmentMapping::initialize()
 {
-	Console::println("EnvironmentMapping::initialize()");
 	cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
-	Console::println("EnvironmentMapping::initialize(): " + to_string(cubeMapTextureId));
 	for (auto i = 0; i < frameBuffers.size(); i++) {
 		frameBuffers[i] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureId, i + 1);
 		frameBuffers[i]->initialize();
@@ -71,17 +67,10 @@ void EnvironmentMapping::initialize()
 
 void EnvironmentMapping::reshape(int32_t width, int32_t height)
 {
-	Console::println("EnvironmentMapping::reshape(): " + to_string(width) + " x " + to_string(height));
-	/*
-	this->width = width;
-	this->height = height;
-	for (auto i = 0; i < frameBuffers.size(); i++) frameBuffers[i]->reshape(width, height);
-	*/
 }
 
 void EnvironmentMapping::dispose()
 {
-	Console::println("EnvironmentMapping::dispose()");
 	for (auto i = 0; i < frameBuffers.size(); i++) {
 		frameBuffers[i]->dispose();
 		delete frameBuffers[i];
@@ -91,7 +80,6 @@ void EnvironmentMapping::dispose()
 
 void EnvironmentMapping::render()
 {
-	Console::println("EnvironmentMapping::render()");
 	//
 	auto engineCamera = engine->getCamera();
 
@@ -104,7 +92,7 @@ void EnvironmentMapping::render()
 		camera->setZNear(engineCamera->getZNear());
 		camera->setZFar(150.0f);
 		camera->setFovY(90.0f);
-		camera->setLookFrom(engineCamera->getLookAt() + Vector3(0.0f, 10.0f, 0.0f));
+		camera->setLookFrom(engineCamera->getLookAt() + Vector3(0.0f, 2.0f, 0.0f));
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);
 		camera->setUpVector(upVectors[i]);

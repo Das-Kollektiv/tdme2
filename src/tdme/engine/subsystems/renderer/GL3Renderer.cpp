@@ -674,20 +674,13 @@ void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 }
 
 int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
-	Console::println(string(__FUNCTION__) + ": " + to_string(width) + " / " + to_string(height));
 	// generate open gl texture
 	uint32_t textureId;
-	checkGLError(__LINE__);
 	glGenTextures(1, &textureId);
-	checkGLError(__LINE__);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	checkGLError(__LINE__);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	checkGLError(__LINE__);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	checkGLError(__LINE__);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	checkGLError(__LINE__);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -700,7 +693,6 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 		0,
@@ -712,7 +704,6 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
 		0,
@@ -724,7 +715,6 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 		0,
@@ -736,7 +726,6 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 		0,
@@ -748,7 +737,6 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 		0,
@@ -760,9 +748,7 @@ int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t 
 		GL_UNSIGNED_BYTE,
 		nullptr
 	);
-	checkGLError(__LINE__);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	checkGLError(__LINE__);
 	return textureId;
 }
 
@@ -798,43 +784,33 @@ void GL3Renderer::disposeTexture(int32_t textureId)
 
 int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	checkGLError(__LINE__);
 	uint32_t frameBufferGlId;
 	// create a frame buffer object
 	glGenFramebuffers(1, &frameBufferGlId);
-	checkGLError(__LINE__);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
-	checkGLError(__LINE__);
 	// attach the depth buffer texture to FBO
 	if (depthBufferTextureGlId != ID_NONE) {
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
-		checkGLError(__LINE__);
 	}
 	// attach the depth buffer texture to FBO
 	if (colorBufferTextureGlId != ID_NONE) {
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		checkGLError(__LINE__);
 	} else
 	if (cubeMapTextureId != ID_NONE) {
-		Console::println("yyy: " + to_string(cubeMapTextureIndex) + " / " + to_string(cubeMapTextureId));
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cubeMapTextureIndex, cubeMapTextureId, 0);
-		checkGLError(__LINE__);
 	} else {
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
-		checkGLError(__LINE__);
 	}
 	// check FBO status
 	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
 		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
 	}
-	checkGLError(__LINE__);
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	checkGLError(__LINE__);
 	return frameBufferGlId;
 }
 

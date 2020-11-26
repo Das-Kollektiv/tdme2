@@ -72,6 +72,10 @@ uniform Light lights[MAX_LIGHTS];
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
 
+uniform vec3 cameraPosition;
+uniform mat4 cameraMatrix;
+uniform vec3 cameraRotationMatrix;
+
 #if defined(HAVE_SOLID_SHADING)
 #else
 	uniform sampler2D specularTextureUnit;
@@ -376,11 +380,13 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		vec4 envColor = textureCube(environmentTextureUnit, normal * -1.0);
-		outColor = vec4(envColor.rgb, 0.0);
-		//outColor+= vsEffectColorAdd;
-		//outColor*= fragColor;
-		//outColor = clamp(outColor, 0.0, 1.0);
+		vec3 vertexCameraDirection = normalize(vsPosition.xyz - cameraPosition);
+		vec3 reflectionVector = reflect(vertexCameraDirection, normalize(normal * vec3(0.05, 1.0, 0.05)));
+		vec4 envColor = textureCube(environmentTextureUnit, -reflectionVector);
+		outColor = vec4(0.2, 0.2, 0.5, 0.5) + vec4(envColor.rgb, 0.0) * 0.5;
+		outColor+= vsEffectColorAdd;
+		outColor*= fragColor;
+		outColor = clamp(outColor, 0.0, 1.0);
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +

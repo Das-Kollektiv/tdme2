@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
@@ -13,6 +14,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
@@ -117,6 +119,10 @@ void LightingShaderBaseImplementation::initialize()
 	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
 
 	//
+	uniformCameraPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraPosition");
+	uniformCameraRotationMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraRotationMatrix");
+
+	//
 	initialized = true;
 }
 
@@ -153,8 +159,23 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		updateLight(renderer, context, i);
 	}
+
+	auto cameraYRotation =
+		Vector3::computeAngle(
+			engine->getCamera()->getLookAt().clone().sub(engine->getCamera()->getLookFrom()).normalize(),
+			Vector3(0.0f, 0.0, -1.0f),
+			Vector3(0.0f, -1.0f, 0.0f)
+		);
+
+	Console::println(to_string(cameraYRotation));
+
+	Matrix4x4 m;
+	m.rotate(Vector3(0.0f, 1.0f, 0.0f), cameraYRotation);
+
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	if (uniformCameraPosition != -1) renderer->setProgramUniformFloatVec3(context, uniformCameraPosition, engine->getCamera()->getLookFrom().getArray());
+	if (uniformCameraRotationMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraRotationMatrix, m.getArray());
 }
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
