@@ -34,6 +34,7 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -74,6 +75,7 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 using tdme::utilities::ObjectDeleter;
@@ -311,7 +313,7 @@ void RayTracingTest::onChar(unsigned int key, int x, int y) {
 }
 
 void RayTracingTest::onKeyDown (unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyUp = true;
 	if (keyChar == 'a') keyLeft = true;
 	if (keyChar == 's') keyDown = true;
@@ -320,7 +322,7 @@ void RayTracingTest::onKeyDown (unsigned char key, int x, int y) {
 }
 
 void RayTracingTest::onKeyUp(unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyUp = false;
 	if (keyChar == 'a') keyLeft = false;
 	if (keyChar == 's') keyDown = false;

@@ -19,6 +19,7 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -47,6 +48,7 @@ using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::ObjectDeleter;
@@ -78,16 +80,38 @@ void WaterTest::display()
 		skyDomeTranslation+= 1.0f / 60.0;
 	}
 
-	if (keyLeft == true) rotationY-= 5.0f;
-	if (keyRight == true) rotationY+= 5.0f;
+	// camera
+	auto camLookFrom = engine->getCamera()->getLookFrom();
+	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
+	if (keyPlus == true) camLookFrom.add(Vector3(0.0f, +20.0f / 60.0f, 0.0f));
+	if (keyLeft == true) camRotationY+= 1.0f;
+	if (keyRight == true) camRotationY-= 1.0f;
+	if (keyDown == true) camRotationX+= 1.0f;
+	if (keyUp == true) camRotationX-= 1.0f;
 
-	Quaternion rotationYQuaternion;
-	rotationYQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), rotationY);
-	auto cam = engine->getCamera();
-	cam->setLookFrom(Vector3(0.0f, 30.0f, 0.0f) + (rotationYQuaternion * Vector3(0.0f, 0.0f, -50.0f)));
-	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
+	Quaternion camRotationYQuaternion;
+	camRotationYQuaternion.rotate(Rotation::Y_AXIS, camRotationY);
+	Quaternion camRotationXQuaternion;
+	camRotationXQuaternion.rotate(Rotation::X_AXIS, camRotationX);
+	Quaternion camRotationQuaternion;
+	camRotationQuaternion.set(camRotationYQuaternion).multiply(camRotationXQuaternion);
+	Vector3 camLookAt;
+	camRotationQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
 
-	//
+	auto forwardVector = camLookAt;
+	auto sideVector = Vector3();
+	Vector3::computeCrossProduct(forwardVector.normalize(), Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
+
+	if (keyA == true) camLookFrom.add(sideVector.clone().scale(-20.0f / 60.0f));
+	if (keyD == true) camLookFrom.add(sideVector.clone().scale(+20.0f / 60.0f));
+	if (keyW == true) camLookFrom.add(forwardVector.clone().scale(+20.0f / 60.0f));
+	if (keyS == true) camLookFrom.add(forwardVector.clone().scale(-20.0f / 60.0f));
+
+	engine->getCamera()->setLookFrom(camLookFrom);
+	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
+	engine->getCamera()->setUpVector(Camera::computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
+
+	// rendering
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
@@ -186,15 +210,12 @@ void WaterTest::initialize()
 	engine->getEntity("water")->setTranslation(engine->getEntity("water")->getTranslation() + Vector3(0.0f, 2.0f, 0.0f));
 	engine->getEntity("water")->update();
 
-	Quaternion rotationYQuaternion;
-	rotationYQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), rotationY);
-
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
 	cam->setLookFrom(Vector3(0.0f, 30.0f, 50.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
-	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
+	cam->setUpVector(Camera::computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.75f, 0.75f, 0.75f, 1.0f));
 	light0->setDiffuse(Color4(0.40f, 0.40f, 0.40f, 1.0f));
@@ -218,19 +239,37 @@ void WaterTest::onChar(unsigned int key, int x, int y) {
 }
 
 void WaterTest::onKeyDown (unsigned char key, int x, int y) {
+	auto keyChar = Character::toLowerCase(key);
+	if (keyChar == 'w') keyW = true;
+	if (keyChar == 'a') keyA = true;
+	if (keyChar == 's') keyS = true;
+	if (keyChar == 'd') keyD = true;
+	if (keyChar == '-') keyMinus = true;
+	if (keyChar == '+') keyPlus = true;
 }
 
 void WaterTest::onKeyUp(unsigned char key, int x, int y) {
+	auto keyChar = Character::toLowerCase(key);
+	if (keyChar == 'w') keyW = false;
+	if (keyChar == 'a') keyA = false;
+	if (keyChar == 's') keyS = false;
+	if (keyChar == 'd') keyD = false;
+	if (keyChar == '-') keyMinus = false;
+	if (keyChar == '+') keyPlus = false;
 }
 
 void WaterTest::onSpecialKeyDown (int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
 void WaterTest::onSpecialKeyUp(int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
 void WaterTest::onMouseDragged(int x, int y) {

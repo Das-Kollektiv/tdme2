@@ -1063,11 +1063,10 @@ void Engine::display()
 	camera->update(context, _width, _height);
 
 	// clear pre render states
-	renderingInitiated = false;
 	renderingComputedTransformations = false;
 
 	// do pre rendering steps
-	if (renderingInitiated == false) initRendering();
+	resetLists();
 	if (renderingComputedTransformations == false) computeTransformations(camera->getFrustum(), true, true);
 
 	// init frame

@@ -165,9 +165,9 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		context,
 		environmentMappingCenter,
 		Vector3(
-			engine->getCamera()->getLookAt().getX(),
-			engine->getCamera()->getLookAt().getY() + 10.0f,
-			engine->getCamera()->getLookAt().getZ()
+			0.0f, // engine->getCamera()->getLookAt().getX(),
+			10.0f, // engine->getCamera()->getLookAt().getY() + 10.0f,
+			0.0f // engine->getCamera()->getLookAt().getZ()
 		).getArray()
 	);
 }

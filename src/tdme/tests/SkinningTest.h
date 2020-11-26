@@ -31,12 +31,14 @@ private:
 	bool keyRight { false };
 	bool keyUp { false };
 	bool keyDown { false };
-	bool keyA { false };
-	bool keyD { false };
 	bool keyW { false };
+	bool keyA { false };
 	bool keyS { false };
-
+	bool keyD { false };
+	bool keyMinus { false };
+	bool keyPlus { false };
 	float camRotationY { 0.0f };
+	float camRotationX { 0.0f };
 
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;

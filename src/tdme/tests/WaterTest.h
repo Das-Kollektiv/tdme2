@@ -38,7 +38,16 @@ private:
 
 	bool keyLeft { false };
 	bool keyRight { false };
-	float rotationY { 180.0f };
+	bool keyUp { false };
+	bool keyDown { false };
+	bool keyW { false };
+	bool keyA { false };
+	bool keyS { false };
+	bool keyD { false };
+	bool keyMinus { false };
+	bool keyPlus { false };
+	float camRotationY { 0.0f };
+	float camRotationX { 0.0f };
 
 public:
 

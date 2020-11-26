@@ -129,9 +129,6 @@ void FrameBuffer::renderToScreen()
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
 	frameBufferRenderShader->useProgram();
 
-	Console::println(to_string(colorBufferTextureId));
-	Console::println(to_string(depthBufferTextureId));
-
 	// bind color buffer texture
 	renderer->setTextureUnit(context, 0);
 	renderer->bindTexture(context, colorBufferTextureId);
