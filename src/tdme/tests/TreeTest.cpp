@@ -77,7 +77,7 @@ void TreeTest::display()
 	if (keyLeft == true) camRotationY+= 1.0f;
 	if (keyRight == true) camRotationY-= 1.0f;
 	Quaternion camRotationYQuaternion;
-	camRotationYQuaternion.rotate(camRotationY, Rotation::Y_AXIS);
+	camRotationYQuaternion.rotate(Rotation::Y_AXIS, camRotationY);
 	auto camLookAt = engine->getCamera()->getLookAt();
 	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt).normalize().scale(80.0f);
 	engine->getCamera()->setLookFrom(camLookFrom);

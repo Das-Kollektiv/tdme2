@@ -13,6 +13,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
@@ -40,6 +41,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
@@ -52,7 +54,6 @@ using tdme::utilities::Time;
 
 WaterTest::WaterTest()
 {
-	using tdme::application::Application;
 	engine = Engine::getInstance();
 }
 
@@ -60,7 +61,7 @@ WaterTest::WaterTest()
 void WaterTest::main(int argc, char** argv)
 {
 	auto waterTest = new WaterTest();
-	waterTest->run(argc, argv, "WaterTest");
+	waterTest->run(argc, argv, "WaterTest", waterTest);
 }
 
 void WaterTest::display()
@@ -76,6 +77,15 @@ void WaterTest::display()
 
 		skyDomeTranslation+= 1.0f / 60.0;
 	}
+
+	if (keyLeft == true) rotationY-= 5.0f;
+	if (keyRight == true) rotationY+= 5.0f;
+
+	Quaternion rotationYQuaternion;
+	rotationYQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), rotationY);
+	auto cam = engine->getCamera();
+	cam->setLookFrom(Vector3(0.0f, 30.0f, 0.0f) + (rotationYQuaternion * Vector3(0.0f, 0.0f, -50.0f)));
+	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 
 	//
 	auto start = Time::getCurrentMillis();
@@ -107,7 +117,7 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", &level);
+	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader2.tl", &level);
 	Level::setLight(engine, &level);
 	Level::addLevel(engine, &level, false, false, false);
 
@@ -115,6 +125,7 @@ void WaterTest::initialize()
 	skySphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
 	skyDomeEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
 	skyPanoramaEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+	sphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "CM_Sphere.tmm");
 
 	// add sky
 	{
@@ -158,10 +169,23 @@ void WaterTest::initialize()
 		engine->addEntity(skyPanorama);
 	}
 
+	{
+		// sphere
+		auto sphere = new Object3D("sphere", sphereEntity->getModel());
+		sphere->setShader("water");
+		sphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
+		sphere->setTranslation(Vector3(0.0f, 10.0f, 0.0f));
+		sphere->update();
+		engine->addEntity(sphere);
+	}
+
+	Quaternion rotationYQuaternion;
+	rotationYQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), rotationY);
+
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookFrom(Vector3(0.0f, 30.0f, -50.0f));
+	cam->setLookFrom(Vector3(0.0f, 30.0f, 50.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
@@ -181,4 +205,35 @@ void WaterTest::initialize()
 void WaterTest::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(width, height);
+}
+
+void WaterTest::onChar(unsigned int key, int x, int y) {
+}
+
+void WaterTest::onKeyDown (unsigned char key, int x, int y) {
+}
+
+void WaterTest::onKeyUp(unsigned char key, int x, int y) {
+}
+
+void WaterTest::onSpecialKeyDown (int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+}
+
+void WaterTest::onSpecialKeyUp(int key, int x, int y) {
+	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+}
+
+void WaterTest::onMouseDragged(int x, int y) {
+}
+
+void WaterTest::onMouseMoved(int x, int y) {
+}
+
+void WaterTest::onMouseButton(int button, int state, int x, int y) {
+}
+
+void WaterTest::onMouseWheel(int button, int direction, int x, int y) {
 }

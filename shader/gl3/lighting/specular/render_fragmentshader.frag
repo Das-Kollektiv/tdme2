@@ -376,7 +376,7 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		vec4 envColor = textureCube(environmentTextureUnit, reflect(vec3(0.0, 1.0, 0.0), normal));
+		vec4 envColor = textureCube(environmentTextureUnit, normal * -1.0);
 		outColor = vec4(envColor.rgb, 0.0);
 		//outColor+= vsEffectColorAdd;
 		//outColor*= fragColor;

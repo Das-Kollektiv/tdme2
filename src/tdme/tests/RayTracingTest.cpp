@@ -145,7 +145,7 @@ void RayTracingTest::display()
 		float trdDistanceCamPlayer = 1.0f;
 
 		Quaternion rotationQuaternion = transformations.getRotation(0).getQuaternion();
-		rotationQuaternion.multiply((Quaternion().rotate(rotationX, Vector3(1.0f, 0.0f, 0.0f))));
+		rotationQuaternion.multiply((Quaternion().rotate(Vector3(1.0f, 0.0f, 0.0f), rotationX)));
 		Vector3 vectorRotated;
 
 		camLookAt.set(transformations.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
