@@ -73,8 +73,6 @@ uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
 
 uniform vec3 cameraPosition;
-uniform mat4 cameraMatrix;
-uniform vec3 cameraRotationMatrix;
 
 #if defined(HAVE_SOLID_SHADING)
 #else
@@ -381,11 +379,11 @@ void main(void) {
 	#elif defined(HAVE_WATER_SHADER)
 		//
 		vec3 vertexCameraDirection = normalize(vsPosition.xyz - cameraPosition);
-		vec3 reflectionVector = reflect(vertexCameraDirection, normalize(normal * vec3(0.05, 1.0, 0.05)));
+		vec3 reflectionVector = reflect(vertexCameraDirection, normalize(normal * vec3(0.1, 1.0, 0.1)));
 		vec4 envColor = textureCube(environmentTextureUnit, -reflectionVector);
-		outColor = vec4(0.2, 0.2, 0.5, 0.5) + vec4(envColor.rgb, 0.0) * 0.5;
+		outColor = fragColor * 0.4;
+		outColor+= vec4(envColor.rgb, 0.0) * 0.6;
 		outColor+= vsEffectColorAdd;
-		outColor*= fragColor;
 		outColor = clamp(outColor, 0.0, 1.0);
 		if (fogStrength > 0.0) {
 			outColor = vec4(

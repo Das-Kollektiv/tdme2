@@ -59,7 +59,6 @@ protected:
 	int32_t uniformApplyFoliageAnimation { -1 };
 	int32_t uniformEnvironmentTextureUnit { -1 };
 	int32_t uniformCameraPosition { -1 };
-	int32_t uniformCameraRotationMatrix { -1 };
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;

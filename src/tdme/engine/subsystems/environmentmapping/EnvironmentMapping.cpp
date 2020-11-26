@@ -92,7 +92,7 @@ void EnvironmentMapping::render()
 		camera->setZNear(engineCamera->getZNear());
 		camera->setZFar(150.0f);
 		camera->setFovY(90.0f);
-		camera->setLookFrom(engineCamera->getLookAt() + Vector3(0.0f, 2.0f, 0.0f));
+		camera->setLookFrom(engineCamera->getLookAt() + Vector3(0.0f, 5.0f, 0.0f));
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);
 		camera->setUpVector(upVectors[i]);

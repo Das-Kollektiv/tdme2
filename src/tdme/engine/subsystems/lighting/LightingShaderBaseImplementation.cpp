@@ -120,7 +120,6 @@ void LightingShaderBaseImplementation::initialize()
 
 	//
 	uniformCameraPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraPosition");
-	uniformCameraRotationMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraRotationMatrix");
 
 	//
 	initialized = true;
@@ -160,22 +159,17 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		updateLight(renderer, context, i);
 	}
 
-	auto cameraYRotation =
-		Vector3::computeAngle(
-			engine->getCamera()->getLookAt().clone().sub(engine->getCamera()->getLookFrom()).normalize(),
-			Vector3(0.0f, 0.0, -1.0f),
-			Vector3(0.0f, -1.0f, 0.0f)
-		);
-
-	Console::println(to_string(cameraYRotation));
-
-	Matrix4x4 m;
-	m.rotate(Vector3(0.0f, 1.0f, 0.0f), cameraYRotation);
-
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	if (uniformCameraPosition != -1) renderer->setProgramUniformFloatVec3(context, uniformCameraPosition, engine->getCamera()->getLookFrom().getArray());
-	if (uniformCameraRotationMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraRotationMatrix, m.getArray());
+	if (uniformCameraPosition != -1) renderer->setProgramUniformFloatVec3(
+		context,
+		uniformCameraPosition,
+		Vector3(
+			engine->getCamera()->getLookAt().getX(),
+			engine->getCamera()->getLookAt().getY() + 10.0f,
+			engine->getCamera()->getLookAt().getZ()
+		).getArray()
+	);
 }
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)

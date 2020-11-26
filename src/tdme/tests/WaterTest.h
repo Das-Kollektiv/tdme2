@@ -38,7 +38,7 @@ private:
 
 	bool keyLeft { false };
 	bool keyRight { false };
-	float rotationY { 0.0f };
+	float rotationY { 180.0f };
 
 public:
 
