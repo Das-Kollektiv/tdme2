@@ -183,6 +183,8 @@ private:
 	static int32_t shadowMapHeight;
 	static int32_t shadowMapRenderLookUps;
 	static float shadowMaplightEyeDistanceScale;
+	static int32_t environmentMappingWidth;
+	static int32_t environmentMappingHeight;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
 	static int32_t lightSourceTextureId;
@@ -540,7 +542,7 @@ public:
 	}
 
 	/**
-	 * @return shadow map width
+	 * @return shadow map height
 	 */
 	inline static int32_t getShadowMapHeight() {
 		return Engine::shadowMapHeight;
@@ -569,6 +571,30 @@ public:
 	 */
 	inline static void setShadowMapRenderLookUps(int32_t shadowMapRenderLookUps) {
 		Engine::shadowMapRenderLookUps = shadowMapRenderLookUps;
+	}
+
+	/**
+	 * @return environment mapping width
+	 */
+	inline static int32_t getEnvironmentMappingWidth() {
+		return Engine::environmentMappingWidth;
+	}
+
+	/**
+	 * @return environment mapping height
+	 */
+	inline static int32_t getEnvironmentMappingHeight() {
+		return Engine::environmentMappingHeight;
+	}
+
+	/**
+	 * Set environment mapping size
+	 * @param width width
+	 * @param height height
+	 */
+	inline static void setEnvironmentMappingSize(int32_t width, int32_t height) {
+		Engine::environmentMappingWidth = width;
+		Engine::environmentMappingHeight = height;
 	}
 
 	/**

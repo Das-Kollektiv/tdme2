@@ -197,6 +197,9 @@ int32_t Engine::shadowMapWidth = 0;
 int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 1.0f;
+int32_t Engine::environmentMappingWidth = 0;
+int32_t Engine::environmentMappingHeight = 0;
+
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 int32_t Engine::lightSourceTextureId = 0;
@@ -340,7 +343,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
-	offScreenEngine->environmentMapping = new EnvironmentMapping(offScreenEngine, 512, 512);
+	offScreenEngine->environmentMapping = new EnvironmentMapping(offScreenEngine, environmentMappingWidth == 0?512:environmentMappingWidth, environmentMappingHeight == 0?512:environmentMappingHeight);
 	offScreenEngine->environmentMapping->initialize();
 	//
 	offScreenEngine->reshape(width, height);
@@ -646,7 +649,7 @@ void Engine::initialize()
 	}
 
 	// environment mapping
-	environmentMapping = new EnvironmentMapping(this, 512, 512);
+	environmentMapping = new EnvironmentMapping(this, environmentMappingWidth == 0?512:environmentMappingWidth, environmentMappingHeight == 0?512:environmentMappingHeight);
 	environmentMapping->initialize();
 
 	// initialize skinning shader

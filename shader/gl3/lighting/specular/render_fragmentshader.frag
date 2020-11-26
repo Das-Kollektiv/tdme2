@@ -72,7 +72,7 @@ uniform Light lights[MAX_LIGHTS];
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
 
-uniform vec3 cameraPosition;
+uniform vec3 environmentMappingCenter;
 
 #if defined(HAVE_SOLID_SHADING)
 #else
@@ -156,7 +156,7 @@ vec4 fragColor;
 	}
 
 #elif defined(HAVE_WATER_SHADER)
-	uniform samplerCube environmentTextureUnit;
+	uniform samplerCube environmentMappingTextureUnit;
 	in float height;
 #else
 	uniform sampler2D diffuseTextureUnit;
@@ -378,9 +378,8 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		vec3 vertexCameraDirection = normalize(vsPosition.xyz - cameraPosition);
-		vec3 reflectionVector = reflect(vertexCameraDirection, normalize(normal * vec3(0.1, 1.0, 0.1)));
-		vec4 envColor = textureCube(environmentTextureUnit, -reflectionVector);
+		vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingCenter), normalize(normal * vec3(0.1, 1.0, 0.1)));
+		vec4 envColor = textureCube(environmentMappingTextureUnit, -reflectionVector);
 		outColor = fragColor * 0.4;
 		outColor+= vec4(envColor.rgb, 0.0) * 0.6;
 		outColor+= vsEffectColorAdd;

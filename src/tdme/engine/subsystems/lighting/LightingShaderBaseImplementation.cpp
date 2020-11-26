@@ -69,7 +69,7 @@ void LightingShaderBaseImplementation::initialize()
 	}
 
 	// environment mapping
-	uniformEnvironmentTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentTextureUnit");
+	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureUnit");
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
@@ -119,7 +119,7 @@ void LightingShaderBaseImplementation::initialize()
 	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
 
 	//
-	uniformCameraPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraPosition");
+	environmentMappingCenter = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingCenter");
 
 	//
 	initialized = true;
@@ -143,8 +143,8 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
-	if (uniformEnvironmentTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformEnvironmentTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+	if (uniformEnvironmentMappingTextureUnit != -1) {
+		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
 		//
 		auto currentTextureUnit = renderer->getTextureUnit(context);
 		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
@@ -161,9 +161,9 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	if (uniformCameraPosition != -1) renderer->setProgramUniformFloatVec3(
+	if (environmentMappingCenter != -1) renderer->setProgramUniformFloatVec3(
 		context,
-		uniformCameraPosition,
+		environmentMappingCenter,
 		Vector3(
 			engine->getCamera()->getLookAt().getX(),
 			engine->getCamera()->getLookAt().getY() + 10.0f,
