@@ -16,6 +16,7 @@ namespace postprocessing {
 	class PostProcessingShaderLightScatteringImplementation;
 	class PostProcessingShaderSSAOImplementation;
 	class PostProcessingShaderSSAOMapImplementation;
+	class PostProcessingShaderVignetteImplementation;
 }  // namespace postprocessing
 }  // namespace subsystems
 }  // namespace engine

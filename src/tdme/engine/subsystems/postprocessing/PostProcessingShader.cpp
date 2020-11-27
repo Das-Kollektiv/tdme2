@@ -9,6 +9,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include "PostProcessingShaderDesaturationImplementation.h"
 
@@ -22,6 +23,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderDesaturation
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderVignetteImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
@@ -33,6 +35,7 @@ PostProcessingShader::PostProcessingShader(Renderer* renderer)
 	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shader["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);
 	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
 	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
+	if (PostProcessingShaderVignetteImplementation::isSupported(renderer) == true) shader["vignette"] = new PostProcessingShaderVignetteImplementation(renderer);
 	implementation = nullptr;
 }
 

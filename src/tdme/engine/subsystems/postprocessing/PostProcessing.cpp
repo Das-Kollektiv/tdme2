@@ -77,6 +77,16 @@ PostProcessing::PostProcessing() {
 			delete program;
 		}
 	}
+	{
+		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_FINAL);
+		program->addPostProcessingStep("vignette", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN);
+		if (program->isSupported() == true) {
+			programs["vignette"] = program;
+		} else {
+			delete program;
+		}
+
+	}
 }
 
 PostProcessingProgram* PostProcessing::getPostProcessingProgram(const string& programId) {
