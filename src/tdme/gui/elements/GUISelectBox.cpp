@@ -41,6 +41,7 @@ unordered_map<string, string> GUISelectBox::getAttributes(GUIScreenNode* screenN
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "100%";
 	attributes["height"] = "auto";
+	attributes["border"] = "1";
 	return attributes;
 }
 

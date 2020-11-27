@@ -1,0 +1,5 @@
+<element width="100%" height="auto">
+	<space height="5"/>
+	<space height="1" width="100%" border-top="1" />
+	<space height="5"/>	
+</element>

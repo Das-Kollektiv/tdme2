@@ -75,7 +75,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = GUIColor("#8080FF");
+		this->foccussedBorderColor = GUIColor("#5680C2");
 	} catch (Exception& exception) {
 		Console::print(string("GUI(): An error occurred: "));
 		Console::println(string(exception.what()));

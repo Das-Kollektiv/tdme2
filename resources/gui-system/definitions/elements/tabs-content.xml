@@ -1,3 +1,3 @@
-<element width="100%" height="*" background-color="#f0f0f0">
+<element width="100%" height="*" background-color="#585858" border-left="1" border-right="1" border-bottom="1">
 	{__InnerXML__}
 </element>
