@@ -193,6 +193,8 @@ private:
 
 	static map<string, Shader> shaders;
 
+	map<string, map<string, string>> postProcessingShaderParameters;
+
 	int32_t width { -1 };
 	int32_t height { -1 };
 	int32_t scaledWidth { -1 };
@@ -1024,6 +1026,29 @@ public:
 	 * @param programId program id
 	 */
 	void addPostProcessingProgram(const string& programId);
+
+	/**
+	 * Get post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 * @return parameter value or empty string
+	 */
+	const string getPostProcessingProgramParameter(const string& programId, const string& name);
+
+	/**
+	 * Set post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 * @param value parameter value
+	 */
+	void setPostProcessingProgramParameter(const string& programId, const string& name, const string& value);
+
+	/**
+	 * Set post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 */
+	void removePostProcessingProgramParameter(const string& programId, const string& name);
 
 	/**
 	 * @return renderer statistics
