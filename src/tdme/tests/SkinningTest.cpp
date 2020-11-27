@@ -111,6 +111,7 @@ void SkinningTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("depth_blur");
+	engine->addPostProcessingProgram("desaturation");
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
