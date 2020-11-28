@@ -196,7 +196,6 @@ float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 0;
 int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
-float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 int32_t Engine::environmentMappingWidth = 0;
 int32_t Engine::environmentMappingHeight = 0;
 
@@ -498,7 +497,7 @@ void Engine::initialize()
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
-			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
+			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
 		}
 		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -1233,7 +1232,7 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * (mouseX * scaleFactorWidth - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
-			1.0f - (2.0f * (mouseY * scaleFactorHeight- camera->getViewPortTop()) / camera->getViewPortHeight()),
+			1.0f - (2.0f * (mouseY * scaleFactorHeight - camera->getViewPortTop()) / camera->getViewPortHeight()),
 			2.0f * z - 1.0f,
 			1.0f
 		),

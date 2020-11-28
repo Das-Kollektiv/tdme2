@@ -461,6 +461,7 @@ void SharedModelEditorView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
+	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(modelEditorScreenController->getScreenNode()->getId());
 	onInitAdditionalScreens();

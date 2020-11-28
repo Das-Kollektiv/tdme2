@@ -182,7 +182,6 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static int32_t shadowMapRenderLookUps;
-	static float shadowMaplightEyeDistanceScale;
 	static int32_t environmentMappingWidth;
 	static int32_t environmentMappingHeight;
 	static float transformationsComputingReduction1Distance;
@@ -222,6 +221,7 @@ private:
 	array<FrameBuffer*, EFFECTPASS_COUNT - 1> effectPassFrameBuffers;
 	array<bool, EFFECTPASS_COUNT - 1> effectPassSkip;
 	ShadowMapping* shadowMapping { nullptr };
+	float shadowMapLightEyeDistanceScale { 1.0f };
 	EnvironmentMapping* environmentMapping { nullptr };
 
 	map<string, Entity*> entitiesById;
@@ -522,16 +522,16 @@ public:
 	/**
 	 * @return shadow map light eye distance scale
 	 */
-	inline static float getShadowMapLightEyeDistanceScale() {
-		return Engine::shadowMaplightEyeDistanceScale;
+	inline float getShadowMapLightEyeDistanceScale() {
+		return shadowMapLightEyeDistanceScale;
 	}
 
 	/**
 	 * Set shadow map light eye distance scale
-	 * @param shadowMaplightEyeDistanceScale shadow map light eye distance scale
+	 * @param shadowMapLightEyeDistanceScale shadow map light eye distance scale
 	 */
-	inline static void setShadowMapLightEyeDistanceScale(float shadowMaplightEyeDistanceScale) {
-		Engine::shadowMaplightEyeDistanceScale = shadowMaplightEyeDistanceScale;
+	inline void setShadowMapLightEyeDistanceScale(float shadowMapLightEyeDistanceScale) {
+		this->shadowMapLightEyeDistanceScale = shadowMapLightEyeDistanceScale;
 	}
 
 	/**
