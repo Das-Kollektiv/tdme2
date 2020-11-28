@@ -48,12 +48,9 @@ resources
 	scripts
 	sounds
 	textures
-	ui
-		definitions
-		fonts
-		images
-		screens
-		templates
+	screens
+	fonts
+	images
 
 
 object   = tmm
@@ -64,4 +61,32 @@ screen 	 = xml
 mesh   	 = tm
 map    	 = tl
 particle = tps
+
+
+icons
+
+folder
+add folder
+search
+edit
+object
+texture
+script
+sound
+screen
+mesh
+map
+particle
+add
+delete
+save
+quit
+options
+link
+filter
+visible
+not visible
+checkbox
+list view
+grid view
  
