@@ -230,7 +230,7 @@ void ShadowMap::render(Light* light)
 
 	// so we get some contraints for the shadow map camera, TODO: improve me
 	Vector3 center(Vector3(center4.getX(), center4.getY(), center4.getZ()));
-	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * Engine::getShadowMapLightEyeDistanceScale();
+	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * shadowMapping->engine->getShadowMapLightEyeDistanceScale();
 
 	// viewers camera
 	Vector3 lightDirection;

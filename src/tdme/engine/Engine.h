@@ -179,7 +179,7 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static int32_t shadowMapRenderLookUps;
-	static float shadowMaplightEyeDistanceScale;
+	static float shadowMapLightEyeDistanceScale;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
 	static int32_t lightSourceTextureId;
@@ -505,16 +505,16 @@ public:
 	/**
 	 * @return shadow map light eye distance scale
 	 */
-	inline static float getShadowMapLightEyeDistanceScale() {
-		return Engine::shadowMaplightEyeDistanceScale;
+	inline float getShadowMapLightEyeDistanceScale() {
+		return shadowMapLightEyeDistanceScale;
 	}
 
 	/**
 	 * Set shadow map light eye distance scale
-	 * @param shadowMaplightEyeDistanceScale shadow map light eye distance scale
+	 * @param shadowMapLightEyeDistanceScale shadow map light eye distance scale
 	 */
-	inline static void setShadowMapLightEyeDistanceScale(float shadowMaplightEyeDistanceScale) {
-		Engine::shadowMaplightEyeDistanceScale = shadowMaplightEyeDistanceScale;
+	inline void setShadowMapLightEyeDistanceScale(float shadowMapLightEyeDistanceScale) {
+		this->shadowMapLightEyeDistanceScale = shadowMapLightEyeDistanceScale;
 	}
 
 	/**

@@ -167,6 +167,7 @@ void EmptyView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
+	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(emptyScreenController->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());

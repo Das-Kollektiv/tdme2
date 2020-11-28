@@ -905,9 +905,16 @@ void LevelEditorView::initialize()
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20.0f, 0.0f, 1.0f));
+	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
+	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
+	light0->setConstantAttenuation(0.5f);
+	light0->setLinearAttenuation(0.0f);
+	light0->setQuadraticAttenuation(0.0f);
+	light0->setSpotExponent(0.0f);
+	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
@@ -921,6 +928,7 @@ void LevelEditorView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionOctTree());
+	engine->setShadowMapLightEyeDistanceScale(1.0f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(levelEditorScreenController->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
@@ -928,11 +936,22 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
-	loadLevel();
+	auto light0 = engine->getLightAt(0);
+	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
+	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
+	light0->setConstantAttenuation(0.5f);
+	light0->setLinearAttenuation(0.0f);
+	light0->setQuadraticAttenuation(0.0f);
+	light0->setSpotExponent(0.0f);
+	light0->setSpotCutOff(180.0f);
+	light0->setEnabled(true);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookAt(camLookAt);
+	loadLevel();
 }
 
 void LevelEditorView::deactivate()
