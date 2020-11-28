@@ -379,7 +379,7 @@ void main(void) {
 	#elif defined(HAVE_WATER_SHADER)
 		//
 		vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingCenter), normalize(normal * vec3(0.1, 1.0, 0.1)));
-		vec4 envColor = textureCube(environmentMappingTextureUnit, -reflectionVector);
+		vec4 envColor = texture(environmentMappingTextureUnit, -reflectionVector);
 		outColor = fragColor * 0.4;
 		outColor+= vec4(envColor.rgb, 0.0) * 0.6;
 		outColor+= vsEffectColorAdd;
