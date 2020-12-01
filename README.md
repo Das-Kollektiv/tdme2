@@ -96,8 +96,10 @@
         - early z rejection
         - post processing
           - depth blur
-          - SSAO
+          - desaturation
           - light scattering
+          - SSAO
+          - vignette
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
@@ -220,6 +222,7 @@
     - documentation
 
 - What is WIP or planned
+    - Reflections via CubeMap
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
