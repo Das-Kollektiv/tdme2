@@ -219,16 +219,17 @@ void EntityRenderer::reset()
 	objectsByShadersAndModels.clear();
 }
 
-void EntityRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
 
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(1, 0, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(1, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
 		EntityRenderer_InstancedRenderFunctionParameters parameters;
+		parameters.renderPass = renderPass;
 		parameters.objects = objects;
 		parameters.collectTransparentFaces = renderTransparentFaces;
 		parameters.renderTypes = renderTypes;
@@ -237,7 +238,7 @@ void EntityRenderer::render(const vector<Object3D*>& objects, bool renderTranspa
 		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
 		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
 
-		renderFunction(threadCount, 0, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(threadCount, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 
 		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
 		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
@@ -1088,7 +1089,7 @@ void EntityRenderer::clearMaterial(void* context)
 	}
 }
 
-void EntityRenderer::render(const vector<Entity*>& pses)
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>& pses)
 {
 	// TODO: Move me into own class
 	if (pses.size() == 0) return;
@@ -1127,6 +1128,7 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
 	auto& cameraMatrix = renderer->getCameraMatrix();
 	for (auto entity: pses) {
+		if (entity->getRenderPass() != renderPass) continue;
 		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);
 		if (ppse != nullptr) {
 			auto textureIndexIt = textureIndices.find(ppse->getTextureId());
@@ -1227,7 +1229,7 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }
 
-void EntityRenderer::render(const vector<LinesObject3D*>& objects) {
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObject3D*>& objects) {
 	// TODO: Move me into own class
 	// TODO: check me performance wise again
 	if (objects.size() == 0) return;
@@ -1247,6 +1249,8 @@ void EntityRenderer::render(const vector<LinesObject3D*>& objects) {
 
 	//
 	for (auto object: objects) {
+		if (object->getRenderPass() != renderPass) continue;
+
 		// 	model view matrix
 		renderer->getModelViewMatrix().set(object->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
 		renderer->onUpdateModelViewMatrix(context);

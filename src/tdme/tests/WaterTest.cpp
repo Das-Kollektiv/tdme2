@@ -155,6 +155,7 @@ void WaterTest::initialize()
 	{
 		// sky sphere
 		auto skySphere = new Object3D("sky_sphere", skySphereEntity->getModel());
+		skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skySphere->setShader("sky");
 		skySphere->setFrustumCulling(false);
 		skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
@@ -167,6 +168,7 @@ void WaterTest::initialize()
 
 		// sky dome
 		auto skyDome = new Object3D("sky_dome", skyDomeEntity->getModel());
+		skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyDome->setShader("sky");
 		skyDome->setFrustumCulling(false);
 		skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
@@ -181,6 +183,7 @@ void WaterTest::initialize()
 
 		// sky panorama
 		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaEntity->getModel());
+		skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyPanorama->setShader("sky");
 		skyPanorama->setFrustumCulling(false);
 		skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));

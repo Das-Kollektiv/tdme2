@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -13,6 +14,7 @@
 using std::vector;
 
 using tdme::engine::Camera;
+using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
@@ -61,6 +63,7 @@ private:
 	int32_t cubeMapTextureId { 0 };
 	int64_t timeRenderLast { -1LL };
 	int64_t timeRenderUpdateFrequency { 100LL };
+	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 
 	/**
 	 * Init frame buffer
@@ -111,6 +114,21 @@ public:
 	 */
 	inline int32_t getHeight() {
 		return height;
+	}
+
+	/**
+	 * @return render pass mask
+	 */
+	inline int32_t getRenderPassMask() {
+		return renderPassMask;
+	}
+
+	/**
+	 * Set up render pass mask
+	 * @param renderPassMask render pass mask
+	 */
+	inline void setRenderPassMask(int32_t renderPassMask) {
+		this->renderPassMask = renderPassMask;
 	}
 
 	/**

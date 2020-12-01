@@ -121,6 +121,7 @@ void EnvironmentMapping::render()
 		// do a render pass
 		engine->render(
 			Engine::EFFECTPASS_NONE,
+			renderPassMask,
 			string(),
 			true,
 			false,

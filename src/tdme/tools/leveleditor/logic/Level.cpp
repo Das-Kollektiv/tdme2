@@ -324,6 +324,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				lodObject->setEffectColorAddLOD3(lodLevel3->getColorAdd());
 				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
+			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(levelEditorEntity->getShader());
 			lodObject->setDistanceShader(levelEditorEntity->getDistanceShader());
 			lodObject->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
@@ -335,6 +336,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				instances
 			);
 			auto object = dynamic_cast<Object3D*>(entity);
+			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(levelEditorEntity->getShader());
 			object->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
@@ -389,6 +391,9 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 
 	//
 	if (entity != nullptr) {
+		if (levelEditorEntity->getModelSettings() != nullptr && levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+			entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
+		}
 		entity->setContributesShadows(levelEditorEntity->isContributesShadows());
 		entity->setReceivesShadows(levelEditorEntity->isReceivesShadows());
 		entity->fromTransformations(transformations);

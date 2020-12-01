@@ -352,7 +352,7 @@ public:
 	 * Set using render groups
 	 * @param renderGroups use render groups
 	 */
-	inline void setRenderNodes(bool renderGroups) {
+	inline void setRenderGroups(bool renderGroups) {
 		this->renderGroups = renderGroups;
 	}
 

@@ -262,12 +262,16 @@ void ShadowMap::render(Light* light)
 	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();
 	// only draw opaque face entities as shadows will not be produced from transparent objects
-	shadowMapping->object3DRenderer->render(
-		visibleObjects,
-		false,
-		EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
-	);
+	for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
+		auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
+		shadowMapping->object3DRenderer->render(
+			renderPass,
+			visibleObjects,
+			false,
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+		);
+	}
 }
 
 void ShadowMap::computeDepthBiasMVPMatrix()
