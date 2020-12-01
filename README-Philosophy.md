@@ -4,6 +4,7 @@
    - Keep it light
    - Keep it KISS whenever possible
        - Also keep the C++ style easy and light while having the performance benefits of C++
+   - Keep it highly maintainable
    - Keep the app/game developers role model, e.g:
        - An artist should not need to program, but needs very good tools to get content in a appropriate way into the app/game
        - A UI designer should be able to create UIs without needing to code
