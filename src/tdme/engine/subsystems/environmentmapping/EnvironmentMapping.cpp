@@ -20,6 +20,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Time.h>
 
 using std::vector;
 
@@ -42,6 +43,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::Time;
 
 EnvironmentMapping::EnvironmentMapping(Engine* engine, int32_t width, int32_t height)
 {
@@ -80,6 +82,10 @@ void EnvironmentMapping::dispose()
 
 void EnvironmentMapping::render()
 {
+	auto now = Time::getCurrentMillis();
+	if (timeRenderLast != -1LL && now - timeRenderLast < timeRenderUpdateFrequency) return;
+	timeRenderLast = now;
+
 	//
 	auto engineCamera = engine->getCamera();
 

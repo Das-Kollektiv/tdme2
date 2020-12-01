@@ -59,6 +59,8 @@ private:
 		{{ 0.0f, 1.0f, 0.0f }} // back
 	}};
 	int32_t cubeMapTextureId { 0 };
+	int64_t timeRenderLast { -1LL };
+	int64_t timeRenderUpdateFrequency { 100LL };
 
 	/**
 	 * Init frame buffer
@@ -109,6 +111,21 @@ public:
 	 */
 	inline int32_t getHeight() {
 		return height;
+	}
+
+	/**
+	 * @return render update time frequency in milliseconds
+	 */
+	inline int64_t getTimeRenderUpdateFrequency() {
+		return timeRenderUpdateFrequency;
+	}
+
+	/**
+	 * Set up render update time frequency
+	 * @param frequency frequency in milliseconds
+	 */
+	inline void setTimeRenderUpdateFrequency(int64_t frequency) {
+		timeRenderUpdateFrequency = frequency;
 	}
 
 	/**
