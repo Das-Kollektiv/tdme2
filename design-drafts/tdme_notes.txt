@@ -4,15 +4,9 @@ screen_import
 screen_infodialog
 
 template_files_thumbnail
+template_files_text
 
 template_outliner_object
-
-template_viewport_map
-template_viewport_mesh
-template_viewport_script
-template_viewport_screen
-template_viewport_material
-template_viewport_particle
 
 template_details_transform
 template_details_mesh
