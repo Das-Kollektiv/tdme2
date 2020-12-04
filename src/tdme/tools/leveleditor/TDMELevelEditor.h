@@ -19,6 +19,7 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
@@ -48,6 +49,7 @@ private:
 	LevelEditorView* levelEditorView { nullptr };
 	ModelEditorView* modelEditorView { nullptr };
 	TriggerView* triggerView { nullptr };
+	EnvironmentMappingView* environmentMappingView { nullptr };
 	EmptyView* emptyView { nullptr };
 	ParticleSystemView* particleSystemView { nullptr };
 
@@ -141,6 +143,11 @@ public:
 	 * Switch to trigger view
 	 */
 	void switchToTriggerView();
+
+	/**
+	 * Switch to environment mappingview
+	 */
+	void switchToEnvironmentMappingView();
 
 	/**
 	 * Switch to empty view

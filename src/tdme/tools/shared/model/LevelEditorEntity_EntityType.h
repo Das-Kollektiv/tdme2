@@ -21,6 +21,7 @@ public:
 	static LevelEditorEntity_EntityType* MODEL;
 	static LevelEditorEntity_EntityType* EMPTY;
 	static LevelEditorEntity_EntityType* PARTICLESYSTEM;
+	static LevelEditorEntity_EntityType* ENVIRONMENTMAPPING;
 
 	/**
 	 * Public constructor

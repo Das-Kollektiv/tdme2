@@ -17,6 +17,7 @@ LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_Enti
 LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::MODEL = new LevelEditorEntity_EntityType("MODEL", 1);
 LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::EMPTY = new LevelEditorEntity_EntityType("EMPTY", 2);
 LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::PARTICLESYSTEM = new LevelEditorEntity_EntityType("PARTICLESYSTEM", 3);
+LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::ENVIRONMENTMAPPING = new LevelEditorEntity_EntityType("ENVIRONMENTMAPPING", 4);
 
 LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(const string& name)
 {
@@ -24,6 +25,6 @@ LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(const string
 	if (MODEL->getName() == name) return MODEL;
 	if (PARTICLESYSTEM->getName() == name) return PARTICLESYSTEM;
 	if (TRIGGER->getName() == name) return TRIGGER;
-	// TODO: throw exception here maybe
+	if (ENVIRONMENTMAPPING->getName() == name) return ENVIRONMENTMAPPING;
 	return nullptr;
 }

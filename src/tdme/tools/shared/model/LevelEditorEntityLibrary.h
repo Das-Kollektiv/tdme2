@@ -66,7 +66,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
+	LevelEditorEntity* addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * Add a trigger
@@ -79,7 +79,20 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth) /* throws(Exception) */;
+	LevelEditorEntity* addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth);
+
+	/**
+	 * Add a environment mapping
+	 * @param id id
+	 * @param name name
+	 * @param description description
+	 * @param width width
+	 * @param height height
+	 * @param depth depth
+	 * @return level editor entity
+	 * @throws tdme::utilities::Exception
+	 */
+	LevelEditorEntity* addEnvironmentMapping(int32_t id, const string& name, const string& description, float width, float height, float depth);
 
 	/**
 	 * Add a empty
@@ -89,7 +102,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addEmpty(int32_t id, const string& name, const string& description) /* throws(Exception) */;
+	LevelEditorEntity* addEmpty(int32_t id, const string& name, const string& description);
 
 	/**
 	 * Add a empty
@@ -99,13 +112,13 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addParticleSystem(int32_t id, const string& name, const string& description) /* throws(Exception) */;
+	LevelEditorEntity* addParticleSystem(int32_t id, const string& name, const string& description);
 
 	/**
 	 * Add a entity
 	 * @param levelEditorEntity model
 	 */
-	void addEntity(LevelEditorEntity* levelEditorEntity) /* throws(Exception) */;
+	void addEntity(LevelEditorEntity* levelEditorEntity);
 
 	/**
 	 * @param idx idx

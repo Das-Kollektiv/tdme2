@@ -17,6 +17,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
+#include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
@@ -56,6 +57,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
@@ -183,16 +185,22 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	{
 		auto v = entity->getType();
 		if (v == LevelEditorEntity_EntityType::MODEL) {
-			if (dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
+			if (dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
-			(dynamic_cast< ModelEditorView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
 		if (v == LevelEditorEntity_EntityType::TRIGGER) {
-			if (dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
+			if (dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
-			(dynamic_cast< TriggerView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+		} else
+		if (v == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+			if (dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
+				TDMELevelEditor::getInstance()->switchToEnvironmentMappingView();
+			}
+			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
 		if (v == LevelEditorEntity_EntityType::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
@@ -201,10 +209,10 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
 		if (v == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			if (dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
+			if (dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
-			(dynamic_cast< ParticleSystemView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		}
 	}
 
@@ -422,6 +430,19 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
 				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
+				setEntityLibrary();
+				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
+				onEditEntity();
+			} catch (Exception& exception) {
+				popUps->getInfoDialogScreenController()->show(
+					"Error",
+					"An error occurred: " + (string(exception.what()))
+				);
+			}
+		} else
+		if (node->getController()->getValue().getString() == "create_environmentmapping") {
+			try {
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(LevelEditorEntityLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();

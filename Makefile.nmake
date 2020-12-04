@@ -374,11 +374,13 @@ SRCS = \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
+	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
 	src/tdme/tools/leveleditor/logic/Level.cpp \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \
+	src/tdme/tools/leveleditor/views/EnvironmentMappingView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.cpp \
 	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \

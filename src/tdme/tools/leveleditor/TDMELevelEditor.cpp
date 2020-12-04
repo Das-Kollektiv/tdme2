@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
+#include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
@@ -34,6 +35,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
@@ -154,6 +156,8 @@ void TDMELevelEditor::initialize() {
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);
 	triggerView->initialize();
+	environmentMappingView = new EnvironmentMappingView(popUps);
+	environmentMappingView->initialize();
 	emptyView = new EmptyView(popUps);
 	emptyView->initialize();
 	particleSystemView = new ParticleSystemView(popUps);
@@ -175,6 +179,10 @@ void TDMELevelEditor::switchToModelEditor() {
 
 void TDMELevelEditor::switchToTriggerView() {
 	setView(triggerView);
+}
+
+void TDMELevelEditor::switchToEnvironmentMappingView() {
+	setView(environmentMappingView);
 }
 
 void TDMELevelEditor::switchToEmptyView() {
