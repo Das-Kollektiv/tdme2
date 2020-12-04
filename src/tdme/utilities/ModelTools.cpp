@@ -1224,7 +1224,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// create optimized material
-	auto optimizedMaterial = new Material("material.optimized");
+	auto optimizedMaterial = new Material("tdme.material.optimized");
 	{
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexturePathName(texturePathName);

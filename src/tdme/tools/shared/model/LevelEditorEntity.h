@@ -193,6 +193,16 @@ public:
 	void setModel(Model* model);
 
 	/**
+	 * Unset model without deleting current one
+	 * @return model
+	 */
+	inline Model* detachModel() {
+		auto currentModel = model;
+		model = nullptr;
+		return currentModel;
+	}
+
+	/**
 	 * @return pivot
 	 */
 	inline Vector3& getPivot() {
