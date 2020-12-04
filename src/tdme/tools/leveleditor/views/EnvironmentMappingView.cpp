@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
-#include <tdme/tools/leveleditor/controller/environmentMappingScreenController.h>
+#include <tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
