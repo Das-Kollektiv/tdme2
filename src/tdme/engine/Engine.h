@@ -179,7 +179,7 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static int32_t shadowMapRenderLookUps;
-	static float shadowMaplightEyeDistanceScale;
+	static float shadowMapLightEyeDistanceScale;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
 	static int32_t lightSourceTextureId;
@@ -192,6 +192,8 @@ private:
 	};
 
 	static map<string, Shader> shaders;
+
+	map<string, map<string, string>> postProcessingShaderParameters;
 
 	int32_t width { -1 };
 	int32_t height { -1 };
@@ -503,16 +505,16 @@ public:
 	/**
 	 * @return shadow map light eye distance scale
 	 */
-	inline static float getShadowMapLightEyeDistanceScale() {
-		return Engine::shadowMaplightEyeDistanceScale;
+	inline float getShadowMapLightEyeDistanceScale() {
+		return shadowMapLightEyeDistanceScale;
 	}
 
 	/**
 	 * Set shadow map light eye distance scale
-	 * @param shadowMaplightEyeDistanceScale shadow map light eye distance scale
+	 * @param shadowMapLightEyeDistanceScale shadow map light eye distance scale
 	 */
-	inline static void setShadowMapLightEyeDistanceScale(float shadowMaplightEyeDistanceScale) {
-		Engine::shadowMaplightEyeDistanceScale = shadowMaplightEyeDistanceScale;
+	inline void setShadowMapLightEyeDistanceScale(float shadowMapLightEyeDistanceScale) {
+		this->shadowMapLightEyeDistanceScale = shadowMapLightEyeDistanceScale;
 	}
 
 	/**
@@ -1024,6 +1026,29 @@ public:
 	 * @param programId program id
 	 */
 	void addPostProcessingProgram(const string& programId);
+
+	/**
+	 * Get post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 * @return parameter value or empty string
+	 */
+	const string getPostProcessingProgramParameter(const string& programId, const string& name);
+
+	/**
+	 * Set post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 * @param value parameter value
+	 */
+	void setPostProcessingProgramParameter(const string& programId, const string& name, const string& value);
+
+	/**
+	 * Set post processing program parameter
+	 * @param programId program id
+	 * @param name parameter name
+	 */
+	void removePostProcessingProgramParameter(const string& programId, const string& name);
 
 	/**
 	 * @return renderer statistics

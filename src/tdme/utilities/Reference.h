@@ -6,17 +6,17 @@
  * Reference counter implementation to be used with inheritance
  * @author Andreas Drewke
  */
-class tdme::utilities::ReferenceCounter {
+class tdme::utilities::Reference {
 public:
 	/**
 	 * @brief Public constructor
 	 */
-	ReferenceCounter();
+	Reference();
 
 	/**
 	 * @brief destructor
 	 */
-	virtual ~ReferenceCounter();
+	virtual ~Reference();
 
 	/**
 	 * @brief acquires a reference, incrementing the counter

@@ -394,18 +394,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(
 		Vector4(
-			entityBoundingBoxToUse->getMin().getX() + ((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) / 2.0f),
-			entityBoundingBoxToUse->getMin().getY() + ((entityBoundingBoxToUse->getMax().getY() - entityBoundingBoxToUse->getMin().getY()) / 2.0f),
-			-entityBoundingBoxToUse->getMin().getZ() * 4.0f,
+			0.0f,
+			10.0f,
+			10.0f,
 			1.0f
 		)
 	);
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
