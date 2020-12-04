@@ -10,6 +10,8 @@ using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
+using tdme::engine::Engine;
+
 /**
  * Frame buffer class
  * @author Andreas Drewke
@@ -123,13 +125,15 @@ public:
 
 	/**
 	 * Do post processing into target frame buffer (which can be screen as well when passing nullptr)
+	 * @param engine engine
 	 * @param source source frame buffer
+	 * @param programId post processing shader id
 	 * @param shaderId post processing shader id
 	 * @param temporary bind additional temporary frame buffer
 	 * @param blendToSource target = blendToSource + source
 	 * @param fixedLightScatteringIntensity if using fixed light scattering intensity (hack until we have shader parameters)
 	 * @param lightScatteringItensityValue light scattering itensity value (hack until we have shader parameters)
 	 */
-	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr, bool fixedLightScatteringIntensity = false, float lightScatteringItensityValue = 0.5f);
+	static void doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr, bool fixedLightScatteringIntensity = false, float lightScatteringItensityValue = 0.5f);
 
 };

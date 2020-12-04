@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
-#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
 
 using tdme::engine::FrameBuffer;
 using tdme::engine::Engine;
@@ -15,7 +15,7 @@ using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
-using tdme::utilities::Console;
+using tdme::utilities::Float;
 
 FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
@@ -165,7 +165,7 @@ void FrameBuffer::renderToScreen()
 	renderer->enableCulling(context);
 }
 
-void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary, FrameBuffer* blendToSource, bool fixedLightScatteringIntensity, float lightScatteringItensityValue)
+void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary, FrameBuffer* blendToSource, bool fixedLightScatteringIntensity, float lightScatteringItensityValue)
 {
 	if (target != nullptr) {
 		target->enableFrameBuffer();
@@ -174,7 +174,6 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 	}
 
 	//
-	auto engine = Engine::currentEngine;
 	auto renderer = Engine::renderer;
 
 	// if we blend source over blend to source?
@@ -207,6 +206,10 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 	lightSourcePosition2D.setX(Math::clamp(lightSourcePosition2D.getX() / static_cast<float>(_width), 0.0f, 1.0f));
 	lightSourcePosition2D.setY(Math::clamp(1.0f - (lightSourcePosition2D.getY() / static_cast<float>(_height)), 0.0f, 1.0f));
 	float intensity = 1.0f;
+	auto programIntensity = engine->getPostProcessingProgramParameter(programId, "intensity");
+	if (programIntensity.empty() == false) {
+		intensity = Float::parseFloat(programIntensity);
+	} else
 	if (fixedLightScatteringIntensity == true) {
 		intensity = lightScatteringItensityValue;
 	} else {

@@ -6,6 +6,7 @@
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
+      - Read about the [philosophy](./README-Philosophy.md) if interested
     - TDME2 is open source
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
@@ -95,8 +96,10 @@
         - early z rejection
         - post processing
           - depth blur
-          - SSAO
+          - desaturation
           - light scattering
+          - SSAO
+          - vignette
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed

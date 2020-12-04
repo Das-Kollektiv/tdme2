@@ -198,7 +198,6 @@ int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
 int32_t Engine::environmentMappingWidth = 0;
 int32_t Engine::environmentMappingHeight = 0;
-
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 int32_t Engine::lightSourceTextureId = 0;
@@ -1877,6 +1876,24 @@ void Engine::addPostProcessingProgram(const string& programId) {
 	if (postProcessing->getPostProcessingProgram(programId) != nullptr) postProcessingPrograms.push_back(programId);
 }
 
+const string Engine::getPostProcessingProgramParameter(const string& programId, const string& name) {
+	auto programIt = postProcessingShaderParameters.find(programId);
+	if (programIt == postProcessingShaderParameters.end()) return string();
+	auto programParameterIt = programIt->second.find(name);
+	if (programParameterIt == programIt->second.end()) return string();
+	return programParameterIt->second;
+}
+
+void Engine::setPostProcessingProgramParameter(const string& programId, const string& name, const string& value) {
+	// TODO: check if parameter is available
+	postProcessingShaderParameters[programId][name] = value;
+}
+
+void Engine::removePostProcessingProgramParameter(const string& programId, const string& name) {
+	postProcessingShaderParameters[programId].erase(name);
+	if (postProcessingShaderParameters[programId].size() == 0) postProcessingShaderParameters.erase(programId);
+}
+
 void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer) {
 	auto postProcessingFrameBufferIdx = 0;
 	for (auto programId: postProcessingPrograms) {
@@ -1919,7 +1936,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					target = postProcessingTemporaryFrameBuffer;
 					break;
 			}
-			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource, fixedLightScatteringIntensity, lightScatteringItensityValue);
+			FrameBuffer::doPostProcessing(this, target, source, programId, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource, fixedLightScatteringIntensity, lightScatteringItensityValue);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
