@@ -32,7 +32,7 @@ const string& GUISelectBoxMultipleParentOption::getName()
 
 const string GUISelectBoxMultipleParentOption::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"selectbox-multiple-parent-option.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"selectbox-multiple-parent-option.xml":fileName);
 }
 
 unordered_map<string, string> GUISelectBoxMultipleParentOption::getAttributes(GUIScreenNode* screenNode)

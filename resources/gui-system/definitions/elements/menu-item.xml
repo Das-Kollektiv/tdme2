@@ -1,8 +1,0 @@
-<element id="{$id}" width="100%" height="auto" value="{$value}" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<!-- normal -->
-	<text padding-left="10" padding-top="2" padding-bottom="2" height="25" width="100%" hide-on="disabled,selected,mouseover" font="resources/gui-system/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
-	<!-- mouse over -->
-	<text padding-left="10" padding-top="2" padding-bottom="2" height="25"width="100%" hide-on="disabled,selected" show-on="mouseover" font="resources/gui-system/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" background-color="#5680C2" />
-	<!-- disabled -->
-	<text padding-left="10" padding-top="2" padding-bottom="2" height="25" width="100%" hide-on="selected" show-on="disabled" font="resources/gui-system/fonts/Roboto_14_mono.fnt" text="{$text}" color="#D0D0D0" />	
-</element>

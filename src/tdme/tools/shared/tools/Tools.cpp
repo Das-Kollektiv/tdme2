@@ -256,7 +256,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
+	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
@@ -521,28 +521,28 @@ void Tools::loadSettings(Application* application) {
 
 Model* Tools::getGizmoAll() {
 	if (gizmoAll == nullptr) {
-		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.fbx.tm");
+		gizmoAll = ModelReader::read("resources/engine/models", "gizmo_all.tm");
 	}
 	return gizmoAll;
 }
 
 Model* Tools::getGizmoTranslation() {
 	if (gizmoTranslation == nullptr) {
-		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.fbx.tm");
+		gizmoTranslation = ModelReader::read("resources/engine/models", "gizmo_translate.tm");
 	}
 	return gizmoTranslation;
 }
 
 Model* Tools::getGizmoScale() {
 	if (gizmoScale == nullptr) {
-		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.fbx.tm");
+		gizmoScale = ModelReader::read("resources/engine/models", "gizmo_scale.tm");
 	}
 	return gizmoScale;
 }
 
 Model* Tools::getGizmoRotations() {
 	if (gizmoRotations == nullptr) {
-		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
+		gizmoRotations = ModelReader::read("resources/engine/models", "gizmo_rotate.tm");
 	}
 	return gizmoRotations;
 }

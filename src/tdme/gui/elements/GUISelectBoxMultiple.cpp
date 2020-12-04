@@ -32,7 +32,7 @@ const string& GUISelectBoxMultiple::getName()
 
 const string GUISelectBoxMultiple::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"selectbox-multiple.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"selectbox-multiple.xml":fileName);
 }
 
 unordered_map<string, string> GUISelectBoxMultiple::getAttributes(GUIScreenNode* screenNode)
