@@ -96,7 +96,7 @@ public:
 	void unsetEntityProperties();
 
 	/**
-	 * Set trigger tab
+	 * Set dimension tab
 	 * @param width width
 	 * @param height height
 	 * @param depth depth
@@ -104,12 +104,12 @@ public:
 	void setDimension(float width, float height, float depth);
 
 	/**
-	 * Unset trigger tab
+	 * Unset dimension tab
 	 */
 	void unsetDimension();
 
 	/**
-	 * On trigger apply
+	 * On dimension apply
 	 */
 	void onDimensionApply();
 

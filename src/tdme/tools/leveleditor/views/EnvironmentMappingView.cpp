@@ -114,7 +114,7 @@ void EnvironmentMappingView::display()
 void EnvironmentMappingView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		environmentMappingScreenController->setScreenCaption("Trigger - " + entity->getName());
+		environmentMappingScreenController->setScreenCaption("Environment Mapping - " + entity->getName());
 		auto preset = entity->getProperty("preset");
 		environmentMappingScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		environmentMappingScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -123,7 +123,7 @@ void EnvironmentMappingView::updateGUIElements()
 		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
 		environmentMappingScreenController->setDimension(dimension.getX(), dimension.getY(), dimension.getZ());
 	} else {
-		environmentMappingScreenController->setScreenCaption("Trigger - no trigger loaded");
+		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
 		environmentMappingScreenController->unsetEntityProperties();
 		environmentMappingScreenController->unsetEntityData();
 		environmentMappingScreenController->unsetDimension();

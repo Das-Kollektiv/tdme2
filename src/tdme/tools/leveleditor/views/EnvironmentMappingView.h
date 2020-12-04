@@ -77,7 +77,7 @@ public:
 	void updateGUIElements();
 
 	/**
-	 * Trigger apply
+	 * Set dimension
 	 */
 	void setDimension(float width, float height, float depth);
 
