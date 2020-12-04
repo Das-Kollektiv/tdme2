@@ -196,7 +196,7 @@ public:
 	 * Unset model without deleting current one
 	 * @return model
 	 */
-	inline Model* detachModel() {
+	inline Model* unsetModel() {
 		auto currentModel = model;
 		model = nullptr;
 		return currentModel;
