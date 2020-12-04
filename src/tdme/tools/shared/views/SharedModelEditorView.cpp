@@ -297,7 +297,7 @@ void SharedModelEditorView::computeNormals() {
 void SharedModelEditorView::optimizeModel() {
 	if (entity == nullptr || entity->getModel() == nullptr) return;
 	engine->removeEntity("model");
-	entity->setModel(ModelTools::optimizeModel(entity->detachModel()));
+	entity->setModel(ModelTools::optimizeModel(entity->unsetModel()));
 	initModelRequested = true;
 	modelEditorScreenController->setMaterials(entity);
 }
