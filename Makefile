@@ -629,7 +629,7 @@ SRCS = \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Properties.cpp \
-	src/tdme/utilities/ReferenceCounter.cpp \
+	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
