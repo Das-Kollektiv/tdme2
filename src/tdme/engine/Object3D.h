@@ -313,9 +313,7 @@ public:
 	 * Set shader
 	 * @param id shader id
 	 */
-	inline void setShader(const string& id) {
-		shaderId = id;
-	}
+	void setShader(const string& id);
 
 	/**
 	 * @return distance shader id
@@ -328,9 +326,7 @@ public:
 	 * Set distance shader
 	 * @param id shader id
 	 */
-	inline void setDistanceShader(const string& id) {
-		distanceShaderId = id;
-	}
+	void setDistanceShader(const string& id);
 
 	/**
 	 * @return distance shader distance

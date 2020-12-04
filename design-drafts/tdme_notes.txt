@@ -4,15 +4,9 @@ screen_import
 screen_infodialog
 
 template_files_thumbnail
+template_files_text
 
 template_outliner_object
-
-template_viewport_map
-template_viewport_mesh
-template_viewport_script
-template_viewport_screen
-template_viewport_material
-template_viewport_particle
 
 template_details_transform
 template_details_mesh
@@ -48,12 +42,9 @@ resources
 	scripts
 	sounds
 	textures
-	ui
-		definitions
-		fonts
-		images
-		screens
-		templates
+	screens
+	fonts
+	images
 
 
 object   = tmm
@@ -64,4 +55,32 @@ screen 	 = xml
 mesh   	 = tm
 map    	 = tl
 particle = tps
+
+
+icons
+
+folder
+add folder
+search
+edit
+object
+texture
+script
+sound
+screen
+mesh
+map
+particle
+add
+delete
+save
+quit
+options
+link
+filter
+visible
+not visible
+checkbox
+list view
+grid view
  

@@ -380,6 +380,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
@@ -628,7 +629,7 @@ SRCS = \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Properties.cpp \
-	src/tdme/utilities/ReferenceCounter.cpp \
+	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \

@@ -22,8 +22,8 @@ Camera::Camera(Renderer* renderer)
 	height = 0;
 	aspect = 1;
 	fovY = 45.0f;
-	zNear = 10.0f;
-	zFar = 4000.0f;
+	zNear = 0.1f;
+	zFar = 150.0f;
 	cameraMode = CAMERAMODE_LOOKAT;
 	upVector.set(0.0f, 1.0f, 0.0f);
 	forwardVector.set(0.0f, 0.0f, 1.0f);
@@ -149,7 +149,7 @@ void Camera::update(void* context, int32_t width, int32_t height)
 		if (_height <= 0)
 			_height = 1;
 
-		aspect = static_cast< float >(_width) / static_cast< float >(_height);
+		aspect = static_cast<float>(_width) / static_cast<float>(_height);
 		this->width = _width;
 		this->height = _height;
 		renderer->getViewportMatrix().set(
