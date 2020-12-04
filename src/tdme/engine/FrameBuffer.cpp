@@ -167,7 +167,7 @@ void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuf
 	if (blendToSource != nullptr) {
 		// yup
 		blendToSource->renderToScreen();
-		renderer->enableBlending();
+		renderer->enableAdditionBlending();
 		renderer->disableDepthBufferTest();
 	} else {
 		// otherwise just clear target

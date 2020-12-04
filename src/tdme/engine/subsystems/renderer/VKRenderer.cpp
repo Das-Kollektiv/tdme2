@@ -4088,6 +4088,10 @@ void VKRenderer::enableBlending()
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
+void VKRenderer::enableAdditionBlending() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not implemented yet!");
+}
+
 void VKRenderer::disableBlending()
 {
 	if (blending_enabled == false) return;
