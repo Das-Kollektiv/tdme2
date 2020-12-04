@@ -104,7 +104,6 @@ void GLES2Renderer::initialize()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 }
@@ -363,12 +362,18 @@ void GLES2Renderer::setCullFace(int32_t cullFace)
 	glCullFace(cullFace);
 }
 
-void GLES2Renderer::enableBlending()
+void GL3Renderer::enableBlending()
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 }
 
-void GLES2Renderer::disableBlending()
+void GL3Renderer::enableAdditionBlending() {
+	glBlendFunc(GL_ONE, GL_ONE);
+	glEnable(GL_BLEND);
+}
+
+void GL3Renderer::disableBlending()
 {
 	glDisable(GL_BLEND);
 }
@@ -844,6 +849,7 @@ void GLES2Renderer::initGuiMode()
 {
 	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

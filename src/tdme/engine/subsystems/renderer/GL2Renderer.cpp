@@ -128,7 +128,6 @@ void GL2Renderer::initialize()
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	glEnable(GL_POINT_SPRITE);
@@ -405,6 +404,12 @@ void GL2Renderer::setCullFace(int32_t cullFace)
 
 void GL2Renderer::enableBlending()
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+}
+
+void GL2Renderer::enableAdditionBlending() {
+	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 }
 
@@ -906,6 +911,7 @@ void GL2Renderer::initGuiMode()
 {
 	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

@@ -86,6 +86,7 @@ public:
 	void setFrontFace(void* context, int32_t frontFace) override;
 	void setCullFace(int32_t cullFace) override;
 	void enableBlending() override;
+	void enableAdditionBlending() override;
 	void disableBlending() override;
 	void enableDepthBufferWriting() override;
 	void disableDepthBufferWriting() override;

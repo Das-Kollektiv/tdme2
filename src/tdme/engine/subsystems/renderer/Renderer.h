@@ -559,6 +559,11 @@ public:
 	virtual void enableBlending() = 0;
 
 	/**
+	 * Enable blending with c = a + b
+	 */
+	virtual void enableAdditionBlending() = 0;
+
+	/**
 	 * Disables blending
 	 */
 	virtual void disableBlending() = 0;
