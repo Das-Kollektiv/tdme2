@@ -6,7 +6,7 @@
 #include <map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -20,13 +20,12 @@ using std::string;
 using std::vector;
 using std::remove;
 
-using tdme::engine::LODObject3D;
+using tdme::engine::Entity;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::ModelProperties;
@@ -65,17 +64,19 @@ private:
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes;
 	LevelEditorEntityPhysics* physics { nullptr };
 	vector<LevelEditorEntityParticleSystem*> particleSystems;
-	LevelEditorEntityModel* modelSettings { nullptr };
-	bool renderGroups;
+	bool terrainMesh { false };
+	bool renderGroups { false };
 	string shaderId { "default"};
 	string distanceShaderId { "default"};
-	float distanceShaderDistance;
-	bool contributesShadows;
-	bool receivesShadows;
+	float distanceShaderDistance { 10000.0f };
+	bool contributesShadows { true };
+	bool receivesShadows { true };
 	map<string, LevelEditorEntityAudio*> soundsById;
 	vector<LevelEditorEntityAudio*> sounds;
 	map<string, string> shaderParameters;
 	map<string, string> distanceShaderParameters;
+	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
+	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 
 public:
 
@@ -314,13 +315,6 @@ public:
 	}
 
 	/**
-	 * @return model settings
-	 */
-	inline LevelEditorEntityModel* getModelSettings() {
-		return modelSettings;
-	}
-
-	/**
 	 * @return if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
@@ -348,6 +342,22 @@ public:
 	 */
 	inline void setReceivesShadows(bool receivesShadows) {
 		this->receivesShadows = receivesShadows;
+	}
+
+	/**
+	 * Is terrain mesh
+	 * @return terrain mesh
+	 */
+	inline bool isTerrainMesh() {
+		return terrainMesh;
+	}
+
+	/**
+	 * Set terrain mesh
+	 * @param terrainMesh terrain mesh
+	 */
+	inline void setTerrainMesh(bool terrainMesh) {
+		this->terrainMesh = terrainMesh;
 	}
 
 	/**
@@ -496,6 +506,36 @@ public:
 	 */
 	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
 		distanceShaderParameters = parameters;
+	}
+
+	/**
+	 * @return render pass mask
+	 */
+	inline int32_t getEnvironmentMapRenderPassMask() {
+		return environmentMapRenderPassMask;
+	}
+
+	/**
+	 * Set up render pass mask
+	 * @param renderPassMask render pass mask
+	 */
+	inline void setEnvironmentMapRenderPassMask(int32_t renderPassMask) {
+		this->environmentMapRenderPassMask = renderPassMask;
+	}
+
+	/**
+	 * @return render update time frequency in milliseconds
+	 */
+	inline int64_t getEnvironmentMapTimeRenderUpdateFrequency() {
+		return environmentMapTimeRenderUpdateFrequency;
+	}
+
+	/**
+	 * Set up render update time frequency
+	 * @param frequency frequency in milliseconds
+	 */
+	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {
+		environmentMapTimeRenderUpdateFrequency = frequency;
 	}
 
 };

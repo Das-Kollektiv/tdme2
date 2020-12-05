@@ -1,5 +1,6 @@
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -26,6 +27,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;
@@ -122,16 +124,18 @@ void EnvironmentMappingView::updateGUIElements()
 		dimension.set(entity->getModel()->getBoundingBox()->getMax());
 		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
 		environmentMappingScreenController->setDimension(dimension.getX(), dimension.getY(), dimension.getZ());
+		environmentMappingScreenController->setGeneration();
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
 		environmentMappingScreenController->unsetEntityProperties();
 		environmentMappingScreenController->unsetEntityData();
 		environmentMappingScreenController->unsetDimension();
+		environmentMappingScreenController->unsetGeneration();
 	}
 }
 
-void EnvironmentMappingView::setDimension(float width, float height, float depth)
-{
+
+void EnvironmentMappingView::setDimension(float width, float height, float depth) {
 	if (entity == nullptr)
 		return;
 
@@ -151,11 +155,9 @@ void EnvironmentMappingView::setDimension(float width, float height, float depth
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		setEntity(entity);
 		updateGUIElements();
-	} catch (Exception& exception) {
-		popUps->getInfoDialogScreenController()->show(
-			"Error",
-			"An error occurred: " + (string(exception.what()))
-		);
+	} catch (Exception &exception) {
+		popUps->getInfoDialogScreenController()->show("Error", "An error occurred: " + (string(exception.what())));
+		environmentMappingScreenController->unsetGeneration();
 	}
 }
 

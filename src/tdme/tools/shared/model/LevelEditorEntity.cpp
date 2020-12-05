@@ -7,7 +7,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/utilities/StringTools.h>
@@ -19,7 +18,6 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::utilities::StringTools;
 
@@ -109,10 +107,6 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
-	this->lodLevel2 = nullptr;
-	this->lodLevel3 = nullptr;
-	this->physics = nullptr;
-	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->physics = new LevelEditorEntityPhysics();
 	} else
@@ -121,13 +115,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
-		this->modelSettings = new LevelEditorEntityModel(this);
 		this->physics = new LevelEditorEntityPhysics();
 	}
-	renderGroups = false;
-	distanceShaderDistance = 10000.0f;
-	contributesShadows = true;
-	receivesShadows = true;
 }
 
 LevelEditorEntity::~LevelEditorEntity() {
@@ -136,7 +125,6 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (physics != nullptr) delete physics;
 	for (auto particleSystem: particleSystems) delete particleSystem;
-	if (modelSettings != nullptr) delete modelSettings;
 	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
 	for (auto sound: sounds) delete sound;
 }

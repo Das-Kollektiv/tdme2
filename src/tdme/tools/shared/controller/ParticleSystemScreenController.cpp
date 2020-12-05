@@ -52,6 +52,7 @@
 
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::engine::fileio::models::ModelReader;

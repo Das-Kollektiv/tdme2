@@ -586,7 +586,6 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntity.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityAudio.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityModel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLODLevel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \

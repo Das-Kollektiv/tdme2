@@ -27,7 +27,6 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -35,6 +34,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -77,6 +77,7 @@ using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
@@ -539,13 +540,13 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesGenerate(Leve
 }
 
 void EntityPhysicsSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
-	terrainMesh->getController()->setValue(MutableString(entity->getModelSettings()->isTerrainMesh() == true?"1":""));
+	terrainMesh->getController()->setValue(MutableString(entity->isTerrainMesh() == true?"1":""));
 	terrainMesh->getController()->setDisabled(false);
 	terrainMeshApply->getController()->setDisabled(false);
 }
 
 void EntityPhysicsSubScreenController::onSetTerrainMesh(LevelEditorEntity* entity) {
-	entity->getModelSettings()->setTerrainMesh(terrainMesh->getController()->getValue().equals("1"));
+	entity->setTerrainMesh(terrainMesh->getController()->getValue().equals("1"));
 }
 
 void EntityPhysicsSubScreenController::unsetTerrainMesh() {

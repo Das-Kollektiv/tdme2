@@ -27,7 +27,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -67,7 +66,6 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::tools::Tools;
@@ -326,7 +324,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				levelEditorObject->getTransformations(),
 				levelEditorEntityPartition
 			);
-			levelEditorEntityPartition->getModelSettings()->setTerrainMesh(levelEditorObject->getEntity()->getModelSettings()->isTerrainMesh());
+			levelEditorEntityPartition->setTerrainMesh(levelEditorObject->getEntity()->isTerrainMesh());
 
 			// add to objects
 			level->addObject(levelEditorObjectPartition);

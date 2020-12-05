@@ -51,6 +51,9 @@ private:
 	GUIElementNode* dimensionHeight { nullptr };
 	GUIElementNode* dimensionDepth { nullptr };
 	GUIElementNode* dimensionApply { nullptr };
+	GUIElementNode* generationRenderPasses { nullptr };
+	GUIElementNode* generationFrequency { nullptr };
+	GUIElementNode* generationApply { nullptr };
 	GUIElementNode* viewPort { nullptr };
 
 public:
@@ -112,6 +115,21 @@ public:
 	 * On dimension apply
 	 */
 	void onDimensionApply();
+
+	/**
+	 * Set generation properties
+	 */
+	void setGeneration();
+
+	/**
+	 * Unset generation properties
+	 */
+	void unsetGeneration();
+
+	/**
+	 * On generation apply
+	 */
+	void onGenerationApply();
 
 	/**
 	 * On quit

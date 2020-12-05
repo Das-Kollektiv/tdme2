@@ -20,12 +20,15 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/utilities/Float.h>
-#include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::tools::leveleditor::controller::EnvironmentMappingScreenController;
 using tdme::gui::GUIParser;
@@ -45,10 +48,12 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::utilities::Float;
-using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 MutableString EnvironmentMappingScreenController::TEXT_EMPTY = MutableString("");
 
@@ -100,6 +105,9 @@ void EnvironmentMappingScreenController::initialize()
 		dimensionHeight = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dimension_height"));
 		dimensionDepth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dimension_depth"));
 		dimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_dimension_apply"));
+		generationRenderPasses = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generation_renderpass"));
+		generationFrequency = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generation_frequency"));
+		generationApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_generation_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("EnvironmentMappingScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -170,6 +178,45 @@ void EnvironmentMappingScreenController::onDimensionApply()
 	}
 }
 
+void EnvironmentMappingScreenController::setGeneration() {
+	int32_t renderPassMask = view->getEntity()->getEnvironmentMapRenderPassMask();
+	int64_t frequency = view->getEntity()->getEnvironmentMapTimeRenderUpdateFrequency();
+	string renderPassMaskString;
+	auto renderPass = 1;
+	for (auto i = 0; i < 31; i++) {
+		if ((renderPassMask & renderPass) == renderPass) {
+			renderPassMaskString+= (renderPassMaskString.empty() == true?"|":"") + to_string(renderPass) + "|";
+		}
+		renderPass = renderPass << 1;
+	}
+	generationRenderPasses->getController()->setDisabled(false);
+	generationRenderPasses->getController()->setValue(renderPassMaskString);
+	generationFrequency->getController()->setDisabled(false);
+	generationFrequency->getController()->setValue(frequency == -1LL?"":to_string(frequency));
+	generationApply->getController()->setDisabled(false);
+}
+
+void EnvironmentMappingScreenController::unsetGeneration() {
+	generationRenderPasses->getController()->setDisabled(true);
+	generationRenderPasses->getController()->setValue(TEXT_EMPTY);
+	generationFrequency->getController()->setDisabled(true);
+	generationFrequency->getController()->setValue(TEXT_EMPTY);
+	generationApply->getController()->setDisabled(true);
+}
+
+void EnvironmentMappingScreenController::onGenerationApply() {
+	try {
+		int32_t renderPassMask = 0;
+		for (auto renderPass: StringTools::tokenize(generationRenderPasses->getController()->getValue().getString(), "|")) renderPassMask|= Integer::parseInt(renderPass);
+		auto frequencyString = generationFrequency->getController()->getValue().getString();
+		auto frequency = frequencyString.empty() == true?-1LL:Integer::parseInt(frequencyString);
+		view->getEntity()->setEnvironmentMapTimeRenderUpdateFrequency(frequency);
+		view->getEntity()->setEnvironmentMapRenderPassMask(renderPassMask);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void EnvironmentMappingScreenController::onQuit()
 {
 	TDMELevelEditor::getInstance()->quit();
@@ -192,6 +239,9 @@ void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_dimension_apply") == 0) {
 			onDimensionApply();
+		} else
+		if (node->getId().compare("button_generation_apply") == 0) {
+			onGenerationApply();
 		}
 	}
 }

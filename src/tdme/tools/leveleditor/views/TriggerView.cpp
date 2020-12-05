@@ -1,5 +1,6 @@
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -27,6 +28,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;

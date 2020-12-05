@@ -10,6 +10,7 @@
 					<tab id="tab_properties_base" text="Environment Mapping" />
 					<tab id="tab_properties_model_properties" text="Properties" />
 					<tab id="tab_properties_dimension" text="Dimension" />
+					<tab id="tab_properties_generation" text="Generation" />
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="tab_properties_base" vertical-align="center">
@@ -89,6 +90,45 @@
 								<button id="button_dimension_apply" name="button_dimension_apply" text="Apply" />
 							</layout>
 						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_generation">
+						<scrollarea-vertical width="100%" height="100%">
+							<space height="20" />
+							<layout width="100%" height="auto" horizontal-align="center" alignment="vertical">
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="top">
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Render pass." width="100" height="auto" />
+									<space width="5" />
+									<selectbox-multiple id="generation_renderpass" name="generation_renderpass" width="200" height="auto">
+										<selectbox-multiple-option text="No frustum culling" value="1" />
+										<selectbox-multiple-option text="Terrain" value="2" />
+										<selectbox-multiple-option text="Water" value="4" />
+										<selectbox-multiple-option text="Standard" value="8" />
+										<selectbox-multiple-option text="Post processing" value="16" />
+									</selectbox-multiple>
+								</layout>
+								<space height="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Frequency" width="100" height="auto" />
+									<space width="5" />
+									<dropdown id="generation_frequency" name="generation_frequency" width="200" height="auto" text="One time only">
+										<dropdown-option text="One time only" value="" />
+										<dropdown-option text="Every frame" value="0" />
+										<dropdown-option text="32ms" value="32" />
+										<dropdown-option text="64ms" value="64" />
+										<dropdown-option text="100ms" value="100" />
+										<dropdown-option text="250ms" value="250" />
+										<dropdown-option text="500ms" value="500" />
+										<dropdown-option text="750ms" value="750" />
+										<dropdown-option text="1000ms" value="1000" />
+									</dropdown>
+								</layout>
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+									<button id="button_generation_apply" name="button_generation_apply" text="Apply" />
+								</layout>
+								<space height="20" />
+							</layout>
+						</scrollarea-vertical>
 					</tab-content>
 				</tabs-content>
 			</tabs>

@@ -16,7 +16,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -187,7 +186,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		}
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
-		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].GetBool());
+		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
 		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
@@ -216,6 +215,11 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot.FindMember("emrpm") != jEntityRoot.MemberEnd()?jEntityRoot["emrpm"].GetInt():Entity::RENDERPASS_ALL);
+		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot.FindMember("emtf") != jEntityRoot.MemberEnd()?jEntityRoot["emtf"].GetInt64():-1);
+	}
+	//
 	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
 	return levelEditorEntity;
 }

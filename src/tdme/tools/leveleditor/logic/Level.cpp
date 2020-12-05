@@ -52,7 +52,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -125,7 +124,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -340,7 +338,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 			object->setShader(levelEditorEntity->getShader());
 			object->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
-			if (enableEarlyZRejection == true && levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+			if (enableEarlyZRejection == true && levelEditorEntity->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
 			}
 		}
@@ -391,7 +389,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 
 	//
 	if (entity != nullptr) {
-		if (levelEditorEntity->getModelSettings() != nullptr && levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+		if (levelEditorEntity->isTerrainMesh() == true) {
 			entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		}
 		entity->setContributesShadows(levelEditorEntity->isContributesShadows());
@@ -526,7 +524,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 		);
 	} else
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL &&
-		levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+		levelEditorEntity->isTerrainMesh() == true) {
 		Object3DModel terrainModel(levelEditorEntity->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
 		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
