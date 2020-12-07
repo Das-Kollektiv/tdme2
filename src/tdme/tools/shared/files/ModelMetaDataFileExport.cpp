@@ -574,5 +574,8 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 	if (entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		jEntityRoot.AddMember("emrpm", Value(entity->getEnvironmentMapRenderPassMask()), jAllocator);
 		jEntityRoot.AddMember("emtf", Value(entity->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
+		jEntityRoot.AddMember("emdx", Value(entity->getEnvironmentMapDimension().getX()), jAllocator);
+		jEntityRoot.AddMember("emdy", Value(entity->getEnvironmentMapDimension().getY()), jAllocator);
+		jEntityRoot.AddMember("emdz", Value(entity->getEnvironmentMapDimension().getZ()), jAllocator);
 	}
 }

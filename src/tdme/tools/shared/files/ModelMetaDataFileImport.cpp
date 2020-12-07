@@ -216,8 +216,15 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
-		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot.FindMember("emrpm") != jEntityRoot.MemberEnd()?jEntityRoot["emrpm"].GetInt():Entity::RENDERPASS_ALL);
-		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot.FindMember("emtf") != jEntityRoot.MemberEnd()?jEntityRoot["emtf"].GetInt64():-1);
+		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
+		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
+		levelEditorEntity->setEnvironmentMapDimension(
+			Vector3(
+				jEntityRoot["emdx"].GetFloat(),
+				jEntityRoot["emdy"].GetFloat(),
+				jEntityRoot["emdz"].GetFloat()
+			)
+		);
 	}
 	//
 	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());

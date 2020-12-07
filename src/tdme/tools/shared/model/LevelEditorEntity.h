@@ -77,6 +77,7 @@ private:
 	map<string, string> distanceShaderParameters;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
+	Vector3 environmentMapDimension { 1.0f, 1.0f, 1.0f };
 
 public:
 
@@ -536,6 +537,21 @@ public:
 	 */
 	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {
 		environmentMapTimeRenderUpdateFrequency = frequency;
+	}
+
+	/**
+	 * @return environment map frustum dimension
+	 */
+	inline const Vector3& getEnvironmentMapDimension() {
+		return environmentMapDimension;
+	}
+
+	/**
+	 * Set up environment map frustum dimension
+	 * @param dimension frequency in milliseconds
+	 */
+	inline void setEnvironmentMapDimension(const Vector3& dimension) {
+		environmentMapDimension = dimension;
 	}
 
 };
