@@ -201,7 +201,7 @@ public:
 	 * Set up object list box
 	 * @param level object by ids hash map
 	 */
-	void setObjectListbox(LevelEditorLevel* level);
+	void setObjectListbox(LevelEditorLevel& level);
 
 	/**
 	 * Unselect objects in object list box
@@ -254,7 +254,7 @@ public:
 	 * @param level map properties
 	 * @param selectedName selected name
 	 */
-	void setMapProperties(LevelEditorLevel* level, const string& selectedName);
+	void setMapProperties(LevelEditorLevel& level, const string& selectedName);
 
 	/**
 	 * On map property save

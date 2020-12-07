@@ -211,7 +211,7 @@ public:
 	 * @param level level
 	 * @param translation translation
 	 */
-	static void setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void setLight(Engine* engine, LevelEditorLevel& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Create particle system
@@ -259,7 +259,7 @@ public:
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body
@@ -294,21 +294,21 @@ public:
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addLevel(World* world, LevelEditorLevel& level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Disable level in engine
 	 * @param engine engine
 	 * @param level level
 	 */
-	static void disableLevel(Engine* engine, LevelEditorLevel* level);
+	static void disableLevel(Engine* engine, LevelEditorLevel& level);
 
 	/**
 	 * Disable level in physics world
 	 * @param world world
 	 * @param level level
 	 */
-	static void disableLevel(World* world, LevelEditorLevel* level);
+	static void disableLevel(World* world, LevelEditorLevel& level);
 
 	/**
 	 * Enable disabled level in engine
@@ -316,7 +316,7 @@ public:
 	 * @param level level
 	 * @param translation translation
 	 */
-	static void enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableLevel(Engine* engine, LevelEditorLevel& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Enable disabled level in physics world
@@ -324,7 +324,7 @@ public:
 	 * @param level level
 	 * @param translation translation
 	 */
-	static void enableLevel(World* world, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableLevel(World* world, LevelEditorLevel& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Add level editor entity sounds into given audio instance associated with given id

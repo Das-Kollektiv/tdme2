@@ -94,7 +94,7 @@ LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary() {
 }
 
 LevelEditorLevel* TDMELevelEditor::getLevel() {
-	return &level;
+	return levelEditorView->getLevel();
 }
 
 void TDMELevelEditor::setView(View* view) {

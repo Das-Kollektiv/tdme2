@@ -258,7 +258,7 @@ void LevelEditorScreenController::onObjectDataApply()
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
+void LevelEditorScreenController::setObjectListbox(LevelEditorLevel& level)
 {
 	auto selectedObjects = objectsListBox->getController()->getValue();
 	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
@@ -270,7 +270,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto objectIdx = 0;
-	for (int i = 0; i < level->getObjectCount(); i++) {
+	for (int i = 0; i < level.getObjectCount(); i++) {
 		if (objectIdx > 25000) {
 			objectsListBoxSubNodesXML =
 				"<scrollarea-vertical id=\"" +
@@ -278,7 +278,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto object = level->getObjectAt(i);
+		auto object = level.getObjectAt(i);
 		if (object->getEntity()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =
@@ -419,7 +419,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, const string& selectedName)
+void LevelEditorScreenController::setMapProperties(LevelEditorLevel& level, const string& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -432,8 +432,8 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 		"<scrollarea-vertical id=\"" +
 		mapPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < level->getPropertyCount(); i++) {
-		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
+	for (auto i = 0; i < level.getPropertyCount(); i++) {
+		PropertyModelClass* mapProperty = level.getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
