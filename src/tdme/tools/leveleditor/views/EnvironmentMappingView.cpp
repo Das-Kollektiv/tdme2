@@ -120,10 +120,11 @@ void EnvironmentMappingView::updateGUIElements()
 		auto preset = entity->getProperty("preset");
 		environmentMappingScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		environmentMappingScreenController->setEntityData(entity->getName(), entity->getDescription());
-		Vector3 dimension;
-		dimension.set(entity->getModel()->getBoundingBox()->getMax());
-		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
-		environmentMappingScreenController->setDimension(dimension.getX(), dimension.getY(), dimension.getZ());
+		environmentMappingScreenController->setDimension(
+			entity->getEnvironmentMapDimension().getX(),
+			entity->getEnvironmentMapDimension().getY(),
+			entity->getEnvironmentMapDimension().getZ()
+		);
 		environmentMappingScreenController->setGeneration();
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
@@ -144,14 +145,16 @@ void EnvironmentMappingView::setDimension(float width, float height, float depth
 
 	//
 	try {
-		auto oldModel = entity;
-		entity = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(LevelEditorEntityLibrary::ID_ALLOCATE, oldModel->getName(), oldModel->getDescription(), width, height, depth);
-		for (auto i = 0; i < oldModel->getPropertyCount(); i++) {
-			auto property = oldModel->getPropertyByIndex(i);
+		auto oldEntity = entity;
+		entity = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(LevelEditorEntityLibrary::ID_ALLOCATE, oldEntity->getName(), oldEntity->getDescription(), width, height, depth);
+		entity->setEnvironmentMapRenderPassMask(oldEntity->getEnvironmentMapRenderPassMask());
+		entity->setEnvironmentMapTimeRenderUpdateFrequency(oldEntity->getEnvironmentMapTimeRenderUpdateFrequency());
+		for (auto i = 0; i < oldEntity->getPropertyCount(); i++) {
+			auto property = oldEntity->getPropertyByIndex(i);
 			entity->addProperty(property->getName(), property->getValue());
 		}
-		TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldModel->getId(), entity->getId());
-		TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldModel->getId());
+		TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldEntity->getId(), entity->getId());
+		TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldEntity->getId());
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		setEntity(entity);
 		updateGUIElements();

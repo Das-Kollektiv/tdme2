@@ -131,6 +131,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEnvironmentMapping(int32_t id, c
 		model,
 		Vector3()
 	);
+	levelEditorEntity->setEnvironmentMapDimension(Vector3(width, height, depth));
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }
