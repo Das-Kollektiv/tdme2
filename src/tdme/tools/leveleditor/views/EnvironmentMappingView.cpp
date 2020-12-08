@@ -23,6 +23,7 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -51,6 +52,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -146,6 +148,7 @@ void EnvironmentMappingView::initialize()
 		entityPhysicsView->initialize();
 		entityPhysicsView->setDisplayBoundingVolume(true);
 		entityPhysicsView->setDisplayBoundingVolumeIdx(0);
+		entityPhysicsView->setGizmoTypeMask(Gizmo::GIZMOTYPE_SCALE);
 		engine->getGUI()->addScreen(environmentMappingScreenController->getScreenNode()->getId(), environmentMappingScreenController->getScreenNode());
 		environmentMappingScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {

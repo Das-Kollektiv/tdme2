@@ -27,7 +27,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityPhysicsView final: protected Gizmo
+class tdme::tools::shared::views::EntityPhysicsView final: public Gizmo
 {
 public:
 	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };

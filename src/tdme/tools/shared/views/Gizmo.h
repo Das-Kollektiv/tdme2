@@ -25,10 +25,11 @@ class tdme::tools::shared::views::Gizmo
 {
 public:
 	enum GizmoType {
-		GIZMOTYPE_ALL,
-		GIZMOTYPE_TRANSLATE,
-		GIZMOTYPE_ROTATE,
-		GIZMOTYPE_SCALE
+		GIZMOTYPE_NONE = 0,
+		GIZMOTYPE_TRANSLATE = 1,
+		GIZMOTYPE_ROTATE = 2,
+		GIZMOTYPE_SCALE = 4,
+		GIZMOTYPE_ALL = 8,
 	};
 	enum GizmoMode {
 		GIZMOMODE_NONE,
@@ -57,6 +58,7 @@ private:
 	Vector3 gizmoLastResult;
 	bool gizmoLastResultAvailable;
 	float gizmoBaseScale;
+	int gizmoTypeMask;
 
 public:
 	/**
@@ -64,13 +66,30 @@ public:
 	 * @param engine engine
 	 * @param id id
 	 * @param gizmoBaseScale gizmo base scale
+	 * @param gizmoTypeMask gizmo type mask
 	 */
-	Gizmo(Engine* engine, const string& id, float gizmoBaseScale = 1.0f);
+	Gizmo(Engine* engine, const string& id, float gizmoBaseScale = 1.0f, int gizmoTypeMask = GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~Gizmo();
+
+	/**
+	 * @return GIZMO type mask
+	 */
+	inline int getGizmoTypeMask() const {
+		return gizmoTypeMask;
+	}
+
+	/**
+	 * Set GIZMO type mask
+	 * @param gizmoTypeMask GIZMO type mask
+	 */
+	inline void setGizmoTypeMask(int gizmoTypeMask) {
+		this->gizmoTypeMask = gizmoTypeMask;
+		if ((gizmoType & gizmoTypeMask) == 0) gizmoType = GIZMOTYPE_ALL;
+	}
 
 	/**
 	 * @return GIZMO type
@@ -84,6 +103,7 @@ public:
 	 * @param gizmoType GIZMO type
 	 */
 	inline void setGizmoType(GizmoType gizmoType) {
+		if (gizmoType != GIZMOTYPE_ALL && (gizmoType & gizmoTypeMask) == 0) return;
 		this->gizmoType = gizmoType;
 	}
 

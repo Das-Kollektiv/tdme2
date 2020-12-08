@@ -18,6 +18,7 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/utilities/Console.h>
@@ -46,6 +47,7 @@ using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::utilities::Console;
@@ -211,6 +213,7 @@ void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType
 			onGenerationApply();
 		}
 	}
+	entityPhysicsSubScreenController->getView()->setDisplayBoundingVolumeIdx(0);
 }
 
 void EnvironmentMappingScreenController::getViewPort(int& left, int& top, int& width, int& height) {
