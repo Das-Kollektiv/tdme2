@@ -1725,6 +1725,9 @@ void LevelEditorView::updateGizmo() {
 		return;
 	}
 
+	// rotation for gizmo
+	Transformations transformations;
+
 	//
 	Vector3 gizmoCenter;
 	auto objectCount = 0;
@@ -1744,6 +1747,7 @@ void LevelEditorView::updateGizmo() {
 	if (objectCount == 1) {
 		auto selectedLevelEditorObject = level.getObjectById(selectedEntityIds[0]);
 		auto selectedLevelEditorEntity = selectedLevelEditorObject != nullptr?selectedLevelEditorObject->getEntity():nullptr;
+		if (selectedLevelEditorObject != nullptr) transformations.fromTransformations(selectedLevelEditorObject->getTransformations());
 		// TODO: maybe move GIZMO types into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
 		if (selectedLevelEditorEntity != nullptr && selectedLevelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 			setGizmoTypeMask(GIZMOTYPE_TRANSLATE | GIZMOTYPE_SCALE);
@@ -1755,5 +1759,5 @@ void LevelEditorView::updateGizmo() {
 	}
 
 	//
-	Gizmo::updateGizmo(gizmoCenter);
+	Gizmo::updateGizmo(gizmoCenter, transformations);
 }

@@ -256,7 +256,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
 			modelBoundingVolumeEntity->setScale(objectScale);
-			modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
+			modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 			modelBoundingVolumeEntity->setEnabled(false);
 			modelBoundingVolumeEntity->update();
 			dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->addEntity(modelBoundingVolumeEntity);
@@ -281,7 +281,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 				transformations.update();
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, Tools::getDefaultObb());
 				modelBoundingVolumeEntity->fromTransformations(transformations);
-				modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
+				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setEnabled(false);
 				engine->addEntity(modelBoundingVolumeEntity);
 			} else {
@@ -297,7 +297,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 					pivot = capsule->getA().clone().add(capsule->getB()).scale(0.5f);
 				}
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
-				modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
+				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setPivot(pivot);
 				modelBoundingVolumeEntity->setScale(boundingVolumesEntity->getScale());
 				modelBoundingVolumeEntity->setPivot(modelBoundingVolumeEntity->getPivot().clone().scale(boundingVolumesEntity->getScale()));
@@ -513,8 +513,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 void EntityPhysicsView::updateGizmo(LevelEditorEntity* entity) {
 	auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
 	if (selectedEntity != nullptr) {
-		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter());
-		setGizmoRotation(entity, selectedEntity->getTransformations());
+		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
 	} else {
 		removeGizmo();
 	}

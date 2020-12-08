@@ -869,7 +869,7 @@ void Engine::determineEntityTypes(
 			if (object->isDisableDepthTest() == true) { \
 				objectsNoDepthTest.push_back(object); \
 			} else \
-			if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+			if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
 				objectsPostPostProcessing.push_back(object); \
 			} else { \
 				objects.push_back(object); \
@@ -885,7 +885,7 @@ void Engine::determineEntityTypes(
 				if (object->isDisableDepthTest() == true) { \
 					objectsNoDepthTest.push_back(object); \
 				} else \
-				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
 					objectsPostPostProcessing.push_back(object); \
 				} else { \
 					objects.push_back(object); \
@@ -900,7 +900,7 @@ void Engine::determineEntityTypes(
 				if (object->isDisableDepthTest() == true) { \
 					objectsNoDepthTest.push_back(object); \
 				} else \
-				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
 					objectsPostPostProcessing.push_back(object); \
 				} else { \
 					objects.push_back(object); \

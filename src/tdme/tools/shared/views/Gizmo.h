@@ -126,8 +126,9 @@ public:
 	/**
 	 * Update gizmo
 	 * @param gizmoCenter GIZMO center
+	 * @param transformations transformations used for rotation
 	 */
-	void updateGizmo(const Vector3& gizmoCenter);
+	void updateGizmo(const Vector3& gizmoCenter, const Transformations& transformations);
 
 	/**
 	 * @return GIZMO object
