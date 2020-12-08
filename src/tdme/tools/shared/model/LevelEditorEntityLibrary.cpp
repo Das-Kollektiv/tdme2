@@ -119,7 +119,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEnvironmentMapping(int32_t id, c
 	auto cacheId = "leveleditor.environmentmapping." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-	auto model = PrimitiveModel::createModel(boundingBox, cacheId + "_aabb");
+	auto modelId = cacheId + "_bv";
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE?allocateEntityId():id,
 		LevelEditorEntity_EntityType::ENVIRONMENTMAPPING,
@@ -128,10 +128,11 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEnvironmentMapping(int32_t id, c
 		"",
 		cacheId,
 		StringTools::replace(StringTools::replace(StringTools::replace(cacheId, "\\", "_"), "/", "_"), ":", "_") + ".png",
-		model,
+		nullptr,
 		Vector3()
 	);
-	levelEditorEntity->setEnvironmentMapDimension(Vector3(width, height, depth));
+	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
+	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }

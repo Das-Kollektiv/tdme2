@@ -367,8 +367,9 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 			);
 		}
 	} else
-	// particle system
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	// trigger/environment mapping
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+		levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {

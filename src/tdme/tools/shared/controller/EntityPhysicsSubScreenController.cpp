@@ -82,10 +82,11 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
+EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount)
 {
 	this->modelPath = modelPath;
-	this->view = new EntityPhysicsView(this, popUps);
+	this->view = new EntityPhysicsView(this, popUps, maxBoundingVolumeCount);
+	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;
 	this->boundingVolumeIdxActivated = 0;
@@ -108,7 +109,7 @@ void EntityPhysicsSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	try {
-		for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+		for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 			boundingVolumeTypeDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_type_" + to_string(i)));
 			boundingVolumeApply[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_apply_" + to_string(i)));
 			boundingVolume[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_" + to_string(i)));

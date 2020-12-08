@@ -1514,7 +1514,15 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		}
 		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
-			level.getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
+			auto levelEditorEntity = level.getEntityLibrary()->getEntityAt(i);
+			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+				levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL ||
+				levelEditorEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+				levelEditorEntity->setDefaultBoundingVolumes();
+			} else
+			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+				levelEditorEntity->setDefaultBoundingVolumes(1);
+			}
 		}
 		levelEditorScreenController->setMapProperties(level, "");
 		levelEditorScreenController->unsetObjectProperties();

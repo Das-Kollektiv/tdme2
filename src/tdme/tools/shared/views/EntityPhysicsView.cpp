@@ -67,11 +67,12 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 
-EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps): Gizmo(Engine::getInstance(), "epv", 2.0f)
+EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount): Gizmo(Engine::getInstance(), "epv", 2.0f)
 {
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;
 	this->entityPhysicsSubScreenController = entityPhysicsSubScreenController;
+	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
@@ -89,7 +90,7 @@ PopUps* EntityPhysicsView::getPopUpsViews()
 
 void EntityPhysicsView::initialize()
 {
-	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i);
 		entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 	}
@@ -166,7 +167,7 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 
 void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 {
-	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 		resetBoundingVolume(entity, i, 0);
 	}
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
@@ -206,7 +207,7 @@ void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 
 void EntityPhysicsView::unsetBoundingVolumes()
 {
-	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 		entityPhysicsSubScreenController->disableBoundingVolume(i);
 	}
 }
@@ -393,7 +394,7 @@ void EntityPhysicsView::setPhysics(LevelEditorEntity* entity) {
 void EntityPhysicsView::display(LevelEditorEntity* entity) {
 	if (entity == nullptr) return;
 
-	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 		auto modelBoundingVolume = dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
 		if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 	}

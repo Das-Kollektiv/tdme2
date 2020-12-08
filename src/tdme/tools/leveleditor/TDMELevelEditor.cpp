@@ -63,7 +63,6 @@ void TDMELevelEditor::main(int argc, char** argv) {
 TDMELevelEditor::TDMELevelEditor() {
 	Tools::loadSettings(this);
 	TDMELevelEditor::instance = this;
-	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(&level);
 	engine = Engine::getInstance();
 	view = nullptr;
 	popUps = new PopUps();
@@ -90,7 +89,7 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 }
 
 LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary() {
-	return level.getEntityLibrary();
+	return levelEditorView->getLevel()->getEntityLibrary();
 }
 
 LevelEditorLevel* TDMELevelEditor::getLevel() {
@@ -143,15 +142,16 @@ void TDMELevelEditor::initialize() {
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
-	levelEditorEntityLibraryScreenController =
-			new LevelEditorEntityLibraryScreenController(popUps);
+	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
 	levelEditorEntityLibraryScreenController->initialize();
 	engine->getGUI()->addScreen(
-			levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
-			levelEditorEntityLibraryScreenController->getScreenNode());
+		levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
+		levelEditorEntityLibraryScreenController->getScreenNode()
+	);
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
+	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(levelEditorView->getLevel());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);

@@ -315,7 +315,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+		entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {

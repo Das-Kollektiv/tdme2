@@ -58,8 +58,6 @@ using tdme::utilities::Exception;
 TriggerView::TriggerView(PopUps* popUps)
 {
 	this->popUps = popUps;
-	triggerScreenController = nullptr;
-	entity = nullptr;
 	engine = Engine::getInstance();
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 }
@@ -67,6 +65,7 @@ TriggerView::TriggerView(PopUps* popUps)
 TriggerView::~TriggerView() {
 	delete cameraRotationInputHandler;
 	delete triggerScreenController;
+	delete entityPhysicsView;
 }
 
 PopUps* TriggerView::getPopUpsViews()

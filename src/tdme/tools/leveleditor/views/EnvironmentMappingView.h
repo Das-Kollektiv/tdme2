@@ -19,6 +19,7 @@ using tdme::tools::leveleditor::controller::EnvironmentMappingScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 
 /**
@@ -35,6 +36,7 @@ private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
 	EnvironmentMappingScreenController* environmentMappingScreenController { nullptr };
+	EntityPhysicsView* entityPhysicsView { nullptr };
 	LevelEditorEntity* entity { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;

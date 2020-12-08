@@ -65,6 +65,7 @@ private:
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ;
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile;
 	bool isModelBoundingVolumes;
+	int maxBoundingVolumeCount;
 	GUIElementNode* terrainMesh { nullptr };
 	GUIElementNode* terrainMeshApply { nullptr };
 	GUIElementNode* convexmeshesModeGenerate { nullptr };
@@ -99,8 +100,9 @@ public:
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
+	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1);
 
 	/**
 	 * Destructor

@@ -22,6 +22,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -49,6 +50,7 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -65,6 +67,7 @@ EnvironmentMappingView::EnvironmentMappingView(PopUps* popUps)
 EnvironmentMappingView::~EnvironmentMappingView() {
 	delete cameraRotationInputHandler;
 	delete environmentMappingScreenController;
+	delete entityPhysicsView;
 }
 
 PopUps* EnvironmentMappingView::getPopUpsViews()
@@ -81,6 +84,7 @@ void EnvironmentMappingView::setEntity(LevelEditorEntity* entity)
 {
 	engine->reset();
 	this->entity = entity;
+	entity->setDefaultBoundingVolumes(1);
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
@@ -89,6 +93,7 @@ void EnvironmentMappingView::setEntity(LevelEditorEntity* entity)
 
 void EnvironmentMappingView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -109,6 +114,7 @@ void EnvironmentMappingView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -120,47 +126,14 @@ void EnvironmentMappingView::updateGUIElements()
 		auto preset = entity->getProperty("preset");
 		environmentMappingScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		environmentMappingScreenController->setEntityData(entity->getName(), entity->getDescription());
-		environmentMappingScreenController->setDimension(
-			entity->getEnvironmentMapDimension().getX(),
-			entity->getEnvironmentMapDimension().getY(),
-			entity->getEnvironmentMapDimension().getZ()
-		);
 		environmentMappingScreenController->setGeneration();
+		entityPhysicsView->setBoundingVolumes(entity);
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
 		environmentMappingScreenController->unsetEntityProperties();
 		environmentMappingScreenController->unsetEntityData();
-		environmentMappingScreenController->unsetDimension();
 		environmentMappingScreenController->unsetGeneration();
-	}
-}
-
-
-void EnvironmentMappingView::setDimension(float width, float height, float depth) {
-	if (entity == nullptr)
-		return;
-
-	//
-	engine->reset();
-
-	//
-	try {
-		auto oldEntity = entity;
-		entity = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(LevelEditorEntityLibrary::ID_ALLOCATE, oldEntity->getName(), oldEntity->getDescription(), width, height, depth);
-		entity->setEnvironmentMapRenderPassMask(oldEntity->getEnvironmentMapRenderPassMask());
-		entity->setEnvironmentMapTimeRenderUpdateFrequency(oldEntity->getEnvironmentMapTimeRenderUpdateFrequency());
-		for (auto i = 0; i < oldEntity->getPropertyCount(); i++) {
-			auto property = oldEntity->getPropertyByIndex(i);
-			entity->addProperty(property->getName(), property->getValue());
-		}
-		TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldEntity->getId(), entity->getId());
-		TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldEntity->getId());
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
-		setEntity(entity);
-		updateGUIElements();
-	} catch (Exception &exception) {
-		popUps->getInfoDialogScreenController()->show("Error", "An error occurred: " + (string(exception.what())));
-		environmentMappingScreenController->unsetGeneration();
+		entityPhysicsView->unsetBoundingVolumes();
 	}
 }
 
@@ -169,6 +142,10 @@ void EnvironmentMappingView::initialize()
 	try {
 		environmentMappingScreenController = new EnvironmentMappingScreenController(this);
 		environmentMappingScreenController->initialize();
+		entityPhysicsView = environmentMappingScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView->initialize();
+		entityPhysicsView->setDisplayBoundingVolume(true);
+		entityPhysicsView->setDisplayBoundingVolumeIdx(0);
 		engine->getGUI()->addScreen(environmentMappingScreenController->getScreenNode()->getId(), environmentMappingScreenController->getScreenNode());
 		environmentMappingScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -199,7 +176,9 @@ void EnvironmentMappingView::dispose()
 }
 
 void EnvironmentMappingView::onRotation() {
+	entityPhysicsView->updateGizmo(entity);
 }
 
 void EnvironmentMappingView::onScale() {
+	entityPhysicsView->updateGizmo(entity);
 }

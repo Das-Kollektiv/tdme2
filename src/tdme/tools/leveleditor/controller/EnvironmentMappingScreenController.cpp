@@ -86,6 +86,12 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 	auto const finalView = view;
 	this->modelPath = new FileDialogPath(".");
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, false, 1);
+}
+
+EntityPhysicsSubScreenController* EnvironmentMappingScreenController::getEntityPhysicsSubScreenController()
+{
+	return entityPhysicsSubScreenController;
 }
 
 GUIScreenNode* EnvironmentMappingScreenController::getScreenNode()
@@ -101,10 +107,6 @@ void EnvironmentMappingScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast<GUITextNode*>(screenNode->getNodeById("screen_caption"));
 		viewPort = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("viewport"));
-		dimensionWidth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dimension_width"));
-		dimensionHeight = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dimension_height"));
-		dimensionDepth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dimension_depth"));
-		dimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_dimension_apply"));
 		generationRenderPasses = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generation_renderpass"));
 		generationFrequency = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generation_frequency"));
 		generationApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_generation_apply"));
@@ -113,6 +115,7 @@ void EnvironmentMappingScreenController::initialize()
 		Console::println(string(exception.what()));
 	}
 	entityBaseSubScreenController->initialize(screenNode);
+	entityPhysicsSubScreenController->initialize(screenNode);
 }
 
 void EnvironmentMappingScreenController::dispose()
@@ -142,40 +145,6 @@ void EnvironmentMappingScreenController::setEntityProperties(const string& prese
 void EnvironmentMappingScreenController::unsetEntityProperties()
 {
 	entityBaseSubScreenController->unsetEntityProperties();
-}
-
-void EnvironmentMappingScreenController::setDimension(float width, float height, float depth)
-{
-	dimensionWidth->getController()->setDisabled(false);
-	dimensionWidth->getController()->setValue(Tools::formatFloat(width));
-	dimensionHeight->getController()->setDisabled(false);
-	dimensionHeight->getController()->setValue(Tools::formatFloat(height));
-	dimensionDepth->getController()->setDisabled(false);
-	dimensionDepth->getController()->setValue(Tools::formatFloat(depth));
-	dimensionApply->getController()->setDisabled(false);
-}
-
-void EnvironmentMappingScreenController::unsetDimension()
-{
-	dimensionWidth->getController()->setDisabled(true);
-	dimensionWidth->getController()->setValue(TEXT_EMPTY);
-	dimensionHeight->getController()->setDisabled(true);
-	dimensionHeight->getController()->setValue(TEXT_EMPTY);
-	dimensionDepth->getController()->setDisabled(true);
-	dimensionDepth->getController()->setValue(TEXT_EMPTY);
-	dimensionApply->getController()->setDisabled(true);
-}
-
-void EnvironmentMappingScreenController::onDimensionApply()
-{
-	try {
-		auto width = Float::parseFloat(dimensionWidth->getController()->getValue().getString());
-		auto height = Float::parseFloat(dimensionHeight->getController()->getValue().getString());
-		auto depth = Float::parseFloat(dimensionDepth->getController()->getValue().getString());
-		view->setDimension(width, height, depth);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
 }
 
 void EnvironmentMappingScreenController::setGeneration() {
@@ -230,16 +199,14 @@ void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, c
 void EnvironmentMappingScreenController::onValueChanged(GUIElementNode* node)
 {
 	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+	entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
 }
 
 void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
-	auto v = type;
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId().compare("button_dimension_apply") == 0) {
-			onDimensionApply();
-		} else
 		if (node->getId().compare("button_generation_apply") == 0) {
 			onGenerationApply();
 		}

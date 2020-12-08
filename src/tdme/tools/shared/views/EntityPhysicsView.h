@@ -39,6 +39,8 @@ private:
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	PopUps* popUps { nullptr };
 
+	int maxBoundingVolumeCount;
+
 	int displayBoundingVolumeIdxLast;
 	int32_t mouseDownLastX;
 	int32_t mouseDownLastY;
@@ -52,8 +54,9 @@ public:
 	 * Public constructor
 	 * @param entityPhysicsSubScreenController pop ups
 	 * @param popUps model editor screen controller
+	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
-	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps);
+	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1);
 
 	/**
 	 * Destructor

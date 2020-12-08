@@ -155,9 +155,10 @@ void LevelEditorEntity::removeBoundingVolume(int32_t idx)
 	boundingVolumes.erase(boundingVolumes.begin() + idx);
 }
 
-void LevelEditorEntity::setDefaultBoundingVolumes()
+void LevelEditorEntity::setDefaultBoundingVolumes(int maxBoundingVolumeCount)
 {
-	for (auto i = boundingVolumes.size(); i < MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	auto boundingVolumeCount = maxBoundingVolumeCount == -1?MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
+	for (auto i = boundingVolumes.size(); i < boundingVolumeCount; i++) {
 		auto bv = new LevelEditorEntityBoundingVolume(i, this);
 		addBoundingVolume(i, bv);
 	}

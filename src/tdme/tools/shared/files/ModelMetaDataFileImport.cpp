@@ -218,13 +218,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
 		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
-		levelEditorEntity->setEnvironmentMapDimension(
-			Vector3(
-				jEntityRoot["emdx"].GetFloat(),
-				jEntityRoot["emdy"].GetFloat(),
-				jEntityRoot["emdz"].GetFloat()
-			)
-		);
 	}
 	//
 	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());

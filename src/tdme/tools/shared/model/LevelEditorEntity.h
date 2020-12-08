@@ -77,7 +77,6 @@ private:
 	map<string, string> distanceShaderParameters;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
-	Vector3 environmentMapDimension { 1.0f, 1.0f, 1.0f };
 
 public:
 
@@ -243,8 +242,9 @@ public:
 
 	/**
 	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
+	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
-	void setDefaultBoundingVolumes();
+	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
 
 	/**
 	 * @return physics
@@ -537,21 +537,6 @@ public:
 	 */
 	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {
 		environmentMapTimeRenderUpdateFrequency = frequency;
-	}
-
-	/**
-	 * @return environment map frustum dimension
-	 */
-	inline const Vector3& getEnvironmentMapDimension() {
-		return environmentMapDimension;
-	}
-
-	/**
-	 * Set up environment map frustum dimension
-	 * @param dimension frequency in milliseconds
-	 */
-	inline void setEnvironmentMapDimension(const Vector3& dimension) {
-		environmentMapDimension = dimension;
 	}
 
 };

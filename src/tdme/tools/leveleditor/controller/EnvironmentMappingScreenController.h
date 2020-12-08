@@ -43,14 +43,11 @@ class tdme::tools::leveleditor::controller::EnvironmentMappingScreenController f
 private:
 	static MutableString TEXT_EMPTY;
 	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	EnvironmentMappingView* view { nullptr };
 	FileDialogPath* modelPath { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
-	GUIElementNode* dimensionWidth { nullptr };
-	GUIElementNode* dimensionHeight { nullptr };
-	GUIElementNode* dimensionDepth { nullptr };
-	GUIElementNode* dimensionApply { nullptr };
 	GUIElementNode* generationRenderPasses { nullptr };
 	GUIElementNode* generationFrequency { nullptr };
 	GUIElementNode* generationApply { nullptr };
@@ -62,6 +59,11 @@ public:
 	 * @param view view
 	 */
 	EnvironmentMappingScreenController(EnvironmentMappingView* view);
+
+	/**
+	 * @return entity physics sub screen controller
+	 */
+	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;
@@ -97,24 +99,6 @@ public:
 	 * Unset entity properties
 	 */
 	void unsetEntityProperties();
-
-	/**
-	 * Set dimension tab
-	 * @param width width
-	 * @param height height
-	 * @param depth depth
-	 */
-	void setDimension(float width, float height, float depth);
-
-	/**
-	 * Unset dimension tab
-	 */
-	void unsetDimension();
-
-	/**
-	 * On dimension apply
-	 */
-	void onDimensionApply();
 
 	/**
 	 * Set generation properties
