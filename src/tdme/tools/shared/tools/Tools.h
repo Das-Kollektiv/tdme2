@@ -38,6 +38,7 @@ private:
 	static Engine* osEngine;
 	static float oseScale;
 	static Model* gizmoAll;
+	static Model* gizmoTranslationScale;
 	static Model* gizmoTranslation;
 	static Model* gizmoScale;
 	static Model* gizmoRotations;
@@ -213,9 +214,14 @@ public:
 	static void loadSettings(Application* application);
 
 	/**
-	 * @return GIZMO translation/scale
+	 * @return GIZMO translation/rotations/scale
 	 */
 	static Model* getGizmoAll();
+
+	/**
+	 * @return GIZMO translation/rotations/scale
+	 */
+	static Model* getGizmoTranslationScale();
 
 	/**
 	 * @return GIZMO for translation

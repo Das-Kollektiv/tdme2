@@ -466,21 +466,27 @@ void LevelEditorView::handleInputEvents()
 									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
 									levelEditorObject->getTransformations().setScale(scale);
-									levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
-									levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
-									levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
+									// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+									if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
+										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
+										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
+									}
 									levelEditorObject->getTransformations().update();
 									_selectedEntity->fromTransformations(levelEditorObject->getTransformations());
 								}
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
+								auto levelEditorObject = level.getObjectById(_selectedEntity->getId());
 								levelEditorScreenController->setObject(
 									_selectedEntity->getTranslation(),
 									_selectedEntity->getScale(),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
-									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex())
+									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
+									// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+									levelEditorObject != nullptr && levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
 								);
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
@@ -839,7 +845,9 @@ void LevelEditorView::updateGUITransformationsElements() {
 				selectedEntity->getScale(),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
-				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex())
+				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
+				// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+				levelEditorObject != nullptr && levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
 			);
 			Vector3 objectCenter;
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
@@ -853,7 +861,7 @@ void LevelEditorView::updateGUITransformationsElements() {
 		}
 	} else
 	if (selectedEntityIds.size() > 1) {
-		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 }
 
@@ -1297,7 +1305,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	level.update();
 	updateGizmo();
@@ -1330,7 +1338,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	level.update();
 	updateGizmo();
@@ -1359,14 +1367,16 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 			if (selectedEntity == nullptr) continue;
 			auto levelEntity = level.getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
-
-			levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).getAngle() + x);
-			levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).getAngle() + y);
-			levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).getAngle() + z);
+			// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+			if (levelEntity->getEntity()->getType() != LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).getAngle() + x);
+				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).getAngle() + y);
+				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).getAngle() + z);
+			}
 			levelEntity->getTransformations().update();
 			selectedEntity->fromTransformations(levelEntity->getTransformations());
 		}
-		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
+		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	level.update();
 	updateGizmo();
@@ -1515,11 +1525,13 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
 			auto levelEditorEntity = level.getEntityLibrary()->getEntityAt(i);
+			// TODO: maybe move bounding volume count into LevelEditorEntity_EntityType::*
 			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
 				levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL ||
 				levelEditorEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 				levelEditorEntity->setDefaultBoundingVolumes();
 			} else
+			// TODO: maybe move bounding volume count into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
 			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 				levelEditorEntity->setDefaultBoundingVolumes(1);
 			}
@@ -1729,7 +1741,18 @@ void LevelEditorView::updateGizmo() {
 		removeGizmo();
 		return;
 	} else
-	if (objectCount > 1) gizmoCenter.scale(1.0f / objectCount);
+	if (objectCount == 1) {
+		auto selectedLevelEditorObject = level.getObjectById(selectedEntityIds[0]);
+		auto selectedLevelEditorEntity = selectedLevelEditorObject != nullptr?selectedLevelEditorObject->getEntity():nullptr;
+		// TODO: maybe move GIZMO types into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+		if (selectedLevelEditorEntity != nullptr && selectedLevelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+			setGizmoTypeMask(GIZMOTYPE_TRANSLATE | GIZMOTYPE_SCALE);
+		} else {
+			setGizmoTypeMask(GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
+		}
+	} else {
+		gizmoCenter.scale(1.0f / objectCount);
+	}
 
 	//
 	Gizmo::updateGizmo(gizmoCenter);

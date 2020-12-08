@@ -236,8 +236,9 @@ public:
 	 * @param rotationX rotation x
 	 * @param rotationY rotation y
 	 * @param rotationZ rotation z
+	 * @oaram disableRotation disable rotation input fields
 	 */
-	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ);
+	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation);
 
 	/**
 	 * Unset current object

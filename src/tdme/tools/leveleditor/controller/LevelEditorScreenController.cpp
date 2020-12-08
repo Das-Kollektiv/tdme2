@@ -344,7 +344,7 @@ void LevelEditorScreenController::onObjectsUnselect()
 	view->unselectObjects();
 }
 
-void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ)
+void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
 {
 	btnObjectTranslationApply->getController()->setDisabled(false);
 	btnObjectScaleApply->getController()->setDisabled(false);
@@ -358,9 +358,9 @@ void LevelEditorScreenController::setObject(const Vector3& translation, const Ve
 	objectScaleX->getController()->setDisabled(false);
 	objectScaleY->getController()->setDisabled(false);
 	objectScaleZ->getController()->setDisabled(false);
-	objectRotationX->getController()->setDisabled(false);
-	objectRotationY->getController()->setDisabled(false);
-	objectRotationZ->getController()->setDisabled(false);
+	objectRotationX->getController()->setDisabled(disableRotation);
+	objectRotationY->getController()->setDisabled(disableRotation);
+	objectRotationZ->getController()->setDisabled(disableRotation);
 	objectTranslationX->getController()->setValue(MutableString(Tools::formatFloat(translation.getX())));
 	objectTranslationY->getController()->setValue(MutableString(Tools::formatFloat(translation.getY())));
 	objectTranslationZ->getController()->setValue(MutableString(Tools::formatFloat(translation.getZ())));
