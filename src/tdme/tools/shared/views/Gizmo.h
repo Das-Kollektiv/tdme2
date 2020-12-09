@@ -57,7 +57,6 @@ private:
 	GizmoMode gizmoMode;
 	Vector3 gizmoLastResult;
 	bool gizmoLastResultAvailable;
-	float gizmoBaseScale;
 	int gizmoTypeMask;
 
 public:
@@ -65,10 +64,9 @@ public:
 	 * Public constructor
 	 * @param engine engine
 	 * @param id id
-	 * @param gizmoBaseScale gizmo base scale
 	 * @param gizmoTypeMask gizmo type mask
 	 */
-	Gizmo(Engine* engine, const string& id, float gizmoBaseScale = 1.0f, int gizmoTypeMask = GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
+	Gizmo(Engine* engine, const string& id, int gizmoTypeMask = GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
 
 	/**
 	 * Destructor

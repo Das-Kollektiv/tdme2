@@ -585,7 +585,7 @@ void LevelEditorView::handleInputEvents()
 			camScale += -mouseWheel * 0.1f;
 			if (camScale < camScaleMin) camScale = camScaleMin;
 			if (camScale > camScaleMax) camScale = camScaleMax;
-			updateGizmo();
+			needGizmoUpdate = true;
 		}
 	}
 	if (keyDelete == true) {
@@ -612,6 +612,11 @@ void LevelEditorView::handleInputEvents()
 
 void LevelEditorView::display()
 {
+	if (needGizmoUpdate == true) {
+		updateGizmo();
+		needGizmoUpdate = false;
+	}
+
 	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
 		auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
@@ -684,11 +689,13 @@ void LevelEditorView::display()
 		camLookRotationY->setAngle(camLookRotationY->getAngle() + mouseRotationX);
 		camLookRotationY->update();
 		mouseRotationX = 0;
+		needGizmoUpdate = true;
 	}
 	if (mouseRotationY != MOUSE_ROTATION_NONE) {
 		camLookRotationX->setAngle(camLookRotationX->getAngle() + mouseRotationY);
 		camLookRotationX->update();
 		mouseRotationY = 0;
+		needGizmoUpdate = true;
 	}
 	if (keyA == true) camLookRotationY->setAngle(camLookRotationY->getAngle() + 1.0f);
 	if (keyD == true) camLookRotationY->setAngle(camLookRotationY->getAngle() - 1.0f);
@@ -699,7 +706,7 @@ void LevelEditorView::display()
 		if (keyPlus == true) camScale -= 0.05f;
 		if (camScale < camScaleMin) camScale = camScaleMin;
 		if (camScale > camScaleMax) camScale = camScaleMax;
-		updateGizmo();
+		needGizmoUpdate = true;
 	}
 
 	if (keyR == true) {
@@ -709,13 +716,18 @@ void LevelEditorView::display()
 		camLookRotationY->update();
 		cam->setLookAt(level.getCenter());
 		camScale = 1.0f;
+		needGizmoUpdate = true;
 	}
-	if (keyA == true|| keyD == true) camLookRotationY->update();
+	if (keyA == true|| keyD == true) {
+		camLookRotationY->update();
+		needGizmoUpdate = true;
+	}
 
 	if (keyW == true || keyS == true) {
 		if (camLookRotationX->getAngle() > 89.99f) camLookRotationX->setAngle(89.99f);
 		if (camLookRotationX->getAngle() < -89.99f) camLookRotationX->setAngle(-89.99f);
 		camLookRotationX->update();
+		needGizmoUpdate = true;
 	}
 
 	Vector3 tmpVector3;
@@ -739,10 +751,12 @@ void LevelEditorView::display()
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
 		camLookAt.sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
 		mousePanningForward = MOUSE_PANNING_NONE;
+		needGizmoUpdate = true;
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
 		camLookAt.sub(tmpVector3.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
 		mousePanningSide = MOUSE_PANNING_NONE;
+		needGizmoUpdate = true;
 	}
 	cam->setLookAt(camLookAt);
 	cam->setLookFrom(cam->getLookAt().clone().add(camLookAtToFromVector));

@@ -121,6 +121,7 @@ private:
 	PopUps* popUps;
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
+	bool needGizmoUpdate { false };
 
 public:
 	/**
