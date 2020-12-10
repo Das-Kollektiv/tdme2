@@ -34,10 +34,9 @@ definition_contextmenu
 
 
 resources
-	maps
-	meshes
+	scenes
+	models
 	music
-	objects
 	particles
 	scripts
 	sounds
@@ -53,7 +52,7 @@ script 	 = wss
 sound  	 = ogg
 screen 	 = xml
 mesh   	 = tm
-map    	 = tl
+scene  	 = tl
 particle = tps
 
 
