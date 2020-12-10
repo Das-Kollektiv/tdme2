@@ -35,7 +35,8 @@ definition_contextmenu
 
 resources
 	scenes
-	models
+	templates
+	meshes
 	music
 	particles
 	scripts
@@ -46,14 +47,15 @@ resources
 	images
 
 
-object   = tmm
-texture  = png
-script 	 = wss
-sound  	 = ogg
-screen 	 = xml
-mesh   	 = tm
-scene  	 = tl
-particle = tps
+template 	= tet
+texture  	= png
+script 	 	= tsr
+sound  	 	= ogg
+gui 	 	= xml
+mesh   	 	= tme
+animation	= tan
+scene  	 	= tsc
+particle 	= tps
 
 
 icons
