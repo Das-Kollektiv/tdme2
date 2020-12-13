@@ -12,7 +12,7 @@ class CrashTestClass {
 public:
 	static void crash() {
 		char* i = nullptr;
-		Console::println(string("CrashTest::crash(): message: ") + i);
+		Console::println(string("CrashTestClass::crash(): message: ") + i);
 	}
 };
 
