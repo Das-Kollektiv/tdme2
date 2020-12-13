@@ -466,8 +466,7 @@ void LevelEditorView::handleInputEvents()
 									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
 									levelEditorObject->getTransformations().setScale(scale);
-									// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-									if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+									if ((levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
@@ -485,8 +484,7 @@ void LevelEditorView::handleInputEvents()
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
-									// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-									levelEditorObject != nullptr && levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+									(levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 								);
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
@@ -860,8 +858,7 @@ void LevelEditorView::updateGUITransformationsElements() {
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
-				// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-				levelEditorObject != nullptr && levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
+				(levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 			);
 			Vector3 objectCenter;
 			if (levelEditorObject->getEntity()->getModel() != nullptr) {
@@ -1381,8 +1378,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 			if (selectedEntity == nullptr) continue;
 			auto levelEntity = level.getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
-			// TODO: maybe move if rotation is allowed into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-			if (levelEntity->getEntity()->getType() != LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+			if ((levelEntity->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).getAngle() + x);
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).getAngle() + y);
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).getAngle() + z);
@@ -1539,16 +1535,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
 			auto levelEditorEntity = level.getEntityLibrary()->getEntityAt(i);
-			// TODO: maybe move bounding volume count into LevelEditorEntity_EntityType::*
-			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
-				levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL ||
-				levelEditorEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-				levelEditorEntity->setDefaultBoundingVolumes();
-			} else
-			// TODO: maybe move bounding volume count into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-			if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
-				levelEditorEntity->setDefaultBoundingVolumes(1);
-			}
+			if (levelEditorEntity->getType()->getBoundingVolumeCount() != 0) levelEditorEntity->setDefaultBoundingVolumes(levelEditorEntity->getType()->getBoundingVolumeCount());
 		}
 		levelEditorScreenController->setMapProperties(level, "");
 		levelEditorScreenController->unsetObjectProperties();
@@ -1762,12 +1749,7 @@ void LevelEditorView::updateGizmo() {
 		auto selectedLevelEditorObject = level.getObjectById(selectedEntityIds[0]);
 		auto selectedLevelEditorEntity = selectedLevelEditorObject != nullptr?selectedLevelEditorObject->getEntity():nullptr;
 		if (selectedLevelEditorObject != nullptr) transformations.fromTransformations(selectedLevelEditorObject->getTransformations());
-		// TODO: maybe move GIZMO types into LevelEditorEntity_EntityType::ENVIRONMENTMAPPING
-		if (selectedLevelEditorEntity != nullptr && selectedLevelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
-			setGizmoTypeMask(GIZMOTYPE_TRANSLATE | GIZMOTYPE_SCALE);
-		} else {
-			setGizmoTypeMask(GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
-		}
+		setGizmoTypeMask(selectedLevelEditorEntity->getType()->getGizmoTypeMask());
 	} else {
 		gizmoCenter.scale(1.0f / objectCount);
 	}
