@@ -16,7 +16,7 @@ public:
 	}
 };
 
-void crashTestFunction() {
+static void crashTestFunction() {
 	CrashTestClass::crash();
 }
 
