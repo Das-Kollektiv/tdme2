@@ -412,7 +412,7 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
@@ -446,6 +446,19 @@ void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, b
 			entity->setReceivesShadows(object->getEntity()->isReceivesShadows());
 			if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
+			}
+			if (object->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
+				entity->setScale(
+					object->getEntity()->getType()->getNonEditScaleDownModeDimension().
+					clone().
+					scale(
+						Vector3(
+							1.0f / (object->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+							1.0f / (object->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+							1.0f / (object->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+						)
+					)
+				);
 			}
 			entity->update();
 			entity->setEnabled(enable);

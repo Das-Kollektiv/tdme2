@@ -254,12 +254,13 @@ public:
 	 * @param level level
 	 * @param addEmpties add empties
 	 * @param addTrigger add trigger
+	 * @param addEnvironmentMapping add environment mapping
 	 * @param pickable pickable
 	 * @param enable enable
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body

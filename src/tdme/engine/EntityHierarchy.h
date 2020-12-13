@@ -117,9 +117,10 @@ private:
 	 * Update hierarchy from given entity hierarchy level ongoing
 	 * @param parentTransformations parent transformations
 	 * @param entityHierarchyLevel entity hierarchy level
-	 * @param depth
+	 * @param depth depth
+	 * @param firstEntity first entity
 	 */
-	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth);
+	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity);
 
 public:
 	/**

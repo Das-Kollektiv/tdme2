@@ -433,6 +433,12 @@ private:
 	void setStandardObjectColorEffect(Entity* object);
 
 	/**
+	 * Reset scale to level editor object scale
+	 * @param object object
+	 */
+	void resetObject(Entity* object);
+
+	/**
 	 * Update dynamic grid
 	 */
 	void updateGrid();

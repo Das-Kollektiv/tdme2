@@ -523,13 +523,13 @@ void LevelEditorView::handleInputEvents()
 							}
 						}
 						for (auto entityToRemove: entitiesToRemove) {
-							setStandardObjectColorEffect(entityToRemove);
 							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
 							auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
 							if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
 								selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
 							}
 							levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
+							resetObject(entityToRemove);
 						}
 					}
 					if (selectedEntity != nullptr) {
@@ -544,7 +544,7 @@ void LevelEditorView::handleInputEvents()
 								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getEntity()->getId());
 							}
 						} else {
-							setStandardObjectColorEffect(selectedEntity);
+							resetObject(selectedEntity);
 							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), selectedEntity->getId()), selectedEntityIds.end());
 							auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(selectedEntity->getId());
 							if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
@@ -552,7 +552,13 @@ void LevelEditorView::handleInputEvents()
 							}
 							levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 						}
-						if (selectedEntityIds.size() == 1) setGizmoRotation(selectedEntity->getTransformations());
+						if (selectedEntityIds.size() == 1) {
+							auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+							if (levelEditorObject != nullptr && levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
+								selectedEntity->fromTransformations(levelEditorObject->getTransformations());
+							}
+							setGizmoRotation(selectedEntity->getTransformations());
+						}
 						if (selectedEntityIds.size() > 1) setGizmoRotation(Transformations());
 					}
 					mouseDraggingLastObject = selectedEntity;
@@ -807,7 +813,8 @@ void LevelEditorView::unselectObjects()
 	removeGizmo();
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
-		if (entityToRemove != nullptr) setStandardObjectColorEffect(entityToRemove);
+		if (entityToRemove == nullptr) continue;
+		resetObject(entityToRemove);
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
@@ -1027,6 +1034,27 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	}
 }
 
+void LevelEditorView::resetObject(Entity* entity) {
+	if (entity == nullptr) return;
+	setStandardObjectColorEffect(entity);
+	auto levelEditorObject = level.getObjectById(entity->getId());
+	if (levelEditorObject == nullptr) return;
+	if (levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == false) return;
+	entity->fromTransformations(levelEditorObject->getTransformations());
+	entity->setScale(
+		levelEditorObject->getEntity()->getType()->getNonEditScaleDownModeDimension().
+		clone().
+		scale(
+			Vector3(
+				1.0f / (levelEditorObject->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+				1.0f / (levelEditorObject->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+				1.0f / (levelEditorObject->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+			)
+		)
+	);
+	entity->update();
+}
+
 void LevelEditorView::loadLevel()
 {
 	removeGizmo();
@@ -1035,7 +1063,7 @@ void LevelEditorView::loadLevel()
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	Level::setLight(engine, level, Vector3());
-	Level::addLevel(engine, level, true, true, true);
+	Level::addLevel(engine, level, true, true, true, true);
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();
@@ -1196,7 +1224,7 @@ void LevelEditorView::placeObject()
 	level.addObject(levelEditorObject);
 	auto entity = Level::createEntity(levelEditorObject);
 	if (entity != nullptr) {
-		setStandardObjectColorEffect(entity);
+		resetObject(entity);
 		entity->setPickable(true);
 		engine->addEntity(entity);
 	}
@@ -1657,7 +1685,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 			level.addObject(levelEditorObject);
 			auto entity = Level::createEntity(pasteModel, levelEditorObjectId, levelEditorObjectTransformations);
 			if (entity != nullptr) {
-				setStandardObjectColorEffect(entity);
+				resetObject(entity);
 				entity->setPickable(true);
 				engine->addEntity(entity);
 			}

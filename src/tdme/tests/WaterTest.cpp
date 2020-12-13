@@ -143,7 +143,7 @@ void WaterTest::initialize()
 
 	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader3.tl", level);
 	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false);
+	Level::addLevel(engine, level, false, false, false, false);
 
 	// load sky
 	skySphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");

@@ -22,10 +22,10 @@ private:
 	Vector3 nonEditScaleDownModeDimension;
 
 public:
-	static LevelEditorEntity_EntityType* TRIGGER;
-	static LevelEditorEntity_EntityType* MODEL;
 	static LevelEditorEntity_EntityType* EMPTY;
+	static LevelEditorEntity_EntityType* MODEL;
 	static LevelEditorEntity_EntityType* PARTICLESYSTEM;
+	static LevelEditorEntity_EntityType* TRIGGER;
 	static LevelEditorEntity_EntityType* ENVIRONMENTMAPPING;
 
 	/**

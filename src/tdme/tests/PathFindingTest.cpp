@@ -170,7 +170,7 @@ void PathFindingTest::initialize()
 	engine->initialize();
 	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", level);
 	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false);
+	Level::addLevel(engine, level, false, false, false, false);
 	Level::addLevel(world, level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
