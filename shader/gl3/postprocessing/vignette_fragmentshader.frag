@@ -18,17 +18,20 @@ out vec4 outColor;
 // main
 void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
+	float borderTransparency = 0.75;
+	vec3 borderColor = vec3(1.0, 0.0, 0.0);
 	vec4 originalColor = texture(colorBufferTextureUnit, vsFragTextureUV);
 	float fadeArea = intensity;
 	float fragmentIntensity = 1.0;
+	float aspect = bufferTexturePixelHeight / bufferTexturePixelWidth; 
 	if (vsFragTextureUV.x < fadeArea) fragmentIntensity*= vsFragTextureUV.x / fadeArea;
 	if (vsFragTextureUV.x > 1.0 - fadeArea) fragmentIntensity*= (1.0 - vsFragTextureUV.x) / fadeArea;
-	if (vsFragTextureUV.y < fadeArea) fragmentIntensity*= vsFragTextureUV.y / fadeArea;
-	if (vsFragTextureUV.y > 1.0 - fadeArea) fragmentIntensity*= (1.0 - vsFragTextureUV.y) / fadeArea;
+	if (vsFragTextureUV.y < fadeArea * aspect) fragmentIntensity*= vsFragTextureUV.y / (fadeArea * aspect);
+	if (vsFragTextureUV.y > 1.0 - fadeArea * aspect) fragmentIntensity*= (1.0 - vsFragTextureUV.y) / (fadeArea * aspect);
 	outColor = vec4(
-		originalColor.r * fragmentIntensity,
-		originalColor.g * fragmentIntensity,
-		originalColor.b * fragmentIntensity,
+		originalColor.r * (fragmentIntensity / (1.0 / (1.0 - borderTransparency)) + borderTransparency) + ((1.0 - fragmentIntensity) * borderColor.r),
+		originalColor.g * (fragmentIntensity / (1.0 / (1.0 - borderTransparency)) + borderTransparency) + ((1.0 - fragmentIntensity) * borderColor.g),
+		originalColor.b * (fragmentIntensity / (1.0 / (1.0 - borderTransparency)) + borderTransparency) + ((1.0 - fragmentIntensity) * borderColor.b),
 		originalColor.a
 	);
 	gl_FragDepth = depth;
