@@ -82,6 +82,11 @@ private:
 	GUIElementNode* mapPropertySave { nullptr };
 	GUIElementNode* mapPropertyRemove { nullptr };
 	GUIElementNode* mapPropertiesListBox { nullptr };
+	GUIElementNode* mapSkyModel { nullptr };
+	GUIElementNode* btnMapSkyModelLoad { nullptr };
+	GUIElementNode* btnMapSkyModelClear { nullptr };
+	GUIElementNode* mapSkyModelScale { nullptr };
+	GUIElementNode* btnMapSkyApply { nullptr };
 	GUIElementNode* objectName { nullptr };
 	GUIElementNode* objectDescription { nullptr };
 	GUIElementNode* objectModel { nullptr };
@@ -121,6 +126,7 @@ private:
 	array<GUIElementNode*, 4> lightsEnabled;
 	GUIElementNode* viewPort { nullptr };
 	FileDialogPath* mapPath { nullptr };
+	FileDialogPath* modelPath { nullptr };
 
 public:
 	/**
@@ -138,6 +144,8 @@ public:
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
+	void onValueChanged(GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Set up screen caption
@@ -471,10 +479,41 @@ public:
 	 * On Light spot direction compute for given light idx
 	 */
 	void onLightSpotDirectionCompute(int lightIdx);
-	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+
+	/**
+	 * Save file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Load file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void loadFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Set sky
+	 * @param level level
+	 */
+	void setSky(LevelEditorLevel& level);
+
+	/**
+	 * On map sky model load
+	 */
+	void onMapSkyModelLoad();
+
+	/**
+	 * On map sky model clear
+	 */
+	void onMapSkyModelClear();
+
+	/**
+	 * On map sky apply
+	 */
+	void onMapSkyApply();
 
 	/**
 	 * Shows the error pop up

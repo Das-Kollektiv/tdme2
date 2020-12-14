@@ -66,6 +66,7 @@ LevelEditorLevel::LevelEditorLevel()
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
 	objectIdx = 0;
+	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
 LevelEditorLevel::~LevelEditorLevel() {
@@ -234,6 +235,12 @@ LevelEditorObject* LevelEditorLevel::getObjectById(const string& id)
 		return objectByIdIt->second;
 	}
 	return nullptr;
+}
+
+void LevelEditorLevel::setSkyModel(Model* model) {
+	if (this->skyModel== model) return;
+	delete this->skyModel;
+	this->skyModel = model;
 }
 
 void LevelEditorLevel::update() {

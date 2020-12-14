@@ -389,6 +389,16 @@ public:
 	 */
 	void applyLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
+	/**
+	 * Update sky
+	 */
+	void updateSky();
+
+	/**
+	 * Update sky position
+	 */
+	void updateSkyPosition();
+
 private:
 	/**
 	 * Update GUI elements

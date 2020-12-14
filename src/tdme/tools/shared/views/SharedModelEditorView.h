@@ -124,7 +124,7 @@ public:
 	/**
 	 * @return pop up views
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * @return entity

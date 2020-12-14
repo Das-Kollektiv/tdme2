@@ -240,6 +240,29 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	level.setFileName(fileName);
 	level.update();
 
+	//
+	if (jRoot.FindMember("sky") != jRoot.MemberEnd()) {
+		auto& jSky = jRoot["sky"];
+		level.setSkyModelFileName(jSky["file"].GetString());
+		level.setSkyModelScale(
+			Vector3(
+				jSky["sx"].GetFloat(),
+				jSky["sy"].GetFloat(),
+				jSky["sz"].GetFloat()
+			)
+		);
+		if (level.getSkyModelFileName().empty() == false) {
+			auto skyModelPathName = ModelMetaDataFileImport::getResourcePathName(pathName, level.getSkyModelFileName());
+			level.setSkyModel(
+				ModelReader::read(
+					skyModelPathName,
+					FileSystem::getInstance()->getFileName(level.getSkyModelFileName())
+				)
+			);
+		}
+	}
+
+	//
 	if (progressCallback != nullptr) {
 		progressCallback->progress(1.0f);
 		delete progressCallback;

@@ -167,6 +167,14 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, L
 	jDocument.AddMember("objects", jObjects, jAllocator);
 	jDocument.AddMember("objects_eidx", Value(level.getObjectIdx()), jAllocator);
 
+	Value jSky;
+	jSky.SetObject();
+	jSky.AddMember("file", Value(level.getSkyModelFileName(), jAllocator), jAllocator);
+	jSky.AddMember("sx", Value(level.getSkyModelScale().getX()), jAllocator);
+	jSky.AddMember("sy", Value(level.getSkyModelScale().getY()), jAllocator);
+	jSky.AddMember("sz", Value(level.getSkyModelScale().getZ()), jAllocator);
+	jDocument.AddMember("sky", jSky, jAllocator);
+
 	StringBuffer strbuf;
 	Writer<StringBuffer> writer(strbuf);
 	jDocument.Accept(writer);

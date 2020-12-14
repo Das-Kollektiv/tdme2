@@ -19,6 +19,7 @@ using std::vector;
 using std::string;
 
 using tdme::tools::shared::model::ModelProperties;
+using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
@@ -47,6 +48,9 @@ private:
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
+	string skyModelFileName;
+	Model* skyModel { nullptr };
+	Vector3 skyModelScale;
 
 	/**
 	 * Computes level bounding box
@@ -261,6 +265,47 @@ public:
 	 */
 	inline LevelEditorObject* getObjectAt(int idx) {
 		return objects[idx];
+	}
+
+	/**
+	 * @return sky model file name
+	 */
+	inline const string& getSkyModelFileName() {
+		return skyModelFileName;
+	}
+
+	/**
+	 * Set sky model file name
+	 * @param skyModelFileName sky model file name
+	 */
+	inline void setSkyModelFileName(const string& skyModelFileName) {
+		this->skyModelFileName = skyModelFileName;
+	}
+
+	/**
+	 * @return sky model
+	 */
+	inline Model* getSkyModel() {
+		return skyModel;
+	}
+
+	/**
+	 * Set sky model
+	 */
+	void setSkyModel(Model* model);
+
+	/**
+	 * @return sky model scale
+	 */
+	inline const Vector3& getSkyModelScale() {
+		return skyModelScale;
+	}
+
+	/**
+	 * Set sky model scale
+	 */
+	void setSkyModelScale(const Vector3& skyModelScale) {
+		this->skyModelScale = skyModelScale;
 	}
 
 	/**

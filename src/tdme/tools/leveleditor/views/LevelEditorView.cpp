@@ -782,6 +782,9 @@ void LevelEditorView::display()
 	viewPortHeight = (int)((float)viewPortHeight * yScale);
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
+	//
+	updateSkyPosition();
+
 	// rendering
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
@@ -1067,6 +1070,7 @@ void LevelEditorView::loadLevel()
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();
+	updateSky();
 }
 
 void LevelEditorView::updateGrid()
@@ -1565,6 +1569,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 			auto levelEditorEntity = level.getEntityLibrary()->getEntityAt(i);
 			if (levelEditorEntity->getType()->getBoundingVolumeCount() != 0) levelEditorEntity->setDefaultBoundingVolumes(levelEditorEntity->getType()->getBoundingVolumeCount());
 		}
+		levelEditorScreenController->setSky(level);
 		levelEditorScreenController->setMapProperties(level, "");
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
@@ -1746,6 +1751,29 @@ void LevelEditorView::applyLight(int i, const Color4& ambient, const Color4& dif
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);
 	levelEditorScreenController->setLight(i, level.getLightAt(i)->getAmbient(), level.getLightAt(i)->getDiffuse(), level.getLightAt(i)->getSpecular(), level.getLightAt(i)->getPosition(), level.getLightAt(i)->getConstantAttenuation(), level.getLightAt(i)->getLinearAttenuation(), level.getLightAt(i)->getQuadraticAttenuation(), level.getLightAt(i)->getSpotTo(), level.getLightAt(i)->getSpotDirection(), level.getLightAt(i)->getSpotExponent(), level.getLightAt(i)->getSpotCutOff(), level.getLightAt(i)->isEnabled());
+}
+
+void LevelEditorView::updateSky() {
+	engine->removeEntity("tdme.sky");
+	if (level.getSkyModel() == nullptr) return;
+	auto sky = new Object3D("tdme.sky", level.getSkyModel());
+	sky->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	sky->setShader("sky");
+	sky->setFrustumCulling(false);
+	sky->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	sky->setScale(level.getSkyModelScale());
+	sky->update();
+	sky->setContributesShadows(false);
+	sky->setReceivesShadows(false);
+	sky->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(sky);
+}
+
+void LevelEditorView::updateSkyPosition() {
+	auto sky = engine->getEntity("tdme.sky");
+	if (sky == nullptr) return;
+	sky->setTranslation(engine->getCamera()->getLookAt());
+	sky->update();
 }
 
 void LevelEditorView::updateGizmo() {

@@ -116,7 +116,7 @@ SharedModelEditorView::~SharedModelEditorView() {
 	delete cameraRotationInputHandler;
 }
 
-PopUps* SharedModelEditorView::getPopUpsViews()
+PopUps* SharedModelEditorView::getPopUps()
 {
 	return popUps;
 }

@@ -87,6 +87,7 @@ LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
 	this->mapPath = new FileDialogPath(".");
+	this->modelPath = new FileDialogPath(".");
 }
 
 GUIScreenNode* LevelEditorScreenController::getScreenNode()
@@ -119,6 +120,11 @@ void LevelEditorScreenController::initialize()
 		mapPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_save"));
 		mapPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_remove"));
 		mapPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_properties_listbox"));
+		mapSkyModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model"));
+		btnMapSkyModelLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_load"));
+		btnMapSkyModelClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_clear"));
+		mapSkyModelScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model_scale"));
+		btnMapSkyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_apply"));
 		objectName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_name"));
 		objectDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_description"));
 		objectModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_model"));
@@ -981,6 +987,83 @@ void LevelEditorScreenController::loadFile(const string& pathName, const string&
 	view->loadMap(pathName, fileName);
 }
 
+void LevelEditorScreenController::setSky(LevelEditorLevel& level) {
+	mapSkyModel->getController()->setValue(MutableString(level.getSkyModelFileName()));
+	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(level.getSkyModelScale())));
+}
+
+void LevelEditorScreenController::onMapSkyModelLoad() {
+	class OnMapSkyModelLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			levelEditorScreenController->mapSkyModel->getController()->setValue(
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			levelEditorScreenController->modelPath->setPath(
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
+		OnMapSkyModelLoad(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		}
+
+	private:
+		LevelEditorScreenController* levelEditorScreenController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		mapSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(mapSkyModel->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(mapSkyModel->getController()->getValue().getString()),
+		true,
+		new OnMapSkyModelLoad(this)
+	);
+}
+
+void LevelEditorScreenController::onMapSkyModelClear() {
+	mapSkyModel->getController()->setValue(MutableString());
+}
+
+void LevelEditorScreenController::onMapSkyApply() {
+	try {
+		auto skyModelScale = Tools::convertToVector3(mapSkyModelScale->getController()->getValue().getString());
+		if (skyModelScale.getX() < 0.01f || skyModelScale.getX() > 150.0f)
+			throw ExceptionBase("x scale must be within 0.01 .. 150.0");
+
+		if (skyModelScale.getY() < 0.01f || skyModelScale.getY() > 150.0f)
+			throw ExceptionBase("y scale must be within 0.01 .. 150.0");
+
+		if (skyModelScale.getZ() < 0.01f || skyModelScale.getZ() > 150.0f)
+			throw ExceptionBase("z scale must be within 0.01 .. 150.0");
+
+		view->getLevel()->setSkyModelScale(skyModelScale);
+		view->getLevel()->setSkyModelFileName(mapSkyModel->getController()->getValue().getString());
+		auto model =
+			mapSkyModel->getController()->getValue().getString().empty() == true?
+				nullptr:
+				ModelReader::read(
+					Tools::getPath(mapSkyModel->getController()->getValue().getString()),
+					Tools::getFileName(mapSkyModel->getController()->getValue().getString())
+				);
+		view->getLevel()->setSkyModel(model);
+		setSky(*view->getLevel());
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (exception.what()));
+	}
+	view->updateSky();
+}
+
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("objects_listbox") == 0) {
@@ -1093,6 +1176,15 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_light3_apply") == 0) {
 			onLight3Apply();
+		} else
+		if (node->getId().compare("button_map_sky_model_load") == 0) {
+			onMapSkyModelLoad();
+		} else
+		if (node->getId().compare("button_map_sky_model_clear") == 0) {
+			onMapSkyModelClear();
+		} else
+		if (node->getId().compare("button_map_sky_apply") == 0) {
+			onMapSkyApply();
 		}
 	}
 }
