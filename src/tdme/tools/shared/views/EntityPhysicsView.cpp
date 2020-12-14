@@ -67,7 +67,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 
-EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount): Gizmo(Engine::getInstance(), "epv")
+EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount, int boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
 {
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;
@@ -78,6 +78,7 @@ EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhy
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 	this->displayBoundingVolumeIdxLast = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 	this->displayBoundingVolume = false;
+	this->boundingVolumeTypeMask = boundingVolumeTypeMask;
 }
 
 EntityPhysicsView::~EntityPhysicsView() {
@@ -91,7 +92,7 @@ PopUps* EntityPhysicsView::getPopUpsViews()
 void EntityPhysicsView::initialize()
 {
 	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
-		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i);
+		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i, boundingVolumeTypeMask);
 		entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 	}
 }
@@ -180,28 +181,41 @@ void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 			auto sphere = dynamic_cast< Sphere* >(bv->getBoundingVolume());
 			entityPhysicsSubScreenController->setupSphere(i, sphere->getCenter(), sphere->getRadius());
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::SPHERE);
+			entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
 		} else
 		if (dynamic_cast<Capsule*>(bv->getBoundingVolume()) != nullptr) {
 			auto capsule = dynamic_cast< Capsule* >(bv->getBoundingVolume());
 			entityPhysicsSubScreenController->setupCapsule(i, capsule->getA(), capsule->getB(), capsule->getRadius());
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::CAPSULE);
+			entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
 		} else
 		if (dynamic_cast<BoundingBox*>(bv->getBoundingVolume()) != nullptr) {
 			auto aabb = dynamic_cast< BoundingBox* >(bv->getBoundingVolume());
 			entityPhysicsSubScreenController->setupBoundingBox(i, aabb->getMin(), aabb->getMax());
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::BOUNDINGBOX);
+			entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
 		} else
 		if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
-			auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
-			entityPhysicsSubScreenController->setupOrientedBoundingBox(i, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
-			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
+			if ((boundingVolumeTypeMask & EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) == EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) {
+				auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
+				entityPhysicsSubScreenController->setupOrientedBoundingBox(i, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
+				entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
+				entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
+			} else
+			if ((boundingVolumeTypeMask & EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) == EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) {
+				auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
+				BoundingBox aabb(obb);
+				entityPhysicsSubScreenController->setupBoundingBox(i, aabb.getMin(), aabb.getMax());
+				entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::BOUNDINGBOX);
+				entityPhysicsSubScreenController->getView()->selectBoundingVolumeType(i, 3);
+			}
 		} else
 		if (dynamic_cast<ConvexMesh*>(bv->getBoundingVolume()) != nullptr) {
 			entityPhysicsSubScreenController->setupConvexMesh(i, bv->getModelMeshFile());
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::CONVEXMESH);
+			entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
 		}
 		entityPhysicsSubScreenController->enableBoundingVolume(i);
-		entityPhysicsSubScreenController->setupModelBoundingVolumeType(entity, i);
 	}
 }
 
@@ -601,8 +615,16 @@ void EntityPhysicsView::applyBoundingVolumeTransformations(LevelEditorEntity* en
 		axis0.normalize();
 		axis1.normalize();
 		axis2.normalize();
-		entityPhysicsSubScreenController->setupOrientedBoundingBox(i, center, axis0, axis1, axis2, halfExtension);
-		if (guiOnly == false) applyBoundingVolumeObb(entity, i, center, axis0, axis1, axis2, halfExtension);
+		if ((boundingVolumeTypeMask & EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) == EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) {
+			entityPhysicsSubScreenController->setupOrientedBoundingBox(i, center, axis0, axis1, axis2, halfExtension);
+			if (guiOnly == false) applyBoundingVolumeObb(entity, i, center, axis0, axis1, axis2, halfExtension);
+		} else
+		if ((boundingVolumeTypeMask & EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) == EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) {
+			OrientedBoundingBox obb(center, axis0, axis1, axis2, halfExtension);
+			BoundingBox aabb(&obb);
+			entityPhysicsSubScreenController->setupBoundingBox(i, aabb.getMin(), aabb.getMax());
+			if (guiOnly == false) applyBoundingVolumeAabb(entity, i, aabb.getMin(), aabb.getMax());
+		}
 	}
 }
 

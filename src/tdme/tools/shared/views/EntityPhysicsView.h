@@ -8,6 +8,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
@@ -49,14 +50,17 @@ private:
 	int displayBoundingVolumeIdx;
 	bool displayBoundingVolume;
 
+	int boundingVolumeTypeMask;
+
 public:
 	/**
 	 * Public constructor
 	 * @param entityPhysicsSubScreenController pop ups
 	 * @param popUps model editor screen controller
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
+	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1);
+	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1, int boundingVolumeTypeMask = EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor
