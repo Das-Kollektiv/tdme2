@@ -159,6 +159,7 @@ void LevelEditorLevel::clearObjects()
 {
 	objectsById.clear();
 	objects.clear();
+	environmentMappingIds.clear();
 	objectIdx = 0;
 }
 
@@ -192,16 +193,6 @@ void LevelEditorLevel::replaceEntity(int searchEntityId, int replaceEntityId)
 	}
 }
 
-void LevelEditorLevel::updatePivot(int modelId, const Vector3& pivot)
-{
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations().setPivot(pivot);
-			object->getTransformations().update();
-		}
-	}
-}
-
 void LevelEditorLevel::addObject(LevelEditorObject* object)
 {
 	auto _entity = getObjectById(object->getId());
@@ -215,6 +206,7 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	}
 	objectsById[object->getId()] = object;
 	objects.push_back(object);
+	if (object->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.insert(object->getId());
 }
 
 void LevelEditorLevel::removeObject(const string& id)
@@ -224,6 +216,7 @@ void LevelEditorLevel::removeObject(const string& id)
 		auto object = objectByIdIt->second;
 		objectsById.erase(objectByIdIt);
 		objects.erase(remove(objects.begin(), objects.end(), object), objects.end());
+		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.erase(object->getId());
 		delete object;
 	}
 }

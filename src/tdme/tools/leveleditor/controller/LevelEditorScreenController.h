@@ -110,6 +110,8 @@ private:
 	GUIElementNode* objectPropertiesListBox { nullptr };
 	GUIElementNode* objectPropertiesPresets { nullptr };
 	GUIElementNode* objectsListBox { nullptr };
+	GUIElementNode* objectReflectionsEnvironmentmappingDropDown { nullptr };
+	GUIElementNode* btnObjectReflectionsEnvironmentmappingApply { nullptr };
 	array<GUIElementNode*, 4> lightsPresets;
 	array<GUIElementNode*, 4> lightsAmbient;
 	array<GUIElementNode*, 4> lightsDiffuse;
@@ -514,6 +516,18 @@ public:
 	 * On map sky apply
 	 */
 	void onMapSkyApply();
+
+	/**
+	 * Set object reflections environment mappings
+	 * @param level level
+	 * @param selectedEnvironmentMappingId selected environment mapping id
+	 */
+	void setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId);
+
+	/**
+	 * Unset object reflections environment mappings
+	 */
+	void unsetObjectReflectionsEnvironmentMappings();
 
 	/**
 	 * Shows the error pop up

@@ -399,6 +399,11 @@ public:
 	 */
 	void updateSkyPosition();
 
+	/**
+	 * Apply reflection environment mapping id
+	 */
+	void applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId);
+
 private:
 	/**
 	 * Update GUI elements

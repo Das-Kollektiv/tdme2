@@ -151,6 +151,7 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, L
 		jObject.AddMember("rx", Value(rotationAroundXAxis.getAngle()), jAllocator);
 		jObject.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
 		jObject.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
+		jObject.AddMember("r", Value(levelEditorObject->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
 		Value jObjectProperties;
 		jObjectProperties.SetArray();
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {

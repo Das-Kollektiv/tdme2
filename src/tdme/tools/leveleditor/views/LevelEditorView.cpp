@@ -836,20 +836,24 @@ void LevelEditorView::updateGUIElements()
 			auto levelEditorObject = level.getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
+			levelEditorScreenController->setObjectReflectionsEnvironmentMappings(level, levelEditorObject->getReflectionEnvironmentMappingId());
 		} else {
 			levelEditorScreenController->unsetObjectData();
 			levelEditorScreenController->unsetObject();
 			levelEditorScreenController->unsetObjectProperties();
+			levelEditorScreenController->unsetObjectReflectionsEnvironmentMappings();
 		}
 	} else
 	if (selectedEntityIds.size() > 1) {
 		levelEditorScreenController->unsetObjectData();
 		levelEditorScreenController->unsetObjectProperties();
+		levelEditorScreenController->unsetObjectReflectionsEnvironmentMappings();
 	} else
 	if (selectedEntityIds.size() == 0) {
 		levelEditorScreenController->unsetObject();
 		levelEditorScreenController->unsetObjectData();
 		levelEditorScreenController->unsetObjectProperties();
+		levelEditorScreenController->unsetObjectReflectionsEnvironmentMappings();
 	}
 	for (auto i = 0; i < 4; i++) {
 		levelEditorScreenController->setLight(i, level.getLightAt(i)->getAmbient(), level.getLightAt(i)->getDiffuse(), level.getLightAt(i)->getSpecular(), level.getLightAt(i)->getPosition(), level.getLightAt(i)->getConstantAttenuation(), level.getLightAt(i)->getLinearAttenuation(), level.getLightAt(i)->getQuadraticAttenuation(), level.getLightAt(i)->getSpotTo(), level.getLightAt(i)->getSpotDirection(), level.getLightAt(i)->getSpotExponent(), level.getLightAt(i)->getSpotCutOff(), level.getLightAt(i)->isEnabled());
@@ -1774,6 +1778,14 @@ void LevelEditorView::updateSkyPosition() {
 	if (sky == nullptr) return;
 	sky->setTranslation(engine->getCamera()->getLookAt());
 	sky->update();
+}
+
+void LevelEditorView::applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
+	for (auto& selectedEntityId: selectedEntityIds) {
+		auto levelEntity = level.getObjectById(selectedEntityId);
+		if (levelEntity == nullptr) continue;
+		levelEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+	}
 }
 
 void LevelEditorView::updateGizmo() {

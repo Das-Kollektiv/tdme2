@@ -155,6 +155,8 @@ void LevelEditorScreenController::initialize()
 		objectPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_listbox"));
 		objectPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_presets"));
 		objectsListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("objects_listbox"));
+		objectReflectionsEnvironmentmappingDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_reflections_environmentmapping"));
+		btnObjectReflectionsEnvironmentmappingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_reflections_environmentmapping_apply"));
 		mapWidth->getController()->setDisabled(true);
 		mapDepth->getController()->setDisabled(true);
 		mapHeight->getController()->setDisabled(true);
@@ -1064,6 +1066,52 @@ void LevelEditorScreenController::onMapSkyApply() {
 	view->updateSky();
 }
 
+void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId) {
+	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
+	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
+	auto environmentMappingIdsDropDownInnerNode = dynamic_cast< GUIParentNode* >((objectReflectionsEnvironmentmappingDropDown->getScreenNode()->getNodeById(objectReflectionsEnvironmentmappingDropDown->getId() + "_inner")));
+	string environmentMappingIdsInnerNodeSubNodesXML = "";
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"<scrollarea-vertical id=\"" +
+		objectReflectionsEnvironmentmappingDropDown->getId() +
+		"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"<dropdown-option text=\"" +
+		GUIParser::escapeQuotes("<None>") +
+		"\" value=\"\" " +
+		(selectedEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") +
+		" />\n";
+	for (auto& environmentMappingId: level.getEnvironmentMappingIds()) {
+		environmentMappingIdsInnerNodeSubNodesXML =
+			environmentMappingIdsInnerNodeSubNodesXML +
+			"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" " +
+			(selectedEnvironmentMappingId == environmentMappingId?"selected=\"true\" ":"") +
+			" />\n";
+	}
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"</scrollarea-vertical>\n";
+	try {
+		environmentMappingIdsDropDownInnerNode->replaceSubNodes(environmentMappingIdsInnerNodeSubNodesXML, true);
+	} catch (Exception& exception) {
+		Console::print(string("LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void LevelEditorScreenController::unsetObjectReflectionsEnvironmentMappings() {
+	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(true);
+	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(true);
+}
+
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("objects_listbox") == 0) {
@@ -1185,6 +1233,9 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_map_sky_apply") == 0) {
 			onMapSkyApply();
+		} else
+		if (node->getId().compare("button_object_reflections_environmentmapping_apply") == 0) {
+			view->applyReflectionEnvironmentMappingId(objectReflectionsEnvironmentmappingDropDown->getController()->getValue().getString());
 		}
 	}
 }

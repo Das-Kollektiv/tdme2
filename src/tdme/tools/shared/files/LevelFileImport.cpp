@@ -230,6 +230,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 				);
 			}
 		}
+		levelEditorObject->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
 		level.addObject(levelEditorObject);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);

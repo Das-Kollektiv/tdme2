@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -15,8 +16,9 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::map;
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::model::Model;
@@ -44,6 +46,7 @@ private:
 	LevelEditorEntityLibrary* entityLibrary { nullptr };
 	map<string, LevelEditorObject*> objectsById;
 	vector<LevelEditorObject*> objects;
+	set<string> environmentMappingIds;
 	int objectIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
@@ -226,11 +229,11 @@ public:
 	void replaceEntity(int searchEntityId, int replaceEntityId);
 
 	/**
-	 * Updates pivot
-	 * @param modelId model id
-	 * @param pivot pivot
+	 * @return environment mapping object ids
 	 */
-	void updatePivot(int modelId, const Vector3& pivot);
+	inline set<string> getEnvironmentMappingIds() {
+		return environmentMappingIds;
+	}
 
 	/**
 	 * Adds an object to level
