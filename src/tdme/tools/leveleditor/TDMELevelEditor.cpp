@@ -165,7 +165,7 @@ void TDMELevelEditor::initialize() {
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(int32_t width, int32_t height) {
+void TDMELevelEditor::reshape(int width, int height) {
 	engine->reshape(width, height);
 }
 

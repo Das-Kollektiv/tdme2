@@ -60,9 +60,9 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 {
 private:
 	static vector<string> OBJECTCOLOR_NAMES;
-	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
-	static constexpr int32_t MOUSE_PANNING_NONE { 0 };
-	static constexpr int32_t MOUSE_ROTATION_NONE { 0 };
+	static constexpr int MOUSE_DOWN_LAST_POSITION_NONE { -1 };
+	static constexpr int MOUSE_PANNING_NONE { 0 };
+	static constexpr int MOUSE_ROTATION_NONE { 0 };
 	float snappingX;
 	float snappingZ;
 	bool snappingEnabled;
@@ -76,16 +76,16 @@ private:
 	float camScale;
 	float camScaleMax;
 	float camScaleMin;
-	int32_t placeEntityMouseX;
-	int32_t placeEntityMouseY;
-	int32_t mouseDownLastX;
-	int32_t mouseDownLastY;
+	int placeEntityMouseX;
+	int placeEntityMouseY;
+	int mouseDownLastX;
+	int mouseDownLastY;
 	bool mouseDragging;
 	Entity* mouseDraggingLastObject;
-	int32_t mousePanningSide;
-	int32_t mousePanningForward;
-	int32_t mouseRotationX;
-	int32_t mouseRotationY;
+	int mousePanningSide;
+	int mousePanningForward;
+	int mouseRotationX;
+	int mouseRotationY;
 	Vector3 camLookAt;
 	Vector3 gridCenter;
 	bool gridEnabled;
@@ -201,7 +201,7 @@ public:
 	 * Load selected entity from library
 	 * @param id id
 	 */
-	void loadEntityFromLibrary(int32_t id);
+	void loadEntityFromLibrary(int id);
 	void handleInputEvents() override;
 
 	/**
@@ -369,7 +369,7 @@ public:
 	 * @param position position
 	 * @param spotTo spot to
 	 */
-	void computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo);
+	void computeSpotDirection(int i, const Vector4& position, const Vector3& spotTo);
 
 	/**
 	 * Apply light with index i
@@ -387,7 +387,7 @@ public:
 	 * @param spotCutoff spot cutoff
 	 * @param enabled enabled
 	 */
-	void applyLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void applyLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 private:
 	/**

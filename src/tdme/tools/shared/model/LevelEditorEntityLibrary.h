@@ -25,19 +25,19 @@ using tdme::tools::shared::model::LevelEditorLevel;
 class tdme::tools::shared::model::LevelEditorEntityLibrary final
 {
 public:
-	static constexpr int32_t ID_ALLOCATE { -1 };
+	static constexpr int ID_ALLOCATE { -1 };
 
 private:
 	LevelEditorLevel* level { nullptr };
-	map<int32_t, LevelEditorEntity*> entitiesById;
+	map<int, LevelEditorEntity*> entitiesById;
 	vector<LevelEditorEntity*> entities;
-	int32_t entityIdx;
+	int entityIdx;
 
 	/**
 	 * Allocata a unique entity idx
 	 * @return
 	 */
-	int32_t allocateEntityId();
+	int allocateEntityId();
 
 public:
 	/**
@@ -66,7 +66,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+	LevelEditorEntity* addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * Add a trigger
@@ -79,7 +79,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth);
+	LevelEditorEntity* addTrigger(int id, const string& name, const string& description, float width, float height, float depth);
 
 	/**
 	 * Add a environment mapping
@@ -92,7 +92,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addEnvironmentMapping(int32_t id, const string& name, const string& description, float width, float height, float depth);
+	LevelEditorEntity* addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth);
 
 	/**
 	 * Add a empty
@@ -102,7 +102,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addEmpty(int32_t id, const string& name, const string& description);
+	LevelEditorEntity* addEmpty(int id, const string& name, const string& description);
 
 	/**
 	 * Add a empty
@@ -112,7 +112,7 @@ public:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	LevelEditorEntity* addParticleSystem(int32_t id, const string& name, const string& description);
+	LevelEditorEntity* addParticleSystem(int id, const string& name, const string& description);
 
 	/**
 	 * Add a entity
@@ -124,24 +124,24 @@ public:
 	 * @param idx idx
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntityAt(int32_t idx);
+	LevelEditorEntity* getEntityAt(int idx);
 
 	/**
 	 * Retrieve a entity
 	 * @param id id
 	 * @return level editor entity
 	 */
-	LevelEditorEntity* getEntity(int32_t id);
+	LevelEditorEntity* getEntity(int id);
 
 	/**
 	 * Remove a entity
 	 * @param id id
 	 */
-	void removeEntity(int32_t id);
+	void removeEntity(int id);
 
 	/**
 	 * @return entity count
 	 */
-	int32_t getEntityCount();
+	int getEntityCount();
 
 };

@@ -114,14 +114,14 @@ public:
 	 * @param text text
 	 * @return int
 	 */
-	static int32_t convertToInt(const string& text) /* throws(NumberFormatException) */;
+	static int convertToInt(const string& text) /* throws(NumberFormatException) */;
 
 	/**
 	 * Convert string to int
 	 * @param text text
 	 * @return int
 	 */
-	static int32_t convertToIntSilent(const string& text);
+	static int convertToIntSilent(const string& text);
 
 	/**
 	 * Set up given engine light with default light

@@ -179,12 +179,12 @@ float Tools::convertToFloat(const string& text)
 	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(const string& text)
+int Tools::convertToInt(const string& text)
 {
 	return Integer::parseInt(text);
 }
 
-int32_t Tools::convertToIntSilent(const string& text)
+int Tools::convertToIntSilent(const string& text)
 {
 	try {
 		return Integer::parseInt(text);

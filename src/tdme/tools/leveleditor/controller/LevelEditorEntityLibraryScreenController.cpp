@@ -118,7 +118,7 @@ void LevelEditorEntityLibraryScreenController::dispose()
 {
 }
 
-void LevelEditorEntityLibraryScreenController::selectEntity(int32_t entityId)
+void LevelEditorEntityLibraryScreenController::selectEntity(int entityId)
 {
 	MutableString entityLibraryListBoxSelection;
 	entityLibraryListBoxSelection.set(entityId);

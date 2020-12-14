@@ -427,7 +427,7 @@ public:
 	 * @param statsTransparentFaces stats transparent faces
 	 * @param statsMaterialCount stats material count
 	 */
-	void setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount);
+	void setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount);
 
 	/**
 	 * Unset statistics

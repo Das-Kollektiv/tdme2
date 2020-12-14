@@ -126,7 +126,7 @@ public:
 	/**
 	 * reshape tdme level editor
 	 */
-	void reshape(int32_t width, int32_t height);
+	void reshape(int width, int height);
 
 	/**
 	 * Switch to level editor

@@ -43,7 +43,7 @@ private:
 	LevelEditorEntityLibrary* entityLibrary { nullptr };
 	map<string, LevelEditorObject*> objectsById;
 	vector<LevelEditorObject*> objects;
-	int32_t objectIdx;
+	int objectIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
@@ -133,7 +133,7 @@ public:
 	/**
 	 * @return number of lights
 	 */
-	inline int32_t getLightCount() {
+	inline int getLightCount() {
 		return lights.size();
 	}
 
@@ -142,7 +142,7 @@ public:
 	 * @param i i
 	 * @return
 	 */
-	inline LevelEditorLight* getLightAt(int32_t i) {
+	inline LevelEditorLight* getLightAt(int i) {
 		return lights[i];
 	}
 
@@ -177,14 +177,14 @@ public:
 	/**
 	 * @return new object idx
 	 */
-	inline int32_t allocateObjectId() {
+	inline int allocateObjectId() {
 		return objectIdx++;
 	}
 
 	/**
 	 * @return object idx
 	 */
-	inline int32_t getObjectIdx() {
+	inline int getObjectIdx() {
 		return objectIdx;
 	}
 
@@ -192,7 +192,7 @@ public:
 	 * Set entity idx
 	 * @param entityIdx objectIdx
 	 */
-	inline void setObjectIdx(int32_t entityIdx) {
+	inline void setObjectIdx(int entityIdx) {
 		this->objectIdx = entityIdx;
 	}
 
@@ -206,27 +206,27 @@ public:
 	 * @param entityId entity id
 	 * @param objectsByEntityId objects by entity id
 	 */
-	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
+	void getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId);
 
 	/**
 	 * Remove objects with given entity id
 	 * @param entityId entity id
 	 */
-	void removeObjectsByEntityId(int32_t entityId);
+	void removeObjectsByEntityId(int entityId);
 
 	/**
 	 * Replace entity
 	 * @param searchEntityId search model id
 	 * @param replaceEntityId replace model id
 	 */
-	void replaceEntity(int32_t searchEntityId, int32_t replaceEntityId);
+	void replaceEntity(int searchEntityId, int replaceEntityId);
 
 	/**
 	 * Updates pivot
 	 * @param modelId model id
 	 * @param pivot pivot
 	 */
-	void updatePivot(int32_t modelId, const Vector3& pivot);
+	void updatePivot(int modelId, const Vector3& pivot);
 
 	/**
 	 * Adds an object to level
@@ -250,7 +250,7 @@ public:
 	/**
 	 * @return number of objects
 	 */
-	inline int32_t getObjectCount() {
+	inline int getObjectCount() {
 		return objects.size();
 	}
 
@@ -259,7 +259,7 @@ public:
 	 * @param idx idx
 	 * @return level object
 	 */
-	inline LevelEditorObject* getObjectAt(int32_t idx) {
+	inline LevelEditorObject* getObjectAt(int idx) {
 		return objects[idx];
 	}
 

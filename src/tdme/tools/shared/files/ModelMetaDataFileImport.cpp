@@ -77,7 +77,7 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -89,7 +89,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& p
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
 {
 	LevelEditorEntity* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
@@ -238,7 +238,7 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;

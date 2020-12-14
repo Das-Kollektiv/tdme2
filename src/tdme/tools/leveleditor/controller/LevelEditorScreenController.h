@@ -393,7 +393,7 @@ public:
 	 * @param spotCutoff spot cutoff
 	 * @param enabled enabled
 	 */
-	void setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/**
 	 * On light 0 apply
@@ -419,7 +419,7 @@ public:
 	 * On light 3 apply
 	 * @param lightIdx light idx
 	 */
-	void onLightApply(int32_t lightIdx);
+	void onLightApply(int lightIdx);
 
 	/**
 	 * On light 0 preset apply
@@ -445,7 +445,7 @@ public:
 	 * On light preset apply for light
 	 * @param lightIdx i
 	 */
-	void onLightPresetApply(int32_t lightIdx);
+	void onLightPresetApply(int lightIdx);
 
 	/**
 	 * On Light 0 spot direction compute
@@ -470,7 +470,7 @@ public:
 	/**
 	 * On Light spot direction compute for given light idx
 	 */
-	void onLightSpotDirectionCompute(int32_t lightIdx);
+	void onLightSpotDirectionCompute(int lightIdx);
 	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 	void onValueChanged(GUIElementNode* node) override;

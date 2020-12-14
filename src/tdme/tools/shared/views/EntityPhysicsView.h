@@ -34,7 +34,7 @@ public:
 	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };
 
 private:
-	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
+	static constexpr int MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 
 	Engine* engine { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
@@ -43,8 +43,8 @@ private:
 	int maxBoundingVolumeCount;
 
 	int displayBoundingVolumeIdxLast;
-	int32_t mouseDownLastX;
-	int32_t mouseDownLastY;
+	int mouseDownLastX;
+	int mouseDownLastY;
 	Vector3 totalDeltaScale;
 
 	int displayBoundingVolumeIdx;
@@ -113,7 +113,7 @@ public:
 	 * @param idx idx
 	 * @param type type
 	 */
-	void resetBoundingVolume(LevelEditorEntity* entity, int32_t idx, int32_t type);
+	void resetBoundingVolume(LevelEditorEntity* entity, int idx, int type);
 
 	/**
 	 * Set bounding volumes
@@ -131,7 +131,7 @@ public:
 	 * @param idx idx
 	 * @param bvTypeId bounding volume type
 	 */
-	void selectBoundingVolumeType(int32_t idx, int32_t bvTypeId);
+	void selectBoundingVolumeType(int idx, int bvTypeId);
 
 	/**
 	 * Set terrain mesh
@@ -172,14 +172,14 @@ private:
 	 * Clear model bounding volume
 	 * @param idx idx
 	 */
-	void clearModelBoundingVolume(int32_t idx);
+	void clearModelBoundingVolume(int idx);
 
 	/**
 	 * Setup model bounding volume
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
+	void setupModelBoundingVolume(LevelEditorEntity* entity, int idx);
 
 public:
 
@@ -188,7 +188,7 @@ public:
 	 * @param entity entity
 	 * @param idx bounding volume index
 	 */
-	void applyBoundingVolumeNone(LevelEditorEntity* entity, int32_t idx);
+	void applyBoundingVolumeNone(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume sphere apply
@@ -197,7 +197,7 @@ public:
 	 * @param center sphere center
 	 * @param radius radius
 	 */
-	void applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius);
+	void applyBoundingVolumeSphere(LevelEditorEntity* entity, int idx, const Vector3& center, float radius);
 
 	/**
 	 * On bounding volume capsule apply
@@ -207,7 +207,7 @@ public:
 	 * @param b point b
 	 * @param radius radius
 	 */
-	void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius);
+	void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int idx, const Vector3& a, const Vector3& b, float radius);
 
 	/**
 	 * On bounding volume AABB apply
@@ -216,7 +216,7 @@ public:
 	 * @param min AABB min vector
 	 * @param max AABB max vector
 	 */
-	void applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max);
+	void applyBoundingVolumeAabb(LevelEditorEntity* entity, int idx, const Vector3& min, const Vector3& max);
 
 	/**
 	 * On bounding volume OBB apply
@@ -228,7 +228,7 @@ public:
 	 * @param axis2 OBB axis 2
 	 * @param halfExtension OBB half extension
 	 */
-	void applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	void applyBoundingVolumeObb(LevelEditorEntity* entity, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
 	 * On bounding volume convex mesh apply
@@ -236,7 +236,7 @@ public:
 	 * @param idx bounding volume index
 	 * @param fileName file name
 	 */
-	void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName);
+	void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int idx, const string& fileName);
 
 	/**
 	 * Apply bounding volume transformations
@@ -246,7 +246,7 @@ public:
 	 * @param objectScale object scale
 	 * @param guiOnly only update GUI not the BV it self
 	 */
-	void applyBoundingVolumeTransformations(LevelEditorEntity* entity, int32_t idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
+	void applyBoundingVolumeTransformations(LevelEditorEntity* entity, int idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
 
 	/**
 	 * Handle input events

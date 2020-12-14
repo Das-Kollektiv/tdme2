@@ -42,15 +42,15 @@ class tdme::tools::shared::model::LevelEditorEntity final
 	friend class LevelEditorEntity_EntityType;
 
 public:
-	static constexpr int32_t ID_NONE { -1 };
-	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 64 };
-	static constexpr int32_t MODEL_SOUNDS_COUNT { 32 };
+	static constexpr int ID_NONE { -1 };
+	static constexpr int MODEL_BOUNDINGVOLUME_COUNT { 64 };
+	static constexpr int MODEL_SOUNDS_COUNT { 32 };
 	static char MODEL_BOUNDINGVOLUME_EDITING_ID[];
 	static char MODEL_BOUNDINGVOLUMES_ID[];
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
-	int32_t id;
+	int id;
 	LevelEditorEntity_EntityType* type { nullptr };
 	string name;
 	string description;
@@ -75,7 +75,7 @@ private:
 	vector<LevelEditorEntityAudio*> sounds;
 	map<string, string> shaderParameters;
 	map<string, string> distanceShaderParameters;
-	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
+	int environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 
 public:
@@ -92,7 +92,7 @@ public:
 	 * @param model model
 	 * @param pivot pivot
 	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
+	LevelEditorEntity(int id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
 
 	/**
 	 * Destructor
@@ -102,7 +102,7 @@ public:
 	/**
 	 * @return id
 	 */
-	inline int32_t getId() {
+	inline int getId() {
 		return id;
 	}
 
@@ -213,7 +213,7 @@ public:
 	/**
 	 * @return bounding volume count
 	 */
-	inline int32_t getBoundingVolumeCount() {
+	inline int getBoundingVolumeCount() {
 		return boundingVolumes.size();
 	}
 
@@ -222,7 +222,7 @@ public:
 	 * @param idx idx
 	 * @return level editor object bounding volume
 	 */
-	inline LevelEditorEntityBoundingVolume* getBoundingVolume(int32_t idx) {
+	inline LevelEditorEntityBoundingVolume* getBoundingVolume(int idx) {
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
@@ -232,13 +232,13 @@ public:
 	 * @param levelEditorEntityBoundingVolume level editor entity bounding volume
 	 * @return level editor bounding volume
 	 */
-	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
+	bool addBoundingVolume(int idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
 
 	/**
 	 * Remove bounding volume
 	 * @param idx idx
 	 */
-	void removeBoundingVolume(int32_t idx);
+	void removeBoundingVolume(int idx);
 
 	/**
 	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
@@ -282,7 +282,7 @@ public:
 	/**
 	 * @return particle systems count
 	 */
-	inline int32_t getParticleSystemsCount() {
+	inline int getParticleSystemsCount() {
 		return particleSystems.size();
 	}
 
@@ -512,7 +512,7 @@ public:
 	/**
 	 * @return render pass mask
 	 */
-	inline int32_t getEnvironmentMapRenderPassMask() {
+	inline int getEnvironmentMapRenderPassMask() {
 		return environmentMapRenderPassMask;
 	}
 
@@ -520,7 +520,7 @@ public:
 	 * Set up render pass mask
 	 * @param renderPassMask render pass mask
 	 */
-	inline void setEnvironmentMapRenderPassMask(int32_t renderPassMask) {
+	inline void setEnvironmentMapRenderPassMask(int renderPassMask) {
 		this->environmentMapRenderPassMask = renderPassMask;
 	}
 

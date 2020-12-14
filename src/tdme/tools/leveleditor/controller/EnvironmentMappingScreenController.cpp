@@ -150,7 +150,7 @@ void EnvironmentMappingScreenController::unsetEntityProperties()
 }
 
 void EnvironmentMappingScreenController::setGeneration() {
-	int32_t renderPassMask = view->getEntity()->getEnvironmentMapRenderPassMask();
+	int renderPassMask = view->getEntity()->getEnvironmentMapRenderPassMask();
 	int64_t frequency = view->getEntity()->getEnvironmentMapTimeRenderUpdateFrequency();
 	string renderPassMaskString;
 	auto renderPass = 1;
@@ -177,7 +177,7 @@ void EnvironmentMappingScreenController::unsetGeneration() {
 
 void EnvironmentMappingScreenController::onGenerationApply() {
 	try {
-		int32_t renderPassMask = 0;
+		int renderPassMask = 0;
 		for (auto renderPass: StringTools::tokenize(generationRenderPasses->getController()->getValue().getString(), "|")) renderPassMask|= Integer::parseInt(renderPass);
 		auto frequencyString = generationFrequency->getController()->getValue().getString();
 		auto frequency = frequencyString.empty() == true?-1LL:Integer::parseInt(frequencyString);

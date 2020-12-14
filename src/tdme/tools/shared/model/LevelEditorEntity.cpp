@@ -21,9 +21,9 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::utilities::StringTools;
 
-constexpr int32_t LevelEditorEntity::ID_NONE;
-constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
-constexpr int32_t LevelEditorEntity::MODEL_SOUNDS_COUNT;
+constexpr int LevelEditorEntity::ID_NONE;
+constexpr int LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
+constexpr int LevelEditorEntity::MODEL_SOUNDS_COUNT;
 
 char LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
@@ -96,7 +96,7 @@ char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUN
 	"model_bv.63"
 };
 
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
+LevelEditorEntity::LevelEditorEntity(int id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -135,7 +135,7 @@ void LevelEditorEntity::setModel(Model* model) {
 	this->model = model;
 }
 
-bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
+bool LevelEditorEntity::addBoundingVolume(int idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
 {
 	if (idx < 0)
 		return false;
@@ -149,7 +149,7 @@ bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBounding
 	return false;
 }
 
-void LevelEditorEntity::removeBoundingVolume(int32_t idx)
+void LevelEditorEntity::removeBoundingVolume(int idx)
 {
 	delete boundingVolumes[idx];
 	boundingVolumes.erase(boundingVolumes.begin() + idx);

@@ -1671,7 +1671,7 @@ void ModelEditorScreenController::unsetPreview() {
 }
 
 
-void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
+void ModelEditorScreenController::setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount)
 {
 	this->statsOpaqueFaces->getController()->setValue(MutableString(statsOpaqueFaces));
 	this->statsTransparentFaces->getController()->setValue(MutableString(statsTransparentFaces));

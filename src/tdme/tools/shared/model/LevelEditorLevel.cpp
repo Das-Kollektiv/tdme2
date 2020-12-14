@@ -161,7 +161,7 @@ void LevelEditorLevel::clearObjects()
 	objectIdx = 0;
 }
 
-void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId) {
+void LevelEditorLevel::getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId) {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == entityId) {
 			objectsByEntityId.push_back(object->getId());
@@ -169,7 +169,7 @@ void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& ob
 	}
 }
 
-void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
+void LevelEditorLevel::removeObjectsByEntityId(int entityId)
 {
 	vector<string> objectsToRemove;
 	getObjectsByEntityId(entityId, objectsToRemove);
@@ -178,7 +178,7 @@ void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 	}
 }
 
-void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEntityId)
+void LevelEditorLevel::replaceEntity(int searchEntityId, int replaceEntityId)
 {
 	auto replaceEntity = getEntityLibrary()->getEntity(replaceEntityId);
 	if (replaceEntity == nullptr)
@@ -191,7 +191,7 @@ void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEnti
 	}
 }
 
-void LevelEditorLevel::updatePivot(int32_t modelId, const Vector3& pivot)
+void LevelEditorLevel::updatePivot(int modelId, const Vector3& pivot)
 {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == modelId) {

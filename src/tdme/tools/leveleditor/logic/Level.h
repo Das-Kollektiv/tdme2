@@ -37,10 +37,10 @@ class tdme::tools::leveleditor::logic::Level final
 {
 
 public:
-	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
-	static constexpr int32_t RIGIDBODY_TYPEID_DYNAMIC { 2 };
-	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
-	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
+	static constexpr int RIGIDBODY_TYPEID_STATIC { 1 };
+	static constexpr int RIGIDBODY_TYPEID_DYNAMIC { 2 };
+	static constexpr int RIGIDBODY_TYPEID_COLLISION { 4 };
+	static constexpr int RIGIDBODY_TYPEID_TRIGGER { 8 };
 
 	static float renderGroupsPartitionWidth;
 	static float renderGroupsPartitionHeight;
@@ -104,7 +104,7 @@ public:
  	 * Set render groups reduce objects by a given factor
  	 * @param reduceBy render groups objects reduce by factor
  	 */
-	inline static void setRenderGroupsReduceBy(int32_t reduceBy) {
+	inline static void setRenderGroupsReduceBy(int reduceBy) {
 		Level::renderGroupsReduceBy = reduceBy;
 	}
 

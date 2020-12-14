@@ -338,7 +338,7 @@ void LevelEditorView::setSnapping(bool snappingEnabled, float snappingX, float s
 	this->snappingZ = snappingZ;
 }
 
-void LevelEditorView::loadEntityFromLibrary(int32_t id)
+void LevelEditorView::loadEntityFromLibrary(int id)
 {
 	selectedEntity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(id);
 }
@@ -1708,7 +1708,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 	if (displayOnly == false) levelEditorScreenController->setObjectListbox(level);
 }
 
-void LevelEditorView::computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo)
+void LevelEditorView::computeSpotDirection(int i, const Vector4& position, const Vector3& spotTo)
 {
 	auto _from = Vector3(position.getX(), position.getY(), position.getZ());
 	auto spotDirection = spotTo.clone().sub(_from);
@@ -1720,7 +1720,7 @@ void LevelEditorView::computeSpotDirection(int32_t i, const Vector4& position, c
 	levelEditorScreenController->setLight(i, level.getLightAt(i)->getAmbient(), level.getLightAt(i)->getDiffuse(), level.getLightAt(i)->getSpecular(), level.getLightAt(i)->getPosition(), level.getLightAt(i)->getConstantAttenuation(), level.getLightAt(i)->getLinearAttenuation(), level.getLightAt(i)->getQuadraticAttenuation(), level.getLightAt(i)->getSpotTo(), level.getLightAt(i)->getSpotDirection(), level.getLightAt(i)->getSpotExponent(), level.getLightAt(i)->getSpotCutOff(), level.getLightAt(i)->isEnabled());
 }
 
-void LevelEditorView::applyLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorView::applyLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
 	level.getLightAt(i)->getAmbient().set(ambient);
 	level.getLightAt(i)->getDiffuse().set(diffuse);

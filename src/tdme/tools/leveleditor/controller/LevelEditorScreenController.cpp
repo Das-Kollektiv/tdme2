@@ -823,7 +823,7 @@ void LevelEditorScreenController::unselectLightPresets()
 {
 }
 
-void LevelEditorScreenController::setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorScreenController::setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
 	lightsAmbient[i]->getController()->setValue(MutableString(Tools::formatFloat(ambient.getRed())).append(", ").append(Tools::formatFloat(ambient.getGreen())).append(", ").append(Tools::formatFloat(ambient.getBlue())).append(", ").append(Tools::formatFloat(ambient.getAlpha())));
 	lightsDiffuse[i]->getController()->setValue(MutableString(Tools::formatFloat(diffuse.getRed())).append(", ").append(Tools::formatFloat(diffuse.getGreen())).append(", ").append(Tools::formatFloat(diffuse.getBlue())).append(", ").append(Tools::formatFloat(diffuse.getAlpha())));
@@ -871,7 +871,7 @@ void LevelEditorScreenController::onLight3Apply()
 	onLightApply(3);
 }
 
-void LevelEditorScreenController::onLightApply(int32_t lightIdx)
+void LevelEditorScreenController::onLightApply(int lightIdx)
 {
 	try {
 		auto enabled = lightsEnabled[lightIdx]->getController()->getValue().equals(CHECKBOX_CHECKED);
@@ -927,7 +927,7 @@ void LevelEditorScreenController::onLight3PresetApply()
 	onLightPresetApply(3);
 }
 
-void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
+void LevelEditorScreenController::onLightPresetApply(int lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
@@ -958,7 +958,7 @@ void LevelEditorScreenController::onLight3SpotDirectionCompute()
 	onLightSpotDirectionCompute(3);
 }
 
-void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
+void LevelEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
 {
 	try {
 		view->computeSpotDirection(
