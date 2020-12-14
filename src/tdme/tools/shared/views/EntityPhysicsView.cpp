@@ -67,7 +67,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 
-EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount, int boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
+EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
 {
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;

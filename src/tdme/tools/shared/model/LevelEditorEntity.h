@@ -75,7 +75,7 @@ private:
 	vector<LevelEditorEntityAudio*> sounds;
 	map<string, string> shaderParameters;
 	map<string, string> distanceShaderParameters;
-	int environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
+	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 
 public:

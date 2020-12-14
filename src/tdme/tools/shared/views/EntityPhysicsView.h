@@ -50,7 +50,7 @@ private:
 	int displayBoundingVolumeIdx;
 	bool displayBoundingVolume;
 
-	int boundingVolumeTypeMask;
+	int32_t boundingVolumeTypeMask;
 
 public:
 	/**
@@ -60,7 +60,7 @@ public:
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1, int boundingVolumeTypeMask = EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ALL);
+	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

@@ -34,7 +34,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
-Gizmo::Gizmo(Engine* engine, const string& id, int gizmoTypeMask)
+Gizmo::Gizmo(Engine* engine, const string& id, int32_t gizmoTypeMask)
 {
 	this->engine = engine;
 	this->id = id;

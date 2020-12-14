@@ -146,7 +146,7 @@ protected:
 	GUINode_ComputedConstraints computedConstraints;
 	GUIColor backgroundColor;
 	Texture* backgroundTexture { nullptr };
-	int backgroundTextureId;
+	int32_t backgroundTextureId;
 	GUINode_Scale9Grid backgroundImageScale9Grid;
 	GUIColor backgroundImageEffectColorMul;
 	GUIColor backgroundImageEffectColorAdd;

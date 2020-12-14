@@ -37,10 +37,10 @@ class tdme::tools::leveleditor::logic::Level final
 {
 
 public:
-	static constexpr int RIGIDBODY_TYPEID_STATIC { 1 };
-	static constexpr int RIGIDBODY_TYPEID_DYNAMIC { 2 };
-	static constexpr int RIGIDBODY_TYPEID_COLLISION { 4 };
-	static constexpr int RIGIDBODY_TYPEID_TRIGGER { 8 };
+	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
+	static constexpr int32_t RIGIDBODY_TYPEID_DYNAMIC { 2 };
+	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
+	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
 	static float renderGroupsPartitionWidth;
 	static float renderGroupsPartitionHeight;

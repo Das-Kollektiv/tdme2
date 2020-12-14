@@ -13,7 +13,7 @@ using tdme::utilities::Enum;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::views::Gizmo;
 
-LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(const string& name, int ordinal, int boundingVolumeCount, int gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension):
+LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(const string& name, int ordinal, int boundingVolumeCount, int32_t gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension):
 	Enum(name, ordinal), boundingVolumeCount(boundingVolumeCount), gizmoTypeMask(gizmoTypeMask), nonEditScaleDownMode(nonEditScaleDownMode), nonEditScaleDownModeDimension(nonEditScaleDownModeDimension)
 {
 }

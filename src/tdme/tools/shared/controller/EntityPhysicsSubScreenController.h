@@ -114,7 +114,7 @@ public:
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

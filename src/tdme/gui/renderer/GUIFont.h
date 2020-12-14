@@ -57,7 +57,7 @@ private:
 	/**
 	 * Texture id
 	 */
-	int textureId { -1 };
+	int32_t textureId { -1 };
 
 	/**
 	 * The characters building up the font

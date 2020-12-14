@@ -57,7 +57,7 @@ private:
 	GizmoMode gizmoMode;
 	Vector3 gizmoLastResult;
 	bool gizmoLastResultAvailable;
-	int gizmoTypeMask;
+	int32_t gizmoTypeMask;
 
 public:
 	/**
@@ -66,7 +66,7 @@ public:
 	 * @param id id
 	 * @param gizmoTypeMask gizmo type mask
 	 */
-	Gizmo(Engine* engine, const string& id, int gizmoTypeMask = GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
+	Gizmo(Engine* engine, const string& id, int32_t gizmoTypeMask = GIZMOTYPE_TRANSLATE | GIZMOTYPE_ROTATE | GIZMOTYPE_SCALE);
 
 	/**
 	 * Destructor
@@ -76,7 +76,7 @@ public:
 	/**
 	 * @return GIZMO type mask
 	 */
-	inline int getGizmoTypeMask() const {
+	inline int32_t getGizmoTypeMask() const {
 		return gizmoTypeMask;
 	}
 

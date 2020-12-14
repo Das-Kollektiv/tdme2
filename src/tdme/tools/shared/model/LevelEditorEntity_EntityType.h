@@ -17,7 +17,7 @@ class tdme::tools::shared::model::LevelEditorEntity_EntityType final: public Enu
 
 private:
 	int boundingVolumeCount;
-	int gizmoTypeMask;
+	int32_t gizmoTypeMask;
 	bool nonEditScaleDownMode;
 	Vector3 nonEditScaleDownModeDimension;
 
@@ -49,7 +49,7 @@ public:
 	/**
 	 * @return gizmo types
 	 */
-	inline int getGizmoTypeMask() {
+	inline int32_t getGizmoTypeMask() {
 		return gizmoTypeMask;
 	}
 
