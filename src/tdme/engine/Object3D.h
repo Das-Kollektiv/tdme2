@@ -56,10 +56,6 @@ class tdme::engine::Object3D final
 	: public Object3DInternal
 	, public Entity
 {
-
-public:
-	enum RenderPass { RENDERPASS_NONE, RENDERPASS_OBJECTS, RENDERPASS_POST_POSTPROCESSING };
-
 private:
 	friend class Engine;
 	friend class LODObject3D;
@@ -72,10 +68,11 @@ private:
 	Engine* engine { nullptr };
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
+	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
-	RenderPass renderPass { RENDERPASS_OBJECTS };
+	string reflectionEnvironmentMappingId;
 	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
 	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
@@ -302,6 +299,14 @@ public:
 		return instanceTransformations[currentInstance];
 	}
 
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
+	}
+
 	/**
 	 * @return shader id
 	 */
@@ -344,18 +349,17 @@ public:
 	}
 
 	/**
-	 * @return render pass
+	 * @return reflection environment mapping id
 	 */
-	inline RenderPass getRenderPass() const {
-		return renderPass;
+	inline const string& getReflectionEnvironmentMappingId() {
+		return reflectionEnvironmentMappingId;
 	}
 
 	/**
-	 * Set render pass
-	 * @param renderPass render pass
+	 * @return reflection environment mapping id
 	 */
-	inline void setRenderPass(RenderPass renderPass) {
-		this->renderPass = renderPass;
+	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
+		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
 	}
 
 	/**

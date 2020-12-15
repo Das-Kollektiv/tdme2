@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -12,6 +13,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -63,6 +65,11 @@ void LightingShaderBaseImplementation::initialize()
 		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureUnit");
 		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
 	}
+
+	// environment mapping
+	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureUnit");
+	uniformEnvironmentMappingTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureAvailable");
+	uniformEnvironmentMappingPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingPosition");
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
@@ -133,12 +140,19 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
+
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
 	updateMaterial(renderer, context);
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		updateLight(renderer, context, i);
 	}
+
+	// environment mapping texture unit
+	if (uniformEnvironmentMappingTextureUnit != -1) {
+		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+	}
+
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
@@ -267,5 +281,16 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* con
 
 			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT:
+			if (uniformEnvironmentMappingTextureUnit != -1 && textureId != 0) {
+				if (uniformEnvironmentMappingTextureAvailable != -1) {
+					renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 1);
+				}
+				if (uniformEnvironmentMappingPosition != -1) {
+					renderer->setProgramUniformFloatVec3(context, uniformEnvironmentMappingPosition, renderer->getEnvironmentMappingCubeMapPosition(context));
+				}
+			} else {
+				if (uniformEnvironmentMappingTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 0);
+			}
 	}
 }

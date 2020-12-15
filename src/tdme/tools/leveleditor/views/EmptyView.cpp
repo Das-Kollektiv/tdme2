@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -26,6 +27,7 @@
 using std::string;
 
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;

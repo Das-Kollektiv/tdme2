@@ -99,6 +99,7 @@ using tdme::utilities::StringTools;
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
 Model* Tools::gizmoAll = nullptr;
+Model* Tools::gizmoTranslationScale = nullptr;
 Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
@@ -178,12 +179,12 @@ float Tools::convertToFloat(const string& text)
 	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(const string& text)
+int Tools::convertToInt(const string& text)
 {
 	return Integer::parseInt(text);
 }
 
-int32_t Tools::convertToIntSilent(const string& text)
+int Tools::convertToIntSilent(const string& text)
 {
 	try {
 		return Integer::parseInt(text);
@@ -315,7 +316,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+		entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -521,28 +523,35 @@ void Tools::loadSettings(Application* application) {
 
 Model* Tools::getGizmoAll() {
 	if (gizmoAll == nullptr) {
-		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.fbx.tm");
+		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.tm");
 	}
 	return gizmoAll;
 }
 
+Model* Tools::getGizmoTranslationScale() {
+	if (gizmoTranslationScale == nullptr) {
+		gizmoTranslationScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_transscale.tm");
+	}
+	return gizmoTranslationScale;
+}
+
 Model* Tools::getGizmoTranslation() {
 	if (gizmoTranslation == nullptr) {
-		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.fbx.tm");
+		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.tm");
 	}
 	return gizmoTranslation;
 }
 
 Model* Tools::getGizmoScale() {
 	if (gizmoScale == nullptr) {
-		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.fbx.tm");
+		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.tm");
 	}
 	return gizmoScale;
 }
 
 Model* Tools::getGizmoRotations() {
 	if (gizmoRotations == nullptr) {
-		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
+		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.tm");
 	}
 	return gizmoRotations;
 }

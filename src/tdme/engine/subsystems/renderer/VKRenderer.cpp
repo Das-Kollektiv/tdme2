@@ -36,6 +36,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -101,8 +102,10 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
+
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::Timing;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -4458,6 +4461,11 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
 }
 
+int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+	Console::println("VKRenderer::setCubeMapTexture(): Not implemented");
+	return 0;
+}
+
 void VKRenderer::uploadTexture(void* context, Texture* texture)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
@@ -4946,7 +4954,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 }
 
-int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
+int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureGlId) + ",  " + to_string(colorBufferTextureGlId));
 

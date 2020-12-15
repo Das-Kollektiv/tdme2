@@ -582,11 +582,10 @@ void SharedParticleSystemView::updateGizmo(LevelEditorEntity* entity) {
 	auto pse = dynamic_cast<ParticleSystemEntity*>(selectedEntity);
 	if (selectedEntity != nullptr) {
 		if (pse != nullptr) {
-			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()));
+			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransformations());
 		} else {
-			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter());
+			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
 		}
-		setGizmoRotation(entity, selectedEntity->getTransformations());
 	} else {
 		removeGizmo();
 	}

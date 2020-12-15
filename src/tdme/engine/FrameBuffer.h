@@ -24,6 +24,16 @@ public:
 	static constexpr int32_t FRAMEBUFFER_DEPTHBUFFER { 1 };
 	static constexpr int32_t FRAMEBUFFER_COLORBUFFER { 2 };
 
+	static constexpr int32_t CUBEMAPTEXTUREID_NONE { 0 };
+
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_NONE { 0 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_X { 1 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_POSITIVE_X { 2 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_POSITIVE_Y { 3 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_Y { 4 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_POSITIVE_Z { 5 };
+	static constexpr int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_Z { 6 };
+
 private:
 	int32_t width;
 	int32_t height;
@@ -31,14 +41,18 @@ private:
 	int32_t depthBufferTextureId;
 	int32_t colorBufferTextureId;
 	int32_t buffers;
+	int32_t cubeMapTextureId;
+	int32_t cubeMapTextureIndex;
 public:
 	/**
 	 * Public constructor
 	 * @param width width
 	 * @param height height
 	 * @param buffers buffers (see FrameBuffer::FRAMEBUFFER_*)
+	 * @param cubeMapTextureId cube map texture id
+	 * @param cubeMapTextureIndex cube map texture index
 	 */
-	FrameBuffer(int32_t width, int32_t height, int32_t buffers);
+	FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId = CUBEMAPTEXTUREID_NONE, int32_t cubeMapTextureIndex = CUBEMAPTEXTUREINDEX_NONE);
 
 	/**
 	 * @return width

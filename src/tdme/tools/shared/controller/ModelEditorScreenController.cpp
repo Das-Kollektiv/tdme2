@@ -31,7 +31,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
@@ -76,7 +75,6 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
@@ -119,9 +117,9 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->audioPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, true);
-	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
+	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUps(), modelPath, true);
+	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUps(), audioPath);
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
 }
 
@@ -511,15 +509,15 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 		void performAction() override {
 			modelEditorScreenController->lodModelFile->getController()->setValue(
 				MutableString(
-					modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+					modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 					"/" +
-					modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				)
 			);
 			modelEditorScreenController->modelPath->setPath(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -537,7 +535,7 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 	auto entityLodLevel = getLODLevel(lodLevelInt);
 	if (entityLodLevel == nullptr) return;
 	auto extensions = ModelReader::getModelExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -905,14 +903,14 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -932,7 +930,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		specularMaterialProperties->getDiffuseTextureFileName() != ""?specularMaterialProperties->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -958,14 +956,14 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -985,7 +983,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		specularMaterialProperties->getDiffuseTransparencyTextureFileName() != ""?specularMaterialProperties->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1011,14 +1009,14 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1038,7 +1036,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		specularMaterialProperties->getNormalTextureFileName() != ""?specularMaterialProperties->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1064,14 +1062,14 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1091,7 +1089,7 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		specularMaterialProperties->getSpecularTextureFileName() != ""?specularMaterialProperties->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1113,14 +1111,14 @@ void ModelEditorScreenController::onMaterialLoadPBRBaseColorTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1140,7 +1138,7 @@ void ModelEditorScreenController::onMaterialLoadPBRBaseColorTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		pbrMaterialProperties != nullptr && pbrMaterialProperties->getBaseColorTextureFileName() != ""?pbrMaterialProperties->getBaseColorTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1162,14 +1160,14 @@ void ModelEditorScreenController::onMaterialLoadPBRMetallicRoughnessTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1189,7 +1187,7 @@ void ModelEditorScreenController::onMaterialLoadPBRMetallicRoughnessTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		pbrMaterialProperties != nullptr && pbrMaterialProperties->getMetallicRoughnessTextureFileName() != ""?pbrMaterialProperties->getMetallicRoughnessTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1211,14 +1209,14 @@ void ModelEditorScreenController::onMaterialLoadPBRNormalTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+					append(modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
 			modelEditorScreenController->getModelPath()->setPath(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1238,7 +1236,7 @@ void ModelEditorScreenController::onMaterialLoadPBRNormalTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		pbrMaterialProperties != nullptr && pbrMaterialProperties->getNormalTextureFileName() != ""?pbrMaterialProperties->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1606,14 +1604,14 @@ void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelLoad() {
 	public:
 		void performAction() override {
 			modelEditorScreenController->previewAnimationsAttachment1ModelModel->getController()->setValue(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorScreenController->modelPath->setPath(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1628,7 +1626,7 @@ void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelLoad() {
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
@@ -1673,7 +1671,7 @@ void ModelEditorScreenController::unsetPreview() {
 }
 
 
-void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
+void ModelEditorScreenController::setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount)
 {
 	this->statsOpaqueFaces->getController()->setValue(MutableString(statsOpaqueFaces));
 	this->statsTransparentFaces->getController()->setValue(MutableString(statsTransparentFaces));
@@ -1718,13 +1716,13 @@ void ModelEditorScreenController::onModelLoad()
 	public:
 		void performAction() override {
 			modelEditorScreenController->view->loadFile(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorScreenController->modelPath->setPath(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1745,7 +1743,7 @@ void ModelEditorScreenController::onModelLoad()
 	fileName = Tools::getFileName(fileName);
 	vector<string> extensions = ModelReader::getModelExtensions();
 	extensions.push_back("tmm");
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -1763,13 +1761,13 @@ void ModelEditorScreenController::onModelSave()
 		void performAction() override {
 			try {
 				modelEditorScreenController->view->saveFile(
-					modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-					modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+					modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);
 				modelEditorScreenController->modelPath->setPath(
-					modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+					modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 				);
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
 				modelEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -1797,7 +1795,7 @@ void ModelEditorScreenController::onModelSave()
 		"tmm"
 	};
 	fileName = Tools::getFileName(fileName);
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Save to: ",
 		extensions,
@@ -1820,13 +1818,13 @@ void ModelEditorScreenController::onModelReimport()
 	public:
 		void performAction() override {
 			modelEditorScreenController->view->reimportModel(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorScreenController->modelPath->setPath(
-				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			modelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1841,7 +1839,7 @@ void ModelEditorScreenController::onModelReimport()
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Reimport model: ",
 		ModelReader::getModelExtensions(),
@@ -1869,7 +1867,7 @@ void ModelEditorScreenController::onRenderingApply()
 	try {
 		view->getEntity()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
 		view->getEntity()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setRenderNodes(renderingRenderGroups->getController()->getValue().equals("1"));
+		view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
 		view->getEntity()->setShader(renderingShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));
@@ -1922,7 +1920,7 @@ void ModelEditorScreenController::loadFile(const string& pathName, const string&
 
 void ModelEditorScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void ModelEditorScreenController::onValueChanged(GUIElementNode* node)

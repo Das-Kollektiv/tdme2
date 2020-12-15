@@ -17,7 +17,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::utilities::Float;
 
-FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers)
+FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	this->width = width;
 	this->height = height;
@@ -25,6 +25,8 @@ FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers)
 	frameBufferId = -1;
 	depthBufferTextureId = Engine::renderer->ID_NONE;
 	colorBufferTextureId = Engine::renderer->ID_NONE;
+	this->cubeMapTextureId = cubeMapTextureId;
+	this->cubeMapTextureIndex = cubeMapTextureIndex;
 }
 
 constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
@@ -36,10 +38,21 @@ void FrameBuffer::initialize()
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == CUBEMAPTEXTUREID_NONE)
 		colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height);
 
-	frameBufferId = Engine::renderer->createFramebufferObject(depthBufferTextureId, colorBufferTextureId);
+	auto rendererCubeMapTexureIndex = -1;
+	switch(cubeMapTextureIndex) {
+		case CUBEMAPTEXTUREINDEX_NONE: rendererCubeMapTexureIndex = -1; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_X: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_X; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_X: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_X; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_Y: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Y; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_Y: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Y; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_Z: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Z; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_Z: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Z; break;
+	}
+
+	frameBufferId = Engine::renderer->createFramebufferObject(depthBufferTextureId, colorBufferTextureId, cubeMapTextureId, rendererCubeMapTexureIndex);
 }
 
 void FrameBuffer::reshape(int32_t width, int32_t height)
@@ -47,7 +60,7 @@ void FrameBuffer::reshape(int32_t width, int32_t height)
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		Engine::renderer->resizeDepthBufferTexture(depthBufferTextureId, width, height);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == CUBEMAPTEXTUREID_NONE)
 		Engine::renderer->resizeColorBufferTexture(colorBufferTextureId, width, height);
 
 	this->width = width;
@@ -59,7 +72,7 @@ void FrameBuffer::dispose()
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		Engine::renderer->disposeTexture(depthBufferTextureId);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == CUBEMAPTEXTUREID_NONE)
 		Engine::renderer->disposeTexture(colorBufferTextureId);
 
 	Engine::renderer->disposeFrameBufferObject(frameBufferId);
