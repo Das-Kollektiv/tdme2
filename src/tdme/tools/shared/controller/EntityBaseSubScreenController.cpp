@@ -13,9 +13,9 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelPropertyPresets.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
@@ -36,9 +36,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelPropertyPresets;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::ScenePropertyPresets;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
@@ -77,7 +77,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 		Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	setEntityPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
+	setEntityPresetIds(ScenePropertyPresets::getInstance()->getObjectPropertiesPresets());
 }
 
 void EntityBaseSubScreenController::setEntityData(const string& name, const string& description)
@@ -98,7 +98,7 @@ void EntityBaseSubScreenController::unsetEntityData()
 	entityApply->getController()->setDisabled(true);
 }
 
-void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
+void EntityBaseSubScreenController::onEntityDataApply(Prototype* model)
 {
 	if (model == nullptr)
 		return;
@@ -107,7 +107,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds)
+void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
 {
 	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -138,7 +138,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<
 	}
 }
 
-void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName)
+void EntityBaseSubScreenController::setEntityProperties(Prototype* entity, const string& presetId, const string& selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	entityPropertyPresetApply->getController()->setDisabled(false);
@@ -158,7 +158,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 		entityPropertiesList->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
-		PropertyModelClass* entityProperty = entity->getPropertyByIndex(i);
+		PrototypeProperty* entityProperty = entity->getPropertyByIndex(i);
 		entityPropertiesListBoxSubNodesXML =
 			entityPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -198,7 +198,7 @@ void EntityBaseSubScreenController::unsetEntityProperties()
 	entityPropertyValue->getController()->setDisabled(true);
 }
 
-void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onEntityPropertySave(Prototype* entity)
 {
 	if (view->entityPropertySave(
 		entity,
@@ -209,14 +209,14 @@ void EntityBaseSubScreenController::onEntityPropertySave(LevelEditorEntity* enti
 	}
 }
 
-void EntityBaseSubScreenController::onEntityPropertyAdd(LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onEntityPropertyAdd(Prototype* entity)
 {
 	if (view->entityPropertyAdd(entity) == false) {
 		showErrorPopUp("Warning", "Adding new entity property failed");
 	}
 }
 
-void EntityBaseSubScreenController::onEntityPropertyRemove(LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onEntityPropertyRemove(Prototype* entity)
 {
 	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing entity property failed");
@@ -228,12 +228,12 @@ void EntityBaseSubScreenController::showErrorPopUp(const string& caption, const 
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntityBaseSubScreenController::onEntityPropertyPresetApply(LevelEditorEntity* model)
+void EntityBaseSubScreenController::onEntityPropertyPresetApply(Prototype* model)
 {
 	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue().getString());
 }
 
-void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(Prototype* entity)
 {
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyName->getController()->setValue(TEXT_EMPTY);
@@ -252,7 +252,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	}
 }
 
-void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* model)
+void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, Prototype* model)
 {
 	if (node == entityPropertiesList) {
 		onEntityPropertiesSelectionChanged(model);
@@ -260,7 +260,7 @@ void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, LevelEd
 	}
 }
 
-void EntityBaseSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
 {
 	if (type == GUIActionListenerType::PERFORMED)
 	{

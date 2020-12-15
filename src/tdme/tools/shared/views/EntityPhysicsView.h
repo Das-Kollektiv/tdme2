@@ -9,7 +9,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 
@@ -19,7 +19,7 @@ using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 
@@ -113,13 +113,13 @@ public:
 	 * @param idx idx
 	 * @param type type
 	 */
-	void resetBoundingVolume(LevelEditorEntity* entity, int idx, int type);
+	void resetBoundingVolume(Prototype* entity, int idx, int type);
 
 	/**
 	 * Set bounding volumes
 	 * @param entity entity
 	 */
-	void setBoundingVolumes(LevelEditorEntity* entity);
+	void setBoundingVolumes(Prototype* entity);
 
 	/**
 	 * Unset bounding volumes
@@ -137,7 +137,7 @@ public:
 	 * Set terrain mesh
 	 * @param entity entity
 	 */
-	void setTerrainMesh(LevelEditorEntity* entity);
+	void setTerrainMesh(Prototype* entity);
 
 	/**
 	 * Unset terrain mesh
@@ -148,7 +148,7 @@ public:
 	 * Set convex meshes
 	 * @param entity entity
 	 */
-	void setConvexMeshes(LevelEditorEntity* entity);
+	void setConvexMeshes(Prototype* entity);
 
 	/**
 	 * Unset convex meshes
@@ -164,7 +164,7 @@ public:
 	 * Set physics
 	 * @param entity entity
 	 */
-	void setPhysics(LevelEditorEntity* entity);
+	void setPhysics(Prototype* entity);
 
 private:
 
@@ -179,7 +179,7 @@ private:
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void setupModelBoundingVolume(LevelEditorEntity* entity, int idx);
+	void setupModelBoundingVolume(Prototype* entity, int idx);
 
 public:
 
@@ -188,7 +188,7 @@ public:
 	 * @param entity entity
 	 * @param idx bounding volume index
 	 */
-	void applyBoundingVolumeNone(LevelEditorEntity* entity, int idx);
+	void applyBoundingVolumeNone(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume sphere apply
@@ -197,7 +197,7 @@ public:
 	 * @param center sphere center
 	 * @param radius radius
 	 */
-	void applyBoundingVolumeSphere(LevelEditorEntity* entity, int idx, const Vector3& center, float radius);
+	void applyBoundingVolumeSphere(Prototype* entity, int idx, const Vector3& center, float radius);
 
 	/**
 	 * On bounding volume capsule apply
@@ -207,7 +207,7 @@ public:
 	 * @param b point b
 	 * @param radius radius
 	 */
-	void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int idx, const Vector3& a, const Vector3& b, float radius);
+	void applyBoundingVolumeCapsule(Prototype* entity, int idx, const Vector3& a, const Vector3& b, float radius);
 
 	/**
 	 * On bounding volume AABB apply
@@ -216,7 +216,7 @@ public:
 	 * @param min AABB min vector
 	 * @param max AABB max vector
 	 */
-	void applyBoundingVolumeAabb(LevelEditorEntity* entity, int idx, const Vector3& min, const Vector3& max);
+	void applyBoundingVolumeAabb(Prototype* entity, int idx, const Vector3& min, const Vector3& max);
 
 	/**
 	 * On bounding volume OBB apply
@@ -228,7 +228,7 @@ public:
 	 * @param axis2 OBB axis 2
 	 * @param halfExtension OBB half extension
 	 */
-	void applyBoundingVolumeObb(LevelEditorEntity* entity, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	void applyBoundingVolumeObb(Prototype* entity, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
 	 * On bounding volume convex mesh apply
@@ -236,7 +236,7 @@ public:
 	 * @param idx bounding volume index
 	 * @param fileName file name
 	 */
-	void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int idx, const string& fileName);
+	void applyBoundingVolumeConvexMesh(Prototype* entity, int idx, const string& fileName);
 
 	/**
 	 * Apply bounding volume transformations
@@ -246,49 +246,49 @@ public:
 	 * @param objectScale object scale
 	 * @param guiOnly only update GUI not the BV it self
 	 */
-	void applyBoundingVolumeTransformations(LevelEditorEntity* entity, int idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
+	void applyBoundingVolumeTransformations(Prototype* entity, int idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
 
 	/**
 	 * Handle input events
 	 * @param entity entity
 	 * @param objectScale object scale
 	 */
-	void handleInputEvents(LevelEditorEntity* entity, const Vector3& objectScale);
+	void handleInputEvents(Prototype* entity, const Vector3& objectScale);
 
 	/**
 	 * Display
 	 * @param entity entity
 	 */
-	void display(LevelEditorEntity* entity);
+	void display(Prototype* entity);
 
 	/**
 	 * Update GIZMO
 	 * @param entity level editor entity
 	 */
-	void updateGizmo(LevelEditorEntity* entity);
+	void updateGizmo(Prototype* entity);
 
 	/**
 	 * Set GIZMO rotation
 	 * @param entity level editor entity
 	 * @param transformations transformations
 	 */
-	void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+	void setGizmoRotation(Prototype* entity, const Transformations& transformations);
 
 	/**
 	 * Start editing bounding volume
 	 * @param entity entity
 	 */
-	void startEditingBoundingVolume(LevelEditorEntity* entity);
+	void startEditingBoundingVolume(Prototype* entity);
 
 	/**
 	 * End editing bounding volume
 	 * @param entity entity
 	 */
-	void endEditingBoundingVolume(LevelEditorEntity* entity);
+	void endEditingBoundingVolume(Prototype* entity);
 
 	/**
 	 * @return is editing bounding volume
 	 */
-	bool isEditingBoundingVolume(LevelEditorEntity* entity);
+	bool isEditingBoundingVolume(Prototype* entity);
 
 };

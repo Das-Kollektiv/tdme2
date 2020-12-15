@@ -18,9 +18,9 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ModelTools.h>
@@ -43,9 +43,9 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ModelTools;
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 	string modelFileName = argv[2];
 	string bvsModelFileName = argc >= 4?argv[3]:"";
 	try {
-		LevelEditorEntity* tmm = nullptr;
+		Prototype* tmm = nullptr;
 		// load model
 		Console::println("Loading model: " + modelFileName);
 		auto model = ModelReader::read(
@@ -134,9 +134,9 @@ int main(int argc, char** argv)
 			auto pathName = FileSystem::getInstance()->getPathName(tmmFileName);
 			auto fileName = FileSystem::getInstance()->getFileName(tmmFileName);
 			auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
-			tmm = new LevelEditorEntity(
+			tmm = new Prototype(
 				-1,
-				LevelEditorEntity_EntityType::MODEL,
+				Prototype_EntityType::MODEL,
 				fileNameWithoutExtension,
 				fileNameWithoutExtension,
 				"",
@@ -217,7 +217,7 @@ int main(int argc, char** argv)
 					to_string(tmm->getBoundingVolumeCount()) +
 					": " + convexMeshFileName
 				);
-				tmm->addBoundingVolume(tmm->getBoundingVolumeCount(), new LevelEditorEntityBoundingVolume(tmm->getBoundingVolumeCount(), tmm));
+				tmm->addBoundingVolume(tmm->getBoundingVolumeCount(), new PrototypeBoundingVolume(tmm->getBoundingVolumeCount(), tmm));
 				tmm->getBoundingVolume(tmm->getBoundingVolumeCount() - 1)->setupConvexMesh(
 					FileSystem::getInstance()->getPathName(convexMeshFileName),
 					FileSystem::getInstance()->getFileName(convexMeshFileName)

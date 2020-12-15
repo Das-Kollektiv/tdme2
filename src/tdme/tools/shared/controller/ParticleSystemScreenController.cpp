@@ -29,18 +29,18 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
@@ -80,18 +80,18 @@ using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_Type;
+using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
@@ -320,7 +320,7 @@ void ParticleSystemScreenController::unsetEntityData()
 	particleSystemSave->getController()->setDisabled(true);
 }
 
-void ParticleSystemScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
+void ParticleSystemScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
@@ -415,11 +415,11 @@ void ParticleSystemScreenController::setParticleSystemType()
 	particleSystemType->getActiveConditions().removeAll();
 	{
 		auto v = particleSystem->getType();
-		if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+		if (v == PrototypeParticleSystem_Type::NONE) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_NONE));
 			particleSystemType->getActiveConditions().add(TYPE_NONE);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_OBJECTPARTICLESYSTEM));
 			particleSystemType->getActiveConditions().add(TYPE_OBJECTPARTICLESYSTEM);
 			opsMaxCount->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getMaxCount()));
@@ -427,7 +427,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			opsModel->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getModelFile()));
 			opsAutoEmit->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->isAutoEmit() == true ? "1" : ""));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_POINTSPARTICLESYSTEM));
 			particleSystemType->getActiveConditions().add(TYPE_POINTSPARTICLESYSTEM);
 			ppsMaxPoints->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getMaxPoints()));
@@ -439,7 +439,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			ppsVerticalSprites->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureVerticalSprites()));
 			ppsFPS->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureSpritesFPS()));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_FOGPARTICLESYSTEM));
 			particleSystemType->getActiveConditions().add(TYPE_FOGPARTICLESYSTEM);
 			fpsMaxPoints->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getMaxPoints()));
@@ -467,9 +467,9 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 		auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
 		{
 			auto v = particleSystem->getType();
-			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+			if (v == PrototypeParticleSystem_Type::NONE) {
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue().getString()));
 				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue().getString()));
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue().getString() == "1");
@@ -479,7 +479,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 					view->getPopUpsViews()->getInfoDialogScreenController()->show("Error", "An error occurred: " + (string(exception.what())));
 				}
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setPointSize(Tools::convertToFloat(ppsPointSize->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString(), ppsTransparencyTexture->getController()->getValue().getString());
@@ -488,7 +488,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getPointParticleSystem()->setTextureVerticalSprites(Tools::convertToInt(ppsVerticalSprites->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setTextureSpritesFPS(Tools::convertToFloat(ppsFPS->getController()->getValue().getString()));
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 				particleSystem->getFogParticleSystem()->setMaxPoints(Tools::convertToInt(fpsMaxPoints->getController()->getValue().getString()));
 				particleSystem->getFogParticleSystem()->setPointSize(Tools::convertToFloat(fpsPointSize->getController()->getValue().getString()));
 				particleSystem->getFogParticleSystem()->setTextureFileName(fpsTexture->getController()->getValue().getString(), fpsTransparencyTexture->getController()->getValue().getString());
@@ -516,16 +516,16 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 	particleSystemType->getActiveConditions().removeAll();
 	particleSystemType->getActiveConditions().add(particleSystemTypeString);
 	if (particleSystemTypeString == TYPE_NONE) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::NONE);
+		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::NONE);
 	} else
 	if (particleSystemTypeString == TYPE_OBJECTPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM);
+		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM);
 	} else
 	if (particleSystemTypeString == TYPE_POINTSPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM);
+		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM);
 	} else
 	if (particleSystemTypeString == TYPE_FOGPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM);
+		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM);
 	} else {
 		Console::println(
 			string(
@@ -546,22 +546,22 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 	particleSystemEmitter->getActiveConditions().removeAll();
 	particleSystemEmitter->getActiveConditions().add(particleSystemEmitterString);
 	if (particleSystemEmitterString == EMITTER_NONE) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::NONE);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::NONE);
 	} else
 	if (particleSystemEmitterString == EMITTER_POINTPARTICLEEMITTER) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER);
 	} else
 	if (particleSystemEmitterString == EMITTER_BOUNDINGBOXPARTICLEEMITTER) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER);
 	} else
 	if (particleSystemEmitterString == EMITTER_CIRCLEPARTICLEEMITTER) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER);
 	} else
 	if (particleSystemEmitterString == EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY);
 	} else
 	if (particleSystemEmitterString == EMITTER_SPHEREPARTICLEEMITTER) {
-		particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER);
+		particleSystem->setEmitter(PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER);
 	} else {
 		Console::println(
 			string(
@@ -579,11 +579,11 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 		auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());;
 		{
 			auto v = particleSystem->getEmitter();
-			if (v == LevelEditorEntityParticleSystem_Emitter::NONE)
+			if (v == PrototypeParticleSystem_Emitter::NONE)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_NONE));
 			} else
-			if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
+			if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_POINTPARTICLEEMITTER));
 				auto emitter = particleSystem->getPointParticleEmitter();
@@ -598,7 +598,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->setColorStart(Tools::convertToColor4(ppeColorStart->getController()->getValue().getString()));
 				emitter->setColorEnd(Tools::convertToColor4(ppeColorEnd->getController()->getValue().getString()));
 			} else
-			if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
+			if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
 				auto emitter = particleSystem->getBoundingBoxParticleEmitters();
@@ -626,7 +626,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->setObbAxis1(obbAxis1);
 				emitter->setObbAxis2(obbAxis2);
 			} else
-			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
+			if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTER));
 				auto emitter = particleSystem->getCircleParticleEmitter();
@@ -653,7 +653,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->setAxis0(axis0);
 				emitter->setAxis1(axis1);
 			} else
-			if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)
+			if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
 				auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
@@ -680,7 +680,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				emitter->setAxis0(axis0);
 				emitter->setAxis1(axis1);
 			} else
-			if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
+			if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
 			{
 				particleSystemEmitters->getController()->setValue(MutableString(EMITTER_SPHEREPARTICLEEMITTER));
 				auto emitter = particleSystem->getSphereParticleEmitter();
@@ -774,11 +774,11 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 	auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
 	{
 		auto v = particleSystem->getEmitter();
-		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
+		if (v == PrototypeParticleSystem_Emitter::NONE) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_NONE));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_NONE);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_POINTPARTICLEEMITTER));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_POINTPARTICLEEMITTER);
 			auto emitter = particleSystem->getPointParticleEmitter();
@@ -793,7 +793,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			ppeColorStart->getController()->setValue(MutableString(Tools::formatColor4(emitter->getColorStart())));
 			ppeColorEnd->getController()->setValue(MutableString(Tools::formatColor4(emitter->getColorEnd())));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_BOUNDINGBOXPARTICLEEMITTER));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_BOUNDINGBOXPARTICLEEMITTER);
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
@@ -817,7 +817,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			bbpeObbRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
 			bbpeObbRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTER));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTER);
 			auto emitter = particleSystem->getCircleParticleEmitter();
@@ -842,7 +842,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			cpeRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
 			cpeRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY);
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
@@ -867,7 +867,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			cpepvRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
 			cpepvRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			particleSystemEmitters->getController()->setValue(MutableString(EMITTER_SPHEREPARTICLEEMITTER));
 			particleSystemEmitter->getActiveConditions().add(EMITTER_SPHEREPARTICLEEMITTER);
 			auto emitter = particleSystem->getSphereParticleEmitter();

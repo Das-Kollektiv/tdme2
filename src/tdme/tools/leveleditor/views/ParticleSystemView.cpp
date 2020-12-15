@@ -8,9 +8,9 @@
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/utilities/StringTools.h>
@@ -24,9 +24,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
 using tdme::utilities::StringTools;;
 
 ParticleSystemView::ParticleSystemView(PopUps* popUps)
@@ -39,17 +39,17 @@ void ParticleSystemView::onSetEntityData()
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
-void ParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity)
+void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity)
 {
 	TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldEntity->getId(), newEntity->getId());
 	TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
-LevelEditorEntity* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
+Prototype* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(LevelEditorEntityLibrary::ID_ALLOCATE, pathName, fileName);
+		auto levelEditorEntity = ModelMetaDataFileImport::doImport(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		TDMELevelEditor::getInstance()->getEntityLibrary()->addEntity(levelEditorEntity);
 		return levelEditorEntity;

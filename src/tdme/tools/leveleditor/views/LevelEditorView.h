@@ -14,8 +14,8 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
@@ -41,9 +41,9 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorObject;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -68,7 +68,7 @@ private:
 	bool snappingEnabled;
 	LevelEditorScreenController* levelEditorScreenController { nullptr };
 	Engine* engine { nullptr };
-	LevelEditorEntity* selectedEntity { nullptr };
+	Prototype* selectedEntity { nullptr };
 	bool reloadEntityLibrary;
 	map<string, LevelEditorView_ObjectColor*> objectColors;
 	Rotation* camLookRotationX { nullptr };
@@ -114,10 +114,10 @@ private:
 
 private:
 	Model* levelEditorGround { nullptr };
-	LevelEditorLevel level;
+	Scene level;
 	vector<string> selectedEntityIds;
 	set<string> selectedEntityIdsById;
-	vector<LevelEditorObject*> pasteObjects_;
+	vector<SceneEntity*> pasteObjects_;
 	PopUps* popUps;
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
@@ -148,17 +148,17 @@ public:
 	/**
 	 * @return level
 	 */
-	LevelEditorLevel* getLevel();
+	Scene* getLevel();
 
 	/**
 	 * @return selected entity
 	 */
-	LevelEditorEntity* getSelectedEntity();
+	Prototype* getSelectedEntity();
 
 	/**
 	 * @return selected level editor object
 	 */
-	LevelEditorObject* getSelectedObject();
+	SceneEntity* getSelectedObject();
 
 	/**
 	 * @return grid enabled

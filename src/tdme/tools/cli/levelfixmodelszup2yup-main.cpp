@@ -10,11 +10,12 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -27,11 +28,11 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::LevelFileExport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorObject;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLibrary;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -47,7 +48,7 @@ int main(int argc, char** argv)
 	string levelFileName = string(argv[1]);
 	try {
 		Console::println("Loading level: " + levelFileName);
-		LevelEditorLevel level;
+		Scene level;
 		LevelFileImport::doImport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
 		auto entityLibrary = level.getEntityLibrary();
 		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 			auto entity = entityLibrary->getEntityAt(i);
-			if (entity->getType() != LevelEditorEntity_EntityType::MODEL) continue;
+			if (entity->getType() != Prototype_EntityType::MODEL) continue;
 			entity->getModel()->setImportTransformationsMatrix(entity->getModel()->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
 			z2yUpMatrix.multiply(
 				entity->getModel()->getBoundingBox()->getMin(),
@@ -75,7 +76,7 @@ int main(int argc, char** argv)
 		// objects
 		for (auto i = 0; i < level.getObjectCount(); i++) {
 			auto object = level.getObjectAt(i);
-			if (object->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL) continue;
+			if (object->getEntity()->getType() != Prototype_EntityType::MODEL) continue;
 			auto scale = object->getTransformations().getScale();
 			object->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
 			auto rotationX = object->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex());

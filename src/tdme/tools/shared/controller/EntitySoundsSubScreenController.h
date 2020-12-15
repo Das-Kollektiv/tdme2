@@ -10,8 +10,8 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::array;
@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::PlayableSoundView;
@@ -47,17 +47,17 @@ private:
 	FileDialogPath* audioPath { nullptr };
 	EntitySoundsView* view { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundKey;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFile;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLoad;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundClear;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundGain;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundPitch;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundOffset;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundLooping;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFixed;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundApply;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundKey;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundFile;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundLoad;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundClear;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundGain;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundPitch;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundOffset;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundLooping;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundFixed;
+	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundApply;
 
 public:
 	/**
@@ -111,14 +111,14 @@ public:
 	 * Set physics
 	 * @param entity entity
 	 */
-	void setSounds(LevelEditorEntity* entity);
+	void setSounds(Prototype* entity);
 
 	/**
 	 * On sound apply
 	 * @param soundIdx sound index
 	 * @param levelEditorEntity entity
 	 */
-	void onSoundApply(int soundIdx, LevelEditorEntity* entity);
+	void onSoundApply(int soundIdx, Prototype* entity);
 
 	/**
 	 * On sound clear
@@ -142,7 +142,7 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
+	void onValueChanged(GUIElementNode* node, Prototype* entity);
 
 	/**
 	 * On action performed
@@ -150,6 +150,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
 
 };

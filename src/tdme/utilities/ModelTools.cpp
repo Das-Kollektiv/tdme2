@@ -27,7 +27,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
+#include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
@@ -61,7 +61,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorObject;
+using tdme::engine::scene::SceneEntity;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;

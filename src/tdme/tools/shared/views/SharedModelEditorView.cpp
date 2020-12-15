@@ -29,10 +29,10 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
@@ -75,10 +75,10 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
@@ -121,12 +121,12 @@ PopUps* SharedModelEditorView::getPopUps()
 	return popUps;
 }
 
-LevelEditorEntity* SharedModelEditorView::getEntity()
+Prototype* SharedModelEditorView::getEntity()
 {
 	return entity;
 }
 
-void SharedModelEditorView::setEntity(LevelEditorEntity* entity)
+void SharedModelEditorView::setEntity(Prototype* entity)
 {
 	engine->reset();
 	this->entity = entity;
@@ -497,7 +497,7 @@ void SharedModelEditorView::dispose()
 	audio->reset();
 }
 
-void SharedModelEditorView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
+void SharedModelEditorView::onLoadModel(Prototype* oldEntity, Prototype* entity)
 {
 	delete oldEntity;
 }
@@ -522,7 +522,7 @@ void SharedModelEditorView::loadModel()
 	}
 }
 
-LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
+Prototype* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
@@ -536,9 +536,9 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 			pathName,
 			fileName
 		);
-		auto levelEditorEntity = new LevelEditorEntity(
-			LevelEditorEntity::ID_NONE,
-			LevelEditorEntity_EntityType::MODEL,
+		auto levelEditorEntity = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_EntityType::MODEL,
 			name,
 			description,
 			"",

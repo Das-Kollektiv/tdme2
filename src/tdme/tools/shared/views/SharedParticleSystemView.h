@@ -7,7 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/View.h>
@@ -22,7 +22,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
@@ -53,7 +53,7 @@ private:
 	EntityDisplayView* entityDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
 	EntitySoundsView* entitySoundsView { nullptr };
-	LevelEditorEntity* entity { nullptr };
+	Prototype* entity { nullptr };
 	bool loadParticleSystemRequested;
 	bool initParticleSystemRequested;
 	bool updateParticleSystemRequested;
@@ -91,7 +91,7 @@ private:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
+	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
 
 public:
 	/**
@@ -123,7 +123,7 @@ public:
 	/**
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getEntity();
 
 	/**
 	 * Reset view
@@ -133,7 +133,7 @@ public:
 	/**
 	 * Set entity
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setEntity(Prototype* entity);
 
 	/**
 	 * @return particle system index
@@ -199,7 +199,7 @@ public:
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
-	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
+	virtual void onLoadParticleSystem(Prototype* oldEntity, Prototype* entity);
 
 	/**
 	 * On set entity data hook
@@ -210,14 +210,14 @@ public:
 	 * Update GIZMO
 	 * @param entity level editor entity
 	 */
-	void updateGizmo(LevelEditorEntity* entity);
+	void updateGizmo(Prototype* entity);
 
 	/**
 	 * Set GIZMO rotation
 	 * @param entity level editor entity
 	 * @param transformations transformations
 	 */
-	void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+	void setGizmoRotation(Prototype* entity, const Transformations& transformations);
 
 	/**
 	 * Apply particle system transformations

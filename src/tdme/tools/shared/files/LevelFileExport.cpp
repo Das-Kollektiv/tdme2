@@ -14,13 +14,13 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorLight.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -39,20 +39,20 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::ModelMetaDataFileExport;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::prototype::PrototypeProperty;
 
 using rapidjson::Document;
 using rapidjson::StringBuffer;
 using rapidjson::Writer;
 using rapidjson::Value;
 
-void LevelFileExport::doExport(const string& pathName, const string& fileName, LevelEditorLevel& level)
+void LevelFileExport::doExport(const string& pathName, const string& fileName, Scene& level)
 {
 	level.setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level.getEntityLibrary();
@@ -119,7 +119,7 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, L
 	Value jMapProperties;
 	jMapProperties.SetArray();
 	for (auto i = 0; i < level.getPropertyCount(); i++) {
-		PropertyModelClass* mapProperty = level.getPropertyByIndex(i);
+		PrototypeProperty* mapProperty = level.getPropertyByIndex(i);
 		Value jMapProperty;
 		jMapProperty.SetObject();
 		jMapProperty.AddMember("name", Value(mapProperty->getName(), jAllocator), jAllocator);
@@ -155,7 +155,7 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, L
 		Value jObjectProperties;
 		jObjectProperties.SetArray();
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
-			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);
+			PrototypeProperty* objectProperty = levelEditorObject->getPropertyByIndex(i);
 			Value jObjectProperty;
 			jObjectProperty.SetObject();
 			jObjectProperty.AddMember("name", Value(objectProperty->getName(), jAllocator), jAllocator);

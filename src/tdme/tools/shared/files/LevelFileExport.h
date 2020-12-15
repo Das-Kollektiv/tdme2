@@ -4,7 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -13,7 +14,7 @@ using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::scene::Scene;
 
 /**
  * TDME Level Editor File Export
@@ -32,6 +33,6 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doExport(const string& pathName, const string& fileName, LevelEditorLevel& level);
+	static void doExport(const string& pathName, const string& fileName, Scene& level);
 
 };

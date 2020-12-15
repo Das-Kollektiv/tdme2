@@ -23,9 +23,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/utilities/Console.h>
@@ -57,9 +57,9 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::scene::Scene;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::utilities::Console;

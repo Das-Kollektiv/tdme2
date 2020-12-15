@@ -9,8 +9,8 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/utilities/PathFinding.h>
 
 using std::vector;
@@ -20,8 +20,8 @@ using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::scene::Scene;
+using tdme::engine::prototype::Prototype;
 using tdme::utilities::PathFinding;
 
 /**
@@ -35,8 +35,8 @@ class tdme::tests::PathFindingTest final
 private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
-	LevelEditorLevel level;
-	LevelEditorEntity* playerModelEntity { nullptr };
+	Scene level;
+	Prototype* playerModelEntity { nullptr };
 	Object3D* playerObject { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;

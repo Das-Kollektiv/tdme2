@@ -25,8 +25,8 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -59,8 +59,8 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
@@ -72,7 +72,7 @@ EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhy
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;
 	this->entityPhysicsSubScreenController = entityPhysicsSubScreenController;
-	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
+	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
@@ -97,7 +97,7 @@ void EntityPhysicsView::initialize()
 	}
 }
 
-void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int idx, int type)
+void EntityPhysicsView::resetBoundingVolume(Prototype* entity, int idx, int type)
 {
 	BoundingBox aabb;
 	if (entity->getModel() != nullptr) {
@@ -166,7 +166,7 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int idx, 
 	}
 }
 
-void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
+void EntityPhysicsView::setBoundingVolumes(Prototype* entity)
 {
 	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
 		resetBoundingVolume(entity, i, 0);
@@ -252,12 +252,12 @@ void EntityPhysicsView::selectBoundingVolumeType(int idx, int bvTypeId)
 
 void EntityPhysicsView::clearModelBoundingVolume(int idx) {
 	if (idx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
-		dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx]);
+		dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_IDS[idx]);
 	}
-	engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+	engine->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 }
 
-void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int idx)
+void EntityPhysicsView::setupModelBoundingVolume(Prototype* entity, int idx)
 {
 	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	if (entityBoundingVolume == nullptr) return;
@@ -266,19 +266,19 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int 
 		Vector3 objectScale(1.0f, 1.0f, 1.0f);
 		auto modelEntity = engine->getEntity("model");
 		if (modelEntity != nullptr) objectScale = modelEntity->getScale();
-		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx];
+		auto modelBoundingVolumeEntityId = Prototype::MODEL_BOUNDINGVOLUME_IDS[idx];
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
 			modelBoundingVolumeEntity->setScale(objectScale);
 			modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 			modelBoundingVolumeEntity->setEnabled(false);
 			modelBoundingVolumeEntity->update();
-			dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->addEntity(modelBoundingVolumeEntity);
+			dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->addEntity(modelBoundingVolumeEntity);
 		}
 	}
 	if (displayBoundingVolumeIdx == idx) {
-		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID;
-		auto boundingVolumesEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
+		auto modelBoundingVolumeEntityId = Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID;
+		auto boundingVolumesEntity = engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID);
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto bv = entity->getBoundingVolume(idx);
 			if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
@@ -323,7 +323,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int 
 	}
 }
 
-void EntityPhysicsView::applyBoundingVolumeNone(LevelEditorEntity* entity, int idx)
+void EntityPhysicsView::applyBoundingVolumeNone(Prototype* entity, int idx)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -332,7 +332,7 @@ void EntityPhysicsView::applyBoundingVolumeNone(LevelEditorEntity* entity, int i
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int idx, const Vector3& center, float radius)
+void EntityPhysicsView::applyBoundingVolumeSphere(Prototype* entity, int idx, const Vector3& center, float radius)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -341,7 +341,7 @@ void EntityPhysicsView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, int idx, const Vector3& a, const Vector3& b, float radius)
+void EntityPhysicsView::applyBoundingVolumeCapsule(Prototype* entity, int idx, const Vector3& a, const Vector3& b, float radius)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -350,7 +350,7 @@ void EntityPhysicsView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, in
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int idx, const Vector3& min, const Vector3& max)
+void EntityPhysicsView::applyBoundingVolumeAabb(Prototype* entity, int idx, const Vector3& min, const Vector3& max)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -359,7 +359,7 @@ void EntityPhysicsView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int i
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::applyBoundingVolumeObb(LevelEditorEntity* entity, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
+void EntityPhysicsView::applyBoundingVolumeObb(Prototype* entity, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -368,7 +368,7 @@ void EntityPhysicsView::applyBoundingVolumeObb(LevelEditorEntity* entity, int id
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int idx, const string& fileName)
+void EntityPhysicsView::applyBoundingVolumeConvexMesh(Prototype* entity, int idx, const string& fileName)
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
@@ -380,7 +380,7 @@ void EntityPhysicsView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity,
 	setupModelBoundingVolume(entity, idx);
 }
 
-void EntityPhysicsView::setTerrainMesh(LevelEditorEntity* entity) {
+void EntityPhysicsView::setTerrainMesh(Prototype* entity) {
 	if (entity == nullptr) return;
 	entityPhysicsSubScreenController->setTerrainMesh(entity);
 }
@@ -393,7 +393,7 @@ void EntityPhysicsView::unsetConvexMeshes() {
 	entityPhysicsSubScreenController->unsetConvexMeshes();
 }
 
-void EntityPhysicsView::setConvexMeshes(LevelEditorEntity* entity) {
+void EntityPhysicsView::setConvexMeshes(Prototype* entity) {
 	entityPhysicsSubScreenController->setConvexMeshes(entity);
 }
 
@@ -401,18 +401,18 @@ void EntityPhysicsView::unsetPhysics() {
 	entityPhysicsSubScreenController->unsetPhysics();
 }
 
-void EntityPhysicsView::setPhysics(LevelEditorEntity* entity) {
+void EntityPhysicsView::setPhysics(Prototype* entity) {
 	entityPhysicsSubScreenController->setPhysics(entity);
 }
 
-void EntityPhysicsView::display(LevelEditorEntity* entity) {
+void EntityPhysicsView::display(Prototype* entity) {
 	if (entity == nullptr) return;
 
 	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
-		auto modelBoundingVolume = dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
+		auto modelBoundingVolume = dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->getEntity(Prototype::MODEL_BOUNDINGVOLUME_IDS[i]);
 		if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 	}
-	auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+	auto modelBoundingVolume = engine->getEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 	if (modelBoundingVolume != nullptr) {
 		modelBoundingVolume->setEnabled(true);
 		modelBoundingVolume->setPickable(true);
@@ -422,7 +422,7 @@ void EntityPhysicsView::display(LevelEditorEntity* entity) {
 	}
 }
 
-void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vector3& objectScale) {
+void EntityPhysicsView::handleInputEvents(Prototype* entity, const Vector3& objectScale) {
 	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL || displayBoundingVolumeIdx != displayBoundingVolumeIdxLast) {
 		displayBoundingVolumeIdxLast = displayBoundingVolumeIdx;
 		removeGizmo();
@@ -456,7 +456,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+				auto selectedEntity = engine->getEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(entity, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
@@ -493,7 +493,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 						auto gizmoEntity = getGizmoObject3D();
-						auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+						auto selectedEntity = engine->getEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 							selectedEntity->setScale(selectedEntity->getScale().clone().scale(deltaScale));
@@ -524,8 +524,8 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 	}
 }
 
-void EntityPhysicsView::updateGizmo(LevelEditorEntity* entity) {
-	auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+void EntityPhysicsView::updateGizmo(Prototype* entity) {
+	auto selectedEntity = engine->getEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 	if (selectedEntity != nullptr) {
 		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
 	} else {
@@ -533,12 +533,12 @@ void EntityPhysicsView::updateGizmo(LevelEditorEntity* entity) {
 	}
 }
 
-void EntityPhysicsView::setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations) {
+void EntityPhysicsView::setGizmoRotation(Prototype* entity, const Transformations& transformations) {
 	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL) return;
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void EntityPhysicsView::applyBoundingVolumeTransformations(LevelEditorEntity* entity, int i, const Transformations& _transformations, const Vector3& objectScale, bool guiOnly) {
+void EntityPhysicsView::applyBoundingVolumeTransformations(Prototype* entity, int i, const Transformations& _transformations, const Vector3& objectScale, bool guiOnly) {
 	auto modelEntity = engine->getEntity("model");
 	auto transformations = _transformations;
 	auto objectScaleInverted = Vector3(
@@ -628,15 +628,15 @@ void EntityPhysicsView::applyBoundingVolumeTransformations(LevelEditorEntity* en
 	}
 }
 
-void EntityPhysicsView::startEditingBoundingVolume(LevelEditorEntity* entity) {
-	engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+void EntityPhysicsView::startEditingBoundingVolume(Prototype* entity) {
+	engine->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 	setupModelBoundingVolume(entity, displayBoundingVolumeIdx);
 }
 
-void EntityPhysicsView::endEditingBoundingVolume(LevelEditorEntity* entity) {
-	engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+void EntityPhysicsView::endEditingBoundingVolume(Prototype* entity) {
+	engine->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 }
 
-bool EntityPhysicsView::isEditingBoundingVolume(LevelEditorEntity* entity) {
+bool EntityPhysicsView::isEditingBoundingVolume(Prototype* entity) {
 	return displayBoundingVolumeIdx != DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 }

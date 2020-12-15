@@ -11,24 +11,24 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem.h>
+#include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/Float.h>
@@ -51,23 +51,23 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityPhysics;
-using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_Type;
+using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::engine::prototype::PrototypePhysics;
+using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Float;
 using tdme::utilities::StringTools;
@@ -77,7 +77,7 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int id, const string& pathName, const string& fileName)
+Prototype* ModelMetaDataFileImport::doImport(int id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -89,16 +89,16 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int id, const string& pathN
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
+Prototype* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
 {
-	LevelEditorEntity* levelEditorEntity;
+	Prototype* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
 	auto pivot = Vector3(
 		static_cast< float >(jEntityRoot["px"].GetFloat()),
 		static_cast< float >(jEntityRoot["py"].GetFloat()),
 		static_cast< float >(jEntityRoot["pz"].GetFloat())
 	);
-	auto modelType = LevelEditorEntity_EntityType::valueOf((jEntityRoot["type"].GetString()));
+	auto modelType = Prototype_EntityType::valueOf((jEntityRoot["type"].GetString()));
 	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
 	auto name = (jEntityRoot["name"].GetString());
 	auto description = (jEntityRoot["descr"].GetString());
@@ -115,11 +115,11 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const strin
 			FileSystem::getInstance()->getFileName(modelFileName)
 		);
 	} else
-	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
+	if (modelType == Prototype_EntityType::EMPTY) {
 		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	}
 
-	levelEditorEntity = new LevelEditorEntity(
+	levelEditorEntity = new Prototype(
 		id,
 		modelType,
 		name,
@@ -159,7 +159,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const strin
 	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && levelEditorEntity->getPhysics() != nullptr) {
 		auto physics = levelEditorEntity->getPhysics();
 		auto& jPhysics = jEntityRoot["p"];
-		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(jPhysics["type"].GetString()));
+		physics->setType(PrototypePhysics_BodyType::valueOf(jPhysics["type"].GetString()));
 		physics->setMass(static_cast<float>(jPhysics["mass"].GetFloat()));
 		physics->setRestitution(static_cast<float>(jPhysics["restitution"].GetFloat()));
 		physics->setFriction(static_cast<float>(jPhysics["friction"].GetFloat()));
@@ -185,12 +185,12 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const strin
 			sound->setFixed(jSound["f"].GetBool());
 		}
 	}
-	if (modelType == LevelEditorEntity_EntityType::MODEL) {
+	if (modelType == Prototype_EntityType::MODEL) {
 		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
 		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
-	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+	if (modelType == Prototype_EntityType::PARTICLESYSTEM) {
 		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
 			levelEditorEntity->addParticleSystem();
 			parseParticleSystem(levelEditorEntity->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
@@ -215,7 +215,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const strin
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+	if (levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
 		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
 		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
 	}
@@ -238,9 +238,9 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
+PrototypeBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv)
 {
-	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
+	auto entityBoundingVolume = new PrototypeBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
 	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {
@@ -329,9 +329,9 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	return entityBoundingVolume;
 }
 
-LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
+PrototypeLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
 	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
-	LevelEditorEntityLODLevel* lodLevel = new LevelEditorEntityLODLevel(
+	PrototypeLODLevel* lodLevel = new PrototypeLODLevel(
 		lodType,
 		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
 		nullptr,
@@ -367,14 +367,14 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 	return lodLevel;
 }
 
-void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
-	particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
+void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
+	particleSystem->setType(PrototypeParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto v = particleSystem->getType();
-		if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+		if (v == PrototypeParticleSystem_Type::NONE) {
 			// no op
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
@@ -393,7 +393,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				Console::println(string(exception.what()));
 			}
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pointParticleSystem = particleSystem->getPointParticleSystem();
 			auto& jPointParticleSystem = jParticleSystem["pps"];
 			pointParticleSystem->setMaxPoints(jPointParticleSystem["mp"].GetInt());
@@ -418,7 +418,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 			}
 			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].GetBool());
 		} else
-		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+		if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fogParticleSystem = particleSystem->getFogParticleSystem();
 			auto& jFogParticleSystem = jParticleSystem["fps"];
 			fogParticleSystem->setMaxPoints(jFogParticleSystem["mp"].GetInt());
@@ -452,13 +452,13 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 		}
 	}
 
-	particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf((jParticleSystem["e"].GetString())));
+	particleSystem->setEmitter(PrototypeParticleSystem_Emitter::valueOf((jParticleSystem["e"].GetString())));
 	{
 		auto v = particleSystem->getEmitter();
-		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
+		if (v == PrototypeParticleSystem_Emitter::NONE) {
 			// no op
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto& jPointParticleEmitter = jParticleSystem["ppe"];
 			auto emitter = particleSystem->getPointParticleEmitter();
 			emitter->setCount(jPointParticleEmitter["c"].GetInt());
@@ -504,7 +504,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				)
 			);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			emitter->setCount(jBoundingBoxParticleEmitter["c"].GetInt());
@@ -578,7 +578,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				)
 			);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto& jCircleParticleEmitter = jParticleSystem["cpe"];
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			emitter->setCount(jCircleParticleEmitter["c"].GetInt());
@@ -639,7 +639,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				)
 			);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].GetInt());
@@ -688,7 +688,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				)
 			);
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto& jSphereParticleEmitter = jParticleSystem["spe"];
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			emitter->setCount(jSphereParticleEmitter["c"].GetInt());

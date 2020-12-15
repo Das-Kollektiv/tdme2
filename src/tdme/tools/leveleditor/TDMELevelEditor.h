@@ -9,8 +9,8 @@
 #include <tdme/tools/leveleditor/fwd-tdme.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::string;
@@ -24,8 +24,8 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
@@ -85,12 +85,12 @@ public:
 	/**
 	 * @return entity library
 	 */
-	LevelEditorEntityLibrary* getEntityLibrary();
+	SceneLibrary* getEntityLibrary();
 
 	/**
 	 * @return level
 	 */
-	LevelEditorLevel* getLevel();
+	Scene* getLevel();
 
 	/**
 	 * Set up new view

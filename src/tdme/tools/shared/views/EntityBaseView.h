@@ -5,13 +5,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::string;
 
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 
 /**
  * Model base biew
@@ -40,7 +40,7 @@ public:
 	 * @param entity entity
 	 * @param presetId preset id
 	 */
-	void entityPropertiesPreset(LevelEditorEntity* entity, const string& presetId);
+	void entityPropertiesPreset(Prototype* entity, const string& presetId);
 
 	/**
 	 * Save a entity property
@@ -50,14 +50,14 @@ public:
 	 * @param value value
 	 * @return success
 	 */
-	bool entityPropertySave(LevelEditorEntity* entity, const string& oldName, const string& name, const string& value);
+	bool entityPropertySave(Prototype* entity, const string& oldName, const string& name, const string& value);
 
 	/**
 	 * Add a entity property
 	 * @param entity entity
 	 * @return success
 	 */
-	bool entityPropertyAdd(LevelEditorEntity* entity);
+	bool entityPropertyAdd(Prototype* entity);
 
 	/**
 	 * Remove a entity property from model properties
@@ -65,7 +65,7 @@ public:
 	 * @param name name
 	 * @return success
 	 */
-	bool entityPropertyRemove(LevelEditorEntity* entity, const string& name);
+	bool entityPropertyRemove(Prototype* entity, const string& name);
 
 	/**
 	 * Update current model data
@@ -73,6 +73,6 @@ public:
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(LevelEditorEntity* entity, const string& name, const string& description);
+	void setEntityData(Prototype* entity, const string& name, const string& description);
 
 };

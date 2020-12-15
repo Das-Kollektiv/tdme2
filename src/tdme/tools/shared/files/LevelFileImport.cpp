@@ -22,12 +22,12 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorLight.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Console.h>
@@ -59,12 +59,12 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::LevelEditorObject;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::SceneEntity;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Float;
 using tdme::utilities::Console;
@@ -73,12 +73,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback)
 {
 	doImport(pathName, fileName, level, "", progressCallback);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, const string& objectIdPrefix, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, Scene& level, const string& objectIdPrefix, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -151,7 +151,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
 		auto& jModel = jRoot["models"].GetArray()[i];
-		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
+		Prototype* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
 			jModel["id"].GetInt(),
 			pathName,
 			jModel["entity"]
@@ -213,7 +213,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		transformations.addRotation(level.getRotationOrder()->getAxis1(), rotation.getArray()[level.getRotationOrder()->getAxis1VectorIndex()]);
 		transformations.addRotation(level.getRotationOrder()->getAxis2(), rotation.getArray()[level.getRotationOrder()->getAxis2VectorIndex()]);
 		transformations.update();
-		auto levelEditorObject = new LevelEditorObject(
+		auto levelEditorObject = new SceneEntity(
 			objectIdPrefix != "" ?
 				objectIdPrefix + jObject["id"].GetString() :
 				(jObject["id"].GetString()),
@@ -270,7 +270,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	}
 }
 
-void LevelFileImport::determineMeshNodes(LevelEditorLevel& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes) {
+void LevelFileImport::determineMeshNodes(Scene& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
 	auto entityLibrary = level.getEntityLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
@@ -328,7 +328,7 @@ void LevelFileImport::determineMeshNodes(LevelEditorLevel& level, Node* node, co
 		}
 	} else {
 		// add to node meshes, even if empty as its a empty :D
-		LevelEditorEntityMeshNode levelEditorEntityMeshNode;
+		PrototypeMeshNode levelEditorEntityMeshNode;
 		levelEditorEntityMeshNode.id = nodeId;
 		levelEditorEntityMeshNode.name = modelName;
 		levelEditorEntityMeshNode.node = node;
@@ -337,7 +337,7 @@ void LevelFileImport::determineMeshNodes(LevelEditorLevel& level, Node* node, co
 	}
 }
 
-void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback) {
+void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback) {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	level.clearProperties();
@@ -361,7 +361,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 
 	auto entityLibrary = level.getEntityLibrary();
 	auto nodeIdx = 0;
-	LevelEditorEntity* emptyEntity = nullptr;
+	Prototype* emptyEntity = nullptr;
 	Matrix4x4 modelImportRotationMatrix;
 	Vector3 levelModelScale;
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
@@ -371,7 +371,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	auto progressIdx = 0;
 	for (auto nodeIt: levelModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
-		vector<LevelEditorEntityMeshNode> meshNodes;
+		vector<PrototypeMeshNode> meshNodes;
 		determineMeshNodes(level, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
 		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
@@ -436,17 +436,17 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				model->getBoundingBox()->update();
 				scale.scale(1.0f / importFixScale);
 			}
-			auto entityType = LevelEditorEntity_EntityType::MODEL;
+			auto entityType = Prototype_EntityType::MODEL;
 			if (meshNode.node->getVertices().size() == 0) {
-				entityType = LevelEditorEntity_EntityType::EMPTY;
+				entityType = Prototype_EntityType::EMPTY;
 				delete model;
 				model = nullptr;
 			}
-			LevelEditorEntity* levelEditorEntity = nullptr;
-			if (entityType == LevelEditorEntity_EntityType::MODEL && model != nullptr) {
+			Prototype* levelEditorEntity = nullptr;
+			if (entityType == Prototype_EntityType::MODEL && model != nullptr) {
 				for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
 					auto levelEditorEntityCompare = level.getEntityLibrary()->getEntityAt(i);
-					if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
+					if (levelEditorEntityCompare->getType() != Prototype_EntityType::MODEL)
 						continue;
 
 					if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
@@ -474,7 +474,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 					);
 				}
 			} else
-			if (entityType == LevelEditorEntity_EntityType::EMPTY) {
+			if (entityType == Prototype_EntityType::EMPTY) {
 				if (emptyEntity == nullptr) {
 					emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}
@@ -492,7 +492,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
 			levelEditorObjectTransformations.setScale(scale);
 			levelEditorObjectTransformations.update();
-			auto object = new LevelEditorObject(
+			auto object = new SceneEntity(
 				meshNode.id,
 				meshNode.id,
 				levelEditorObjectTransformations,

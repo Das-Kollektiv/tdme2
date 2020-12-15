@@ -6,7 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/engine/prototype/Prototype.h>
 
 using tdme::tools::shared::views::EntityDisplayView;
 
@@ -16,7 +16,7 @@ using std::string;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 
 EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController)
 {
@@ -29,7 +29,7 @@ EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDis
 EntityDisplayView::~EntityDisplayView() {
 }
 
-void EntityDisplayView::display(LevelEditorEntity* entity)
+void EntityDisplayView::display(Prototype* entity)
 {
 	if (entity != nullptr) {
 		auto model = engine->getEntity("model");

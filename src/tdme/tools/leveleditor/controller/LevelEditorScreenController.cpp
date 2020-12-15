@@ -23,12 +23,12 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorLight.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/LevelPropertyPresets.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Float.h>
@@ -63,12 +63,12 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::LevelPropertyPresets;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::ScenePropertyPresets;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Float;
@@ -266,7 +266,7 @@ void LevelEditorScreenController::onObjectDataApply()
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(LevelEditorLevel& level)
+void LevelEditorScreenController::setObjectListbox(Scene& level)
 {
 	auto selectedObjects = objectsListBox->getController()->getValue();
 	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
@@ -427,7 +427,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(LevelEditorLevel& level, const string& selectedName)
+void LevelEditorScreenController::setMapProperties(Scene& level, const string& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -441,7 +441,7 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel& level, cons
 		mapPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < level.getPropertyCount(); i++) {
-		PropertyModelClass* mapProperty = level.getPropertyByIndex(i);
+		PrototypeProperty* mapProperty = level.getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -490,7 +490,7 @@ void LevelEditorScreenController::onMapPropertyRemove()
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PropertyModelClass*>>& objectPresetIds)
+void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PrototypeProperty*>>& objectPresetIds)
 {
 	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(objectPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -547,7 +547,7 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setObjectProperties(const string& presetId, LevelEditorObject* object, const string& selectedName)
+void LevelEditorScreenController::setObjectProperties(const string& presetId, SceneEntity* object, const string& selectedName)
 {
 	objectPropertiesPresets->getController()->setDisabled(false);
 	btnObjectPropertyPresetApply->getController()->setDisabled(false);
@@ -567,7 +567,7 @@ void LevelEditorScreenController::setObjectProperties(const string& presetId, Le
 		objectPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < object->getPropertyCount(); i++) {
-	PropertyModelClass* objectProperty = object->getPropertyByIndex(i);
+	PrototypeProperty* objectProperty = object->getPropertyByIndex(i);
 		objectPropertiesListBoxSubNodesXML =
 			objectPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -791,7 +791,7 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue().getString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEditorLight*>& lightPresetIds)
+void LevelEditorScreenController::setLightPresetsIds(const map<string, SceneLight*>& lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(lightsPresets[i]->getId() + "_inner")));
@@ -937,8 +937,8 @@ void LevelEditorScreenController::onLight3PresetApply()
 
 void LevelEditorScreenController::onLightPresetApply(int lightIdx)
 {
-	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
-	LevelEditorLight* lightPreset = nullptr;
+	auto lightPresets = ScenePropertyPresets::getInstance()->getLightPresets();
+	SceneLight* lightPreset = nullptr;
 	auto lightPresetIt = lightPresets.find(lightsPresets[lightIdx]->getController()->getValue().getString());
 	if (lightPresetIt != lightPresets.end()) lightPreset = lightPresetIt->second;
 	if (lightPreset == nullptr) return;
@@ -989,7 +989,7 @@ void LevelEditorScreenController::loadFile(const string& pathName, const string&
 	view->loadMap(pathName, fileName);
 }
 
-void LevelEditorScreenController::setSky(LevelEditorLevel& level) {
+void LevelEditorScreenController::setSky(Scene& level) {
 	mapSkyModel->getController()->setValue(MutableString(level.getSkyModelFileName()));
 	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(level.getSkyModelScale())));
 }
@@ -1066,7 +1066,7 @@ void LevelEditorScreenController::onMapSkyApply() {
 	view->updateSky();
 }
 
-void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId) {
+void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene& level, const string& selectedEnvironmentMappingId) {
 	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
 	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(false);

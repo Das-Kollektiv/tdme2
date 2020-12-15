@@ -404,31 +404,31 @@ SRCS = \
 	src/tdme/tools/shared/files/LevelFileImport.cpp \
 	src/tdme/tools/shared/files/ModelMetaDataFileExport.cpp \
 	src/tdme/tools/shared/files/ModelMetaDataFileImport.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntity.cpp \
-    src/tdme/tools/shared/model/LevelEditorEntityAudio.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityLODLevel.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityPhysics.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntity_EntityType.cpp \
-	src/tdme/tools/shared/model/LevelEditorLevel.cpp \
-	src/tdme/tools/shared/model/LevelEditorLight.cpp \
-	src/tdme/tools/shared/model/LevelEditorObject.cpp \
-	src/tdme/tools/shared/model/LevelPropertyPresets.cpp \
-	src/tdme/tools/shared/model/ModelProperties.cpp \
-	src/tdme/tools/shared/model/PropertyModelClass.cpp \
+	src/tdme/engine/prototype/Prototype.cpp \
+    src/tdme/engine/prototype/PrototypeAudio.cpp \
+	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+	src/tdme/engine/scene/SceneLibrary.cpp \
+	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
+	src/tdme/engine/prototype/PrototypePhysics.cpp \
+	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
+	src/tdme/engine/prototype/Prototype_EntityType.cpp \
+	src/tdme/engine/scene/Scene.cpp \
+	src/tdme/engine/scene/SceneLight.cpp \
+	src/tdme/engine/scene/SceneEntity.cpp \
+	src/tdme/engine/scene/ScenePropertyPresets.cpp \
+	src/tdme/engine/prototype/PrototypeProperties.cpp \
+	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/EntityBaseView.cpp \

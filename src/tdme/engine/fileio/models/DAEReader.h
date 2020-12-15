@@ -9,7 +9,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -28,7 +28,6 @@ using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystemException;
-using tdme::tools::shared::model::LevelEditorLevel;
 
 using tinyxml::TiXmlElement;
 

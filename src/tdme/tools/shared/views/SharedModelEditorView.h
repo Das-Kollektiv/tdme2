@@ -10,7 +10,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
@@ -23,7 +23,7 @@ using tdme::engine::model::Model;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
@@ -54,7 +54,7 @@ private:
 	EntityDisplayView* entityDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
 	EntitySoundsView* entitySoundsView { nullptr };
-	LevelEditorEntity* entity { nullptr };
+	Prototype* entity { nullptr };
 	bool loadModelRequested;
 	bool initModelRequested;
 	bool initModelRequestedReset;
@@ -97,7 +97,7 @@ private:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+	virtual Prototype* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * On rotation event to be overloaded
@@ -129,12 +129,12 @@ public:
 	/**
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getEntity();
 
 	/**
 	 * Set entity
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setEntity(Prototype* entity);
 
 	/**
 	 * Reset entity
@@ -236,7 +236,7 @@ public:
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
-	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
+	virtual void onLoadModel(Prototype* oldEntity, Prototype* entity);
 
 	/**
 	 * On set entity data hook

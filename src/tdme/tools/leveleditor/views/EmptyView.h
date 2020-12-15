@@ -6,7 +6,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
@@ -16,7 +16,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::tools::leveleditor::controller::EmptyScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 
@@ -34,7 +34,7 @@ private:
 
 	PopUps* popUps {  };
 	EmptyScreenController* emptyScreenController {  };
-	LevelEditorEntity* entity {  };
+	Prototype* entity {  };
 	bool initModelRequested {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 	Vector3 objectScale;
@@ -64,12 +64,12 @@ public:
 	/**
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getEntity();
 
 	/**
 	 * @return selected entity
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setEntity(Prototype* entity);
 
 	void handleInputEvents() override;
 

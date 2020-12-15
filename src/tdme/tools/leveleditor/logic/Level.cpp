@@ -48,29 +48,29 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorLight.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/ModelProperties.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem.h>
+#include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -122,28 +122,28 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityPhysics;
-using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::ModelProperties;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_Type;
+using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::engine::prototype::PrototypePhysics;
+using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
@@ -161,7 +161,7 @@ int Level::renderGroupsLOD2ReduceBy = 4;
 int Level::renderGroupsLOD3ReduceBy = 16;
 bool Level::enableEarlyZRejection = false;
 
-void Level::setLight(Engine* engine, LevelEditorLevel& level, const Vector3& translation)
+void Level::setLight(Engine* engine, Scene& level, const Vector3& translation)
 {
 	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level.getLightCount(); i++) {
 		engine->getLightAt(i)->setAmbient(Color4(level.getLightAt(i)->getAmbient()));
@@ -185,31 +185,31 @@ void Level::setLight(Engine* engine, LevelEditorLevel& level, const Vector3& tra
 	}
 }
 
-Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& id, bool enableDynamicShadows)
+Entity* Level::createParticleSystem(PrototypeParticleSystem* particleSystem, const string& id, bool enableDynamicShadows)
 {
 	ParticleEmitter* engineEmitter = nullptr;
 	{
 		auto v = particleSystem->getEmitter();
-		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
+		if (v == PrototypeParticleSystem_Emitter::NONE) {
 			return nullptr;
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
 			engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else {
@@ -227,10 +227,10 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 	{
 		{
 			auto v = particleSystem->getType();
-			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+			if (v == PrototypeParticleSystem_Type::NONE) {
 				return nullptr;
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 				if (objectParticleSystem->getModel() == nullptr) return nullptr;
 
@@ -245,7 +245,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					engineEmitter
 				);
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
 				return new PointsParticleSystem(
 					id,
@@ -259,7 +259,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					pointParticleSystem->getTextureSpritesFPS()
 				);
 			} else
-			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 				auto fogParticleSystem = particleSystem->getFogParticleSystem();
 				return new FogParticleSystem(
 					id,
@@ -298,7 +298,7 @@ Entity* Level::createEmpty(const string& id, const Transformations& transformati
 	return entity;
 }
 
-Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, int instances) {
+Entity* Level::createEntity(Prototype* levelEditorEntity, const string& id, const Transformations& transformations, int instances) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -346,7 +346,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 		}
 	} else
 	// particle system
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+	if (levelEditorEntity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
 		vector<ParticleSystemEntity*> particleSystems;
 		for (auto i = 0; i < levelEditorEntity->getParticleSystemsCount(); i++) {
 			auto particleSystem = createParticleSystem(
@@ -370,19 +370,19 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 		}
 	} else
 	// trigger/environment mapping
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
-		levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+	if (levelEditorEntity->getType() == Prototype_EntityType::TRIGGER ||
+		levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
-				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
 		}
-		if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING &&
+		if (levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING &&
 			levelEditorEntity->getBoundingVolumeCount() == 1 &&
 			dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
 			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()));
@@ -414,7 +414,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 	return entity;
 }
 
-Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3& translation) {
+Entity* Level::createEntity(SceneEntity* levelEditorObject, const Vector3& translation) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
@@ -424,11 +424,11 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void Level::addLevel(Engine* engine, Scene& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
-	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
+	map<string, Prototype*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < level.getObjectCount(); i++) {
 		auto object = level.getObjectAt(i);
@@ -436,8 +436,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, b
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level.getObjectCount()) * 0.5f);
 		progressStepCurrent++;
 
-		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
-		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
+		if (addEmpties == false && object->getEntity()->getType() == Prototype_EntityType::EMPTY) continue;
+		if (addTrigger == false && object->getEntity()->getType() == Prototype_EntityType::TRIGGER) continue;
 
 		if (object->getEntity()->isRenderGroups() == true) {
 			auto minX = object->getTransformations().getTranslation().getX();
@@ -456,7 +456,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, b
 			entity->setPickable(pickable);
 			entity->setContributesShadows(object->getEntity()->isContributesShadows());
 			entity->setReceivesShadows(object->getEntity()->isReceivesShadows());
-			if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
+			if (object->getEntity()->getType() == Prototype_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}
 			if (object->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
@@ -534,11 +534,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, b
 	}
 }
 
-Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
+Body* Level::createBody(World* world, Prototype* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+	if (levelEditorEntity->getType() == Prototype_EntityType::EMPTY) return nullptr;
 
 	auto physicsType = overrideType != nullptr?overrideType:levelEditorEntity->getPhysics()->getType();
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	if (levelEditorEntity->getType() == Prototype_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
 			auto entityBv = levelEditorEntity->getBoundingVolume(j);
@@ -553,11 +553,11 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 			boundingVolumes
 		);
 	} else
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL &&
+	if (levelEditorEntity->getType() == Prototype_EntityType::MODEL &&
 		levelEditorEntity->isTerrainMesh() == true) {
 		Object3DModel terrainModel(levelEditorEntity->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
-		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -566,7 +566,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -576,7 +576,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -596,7 +596,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
-		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -605,7 +605,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -615,7 +615,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -632,7 +632,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	return nullptr;
 }
 
-Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
+Body* Level::createBody(World* world, SceneEntity* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
@@ -642,7 +642,7 @@ Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, cons
 	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel& level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void Level::addLevel(World* world, Scene& level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
@@ -674,7 +674,7 @@ void Level::addLevel(World* world, LevelEditorLevel& level, bool enable, const V
 	}
 }
 
-void Level::disableLevel(Engine* engine, LevelEditorLevel& level)
+void Level::disableLevel(Engine* engine, Scene& level)
 {
 	for (auto i = 0; i < level.getObjectCount(); i++) {
 		auto object = level.getObjectAt(i);
@@ -686,7 +686,7 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel& level)
 	}
 }
 
-void Level::disableLevel(World* world, LevelEditorLevel& level)
+void Level::disableLevel(World* world, Scene& level)
 {
 	Transformations transformations;
 	for (auto i = 0; i < level.getObjectCount(); i++) {
@@ -697,7 +697,7 @@ void Level::disableLevel(World* world, LevelEditorLevel& level)
 	}
 }
 
-void Level::enableLevel(Engine* engine, LevelEditorLevel& level, const Vector3& translation)
+void Level::enableLevel(Engine* engine, Scene& level, const Vector3& translation)
 {
 	// TODO: a.drewke, Object3DRenderGroups
 	for (auto i = 0; i < level.getObjectCount(); i++) {
@@ -708,7 +708,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel& level, const Vector3& 
 
 		entity->fromTransformations(object->getTransformations());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
+		if (object->getEntity()->getType() == Prototype_EntityType::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
@@ -716,7 +716,7 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel& level, const Vector3& 
 	}
 }
 
-void Level::enableLevel(World* world, LevelEditorLevel& level, const Vector3& translation)
+void Level::enableLevel(World* world, Scene& level, const Vector3& translation)
 {
 	Transformations transformations;
 	for (auto i = 0; i < level.getObjectCount(); i++) {
@@ -731,7 +731,7 @@ void Level::enableLevel(World* world, LevelEditorLevel& level, const Vector3& tr
 	}
 }
 
-void Level::addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id, const int poolSize) {
+void Level::addEntitySounds(Audio* audio, Prototype* levelEditorEntity, const string& id, const int poolSize) {
 	for (auto soundDefinition: levelEditorEntity->getSounds()) {
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {

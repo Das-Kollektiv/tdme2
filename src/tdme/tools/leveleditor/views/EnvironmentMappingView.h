@@ -5,7 +5,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/shared/views/View.h>
@@ -16,7 +16,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::tools::leveleditor::controller::EnvironmentMappingScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
@@ -37,7 +37,7 @@ private:
 	PopUps* popUps { nullptr };
 	EnvironmentMappingScreenController* environmentMappingScreenController { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
-	LevelEditorEntity* entity { nullptr };
+	Prototype* entity { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;
 
@@ -61,12 +61,12 @@ public:
 	/**
 	 * @return entity
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getEntity();
 
 	/**
 	 * @return selected entity
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setEntity(Prototype* entity);
 
 	/**
 	 * Renders the scene

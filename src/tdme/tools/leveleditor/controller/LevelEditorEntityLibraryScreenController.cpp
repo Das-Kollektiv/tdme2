@@ -24,11 +24,11 @@
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
@@ -63,11 +63,10 @@ using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::Scene;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -182,31 +181,31 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	if (entity == nullptr) return;
 	{
 		auto v = entity->getType();
-		if (v == LevelEditorEntity_EntityType::MODEL) {
+		if (v == Prototype_EntityType::MODEL) {
 			if (dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
 			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == LevelEditorEntity_EntityType::TRIGGER) {
+		if (v == Prototype_EntityType::TRIGGER) {
 			if (dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
 			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+		if (v == Prototype_EntityType::ENVIRONMENTMAPPING) {
 			if (dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEnvironmentMappingView();
 			}
 			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == LevelEditorEntity_EntityType::EMPTY) {
+		if (v == Prototype_EntityType::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
 			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+		if (v == Prototype_EntityType::PARTICLESYSTEM) {
 			if (dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
@@ -254,7 +253,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 {
 	// check if we have a entity
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr || entity->getType() != LevelEditorEntity_EntityType::MODEL) return;
+	if (entity == nullptr || entity->getType() != Prototype_EntityType::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
 	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
 		popUps->getInfoDialogScreenController()->show("Warning", "This model has animations or skinning");
@@ -300,7 +299,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				fileNamePartition
 			);
 			auto levelEditorEntityPartition = levelEntityLibrary->addModel(
-				LevelEditorEntityLibrary::ID_ALLOCATE,
+				SceneLibrary::ID_ALLOCATE,
 				model->getName(),
 				model->getName(),
 				pathName,
@@ -318,7 +317,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			}
 
 			// add to level
-			auto levelEditorObjectPartition = new LevelEditorObject(
+			auto levelEditorObjectPartition = new SceneEntity(
 				objectName,
 				"",
 				levelEditorObject->getTransformations(),
@@ -377,7 +376,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				void performAction() override {
 					try {
 						auto entity = entityLibrary->addModel(
-							LevelEditorEntityLibrary::ID_ALLOCATE,
+							SceneLibrary::ID_ALLOCATE,
 							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							"",
 							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
@@ -403,14 +402,14 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 * @param levelEditorEntityLibraryScreenController level editor entity library screen controller
 				 * @param entityLibrary entity library
 				 */
-				OnCreateModel(LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController, LevelEditorEntityLibrary* entityLibrary)
+				OnCreateModel(LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController, SceneLibrary* entityLibrary)
 					: levelEditorEntityLibraryScreenController(levelEditorEntityLibraryScreenController)
 					, entityLibrary(entityLibrary) {
 				}
 
 			private:
 				LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController;
-				LevelEditorEntityLibrary* entityLibrary;
+				SceneLibrary* entityLibrary;
 			};
 
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
@@ -427,7 +426,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(SceneLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
@@ -440,7 +439,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_environmentmapping") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(LevelEditorEntityLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(SceneLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
@@ -453,7 +452,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_empty") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(LevelEditorEntityLibrary::ID_ALLOCATE, "New empty", "");
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(SceneLibrary::ID_ALLOCATE, "New empty", "");
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();
@@ -468,7 +467,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_particlesystem") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(LevelEditorEntityLibrary::ID_ALLOCATE, "New particle system", "");
+				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
 				setEntityLibrary();
 				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
 				onEditEntity();

@@ -16,9 +16,9 @@
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelPropertyPresets.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
@@ -40,9 +40,9 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelPropertyPresets;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
+using tdme::engine::scene::ScenePropertyPresets;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -88,11 +88,11 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 	return levelEditorEntityLibraryScreenController;
 }
 
-LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary() {
+SceneLibrary* TDMELevelEditor::getEntityLibrary() {
 	return levelEditorView->getLevel()->getEntityLibrary();
 }
 
-LevelEditorLevel* TDMELevelEditor::getLevel() {
+Scene* TDMELevelEditor::getLevel() {
 	return levelEditorView->getLevel();
 }
 
@@ -151,7 +151,7 @@ void TDMELevelEditor::initialize() {
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
-	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(levelEditorView->getLevel());
+	ScenePropertyPresets::getInstance()->setDefaultLevelProperties(levelEditorView->getLevel());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);

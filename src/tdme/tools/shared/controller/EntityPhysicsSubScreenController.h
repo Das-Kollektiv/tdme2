@@ -10,8 +10,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
@@ -48,22 +48,22 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* modelPath { nullptr };
 	EntityPhysicsView* view { nullptr };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeApply;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereCenter;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereRadius;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleA;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleB;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleRadius;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMin;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMax;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbCenter;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbHalfextension;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationX;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationY;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ;
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeApply;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereCenter;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereRadius;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleA;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleB;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleRadius;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMin;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMax;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbCenter;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbHalfextension;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationX;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationY;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ;
+	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile;
 	bool isModelBoundingVolumes;
 	int maxBoundingVolumeCount;
 	GUIElementNode* terrainMesh { nullptr };
@@ -153,7 +153,7 @@ public:
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void setupModelBoundingVolumeType(LevelEditorEntity* entity, int idx);
+	void setupModelBoundingVolumeType(Prototype* entity, int idx);
 
 	/**
 	 * Set up bounding volume types
@@ -217,86 +217,86 @@ public:
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeTypeApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume none apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeNoneApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume sphere apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeSphereApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume capsule apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeCapsuleApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume AABB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeAabbApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume OBB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeObbApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeObbApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume convex mesh apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeConvexMeshApply(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume convex mesh file clicked
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int idx);
+	void onBoundingVolumeConvexMeshFile(Prototype* entity, int idx);
 
 	/**
 	 * On bounding volume convex meshes file
 	 * @param entity entity
 	 */
-	void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesFile(Prototype* entity);
 
 	/**
 	 * On bounding volume convex meshes remove
 	 * @param entity entity
 	 */
-	void onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesRemove(Prototype* entity);
 
 	/**
 	 * On bounding volume convex meshes generate
 	 * @param entity entity
 	 */
-	void onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity);
+	void onBoundingVolumeConvexMeshesGenerate(Prototype* entity);
 
 	/**
 	 * Set terrain mesh
 	 * @param entity entity
 	 */
-	void setTerrainMesh(LevelEditorEntity* entity);
+	void setTerrainMesh(Prototype* entity);
 
 	/**
 	 * Shows the error pop up
 	 * @param entity entity
 	 */
-	void onSetTerrainMesh(LevelEditorEntity* entity);
+	void onSetTerrainMesh(Prototype* entity);
 
 	/**
 	 * Unset terrain mesh
@@ -307,7 +307,7 @@ public:
 	 * Set convex meshes
 	 * @param entity entity
 	 */
-	void setConvexMeshes(LevelEditorEntity* entity);
+	void setConvexMeshes(Prototype* entity);
 
 	/**
 	 * Unset convex meshes
@@ -323,19 +323,19 @@ public:
 	 * Set physics
 	 * @param entity entity
 	 */
-	void setPhysics(LevelEditorEntity* entity);
+	void setPhysics(Prototype* entity);
 
 	/**
 	 * On physics body type apply
 	 * @param entity entity
 	 */
-	void onPhysicsBodyTypeApply(LevelEditorEntity* entity);
+	void onPhysicsBodyTypeApply(Prototype* entity);
 
 	/**
 	 * On physics body apply
 	 * @param entity entity
 	 */
-	void onPhysicsBodyApply(LevelEditorEntity* entity);
+	void onPhysicsBodyApply(Prototype* entity);
 
 	/**
 	 * On convex mesh mode changed
@@ -353,7 +353,7 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
+	void onValueChanged(GUIElementNode* node, Prototype* entity);
 
 	/**
 	 * On action performed
@@ -361,6 +361,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
 
 };

@@ -8,7 +8,8 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <rapidjson/document.h>
 
@@ -19,7 +20,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Node;
 using tdme::math::Matrix4x4;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::scene::Scene;
 using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;
@@ -42,7 +43,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback = nullptr);
+	static void doImport(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a TDME level file to Level Editor
@@ -54,7 +55,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
+	static void doImport(const string& pathName, const string& fileName, Scene& level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a model file to Level Editor
@@ -65,10 +66,10 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback = nullptr);
+	static void doImportFromModel(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback = nullptr);
 
 private:
-	struct LevelEditorEntityMeshNode {
+	struct PrototypeMeshNode {
 		string id;
 		string name;
 		Matrix4x4 transformationsMatrix;
@@ -83,5 +84,5 @@ private:
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshNodes(LevelEditorLevel& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes);
+	static void determineMeshNodes(Scene& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
 };

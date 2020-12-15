@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::vector;
@@ -14,7 +14,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 
 /**
  * Entity display view
@@ -75,6 +75,6 @@ public:
 	 * Display
 	 * @param entity entity
 	 */
-	 void display(LevelEditorEntity* entity);
+	 void display(Prototype* entity);
 
 };

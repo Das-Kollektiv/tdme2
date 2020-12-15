@@ -18,25 +18,25 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem.h>
+#include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Console.h>
@@ -63,24 +63,24 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityPhysics;
-using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_Type;
+using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::engine::prototype::PrototypePhysics;
+using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::StringTools;
 using tdme::utilities::Console;
@@ -95,7 +95,7 @@ void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
 
-void ModelMetaDataFileExport::doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity)
+void ModelMetaDataFileExport::doExport(const string& pathName, const string& fileName, Prototype* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	Document jRoot;
@@ -109,7 +109,7 @@ void ModelMetaDataFileExport::doExport(const string& pathName, const string& fil
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }
 
-void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel) {
+void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
@@ -135,10 +135,10 @@ void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& j
 	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRoot, LevelEditorEntity* entity)
+void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity)
 {
 	auto& jAllocator = jDocument.GetAllocator();
-	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
+	if (entity->getType() == Prototype_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(entity->getFileName())) + ".tm";
 		TMWriter::write(
@@ -216,7 +216,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 		jEntityRoot.AddMember("sd", jSounds, jAllocator);
 	}
 
-	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+	if (entity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
 		for (auto i = 0; i < entity->getParticleSystemsCount(); i++) {
@@ -226,10 +226,10 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 			jParticleSystem.AddMember("t", Value(particleSystem->getType()->getName(), jAllocator), jAllocator);
 			{
 				auto v = particleSystem->getType();
-				if (v == LevelEditorEntityParticleSystem_Type::NONE) {
+				if (v == PrototypeParticleSystem_Type::NONE) {
 					// no op
 				} else
-				if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)
+				if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)
 				{
 					Value jObjectParticleSystem;
 					jObjectParticleSystem.SetObject();
@@ -251,7 +251,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jObjectParticleSystem.AddMember("ae", Value(particleSystem->getObjectParticleSystem()->isAutoEmit()), jAllocator);
 					jParticleSystem.AddMember("ops", jObjectParticleSystem, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)
+				if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM)
 				{
 					Value jPointParticleSystem;
 					jPointParticleSystem.SetObject();
@@ -265,7 +265,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jPointParticleSystem.AddMember("ae", Value(particleSystem->getPointParticleSystem()->isAutoEmit()), jAllocator);
 					jParticleSystem.AddMember("pps", jPointParticleSystem, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM)
+				if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM)
 				{
 					Value jFogParticleSystem;
 					jFogParticleSystem.SetObject();
@@ -291,10 +291,10 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 			jParticleSystem.AddMember("e", Value(particleSystem->getEmitter()->getName(), jAllocator), jAllocator);
 			{
 				auto v = particleSystem->getEmitter();
-				if (v == LevelEditorEntityParticleSystem_Emitter::NONE)
+				if (v == PrototypeParticleSystem_Emitter::NONE)
 				{
 				} else
-				if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
+				if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
 				{
 					Value jPointParticleEmitter;
 					jPointParticleEmitter.SetObject();
@@ -323,7 +323,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jPointParticleEmitter.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
 					jParticleSystem.AddMember("ppe", jPointParticleEmitter, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
+				if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
 				{
 					Value jBoundingBoxParticleEmitter;
 					jBoundingBoxParticleEmitter.SetObject();
@@ -364,7 +364,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jBoundingBoxParticleEmitter.AddMember("oa2z", Value(emitter->getObbAxis2().getZ()), jAllocator);
 					jParticleSystem.AddMember("bbpe", jBoundingBoxParticleEmitter, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
+				if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
 				{
 					Value jCircleParticleEmitter;
 					jCircleParticleEmitter.SetObject();
@@ -400,7 +400,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jCircleParticleEmitter.AddMember("a1z", Value(emitter->getAxis1().getZ()), jAllocator);
 					jParticleSystem.AddMember("cpe", jCircleParticleEmitter, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+				if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 					Value jCircleParticleEmitterPlaneVelocity;
 					jCircleParticleEmitterPlaneVelocity.SetObject();
 					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
@@ -431,7 +431,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jCircleParticleEmitterPlaneVelocity.AddMember("a1z", Value(emitter->getAxis1().getZ()), jAllocator);
 					jParticleSystem.AddMember("cpeev", jCircleParticleEmitterPlaneVelocity, jAllocator);
 				} else
-				if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
+				if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
 				{
 					Value jSphereParticleEmitter;
 					jSphereParticleEmitter.SetObject();
@@ -554,24 +554,24 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 		jPhysics.AddMember("itz", Value(physics->getInertiaTensor().getZ()), jAllocator);
 		jEntityRoot.AddMember("p", jPhysics, jAllocator);
 	}
-	Value jModelProperties;
-	jModelProperties.SetArray();
+	Value jPrototypeProperties;
+	jPrototypeProperties.SetArray();
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
-		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
+		PrototypeProperty* modelProperty = entity->getPropertyByIndex(i);
 		Value jObjectProperty;
 		jObjectProperty.SetObject();
 		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);
 		jObjectProperty.AddMember("value", Value(modelProperty->getValue(), jAllocator), jAllocator);
-		jModelProperties.PushBack(jObjectProperty, jAllocator);
+		jPrototypeProperties.PushBack(jObjectProperty, jAllocator);
 	}
-	jEntityRoot.AddMember("properties", jModelProperties, jAllocator);
+	jEntityRoot.AddMember("properties", jPrototypeProperties, jAllocator);
 	jEntityRoot.AddMember("cs", Value(entity->isContributesShadows()), jAllocator);
 	jEntityRoot.AddMember("rs", Value(entity->isReceivesShadows()), jAllocator);
 	jEntityRoot.AddMember("rg", Value(entity->isRenderGroups()), jAllocator);
 	jEntityRoot.AddMember("s", Value(entity->getShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sds", Value(entity->getDistanceShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sdsd", Value(entity->getDistanceShaderDistance()), jAllocator);
-	if (entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+	if (entity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
 		jEntityRoot.AddMember("emrpm", Value(entity->getEnvironmentMapRenderPassMask()), jAllocator);
 		jEntityRoot.AddMember("emtf", Value(entity->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
 	}

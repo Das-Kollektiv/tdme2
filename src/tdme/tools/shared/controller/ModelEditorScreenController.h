@@ -10,7 +10,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
@@ -34,8 +34,8 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utilities::MutableString;
 
@@ -152,7 +152,7 @@ private:
 	/**
 	 * @return level editor entity lod level or nullptr
 	 */
-	LevelEditorEntityLODLevel* getLODLevel(int level);
+	PrototypeLODLevel* getLODLevel(int level);
 
 	/**
 	 * @return current selected material
@@ -231,7 +231,7 @@ public:
 	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
+	void setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName);
 
 	/**
 	 * Unset entity properties
@@ -259,7 +259,7 @@ public:
 	 * Set renering options
 	 * @param entity entity
 	 */
-	void setRendering(LevelEditorEntity* entity);
+	void setRendering(Prototype* entity);
 
 	/**
 	 * Unset rendering
@@ -271,7 +271,7 @@ public:
 	 * @param entity entity
 	 * @param level lod level
 	 */
-	void setLODLevel(LevelEditorEntity* entity, int level);
+	void setLODLevel(Prototype* entity, int level);
 
 	/**
 	 * Unset LOD level
@@ -302,7 +302,7 @@ public:
 	 * Set materials
 	 * @param entity entity
 	 */
-	void setMaterials(LevelEditorEntity* entity);
+	void setMaterials(Prototype* entity);
 
 	/**
 	 * Unset materials
@@ -369,7 +369,7 @@ public:
 	/**
 	 * Set animations
 	 */
-	void setAnimations(LevelEditorEntity* entity);
+	void setAnimations(Prototype* entity);
 
 	/**
 	 * On animation drop down value changed

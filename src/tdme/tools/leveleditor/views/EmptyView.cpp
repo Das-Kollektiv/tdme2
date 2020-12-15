@@ -16,8 +16,8 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -41,8 +41,8 @@ using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
@@ -69,12 +69,12 @@ PopUps* EmptyView::getPopUpsViews()
 	return popUps;
 }
 
-LevelEditorEntity* EmptyView::getEntity()
+Prototype* EmptyView::getEntity()
 {
 	return entity;
 }
 
-void EmptyView::setEntity(LevelEditorEntity* entity)
+void EmptyView::setEntity(Prototype* entity)
 {
 	engine->reset();
 	this->entity = entity;

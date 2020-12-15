@@ -4,21 +4,21 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/engine/prototype/Prototype.h>
 
 #include <rapidjson/document.h>
 
 using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;
@@ -39,31 +39,31 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	inline static LevelEditorEntity* doImport(const string& pathName, const string& fileName) {
-		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
+	inline static Prototype* doImport(const string& pathName, const string& fileName) {
+		return doImport(Prototype::ID_NONE, pathName, fileName);
 	}
 
 	/**
 	 * Imports a model meta data file from file
-	 * @param id id or LevelEditorEntity.ID_NONE
+	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int id, const string& pathName, const string& fileName);
+	static Prototype* doImport(int id, const string& pathName, const string& fileName);
 
 	/**
 	 * Imports a model meta data file from JSON object
-	 * @param id id or LevelEditorEntity.ID_NONE
+	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int id, const string& pathName, Value& jEntityRoot);
+	static Prototype* doImportFromJSON(int id, const string& pathName, Value& jEntityRoot);
 
 	/**
 	 * Get resource path name
@@ -85,7 +85,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv);
+	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv);
 
 	/**
 	 * Parse LOD level
@@ -93,7 +93,7 @@ private:
 	 * @param jLodLevel JSON LOD level
 	 * @return level editor lod level
 	 */
-	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
+	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
 
 	/**
 	 * Parse particle system
@@ -101,6 +101,6 @@ private:
 	 * @param pathName path name
 	 * @param jParticleSystem JSON particle system object
 	 */
-	static void parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem);
+	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem);
 
 };

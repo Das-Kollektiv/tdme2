@@ -35,10 +35,10 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
@@ -85,9 +85,9 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -222,7 +222,7 @@ void Tools::oseDispose()
 	delete osEngine;
 }
 
-void Tools::oseThumbnail(LevelEditorEntity* model)
+void Tools::oseThumbnail(Prototype* model)
 {
 	Vector3 objectScale;
 	Transformations oseLookFromRotations;
@@ -290,7 +290,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
+void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
 {
 	if (entity == nullptr) return;
 
@@ -303,11 +303,11 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// bounding volumes
-	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
+	auto entityBoundingVolumesHierarchy = new EntityHierarchy(Prototype::MODEL_BOUNDINGVOLUMES_ID);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = entity->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+			auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);
 			entityBoundingVolumesHierarchy->addEntity(bvObject);
 		}
@@ -316,11 +316,11 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
-		entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+	if (entity->getType() == Prototype_EntityType::TRIGGER ||
+		entity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
-	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+	if (entity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
 		modelEntity = Level::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else
@@ -390,8 +390,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(groundObject);
 
 	//
-	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
-	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->update();
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);

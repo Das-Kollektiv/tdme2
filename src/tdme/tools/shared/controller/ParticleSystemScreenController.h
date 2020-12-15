@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
@@ -32,7 +32,7 @@ using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
 /**
@@ -230,7 +230,7 @@ public:
 	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
+	void setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName);
 
 	/**
 	 * Unset entity properties

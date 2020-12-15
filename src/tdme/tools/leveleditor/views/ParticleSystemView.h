@@ -4,14 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 
 using std::string;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::PopUps;
 
 
@@ -33,10 +33,10 @@ public:
 	// overridden methods
 	virtual void onInitAdditionalScreens() override;
 	virtual void onSetEntityData() override;
-	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* newEntity) override;
+	virtual void onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity) override;
 
 private:
 	// overridden methods
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) override;
+	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) override;
 
 };

@@ -13,8 +13,8 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
@@ -43,8 +43,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
@@ -80,7 +80,7 @@ void EntitySoundsSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	try {
-		for (auto i = 0; i < LevelEditorEntity::MODEL_SOUNDS_COUNT; i++) {
+		for (auto i = 0; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 			soundsSoundAnimationDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_animation_" + to_string(i)));
 			soundsSoundKey[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_key_" + to_string(i)));
 			soundsSoundFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_file_" + to_string(i)));
@@ -157,12 +157,12 @@ void EntitySoundsSubScreenController::unsetSound(int soundIdx) {
 }
 
 void EntitySoundsSubScreenController::unsetSounds() {
-	for (auto i = 0; i < LevelEditorEntity::MODEL_SOUNDS_COUNT; i++) {
+	for (auto i = 0; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 		unsetSound(i);
 	}
 }
 
-void EntitySoundsSubScreenController::setSounds(LevelEditorEntity* entity) {
+void EntitySoundsSubScreenController::setSounds(Prototype* entity) {
 	auto i = 0;
 	auto& sounds = entity->getSounds();
 	for (auto sound: sounds) {
@@ -188,7 +188,7 @@ void EntitySoundsSubScreenController::setSounds(LevelEditorEntity* entity) {
 		soundsSoundApply[i]->getController()->setDisabled(false);
 		i++;
 	}
-	for (; i < sounds.size() + 1 && i < LevelEditorEntity::MODEL_SOUNDS_COUNT; i++) {
+	for (; i < sounds.size() + 1 && i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 		setSoundAnimationDropDown(i, entity->getModel());
 		soundsSoundKey[i]->getController()->setValue(MutableString(""));
 		soundsSoundKey[i]->getController()->setDisabled(false);
@@ -210,7 +210,7 @@ void EntitySoundsSubScreenController::setSounds(LevelEditorEntity* entity) {
 		soundsSoundFixed[i]->getController()->setDisabled(false);
 		soundsSoundApply[i]->getController()->setDisabled(false);
 	}
-	for (; i < LevelEditorEntity::MODEL_SOUNDS_COUNT; i++) {
+	for (; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 		unsetSound(i);
 	}
 
@@ -252,9 +252,9 @@ void EntitySoundsSubScreenController::onSoundLoad(int soundIdx) {
 }
 
 
-void EntitySoundsSubScreenController::onSoundApply(int soundIdx, LevelEditorEntity* entity) {
+void EntitySoundsSubScreenController::onSoundApply(int soundIdx, Prototype* entity) {
 	try {
-		LevelEditorEntityAudio* sound = nullptr;
+		PrototypeAudio* sound = nullptr;
 		if (soundIdx == entity->getSounds().size()) {
 			sound = entity->addSound(soundsSoundKey[soundIdx]->getController()->getValue().getString());
 		} else {
@@ -285,10 +285,10 @@ void EntitySoundsSubScreenController::showErrorPopUp(const string& caption, cons
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntitySoundsSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* entity) {
+void EntitySoundsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* entity) {
 }
 
-void EntitySoundsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntitySoundsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (StringTools::startsWith(node->getId(), "sounds_sound_apply_") == true) {

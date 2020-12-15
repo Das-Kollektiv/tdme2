@@ -17,8 +17,8 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
@@ -46,8 +46,8 @@ using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;

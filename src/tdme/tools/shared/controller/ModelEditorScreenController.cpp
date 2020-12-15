@@ -28,9 +28,9 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
@@ -72,9 +72,9 @@ using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
@@ -296,7 +296,7 @@ void ModelEditorScreenController::unsetEntityData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
+void ModelEditorScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
 	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
 }
@@ -365,7 +365,7 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 }
 
-void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
+void ModelEditorScreenController::setRendering(Prototype* entity)
 {
 	renderingContributesShadows->getController()->setDisabled(false);
 	renderingContributesShadows->getController()->setValue(MutableString(entity->isContributesShadows() == true?"1":""));
@@ -399,14 +399,14 @@ void ModelEditorScreenController::unsetRendering()
 	renderingApply->getController()->setDisabled(true);
 }
 
-LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
+PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	auto entity = view->getEntity();
 	switch(level) {
 		case 2:
 			{
 				auto entityLodLevel = entity->getLODLevel2();
 				if (entityLodLevel == nullptr) {
-					entityLodLevel = new LevelEditorEntityLODLevel(
+					entityLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
@@ -420,7 +420,7 @@ LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 			{
 				auto entityLodLevel = entity->getLODLevel3();
 				if (entityLodLevel == nullptr) {
-					entityLodLevel = new LevelEditorEntityLODLevel(
+					entityLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
@@ -437,7 +437,7 @@ LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	}
 }
 
-void ModelEditorScreenController::setLODLevel(LevelEditorEntity* entity, int level) {
+void ModelEditorScreenController::setLODLevel(Prototype* entity, int level) {
 	auto entityLodLevel = getLODLevel(level);
 	if (entityLodLevel == nullptr) {
 		lodLevel->getController()->setValue(MutableString(to_string(level)));
@@ -552,7 +552,7 @@ void ModelEditorScreenController::onLODLevelClearModel() {
 void ModelEditorScreenController::onLODLevelApplySettings() {
 	view->resetEntity();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	LevelEditorEntityLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
+	PrototypeLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
 	try {
 		entityLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
 		entityLodLevel->setFileName(
@@ -576,7 +576,7 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 	}
 }
 
-void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
+void ModelEditorScreenController::setMaterials(Prototype* entity) {
 	Model* model = view->getLodLevel() == 1?entity->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetMaterials();
@@ -1250,7 +1250,7 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 	guiElementNode->getController()->setValue(MutableString(""));
 }
 
-void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
+void ModelEditorScreenController::setAnimations(Prototype* entity) {
 	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetAnimations();

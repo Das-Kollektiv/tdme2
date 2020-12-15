@@ -8,13 +8,15 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
@@ -40,10 +42,10 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::utilities::MutableString;
 
 /**
@@ -211,7 +213,7 @@ public:
 	 * Set up object list box
 	 * @param level object by ids hash map
 	 */
-	void setObjectListbox(LevelEditorLevel& level);
+	void setObjectListbox(Scene& level);
 
 	/**
 	 * Unselect objects in object list box
@@ -265,7 +267,7 @@ public:
 	 * @param level map properties
 	 * @param selectedName selected name
 	 */
-	void setMapProperties(LevelEditorLevel& level, const string& selectedName);
+	void setMapProperties(Scene& level, const string& selectedName);
 
 	/**
 	 * On map property save
@@ -286,7 +288,7 @@ public:
 	 * Set up object property preset ids
 	 * @param objectPresetIds object property preset ids
 	 */
-	void setObjectPresetIds(const map<string, vector<PropertyModelClass*>>& objectPresetIds);
+	void setObjectPresetIds(const map<string, vector<PrototypeProperty*>>& objectPresetIds);
 
 	/**
 	 * Event callback for object properties selection
@@ -299,7 +301,7 @@ public:
 	 * @param object object properties
 	 * @param selectedName selected name
 	 */
-	void setObjectProperties(const string& presetId, LevelEditorObject* object, const string& selectedName);
+	void setObjectProperties(const string& presetId, SceneEntity* object, const string& selectedName);
 
 	/**
 	 * On object property save
@@ -380,7 +382,7 @@ public:
 	 * Set up light presets
 	 * @param lightPresetIds light presets
 	 */
-	void setLightPresetsIds(const map<string, LevelEditorLight*>& lightPresetIds);
+	void setLightPresetsIds(const map<string, SceneLight*>& lightPresetIds);
 
 	/**
 	 * Unselect light presets
@@ -500,7 +502,7 @@ public:
 	 * Set sky
 	 * @param level level
 	 */
-	void setSky(LevelEditorLevel& level);
+	void setSky(Scene& level);
 
 	/**
 	 * On map sky model load
@@ -522,7 +524,7 @@ public:
 	 * @param level level
 	 * @param selectedEnvironmentMappingId selected environment mapping id
 	 */
-	void setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId);
+	void setObjectReflectionsEnvironmentMappings(Scene& level, const string& selectedEnvironmentMappingId);
 
 	/**
 	 * Unset object reflections environment mappings

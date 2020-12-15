@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -15,8 +15,8 @@ using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeLODLevel;
 
 using rapidjson::Document;
 using rapidjson::Value;
@@ -45,7 +45,7 @@ private:
 	 * @param lodLevel lod level
 	 * @return json root
 	 */
-	static void exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel);
+	static void exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel);
 
 public:
 
@@ -57,7 +57,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity);
+	static void doExport(const string& pathName, const string& fileName, Prototype* entity);
 
 	/**
 	 * Export model meta data file to JSON node
@@ -67,6 +67,6 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void exportToJSON(Document& jDocument, Value& jEntityRoot, LevelEditorEntity* entity);
+	static void exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity);
 
 };

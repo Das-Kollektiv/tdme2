@@ -50,14 +50,14 @@
 #include <tdme/tools/shared/files/LevelFileExport.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorLight.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/tools/shared/model/LevelPropertyPresets.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -122,14 +122,14 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLibrary;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorLight;
-using tdme::tools::shared::model::LevelEditorObject;
-using tdme::tools::shared::model::LevelPropertyPresets;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::ScenePropertyPresets;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
@@ -205,7 +205,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 
 	{
 		// entity picking filter for no grid
-		class LevelEditorEntityPickingFilterNoGrid: public virtual EntityPickingFilter
+		class PrototypePickingFilterNoGrid: public virtual EntityPickingFilter
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
@@ -216,18 +216,18 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 			 * Public constructor
 			 * @param levelEditorView level editor view
 			 */
-			LevelEditorEntityPickingFilterNoGrid(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
+			PrototypePickingFilterNoGrid(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
 			}
 
 		private:
 			LevelEditorView* levelEditorView;
 		};
-		entityPickingFilterNoGrid = new LevelEditorEntityPickingFilterNoGrid(this);
+		entityPickingFilterNoGrid = new PrototypePickingFilterNoGrid(this);
 	}
 
 	{
 		// entity picking filter for no placing object
-		class LevelEditorEntityPickingFilterPlacing: public virtual EntityPickingFilter
+		class PrototypePickingFilterPlacing: public virtual EntityPickingFilter
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
@@ -241,13 +241,13 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 			 * Public constructor
 			 * @param levelEditorView level editor view
 			 */
-			LevelEditorEntityPickingFilterPlacing(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
+			PrototypePickingFilterPlacing(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
 			}
 
 		private:
 			LevelEditorView* levelEditorView;
 		};
-		entityPickingFilterPlacing = new LevelEditorEntityPickingFilterPlacing(this);
+		entityPickingFilterPlacing = new PrototypePickingFilterPlacing(this);
 	}
 }
 
@@ -277,22 +277,22 @@ const string LevelEditorView::getFileName()
 	return FileSystem::getInstance()->getFileName(level.getFileName());
 }
 
-LevelEditorLevel* LevelEditorView::getLevel()
+Scene* LevelEditorView::getLevel()
 {
 	return &level;
 }
 
-LevelEditorEntity* LevelEditorView::getSelectedEntity()
+Prototype* LevelEditorView::getSelectedEntity()
 {
 	return selectedEntity;
 }
 
-LevelEditorObject* LevelEditorView::getSelectedObject()
+SceneEntity* LevelEditorView::getSelectedObject()
 {
 	if (selectedEntityIds.size() != 1) return nullptr;
 
 	auto selectedObject = level.getObjectById(selectedEntityIds[0]);
-	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level.getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
+	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level.getObjectById(selectedObject->getId()) : static_cast< SceneEntity* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -933,8 +933,8 @@ void LevelEditorView::initialize()
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
 	levelEditorScreenController->setSnapping(snappingEnabled, snappingX, snappingZ);
 	levelEditorScreenController->setMapProperties(level, "");
-	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
-	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
+	levelEditorScreenController->setObjectPresetIds(ScenePropertyPresets::getInstance()->getObjectPropertiesPresets());
+	levelEditorScreenController->setLightPresetsIds(ScenePropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -1223,7 +1223,7 @@ void LevelEditorView::placeObject()
 			return;
 		}
 	}
-	auto levelEditorObject = new LevelEditorObject(
+	auto levelEditorObject = new SceneEntity(
 		selectedEntity->getName() + "_" + to_string(level.allocateObjectId()),
 		"",
 		levelEditorObjectTransformations,
@@ -1492,8 +1492,8 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 	if (levelEntity == nullptr) return;
 
 	levelEntity->clearProperties();
-	auto& objectPropertiesPresets = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
-	const vector<PropertyModelClass*>* objectPropertyPresetVector = nullptr;
+	auto& objectPropertiesPresets = ScenePropertyPresets::getInstance()->getObjectPropertiesPresets();
+	const vector<PrototypeProperty*>* objectPropertyPresetVector = nullptr;
 	auto objectPropertyPresetVectorIt = objectPropertiesPresets.find(presetId);
 	if (objectPropertyPresetVectorIt != objectPropertiesPresets.end()) {
 		objectPropertyPresetVector = &objectPropertyPresetVectorIt->second;
@@ -1680,15 +1680,15 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 		if (displayOnly == false) {
 			//
 			auto levelEditorObjectId = pasteModel->getName() + "_" + to_string(level.allocateObjectId());
-			auto levelEditorObject = new LevelEditorObject(
+			auto levelEditorObject = new SceneEntity(
 				levelEditorObjectId,
 				"",
 				levelEditorObjectTransformations,
 				pasteModel
 			 );
-			ModelProperties* properties = pasteObject;
+			PrototypeProperties* properties = pasteObject;
 			for (int i = 0; i < properties->getPropertyCount(); i++) {
-				PropertyModelClass* property = properties->getPropertyByIndex(i);
+				PrototypeProperty* property = properties->getPropertyByIndex(i);
 				levelEditorObject->addProperty(property->getName(), property->getValue());
 			}
 			level.addObject(levelEditorObject);
@@ -1814,10 +1814,10 @@ void LevelEditorView::updateGizmo() {
 		return;
 	} else
 	if (objectCount == 1) {
-		auto selectedLevelEditorObject = level.getObjectById(selectedEntityIds[0]);
-		auto selectedLevelEditorEntity = selectedLevelEditorObject != nullptr?selectedLevelEditorObject->getEntity():nullptr;
-		if (selectedLevelEditorObject != nullptr) transformations.fromTransformations(selectedLevelEditorObject->getTransformations());
-		setGizmoTypeMask(selectedLevelEditorEntity->getType()->getGizmoTypeMask());
+		auto selectedSceneEntity = level.getObjectById(selectedEntityIds[0]);
+		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getEntity():nullptr;
+		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
+		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
 	} else {
 		gizmoCenter.scale(1.0f / objectCount);
 	}

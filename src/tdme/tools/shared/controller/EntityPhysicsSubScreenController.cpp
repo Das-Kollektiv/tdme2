@@ -25,10 +25,10 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -68,10 +68,10 @@ using tdme::tools::shared::controller::EntityPhysicsSubScreenController_Bounding
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityPhysics;
-using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypePhysics;
+using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
@@ -86,7 +86,7 @@ EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUp
 {
 	this->modelPath = modelPath;
 	this->view = new EntityPhysicsView(this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
-	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
+	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;
 	this->boundingVolumeIdxActivated = 0;
@@ -175,7 +175,7 @@ void EntityPhysicsSubScreenController::enableBoundingVolume(int idx)
 	boundingVolumeApply[idx]->getController()->setDisabled(boundingVolumeTypeCount <= 1);
 }
 
-void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(Prototype* entity, int idx)
 {
 	if (entity == nullptr) {
 		view->selectBoundingVolumeType(idx, 0);
@@ -329,7 +329,7 @@ void EntityPhysicsSubScreenController::setupConvexMesh(int idx, const string& fi
 	boundingvolumeConvexMeshFile[idx]->getController()->setValue(MutableString(file));
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(Prototype* entity, int idx)
 {
 	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue().getString());
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
@@ -361,13 +361,13 @@ void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(LevelEditorEnti
 	}
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeNoneApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeNoneApply(Prototype* entity, int idx)
 {
 	view->applyBoundingVolumeNone(entity, idx);
 	view->resetBoundingVolume(entity, idx, 0);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(Prototype* entity, int idx)
 {
 	try {
 		view->applyBoundingVolumeSphere(
@@ -382,7 +382,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEn
 	view->updateGizmo(entity);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(Prototype* entity, int idx)
 {
 	try {
 		view->applyBoundingVolumeCapsule(
@@ -398,7 +398,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorE
 	view->updateGizmo(entity);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(Prototype* entity, int idx)
 {
 	try {
 		view->applyBoundingVolumeAabb(
@@ -413,7 +413,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEnti
 	view->updateGizmo(entity);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(Prototype* entity, int idx)
 {
 	try {
 		Transformations rotations;
@@ -440,7 +440,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntit
 	view->updateGizmo(entity);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(Prototype* entity, int idx)
 {
 	view->applyBoundingVolumeConvexMesh(
 		entity,
@@ -450,7 +450,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEdit
 	view->updateGizmo(entity);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(Prototype* entity, int idx)
 {
 	class OnBoundingVolumeConvexMeshFileAction: public virtual Action
 	{
@@ -474,7 +474,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 		 * @param idxFinal idx final
 		 * @param entityFinal entity final
 		 */
-		OnBoundingVolumeConvexMeshFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, int idxFinal, LevelEditorEntity* entityFinal)
+		OnBoundingVolumeConvexMeshFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, int idxFinal, Prototype* entityFinal)
 			: entityPhysicsSubScreenController(entityPhysicsSubScreenController)
 			, idxFinal(idxFinal)
 			, entityFinal(entityFinal) {
@@ -483,7 +483,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 	private:
 		EntityPhysicsSubScreenController* entityPhysicsSubScreenController;
 		int idxFinal;
-		LevelEditorEntity* entityFinal;
+		Prototype* entityFinal;
 	};
 
 
@@ -500,7 +500,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 	);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(Prototype* entity)
 {
 	class OnBoundingVolumeConvexMeshesFileAction: public virtual Action
 	{
@@ -522,14 +522,14 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEdi
 		 * @param entityPhysicsSubScreenController entity physics sub screen controller
 		 * @param entityFinal entity final
 		 */
-		OnBoundingVolumeConvexMeshesFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal)
+		OnBoundingVolumeConvexMeshesFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, Prototype* entityFinal)
 			: entityPhysicsSubScreenController(entityPhysicsSubScreenController)
 			, entityFinal(entityFinal) {
 		}
 
 	private:
 		EntityPhysicsSubScreenController* entityPhysicsSubScreenController;
-		LevelEditorEntity* entityFinal;
+		Prototype* entityFinal;
 	};
 
 	auto const entityFinal = entity;
@@ -544,7 +544,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEdi
 	);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesRemove(Prototype* entity)
 {
 	EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(
 		this,
@@ -552,7 +552,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesRemove(LevelE
 	);
 }
 
-void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesGenerate(Prototype* entity)
 {
 	EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(
 		this,
@@ -560,13 +560,13 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesGenerate(Leve
 	);
 }
 
-void EntityPhysicsSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setTerrainMesh(Prototype* entity) {
 	terrainMesh->getController()->setValue(MutableString(entity->isTerrainMesh() == true?"1":""));
 	terrainMesh->getController()->setDisabled(false);
 	terrainMeshApply->getController()->setDisabled(false);
 }
 
-void EntityPhysicsSubScreenController::onSetTerrainMesh(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onSetTerrainMesh(Prototype* entity) {
 	entity->setTerrainMesh(terrainMesh->getController()->getValue().equals("1"));
 }
 
@@ -587,7 +587,7 @@ void EntityPhysicsSubScreenController::unsetConvexMeshes() {
 	onConvexMeshModeChanged(true);
 }
 
-void EntityPhysicsSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setConvexMeshes(Prototype* entity) {
 	convexMeshesFile->getController()->setValue(MutableString(entity->getFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
@@ -613,16 +613,16 @@ void EntityPhysicsSubScreenController::unsetPhysics() {
 	bodyApply->getController()->setDisabled(true);
 }
 
-void EntityPhysicsSubScreenController::setPhysics(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setPhysics(Prototype* entity) {
 	auto physics = entity->getPhysics();
 	if (physics == nullptr) return;
-	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+	if (physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
 	} else
-	if (physics->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+	if (physics->getType() == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("dynamicrigidbody"));
 	} else
-	if (physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+	if (physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("staticrigidbody"));
 	} else {
 		bodyTypeDropdown->getController()->setValue(MutableString("none"));
@@ -630,71 +630,71 @@ void EntityPhysicsSubScreenController::setPhysics(LevelEditorEntity* entity) {
 	bodyTypeDropdown->getController()->setDisabled(false);
 	bodyTypeDropdownApply->getController()->setDisabled(false);
 	bodyMass->getController()->setValue(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY?
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY?
 			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getMass())
 	);
 	bodyMass->getController()->setDisabled(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY
 	);
 	bodyBounciness->getController()->setValue(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY?
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY?
 			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getRestitution())
 	);
 	bodyBounciness->getController()->setDisabled(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY
 	);
 	bodyFriction->getController()->setValue(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY?
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY?
 			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getFriction())
 	);
 	bodyFriction->getController()->setDisabled(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY
 	);
 	bodyInertiaTensor->getController()->setValue(
-		physics->getType() != LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY?
+		physics->getType() != PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY?
 			Tools::formatVector3(Vector3()):
 			Tools::formatVector3(physics->getInertiaTensor())
 	);
 	bodyInertiaTensor->getController()->setDisabled(
-		physics->getType() != LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY
+		physics->getType() != PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY
 	);
 	bodyApply->getController()->setDisabled(
-		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+		physics->getType() == PrototypePhysics_BodyType::NONE ||
+		physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY
 	);
 }
 
-void EntityPhysicsSubScreenController::onPhysicsBodyTypeApply(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onPhysicsBodyTypeApply(Prototype* entity) {
 	auto physics = entity->getPhysics();
 	auto type = bodyTypeDropdown->getController()->getValue().getString();
 	if (type == "collisionbody") {
-		physics->setType(LevelEditorEntityPhysics_BodyType::COLLISION_BODY);
+		physics->setType(PrototypePhysics_BodyType::COLLISION_BODY);
 	} else
 	if (type == "dynamicrigidbody") {
-		physics->setType(LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY);
+		physics->setType(PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY);
 	} else
 	if (type == "staticrigidbody") {
-		physics->setType(LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY);
+		physics->setType(PrototypePhysics_BodyType::STATIC_RIGIDBODY);
 	} else {
-		physics->setType(LevelEditorEntityPhysics_BodyType::NONE);
+		physics->setType(PrototypePhysics_BodyType::NONE);
 	}
 	setPhysics(entity);
 }
 
-void EntityPhysicsSubScreenController::onPhysicsBodyApply(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onPhysicsBodyApply(Prototype* entity) {
 	auto physics = entity->getPhysics();
 	try {
 		auto mass = Float::parseFloat(bodyMass->getController()->getValue().getString());
@@ -745,13 +745,13 @@ void EntityPhysicsSubScreenController::showErrorPopUp(const string& caption, con
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntityPhysicsSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* entity) {
 	if (StringTools::startsWith(node->getId(), "boundingvolume_convexmeshes_mode") == true) {
 		onConvexMeshModeChanged(false);
 	}
 }
 
-void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "button_boundingvolume_apply_")) {

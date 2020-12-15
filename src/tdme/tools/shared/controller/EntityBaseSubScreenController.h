@@ -8,7 +8,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -20,8 +20,8 @@ using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
@@ -85,13 +85,13 @@ public:
 	 * On entity data apply
 	 * @param model model
 	 */
-	void onEntityDataApply(LevelEditorEntity* model);
+	void onEntityDataApply(Prototype* model);
 
 	/**
 	 * Set up entity property preset ids
 	 * @param entityPresetIds entity property preset ids
 	 */
-	void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds); // TODO: std container: maybe use call by reference
+	void setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Set up entity properties
@@ -99,7 +99,7 @@ public:
 	 * @param presetId preset id
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
+	void setEntityProperties(Prototype* entity, const string& presetId, const string& selectedName);
 
 	/**
 	 * Unset entity properties
@@ -110,19 +110,19 @@ public:
 	 * On entity property save
 	 * @param entity entity
 	 */
-	void onEntityPropertySave(LevelEditorEntity* entity);
+	void onEntityPropertySave(Prototype* entity);
 
 	/**
 	 * On entity property add
 	 * @param entity entity
 	 */
-	void onEntityPropertyAdd(LevelEditorEntity* entity);
+	void onEntityPropertyAdd(Prototype* entity);
 
 	/**
 	 * On entity property remove
 	 * @param entity entity
 	 */
-	void onEntityPropertyRemove(LevelEditorEntity* entity);
+	void onEntityPropertyRemove(Prototype* entity);
 
 	/**
 	 * Shows the error pop up
@@ -133,20 +133,20 @@ public:
 	 * On entity property preset apply
 	 * @param model model
 	 */
-	void onEntityPropertyPresetApply(LevelEditorEntity* model);
+	void onEntityPropertyPresetApply(Prototype* model);
 
 	/**
 	 * Event callback for entity properties selection
 	 * @param entity
 	 */
-	void onEntityPropertiesSelectionChanged(LevelEditorEntity* entity);
+	void onEntityPropertiesSelectionChanged(Prototype* entity);
 
 	/**
 	 * On value changed
 	 * @param node node
 	 * @param model model
 	 */
-	void onValueChanged(GUIElementNode* node, LevelEditorEntity* model);
+	void onValueChanged(GUIElementNode* node, Prototype* model);
 
 	/**
 	 * On action performed
@@ -154,6 +154,6 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
 
 };
