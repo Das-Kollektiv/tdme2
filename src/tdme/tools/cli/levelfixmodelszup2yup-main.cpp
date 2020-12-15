@@ -42,23 +42,23 @@ int main(int argc, char** argv)
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 	if (argc != 2) {
-		Console::println("Usage: levelfixmodelszup2yup level.tl");
+		Console::println("Usage: levelfixmodelszup2yup scene.tl");
 		Application::exit(1);
 	}
 	string levelFileName = string(argv[1]);
 	try {
 		Console::println("Loading level: " + levelFileName);
-		Scene level;
+		Scene scene;
 		SceneReader::read(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
-			level
+			scene
 		);
 		Console::println("Fixing level models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
 		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// entity library
-		auto entityLibrary = level.getLibrary();
+		auto entityLibrary = scene.getLibrary();
 		for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
 			auto entity = entityLibrary->getPrototypeAt(i);
 			if (entity->getType() != Prototype_Type::MODEL) continue;
@@ -73,22 +73,22 @@ int main(int argc, char** argv)
 			);
 			entity->getModel()->getBoundingBox()->update();
 		}
-		// objects
-		for (auto i = 0; i < level.getEntityCount(); i++) {
-			auto object = level.getEntityAt(i);
-			if (object->getPrototype()->getType() != Prototype_Type::MODEL) continue;
-			auto scale = object->getTransformations().getScale();
-			object->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
-			auto rotationX = object->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex());
-			object->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisXIndex(), rotationX + 90);
-			object->getTransformations().update();
+		// scene entities
+		for (auto i = 0; i < scene.getEntityCount(); i++) {
+			auto entity = scene.getEntityAt(i);
+			if (entity->getPrototype()->getType() != Prototype_Type::MODEL) continue;
+			auto scale = entity->getTransformations().getScale();
+			entity->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
+			auto rotationX = entity->getTransformations().getRotationAngle(scene.getRotationOrder()->getAxisXIndex());
+			entity->getTransformations().setRotationAngle(scene.getRotationOrder()->getAxisXIndex(), rotationX + 90);
+			entity->getTransformations().update();
 		}
 		// TODO: bvs
 		Console::println("Saving level: " + levelFileName);
 		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
-			level
+			scene
 		);
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));

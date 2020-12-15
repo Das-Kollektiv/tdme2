@@ -76,7 +76,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) return true;
 				// meta
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) return true;
-				// level
+				// scene
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tl") == true) return true;
 				// particle system
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) return true;

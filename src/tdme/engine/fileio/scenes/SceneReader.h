@@ -79,11 +79,11 @@ private:
 
 	/**
 	 * Determine mesh nodes in node hierarchy
-	 * @param level level
+	 * @param scene scene
 	 * @param node node
 	 * @param parentName parent node
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshNodes(Scene& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
+	static void determineMeshNodes(Scene& scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
 };
