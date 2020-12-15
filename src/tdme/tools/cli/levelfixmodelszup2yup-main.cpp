@@ -59,8 +59,8 @@ int main(int argc, char** argv)
 		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// entity library
 		auto entityLibrary = level.getLibrary();
-		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
-			auto entity = entityLibrary->getEntityAt(i);
+		for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
+			auto entity = entityLibrary->getPrototypeAt(i);
 			if (entity->getType() != Prototype_EntityType::MODEL) continue;
 			entity->getModel()->setImportTransformationsMatrix(entity->getModel()->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
 			z2yUpMatrix.multiply(

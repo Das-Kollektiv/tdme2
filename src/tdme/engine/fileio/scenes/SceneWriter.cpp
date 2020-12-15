@@ -101,8 +101,8 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 	jDocument.AddMember("lights", jLights, jAllocator);
 	Value jEntityLibrary;
 	jEntityLibrary.SetArray();
-	for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
-		auto entity = entityLibrary->getEntityAt(i);
+	for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
+		auto entity = entityLibrary->getPrototypeAt(i);
 		Value jEntity;
 		jEntity.SetObject();
 		PrototypeWriter::write(jDocument, jEntity, entity);

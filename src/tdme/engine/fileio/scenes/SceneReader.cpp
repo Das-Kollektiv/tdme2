@@ -160,7 +160,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			Console::println("SceneReader::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
-		scene.getLibrary()->addEntity(levelEditorEntity);
+		scene.getLibrary()->addPrototype(levelEditorEntity);
 		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
 			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
 				auto& jModelProperty = jModel["properties"].GetArray()[j];
@@ -178,7 +178,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 
 	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
 		auto& jObject = jRoot["objects"].GetArray()[i];
-		auto model = scene.getLibrary()->getEntity(jObject["mid"].GetInt());
+		auto model = scene.getLibrary()->getPrototype(jObject["mid"].GetInt());
 		if (model == nullptr) {
 			Console::println("SceneReader::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
 
@@ -277,14 +277,14 @@ void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& par
 	auto modelName = nodeId;
 	modelName = StringTools::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
 	modelName = StringTools::regexReplace(modelName, "[0-9]+$", "");
-	auto haveName = entityLibrary->getEntityCount() == 0;
+	auto haveName = entityLibrary->getPrototypeCount() == 0;
 	if (haveName == false) {
 		for (auto i = 0; i < 10000; i++) {
 			haveName = true;
 			auto modelNameTry = modelName;
 			if (i > 0) modelNameTry+= to_string(i);
-			for (auto entityIdx = 0; entityIdx < entityLibrary->getEntityCount(); entityIdx++) {
-				auto entity = entityLibrary->getEntityAt(entityIdx);
+			for (auto entityIdx = 0; entityIdx < entityLibrary->getPrototypeCount(); entityIdx++) {
+				auto entity = entityLibrary->getPrototypeAt(entityIdx);
 				if (entity->getName() == modelNameTry) {
 					haveName = false;
 					break;
@@ -444,8 +444,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			}
 			Prototype* levelEditorEntity = nullptr;
 			if (entityType == Prototype_EntityType::MODEL && model != nullptr) {
-				for (auto i = 0; i < scene.getLibrary()->getEntityCount(); i++) {
-					auto levelEditorEntityCompare = scene.getLibrary()->getEntityAt(i);
+				for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
+					auto levelEditorEntityCompare = scene.getLibrary()->getPrototypeAt(i);
 					if (levelEditorEntityCompare->getType() != Prototype_EntityType::MODEL)
 						continue;
 

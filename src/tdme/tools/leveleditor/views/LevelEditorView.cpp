@@ -342,7 +342,7 @@ void LevelEditorView::setSnapping(bool snappingEnabled, float snappingX, float s
 
 void LevelEditorView::loadEntityFromLibrary(int id)
 {
-	selectedEntity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(id);
+	selectedEntity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(id);
 }
 
 void LevelEditorView::handleInputEvents()
@@ -626,8 +626,8 @@ void LevelEditorView::display()
 	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
 		auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
-			selectedEntity = entityLibrary->getEntityAt(i);
+		for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
+			selectedEntity = entityLibrary->getPrototypeAt(i);
 			Tools::oseThumbnail(selectedEntity);
 		}
 		reloadEntityLibrary = false;
@@ -1571,8 +1571,8 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 			SceneReader::read(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		}
 		popUps->getProgressBarScreenController()->close();
-		for (auto i = 0; i < level.getLibrary()->getEntityCount(); i++) {
-			auto levelEditorEntity = level.getLibrary()->getEntityAt(i);
+		for (auto i = 0; i < level.getLibrary()->getPrototypeCount(); i++) {
+			auto levelEditorEntity = level.getLibrary()->getPrototypeAt(i);
 			if (levelEditorEntity->getType()->getBoundingVolumeCount() != 0) levelEditorEntity->setDefaultBoundingVolumes(levelEditorEntity->getType()->getBoundingVolumeCount());
 		}
 		levelEditorScreenController->setSky(level);

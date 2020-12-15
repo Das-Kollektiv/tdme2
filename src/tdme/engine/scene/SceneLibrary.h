@@ -29,16 +29,16 @@ public:
 	static constexpr int ID_ALLOCATE { -1 };
 
 private:
-	Scene* level { nullptr };
-	map<int, Prototype*> entitiesById;
-	vector<Prototype*> entities;
-	int entityIdx;
+	Scene* scene { nullptr };
+	map<int, Prototype*> prototypesById;
+	vector<Prototype*> prototypes;
+	int prototypeIdx;
 
 	/**
-	 * Allocata a unique entity idx
-	 * @return
+	 * Allocata a unique prototype index
+	 * @return index
 	 */
-	int allocateEntityId();
+	int allocatePrototypeId();
 
 public:
 	/**
@@ -52,7 +52,7 @@ public:
 	~SceneLibrary();
 
 	/**
-	 * Clears this model library
+	 * Clears this scene prototype library
 	 */
 	void clear();
 
@@ -64,10 +64,20 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param pivot pivot
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	Prototype* addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+
+	/**
+	 * Add a empty
+	 * @param id id
+	 * @param name name
+	 * @param description description
+	 * @return prototype
+	 * @throws tdme::utilities::Exception
+	 */
+	Prototype* addParticleSystem(int id, const string& name, const string& description);
 
 	/**
 	 * Add a trigger
@@ -77,7 +87,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param depth depth
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	Prototype* addTrigger(int id, const string& name, const string& description, float width, float height, float depth);
@@ -90,7 +100,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param depth depth
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	Prototype* addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth);
@@ -100,49 +110,40 @@ public:
 	 * @param id id
 	 * @param name name
 	 * @param description description
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	Prototype* addEmpty(int id, const string& name, const string& description);
 
 	/**
-	 * Add a empty
+	 * Add a prototype
+	 * @param prototype prototype
+	 */
+	void addPrototype(Prototype* prototype);
+
+	/**
+	 * Get prototype at given index
+	 * @param idx index
+	 * @return prototype
+	 */
+	Prototype* getPrototypeAt(int idx);
+
+	/**
+	 * Get a prototype by given id
 	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @return level editor entity
-	 * @throws tdme::utilities::Exception
+	 * @return prototype
 	 */
-	Prototype* addParticleSystem(int id, const string& name, const string& description);
+	Prototype* getPrototype(int id);
 
 	/**
-	 * Add a entity
-	 * @param levelEditorEntity model
-	 */
-	void addEntity(Prototype* levelEditorEntity);
-
-	/**
-	 * @param idx idx
-	 * @return entity
-	 */
-	Prototype* getEntityAt(int idx);
-
-	/**
-	 * Retrieve a entity
-	 * @param id id
-	 * @return level editor entity
-	 */
-	Prototype* getEntity(int id);
-
-	/**
-	 * Remove a entity
+	 * Remove a prototype
 	 * @param id id
 	 */
-	void removeEntity(int id);
+	void removePrototype(int id);
 
 	/**
-	 * @return entity count
+	 * @return prototype count
 	 */
-	int getEntityCount();
+	int getPrototypeCount();
 
 };

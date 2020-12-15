@@ -137,9 +137,9 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 		"<scrollarea-vertical id=\"" +
 		entityLibraryListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
-		auto objectId = entityLibrary->getEntityAt(i)->getId();
-		auto objectName = entityLibrary->getEntityAt(i)->getName();
+	for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
+		auto objectId = entityLibrary->getPrototypeAt(i)->getId();
+		auto objectName = entityLibrary->getPrototypeAt(i)->getName();
 		entityLibraryListBoxSubNodesXML =
 			entityLibraryListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -161,14 +161,14 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 		entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
 	}
 	onEntitySelectionChanged();
-	buttonEntityPlace->getController()->setDisabled(entityLibrary->getEntityCount() == 0);
+	buttonEntityPlace->getController()->setDisabled(entityLibrary->getPrototypeCount() == 0);
 }
 
 void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 		if (entity != nullptr) {
 			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
 		}
@@ -177,7 +177,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 
 void LevelEditorEntityLibraryScreenController::onEditEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	{
 		auto v = entity->getType();
@@ -226,7 +226,7 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
@@ -236,7 +236,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
 	TDMELevelEditor::getInstance()->getLevel()->removeEntitiesByPrototypeId(entity->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
@@ -245,14 +245,14 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
-	TDMELevelEditor::getInstance()->getLevel()->getLibrary()->removeEntity(entity->getId());
+	TDMELevelEditor::getInstance()->getLevel()->getLibrary()->removePrototype(entity->getId());
 	setEntityLibrary();
 }
 
 void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 {
 	// check if we have a entity
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr || entity->getType() != Prototype_EntityType::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
 	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
@@ -348,7 +348,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// remove original entity from entity library
 	// TODO: delete file
-	level->getLibrary()->removeEntity(entity->getId());
+	level->getLibrary()->removePrototype(entity->getId());
 
 	//
 	setEntityLibrary();
