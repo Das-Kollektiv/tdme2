@@ -736,7 +736,7 @@ void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string&
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
 				string pathName = PrototypeReader::getResourcePathName(
-					Tools::getPath(prototype->getEntityFileName()),
+					Tools::getPath(prototype->getFileName()),
 					soundDefinition->getFileName()
 				);
 				string fileName = Tools::getFileName(soundDefinition->getFileName());

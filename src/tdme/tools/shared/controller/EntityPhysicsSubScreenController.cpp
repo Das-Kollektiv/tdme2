@@ -494,7 +494,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(Prototype*
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		entity->getBoundingVolume(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolume(idx)->getModelMeshFile() : entity->getFileName(),
+		entity->getBoundingVolume(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolume(idx)->getModelMeshFile() : entity->getModelFileName(),
 		true,
 		new OnBoundingVolumeConvexMeshFileAction(this, idxFinal, entityFinal)
 	);
@@ -588,7 +588,7 @@ void EntityPhysicsSubScreenController::unsetConvexMeshes() {
 }
 
 void EntityPhysicsSubScreenController::setConvexMeshes(Prototype* entity) {
-	convexMeshesFile->getController()->setValue(MutableString(entity->getFileName()));
+	convexMeshesFile->getController()->setValue(MutableString(entity->getModelFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
 	convexmeshesModeGenerate->getController()->setDisabled(false);

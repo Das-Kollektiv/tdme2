@@ -98,7 +98,7 @@ void PrototypeWriter::copyFile(const string& source, const string& dest)
 
 void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
 {
-	prototype->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	prototype->setFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	Document jRoot;
 	jRoot.SetObject();
 	write(jRoot, jRoot, prototype);
@@ -139,9 +139,9 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* prototype)
 {
 	auto& jAllocator = jDocument.GetAllocator();
-	if (prototype->getType() == Prototype_Type::MODEL && prototype->getFileName().length() > 0) {
-		auto modelPathName = Tools::getPath(prototype->getFileName());
-		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(prototype->getFileName())) + ".tm";
+	if (prototype->getType() == Prototype_Type::MODEL && prototype->getModelFileName().length() > 0) {
+		auto modelPathName = Tools::getPath(prototype->getModelFileName());
+		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(prototype->getModelFileName())) + ".tm";
 		TMWriter::write(
 			prototype->getModel(),
 			modelPathName,

@@ -285,8 +285,8 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	try {
 		// add partitions to level
-		auto pathName = Tools::getPath(entity->getFileName());
-		auto fileName = Tools::getFileName(entity->getFileName());
+		auto pathName = Tools::getPath(entity->getModelFileName());
+		auto fileName = Tools::getFileName(entity->getModelFileName());
 		for (auto modelsByPartitionIt: modelsByPartition) {
 			auto key = modelsByPartitionIt.first;
 			auto model = modelsByPartitionIt.second;

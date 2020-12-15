@@ -85,7 +85,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	jEntityRoot.Parse(jsonContent.c_str());
 
 	auto levelEditorEntity = read(id, pathName, jEntityRoot);
-	levelEditorEntity->setEntityFileName(pathName + "/" + fileName);
+	levelEditorEntity->setFileName(pathName + "/" + fileName);
 	return levelEditorEntity;
 }
 
@@ -98,7 +98,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		static_cast< float >(jEntityRoot["py"].GetFloat()),
 		static_cast< float >(jEntityRoot["pz"].GetFloat())
 	);
-	auto modelType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
+	auto prototypeType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
 	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
 	auto name = (jEntityRoot["name"].GetString());
 	auto description = (jEntityRoot["descr"].GetString());
@@ -115,13 +115,13 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			FileSystem::getInstance()->getFileName(modelFileName)
 		);
 	} else
-	if (modelType == Prototype_Type::EMPTY) {
+	if (prototypeType == Prototype_Type::EMPTY) {
 		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	}
 
 	levelEditorEntity = new Prototype(
 		id,
-		modelType,
+		prototypeType,
 		name,
 		description,
 		"",
@@ -185,12 +185,12 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			sound->setFixed(jSound["f"].GetBool());
 		}
 	}
-	if (modelType == Prototype_Type::MODEL) {
+	if (prototypeType == Prototype_Type::MODEL) {
 		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
 		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
-	if (modelType == Prototype_Type::PARTICLESYSTEM) {
+	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
 		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
 			levelEditorEntity->addParticleSystem();
 			parseParticleSystem(levelEditorEntity->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);

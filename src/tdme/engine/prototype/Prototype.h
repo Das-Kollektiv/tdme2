@@ -32,7 +32,7 @@ using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeLODLevel;
 
 /**
- * Level Editor Model
+ * Prototype
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -54,9 +54,9 @@ private:
 	Prototype_Type* type { nullptr };
 	string name;
 	string description;
-	string entityFileName;
 	string fileName;
-	string thumbnail;
+	string modelFileName;
+	string thumbnailFileName;
 	Model* model { nullptr };
 	Vector3 pivot;
 	PrototypeLODLevel* lodLevel2 { nullptr };
@@ -81,18 +81,18 @@ private:
 public:
 
 	/**
-	 * Creates a level editor model
+	 * Creates a prototype
 	 * @param id id
-	 * @param entityType entity type
+	 * @param prototypType prototype type
 	 * @param name name
 	 * @param description description
-	 * @param entityFileName entity file name
 	 * @param fileName file name
+	 * @param modelFileName model file name
 	 * @param thumbnail thumbnail
 	 * @param model model
 	 * @param pivot pivot
 	 */
-	Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
+	Prototype(int id, Prototype_Type* prototypeType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot);
 
 	/**
 	 * Destructor
@@ -107,7 +107,7 @@ public:
 	}
 
 	/**
-	 * @return entity type
+	 * @return type
 	 */
 	inline Prototype_Type* getType() {
 		return type;
@@ -121,7 +121,7 @@ public:
 	}
 
 	/**
-	 * Set up model name
+	 * Set up name
 	 * @param name name
 	 */
 	inline void setName(const string& name) {
@@ -136,7 +136,7 @@ public:
 	}
 
 	/**
-	 * Set up model description
+	 * Set up description
 	 * @param description description
 	 */
 	inline void setDescription(const string& description) {
@@ -144,40 +144,40 @@ public:
 	}
 
 	/**
-	 * @return entity file name
-	 */
-	inline const string& getEntityFileName() {
-		return entityFileName;
-	}
-
-	/**
-	 * Set entity file name
-	 * @param entityFileName entity file name
-	 */
-	inline void setEntityFileName(const string& entityFileName) {
-		this->entityFileName = entityFileName;
-	}
-
-	/**
-	 * @return file name
+	 * @return prototype file name
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set file name
-	 * @param fileName file name
+	 * Set prototype file name
+	 * @param fileName prototype file name
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;
 	}
 
 	/**
-	 * @return thumbnail
+	 * @return model file name
 	 */
-	inline const string& getThumbnail() {
-		return thumbnail;
+	inline const string& getModelFileName() {
+		return modelFileName;
+	}
+
+	/**
+	 * Set model file name
+	 * @param fileName file name
+	 */
+	inline void setModelFileName(const string& fileName) {
+		this->modelFileName = fileName;
+	}
+
+	/**
+	 * @return thumbnail file name
+	 */
+	inline const string& getThumbnailFileName() {
+		return thumbnailFileName;
 	}
 
 	/**
@@ -218,30 +218,30 @@ public:
 	}
 
 	/**
-	 * Get bounding volume at
-	 * @param idx idx
-	 * @return level editor object bounding volume
+	 * Get bounding volume at given index
+	 * @param idx index
+	 * @return prototype bounding volume
 	 */
 	inline PrototypeBoundingVolume* getBoundingVolume(int idx) {
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
 	/**
-	 * Add bounding volume
-	 * @param idx idx
-	 * @param levelEditorEntityBoundingVolume level editor entity bounding volume
+	 * Add bounding volume at given index
+	 * @param idx index
+	 * @param prototypeBoundingVolume prototype bounding volume
 	 * @return level editor bounding volume
 	 */
-	bool addBoundingVolume(int idx, PrototypeBoundingVolume* levelEditorEntityBoundingVolume);
+	bool addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBoundingVolume);
 
 	/**
-	 * Remove bounding volume
-	 * @param idx idx
+	 * Remove bounding volume at given index
+	 * @param idx index
 	 */
 	void removeBoundingVolume(int idx);
 
 	/**
-	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
+	 * Set default bounding volumes(to be used with LevelEditor)
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
 	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
@@ -294,7 +294,7 @@ public:
 	}
 
 	/**
-	 * Remove particle system from given index
+	 * Remove particle system at given index
 	 * @param idx particle system index
 	 * @return success
 	 */
@@ -309,7 +309,7 @@ public:
 	/**
 	 * Get particle system at given index
 	 * @param idx particle system index
-	 * @return level editor entity particle system
+	 * @return prototype particle system
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
 		return particleSystems[idx];
@@ -411,7 +411,7 @@ public:
 
 	/**
 	 * Get distance shader distance
-	 * @return shader id
+	 * @return distance shader distance
 	 */
 	inline float getDistanceShaderDistance() {
 		return distanceShaderDistance;
@@ -435,7 +435,7 @@ public:
 	/**
 	 * Returns sound of given sound id
 	 * @param id id
-	 * @return sound with given id
+	 * @return sound
 	 */
 	inline PrototypeAudio* getSound(const string& id) {
 		auto soundIt = soundsById.find(id);
@@ -446,7 +446,6 @@ public:
 	/**
 	 * Remove sound of given sound id
 	 * @param id id
-	 * @return sound with given id
 	 */
 	inline void removeSound(const string& id) {
 		auto soundIt = soundsById.find(id);
@@ -456,8 +455,9 @@ public:
 	}
 
 	/**
-	 * Returns sound of given sound id
-	 * @param id id
+	 * Renames sound of given sound id with new id
+	 * @param id existing id
+	 * @param id new id
 	 * @return success
 	 */
 	inline bool renameSound(const string& id, const string& newId) {
@@ -470,10 +470,9 @@ public:
 	}
 
 	/**
-	 * Set up sound
+	 * Add sound with given id
 	 * @param id id
-	 * @param audio audio
-	 * @return success
+	 * @return prototype audio
 	 */
 	PrototypeAudio* addSound(const string& id);
 
@@ -510,14 +509,14 @@ public:
 	}
 
 	/**
-	 * @return render pass mask
+	 * @return environment map render pass mask
 	 */
 	inline int getEnvironmentMapRenderPassMask() {
 		return environmentMapRenderPassMask;
 	}
 
 	/**
-	 * Set up render pass mask
+	 * Set up environment render pass mask
 	 * @param renderPassMask render pass mask
 	 */
 	inline void setEnvironmentMapRenderPassMask(int renderPassMask) {
@@ -525,14 +524,14 @@ public:
 	}
 
 	/**
-	 * @return render update time frequency in milliseconds
+	 * @return environment map render update time frequency in milliseconds
 	 */
 	inline int64_t getEnvironmentMapTimeRenderUpdateFrequency() {
 		return environmentMapTimeRenderUpdateFrequency;
 	}
 
 	/**
-	 * Set up render update time frequency
+	 * Set up environment map render update time frequency
 	 * @param frequency frequency in milliseconds
 	 */
 	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {

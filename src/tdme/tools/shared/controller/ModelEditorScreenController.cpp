@@ -445,7 +445,7 @@ void ModelEditorScreenController::setLODLevel(Prototype* entity, int level) {
 		lodLevelApply->getController()->setDisabled(false);
 		lodType->getController()->setValue(MutableString("1"));
 		lodType->getController()->setDisabled(true);
-		lodModelFile->getController()->setValue(MutableString(entity->getFileName()));
+		lodModelFile->getController()->setValue(MutableString(entity->getModelFileName()));
 		lodModelFile->getController()->setDisabled(true);
 		lodModelFileLoad->getController()->setDisabled(true);
 		lodModelFileClear->getController()->setDisabled(true);
@@ -1736,7 +1736,7 @@ void ModelEditorScreenController::onModelLoad()
 		ModelEditorScreenController *modelEditorScreenController;
 	};
 
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 	}
@@ -1784,7 +1784,7 @@ void ModelEditorScreenController::onModelSave()
 		ModelEditorScreenController* modelEditorScreenController;
 	};
 
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
+	auto fileName = view->getEntity() != nullptr?view->getEntity()->getFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == false) {

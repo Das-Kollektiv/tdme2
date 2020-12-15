@@ -180,7 +180,7 @@ void SharedParticleSystemView::initParticleSystem()
 	if (entity == nullptr)
 		return;
 
-	particleSystemFile = entity->getEntityFileName();
+	particleSystemFile = entity->getFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
 	updateGUIElements();
@@ -374,7 +374,7 @@ void SharedParticleSystemView::display()
 void SharedParticleSystemView::updateGUIElements()
 {
 	if (entity != nullptr && entity->getParticleSystemsCount() > 0) {
-		particleSystemScreenController->setScreenCaption("Particle System - " + (entity->getEntityFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()));
+		particleSystemScreenController->setScreenCaption("Particle System - " + (entity->getFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getFileName()) : entity->getName()));
 		auto preset = entity->getProperty("preset");
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -549,7 +549,7 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 	auto soundDefinition = entity->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(entity->getEntityFileName()),
+			Tools::getPath(entity->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());

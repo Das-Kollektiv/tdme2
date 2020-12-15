@@ -997,7 +997,7 @@ void ParticleSystemScreenController::onEntitySave()
 		ParticleSystemScreenController* particleSystemScreenController;
 	};
 
-	auto fileName = view->getEntity()->getEntityFileName();
+	auto fileName = view->getEntity()->getFileName();
 	if (fileName.length() == 0) {
 		fileName = "untitle.tps";
 	}

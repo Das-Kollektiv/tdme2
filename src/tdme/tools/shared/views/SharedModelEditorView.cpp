@@ -158,7 +158,7 @@ void SharedModelEditorView::initModel()
 		delete attachment1Model;
 		attachment1Model = nullptr;
 	}
-	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
+	modelFile = entity->getFileName().length() > 0 ? entity->getFileName() : entity->getModelFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
@@ -380,7 +380,7 @@ void SharedModelEditorView::display()
 void SharedModelEditorView::updateGUIElements()
 {
 	if (entity != nullptr) {
-		modelEditorScreenController->setScreenCaption("Model Editor - " + (entity->getEntityFileName().length() > 0 ? Tools::getFileName(entity->getEntityFileName()) : Tools::getFileName(entity->getFileName())));
+		modelEditorScreenController->setScreenCaption("Model Editor - " + (entity->getFileName().length() > 0 ? Tools::getFileName(entity->getFileName()) : Tools::getFileName(entity->getModelFileName())));
 		auto preset = entity->getProperty("preset");
 		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
@@ -593,7 +593,7 @@ void SharedModelEditorView::playSound(const string& soundId) {
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(entity->getEntityFileName()),
+			Tools::getPath(entity->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());
