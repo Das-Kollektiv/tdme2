@@ -144,8 +144,8 @@ void WaterTest::initialize()
 	engine->initialize();
 
 	SceneReader::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
-	SceneConnector::setLight(engine, level);
-	SceneConnector::addLevel(engine, level, false, false, false, false);
+	SceneConnector::setLights(engine, level);
+	SceneConnector::addScene(engine, level, false, false, false, false);
 
 	// load sky
 	skySphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");

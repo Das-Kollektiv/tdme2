@@ -29,7 +29,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::utilities::MutableString;
 
 /**
- * Level Editor Level Logic
+ * Scene engine/physics connector
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -191,14 +191,14 @@ public:
 	}
 
 	/**
-	 * @return If early z rejection is enabled, in level loading case its used for render groups and terrain
+	 * @return If early z rejection is enabled, in scene loading case its used for render groups and terrain
 	 */
 	inline static bool isEnableEarlyZRejection() {
 		return enableEarlyZRejection;
 	}
 
 	/**
-	 * Enable/disable early z rejection, in level loading case its used for render groups and terrain
+	 * Enable/disable early z rejection, in scene loading case its used for render groups and terrain
 	 * @param enableEarlyZRejection enable early z rejection
 	 */
 	inline static void setEnableEarlyZRejection(bool enableEarlyZRejection) {
@@ -206,16 +206,16 @@ public:
 	}
 
 	/**
-	 * Set lights from level
+	 * Set lights from scene
 	 * @param engine engine
-	 * @param level level
+	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void setLight(Engine* engine, Scene& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void setLights(Engine* engine, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Create particle system
-	 * @param particleSystem level editor entity particle system
+	 * @param particleSystem prototype particle system
 	 * @param id id
 	 * @param enableDynamicShadows enable dynamic shadows
 	 * @return engine particle system entity
@@ -232,26 +232,26 @@ public:
 
 	/**
 	 * Create engine entity
-	 * @param levelEditorEntity level editor entity
+	 * @param prototype prototype
 	 * @param id id
 	 * @param transformations transformations
 	 * @param instances instances which applies only for skinned objects
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* levelEditorEntity, const string& id, const Transformations& transformations, int instances = 1);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1);
 
 	/**
 	 * Create engine entity
-	 * @param levelEditorObject level editor object
+	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @return entity
 	 */
-	static Entity* createEntity(SceneEntity* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
-	 * Add level to engine
+	 * Add scene to engine
 	 * @param engine engine
-	 * @param level level
+	 * @param scene scene
 	 * @param addEmpties add empties
 	 * @param addTrigger add trigger
 	 * @param addEnvironmentMapping add environment mapping
@@ -260,12 +260,12 @@ public:
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addLevel(Engine* engine, Scene& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body
 	 * @param world world
-	 * @param levelEditorEntity level editor entity
+	 * @param prototype prototype
 	 * @param id id
 	 * @param transformations transformations
 	 * @param collisionTypeId collision type id or 0 for default
@@ -273,68 +273,68 @@ public:
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
 	 * @param world world
-	 * @param levelEditorObject level editor object
+	 * @param sceneEntity scene entity
 	 * @param translation translation
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, SceneEntity* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
-	 * Add level to physics world
+	 * Add scene to physics world
 	 * @param world world
-	 * @param level level
+	 * @param scene scene
 	 * @param enable enable
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addLevel(World* world, Scene& level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addScene(World* world, Scene& scene, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Disable level in engine
+	 * Disable scene in engine
 	 * @param engine engine
-	 * @param level level
+	 * @param scene scene
 	 */
-	static void disableLevel(Engine* engine, Scene& level);
+	static void disableScene(Engine* engine, Scene& scene);
 
 	/**
-	 * Disable level in physics world
+	 * Disable scene in physics world
 	 * @param world world
-	 * @param level level
+	 * @param scene scene
 	 */
-	static void disableLevel(World* world, Scene& level);
+	static void disableScene(World* world, Scene& scene);
 
 	/**
-	 * Enable disabled level in engine
+	 * Enable disabled scene in engine
 	 * @param engine engine
-	 * @param level level
+	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void enableLevel(Engine* engine, Scene& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableScene(Engine* engine, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
-	 * Enable disabled level in physics world
+	 * Enable disabled scene in physics world
 	 * @param world world
-	 * @param level level
+	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void enableLevel(World* world, Scene& level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableScene(World* world, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
-	 * Add level editor entity sounds into given audio instance associated with given id
+	 * Add scene entity sounds into given audio instance associated with given id
 	 * @param audio audio instance to load sounds into
-	 * @param levelEditorEntity level editor entity
+	 * @param prototype scene entity
 	 * @param id audio entity id
 	 * @param poolSize pool size, which is optional if you want to use a pool for each sound
 	 */
-	static void addEntitySounds(Audio* audio, Prototype* levelEditorEntity, const string& id, const int poolSize = 1);
+	static void addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize = 1);
 
 private:
 	static Model* emptyModel;

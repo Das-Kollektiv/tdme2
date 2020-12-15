@@ -129,9 +129,9 @@ void FlowMapTest::initialize()
 {
 	engine->initialize();
 	SceneReader::doImport("resources/tests/levels/pathfinding", "test.tl", level);
-	SceneConnector::setLight(engine, level);
-	SceneConnector::addLevel(engine, level, false, false, false, false);
-	SceneConnector::addLevel(world, level);
+	SceneConnector::setLights(engine, level);
+	SceneConnector::addScene(engine, level, false, false, false, false);
+	SceneConnector::addScene(world, level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);

@@ -1071,8 +1071,8 @@ void LevelEditorView::loadLevel()
 	engine->reset();
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
-	SceneConnector::setLight(engine, level, Vector3());
-	SceneConnector::addLevel(engine, level, true, true, true, true);
+	SceneConnector::setLights(engine, level, Vector3());
+	SceneConnector::addScene(engine, level, true, true, true, true);
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();

@@ -161,7 +161,7 @@ int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 bool SceneConnector::enableEarlyZRejection = false;
 
-void SceneConnector::setLight(Engine* engine, Scene& level, const Vector3& translation)
+void SceneConnector::setLights(Engine* engine, Scene& level, const Vector3& translation)
 {
 	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level.getLightCount(); i++) {
 		engine->getLightAt(i)->setAmbient(Color4(level.getLightAt(i)->getAmbient()));
@@ -298,18 +298,18 @@ Entity* SceneConnector::createEmpty(const string& id, const Transformations& tra
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(Prototype* levelEditorEntity, const string& id, const Transformations& transformations, int instances) {
+Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances) {
 	Entity* entity = nullptr;
 
 	// objects
-	if (levelEditorEntity->getModel() != nullptr) {
-		auto lodLevel2 = levelEditorEntity->getLODLevel2();
-		auto lodLevel3 = levelEditorEntity->getLODLevel3();
+	if (prototype->getModel() != nullptr) {
+		auto lodLevel2 = prototype->getLODLevel2();
+		auto lodLevel3 = prototype->getLODLevel3();
 		// with LOD
 		if (lodLevel2 != nullptr) {
 			entity = new LODObject3D(
 				id,
-				levelEditorEntity->getModel(),
+				prototype->getModel(),
 				lodLevel2->getType(),
 				lodLevel2->getMinDistance(),
 				lodLevel2->getModel(),
@@ -324,33 +324,33 @@ Entity* SceneConnector::createEntity(Prototype* levelEditorEntity, const string&
 				lodObject->setEffectColorAddLOD3(lodLevel3->getColorAdd());
 				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
-			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
-			lodObject->setShader(levelEditorEntity->getShader());
-			lodObject->setDistanceShader(levelEditorEntity->getDistanceShader());
-			lodObject->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
+			lodObject->setShader(prototype->getShader());
+			lodObject->setDistanceShader(prototype->getDistanceShader());
+			lodObject->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 		} else {
 			// single
 			entity = new Object3D(
 				id,
-				levelEditorEntity->getModel(),
+				prototype->getModel(),
 				instances
 			);
 			auto object = dynamic_cast<Object3D*>(entity);
-			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
-			object->setShader(levelEditorEntity->getShader());
-			object->setDistanceShader(levelEditorEntity->getDistanceShader());
-			object->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
-			if (enableEarlyZRejection == true && levelEditorEntity->isTerrainMesh() == true) {
+			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
+			object->setShader(prototype->getShader());
+			object->setDistanceShader(prototype->getDistanceShader());
+			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+			if (enableEarlyZRejection == true && prototype->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
 			}
 		}
 	} else
 	// particle system
-	if (levelEditorEntity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
+	if (prototype->getType() == Prototype_EntityType::PARTICLESYSTEM) {
 		vector<ParticleSystemEntity*> particleSystems;
-		for (auto i = 0; i < levelEditorEntity->getParticleSystemsCount(); i++) {
+		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
 			auto particleSystem = createParticleSystem(
-				levelEditorEntity->getParticleSystemAt(i),
+				prototype->getParticleSystemAt(i),
 				id + (i == 0?"":"." + to_string(i)),
 				true
 			);
@@ -370,25 +370,25 @@ Entity* SceneConnector::createEntity(Prototype* levelEditorEntity, const string&
 		}
 	} else
 	// trigger/environment mapping
-	if (levelEditorEntity->getType() == Prototype_EntityType::TRIGGER ||
-		levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+	if (prototype->getType() == Prototype_EntityType::TRIGGER ||
+		prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
-		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
-			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
+		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+			auto entityBoundingVolume = prototype->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
 		}
-		if (levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING &&
-			levelEditorEntity->getBoundingVolumeCount() == 1 &&
-			dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
-			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()));
+		if (prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING &&
+			prototype->getBoundingVolumeCount() == 1 &&
+			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
+			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()));
 			auto environmentMapping = new EnvironmentMapping("environmentmapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), aabb);
-			environmentMapping->setRenderPassMask(levelEditorEntity->getEnvironmentMapRenderPassMask());
-			environmentMapping->setTimeRenderUpdateFrequency(levelEditorEntity->getEnvironmentMapTimeRenderUpdateFrequency());
+			environmentMapping->setRenderPassMask(prototype->getEnvironmentMapRenderPassMask());
+			environmentMapping->setTimeRenderUpdateFrequency(prototype->getEnvironmentMapTimeRenderUpdateFrequency());
 			entityBoundingVolumesHierarchy->addEntity(environmentMapping);
 		}
 		entityBoundingVolumesHierarchy->update();
@@ -402,11 +402,11 @@ Entity* SceneConnector::createEntity(Prototype* levelEditorEntity, const string&
 
 	//
 	if (entity != nullptr) {
-		if (levelEditorEntity->isTerrainMesh() == true) {
+		if (prototype->isTerrainMesh() == true) {
 			entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		}
-		entity->setContributesShadows(levelEditorEntity->isContributesShadows());
-		entity->setReceivesShadows(levelEditorEntity->isReceivesShadows());
+		entity->setContributesShadows(prototype->isContributesShadows());
+		entity->setReceivesShadows(prototype->isReceivesShadows());
 		entity->fromTransformations(transformations);
 	}
 
@@ -414,26 +414,26 @@ Entity* SceneConnector::createEntity(Prototype* levelEditorEntity, const string&
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(SceneEntity* levelEditorObject, const Vector3& translation) {
+Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation) {
 	Transformations transformations;
-	transformations.fromTransformations(levelEditorObject->getTransformations());
+	transformations.fromTransformations(sceneEntity->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
+	return createEntity(sceneEntity->getEntity(), sceneEntity->getId(), transformations);
 }
 
-void SceneConnector::addLevel(Engine* engine, Scene& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, Prototype*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto object = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto object = scene.getObjectAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level.getObjectCount()) * 0.5f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getObjectCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && object->getEntity()->getType() == Prototype_EntityType::EMPTY) continue;
@@ -534,14 +534,14 @@ void SceneConnector::addLevel(Engine* engine, Scene& level, bool addEmpties, boo
 	}
 }
 
-Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
-	if (levelEditorEntity->getType() == Prototype_EntityType::EMPTY) return nullptr;
+Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+	if (prototype->getType() == Prototype_EntityType::EMPTY) return nullptr;
 
-	auto physicsType = overrideType != nullptr?overrideType:levelEditorEntity->getPhysics()->getType();
-	if (levelEditorEntity->getType() == Prototype_EntityType::TRIGGER) {
+	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
+	if (prototype->getType() == Prototype_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
-		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolume(j);
+		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
+			auto entityBv = prototype->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
@@ -553,9 +553,9 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 			boundingVolumes
 		);
 	} else
-	if (levelEditorEntity->getType() == Prototype_EntityType::MODEL &&
-		levelEditorEntity->isTerrainMesh() == true) {
-		Object3DModel terrainModel(levelEditorEntity->getModel());
+	if (prototype->getType() == Prototype_EntityType::MODEL &&
+		prototype->isTerrainMesh() == true) {
+		Object3DModel terrainModel(prototype->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
@@ -572,7 +572,7 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
 				Transformations(),
-				levelEditorEntity->getPhysics()->getFriction(),
+				prototype->getPhysics()->getFriction(),
 				{terrainMesh}
 			);
 		} else
@@ -582,17 +582,17 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
 				Transformations(),
-				levelEditorEntity->getPhysics()->getRestitution(),
-				levelEditorEntity->getPhysics()->getFriction(),
-				levelEditorEntity->getPhysics()->getMass(),
-				levelEditorEntity->getPhysics()->getInertiaTensor(),
+				prototype->getPhysics()->getRestitution(),
+				prototype->getPhysics()->getFriction(),
+				prototype->getPhysics()->getMass(),
+				prototype->getPhysics()->getInertiaTensor(),
 				{terrainMesh}
 			);
 		}
 	} else {
 		vector<BoundingVolume*> boundingVolumes;
-		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolume(j);
+		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
+			auto entityBv = prototype->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
@@ -611,7 +611,7 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
 				transformations,
-				levelEditorEntity->getPhysics()->getFriction(),
+				prototype->getPhysics()->getFriction(),
 				boundingVolumes
 			);
 		} else
@@ -621,10 +621,10 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
 				transformations,
-				levelEditorEntity->getPhysics()->getRestitution(),
-				levelEditorEntity->getPhysics()->getFriction(),
-				levelEditorEntity->getPhysics()->getMass(),
-				levelEditorEntity->getPhysics()->getInertiaTensor(),
+				prototype->getPhysics()->getRestitution(),
+				prototype->getPhysics()->getFriction(),
+				prototype->getPhysics()->getMass(),
+				prototype->getPhysics()->getInertiaTensor(),
 				boundingVolumes
 			);
 		}
@@ -632,27 +632,27 @@ Body* SceneConnector::createBody(World* world, Prototype* levelEditorEntity, con
 	return nullptr;
 }
 
-Body* SceneConnector::createBody(World* world, SceneEntity* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	Transformations transformations;
-	transformations.fromTransformations(levelEditorObject->getTransformations());
+	transformations.fromTransformations(sceneEntity->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index, overrideType);
+	return createBody(world, sceneEntity->getEntity(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
-void SceneConnector::addLevel(World* world, Scene& level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	//
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto levelEditorObject = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto levelEditorObject = scene.getObjectAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level.getObjectCount()) * 1.0f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getObjectCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -674,10 +674,10 @@ void SceneConnector::addLevel(World* world, Scene& level, bool enable, const Vec
 	}
 }
 
-void SceneConnector::disableLevel(Engine* engine, Scene& level)
+void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto object = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto object = scene.getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -686,22 +686,22 @@ void SceneConnector::disableLevel(Engine* engine, Scene& level)
 	}
 }
 
-void SceneConnector::disableLevel(World* world, Scene& level)
+void SceneConnector::disableScene(World* world, Scene& scene)
 {
 	Transformations transformations;
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto object = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto object = scene.getObjectAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		rigidBody->setEnabled(false);
 	}
 }
 
-void SceneConnector::enableLevel(Engine* engine, Scene& level, const Vector3& translation)
+void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
 {
 	// TODO: a.drewke, Object3DRenderGroups
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto object = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto object = scene.getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -716,11 +716,11 @@ void SceneConnector::enableLevel(Engine* engine, Scene& level, const Vector3& tr
 	}
 }
 
-void SceneConnector::enableLevel(World* world, Scene& level, const Vector3& translation)
+void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
 	Transformations transformations;
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto object = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto object = scene.getObjectAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(object->getTransformations());
@@ -731,12 +731,12 @@ void SceneConnector::enableLevel(World* world, Scene& level, const Vector3& tran
 	}
 }
 
-void SceneConnector::addEntitySounds(Audio* audio, Prototype* levelEditorEntity, const string& id, const int poolSize) {
-	for (auto soundDefinition: levelEditorEntity->getSounds()) {
+void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize) {
+	for (auto soundDefinition: prototype->getSounds()) {
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
 				string pathName = PrototypeReader::getResourcePathName(
-					Tools::getPath(levelEditorEntity->getEntityFileName()),
+					Tools::getPath(prototype->getEntityFileName()),
 					soundDefinition->getFileName()
 				);
 				string fileName = Tools::getFileName(soundDefinition->getFileName());
