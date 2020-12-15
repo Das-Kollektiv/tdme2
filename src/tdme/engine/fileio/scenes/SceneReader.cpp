@@ -146,7 +146,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			light->setEnabled(jLight["e"].GetBool());
 		}
 	}
-	scene.getEntityLibrary()->clear();
+	scene.getLibrary()->clear();
 
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
@@ -160,7 +160,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			Console::println("SceneReader::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
-		scene.getEntityLibrary()->addEntity(levelEditorEntity);
+		scene.getLibrary()->addEntity(levelEditorEntity);
 		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
 			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
 				auto& jModelProperty = jModel["properties"].GetArray()[j];
@@ -174,11 +174,11 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	scene.clearObjects();
+	scene.clearEntities();
 
 	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
 		auto& jObject = jRoot["objects"].GetArray()[i];
-		auto model = scene.getEntityLibrary()->getEntity(jObject["mid"].GetInt());
+		auto model = scene.getLibrary()->getEntity(jObject["mid"].GetInt());
 		if (model == nullptr) {
 			Console::println("SceneReader::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
 
@@ -231,12 +231,12 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			}
 		}
 		levelEditorObject->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
-		scene.addObject(levelEditorObject);
+		scene.addEntity(levelEditorObject);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	scene.setObjectIdx(jRoot["objects_eidx"].GetInt());
+	scene.setEntityIdx(jRoot["objects_eidx"].GetInt());
 	scene.setPathName(pathName);
 	scene.setFileName(fileName);
 	scene.update();
@@ -271,7 +271,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 }
 
 void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
-	auto entityLibrary = scene.getEntityLibrary();
+	auto entityLibrary = scene.getLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
 	auto modelName = nodeId;
@@ -341,8 +341,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	scene.clearProperties();
-	scene.getEntityLibrary()->clear();
-	scene.clearObjects();
+	scene.getLibrary()->clear();
+	scene.clearEntities();
 
 	string modelPathName = pathName + "/" + fileName + "-models";
 	if (FileSystem::getInstance()->fileExists(modelPathName)) {
@@ -359,7 +359,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 
 	scene.setRotationOrder(rotationOrder);
 
-	auto entityLibrary = scene.getEntityLibrary();
+	auto entityLibrary = scene.getLibrary();
 	auto nodeIdx = 0;
 	Prototype* emptyEntity = nullptr;
 	Matrix4x4 modelImportRotationMatrix;
@@ -444,8 +444,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			}
 			Prototype* levelEditorEntity = nullptr;
 			if (entityType == Prototype_EntityType::MODEL && model != nullptr) {
-				for (auto i = 0; i < scene.getEntityLibrary()->getEntityCount(); i++) {
-					auto levelEditorEntityCompare = scene.getEntityLibrary()->getEntityAt(i);
+				for (auto i = 0; i < scene.getLibrary()->getEntityCount(); i++) {
+					auto levelEditorEntityCompare = scene.getLibrary()->getEntityAt(i);
 					if (levelEditorEntityCompare->getType() != Prototype_EntityType::MODEL)
 						continue;
 
@@ -498,7 +498,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				levelEditorObjectTransformations,
 				levelEditorEntity
 			);
-			scene.addObject(object);
+			scene.addEntity(object);
 		}
 		//
 		progressIdx++;

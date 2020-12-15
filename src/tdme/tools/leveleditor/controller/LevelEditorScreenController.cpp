@@ -278,7 +278,7 @@ void LevelEditorScreenController::setObjectListbox(Scene& level)
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto objectIdx = 0;
-	for (int i = 0; i < level.getObjectCount(); i++) {
+	for (int i = 0; i < level.getEntityCount(); i++) {
 		if (objectIdx > 25000) {
 			objectsListBoxSubNodesXML =
 				"<scrollarea-vertical id=\"" +
@@ -286,7 +286,7 @@ void LevelEditorScreenController::setObjectListbox(Scene& level)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto object = level.getObjectAt(i);
+		auto object = level.getEntityAt(i);
 		if (object->getEntity()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =

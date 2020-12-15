@@ -238,14 +238,14 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
-	TDMELevelEditor::getInstance()->getLevel()->removeObjectsByEntityId(entity->getId());
+	TDMELevelEditor::getInstance()->getLevel()->removeEntitiesByPrototypeId(entity->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
-	TDMELevelEditor::getInstance()->getLevel()->getEntityLibrary()->removeEntity(entity->getId());
+	TDMELevelEditor::getInstance()->getLevel()->getLibrary()->removeEntity(entity->getId());
 	setEntityLibrary();
 }
 
@@ -262,7 +262,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// check if entity exists only once
 	vector<string> objectsByEntityId;
-	TDMELevelEditor::getInstance()->getLevel()->getObjectsByEntityId(entity->getId(), objectsByEntityId);
+	TDMELevelEditor::getInstance()->getLevel()->getEntitiesByPrototypeId(entity->getId(), objectsByEntityId);
 	if (objectsByEntityId.size() != 1) {
 		popUps->getInfoDialogScreenController()->show("Warning", "This model has several object instances");
 		return;
@@ -270,8 +270,8 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	//
 	auto level = TDMELevelEditor::getInstance()->getLevel();
-	auto levelEntityLibrary = level->getEntityLibrary();
-	auto levelEditorObject = level->getObjectById(objectsByEntityId[0]);
+	auto levelEntityLibrary = level->getLibrary();
+	auto levelEditorObject = level->getEntity(objectsByEntityId[0]);
 
 	// partition object
 	map<string, Model*> modelsByPartition;
@@ -312,7 +312,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 			// avoid name collision
 			auto objectName = model->getName();
-			while (level->getObjectById(objectName) != nullptr) {
+			while (level->getEntity(objectName) != nullptr) {
 				objectName+= ".p";
 			}
 
@@ -326,14 +326,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			levelEditorEntityPartition->setTerrainMesh(levelEditorObject->getEntity()->isTerrainMesh());
 
 			// add to objects
-			level->addObject(levelEditorObjectPartition);
+			level->addEntity(levelEditorObjectPartition);
 		}
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
 	}
 
 	// remove original object
-	level->removeObjectsByEntityId(entity->getId());
+	level->removeEntitiesByPrototypeId(entity->getId());
 	// TODO: check if to delete original model
 	//	as long as .tl has not been saved it is still required to have this file
 	// FileSystem::getInstance()->removeFile(pathName, fileName);
@@ -348,7 +348,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// remove original entity from entity library
 	// TODO: delete file
-	level->getEntityLibrary()->removeEntity(entity->getId());
+	level->getLibrary()->removeEntity(entity->getId());
 
 	//
 	setEntityLibrary();

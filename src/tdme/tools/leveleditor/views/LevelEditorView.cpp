@@ -293,8 +293,8 @@ SceneEntity* LevelEditorView::getSelectedObject()
 {
 	if (selectedEntityIds.size() != 1) return nullptr;
 
-	auto selectedObject = level.getObjectById(selectedEntityIds[0]);
-	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level.getObjectById(selectedObject->getId()) : static_cast< SceneEntity* >(nullptr);
+	auto selectedObject = level.getEntity(selectedEntityIds[0]);
+	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level.getEntity(selectedObject->getId()) : static_cast< SceneEntity* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -454,7 +454,7 @@ void LevelEditorView::handleInputEvents()
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
 								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
-									auto levelEditorObject = level.getObjectById(_selectedEntity->getId());
+									auto levelEditorObject = level.getEntity(_selectedEntity->getId());
 									if (levelEditorObject == nullptr) continue;
 									auto translation = levelEditorObject->getTransformations().getTranslation();
 									auto translationRelative = translation.clone().sub(gizmoEntity->getTranslation());
@@ -479,7 +479,7 @@ void LevelEditorView::handleInputEvents()
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
-								auto levelEditorObject = level.getObjectById(_selectedEntity->getId());
+								auto levelEditorObject = level.getEntity(_selectedEntity->getId());
 								levelEditorScreenController->setObject(
 									_selectedEntity->getTranslation(),
 									_selectedEntity->getScale(),
@@ -541,7 +541,7 @@ void LevelEditorView::handleInputEvents()
 							selectedEntityIds.push_back(selectedEntity->getId());
 							selectedEntityIdsById.insert(selectedEntity->getId());
 							levelEditorScreenController->selectObjectInObjectListbox(selectedEntity->getId());
-							auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+							auto levelEditorObject = level.getEntity(selectedEntity->getId());
 							if (levelEditorObject != nullptr) {
 								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getEntity()->getId());
 							}
@@ -555,7 +555,7 @@ void LevelEditorView::handleInputEvents()
 							levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 						}
 						if (selectedEntityIds.size() == 1) {
-							auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+							auto levelEditorObject = level.getEntity(selectedEntity->getId());
 							if (levelEditorObject != nullptr && levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
 								selectedEntity->fromTransformations(levelEditorObject->getTransformations());
 							}
@@ -835,7 +835,7 @@ void LevelEditorView::updateGUIElements()
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+			auto levelEditorObject = level.getEntity(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
 			levelEditorScreenController->setObjectReflectionsEnvironmentMappings(level, levelEditorObject->getReflectionEnvironmentMappingId());
@@ -867,7 +867,7 @@ void LevelEditorView::updateGUITransformationsElements() {
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+			auto levelEditorObject = level.getEntity(selectedEntity->getId());
 			levelEditorScreenController->setObject(
 				selectedEntity->getTranslation(),
 				selectedEntity->getScale(),
@@ -1029,7 +1029,7 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	auto color = objectColors["none"];
 	object->setEffectColorAdd(Color4(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f));
 	object->setEffectColorMul(Color4(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f));
-	auto levelEditorObject = level.getObjectById(object->getId());
+	auto levelEditorObject = level.getEntity(object->getId());
 	if (levelEditorObject == nullptr) return;
 	auto colorProperty = levelEditorObject->getProperty("object.color");
 	if (colorProperty == nullptr) colorProperty = levelEditorObject->getEntity()->getProperty("object.color");
@@ -1046,7 +1046,7 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 void LevelEditorView::resetObject(Entity* entity) {
 	if (entity == nullptr) return;
 	setStandardObjectColorEffect(entity);
-	auto levelEditorObject = level.getObjectById(entity->getId());
+	auto levelEditorObject = level.getEntity(entity->getId());
 	if (levelEditorObject == nullptr) return;
 	if (levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == false) return;
 	entity->fromTransformations(levelEditorObject->getTransformations());
@@ -1170,19 +1170,19 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.")) return false;
 
-	auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+	auto levelEditorObject = level.getEntity(selectedEntity->getId());
 	if (levelEditorObject == nullptr) return false;
 
 	levelEditorObject->setDescription(description);
 	if (levelEditorObject->getId() != name) {
 		if (engine->getEntity(name) != nullptr) return false;
 		auto oldId = levelEditorObject->getId();
-		level.removeObject(levelEditorObject->getId());
+		level.removeEntity(levelEditorObject->getId());
 		engine->removeEntity(levelEditorObject->getId());
 		selectedEntityIds.clear();
 		selectedEntityIdsById.clear();
 		levelEditorObject->setId(name);
-		level.addObject(levelEditorObject);
+		level.addEntity(levelEditorObject);
 		auto entity = SceneConnector::createEntity(levelEditorObject);
 		if (entity != nullptr) {
 			setHighlightObjectColorEffect(entity);
@@ -1219,19 +1219,19 @@ void LevelEditorView::placeObject()
 	levelEditorObjectTransformations.addRotation(level.getRotationOrder()->getAxis2(), 0.0f);
 	levelEditorObjectTransformations.setRotationAngle(level.getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
 	levelEditorObjectTransformations.update();
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto levelEditorObject = level.getObjectAt(i);
+	for (auto i = 0; i < level.getEntityCount(); i++) {
+		auto levelEditorObject = level.getEntityAt(i);
 		if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 			return;
 		}
 	}
 	auto levelEditorObject = new SceneEntity(
-		selectedEntity->getName() + "_" + to_string(level.allocateObjectId()),
+		selectedEntity->getName() + "_" + to_string(level.allocateEntityId()),
 		"",
 		levelEditorObjectTransformations,
 		selectedEntity
 	);
-	level.addObject(levelEditorObject);
+	level.addEntity(levelEditorObject);
 	auto entity = SceneConnector::createEntity(levelEditorObject);
 	if (entity != nullptr) {
 		resetObject(entity);
@@ -1250,7 +1250,7 @@ void LevelEditorView::removeObjects()
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			level.removeObject(selectedEntity->getId());
+			level.removeEntity(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
 		}
@@ -1274,7 +1274,7 @@ void LevelEditorView::colorObject()
 
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		auto levelEditorObject = level.getObjectById(selectedEntityId);
+		auto levelEditorObject = level.getEntity(selectedEntityId);
 		if (levelEditorObject == nullptr) continue;
 		auto color = OBJECTCOLOR_NAMES[0];
 		auto colorProperty = levelEditorObject->getProperty("object.color");
@@ -1301,7 +1301,7 @@ void LevelEditorView::colorObject()
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+			auto levelEditorObject = level.getEntity(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
 		} else {
@@ -1335,7 +1335,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = level.getObjectById(selectedEntity->getId());
+		auto levelEntity = level.getEntity(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 
 		levelEntity->getTransformations().setTranslation(Vector3(x, y, z));
@@ -1346,7 +1346,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = level.getObjectById(selectedEntity->getId());
+			auto levelEntity = level.getEntity(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			levelEntity->getTransformations().setTranslation(
 				levelEntity->getTransformations().getTranslation().clone().add(Vector3(x, y, z))
@@ -1369,7 +1369,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = level.getObjectById(selectedEntity->getId());
+		auto levelEntity = level.getEntity(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 
 		levelEntity->getTransformations().setScale(Vector3(x, y, z));
@@ -1380,7 +1380,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = level.getObjectById(selectedEntity->getId());
+			auto levelEntity = level.getEntity(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 
 			levelEntity->getTransformations().setScale(levelEntity->getTransformations().getScale().clone().scale(Vector3(x, y, z)));
@@ -1402,7 +1402,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = level.getObjectById(selectedEntity->getId());
+		auto levelEntity = level.getEntity(selectedEntity->getId());
 		if (levelEntity == nullptr) return;
 		levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(x);
 		levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).setAngle(y);
@@ -1414,7 +1414,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = level.getObjectById(selectedEntity->getId());
+			auto levelEntity = level.getEntity(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			if ((levelEntity->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).getAngle() + x);
@@ -1469,7 +1469,7 @@ bool LevelEditorView::objectPropertyRemove(const string& name)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = level.getObjectById(selectedEntity->getId());
+	auto levelEntity = level.getEntity(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
 
 	auto idx = levelEntity->getPropertyIndex(name);
@@ -1490,7 +1490,7 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return;
-	auto levelEntity = level.getObjectById(selectedEntity->getId());
+	auto levelEntity = level.getEntity(selectedEntity->getId());
 	if (levelEntity == nullptr) return;
 
 	levelEntity->clearProperties();
@@ -1514,7 +1514,7 @@ bool LevelEditorView::objectPropertySave(const string& oldName, const string& na
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = level.getObjectById(selectedEntity->getId());
+	auto levelEntity = level.getEntity(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
 
 	if (levelEntity->updateProperty(oldName, name, value) == true) {
@@ -1530,7 +1530,7 @@ bool LevelEditorView::objectPropertyAdd()
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = level.getObjectById(selectedEntity->getId());
+	auto levelEntity = level.getEntity(selectedEntity->getId());
 	if (levelEntity == nullptr) return false;
 
 	if (levelEntity->addProperty("new.property", "new.value")) {
@@ -1571,8 +1571,8 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 			SceneReader::read(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		}
 		popUps->getProgressBarScreenController()->close();
-		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
-			auto levelEditorEntity = level.getEntityLibrary()->getEntityAt(i);
+		for (auto i = 0; i < level.getLibrary()->getEntityCount(); i++) {
+			auto levelEditorEntity = level.getLibrary()->getEntityAt(i);
 			if (levelEditorEntity->getType()->getBoundingVolumeCount() != 0) levelEditorEntity->setDefaultBoundingVolumes(levelEditorEntity->getType()->getBoundingVolumeCount());
 		}
 		levelEditorScreenController->setSky(level);
@@ -1616,7 +1616,7 @@ void LevelEditorView::copyObjects()
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEntity = level.getObjectById(selectedEntity->getId());
+			auto levelEntity = level.getEntity(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			pasteObjects_.push_back(levelEntity);
 		}
@@ -1672,8 +1672,8 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 		);
 		levelEditorObjectTransformations.update();
 		if (displayOnly == false) {
-			for (auto i = 0; i < level.getObjectCount(); i++) {
-				auto levelEditorObject = level.getObjectAt(i);
+			for (auto i = 0; i < level.getEntityCount(); i++) {
+				auto levelEditorObject = level.getEntityAt(i);
 				if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 					continue;
 				}
@@ -1681,7 +1681,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 		}
 		if (displayOnly == false) {
 			//
-			auto levelEditorObjectId = pasteModel->getName() + "_" + to_string(level.allocateObjectId());
+			auto levelEditorObjectId = pasteModel->getName() + "_" + to_string(level.allocateEntityId());
 			auto levelEditorObject = new SceneEntity(
 				levelEditorObjectId,
 				"",
@@ -1693,7 +1693,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 				PrototypeProperty* property = properties->getPropertyByIndex(i);
 				levelEditorObject->addProperty(property->getName(), property->getValue());
 			}
-			level.addObject(levelEditorObject);
+			level.addEntity(levelEditorObject);
 			auto entity = SceneConnector::createEntity(pasteModel, levelEditorObjectId, levelEditorObjectTransformations);
 			if (entity != nullptr) {
 				resetObject(entity);
@@ -1784,7 +1784,7 @@ void LevelEditorView::updateSkyPosition() {
 
 void LevelEditorView::applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 	for (auto& selectedEntityId: selectedEntityIds) {
-		auto levelEntity = level.getObjectById(selectedEntityId);
+		auto levelEntity = level.getEntity(selectedEntityId);
 		if (levelEntity == nullptr) continue;
 		levelEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
@@ -1805,7 +1805,7 @@ void LevelEditorView::updateGizmo() {
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEditorObject = level.getObjectById(selectedEntity->getId());
+			auto levelEditorObject = level.getEntity(selectedEntity->getId());
 			if (levelEditorObject == nullptr) continue;
 			gizmoCenter.add(levelEditorObject->getTransformations().getTranslation());
 			objectCount++;
@@ -1816,7 +1816,7 @@ void LevelEditorView::updateGizmo() {
 		return;
 	} else
 	if (objectCount == 1) {
-		auto selectedSceneEntity = level.getObjectById(selectedEntityIds[0]);
+		auto selectedSceneEntity = level.getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getEntity():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
 		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());

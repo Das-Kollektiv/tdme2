@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		Matrix4x4 z2yUpMatrix;
 		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// entity library
-		auto entityLibrary = level.getEntityLibrary();
+		auto entityLibrary = level.getLibrary();
 		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 			auto entity = entityLibrary->getEntityAt(i);
 			if (entity->getType() != Prototype_EntityType::MODEL) continue;
@@ -74,8 +74,8 @@ int main(int argc, char** argv)
 			entity->getModel()->getBoundingBox()->update();
 		}
 		// objects
-		for (auto i = 0; i < level.getObjectCount(); i++) {
-			auto object = level.getObjectAt(i);
+		for (auto i = 0; i < level.getEntityCount(); i++) {
+			auto object = level.getEntityAt(i);
 			if (object->getEntity()->getType() != Prototype_EntityType::MODEL) continue;
 			auto scale = object->getTransformations().getScale();
 			object->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));

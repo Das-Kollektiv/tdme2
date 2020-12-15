@@ -31,7 +31,7 @@ using tdme::engine::scene::SceneLight;
 using tdme::engine::scene::SceneEntity;
 
 /**
- * Level
+ * Scene
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -44,11 +44,11 @@ private:
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
 	vector<SceneLight*> lights;
-	SceneLibrary* entityLibrary { nullptr };
-	map<string, SceneEntity*> objectsById;
-	vector<SceneEntity*> objects;
+	SceneLibrary* library { nullptr };
+	map<string, SceneEntity*> entitiesById;
+	vector<SceneEntity*> entities;
 	set<string> environmentMappingIds;
-	int objectIdx;
+	int entityIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
@@ -63,7 +63,7 @@ private:
 	void computeBoundingBox();
 
 	/**
-	 * @return level center
+	 * @return scene center
 	 */
 	void computeCenter();
 
@@ -79,14 +79,14 @@ public:
 	~Scene();
 
 	/**
-	 * @return game root
+	 * @return application root
 	 */
 	inline const string& getApplicationRoot() {
 		return applicationRoot;
 	}
 
 	/**
-	 * Set game root
+	 * Set application root
 	 * @param gameRoot gameRoot
 	 */
 	inline void setApplicationRoot(const string& applicationRoot) {
@@ -109,14 +109,14 @@ public:
 	}
 
 	/**
-	 * @return file name
+	 * @return scene file name
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set up level file name
+	 * Set up scene file name
 	 * @param fileName file name
 	 */
 	inline void setFileName(const string& fileName) {
@@ -146,19 +146,19 @@ public:
 	}
 
 	/**
-	 * Get light at index i
-	 * @param i i
-	 * @return
+	 * Get light at given index
+	 * @param i index
+	 * @return light
 	 */
 	inline SceneLight* getLightAt(int i) {
 		return lights[i];
 	}
 
 	/**
-	 * @return entity library
+	 * @return scene prototype library
 	 */
-	inline SceneLibrary* getEntityLibrary() {
-		return entityLibrary;
+	inline SceneLibrary* getLibrary() {
+		return library;
 	}
 
 	/**
@@ -169,65 +169,65 @@ public:
 	}
 
 	/**
-	 * @return level bounding box
+	 * @return scene bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
 	/**
-	 * @return level center
+	 * @return scene center
 	 */
 	inline const Vector3& getCenter() {
 		return center;
 	}
 
 	/**
-	 * @return new object idx
+	 * @return new entity id
 	 */
-	inline int allocateObjectId() {
-		return objectIdx++;
+	inline int allocateEntityId() {
+		return entityIdx++;
 	}
 
 	/**
-	 * @return object idx
+	 * @return entity idx
 	 */
-	inline int getObjectIdx() {
-		return objectIdx;
+	inline int getEntityIdx() {
+		return entityIdx;
 	}
 
 	/**
 	 * Set entity idx
 	 * @param entityIdx objectIdx
 	 */
-	inline void setObjectIdx(int entityIdx) {
-		this->objectIdx = entityIdx;
+	inline void setEntityIdx(int entityIdx) {
+		this->entityIdx = entityIdx;
 	}
 
 	/**
-	 * Clears all level objects
+	 * Clears all scene entities
 	 */
-	void clearObjects();
+	void clearEntities();
 
 	/**
-	 * Get objects with given entity id
-	 * @param entityId entity id
-	 * @param objectsByEntityId objects by entity id
+	 * Get entities with given prototype id
+	 * @param prototypeId prototype id
+	 * @param entitiesByPrototypeId entities by prototype id
 	 */
-	void getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId);
+	void getEntitiesByPrototypeId(int prototypeId, vector<string>& entitiesByPrototypeId);
 
 	/**
-	 * Remove objects with given entity id
-	 * @param entityId entity id
+	 * Remove entities with given prototype id
+	 * @param prototypeId prototype id
 	 */
-	void removeObjectsByEntityId(int entityId);
+	void removeEntitiesByPrototypeId(int prototypeId);
 
 	/**
 	 * Replace entity
-	 * @param searchEntityId search model id
-	 * @param replaceEntityId replace model id
+	 * @param searchPrototypeId search prototype id
+	 * @param newPrototypeId new prototype id
 	 */
-	void replaceEntity(int searchEntityId, int replaceEntityId);
+	void replacePrototype(int searchPrototypeId, int newPrototypeId);
 
 	/**
 	 * @return environment mapping object ids
@@ -237,38 +237,38 @@ public:
 	}
 
 	/**
-	 * Adds an object to level
+	 * Adds an entity to level
 	 * @param object object
 	 */
-	void addObject(SceneEntity* object);
+	void addEntity(SceneEntity* entity);
 
 	/**
-	 * Removes an object from level
+	 * Removes an entity from level
 	 * @param id id
 	 */
-	void removeObject(const string& id);
+	void removeEntity(const string& id);
 
 	/**
-	 * Returns level editor object by id
+	 * Returns scene entity by id
 	 * @param id id
-	 * @return level editor object or null
+	 * @return scene entity
 	 */
-	SceneEntity* getObjectById(const string& id);
+	SceneEntity* getEntity(const string& id);
 
 	/**
-	 * @return number of objects
+	 * @return number of entities
 	 */
-	inline int getObjectCount() {
-		return objects.size();
+	inline int getEntityCount() {
+		return entities.size();
 	}
 
 	/**
-	 * Returns object at idx
-	 * @param idx idx
-	 * @return level object
+	 * Returns entity at given index
+	 * @param idx index
+	 * @return scene entity
 	 */
-	inline SceneEntity* getObjectAt(int idx) {
-		return objects[idx];
+	inline SceneEntity* getEntityAt(int idx) {
+		return entities[idx];
 	}
 
 	/**

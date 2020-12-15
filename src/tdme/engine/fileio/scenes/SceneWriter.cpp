@@ -55,7 +55,7 @@ using rapidjson::Value;
 void SceneWriter::write(const string& pathName, const string& fileName, Scene& scene)
 {
 	scene.setFileName(pathName + '/' + fileName);
-	auto entityLibrary = scene.getEntityLibrary();
+	auto entityLibrary = scene.getLibrary();
 	Document jDocument;
 	jDocument.SetObject();
 	auto& jAllocator = jDocument.GetAllocator();
@@ -129,8 +129,8 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 	jDocument.AddMember("properties", jMapProperties, jAllocator);
 	Value jObjects;
 	jObjects.SetArray();
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto levelEditorObject = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto levelEditorObject = scene.getEntityAt(i);
 		Value jObject;
 		jObject.SetObject();
 		auto& transformations = levelEditorObject->getTransformations();
@@ -166,7 +166,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		jObjects.PushBack(jObject, jAllocator);
 	}
 	jDocument.AddMember("objects", jObjects, jAllocator);
-	jDocument.AddMember("objects_eidx", Value(scene.getObjectIdx()), jAllocator);
+	jDocument.AddMember("objects_eidx", Value(scene.getEntityIdx()), jAllocator);
 
 	Value jSky;
 	jSky.SetObject();

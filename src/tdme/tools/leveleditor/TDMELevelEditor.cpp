@@ -89,7 +89,7 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 }
 
 SceneLibrary* TDMELevelEditor::getEntityLibrary() {
-	return levelEditorView->getLevel()->getEntityLibrary();
+	return levelEditorView->getLevel()->getLibrary();
 }
 
 Scene* TDMELevelEditor::getLevel() {

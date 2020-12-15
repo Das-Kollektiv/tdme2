@@ -430,10 +430,10 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, Prototype*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto object = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto object = scene.getEntityAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getObjectCount()) * 0.5f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && object->getEntity()->getType() == Prototype_EntityType::EMPTY) continue;
@@ -648,11 +648,11 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	auto progressStepCurrent = 0;
 
 	//
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto levelEditorObject = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto levelEditorObject = scene.getEntityAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getObjectCount()) * 1.0f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -676,8 +676,8 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 
 void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto object = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto object = scene.getEntityAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -689,8 +689,8 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 void SceneConnector::disableScene(World* world, Scene& scene)
 {
 	Transformations transformations;
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto object = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto object = scene.getEntityAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		rigidBody->setEnabled(false);
@@ -700,8 +700,8 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
 {
 	// TODO: a.drewke, Object3DRenderGroups
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto object = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto object = scene.getEntityAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -719,8 +719,8 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
 	Transformations transformations;
-	for (auto i = 0; i < scene.getObjectCount(); i++) {
-		auto object = scene.getObjectAt(i);
+	for (auto i = 0; i < scene.getEntityCount(); i++) {
+		auto object = scene.getEntityAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(object->getTransformations());

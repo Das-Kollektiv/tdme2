@@ -64,8 +64,8 @@ Scene::Scene()
 	light->setSpotExponent(0.0f);
 	light->setSpotCutOff(180.0f);
 	light->setEnabled(true);
-	entityLibrary = new SceneLibrary(this);
-	objectIdx = 0;
+	library = new SceneLibrary(this);
+	entityIdx = 0;
 	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
@@ -73,10 +73,10 @@ Scene::~Scene() {
 	for (auto light: lights) {
 		delete light;
 	}
-	for (auto object: objects) {
+	for (auto object: entities) {
 		delete object;
 	}
-	delete entityLibrary;
+	delete library;
 }
 
 void Scene::computeBoundingBox()
@@ -95,7 +95,7 @@ void Scene::computeBoundingBox()
 	Vector3 bbDimension;
 	Vector3 bbMin;
 	Vector3 bbMax;
-	for (auto levelEditorObject: objects) {
+	for (auto levelEditorObject: entities) {
 		if (levelEditorObject->getEntity()->getType() != Prototype_EntityType::MODEL) continue;
 		BoundingBox cbv;
 		cbv.fromBoundingVolumeWithTransformations(levelEditorObject->getEntity()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
@@ -109,27 +109,27 @@ void Scene::computeBoundingBox()
 		bbMin.sub(bbDimension);
 		bbMax.set(cbv.getCenter());
 		bbMax.add(bbDimension);
-		auto objectLeft = bbMin.getX();
-		auto objectRight = bbMax.getX();
-		auto objectNear = bbMin.getZ();
-		auto objectFar = bbMax.getZ();
-		auto objectBottom = bbMin.getY();
-		auto objectTop = bbMax.getY();
+		auto entityLeft = bbMin.getX();
+		auto entityRight = bbMax.getX();
+		auto entityNear = bbMin.getZ();
+		auto entityFar = bbMax.getZ();
+		auto entityBottom = bbMin.getY();
+		auto entityTop = bbMax.getY();
 		if (haveDimension == false) {
-			levelLeft = objectLeft;
-			levelRight = objectRight;
-			levelNear = objectNear;
-			levelFar = objectFar;
-			levelTop = objectTop;
-			levelBottom = objectBottom;
+			levelLeft = entityLeft;
+			levelRight = entityRight;
+			levelNear = entityNear;
+			levelFar = entityFar;
+			levelTop = entityTop;
+			levelBottom = entityBottom;
 			haveDimension = true;
 		} else {
-			if (objectLeft < levelLeft) levelLeft = objectLeft;
-			if (objectRight > levelRight) levelRight = objectRight;
-			if (objectNear < levelNear) levelNear = objectNear;
-			if (objectFar > levelFar) levelFar = objectFar;
-			if (objectTop > levelTop) levelTop = objectTop;
-			if (objectBottom < levelBottom) levelBottom = objectBottom;
+			if (entityLeft < levelLeft) levelLeft = entityLeft;
+			if (entityRight > levelRight) levelRight = entityRight;
+			if (entityNear < levelNear) levelNear = entityNear;
+			if (entityFar > levelFar) levelFar = entityFar;
+			if (entityTop > levelTop) levelTop = entityTop;
+			if (entityBottom < levelBottom) levelBottom = entityBottom;
 		}
 	}
 	boundingBox.getMin().set(levelLeft, levelBottom, levelNear);
@@ -143,89 +143,89 @@ void Scene::computeBoundingBox()
 void Scene::computeCenter()
 {
 	center.set(0.0f, 0.0f, 0.0f);
-	auto objectCount = 0;
-	for (auto levelEditorObject: objects) {
+	auto entityCount = 0;
+	for (auto levelEditorObject: entities) {
 		if (levelEditorObject->getEntity()->getType() != Prototype_EntityType::MODEL)
 			continue;
 
 		center.add(levelEditorObject->getTransformations().getTranslation());
-		objectCount++;
+		entityCount++;
 	}
-	if (objectCount != 0)
-		center.scale(1.0f / objectCount);
+	if (entityCount != 0)
+		center.scale(1.0f / entityCount);
 }
 
-void Scene::clearObjects()
+void Scene::clearEntities()
 {
-	objectsById.clear();
-	objects.clear();
+	entitiesById.clear();
+	entities.clear();
 	environmentMappingIds.clear();
-	objectIdx = 0;
+	entityIdx = 0;
 }
 
-void Scene::getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId) {
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == entityId) {
-			objectsByEntityId.push_back(object->getId());
+void Scene::getEntitiesByPrototypeId(int prototypeId, vector<string>& entitiesByPrototypeId) {
+	for (auto entity: entities) {
+		if (entity->getEntity()->getId() == prototypeId) {
+			entitiesByPrototypeId.push_back(entity->getId());
 		}
 	}
 }
 
-void Scene::removeObjectsByEntityId(int entityId)
+void Scene::removeEntitiesByPrototypeId(int prototypeId)
 {
-	vector<string> objectsToRemove;
-	getObjectsByEntityId(entityId, objectsToRemove);
-	for (auto objectId: objectsToRemove) {
-		removeObject(objectId);
+	vector<string> entitiesToRemove;
+	getEntitiesByPrototypeId(prototypeId, entitiesToRemove);
+	for (auto entityId: entitiesToRemove) {
+		removeEntity(entityId);
 	}
 }
 
-void Scene::replaceEntity(int searchEntityId, int replaceEntityId)
+void Scene::replacePrototype(int searchPrototypeId, int newEntityId)
 {
-	auto replaceEntity = getEntityLibrary()->getEntity(replaceEntityId);
+	auto replaceEntity = getLibrary()->getEntity(newEntityId);
 	if (replaceEntity == nullptr)
 		return;
 
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == searchEntityId) {
-			object->setEntity(replaceEntity);
+	for (auto entity: entities) {
+		if (entity->getEntity()->getId() == searchPrototypeId) {
+			entity->setEntity(replaceEntity);
 		}
 	}
 }
 
-void Scene::addObject(SceneEntity* object)
+void Scene::addEntity(SceneEntity* entity)
 {
-	auto _entity = getObjectById(object->getId());
+	auto _entity = getEntity(entity->getId());
 	if (_entity != nullptr) {
-		removeObject(object->getId());
+		removeEntity(entity->getId());
 		Console::println(
-			"Scene::addObject():: object with id '" +
-			object->getId() +
+			"Scene::addEntity():: entity with id '" +
+			entity->getId() +
 			"' already exists. Removing it!"
 		);
 	}
-	objectsById[object->getId()] = object;
-	objects.push_back(object);
-	if (object->getEntity()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.insert(object->getId());
+	entitiesById[entity->getId()] = entity;
+	entities.push_back(entity);
+	if (entity->getEntity()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
 }
 
-void Scene::removeObject(const string& id)
+void Scene::removeEntity(const string& id)
 {
-	auto objectByIdIt = objectsById.find(id);
-	if (objectByIdIt != objectsById.end()) {
-		auto object = objectByIdIt->second;
-		objectsById.erase(objectByIdIt);
-		objects.erase(remove(objects.begin(), objects.end(), object), objects.end());
-		if (object->getEntity()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.erase(object->getId());
-		delete object;
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		auto entity = entityByIdIt->second;
+		entitiesById.erase(entityByIdIt);
+		entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
+		if (entity->getEntity()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
+		delete entity;
 	}
 }
 
-SceneEntity* Scene::getObjectById(const string& id)
+SceneEntity* Scene::getEntity(const string& id)
 {
-	auto objectByIdIt = objectsById.find(id);
-	if (objectByIdIt != objectsById.end()) {
-		return objectByIdIt->second;
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		return entityByIdIt->second;
 	}
 	return nullptr;
 }
