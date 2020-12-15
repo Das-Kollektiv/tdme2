@@ -1198,6 +1198,20 @@ public:
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) = 0;
 
 	/**
+	 * Get environment mapping cube map position
+	 * @param context context
+	 * @return environment mapping position
+	 */
+	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) = 0;
+
+	/**
+	 * Set environment mapping cube map position
+	 * @param context context
+	 * @param position position
+	 */
+	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) = 0;
+
+	/**
 	 * Set up renderer for GUI rendering
 	 */
 	virtual void initGuiMode() = 0;

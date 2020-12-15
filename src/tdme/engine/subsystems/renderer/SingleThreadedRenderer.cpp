@@ -81,6 +81,14 @@ void SingleThreadedRenderer::setMaskMaxValue(void* context, float maskMaxValue) 
 	this->maskMaxValue = maskMaxValue;
 }
 
+array<float, 3>& SingleThreadedRenderer::getEnvironmentMappingCubeMapPosition(void* context) {
+	return environmentMappingCubeMapPosition;
+}
+
+void SingleThreadedRenderer::setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) {
+	this->environmentMappingCubeMapPosition = position;
+}
+
 const Renderer::Renderer_Statistics SingleThreadedRenderer::getStatistics() {
 	auto stats = statistics;
 	statistics.time = Time::getCurrentMillis();

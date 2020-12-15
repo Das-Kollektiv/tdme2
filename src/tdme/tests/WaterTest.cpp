@@ -141,7 +141,7 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader3.tl", level);
+	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
 	Level::setLight(engine, level);
 	Level::addLevel(engine, level, false, false, false, false);
 
@@ -207,11 +207,6 @@ void WaterTest::initialize()
 		engine->addEntity(sphere);
 	}
 	*/
-
-	//
-	engine->getEntity("water")->setScale(Vector3(400.0f, 1.0f, 400.0f));
-	engine->getEntity("water")->setTranslation(engine->getEntity("water")->getTranslation() + Vector3(0.0f, 2.0f, 0.0f));
-	engine->getEntity("water")->update();
 
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

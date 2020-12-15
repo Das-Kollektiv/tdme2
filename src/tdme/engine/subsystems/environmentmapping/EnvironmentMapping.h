@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -13,6 +13,7 @@
 
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
@@ -28,7 +29,7 @@ using tdme::math::Vector3;
  */
 class tdme::engine::subsystems::environmentmapping::EnvironmentMapping final
 {
-	friend class tdme::engine::Engine;
+	friend class tdme::engine::EnvironmentMapping;
 
 private:
 	Engine* engine { nullptr };
@@ -64,6 +65,7 @@ private:
 	int64_t timeRenderLast { -1LL };
 	int64_t timeRenderUpdateFrequency { 100LL };
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
+	Engine::DecomposedEntities visibleDecomposedEntities;
 
 	/**
 	 * Init frame buffer
@@ -84,9 +86,9 @@ private:
 
 	/**
 	 * Renders given objects in to environment cube map
-	 * @param light light
+	 * @param position position
 	 */
-	void render();
+	void render(const Vector3& position);
 
 public:
 	/**

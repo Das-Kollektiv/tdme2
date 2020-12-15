@@ -222,7 +222,7 @@
     - documentation
 
 - What is WIP or planned
-    - Reflections via CubeMap
+    - Reflections via environment mapping
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects

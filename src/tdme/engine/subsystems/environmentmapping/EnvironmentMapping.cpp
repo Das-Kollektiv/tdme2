@@ -80,7 +80,7 @@ void EnvironmentMapping::dispose()
 	engine->renderer->disposeTexture(cubeMapTextureId);
 }
 
-void EnvironmentMapping::render()
+void EnvironmentMapping::render(const Vector3& position)
 {
 	auto now = Time::getCurrentMillis();
 	if (timeRenderLast != -1LL && now - timeRenderLast < timeRenderUpdateFrequency) return;
@@ -89,16 +89,16 @@ void EnvironmentMapping::render()
 	//
 	auto engineCamera = engine->getCamera();
 
-	// so we get some contraints for the shadow map camera, TODO: improve me
+	//
 	for (auto i = 0; i < frameBuffers.size(); i++) {
 		// bind frame buffer
 		frameBuffers[i]->enableFrameBuffer();
 
 		// set up camera
 		camera->setZNear(engineCamera->getZNear());
-		camera->setZFar(150.0f);
+		camera->setZFar(engineCamera->getZFar());
 		camera->setFovY(90.0f);
-		camera->setLookFrom(/*engineCamera->getLookAt() + */Vector3(0.0f, 5.0f, 0.0f));
+		camera->setLookFrom(position);
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);
 		camera->setUpVector(upVectors[i]);
@@ -116,10 +116,11 @@ void EnvironmentMapping::render()
 		Engine::renderer->clear(engine->renderer->CLEAR_DEPTH_BUFFER_BIT | engine->renderer->CLEAR_COLOR_BUFFER_BIT);
 
 		//
-		engine->computeTransformations(camera->getFrustum(), false, false);
+		engine->computeTransformations(camera->getFrustum(), visibleDecomposedEntities, false, false);
 
 		// do a render pass
 		engine->render(
+			visibleDecomposedEntities,
 			Engine::EFFECTPASS_NONE,
 			renderPassMask,
 			string(),
@@ -140,7 +141,7 @@ void EnvironmentMapping::render()
 		);
 
 		//
-		engine->resetLists();
+		engine->resetLists(visibleDecomposedEntities);
 	}
 
 	// unbind frame buffer

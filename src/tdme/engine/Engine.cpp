@@ -31,6 +31,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
@@ -109,6 +110,7 @@ using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
+using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -132,7 +134,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
-using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
+using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -196,8 +198,8 @@ float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 0;
 int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
-int32_t Engine::environmentMappingWidth = 0;
-int32_t Engine::environmentMappingHeight = 0;
+int32_t Engine::environmentMappingWidth = 512;
+int32_t Engine::environmentMappingHeight = 512;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 int32_t Engine::lightSourceTextureId = 0;
@@ -222,7 +224,7 @@ void Engine::EngineThread::run() {
 				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(threadCount, idx, transformations.computeTransformations);
+				engine->computeTransformationsFunction(engine->visibleDecomposedEntities, threadCount, idx, transformations.computeTransformations);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
@@ -255,7 +257,6 @@ Engine::Engine() {
 	// shadow mapping
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
-	environmentMapping = nullptr;
 	// render process state
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
@@ -282,7 +283,6 @@ Engine::~Engine() {
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMapping != nullptr) delete shadowMapping;
-	if (environmentMapping != nullptr) delete environmentMapping;
 	delete entityRenderer;
 	if (instance == this) {
 		delete renderer;
@@ -341,8 +341,6 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
-	offScreenEngine->environmentMapping = new EnvironmentMapping(offScreenEngine, environmentMappingWidth == 0?512:environmentMappingWidth, environmentMappingHeight == 0?512:environmentMappingHeight);
-	offScreenEngine->environmentMapping->initialize();
 	//
 	offScreenEngine->reshape(width, height);
 	return offScreenEngine;
@@ -388,7 +386,12 @@ void Engine::deregisterEntity(Entity* entity) {
 
 	//
 	noFrustumCullingEntitiesById.erase(hierarchicalId);
-	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
+	visibleDecomposedEntities.noFrustumCullingEntities.erase(
+		remove(
+			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
+			visibleDecomposedEntities.noFrustumCullingEntities.end(), entity
+		),
+		visibleDecomposedEntities.noFrustumCullingEntities.end());
 	autoEmitParticleSystemEntities.erase(hierarchicalId);
 }
 
@@ -398,14 +401,21 @@ void Engine::registerEntity(Entity* entity) {
 
 	//
 	noFrustumCullingEntitiesById.erase(hierarchicalId);
-	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
+	visibleDecomposedEntities.noFrustumCullingEntities.erase(
+		remove(
+			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
+			visibleDecomposedEntities.noFrustumCullingEntities.end(),
+			entity
+		),
+		visibleDecomposedEntities.noFrustumCullingEntities.end()
+	);
 	autoEmitParticleSystemEntities.erase(hierarchicalId);
 
 	// add to no frustum culling
 	if (entity->isFrustumCulling() == false && entity->getParentEntity() == nullptr) {
 		// otherwise add to no frustum culling entities
 		noFrustumCullingEntitiesById[hierarchicalId] = entity;
-		noFrustumCullingEntities.push_back(entity);
+		visibleDecomposedEntities.noFrustumCullingEntities.push_back(entity);
 	}
 
 	// add to auto emit particle system entities
@@ -442,18 +452,110 @@ void Engine::removeEntity(const string& id)
 	delete entity;
 
 	// delete from lists
-	visibleObjects.erase(remove(visibleObjects.begin(), visibleObjects.end(), entity), visibleObjects.end());
-	visibleObjectsPostPostProcessing.erase(remove(visibleObjectsPostPostProcessing.begin(), visibleObjectsPostPostProcessing.end(), entity), visibleObjectsPostPostProcessing.end());
-	visibleObjectsNoDepthTest.erase(remove(visibleObjectsNoDepthTest.begin(), visibleObjectsNoDepthTest.end(), entity), visibleObjectsNoDepthTest.end());
-	visibleLODObjects.erase(remove(visibleLODObjects.begin(), visibleLODObjects.end(), entity), visibleLODObjects.end());
-	visibleOpses.erase(remove(visibleOpses.begin(), visibleOpses.end(), entity), visibleOpses.end());
-	visiblePpses.erase(remove(visiblePpses.begin(), visiblePpses.end(), entity), visiblePpses.end());
-	visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
-	visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
-	visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
-	visibleObjectEntityHierarchies.erase(remove(visibleObjectEntityHierarchies.begin(), visibleObjectEntityHierarchies.end(), entity), visibleObjectEntityHierarchies.end());
-	visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
-	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
+	visibleDecomposedEntities.objects.erase(
+		remove(
+			visibleDecomposedEntities.objects.begin(),
+			visibleDecomposedEntities.objects.end(),
+			entity
+		),
+		visibleDecomposedEntities.objects.end()
+	);
+	visibleDecomposedEntities.objectsPostPostProcessing.erase(
+		remove(
+			visibleDecomposedEntities.objectsPostPostProcessing.begin(),
+			visibleDecomposedEntities.objectsPostPostProcessing.end(),
+			entity
+		),
+		visibleDecomposedEntities.objectsPostPostProcessing.end()
+	);
+	visibleDecomposedEntities.objectsNoDepthTest.erase(
+		remove(
+			visibleDecomposedEntities.objectsNoDepthTest.begin(),
+			visibleDecomposedEntities.objectsNoDepthTest.end(),
+			entity
+		),
+		visibleDecomposedEntities.objectsNoDepthTest.end()
+	);
+	visibleDecomposedEntities.lodObjects.erase(
+		remove(
+			visibleDecomposedEntities.lodObjects.begin(),
+			visibleDecomposedEntities.lodObjects.end(),
+			entity
+		),
+		visibleDecomposedEntities.lodObjects.end()
+	);
+	visibleDecomposedEntities.opses.erase(
+		remove(
+			visibleDecomposedEntities.opses.begin(),
+			visibleDecomposedEntities.opses.end(),
+			entity
+		),
+		visibleDecomposedEntities.opses.end()
+	);
+	visibleDecomposedEntities.ppses.erase(
+		remove(
+			visibleDecomposedEntities.ppses.begin(),
+			visibleDecomposedEntities.ppses.end(),
+			entity
+		),
+		visibleDecomposedEntities.ppses.end()
+	);
+	visibleDecomposedEntities.psgs.erase(
+		remove(
+			visibleDecomposedEntities.psgs.begin(),
+			visibleDecomposedEntities.psgs.end(),
+			entity
+		),
+		visibleDecomposedEntities.psgs.end()
+	);
+	visibleDecomposedEntities.linesObjects.erase(
+		remove(
+			visibleDecomposedEntities.linesObjects.begin(),
+			visibleDecomposedEntities.linesObjects.end(),
+			entity
+		),
+		visibleDecomposedEntities.linesObjects.end()
+	);
+	visibleDecomposedEntities.objectRenderGroups.erase(
+		remove(
+			visibleDecomposedEntities.objectRenderGroups.begin(),
+			visibleDecomposedEntities.objectRenderGroups.end(),
+			entity
+		),
+		visibleDecomposedEntities.objectRenderGroups.end()
+	);
+	visibleDecomposedEntities.entityHierarchies.erase(
+		remove(
+			visibleDecomposedEntities.entityHierarchies.begin(),
+			visibleDecomposedEntities.entityHierarchies.end(),
+			entity
+		),
+		visibleDecomposedEntities.entityHierarchies.end()
+	);
+	visibleDecomposedEntities.ezrObjects.erase(
+		remove(
+			visibleDecomposedEntities.ezrObjects.begin(),
+			visibleDecomposedEntities.ezrObjects.end(),
+			entity
+		),
+		visibleDecomposedEntities.ezrObjects.end()
+	);
+	visibleDecomposedEntities.noFrustumCullingEntities.erase(
+		remove(
+			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
+			visibleDecomposedEntities.noFrustumCullingEntities.end(),
+			entity
+		),
+		visibleDecomposedEntities.noFrustumCullingEntities.end()
+	);
+	visibleDecomposedEntities.environmentMappingEntities.erase(
+		remove(
+			visibleDecomposedEntities.environmentMappingEntities.begin(),
+			visibleDecomposedEntities.environmentMappingEntities.end(),
+			entity
+		),
+		visibleDecomposedEntities.environmentMappingEntities.end()
+	);
 }
 
 void Engine::reset()
@@ -646,10 +748,6 @@ void Engine::initialize()
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
 
-	// environment mapping
-	environmentMapping = new EnvironmentMapping(this, environmentMappingWidth == 0?512:environmentMappingWidth, environmentMappingHeight == 0?512:environmentMappingHeight);
-	environmentMapping->initialize();
-
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
 		Console::println(string("TDME::Using skinning compute shader"));
@@ -730,9 +828,6 @@ void Engine::reshape(int32_t width, int32_t height)
 	// update shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
 
-	// update environment mapping
-	if (environmentMapping != nullptr) environmentMapping->reshape(width, height);
-
 	// unset scaling frame buffer if width and height matches scaling
 	if (this == Engine::instance && scaledWidth != -1 && scaledHeight != -1) {
 		if (this->width == scaledWidth && this->height == scaledHeight) {
@@ -779,20 +874,21 @@ void Engine::renderToScreen() {
 	if (this == Engine::instance && frameBuffer != nullptr) frameBuffer->renderToScreen();
 }
 
-void Engine::resetLists() {
+void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	// clear lists of visible objects
-	visibleObjects.clear();
-	visibleObjectsPostPostProcessing.clear();
-	visibleObjectsNoDepthTest.clear();
-	visibleLODObjects.clear();
-	visibleOpses.clear();
-	visiblePpses.clear();
-	visiblePsgs.clear();
-	visibleLinesObjects.clear();
-	visibleObjectRenderGroups.clear();
-	visibleObjectEntityHierarchies.clear();
-	visibleEZRObjects.clear();
-	noFrustumCullingEntities.clear();
+	decomposedEntites.objects.clear();
+	decomposedEntites.objectsPostPostProcessing.clear();
+	decomposedEntites.objectsNoDepthTest.clear();
+	decomposedEntites.lodObjects.clear();
+	decomposedEntites.opses.clear();
+	decomposedEntites.ppses.clear();
+	decomposedEntites.psgs.clear();
+	decomposedEntites.linesObjects.clear();
+	decomposedEntites.objectRenderGroups.clear();
+	decomposedEntites.entityHierarchies.clear();
+	decomposedEntites.ezrObjects.clear();
+	decomposedEntites.noFrustumCullingEntities.clear();
+	decomposedEntites.environmentMappingEntities.clear();
 }
 
 void Engine::initRendering()
@@ -801,16 +897,16 @@ void Engine::initRendering()
 	timing->updateTiming();
 
 	//
-	resetLists();
+	resetLists(visibleDecomposedEntities);
 
 	//
 	renderingInitiated = true;
 }
 
-void Engine::computeTransformationsFunction(int threadCount, int threadIdx, bool computeTransformations) {
+void Engine::computeTransformationsFunction(DecomposedEntities& decomposedEntites, int threadCount, int threadIdx, bool computeTransformations) {
 	auto context = renderer->getContext(threadIdx);
 	auto objectIdx = 0;
-	for (auto object: visibleObjects) {
+	for (auto object: decomposedEntites.objects) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
 			objectIdx++;
 			continue;
@@ -819,7 +915,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx, bool
 		if (computeTransformations == true) object->computeTransformations(context);
 		objectIdx++;
 	}
-	for (auto object: visibleObjectsPostPostProcessing) {
+	for (auto object: decomposedEntites.objectsPostPostProcessing) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
 			objectIdx++;
 			continue;
@@ -828,7 +924,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx, bool
 		if (computeTransformations == true) object->computeTransformations(context);
 		objectIdx++;
 	}
-	for (auto object: visibleObjectsNoDepthTest) {
+	for (auto object: decomposedEntites.objectsNoDepthTest) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
 			objectIdx++;
 			continue;
@@ -839,19 +935,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx, bool
 	}
 }
 
-void Engine::determineEntityTypes(
-	const vector<Entity*>& entities,
-	vector<Object3D*>& objects,
-	vector<Object3D*>& objectsPostPostProcessing,
-	vector<Object3D*>& objectsNoDepthTest,
-	vector<LODObject3D*>& lodObjects,
-	vector<ObjectParticleSystem*>& opses,
-	vector<Entity*>& ppses,
-	vector<ParticleSystemGroup*>& psgs,
-	vector<LinesObject3D*>& linesObjects,
-	vector<Object3DRenderGroup*>& objectRenderGroups,
-	vector<EntityHierarchy*>& entityHierarchies
-	) {
+void Engine::determineEntityTypes(const vector<Entity*>& entities, DecomposedEntities& decomposedEntities) {
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
 	ParticleSystemGroup* psg = nullptr;
@@ -862,60 +946,64 @@ void Engine::determineEntityTypes(
 	LinesObject3D* lo = nullptr;
 	Entity* subEntity = nullptr;
 	EntityHierarchy* eh = nullptr;
+	EnvironmentMappingEntity* eme = nullptr;
 
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
 		if ((object = dynamic_cast<Object3D*>(_entity)) != nullptr) { \
 			if (object->isDisableDepthTest() == true) { \
-				objectsNoDepthTest.push_back(object); \
+				decomposedEntities.objectsNoDepthTest.push_back(object); \
 			} else \
 			if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
-				objectsPostPostProcessing.push_back(object); \
+				decomposedEntities.objectsPostPostProcessing.push_back(object); \
 			} else { \
-				objects.push_back(object); \
+				decomposedEntities.objects.push_back(object); \
 			} \
 			if (object->isEnableEarlyZRejection() == true) { \
-				visibleEZRObjects.push_back(object); \
+				decomposedEntities.ezrObjects.push_back(object); \
 			}; \
 		} else \
 		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
 			auto object = lodObject->determineLODObject(camera); /* TODO: use a variable camera */ \
 			if (object != nullptr) { \
-				lodObjects.push_back(lodObject); \
+				decomposedEntities.lodObjects.push_back(lodObject); \
 				if (object->isDisableDepthTest() == true) { \
-					objectsNoDepthTest.push_back(object); \
+					decomposedEntities.objectsNoDepthTest.push_back(object); \
 				} else \
 				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
-					objectsPostPostProcessing.push_back(object); \
+					decomposedEntities.objectsPostPostProcessing.push_back(object); \
 				} else { \
-					objects.push_back(object); \
+					decomposedEntities.objects.push_back(object); \
 				} \
 				if (object->isEnableEarlyZRejection() == true) { \
-					visibleEZRObjects.push_back(object); \
+					decomposedEntities.ezrObjects.push_back(object); \
 				}; \
 			} \
 		} else \
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
 			for (auto object: opse->getEnabledObjects()) { \
 				if (object->isDisableDepthTest() == true) { \
-					objectsNoDepthTest.push_back(object); \
+					decomposedEntities.objectsNoDepthTest.push_back(object); \
 				} else \
 				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) { \
-					objectsPostPostProcessing.push_back(object); \
+					decomposedEntities.objectsPostPostProcessing.push_back(object); \
 				} else { \
-					objects.push_back(object); \
+					decomposedEntities.objects.push_back(object); \
 				} \
 			} \
-			opses.push_back(opse); \
+			decomposedEntities.opses.push_back(opse); \
 		} else \
 		if ((ppse = dynamic_cast<PointsParticleSystem*>(_entity)) != nullptr) { \
-			ppses.push_back(ppse); \
+			decomposedEntities.ppses.push_back(ppse); \
 		} else \
 		if ((fpse = dynamic_cast<FogParticleSystem*>(_entity)) != nullptr) { \
-			ppses.push_back(fpse); \
+			decomposedEntities.ppses.push_back(fpse); \
 		} else \
 		if ((lo = dynamic_cast<LinesObject3D*>(_entity)) != nullptr) { \
-			linesObjects.push_back(lo); \
+			decomposedEntities.linesObjects.push_back(lo); \
+		} else \
+		if ((eme = dynamic_cast<EnvironmentMappingEntity*>(_entity)) != nullptr) { \
+			decomposedEntities.environmentMappingEntities.push_back(eme); \
 		} \
 	}
 
@@ -923,24 +1011,24 @@ void Engine::determineEntityTypes(
 	for (auto entity: entities) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
-			objectRenderGroups.push_back(org);
+			decomposedEntities.objectRenderGroups.push_back(org);
 			if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 		} else
 		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
-			psgs.push_back(psg); \
+			decomposedEntities.psgs.push_back(psg); \
 			for (auto ps: psg->getParticleSystems()) COMPUTE_ENTITY_TRANSFORMATIONS(ps);
 		} else
 		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
-			entityHierarchies.push_back(eh);
+			decomposedEntities.entityHierarchies.push_back(eh);
 			for (auto entityEh: eh->getEntities()) {
 				if (entityEh->isEnabled() == false) continue;
 				// compute transformations and add to lists
 				if ((org = dynamic_cast<Object3DRenderGroup*>(entityEh)) != nullptr) {
-					objectRenderGroups.push_back(org);
+					decomposedEntities.objectRenderGroups.push_back(org);
 					if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 				} else
 				if ((psg = dynamic_cast<ParticleSystemGroup*>(entityEh)) != nullptr) {
-					psgs.push_back(psg); \
+					decomposedEntities.psgs.push_back(psg); \
 					for (auto ps: psg->getParticleSystems()) COMPUTE_ENTITY_TRANSFORMATIONS(ps);
 				} else {
 					COMPUTE_ENTITY_TRANSFORMATIONS(entityEh);
@@ -952,11 +1040,8 @@ void Engine::determineEntityTypes(
 	}
 }
 
-void Engine::computeTransformations(Frustum* frustum, bool autoEmit, bool computeTransformations)
+void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransformations)
 {
-	// init rendering if not yet done
-	if (renderingInitiated == false) initRendering();
-
 	ParticleSystemEntity* pse = nullptr;
 
 	// do particle systems auto emit
@@ -978,16 +1063,7 @@ void Engine::computeTransformations(Frustum* frustum, bool autoEmit, bool comput
 	// determine entity types and store them
 	determineEntityTypes(
 		partition->getVisibleEntities(frustum),
-		visibleObjects,
-		visibleObjectsPostPostProcessing,
-		visibleObjectsNoDepthTest,
-		visibleLODObjects,
-		visibleOpses,
-		visiblePpses,
-		visiblePsgs,
-		visibleLinesObjects,
-		visibleObjectRenderGroups,
-		visibleObjectEntityHierarchies
+		decomposedEntities
 	);
 
 	// collect entities that do not have frustum culling enabled
@@ -998,33 +1074,24 @@ void Engine::computeTransformations(Frustum* frustum, bool autoEmit, bool comput
 		if (entity->isEnabled() == false) continue;
 
 		//
-		noFrustumCullingEntities.push_back(entity);
+		decomposedEntities.noFrustumCullingEntities.push_back(entity);
 	}
 
 	// determine additional entity types for objects without frustum culling
 	determineEntityTypes(
-		noFrustumCullingEntities,
-		visibleObjects,
-		visibleObjectsPostPostProcessing,
-		visibleObjectsNoDepthTest,
-		visibleLODObjects,
-		visibleOpses,
-		visiblePpses,
-		visiblePsgs,
-		visibleLinesObjects,
-		visibleObjectRenderGroups,
-		visibleObjectEntityHierarchies
+		decomposedEntities.noFrustumCullingEntities,
+		decomposedEntities
 	);
 
 	//
 	if (skinningShaderEnabled == true) skinningShader->useProgram();
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		computeTransformationsFunction(1, 0, computeTransformations);
+		computeTransformationsFunction(decomposedEntities, 1, 0, computeTransformations);
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) engineThread->transformations.computeTransformations = computeTransformations;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		computeTransformationsFunction(threadCount, 0, computeTransformations);
+		computeTransformationsFunction(decomposedEntities, threadCount, 0, computeTransformations);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
@@ -1044,7 +1111,11 @@ void Engine::display()
 	// set current engine
 	currentEngine = this;
 
-	if (renderingInitiated == false) initRendering();
+	// init frame
+	if (this == Engine::instance) Engine::renderer->initializeFrame();
+
+	//
+	initRendering();
 
 	// default context
 	auto context = Engine::renderer->getDefaultContext();
@@ -1054,21 +1125,18 @@ void Engine::display()
 	// camera
 	camera->update(context, _width, _height);
 
-	// create environment maps; TODO: have multiple dynamic environment mappings and only render the ones in frustum
-	environmentMapping->render();
-
-	// camera
-	camera->update(context, _width, _height);
-
 	// clear pre render states
 	renderingComputedTransformations = false;
 
 	// do pre rendering steps
-	resetLists();
-	if (renderingComputedTransformations == false) computeTransformations(camera->getFrustum(), true, true);
+	resetLists(visibleDecomposedEntities);
+	computeTransformations(camera->getFrustum(), visibleDecomposedEntities, true, true);
 
-	// init frame
-	if (this == Engine::instance) Engine::renderer->initializeFrame();
+	// create environment maps
+	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
+
+	// camera
+	camera->update(context, _width, _height);
 
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
@@ -1116,6 +1184,7 @@ void Engine::display()
 			} else {
 				// Do the effect render pass
 				render(
+					visibleDecomposedEntities,
 					effectPassIdx,
 					Entity::RENDERPASS_ALL,
 					"ls_",
@@ -1182,6 +1251,7 @@ void Engine::display()
 
 	// do rendering
 	render(
+		visibleDecomposedEntities,
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
 		string(),
@@ -1222,6 +1292,9 @@ void Engine::display()
 	if (frameBuffer != nullptr) {
 		FrameBuffer::disableFrameBuffer();
 	}
+
+	// camera
+	camera->update(context, _width, _height);
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
@@ -1269,23 +1342,14 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 }
 
 Entity* Engine::getEntityByMousePosition(
+	DecomposedEntities& decomposedEntities,
 	bool forcePicking,
 	int32_t mouseX,
 	int32_t mouseY,
-	const vector<Object3D*>& objects,
-	const vector<Object3D*>& objectsPostPostProcessing,
-	const vector<Object3D*>& objectsNoDepthTest,
-	const vector<LODObject3D*>& lodObjects,
-	const vector<ObjectParticleSystem*>& opses,
-	const vector<Entity*>& ppses,
-	const vector<ParticleSystemGroup*>& psgs,
-	const vector<LinesObject3D*>& linesObjects,
-	const vector<EntityHierarchy*>& entityHierarchies,
 	EntityPickingFilter* filter,
 	Node** object3DNode,
 	ParticleSystemEntity** particleSystemEntity
-)
-{
+) {
 	// get world position of mouse position at near and far plane
 	Vector3 tmpVector3a;
 	Vector3 tmpVector3b;
@@ -1302,7 +1366,7 @@ Entity* Engine::getEntityByMousePosition(
 	ParticleSystemEntity* selectedParticleSystem = nullptr;
 
 	// iterate visible objects that have no depth test, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objectsNoDepthTest) {
+	for (auto entity: decomposedEntities.objectsNoDepthTest) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1333,7 +1397,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: opses) {
+	for (auto entity: decomposedEntities.opses) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1351,7 +1415,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: ppses) {
+	for (auto entity: decomposedEntities.ppses) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1369,7 +1433,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible particle system nodes, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: psgs) {
+	for (auto entity: decomposedEntities.psgs) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1399,7 +1463,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible line objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: linesObjects) {
+	for (auto entity: decomposedEntities.linesObjects) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1417,7 +1481,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objects) {
+	for (auto entity: decomposedEntities.objects) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1440,7 +1504,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objectsPostPostProcessing) {
+	for (auto entity: decomposedEntities.objectsPostPostProcessing) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1463,7 +1527,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: lodObjects) {
+	for (auto entity: decomposedEntities.lodObjects) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1489,50 +1553,24 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible entity hierarches, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: entityHierarchies) {
+	for (auto entity: decomposedEntities.entityHierarchies) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			vector<Object3D*> objectsEH;
-			vector<Object3D*> objectsPostPostProcessingEH;
-			vector<Object3D*> objectsNoDepthTestEH;
-			vector<LODObject3D*> lodObjectsEH;
-			vector<ObjectParticleSystem*> opsesEH;
-			vector<Entity*> ppsesEH;
-			vector<ParticleSystemGroup*> psgsEH;
-			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderGroupsEH;
-			vector<EntityHierarchy*> entityHierarchiesEH;
+			DecomposedEntities decomposedEntitiesEH;
 			Node* object3DNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
 			determineEntityTypes(
 				entity->getEntities(),
-				objectsEH,
-				objectsPostPostProcessingEH,
-				objectsNoDepthTestEH,
-				lodObjectsEH,
-				opsesEH,
-				ppsesEH,
-				psgsEH,
-				linesObjectsEH,
-				objectRenderGroupsEH,
-				entityHierarchiesEH
+				decomposedEntitiesEH
 			);
 			auto subEntity = getEntityByMousePosition(
+				decomposedEntitiesEH,
 				true,
 				mouseX,
 				mouseY,
-				objectsEH,
-				objectsPostPostProcessingEH,
-				objectsNoDepthTestEH,
-				lodObjectsEH,
-				opsesEH,
-				ppsesEH,
-				psgsEH,
-				linesObjectsEH,
-				entityHierarchiesEH,
 				filter,
 				&object3DNodeEH,
 				&particleSystemEntityEH
@@ -1581,12 +1619,8 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3
 }
 
 Entity* Engine::doRayCasting(
+	DecomposedEntities& decomposedEntities,
 	bool forcePicking,
-	const vector<Object3D*>& objects,
-	const vector<Object3D*>& objectsPostPostProcessing,
-	const vector<Object3D*>& objectsNoDepthTest,
-	const vector<LODObject3D*>& lodObjects,
-	const vector<EntityHierarchy*>& entityHierarchies,
 	const Vector3& startPoint,
 	const Vector3& endPoint,
 	Vector3& contactPoint,
@@ -1600,7 +1634,7 @@ Entity* Engine::doRayCasting(
 	Entity* selectedEntity = nullptr;
 
 	// iterate visible objects with no depth writing, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objectsNoDepthTest) {
+	for (auto entity: decomposedEntities.objectsNoDepthTest) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1626,7 +1660,7 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objects) {
+	for (auto entity: decomposedEntities.objects) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1648,7 +1682,7 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: objectsPostPostProcessing) {
+	for (auto entity: decomposedEntities.objectsPostPostProcessing) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1670,7 +1704,7 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: lodObjects) {
+	for (auto entity: decomposedEntities.lodObjects) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1695,43 +1729,21 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible entity hierarches, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: entityHierarchies) {
+	for (auto entity: decomposedEntities.entityHierarchies) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
-			vector<Object3D*> objectsEH;
-			vector<Object3D*> objectsPostPostProcessingEH;
-			vector<Object3D*> objectsNoDepthTestEH;
-			vector<LODObject3D*> lodObjectsEH;
-			vector<ObjectParticleSystem*> opsesEH;
-			vector<Entity*> ppsesEH;
-			vector<ParticleSystemGroup*> psgsEH;
-			vector<LinesObject3D*> linesObjectsEH;
-			vector<Object3DRenderGroup*> objectRenderGroupsEH;
-			vector<EntityHierarchy*> entityHierarchiesEH;
+			DecomposedEntities decomposedEntitiesEH;
 			determineEntityTypes(
 				entity->getEntities(),
-				objectsEH,
-				objectsPostPostProcessingEH,
-				objectsNoDepthTestEH,
-				lodObjectsEH,
-				opsesEH,
-				ppsesEH,
-				psgsEH,
-				linesObjectsEH,
-				objectRenderGroupsEH,
-				entityHierarchiesEH
+				decomposedEntitiesEH
 			);
 			Vector3 contactPointEH;
 			auto entity = doRayCasting(
+				decomposedEntitiesEH,
 				true,
-				objectsEH,
-				objectsPostPostProcessingEH,
-				objectsNoDepthTestEH,
-				lodObjectsEH,
-				entityHierarchiesEH,
 				startPoint,
 				endPoint,
 				contactPointEH,
@@ -1785,9 +1797,6 @@ void Engine::dispose()
 
 	// dispose shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->dispose();
-
-	// environment mapping
-	if (environmentMapping != nullptr) environmentMapping->dispose();
 
 	// dispose frame buffers
 	if (frameBuffer != nullptr) frameBuffer->dispose();
@@ -1985,7 +1994,7 @@ const map<string, string> Engine::getShaderParameterDefaults(const string& shade
 	return shaders.find(shaderId)->second.parameterDefaults;
 }
 
-void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
+void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
@@ -1994,14 +2003,14 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 	auto context = Engine::renderer->getDefaultContext();
 
 	// render lines objects
-	if (visibleLinesObjects.size() > 0) {
+	if (visibleDecomposedEntities.linesObjects.size() > 0) {
 		// use particle shader
 		if (linesShader != nullptr) linesShader->useProgram(context);
 
 		// render points based particle systems
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleLinesObjects);
+			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.linesObjects);
 		}
 
 		// unuse particle shader
@@ -2009,7 +2018,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 	}
 
 	// do depth buffer writing aka early z rejection
-	if (useEZR == true && ezrShaderPre != nullptr && visibleEZRObjects.size() > 0) {
+	if (useEZR == true && ezrShaderPre != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
 		// disable color rendering, we only want to write to the Z-Buffer
 		renderer->setColorMask(false, false, false, false);
 		// render
@@ -2020,7 +2029,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 			if ((renderPassMask & renderPass) == renderPass) {
 				entityRenderer->render(
 					renderPass,
-					visibleEZRObjects,
+					visibleDecomposedEntities.ezrObjects,
 					false,
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)
@@ -2034,7 +2043,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 	}
 
 	// use lighting shader
-	if (visibleObjects.size() > 0) {
+	if (visibleDecomposedEntities.objects.size() > 0) {
 		//
 		if (lightingShader != nullptr) lightingShader->useProgram(this);
 
@@ -2044,7 +2053,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 			if ((renderPassMask & renderPass) == renderPass) {
 				entityRenderer->render(
 					renderPass,
-					visibleObjects,
+					visibleDecomposedEntities.objects,
 					true,
 					((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
@@ -2063,7 +2072,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objects);
 	}
 
 	// do post processing
@@ -2076,15 +2085,15 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 	}
 
 	// render point particle systems
-	if (doRenderParticleSystems == true && visiblePpses.size() > 0) {
+	if (doRenderParticleSystems == true && visibleDecomposedEntities.ppses.size() > 0) {
 		// use particle shader
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		if (visiblePpses.size() > 0) {
+		if (visibleDecomposedEntities.ppses.size() > 0) {
 			for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 				auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-				if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visiblePpses);
+				if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.ppses);
 			}
 		}
 
@@ -2100,7 +2109,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 	}
 
 	// render objects that are have post post processing render pass
-	if (visibleObjectsPostPostProcessing.size() > 0) {
+	if (visibleDecomposedEntities.objectsPostPostProcessing.size() > 0) {
 		// use lighting shader
 		if (lightingShader != nullptr) {
 			lightingShader->useProgram(this);
@@ -2112,7 +2121,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 			if ((renderPassMask & renderPass) == renderPass) {
 				entityRenderer->render(
 					renderPass,
-					visibleObjectsPostPostProcessing,
+					visibleDecomposedEntities.objectsPostPostProcessing,
 					true,
 					((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
@@ -2131,11 +2140,11 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsPostPostProcessing);
 	}
 
 	// render objects that are have post post processing render pass
-	if (visibleObjectsNoDepthTest.size() > 0) {
+	if (visibleDecomposedEntities.objectsNoDepthTest.size() > 0) {
 		// use lighting shader
 		if (lightingShader != nullptr) {
 			lightingShader->useProgram(this);
@@ -2150,7 +2159,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 			if ((renderPassMask & renderPass) == renderPass) {
 				entityRenderer->render(
 					renderPass,
-					visibleObjectsNoDepthTest,
+					visibleDecomposedEntities.objectsNoDepthTest,
 					true,
 					((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
@@ -2172,7 +2181,7 @@ void Engine::render(int32_t effectPass, int32_t renderPassMask, const string& sh
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsNoDepthTest);
 	}
 
 	if (doRenderLightSource == true) {

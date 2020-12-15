@@ -5,7 +5,6 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -17,7 +16,6 @@ using std::string;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -70,6 +68,8 @@ void LightingShaderBaseImplementation::initialize()
 
 	// environment mapping
 	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureUnit");
+	uniformEnvironmentMappingTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureAvailable");
+	uniformEnvironmentMappingPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingPosition");
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
@@ -119,9 +119,6 @@ void LightingShaderBaseImplementation::initialize()
 	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
 
 	//
-	environmentMappingCenter = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingCenter");
-
-	//
 	initialized = true;
 }
 
@@ -143,14 +140,6 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
-	if (uniformEnvironmentMappingTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-		//
-		auto currentTextureUnit = renderer->getTextureUnit(context);
-		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
-		renderer->bindCubeMapTexture(context, engine->getEnvironmentMapping()->getCubeMapTextureId());
-		renderer->setTextureUnit(context, currentTextureUnit);
-	}
 
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
@@ -159,17 +148,13 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		updateLight(renderer, context, i);
 	}
 
+	// environment mapping texture unit
+	if (uniformEnvironmentMappingTextureUnit != -1) {
+		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+	}
+
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	if (environmentMappingCenter != -1) renderer->setProgramUniformFloatVec3(
-		context,
-		environmentMappingCenter,
-		Vector3(
-			0.0f, // engine->getCamera()->getLookAt().getX(),
-			10.0f, // engine->getCamera()->getLookAt().getY() + 10.0f,
-			0.0f // engine->getCamera()->getLookAt().getZ()
-		).getArray()
-	);
 }
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
@@ -296,5 +281,16 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* con
 
 			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT:
+			if (uniformEnvironmentMappingTextureUnit != -1 && textureId != 0) {
+				if (uniformEnvironmentMappingTextureAvailable != -1) {
+					renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 1);
+				}
+				if (uniformEnvironmentMappingPosition != -1) {
+					renderer->setProgramUniformFloatVec3(context, uniformEnvironmentMappingPosition, renderer->getEnvironmentMappingCubeMapPosition(context));
+				}
+			} else {
+				if (uniformEnvironmentMappingTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 0);
+			}
 	}
 }

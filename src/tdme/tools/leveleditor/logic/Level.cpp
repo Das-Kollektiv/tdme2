@@ -14,6 +14,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
@@ -87,6 +88,7 @@ using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
@@ -376,8 +378,18 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
+		}
+		if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING &&
+			levelEditorEntity->getBoundingVolumeCount() == 1 &&
+			dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
+			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()));
+			auto environmentMapping = new EnvironmentMapping("environmentmapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), aabb);
+			environmentMapping->setRenderPassMask(levelEditorEntity->getEnvironmentMapRenderPassMask());
+			environmentMapping->setTimeRenderUpdateFrequency(levelEditorEntity->getEnvironmentMapTimeRenderUpdateFrequency());
+			entityBoundingVolumesHierarchy->addEntity(environmentMapping);
 		}
 		entityBoundingVolumesHierarchy->update();
 		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {
@@ -462,6 +474,10 @@ void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, b
 			}
 			entity->update();
 			entity->setEnabled(enable);
+
+			auto object3D = dynamic_cast<Object3D*>(entity);
+			if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(object->getReflectionEnvironmentMappingId());
+
 			engine->addEntity(entity);
 		}
 	}

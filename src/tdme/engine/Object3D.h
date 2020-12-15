@@ -72,6 +72,7 @@ private:
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
+	string reflectionEnvironmentMappingId;
 	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
 	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
@@ -345,6 +346,20 @@ public:
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;
+	}
+
+	/**
+	 * @return reflection environment mapping id
+	 */
+	inline const string& getReflectionEnvironmentMappingId() {
+		return reflectionEnvironmentMappingId;
+	}
+
+	/**
+	 * @return reflection environment mapping id
+	 */
+	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
+		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
 	}
 
 	/**

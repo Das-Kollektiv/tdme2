@@ -639,14 +639,14 @@ void LevelEditorScreenController::onObjectScaleApply()
 		auto x = Float::parseFloat(objectScaleX->getController()->getValue().getString());
 		auto y = Float::parseFloat(objectScaleY->getController()->getValue().getString());
 		auto z = Float::parseFloat(objectScaleZ->getController()->getValue().getString());
-		if (x < -10.0f || x > 10.0f)
-			throw ExceptionBase("x scale must be within -10 .. +10");
+		if (x < -500.0f || x > 500.0f)
+			throw ExceptionBase("x scale must be within -500 .. +500");
 
-		if (y < -10.0f || y > 10.0f)
-			throw ExceptionBase("y scale must be within -10 .. +10");
+		if (y < -500.0f || y > 500.0f)
+			throw ExceptionBase("y scale must be within -500 .. +500");
 
-		if (z < -10.0f || z > 10.0f)
-			throw ExceptionBase("z scale must be within -10 .. +10");
+		if (z < -500.0f || z > 500.0f)
+			throw ExceptionBase("z scale must be within -500 .. +500");
 
 		view->objectScaleApply(x, y, z);
 	} catch (Exception& exception) {

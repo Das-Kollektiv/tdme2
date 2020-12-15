@@ -11,6 +11,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
@@ -78,6 +80,8 @@ using std::unordered_set;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
+using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
@@ -697,6 +701,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				vector<int32_t>* boundVBOOrigins = nullptr;
+				int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 				auto objectCount = object3DRenderContext.objectsToRender.size();
 
 				//
@@ -861,6 +866,30 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						if (objectFrontFace != frontFace) {
 							object3DRenderContext.objectsNotRendered.push_back(object);
 							continue;
+						}
+					}
+
+					if (object->getReflectionEnvironmentMappingId().empty() == false) {
+						EnvironmentMappingEntity* environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+						if (environmentMappingEntity == nullptr) {
+							auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+							if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+						}
+						if (environmentMappingEntity != nullptr) {
+							auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
+							if (boundEnvironmentMappingCubeMapTextureId == -1) {
+								Vector3 translation;
+								environmentMappingEntity->getTransformationsMatrix().getTranslation(translation);
+								renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+								renderer->bindCubeMapTexture(context, environmentMappingCubeMapTextureId);
+								renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+								renderer->setEnvironmentMappingCubeMapPosition(context, translation.getArray());
+								boundEnvironmentMappingCubeMapTextureId = environmentMappingCubeMapTextureId;
+							} else
+							if (boundEnvironmentMappingCubeMapTextureId != environmentMappingCubeMapTextureId) {
+								object3DRenderContext.objectsNotRendered.push_back(object);
+								continue;
+							}
 						}
 					}
 

@@ -49,6 +49,7 @@ using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
+using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -66,7 +67,6 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
-using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -108,6 +108,7 @@ class tdme::engine::Engine final
 	friend class EngineGLES2Renderer;
 	friend class EngineVKRenderer;
 	friend class EntityHierarchy;
+	friend class EnvironmentMapping;
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class Object3D;
@@ -199,6 +200,22 @@ private:
 
 	map<string, map<string, string>> postProcessingShaderParameters;
 
+	struct DecomposedEntities {
+		vector<Entity*> noFrustumCullingEntities;
+		vector<Object3D*> objects;
+		vector<Object3D*> objectsPostPostProcessing;
+		vector<Object3D*> objectsNoDepthTest;
+		vector<LODObject3D*> lodObjects;
+		vector<ObjectParticleSystem*> opses;
+		vector<Entity*> ppses;
+		vector<ParticleSystemGroup*> psgs;
+		vector<LinesObject3D*> linesObjects;
+		vector<Object3DRenderGroup*> objectRenderGroups;
+		vector<EntityHierarchy*> entityHierarchies;
+		vector<EnvironmentMappingEntity*> environmentMappingEntities;
+		vector<Object3D*> ezrObjects;
+	};
+
 	int32_t width { -1 };
 	int32_t height { -1 };
 	int32_t scaledWidth { -1 };
@@ -224,25 +241,12 @@ private:
 	array<bool, EFFECTPASS_COUNT - 1> effectPassSkip;
 	ShadowMapping* shadowMapping { nullptr };
 	float shadowMapLightEyeDistanceScale { 1.0f };
-	EnvironmentMapping* environmentMapping { nullptr };
 
 	map<string, Entity*> entitiesById;
 	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
 	map<string, Entity*> noFrustumCullingEntitiesById;
 
-	vector<Object3D*> visibleObjects;
-	vector<Object3D*> visibleObjectsPostPostProcessing;
-	vector<Object3D*> visibleObjectsNoDepthTest;
-	vector<LODObject3D*> visibleLODObjects;
-	vector<ObjectParticleSystem*> visibleOpses;
-	vector<Entity*> visiblePpses;
-	vector<ParticleSystemGroup*> visiblePsgs;
-	vector<LinesObject3D*> visibleLinesObjects;
-	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
-	vector<EntityHierarchy*> visibleObjectEntityHierarchies;
-	vector<Entity*> noFrustumCullingEntities;
-
-	vector<Object3D*> visibleEZRObjects;
+	DecomposedEntities visibleDecomposedEntities;
 
 	EntityRenderer* entityRenderer { nullptr };
 
@@ -387,46 +391,30 @@ private:
 	/**
 	 * Determine entity types
 	 * @param entities given entities to investigate
-	 * @param objects object
-	 * @param objectsPostPostProcessing objects that will be rendered after post processing
-	 * @param objectsNoDepthTest objects that will render without depth test
-	 * @param lodObjects LOD objects
-	 * @param opses object particle systems
-	 * @param ppses point particle systems
-	 * @param psgs particle system groups
-	 * @param linesObjects lines objects
-	 * @param objectRenderGroups object render groups
-	 * @param entityHierarchies entity hierarchies
+	 * @param decomposedEntities decomposed entities
 	 */
 	void determineEntityTypes(
 		const vector<Entity*>& entities,
-		vector<Object3D*>& objects,
-		vector<Object3D*>& objectsPostPostProcessing,
-		vector<Object3D*>& objectsNoDepthTest,
-		vector<LODObject3D*>& lodObjects,
-		vector<ObjectParticleSystem*>& opses,
-		vector<Entity*>& ppses,
-		vector<ParticleSystemGroup*>& psgs,
-		vector<LinesObject3D*>& linesObjects,
-		vector<Object3DRenderGroup*>& objectRenderGroups,
-		vector<EntityHierarchy*>& entityHierarchies
+		DecomposedEntities& decomposedEntities
 	);
 
 	/**
 	 * Computes visibility and transformations
+	 * @param decomposedEntites decomposed entites
 	 * @param threadCount thread count
 	 * @param threadIdx thread idx
 	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformationsFunction(int threadCount, int threadIdx, bool computeTransformations);
+	void computeTransformationsFunction(DecomposedEntities& decomposedEntites, int threadCount, int threadIdx, bool computeTransformations);
 
 	/**
 	 * Computes visibility and transformations
 	 * @param frustum frustum
+	 * @param decomposedEntities decomposed entities
 	 * @param autoEmit auto emit particle systems
 	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformations(Frustum* frustum, bool autoEmit, bool computeTransformations);
+	void computeTransformations(Frustum* frustum, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeTransformations);
 
 	/**
 	 * Set up GUI mode rendering
@@ -440,8 +428,9 @@ private:
 
 	/**
 	 * Reset lists
+	 * @param decomposedEntities decomposed entities
 	 */
-	void resetLists();
+	void resetLists(DecomposedEntities& decomposedEntites);
 
 	/**
 	 * Initiates the rendering process
@@ -967,18 +956,10 @@ public:
 	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
+				visibleDecomposedEntities,
 				false,
 				mouseX,
 				mouseY,
-				visibleObjects,
-				visibleObjectsPostPostProcessing,
-				visibleObjectsNoDepthTest,
-				visibleLODObjects,
-				visibleOpses,
-				visiblePpses,
-				visiblePsgs,
-				visibleLinesObjects,
-				visibleObjectEntityHierarchies,
 				filter,
 				object3DNode,
 				particleSystemEntity
@@ -1013,12 +994,8 @@ public:
 	) {
 		return
 			doRayCasting(
+				visibleDecomposedEntities,
 				false,
-				visibleObjects,
-				visibleObjectsPostPostProcessing,
-				visibleObjectsNoDepthTest,
-				visibleLODObjects,
-				visibleObjectEntityHierarchies,
 				startPoint,
 				endPoint,
 				contactPoint,
@@ -1100,46 +1077,23 @@ public:
 		return renderer->getStatistics();
 	}
 
-	/**
-	 * @return environment mapping
-	 */
-	inline EnvironmentMapping* getEnvironmentMapping() {
-		return environmentMapping;
-	}
-
 private:
 	/**
 	 * Retrieves entity by mouse position
+	 * @param decomposedEntities decomposed entities
 	 * @param forcePicking override picking to be always enabled
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @param objects objects
-	 * @param objectsPostPostProcessing objects that will be rendered after post processing
-	 * @param objectsNoDepthTest objects that will render without depth test
-	 * @param lodObjects LOD objects
-	 * @param opses object particle systems
-	 * @param ppses point particle systems
-	 * @param psgs particle system groups
-	 * @param linesObjects lines objects
-	 * @param entityHierarchies entity hierarchies
 	 * @param filter filter
 	 * @param object3DNode pointer to store node of Object3D to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(
+		DecomposedEntities& decomposedEntities,
 		bool forcePicking,
 		int32_t mouseX,
 		int32_t mouseY,
-		const vector<Object3D*>& objects,
-		const vector<Object3D*>& objectsPostPostProcessing,
-		const vector<Object3D*>& objectsNoDepthTest,
-		const vector<LODObject3D*>& lodObjects,
-		const vector<ObjectParticleSystem*>& opses,
-		const vector<Entity*>& ppses,
-		const vector<ParticleSystemGroup*>& psgs,
-		const vector<LinesObject3D*>& linesObjects,
-		const vector<EntityHierarchy*>& entityHierarchies,
 		EntityPickingFilter* filter = nullptr,
 		Node** object3DNode = nullptr,
 		ParticleSystemEntity** particleSystemEntity = nullptr
@@ -1147,12 +1101,8 @@ private:
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
+	 * @param decomposedEntities decomposed entities
 	 * @param forcePicking override picking to be always enabled
-	 * @param objects objects
-	 * @param objectsPostPostProcessing objects that will be rendered after post processing
-	 * @param objectsNoDepthTest objects that will render without depth test
-	 * @param lodObjects LOD objects
-	 * @param entityHierarchies entity hierarchies
 	 * @param startPoint start point
 	 * @param endPoint end point
 	 * @param contactPoint world coordinate of contact point
@@ -1160,12 +1110,8 @@ private:
 	 * @return entity or nullptr
 	 */
 	Entity* doRayCasting(
+		DecomposedEntities& decomposedEntities,
 		bool forcePicking,
-		const vector<Object3D*>& objects,
-		const vector<Object3D*>& objectsPostPostProcessing,
-		const vector<Object3D*>& objectsNoDepthTest,
-		const vector<LODObject3D*>& lodObjects,
-		const vector<EntityHierarchy*>& entityHierarchies,
 		const Vector3& startPoint,
 		const Vector3& endPoint,
 		Vector3& contactPoint,
@@ -1194,6 +1140,7 @@ private:
 
 	/**
 	 * Do a render/effect pass
+	 * @param visibleDecomposedEntities visible decomposed entities
 	 * @param effectPass effect pass
 	 * @param renderPassMask render pass mask
 	 * @param shaderPrefix shader prefix
@@ -1204,7 +1151,7 @@ private:
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light source
