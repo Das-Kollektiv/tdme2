@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 
 #include <iostream>
 #include <iomanip>
@@ -49,8 +49,9 @@
 using std::ostringstream;
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+
 using tdme::engine::LODObject3D;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -91,11 +92,11 @@ using rapidjson::StringBuffer;
 using rapidjson::Writer;
 using rapidjson::Value;
 
-void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
+void PrototypeWriter::copyFile(const string& source, const string& dest)
 {
 }
 
-void ModelMetaDataFileExport::doExport(const string& pathName, const string& fileName, Prototype* entity)
+void PrototypeWriter::doExport(const string& pathName, const string& fileName, Prototype* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	Document jRoot;
@@ -109,7 +110,7 @@ void ModelMetaDataFileExport::doExport(const string& pathName, const string& fil
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }
 
-void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
+void PrototypeWriter::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
@@ -135,7 +136,7 @@ void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& j
 	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity)
+void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity)
 {
 	auto& jAllocator = jDocument.GetAllocator();
 	if (entity->getType() == Prototype_EntityType::MODEL && entity->getFileName().length() > 0) {
@@ -153,7 +154,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 			jEntityRoot.AddMember("thumbnail] = (thumbnail));
 			copyFile("./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
 		} catch (Exception& exception) {
-			Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
+			Console::print(string("PrototypeWriter::export(): An error occurred: '));
 			Console::print(entity->getFileName());
 			Console::print(string(": "));
 			Console::println(exception.what());
@@ -280,7 +281,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 				} else {
 					Console::println(
 						string(
-							"ModelMetaDataFileExport::export(): unknown particle system type '" +
+							"PrototypeWriter::export(): unknown particle system type '" +
 							particleSystem->getType()->getName() +
 							"'"
 						)
@@ -464,7 +465,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 				{
 					Console::println(
 						string(
-							"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
+							"PrototypeWriter::export(): unknown particle system emitter '" +
 							particleSystem->getEmitter()->getName() +
 							"'"
 						 )

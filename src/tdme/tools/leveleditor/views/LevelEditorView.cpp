@@ -47,9 +47,9 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ProgressBarScreenController.h>
-#include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -119,9 +119,9 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ProgressBarScreenController;
-using tdme::tools::shared::files::LevelFileExport;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::scenes::SceneWriter;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -1564,9 +1564,9 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		};
 		popUps->getProgressBarScreenController()->show();
 		if (haveModelFile == true) {
-			LevelFileImport::doImportFromModel(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			SceneReader::doImportFromModel(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		} else {
-			LevelFileImport::doImport(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			SceneReader::doImport(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		}
 		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
@@ -1598,7 +1598,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 void LevelEditorView::saveMap(const string& pathName, const string& fileName)
 {
 	try {
-		LevelFileExport::doExport(pathName, fileName, level);
+		SceneWriter::doExport(pathName, fileName, level);
 	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			"Warning: Could not save level file",

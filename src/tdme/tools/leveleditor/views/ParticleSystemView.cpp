@@ -7,7 +7,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/Scene.h>
@@ -23,7 +23,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
@@ -49,7 +49,7 @@ void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* n
 Prototype* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(SceneLibrary::ID_ALLOCATE, pathName, fileName);
+		auto levelEditorEntity = PrototypeReader::doImport(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		TDMELevelEditor::getInstance()->getEntityLibrary()->addEntity(levelEditorEntity);
 		return levelEditorEntity;

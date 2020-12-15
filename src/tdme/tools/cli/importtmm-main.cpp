@@ -16,8 +16,8 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -41,8 +41,8 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::Triangle;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 			);
 		} else {
 			Console::println("Loading tmm: " + tmmFileName);
-			tmm = ModelMetaDataFileImport::doImport(
+			tmm = PrototypeReader::doImport(
 				FileSystem::getInstance()->getPathName(tmmFileName),
 				FileSystem::getInstance()->getFileName(tmmFileName)
 			);
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 			}
 		}
 		Console::println("Saving tmm: " + tmmFileName);
-		ModelMetaDataFileExport::doExport(
+		PrototypeWriter::doExport(
 			FileSystem::getInstance()->getPathName(tmmFileName),
 			FileSystem::getInstance()->getFileName(tmmFileName),
 			tmm

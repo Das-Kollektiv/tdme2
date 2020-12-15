@@ -25,8 +25,8 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/PathFinding.h>
 
@@ -56,8 +56,8 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::utilities::Console;
 using tdme::utilities::PathFinding;
 using tdme::utilities::Time;
@@ -168,7 +168,7 @@ void PathFindingTest::dispose()
 void PathFindingTest::initialize()
 {
 	engine->initialize();
-	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", level);
+	SceneReader::doImport("resources/tests/levels/pathfinding", "test.tl", level);
 	Level::setLight(engine, level);
 	Level::addLevel(engine, level, false, false, false, false);
 	Level::addLevel(world, level);
@@ -178,7 +178,7 @@ void PathFindingTest::initialize()
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(level.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	playerModelEntity = ModelMetaDataFileImport::doImport("resources/tests/models/mementoman", "mementoman.dae.tmm");
+	playerModelEntity = PrototypeReader::doImport("resources/tests/models/mementoman", "mementoman.dae.tmm");
 	playerModelEntity->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelEntity->getModel()->addAnimationSetup("death", 109, 169, false);

@@ -3,12 +3,12 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
-#include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -21,7 +21,7 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics_BodyType;

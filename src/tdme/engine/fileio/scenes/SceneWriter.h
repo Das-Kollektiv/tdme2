@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/tools/shared/files/fwd-tdme.h>
+#include <tdme/engine/fileio/scenes/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
@@ -21,7 +21,7 @@ using tdme::engine::scene::Scene;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::files::LevelFileExport final
+class tdme::engine::fileio::scenes::SceneWriter final
 {
 
 public:

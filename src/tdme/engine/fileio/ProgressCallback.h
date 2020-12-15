@@ -1,13 +1,13 @@
 #pragma once
 
-#include <tdme/tools/shared/files/fwd-tdme.h>
+#include <tdme/engine/fileio/fwd-tdme.h>
 
 /**
  * Progress Callback
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::tools::shared::files::ProgressCallback
+struct tdme::engine::fileio::ProgressCallback
 {
 	/**
 	 * Destructor

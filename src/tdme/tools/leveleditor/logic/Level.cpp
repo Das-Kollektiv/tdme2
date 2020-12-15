@@ -46,8 +46,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -120,8 +120,8 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::PrototypeAudio;
@@ -735,7 +735,7 @@ void Level::addEntitySounds(Audio* audio, Prototype* levelEditorEntity, const st
 	for (auto soundDefinition: levelEditorEntity->getSounds()) {
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
-				string pathName = ModelMetaDataFileImport::getResourcePathName(
+				string pathName = PrototypeReader::getResourcePathName(
 					Tools::getPath(levelEditorEntity->getEntityFileName()),
 					soundDefinition->getFileName()
 				);

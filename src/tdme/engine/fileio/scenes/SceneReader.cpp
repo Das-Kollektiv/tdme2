@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/files/LevelFileImport.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
 
 #include <string>
 
@@ -19,9 +19,9 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/scene/Scene.h>
@@ -38,7 +38,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::tools::shared::files::LevelFileImport;
+using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::ModelUtilities;
@@ -56,9 +56,9 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::files::LevelFileExport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::scenes::SceneWriter;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::scene::Scene;
@@ -73,12 +73,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback)
+void SceneReader::doImport(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback)
 {
 	doImport(pathName, fileName, level, "", progressCallback);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, Scene& level, const string& objectIdPrefix, ProgressCallback* progressCallback)
+void SceneReader::doImport(const string& pathName, const string& fileName, Scene& level, const string& objectIdPrefix, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -151,13 +151,13 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, S
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
 		auto& jModel = jRoot["models"].GetArray()[i];
-		Prototype* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
+		Prototype* levelEditorEntity = PrototypeReader::doImportFromJSON(
 			jModel["id"].GetInt(),
 			pathName,
 			jModel["entity"]
 		);
 		if (levelEditorEntity == nullptr) {
-			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
+			Console::println("SceneReader::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
 		level.getEntityLibrary()->addEntity(levelEditorEntity);
@@ -180,7 +180,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, S
 		auto& jObject = jRoot["objects"].GetArray()[i];
 		auto model = level.getEntityLibrary()->getEntity(jObject["mid"].GetInt());
 		if (model == nullptr) {
-			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
+			Console::println("SceneReader::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
 
 			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 			progressStepCurrent++;
@@ -253,7 +253,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, S
 			)
 		);
 		if (level.getSkyModelFileName().empty() == false) {
-			auto skyModelPathName = ModelMetaDataFileImport::getResourcePathName(pathName, level.getSkyModelFileName());
+			auto skyModelPathName = PrototypeReader::getResourcePathName(pathName, level.getSkyModelFileName());
 			level.setSkyModel(
 				ModelReader::read(
 					skyModelPathName,
@@ -270,7 +270,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, S
 	}
 }
 
-void LevelFileImport::determineMeshNodes(Scene& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
+void SceneReader::determineMeshNodes(Scene& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
 	auto entityLibrary = level.getEntityLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
@@ -299,7 +299,7 @@ void LevelFileImport::determineMeshNodes(Scene& level, Node* node, const string&
 	if (haveName == false) {
 		Console::println(
 			string(
-				"LevelFileImport::doImportFromModel(): Skipping model '" +
+				"SceneReader::doImportFromModel(): Skipping model '" +
 				modelName +
 				"' as no name could be created for it."
 			)
@@ -337,7 +337,7 @@ void LevelFileImport::determineMeshNodes(Scene& level, Node* node, const string&
 	}
 }
 
-void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback) {
+void SceneReader::doImportFromModel(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback) {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	level.clearProperties();
@@ -507,7 +507,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	if (progressCallback != nullptr) progressCallback->progress(0.9f);
 
 	// export to tl
-	LevelFileExport::doExport(
+	SceneWriter::doExport(
 		pathName,
 		Tools::removeFileEnding(fileName) + ".tl",
 		level

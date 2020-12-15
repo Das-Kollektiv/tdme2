@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 
 #include <string>
 
@@ -41,7 +41,7 @@
 using std::string;
 
 using tdme::engine::LODObject3D;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
@@ -77,7 +77,7 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-Prototype* ModelMetaDataFileImport::doImport(int id, const string& pathName, const string& fileName)
+Prototype* PrototypeReader::doImport(int id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -89,7 +89,7 @@ Prototype* ModelMetaDataFileImport::doImport(int id, const string& pathName, con
 	return levelEditorEntity;
 }
 
-Prototype* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
+Prototype* PrototypeReader::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
 {
 	Prototype* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
@@ -224,7 +224,7 @@ Prototype* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathN
 	return levelEditorEntity;
 }
 
-const string ModelMetaDataFileImport::getResourcePathName(const string& pathName, const string& fileName) {
+const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
 		(
 			StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
@@ -238,7 +238,7 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-PrototypeBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv)
+PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv)
 {
 	auto entityBoundingVolume = new PrototypeBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
@@ -322,14 +322,14 @@ PrototypeBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, P
 				Tools::getFileName(fileName)
 			);
 		} catch (Exception& exception) {
-			Console::print(string("ModelMetaDataFileImport::parseBoundingVolume(): An error occurred: "));
+			Console::print(string("PrototypeReader::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 	}
 	return entityBoundingVolume;
 }
 
-PrototypeLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
+PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel) {
 	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
 	PrototypeLODLevel* lodLevel = new PrototypeLODLevel(
 		lodType,
@@ -367,7 +367,7 @@ PrototypeLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName
 	return lodLevel;
 }
 
-void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
+void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
 	particleSystem->setType(PrototypeParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto v = particleSystem->getType();
@@ -389,7 +389,7 @@ void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* parti
 					particleModelPath + "/" + Tools::getFileName(particleModelFile)
 				);
 			} catch (Exception& exception) {
-				Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+				Console::print(string("PrototypeReader::doImport(): An error occurred: "));
 				Console::println(string(exception.what()));
 			}
 		} else
@@ -412,7 +412,7 @@ void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* parti
 					if (jPointParticleSystem.FindMember("tvs") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureVerticalSprites(jPointParticleSystem["tvs"].GetInt());
 					if (jPointParticleSystem.FindMember("fps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureSpritesFPS(jPointParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
-					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+					Console::print(string("PrototypeReader::doImport(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 			}
@@ -437,14 +437,14 @@ void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* parti
 					if (jFogParticleSystem.FindMember("tvs") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureVerticalSprites(jFogParticleSystem["tvs"].GetInt());
 					if (jFogParticleSystem.FindMember("fps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureSpritesFPS(jFogParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
-					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+					Console::print(string("PrototypeReader::doImport(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 			}
 		} else {
 			Console::println(
 				string(
-					 "ModelMetaDataFileExport::export(): unknown particle system type '" +
+					 "PrototypeWriter::export(): unknown particle system type '" +
 					 particleSystem->getType()->getName() +
 					 "'"
 				 )
@@ -736,7 +736,7 @@ void ModelMetaDataFileImport::parseParticleSystem(PrototypeParticleSystem* parti
 			emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].GetFloat()));
 		} else {
 			Console::println(
-				"ModelMetaDataFileExport::export(): unknown particle system emitter '" +
+				"PrototypeWriter::export(): unknown particle system emitter '" +
 				particleSystem->getEmitter()->getName() +
 				"'"
 			 );

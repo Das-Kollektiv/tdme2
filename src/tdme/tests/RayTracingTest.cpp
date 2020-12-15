@@ -31,7 +31,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/utilities/Character.h>
@@ -72,7 +72,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::utilities::Character;
@@ -255,7 +255,7 @@ void RayTracingTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
-	auto interactionTable = levelEditorEntityDeleter.add(ModelMetaDataFileImport::doImport("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
+	auto interactionTable = levelEditorEntityDeleter.add(PrototypeReader::doImport("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
 	entityBoundingVolumeModel = modelDeleter.add(PrimitiveModel::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)

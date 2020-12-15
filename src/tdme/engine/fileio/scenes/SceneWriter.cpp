@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/files/LevelFileExport.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 
 #include <iostream>
 #include <iomanip>
@@ -13,7 +13,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -29,7 +29,7 @@
 using std::ostringstream;
 using std::string;
 
-using tdme::tools::shared::files::LevelFileExport;
+using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
@@ -38,7 +38,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -52,7 +52,7 @@ using rapidjson::StringBuffer;
 using rapidjson::Writer;
 using rapidjson::Value;
 
-void LevelFileExport::doExport(const string& pathName, const string& fileName, Scene& level)
+void SceneWriter::doExport(const string& pathName, const string& fileName, Scene& level)
 {
 	level.setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level.getEntityLibrary();
@@ -105,7 +105,7 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, S
 		auto entity = entityLibrary->getEntityAt(i);
 		Value jEntity;
 		jEntity.SetObject();
-		ModelMetaDataFileExport::exportToJSON(jDocument, jEntity, entity);
+		PrototypeWriter::exportToJSON(jDocument, jEntity, entity);
 		Value jModel;
 		jModel.SetObject();
 		jModel.AddMember("id", Value().SetInt(entity->getId()), jAllocator);

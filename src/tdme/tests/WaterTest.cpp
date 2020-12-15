@@ -15,8 +15,8 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/utilities/Character.h>
@@ -44,8 +44,8 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::utilities::Character;
@@ -141,15 +141,15 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
+	SceneReader::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
 	Level::setLight(engine, level);
 	Level::addLevel(engine, level, false, false, false, false);
 
 	// load sky
-	skySphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
-	skyDomeEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
-	skyPanoramaEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
-	sphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "CM_Sphere.tmm");
+	skySphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+	skyDomeEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+	skyPanoramaEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+	sphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "CM_Sphere.tmm");
 
 	// add sky
 	{

@@ -14,7 +14,7 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/files/fwd-tdme.h>
+#include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -28,7 +28,7 @@ using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::ProgressCallback;
 
 /**
  * Model tools functions class

@@ -400,10 +400,10 @@ SRCS = \
 	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ProgressBarScreenController.cpp \
-	src/tdme/tools/shared/files/LevelFileExport.cpp \
-	src/tdme/tools/shared/files/LevelFileImport.cpp \
-	src/tdme/tools/shared/files/ModelMetaDataFileExport.cpp \
-	src/tdme/tools/shared/files/ModelMetaDataFileImport.cpp \
+	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
+	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
 	src/tdme/engine/prototype/Prototype.cpp \
     src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \

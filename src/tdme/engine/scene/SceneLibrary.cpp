@@ -8,7 +8,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -29,7 +29,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -71,7 +71,7 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 {
 	Prototype* levelEditorEntity = nullptr;
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE?allocateEntityId():id, pathName, fileName);
+		levelEditorEntity = PrototypeReader::doImport(id == ID_ALLOCATE?allocateEntityId():id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(
 			pathName,

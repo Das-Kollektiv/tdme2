@@ -32,7 +32,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/LevelFileExport.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTokenizer.h>

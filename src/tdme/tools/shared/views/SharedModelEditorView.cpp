@@ -26,9 +26,9 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ModelEditorScreenController.h>
 #include <tdme/tools/shared/controller/ProgressBarScreenController.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -72,9 +72,9 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::controller::ProgressBarScreenController;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
@@ -259,7 +259,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 
 void SharedModelEditorView::saveFile(const string& pathName, const string& fileName)
 {
-	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
+	PrototypeWriter::doExport(pathName, fileName, entity);
 }
 
 void SharedModelEditorView::reloadFile()
@@ -525,7 +525,7 @@ void SharedModelEditorView::loadModel()
 Prototype* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
+		auto levelEditorEntity = PrototypeReader::doImport(
 			pathName,
 			fileName
 		);
@@ -592,7 +592,7 @@ void SharedModelEditorView::playSound(const string& soundId) {
 	auto soundDefinition = entity->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
-		string pathName = ModelMetaDataFileImport::getResourcePathName(
+		string pathName = PrototypeReader::getResourcePathName(
 			Tools::getPath(entity->getEntityFileName()),
 			soundDefinition->getFileName()
 		);

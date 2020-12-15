@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/tools/shared/files/fwd-tdme.h>
+#include <tdme/engine/fileio/prototypes/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -28,7 +28,7 @@ using rapidjson::Value;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::files::ModelMetaDataFileImport final
+class tdme::engine::fileio::prototypes::PrototypeReader final
 {
 public:
 	/**

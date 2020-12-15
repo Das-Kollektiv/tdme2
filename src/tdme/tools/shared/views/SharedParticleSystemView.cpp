@@ -26,8 +26,8 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ParticleSystemScreenController.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
@@ -81,8 +81,8 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
@@ -198,7 +198,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
+	PrototypeWriter::doExport(pathName, fileName, entity);
 }
 
 void SharedParticleSystemView::reloadFile()
@@ -519,7 +519,7 @@ void SharedParticleSystemView::loadParticleSystem()
 Prototype* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(pathName, fileName);
+		auto levelEditorEntity = PrototypeReader::doImport(pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	}
@@ -546,7 +546,7 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
 	auto soundDefinition = entity->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
-		string pathName = ModelMetaDataFileImport::getResourcePathName(
+		string pathName = PrototypeReader::getResourcePathName(
 			Tools::getPath(entity->getEntityFileName()),
 			soundDefinition->getFileName()
 		);

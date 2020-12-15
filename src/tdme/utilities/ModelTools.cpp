@@ -26,7 +26,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -60,7 +60,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ProgressCallback;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::scene::SceneEntity;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;

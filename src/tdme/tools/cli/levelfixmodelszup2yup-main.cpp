@@ -8,8 +8,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/LevelFileExport.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
@@ -26,8 +26,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::LevelFileExport;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::scene::Scene;
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	try {
 		Console::println("Loading level: " + levelFileName);
 		Scene level;
-		LevelFileImport::doImport(
+		SceneReader::doImport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
 			level
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 		}
 		// TODO: bvs
 		Console::println("Saving level: " + levelFileName);
-		LevelFileExport::doExport(
+		SceneWriter::doExport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
 			level
