@@ -168,48 +168,48 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-		if (entity != nullptr) {
-			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(entity->getId());
+		auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+		if (prototype != nullptr) {
+			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(prototype->getId());
 		}
 	}
 }
 
 void LevelEditorEntityLibraryScreenController::onEditEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr) return;
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (prototype == nullptr) return;
 	{
-		auto v = entity->getType();
+		auto v = prototype->getType();
 		if (v == Prototype_Type::MODEL) {
 			if (dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
-			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
 		} else
 		if (v == Prototype_Type::TRIGGER) {
 			if (dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
-			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
 		} else
 		if (v == Prototype_Type::ENVIRONMENTMAPPING) {
 			if (dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEnvironmentMappingView();
 			}
-			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
 		} else
 		if (v == Prototype_Type::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
-			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
 		} else
 		if (v == Prototype_Type::PARTICLESYSTEM) {
 			if (dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
-			(dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
+			(dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
 		}
 	}
 
@@ -226,8 +226,8 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr) return;
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (prototype == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->setPlaceObjectMode();
@@ -236,16 +236,16 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr) return;
-	TDMELevelEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(entity->getId());
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (prototype == nullptr) return;
+	TDMELevelEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(prototype->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
-	TDMELevelEditor::getInstance()->getScene()->getLibrary()->removePrototype(entity->getId());
+	TDMELevelEditor::getInstance()->getScene()->getLibrary()->removePrototype(prototype->getId());
 	setEntityLibrary();
 }
 
@@ -426,9 +426,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(SceneLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
+				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(SceneLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -439,9 +439,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_environmentmapping") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(SceneLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
+				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(SceneLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -452,9 +452,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_empty") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(SceneLibrary::ID_ALLOCATE, "New empty", "");
+				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(SceneLibrary::ID_ALLOCATE, "New empty", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -467,9 +467,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		} else
 		if (node->getController()->getValue().getString() == "create_particlesystem") {
 			try {
-				auto model = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
+				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(model->getId()));
+				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
