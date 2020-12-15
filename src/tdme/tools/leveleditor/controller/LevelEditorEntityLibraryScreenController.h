@@ -83,7 +83,7 @@ public:
 	void onEditEntity();
 
 	/**
-	 * On edit level
+	 * On edit scene
 	 */
 	void onEditLevel();
 

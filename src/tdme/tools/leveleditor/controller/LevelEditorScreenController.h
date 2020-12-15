@@ -173,7 +173,7 @@ public:
 	void setSnapping(bool snappingEnabled, float snappingX, float snappingZ);
 
 	/**
-	 * Set up level size
+	 * Set up scene size
 	 * @param width width
 	 * @param depth depth
 	 * @param height height
@@ -211,9 +211,9 @@ public:
 
 	/**
 	 * Set up object list box
-	 * @param level object by ids hash map
+	 * @param scene object by ids hash map
 	 */
-	void setObjectListbox(Scene& level);
+	void setObjectListbox(Scene& scene);
 
 	/**
 	 * Unselect objects in object list box
@@ -264,10 +264,10 @@ public:
 
 	/**
 	 * Set up map properties
-	 * @param level map properties
+	 * @param scene map properties
 	 * @param selectedName selected name
 	 */
-	void setMapProperties(Scene& level, const string& selectedName);
+	void setMapProperties(Scene& scene, const string& selectedName);
 
 	/**
 	 * On map property save
@@ -500,9 +500,9 @@ public:
 
 	/**
 	 * Set sky
-	 * @param level level
+	 * @param scene scene
 	 */
-	void setSky(Scene& level);
+	void setSky(Scene& scene);
 
 	/**
 	 * On map sky model load
@@ -521,10 +521,10 @@ public:
 
 	/**
 	 * Set object reflections environment mappings
-	 * @param level level
+	 * @param scene scene
 	 * @param selectedEnvironmentMappingId selected environment mapping id
 	 */
-	void setObjectReflectionsEnvironmentMappings(Scene& level, const string& selectedEnvironmentMappingId);
+	void setObjectReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId);
 
 	/**
 	 * Unset object reflections environment mappings

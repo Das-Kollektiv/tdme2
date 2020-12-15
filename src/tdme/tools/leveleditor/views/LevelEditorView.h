@@ -114,7 +114,7 @@ private:
 
 private:
 	Model* levelEditorGround { nullptr };
-	Scene level;
+	Scene scene;
 	vector<string> selectedEntityIds;
 	set<string> selectedEntityIdsById;
 	vector<SceneEntity*> pasteObjects_;
@@ -141,12 +141,12 @@ public:
 	PopUps* getPopUps();
 
 	/**
-	 * @return level file name
+	 * @return scene file name
 	 */
 	const string getFileName();
 
 	/**
-	 * @return level
+	 * @return scene
 	 */
 	Scene* getLevel();
 
@@ -237,7 +237,7 @@ public:
 	void dispose() override;
 
 	/**
-	 * Loads a level from internal level representation to tdme
+	 * Loads a scene from internal scene representation to tdme
 	 */
 	void loadLevel();
 
@@ -408,7 +408,7 @@ private:
 	/**
 	 * Update GUI elements
 	 * screen caption
-	 * level size
+	 * scene size
 	 * selected object
 	 * object properties
 	 * object 3d transformations
@@ -419,7 +419,7 @@ private:
 
 	/**
 	 * Update GUI transformations elements
-	 * level size
+	 * scene size
 	 * object 3d transformations
 	 * ..
 	 */

@@ -269,9 +269,9 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	}
 
 	//
-	auto level = TDMELevelEditor::getInstance()->getLevel();
-	auto levelEntityLibrary = level->getLibrary();
-	auto sceneEntity = level->getEntity(objectsByEntityId[0]);
+	auto scene = TDMELevelEditor::getInstance()->getLevel();
+	auto levelEntityLibrary = scene->getLibrary();
+	auto sceneEntity = scene->getEntity(objectsByEntityId[0]);
 
 	// partition object
 	map<string, Model*> modelsByPartition;
@@ -284,7 +284,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	);
 
 	try {
-		// add partitions to level
+		// add partitions to scene
 		auto pathName = Tools::getPath(entity->getModelFileName());
 		auto fileName = Tools::getFileName(entity->getModelFileName());
 		for (auto modelsByPartitionIt: modelsByPartition) {
@@ -312,11 +312,11 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 			// avoid name collision
 			auto objectName = model->getName();
-			while (level->getEntity(objectName) != nullptr) {
+			while (scene->getEntity(objectName) != nullptr) {
 				objectName+= ".p";
 			}
 
-			// add to level
+			// add to scene
 			auto sceneEntityPartition = new SceneEntity(
 				objectName,
 				"",
@@ -326,14 +326,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			prototypePartition->setTerrainMesh(sceneEntity->getPrototype()->isTerrainMesh());
 
 			// add to objects
-			level->addEntity(sceneEntityPartition);
+			scene->addEntity(sceneEntityPartition);
 		}
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
 	}
 
 	// remove original object
-	level->removeEntitiesByPrototypeId(entity->getId());
+	scene->removeEntitiesByPrototypeId(entity->getId());
 	// TODO: check if to delete original model
 	//	as long as .tl has not been saved it is still required to have this file
 	// FileSystem::getInstance()->removeFile(pathName, fileName);
@@ -348,7 +348,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// remove original entity from entity library
 	// TODO: delete file
-	level->getLibrary()->removePrototype(entity->getId());
+	scene->getLibrary()->removePrototype(entity->getId());
 
 	//
 	setEntityLibrary();

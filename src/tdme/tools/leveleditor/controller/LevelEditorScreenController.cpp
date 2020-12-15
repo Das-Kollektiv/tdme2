@@ -266,7 +266,7 @@ void LevelEditorScreenController::onObjectDataApply()
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(Scene& level)
+void LevelEditorScreenController::setObjectListbox(Scene& scene)
 {
 	auto selectedObjects = objectsListBox->getController()->getValue();
 	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
@@ -278,7 +278,7 @@ void LevelEditorScreenController::setObjectListbox(Scene& level)
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto objectIdx = 0;
-	for (int i = 0; i < level.getEntityCount(); i++) {
+	for (int i = 0; i < scene.getEntityCount(); i++) {
 		if (objectIdx > 25000) {
 			objectsListBoxSubNodesXML =
 				"<scrollarea-vertical id=\"" +
@@ -286,7 +286,7 @@ void LevelEditorScreenController::setObjectListbox(Scene& level)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto object = level.getEntityAt(i);
+		auto object = scene.getEntityAt(i);
 		if (object->getPrototype()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =
@@ -427,7 +427,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(Scene& level, const string& selectedName)
+void LevelEditorScreenController::setMapProperties(Scene& scene, const string& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -440,8 +440,8 @@ void LevelEditorScreenController::setMapProperties(Scene& level, const string& s
 		"<scrollarea-vertical id=\"" +
 		mapPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < level.getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = level.getPropertyByIndex(i);
+	for (auto i = 0; i < scene.getPropertyCount(); i++) {
+		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -989,9 +989,9 @@ void LevelEditorScreenController::loadFile(const string& pathName, const string&
 	view->loadMap(pathName, fileName);
 }
 
-void LevelEditorScreenController::setSky(Scene& level) {
-	mapSkyModel->getController()->setValue(MutableString(level.getSkyModelFileName()));
-	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(level.getSkyModelScale())));
+void LevelEditorScreenController::setSky(Scene& scene) {
+	mapSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
+	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
 }
 
 void LevelEditorScreenController::onMapSkyModelLoad() {
@@ -1066,7 +1066,7 @@ void LevelEditorScreenController::onMapSkyApply() {
 	view->updateSky();
 }
 
-void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene& level, const string& selectedEnvironmentMappingId) {
+void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
 	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
 	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
@@ -1084,7 +1084,7 @@ void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene&
 		"\" value=\"\" " +
 		(selectedEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") +
 		" />\n";
-	for (auto& environmentMappingId: level.getEnvironmentMappingIds()) {
+	for (auto& environmentMappingId: scene.getEnvironmentMappingIds()) {
 		environmentMappingIdsInnerNodeSubNodesXML =
 			environmentMappingIdsInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +

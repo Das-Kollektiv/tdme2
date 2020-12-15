@@ -88,7 +88,7 @@ public:
 	SceneLibrary* getEntityLibrary();
 
 	/**
-	 * @return level
+	 * @return scene
 	 */
 	Scene* getLevel();
 
