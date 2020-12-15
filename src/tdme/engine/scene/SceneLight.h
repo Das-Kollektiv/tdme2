@@ -13,7 +13,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 
 /**
- * Scene light
+ * Scene light definition
  * @author Andreas Drewke
  * @version $Id$
  */

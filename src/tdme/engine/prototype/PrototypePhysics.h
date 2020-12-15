@@ -13,7 +13,7 @@ using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Level editor entity physics body settings
+ * Prototype physics body definitions
  * @author Andreas Drewke
  * @version $Id$
  */

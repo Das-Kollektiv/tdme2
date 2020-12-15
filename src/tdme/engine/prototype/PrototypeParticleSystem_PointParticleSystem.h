@@ -20,7 +20,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypeParticleSystem;
 
 /**
- * Point particle system
+ * Prototype point particle system definition
  * @author Andreas Drewke
  * @version $Id$
  */

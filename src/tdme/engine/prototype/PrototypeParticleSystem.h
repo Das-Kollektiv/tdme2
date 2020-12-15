@@ -14,7 +14,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 
 /**
- * Level editor entity particle system
+ * Prototype particle system definition
  * @author Andreas Drewke
  * @version $Id$
  */

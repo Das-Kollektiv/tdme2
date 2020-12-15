@@ -7,7 +7,7 @@
 using std::string;
 
 /**
- * Property model class
+ * Prototype property model class
  * @author Andreas Drewke
  * @version $Id$
  */

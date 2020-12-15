@@ -12,9 +12,11 @@ using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::utilities::Enum;
 
-class tdme::engine::prototype::Prototype_Type final: public Enum
-{
-
+/**
+ * Prototype type enum
+ * @author Andreas Drewke
+ */
+class tdme::engine::prototype::Prototype_Type final: public Enum {
 private:
 	int boundingVolumeCount;
 	int32_t gizmoTypeMask;

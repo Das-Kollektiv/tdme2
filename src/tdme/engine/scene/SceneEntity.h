@@ -14,7 +14,7 @@ using tdme::engine::Transformations;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Scene entity
+ * Scene entity definition
  * @author Andreas Drewke
  * @version $Id$
  */

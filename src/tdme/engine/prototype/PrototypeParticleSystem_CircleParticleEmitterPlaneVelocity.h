@@ -11,7 +11,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
 /**
- * Circle particle emitter plane velocity
+ * Prototype circle particle emitter plane velocity definition
  * @author Andreas Drewke
  * @version $Id$
  */

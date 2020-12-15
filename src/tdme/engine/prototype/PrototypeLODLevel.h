@@ -15,7 +15,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Color4;
 
 /**
- * Level Editor Entity LOD Level
+ * Prototype LOD level definition
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -24,7 +24,7 @@ class tdme::engine::prototype::PrototypeLODLevel final
 private:
 	LODObject3D::LODLevelType type;
 	string fileName;
-	Model* model;
+	Model* model { nullptr };
 	float minDistance;
 	Color4 colorMul;
 	Color4 colorAdd;

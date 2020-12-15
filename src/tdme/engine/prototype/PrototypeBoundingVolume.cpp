@@ -48,10 +48,10 @@ using tdme::utilities::StringTools;
 
 volatile unsigned int PrototypeBoundingVolume::modelIdx = 0;
 
-PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* levelEditorEntity)
+PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
 {
 	this->id = id;
-	this->levelEditorEntity = levelEditorEntity;
+	this->prototype = prototype;
 	modelMeshFile = "";
 	model = nullptr;
 	boundingVolume = nullptr;
@@ -80,9 +80,9 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
-			to_string(levelEditorEntity->getId()) +
+			to_string(prototype->getId()) +
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
@@ -98,9 +98,9 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
-			to_string(levelEditorEntity->getId()) +
+			to_string(prototype->getId()) +
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
@@ -116,9 +116,9 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
-			to_string(levelEditorEntity->getId()) +
+			to_string(prototype->getId()) +
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
@@ -135,9 +135,9 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
-		string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
+		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
-			to_string(levelEditorEntity->getId()) +
+			to_string(prototype->getId()) +
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +

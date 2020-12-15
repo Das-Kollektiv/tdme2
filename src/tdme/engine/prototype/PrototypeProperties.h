@@ -15,7 +15,7 @@ using std::string;
 using tdme::engine::prototype::PrototypeProperty;
 
 /**
- * Properties
+ * Prototype properties
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -12,7 +12,7 @@ using tdme::utilities::Enum;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 
 /**
- * Level editor entity physics body type
+ * Prototype physics body type enum
  * @author Andreas Drewke
  */
 class tdme::engine::prototype::PrototypePhysics_BodyType final: public Enum

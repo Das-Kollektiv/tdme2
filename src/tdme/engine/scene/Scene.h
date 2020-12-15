@@ -31,7 +31,7 @@ using tdme::engine::scene::SceneLight;
 using tdme::engine::scene::SceneEntity;
 
 /**
- * Scene
+ * Scene definition
  * @author Andreas Drewke
  * @version $Id$
  */

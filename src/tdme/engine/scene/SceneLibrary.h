@@ -19,7 +19,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 
 /**
- * Model Editor Entity Library
+ * Scene prototype library definition
  * @author Andreas Drewke
  * @version $Id$
  */

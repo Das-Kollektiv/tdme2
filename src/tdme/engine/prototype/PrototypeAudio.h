@@ -10,17 +10,16 @@ using std::string;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Level editor entity audio
+ * Prototype audio definition
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::engine::prototype::PrototypeAudio final
 {
 private:
-	Prototype* entity;
-	string id { "" };
-	string animation { "" };
-	string fileName { "" };
+	string id;
+	string animation;
+	string fileName;
 	float gain { 1.0f };
 	float pitch { 1.0f };
 	int offset { 0 };
@@ -31,23 +30,15 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param levelEditorEntity level editor entity
 	 * @param id id
 	 */
-	inline PrototypeAudio(Prototype* entity, const string& id): entity(entity), id(id) {
+	inline PrototypeAudio(const string& id): id(id) {
 	}
 
 	/**
 	 * Destructor
 	 */
 	~PrototypeAudio();
-
-	/**
-	 * @return entity
-	 */
-	inline Prototype* getEntity() {
-		return entity;
-	}
 
 	/**
 	 * @return id

@@ -11,7 +11,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
 /**
- * Bounding box particle emitter
+ * Prototype bounding box particle emitter definition
  * @author Andreas Drewke
  * @version $Id$
  */

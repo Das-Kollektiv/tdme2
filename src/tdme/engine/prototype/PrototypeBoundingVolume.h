@@ -17,7 +17,7 @@ using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Level Editor Entity Bouning Volume
+ * Prototype bounding volume definition
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -26,7 +26,7 @@ class tdme::engine::prototype::PrototypeBoundingVolume final
 private:
 	static volatile unsigned int modelIdx;
 	int id;
-	Prototype* levelEditorEntity { nullptr };
+	Prototype* prototype { nullptr };
 	string modelMeshFile;
 	Model* model { nullptr };
 	BoundingVolume* boundingVolume { nullptr };
@@ -35,9 +35,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param levelEditorEntity level editor entity
+	 * @param prototype prototype
 	 */
-	PrototypeBoundingVolume(int id, Prototype* levelEditorEntity);
+	PrototypeBoundingVolume(int id, Prototype* prototype);
 
 	/**
 	 * Destructor
@@ -49,13 +49,6 @@ public:
 	 */
 	inline int getId() {
 		return id;
-	}
-
-	/**
-	 * @return level editor entity
-	 */
-	inline Prototype* getPrototype() {
-		return levelEditorEntity;
 	}
 
 	/**

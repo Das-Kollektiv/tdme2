@@ -11,7 +11,7 @@ using std::string;
 using tdme::engine::fileio::textures::Texture;
 
 /**
- * Point particle system
+ * Prototype point particle system definition
  * @author Andreas Drewke
  * @version $Id$
  */

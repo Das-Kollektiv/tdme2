@@ -9,8 +9,11 @@ using std::string;
 
 using tdme::utilities::Enum;
 
-class tdme::engine::prototype::PrototypeParticleSystem_Type final
-	: public Enum
+/**
+ * Prototype particle system type enum
+ * @author Andreas Drewke
+ */
+class tdme::engine::prototype::PrototypeParticleSystem_Type final: public Enum
 {
 public:
 	static PrototypeParticleSystem_Type* NONE;

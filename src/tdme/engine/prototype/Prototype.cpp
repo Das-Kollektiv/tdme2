@@ -180,7 +180,7 @@ PrototypeAudio* Prototype::addSound(const string& id) {
 	if (sounds.size() == MODEL_SOUNDS_COUNT) return nullptr;
 	auto sound = getSound(id);
 	if (sound != nullptr) return nullptr;
-	auto audio = new PrototypeAudio(this, id);
+	auto audio = new PrototypeAudio(id);
 	soundsById[id] = audio;
 	sounds.push_back(audio);
 	return audio;

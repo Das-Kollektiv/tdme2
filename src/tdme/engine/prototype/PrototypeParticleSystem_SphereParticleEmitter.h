@@ -11,7 +11,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
 /**
- * Sphere particle emitter
+ * Prototype sphere particle emitter definition
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -9,16 +9,18 @@ using std::string;
 
 using tdme::utilities::Enum;
 
-class tdme::engine::prototype::PrototypeParticleSystem_Emitter final
-	: public Enum
-{
+/**
+ * Prototype particle system emitter type enum
+ * @author Andreas Drewke
+ */
+class tdme::engine::prototype::PrototypeParticleSystem_Emitter final: public Enum {
 public:
-	static PrototypeParticleSystem_Emitter *NONE;
-	static PrototypeParticleSystem_Emitter *POINT_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter *BOUNDINGBOX_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
-	static PrototypeParticleSystem_Emitter *SPHERE_PARTICLE_EMITTER;
+	static PrototypeParticleSystem_Emitter* NONE;
+	static PrototypeParticleSystem_Emitter* POINT_PARTICLE_EMITTER;
+	static PrototypeParticleSystem_Emitter* BOUNDINGBOX_PARTICLE_EMITTER;
+	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER;
+	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
+	static PrototypeParticleSystem_Emitter* SPHERE_PARTICLE_EMITTER;
 
 	/**
 	 * Public constructor

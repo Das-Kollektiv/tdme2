@@ -23,7 +23,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypeParticleSystem;
 
 /**
- * Object particle system
+ * Prototype object particle system definition
  * @author Andreas Drewke
  * @version $Id$
  */

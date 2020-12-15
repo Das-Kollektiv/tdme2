@@ -11,7 +11,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
 /**
- * Circle particle emitter
+ * Prototype circle particle emitter definition
  * @author Andreas Drewke
  * @version $Id$
  */

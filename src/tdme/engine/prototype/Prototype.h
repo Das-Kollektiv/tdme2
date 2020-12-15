@@ -32,7 +32,7 @@ using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeLODLevel;
 
 /**
- * Prototype
+ * Prototype definition
  * @author Andreas Drewke
  * @version $Id$
  */
