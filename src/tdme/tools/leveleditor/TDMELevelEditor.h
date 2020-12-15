@@ -90,7 +90,7 @@ public:
 	/**
 	 * @return scene
 	 */
-	Scene* getLevel();
+	Scene* getScene();
 
 	/**
 	 * Set up new view

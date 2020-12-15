@@ -89,11 +89,11 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 }
 
 SceneLibrary* TDMELevelEditor::getEntityLibrary() {
-	return levelEditorView->getLevel()->getLibrary();
+	return levelEditorView->getScene()->getLibrary();
 }
 
-Scene* TDMELevelEditor::getLevel() {
-	return levelEditorView->getLevel();
+Scene* TDMELevelEditor::getScene() {
+	return levelEditorView->getScene();
 }
 
 void TDMELevelEditor::setView(View* view) {
@@ -151,7 +151,7 @@ void TDMELevelEditor::initialize() {
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
-	ScenePropertyPresets::getInstance()->setDefaultSceneProperties(levelEditorView->getLevel());
+	ScenePropertyPresets::getInstance()->setDefaultSceneProperties(levelEditorView->getScene());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);

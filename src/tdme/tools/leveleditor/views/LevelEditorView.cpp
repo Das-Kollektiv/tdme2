@@ -279,7 +279,7 @@ const string LevelEditorView::getFileName()
 	return FileSystem::getInstance()->getFileName(scene.getFileName());
 }
 
-Scene* LevelEditorView::getLevel()
+Scene* LevelEditorView::getScene()
 {
 	return &scene;
 }

@@ -41,7 +41,7 @@ void ParticleSystemView::onSetEntityData()
 
 void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity)
 {
-	TDMELevelEditor::getInstance()->getLevel()->replacePrototype(oldEntity->getId(), newEntity->getId());
+	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), newEntity->getId());
 	TDMELevelEditor::getInstance()->getEntityLibrary()->removePrototype(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }

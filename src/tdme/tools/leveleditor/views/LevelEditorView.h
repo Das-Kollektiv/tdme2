@@ -148,7 +148,7 @@ public:
 	/**
 	 * @return scene
 	 */
-	Scene* getLevel();
+	Scene* getScene();
 
 	/**
 	 * @return selected entity

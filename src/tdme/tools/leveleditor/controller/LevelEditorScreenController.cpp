@@ -416,7 +416,7 @@ void LevelEditorScreenController::onScenePropertiesSelectionChanged()
 	mapPropertyValue->getController()->setValue(TEXT_EMPTY);
 	mapPropertySave->getController()->setDisabled(true);
 	mapPropertyRemove->getController()->setDisabled(true);
-	auto mapProperty = view->getLevel()->getProperty(mapPropertiesListBox->getController()->getValue().getString());
+	auto mapProperty = view->getScene()->getProperty(mapPropertiesListBox->getController()->getValue().getString());
 	if (mapProperty != nullptr) {
 		mapPropertyName->getController()->setValue(MutableString(mapProperty->getName()));
 		mapPropertyValue->getController()->setValue(MutableString(mapProperty->getValue()));
@@ -1049,8 +1049,8 @@ void LevelEditorScreenController::onMapSkyApply() {
 		if (skyModelScale.getZ() < 0.01f || skyModelScale.getZ() > 150.0f)
 			throw ExceptionBase("z scale must be within 0.01 .. 150.0");
 
-		view->getLevel()->setSkyModelScale(skyModelScale);
-		view->getLevel()->setSkyModelFileName(mapSkyModel->getController()->getValue().getString());
+		view->getScene()->setSkyModelScale(skyModelScale);
+		view->getScene()->setSkyModelFileName(mapSkyModel->getController()->getValue().getString());
 		auto model =
 			mapSkyModel->getController()->getValue().getString().empty() == true?
 				nullptr:
@@ -1058,8 +1058,8 @@ void LevelEditorScreenController::onMapSkyApply() {
 					Tools::getPath(mapSkyModel->getController()->getValue().getString()),
 					Tools::getFileName(mapSkyModel->getController()->getValue().getString())
 				);
-		view->getLevel()->setSkyModel(model);
-		setSky(*view->getLevel());
+		view->getScene()->setSkyModel(model);
+		setSky(*view->getScene());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}

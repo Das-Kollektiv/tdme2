@@ -238,14 +238,14 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
 	if (entity == nullptr) return;
-	TDMELevelEditor::getInstance()->getLevel()->removeEntitiesByPrototypeId(entity->getId());
+	TDMELevelEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(entity->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
-	TDMELevelEditor::getInstance()->getLevel()->getLibrary()->removePrototype(entity->getId());
+	TDMELevelEditor::getInstance()->getScene()->getLibrary()->removePrototype(entity->getId());
 	setEntityLibrary();
 }
 
@@ -262,14 +262,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	// check if entity exists only once
 	vector<string> entitiesByPrototypeId;
-	TDMELevelEditor::getInstance()->getLevel()->getEntitiesByPrototypeId(prototype->getId(), entitiesByPrototypeId);
+	TDMELevelEditor::getInstance()->getScene()->getEntitiesByPrototypeId(prototype->getId(), entitiesByPrototypeId);
 	if (entitiesByPrototypeId.size() != 1) {
 		popUps->getInfoDialogScreenController()->show("Warning", "This model has several instances");
 		return;
 	}
 
 	//
-	auto scene = TDMELevelEditor::getInstance()->getLevel();
+	auto scene = TDMELevelEditor::getInstance()->getScene();
 	auto sceneLibrary = scene->getLibrary();
 	auto sceneEntity = scene->getEntity(entitiesByPrototypeId[0]);
 

@@ -35,7 +35,7 @@ void ModelEditorView::onSetEntityData()
 
 void ModelEditorView::onLoadModel(Prototype* oldEntity, Prototype* entity)
 {
-	TDMELevelEditor::getInstance()->getLevel()->replacePrototype(oldEntity->getId(), entity->getId());
+	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), entity->getId());
 	TDMELevelEditor::getInstance()->getEntityLibrary()->removePrototype(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
