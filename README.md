@@ -70,6 +70,8 @@
               - there is also support for particle system groups
             - lines based objects
             - entity hierarchy objects
+            - environment mapping objects
+              - which can be used as reflection sources of other objects
         - object/entity transformations
             - scaling
             - rotations
@@ -212,7 +214,7 @@
             - installation using HTTP download from a repository which is easy to set up
             - updating/repairing/uninstalling
         - TDME2 tools contains the installer creation application, whereas
-            - installer definitions are set up using simple property files
+            - installer definitions are set up using property files
             - create-installer is able to group files into components
 
 - What does it (maybe still) lack
