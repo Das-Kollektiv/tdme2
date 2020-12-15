@@ -96,12 +96,12 @@ void PrototypeWriter::copyFile(const string& source, const string& dest)
 {
 }
 
-void PrototypeWriter::doExport(const string& pathName, const string& fileName, Prototype* entity)
+void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
 {
-	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	prototype->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	Document jRoot;
 	jRoot.SetObject();
-	exportToJSON(jRoot, jRoot, entity);
+	write(jRoot, jRoot, prototype);
 
 	StringBuffer strbuf;
 	Writer<StringBuffer> writer(strbuf);
@@ -110,7 +110,7 @@ void PrototypeWriter::doExport(const string& pathName, const string& fileName, P
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }
 
-void PrototypeWriter::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
+void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
@@ -136,14 +136,14 @@ void PrototypeWriter::exportLODLevelToJSON(Document& jDocument, Value& jLodLevel
 	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity)
+void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* prototype)
 {
 	auto& jAllocator = jDocument.GetAllocator();
-	if (entity->getType() == Prototype_EntityType::MODEL && entity->getFileName().length() > 0) {
-		auto modelPathName = Tools::getPath(entity->getFileName());
-		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(entity->getFileName())) + ".tm";
+	if (prototype->getType() == Prototype_EntityType::MODEL && prototype->getFileName().length() > 0) {
+		auto modelPathName = Tools::getPath(prototype->getFileName());
+		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(prototype->getFileName())) + ".tm";
 		TMWriter::write(
-			entity->getModel(),
+			prototype->getModel(),
 			modelPathName,
 			modelFileName
 		);
@@ -160,10 +160,10 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 			Console::println(exception.what());
 		}
 		*/
-		jEntityRoot.AddMember("tm", Value(entity->isTerrainMesh()), jAllocator);
+		jEntityRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
-			auto lodLevel = entity->getLODLevel2();
+			auto lodLevel = prototype->getLODLevel2();
 			if (lodLevel != nullptr &&
 				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
 				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
@@ -171,12 +171,12 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 				//
 				Value jLodLevel;
 				jLodLevel.SetObject();
-				exportLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
 				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
 			}
 		}
 		{
-			auto lodLevel = entity->getLODLevel3();
+			auto lodLevel = prototype->getLODLevel3();
 			if (lodLevel != nullptr &&
 				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
 				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
@@ -185,22 +185,22 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 				//
 				Value jLodLevel;
 				jLodLevel.SetObject();
-				exportLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
 				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
 			}
 		}
 	}
 	jEntityRoot.AddMember("version", Value("1.99", jAllocator), jAllocator);
-	jEntityRoot.AddMember("type", Value(entity->getType()->getName(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("name", Value(entity->getName(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("descr", Value(entity->getDescription(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("px", Value(entity->getPivot().getX()), jAllocator);
-	jEntityRoot.AddMember("py", Value(entity->getPivot().getY()), jAllocator);
-	jEntityRoot.AddMember("pz", Value(entity->getPivot().getZ()), jAllocator);
-	if (entity->getSounds().size() > 0) {
+	jEntityRoot.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("name", Value(prototype->getName(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("descr", Value(prototype->getDescription(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
+	jEntityRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
+	jEntityRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
+	if (prototype->getSounds().size() > 0) {
 		Value jSounds;
 		jSounds.SetArray();
-		for (auto sound: entity->getSounds()) {
+		for (auto sound: prototype->getSounds()) {
 			if (sound->getFileName().length() == 0) continue;
 			Value jSound;
 			jSound.SetObject();
@@ -217,11 +217,11 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 		jEntityRoot.AddMember("sd", jSounds, jAllocator);
 	}
 
-	if (entity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
+	if (prototype->getType() == Prototype_EntityType::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
-		for (auto i = 0; i < entity->getParticleSystemsCount(); i++) {
-			auto particleSystem = entity->getParticleSystemAt(i);
+		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
+			auto particleSystem = prototype->getParticleSystemAt(i);
 			Value jParticleSystem;
 			jParticleSystem.SetObject();
 			jParticleSystem.AddMember("t", Value(particleSystem->getType()->getName(), jAllocator), jAllocator);
@@ -478,8 +478,8 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 	}
 	Value jBoundingVolumes;
 	jBoundingVolumes.SetArray();
-	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = entity->getBoundingVolume(i);
+	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+		auto entityBoundingVolume = prototype->getBoundingVolume(i);
 		auto bv = entityBoundingVolume->getBoundingVolume();
 		if (bv == nullptr) continue;
 		Value jBoundingVolume;
@@ -542,7 +542,7 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 		jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
 	}
 	jEntityRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
-	auto physics = entity->getPhysics();
+	auto physics = prototype->getPhysics();
 	if (physics != nullptr) {
 		Value jPhysics;
 		jPhysics.SetObject();
@@ -557,8 +557,8 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 	}
 	Value jPrototypeProperties;
 	jPrototypeProperties.SetArray();
-	for (auto i = 0; i < entity->getPropertyCount(); i++) {
-		PrototypeProperty* modelProperty = entity->getPropertyByIndex(i);
+	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
+		PrototypeProperty* modelProperty = prototype->getPropertyByIndex(i);
 		Value jObjectProperty;
 		jObjectProperty.SetObject();
 		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);
@@ -566,14 +566,14 @@ void PrototypeWriter::exportToJSON(Document& jDocument, Value& jEntityRoot, Prot
 		jPrototypeProperties.PushBack(jObjectProperty, jAllocator);
 	}
 	jEntityRoot.AddMember("properties", jPrototypeProperties, jAllocator);
-	jEntityRoot.AddMember("cs", Value(entity->isContributesShadows()), jAllocator);
-	jEntityRoot.AddMember("rs", Value(entity->isReceivesShadows()), jAllocator);
-	jEntityRoot.AddMember("rg", Value(entity->isRenderGroups()), jAllocator);
-	jEntityRoot.AddMember("s", Value(entity->getShader(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("sds", Value(entity->getDistanceShader(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("sdsd", Value(entity->getDistanceShaderDistance()), jAllocator);
-	if (entity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
-		jEntityRoot.AddMember("emrpm", Value(entity->getEnvironmentMapRenderPassMask()), jAllocator);
-		jEntityRoot.AddMember("emtf", Value(entity->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
+	jEntityRoot.AddMember("cs", Value(prototype->isContributesShadows()), jAllocator);
+	jEntityRoot.AddMember("rs", Value(prototype->isReceivesShadows()), jAllocator);
+	jEntityRoot.AddMember("rg", Value(prototype->isRenderGroups()), jAllocator);
+	jEntityRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
+	if (prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+		jEntityRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
+		jEntityRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
 	}
 }

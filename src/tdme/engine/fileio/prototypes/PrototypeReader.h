@@ -24,7 +24,7 @@ using tdme::os::filesystem::FileSystemException;
 using rapidjson::Value;
 
 /**
- * TDME Model meta data file import
+ * Prototype reader
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -32,19 +32,19 @@ class tdme::engine::fileio::prototypes::PrototypeReader final
 {
 public:
 	/**
-	 * Imports a model meta data file from file
+	 * Reads a prototype from file
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	inline static Prototype* doImport(const string& pathName, const string& fileName) {
-		return doImport(Prototype::ID_NONE, pathName, fileName);
+	inline static Prototype* read(const string& pathName, const string& fileName) {
+		return read(Prototype::ID_NONE, pathName, fileName);
 	}
 
 	/**
-	 * Imports a model meta data file from file
+	 * Reads a prototype from file
 	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
@@ -52,10 +52,10 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static Prototype* doImport(int id, const string& pathName, const string& fileName);
+	static Prototype* read(int id, const string& pathName, const string& fileName);
 
 	/**
-	 * Imports a model meta data file from JSON object
+	 * Reads a prototype from JSON object
 	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
@@ -63,7 +63,7 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static Prototype* doImportFromJSON(int id, const string& pathName, Value& jEntityRoot);
+	static Prototype* read(int id, const string& pathName, Value& jEntityRoot);
 
 	/**
 	 * Get resource path name

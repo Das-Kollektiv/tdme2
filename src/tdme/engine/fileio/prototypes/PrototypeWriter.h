@@ -22,7 +22,7 @@ using rapidjson::Document;
 using rapidjson::Value;
 
 /**
- * TDME Model meta data file export
+ * Prototype writer
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -39,34 +39,34 @@ private:
 	static void copyFile(const string& source, const string& dest);
 
 	/**
-	 * Export LOD level to JSON
+	 * Writes LOD level to JSON
 	 * @param jDocument JSON document
 	 * @param jLodLevelRoot JSON LOD level root value
 	 * @param lodLevel lod level
 	 * @return json root
 	 */
-	static void exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel);
+	static void writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel);
 
 public:
 
 	/**
-	 * Exports a level to a TDME level file
+	 * Writes a prototype to file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doExport(const string& pathName, const string& fileName, Prototype* entity);
+	static void write(const string& pathName, const string& fileName, Prototype* prototype);
 
 	/**
-	 * Export model meta data file to JSON node
+	 * Writes a prototype to JSON
 	 * @param document JSON document
 	 * @param jEntityRoot JSON value to store data in
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void exportToJSON(Document& jDocument, Value& jEntityRoot, Prototype* entity);
+	static void write(Document& jDocument, Value& jEntityRoot, Prototype* prototype);
 
 };

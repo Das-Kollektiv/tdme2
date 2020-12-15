@@ -27,7 +27,7 @@ using tdme::os::filesystem::FileSystemException;
 using rapidjson::Value;
 
 /**
- * TDME Level Editor File Export
+ * Scene reader
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -36,38 +36,38 @@ class tdme::engine::fileio::scenes::SceneReader final
 
 public:
 	/**
-	 * Imports a level from a TDME level file to Level Editor
+	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param level level
+	 * @param scene scene
 	 * @param progressCallback progress callback
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback = nullptr);
+	static void read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Imports a level from a TDME level file to Level Editor
+	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param level level
+	 * @param scene scene
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, Scene& level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
+	static void read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Imports a level from a model file to Level Editor
+	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param level level
+	 * @param scene scene
 	 * @param progressCallback progress callback
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImportFromModel(const string& pathName, const string& fileName, Scene& level, ProgressCallback* progressCallback = nullptr);
+	static void readFromModel(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr);
 
 private:
 	struct PrototypeMeshNode {

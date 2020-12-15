@@ -143,15 +143,15 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	SceneReader::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
+	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tl", level);
 	SceneConnector::setLights(engine, level);
 	SceneConnector::addScene(engine, level, false, false, false, false);
 
 	// load sky
-	skySphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
-	skyDomeEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
-	skyPanoramaEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
-	sphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "CM_Sphere.tmm");
+	skySphereEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+	skyDomeEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+	skyPanoramaEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+	sphereEntity = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
 
 	// add sky
 	{

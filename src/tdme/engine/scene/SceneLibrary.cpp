@@ -71,7 +71,7 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 {
 	Prototype* levelEditorEntity = nullptr;
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		levelEditorEntity = PrototypeReader::doImport(id == ID_ALLOCATE?allocateEntityId():id, pathName, fileName);
+		levelEditorEntity = PrototypeReader::read(id == ID_ALLOCATE?allocateEntityId():id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(
 			pathName,

@@ -1566,9 +1566,9 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		};
 		popUps->getProgressBarScreenController()->show();
 		if (haveModelFile == true) {
-			SceneReader::doImportFromModel(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			SceneReader::readFromModel(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		} else {
-			SceneReader::doImport(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			SceneReader::read(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		}
 		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
@@ -1600,7 +1600,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 void LevelEditorView::saveMap(const string& pathName, const string& fileName)
 {
 	try {
-		SceneWriter::doExport(pathName, fileName, level);
+		SceneWriter::write(pathName, fileName, level);
 	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			"Warning: Could not save level file",

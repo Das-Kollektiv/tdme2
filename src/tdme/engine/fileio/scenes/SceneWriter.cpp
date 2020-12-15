@@ -52,19 +52,19 @@ using rapidjson::StringBuffer;
 using rapidjson::Writer;
 using rapidjson::Value;
 
-void SceneWriter::doExport(const string& pathName, const string& fileName, Scene& level)
+void SceneWriter::write(const string& pathName, const string& fileName, Scene& scene)
 {
-	level.setFileName(pathName + '/' + fileName);
-	auto entityLibrary = level.getEntityLibrary();
+	scene.setFileName(pathName + '/' + fileName);
+	auto entityLibrary = scene.getEntityLibrary();
 	Document jDocument;
 	jDocument.SetObject();
 	auto& jAllocator = jDocument.GetAllocator();
 	jDocument.AddMember("version", Value("1.99", jAllocator), jAllocator);
-	jDocument.AddMember("ro", Value(level.getRotationOrder()->getName(), jAllocator), jAllocator);
+	jDocument.AddMember("ro", Value(scene.getRotationOrder()->getName(), jAllocator), jAllocator);
 	Value jLights;
 	jLights.SetArray();
-	for (auto i = 0; i < level.getLightCount(); i++) {
-		auto light = level.getLightAt(i);
+	for (auto i = 0; i < scene.getLightCount(); i++) {
+		auto light = scene.getLightAt(i);
 		Value jLight;
 		jLight.SetObject();
 		jLight.AddMember("id", Value(i), jAllocator);
@@ -105,7 +105,7 @@ void SceneWriter::doExport(const string& pathName, const string& fileName, Scene
 		auto entity = entityLibrary->getEntityAt(i);
 		Value jEntity;
 		jEntity.SetObject();
-		PrototypeWriter::exportToJSON(jDocument, jEntity, entity);
+		PrototypeWriter::write(jDocument, jEntity, entity);
 		Value jModel;
 		jModel.SetObject();
 		jModel.AddMember("id", Value().SetInt(entity->getId()), jAllocator);
@@ -118,8 +118,8 @@ void SceneWriter::doExport(const string& pathName, const string& fileName, Scene
 	jDocument.AddMember("models", jEntityLibrary, jAllocator);
 	Value jMapProperties;
 	jMapProperties.SetArray();
-	for (auto i = 0; i < level.getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = level.getPropertyByIndex(i);
+	for (auto i = 0; i < scene.getPropertyCount(); i++) {
+		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
 		Value jMapProperty;
 		jMapProperty.SetObject();
 		jMapProperty.AddMember("name", Value(mapProperty->getName(), jAllocator), jAllocator);
@@ -129,16 +129,16 @@ void SceneWriter::doExport(const string& pathName, const string& fileName, Scene
 	jDocument.AddMember("properties", jMapProperties, jAllocator);
 	Value jObjects;
 	jObjects.SetArray();
-	for (auto i = 0; i < level.getObjectCount(); i++) {
-		auto levelEditorObject = level.getObjectAt(i);
+	for (auto i = 0; i < scene.getObjectCount(); i++) {
+		auto levelEditorObject = scene.getObjectAt(i);
 		Value jObject;
 		jObject.SetObject();
 		auto& transformations = levelEditorObject->getTransformations();
 		auto& translation = transformations.getTranslation();
 		auto& scale = transformations.getScale();
-		auto& rotationAroundXAxis = transformations.getRotation(level.getRotationOrder()->getAxisXIndex());
-		auto& rotationAroundYAxis = transformations.getRotation(level.getRotationOrder()->getAxisYIndex());
-		auto& rotationAroundZAxis = transformations.getRotation(level.getRotationOrder()->getAxisZIndex());
+		auto& rotationAroundXAxis = transformations.getRotation(scene.getRotationOrder()->getAxisXIndex());
+		auto& rotationAroundYAxis = transformations.getRotation(scene.getRotationOrder()->getAxisYIndex());
+		auto& rotationAroundZAxis = transformations.getRotation(scene.getRotationOrder()->getAxisZIndex());
 		jObject.AddMember("id", Value(levelEditorObject->getId(), jAllocator), jAllocator);
 		jObject.AddMember("descr", Value(levelEditorObject->getDescription(), jAllocator), jAllocator);;
 		jObject.AddMember("mid", Value(levelEditorObject->getEntity()->getId()), jAllocator);
@@ -166,14 +166,14 @@ void SceneWriter::doExport(const string& pathName, const string& fileName, Scene
 		jObjects.PushBack(jObject, jAllocator);
 	}
 	jDocument.AddMember("objects", jObjects, jAllocator);
-	jDocument.AddMember("objects_eidx", Value(level.getObjectIdx()), jAllocator);
+	jDocument.AddMember("objects_eidx", Value(scene.getObjectIdx()), jAllocator);
 
 	Value jSky;
 	jSky.SetObject();
-	jSky.AddMember("file", Value(level.getSkyModelFileName(), jAllocator), jAllocator);
-	jSky.AddMember("sx", Value(level.getSkyModelScale().getX()), jAllocator);
-	jSky.AddMember("sy", Value(level.getSkyModelScale().getY()), jAllocator);
-	jSky.AddMember("sz", Value(level.getSkyModelScale().getZ()), jAllocator);
+	jSky.AddMember("file", Value(scene.getSkyModelFileName(), jAllocator), jAllocator);
+	jSky.AddMember("sx", Value(scene.getSkyModelScale().getX()), jAllocator);
+	jSky.AddMember("sy", Value(scene.getSkyModelScale().getY()), jAllocator);
+	jSky.AddMember("sz", Value(scene.getSkyModelScale().getZ()), jAllocator);
 	jDocument.AddMember("sky", jSky, jAllocator);
 
 	StringBuffer strbuf;

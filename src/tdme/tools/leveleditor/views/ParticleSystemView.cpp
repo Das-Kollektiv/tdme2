@@ -49,7 +49,7 @@ void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* n
 Prototype* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = PrototypeReader::doImport(SceneLibrary::ID_ALLOCATE, pathName, fileName);
+		auto levelEditorEntity = PrototypeReader::read(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		TDMELevelEditor::getInstance()->getEntityLibrary()->addEntity(levelEditorEntity);
 		return levelEditorEntity;

@@ -17,7 +17,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::engine::scene::Scene;
 
 /**
- * TDME Level Editor File Export
+ * Scene writer
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -26,13 +26,13 @@ class tdme::engine::fileio::scenes::SceneWriter final
 
 public:
 	/**
-	 * Exports a level to a TDME level file
+	 * Writes a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param level level
+	 * @param scene scene
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doExport(const string& pathName, const string& fileName, Scene& level);
+	static void write(const string& pathName, const string& fileName, Scene& scene);
 
 };

@@ -170,7 +170,7 @@ void PathFindingTest::dispose()
 void PathFindingTest::initialize()
 {
 	engine->initialize();
-	SceneReader::doImport("resources/tests/levels/pathfinding", "test.tl", level);
+	SceneReader::read("resources/tests/levels/pathfinding", "test.tl", level);
 	SceneConnector::setLights(engine, level);
 	SceneConnector::addScene(engine, level, false, false, false, false);
 	SceneConnector::addScene(world, level);
@@ -180,7 +180,7 @@ void PathFindingTest::initialize()
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(level.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	playerModelEntity = PrototypeReader::doImport("resources/tests/models/mementoman", "mementoman.dae.tmm");
+	playerModelEntity = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
 	playerModelEntity->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelEntity->getModel()->addAnimationSetup("death", 109, 169, false);

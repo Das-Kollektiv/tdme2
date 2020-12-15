@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 			);
 		} else {
 			Console::println("Loading tmm: " + tmmFileName);
-			tmm = PrototypeReader::doImport(
+			tmm = PrototypeReader::read(
 				FileSystem::getInstance()->getPathName(tmmFileName),
 				FileSystem::getInstance()->getFileName(tmmFileName)
 			);
@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 			}
 		}
 		Console::println("Saving tmm: " + tmmFileName);
-		PrototypeWriter::doExport(
+		PrototypeWriter::write(
 			FileSystem::getInstance()->getPathName(tmmFileName),
 			FileSystem::getInstance()->getFileName(tmmFileName),
 			tmm

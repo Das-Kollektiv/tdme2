@@ -259,7 +259,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 
 void SharedModelEditorView::saveFile(const string& pathName, const string& fileName)
 {
-	PrototypeWriter::doExport(pathName, fileName, entity);
+	PrototypeWriter::write(pathName, fileName, entity);
 }
 
 void SharedModelEditorView::reloadFile()
@@ -525,7 +525,7 @@ void SharedModelEditorView::loadModel()
 Prototype* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		auto levelEditorEntity = PrototypeReader::doImport(
+		auto levelEditorEntity = PrototypeReader::read(
 			pathName,
 			fileName
 		);

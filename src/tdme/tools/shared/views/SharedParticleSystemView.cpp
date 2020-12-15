@@ -200,7 +200,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	PrototypeWriter::doExport(pathName, fileName, entity);
+	PrototypeWriter::write(pathName, fileName, entity);
 }
 
 void SharedParticleSystemView::reloadFile()
@@ -521,7 +521,7 @@ void SharedParticleSystemView::loadParticleSystem()
 Prototype* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = PrototypeReader::doImport(pathName, fileName);
+		auto levelEditorEntity = PrototypeReader::read(pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	}

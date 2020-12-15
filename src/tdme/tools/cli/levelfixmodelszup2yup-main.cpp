@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	try {
 		Console::println("Loading level: " + levelFileName);
 		Scene level;
-		SceneReader::doImport(
+		SceneReader::read(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
 			level
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 		}
 		// TODO: bvs
 		Console::println("Saving level: " + levelFileName);
-		SceneWriter::doExport(
+		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
 			level

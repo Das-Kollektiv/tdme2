@@ -77,19 +77,19 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-Prototype* PrototypeReader::doImport(int id, const string& pathName, const string& fileName)
+Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Document jEntityRoot;
 	jEntityRoot.Parse(jsonContent.c_str());
 
-	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot);
+	auto levelEditorEntity = read(id, pathName, jEntityRoot);
 	levelEditorEntity->setEntityFileName(pathName + "/" + fileName);
 	return levelEditorEntity;
 }
 
-Prototype* PrototypeReader::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
+Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityRoot)
 {
 	Prototype* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
