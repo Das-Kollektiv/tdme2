@@ -68,7 +68,7 @@ public:
 	void selectEntity(int entityId);
 
 	/**
-	 * Set up complete entity library
+	 * Set up complete scene prototype library
 	 */
 	void setEntityLibrary();
 

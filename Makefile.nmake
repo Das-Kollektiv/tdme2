@@ -781,8 +781,8 @@ generatelicenses:
 importtmm:
 	cl /Feimporttmm /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-levelfixmodelszup2yup:
-	cl /Felevelfixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+scenefixmodelszup2yup:
+	cl /Felevelfixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

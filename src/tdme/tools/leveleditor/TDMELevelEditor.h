@@ -83,7 +83,7 @@ public:
 	LevelEditorEntityLibraryScreenController* getLevelEditorEntityLibraryScreenController();
 
 	/**
-	 * @return entity library
+	 * @return scene prototype library
 	 */
 	SceneLibrary* getEntityLibrary();
 

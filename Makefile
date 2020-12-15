@@ -884,7 +884,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/create-installer-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmm-main.cpp \
-	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
+	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp
 

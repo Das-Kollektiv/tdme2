@@ -252,26 +252,26 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 {
 	// check if we have a entity
-	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr || entity->getType() != Prototype_Type::MODEL) return;
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	if (prototype == nullptr || prototype->getType() != Prototype_Type::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
-	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
+	if (/*entity->getModel()->hasAnimations() == true || */prototype->getModel()->hasSkinning() == true) {
 		popUps->getInfoDialogScreenController()->show("Warning", "This model has animations or skinning");
 		return;
 	}
 
 	// check if entity exists only once
-	vector<string> objectsByEntityId;
-	TDMELevelEditor::getInstance()->getLevel()->getEntitiesByPrototypeId(entity->getId(), objectsByEntityId);
-	if (objectsByEntityId.size() != 1) {
-		popUps->getInfoDialogScreenController()->show("Warning", "This model has several object instances");
+	vector<string> entitiesByPrototypeId;
+	TDMELevelEditor::getInstance()->getLevel()->getEntitiesByPrototypeId(prototype->getId(), entitiesByPrototypeId);
+	if (entitiesByPrototypeId.size() != 1) {
+		popUps->getInfoDialogScreenController()->show("Warning", "This model has several instances");
 		return;
 	}
 
 	//
 	auto scene = TDMELevelEditor::getInstance()->getLevel();
-	auto levelEntityLibrary = scene->getLibrary();
-	auto sceneEntity = scene->getEntity(objectsByEntityId[0]);
+	auto sceneLibrary = scene->getLibrary();
+	auto sceneEntity = scene->getEntity(entitiesByPrototypeId[0]);
 
 	// partition object
 	map<string, Model*> modelsByPartition;
@@ -285,8 +285,8 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 
 	try {
 		// add partitions to scene
-		auto pathName = Tools::getPath(entity->getModelFileName());
-		auto fileName = Tools::getFileName(entity->getModelFileName());
+		auto pathName = Tools::getPath(prototype->getModelFileName());
+		auto fileName = Tools::getFileName(prototype->getModelFileName());
 		for (auto modelsByPartitionIt: modelsByPartition) {
 			auto key = modelsByPartitionIt.first;
 			auto model = modelsByPartitionIt.second;
@@ -298,7 +298,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				pathName,
 				fileNamePartition
 			);
-			auto prototypePartition = levelEntityLibrary->addModel(
+			auto prototypePartition = sceneLibrary->addModel(
 				SceneLibrary::ID_ALLOCATE,
 				model->getName(),
 				model->getName(),
@@ -306,9 +306,9 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				fileNamePartition,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
-			prototypePartition->setShader(entity->getShader());
-			prototypePartition->setDistanceShader(entity->getDistanceShader());
-			prototypePartition->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+			prototypePartition->setShader(prototype->getShader());
+			prototypePartition->setDistanceShader(prototype->getDistanceShader());
+			prototypePartition->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 
 			// avoid name collision
 			auto objectName = model->getName();
@@ -333,7 +333,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	}
 
 	// remove original object
-	scene->removeEntitiesByPrototypeId(entity->getId());
+	scene->removeEntitiesByPrototypeId(prototype->getId());
 	// TODO: check if to delete original model
 	//	as long as .tl has not been saved it is still required to have this file
 	// FileSystem::getInstance()->removeFile(pathName, fileName);
@@ -346,9 +346,9 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
 
-	// remove original entity from entity library
+	// remove prototype from scene prototype library
 	// TODO: delete file
-	scene->getLibrary()->removePrototype(entity->getId());
+	scene->getLibrary()->removePrototype(prototype->getId());
 
 	//
 	setEntityLibrary();
@@ -399,8 +399,8 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 
 				/**
 				 * Public constructor
-				 * @param prototypeLibraryScreenController scene editor entity library screen controller
-				 * @param entityLibrary entity library
+				 * @param prototypeLibraryScreenController scene editor scene prototype library screen controller
+				 * @param entityLibrary scene prototype library
 				 */
 				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* entityLibrary)
 					: prototypeLibraryScreenController(prototypeLibraryScreenController)
