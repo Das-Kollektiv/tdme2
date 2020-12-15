@@ -48,7 +48,7 @@ public:
 public:
 
 	/**
-	 * @return level editor instance
+	 * @return scene editor instance
 	 */
 	static TDMEModelEditor* getInstance();
 
@@ -89,12 +89,12 @@ public:
 	void dispose();
 
 	/**
-	 * Initialize tdme level editor
+	 * Initialize tdme scene editor
 	 */
 	void initialize();
 
 	/**
-	 * Reshape tdme level editor
+	 * Reshape tdme scene editor
 	 * @param width width
 	 * @param height height
 	 */

@@ -63,7 +63,7 @@ public:
 
 public:
 	/**
-	 * @return level editor instance
+	 * @return scene editor instance
 	 */
 	static TDMELevelEditor* getInstance();
 
@@ -119,17 +119,17 @@ public:
 	void dispose();
 
 	/**
-	 * Initialize tdme level editor
+	 * Initialize tdme scene editor
 	 */
 	void initialize();
 
 	/**
-	 * reshape tdme level editor
+	 * reshape tdme scene editor
 	 */
 	void reshape(int width, int height);
 
 	/**
-	 * Switch to level editor
+	 * Switch to scene editor
 	 */
 	void switchToLevelEditor();
 

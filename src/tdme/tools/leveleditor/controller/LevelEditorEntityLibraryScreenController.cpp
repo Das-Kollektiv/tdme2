@@ -338,7 +338,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	//	as long as .tl has not been saved it is still required to have this file
 	// FileSystem::getInstance()->removeFile(pathName, fileName);
 
-	// (re-)load level editor view
+	// (re-)load scene editor view
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
 		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
@@ -399,7 +399,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 
 				/**
 				 * Public constructor
-				 * @param prototypeLibraryScreenController level editor entity library screen controller
+				 * @param prototypeLibraryScreenController scene editor entity library screen controller
 				 * @param entityLibrary entity library
 				 */
 				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* entityLibrary)

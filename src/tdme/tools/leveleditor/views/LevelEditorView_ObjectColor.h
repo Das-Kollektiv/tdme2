@@ -27,7 +27,7 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param levelEditorView level editor view
+	 * @param levelEditorView scene editor view
 	 * @param colorMulR colorMulR
 	 * @param colorMulG colorMulG
 	 * @param colorMulB colorMulB

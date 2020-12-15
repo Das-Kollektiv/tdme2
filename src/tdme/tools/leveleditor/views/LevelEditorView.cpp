@@ -216,7 +216,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 
 			/**
 			 * Public constructor
-			 * @param levelEditorView level editor view
+			 * @param levelEditorView scene editor view
 			 */
 			PrototypePickingFilterNoGrid(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
 			}
@@ -241,7 +241,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 
 			/**
 			 * Public constructor
-			 * @param levelEditorView level editor view
+			 * @param levelEditorView scene editor view
 			 */
 			PrototypePickingFilterPlacing(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
 			}

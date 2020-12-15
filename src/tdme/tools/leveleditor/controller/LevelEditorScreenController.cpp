@@ -703,7 +703,7 @@ void LevelEditorScreenController::onMapLoad()
 
 		/**
 		 * Public constructor
-		 * @param levelEditorScreenController level editor screen controller
+		 * @param levelEditorScreenController scene editor screen controller
 		 */
 		OnMapLoadAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
 		}
@@ -737,7 +737,7 @@ void LevelEditorScreenController::onMapSave()
 
 		/**
 		 * Public constructor
-		 * @param levelEditorScreenController level editor screen controller
+		 * @param levelEditorScreenController scene editor screen controller
 		 */
 		OnMapSaveAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
 		}

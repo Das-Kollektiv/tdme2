@@ -230,7 +230,7 @@ public:
 	 * Add bounding volume at given index
 	 * @param idx index
 	 * @param prototypeBoundingVolume prototype bounding volume
-	 * @return level editor bounding volume
+	 * @return scene editor bounding volume
 	 */
 	bool addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBoundingVolume);
 

@@ -91,7 +91,7 @@ private:
 	 * Parse LOD level
 	 * @param pathName path name
 	 * @param jLodLevel JSON LOD level
-	 * @return level editor lod level
+	 * @return scene editor lod level
 	 */
 	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
 

@@ -156,7 +156,7 @@ public:
 	Prototype* getSelectedEntity();
 
 	/**
-	 * @return selected level editor object
+	 * @return selected scene editor object
 	 */
 	SceneEntity* getSelectedObject();
 
@@ -448,7 +448,7 @@ private:
 	void setStandardObjectColorEffect(Entity* object);
 
 	/**
-	 * Reset scale to level editor object scale
+	 * Reset scale to scene editor object scale
 	 * @param object object
 	 */
 	void resetObject(Entity* object);
@@ -464,7 +464,7 @@ private:
 	void removeGrid();
 
 	/**
-	 * Creates a level editor ground plate
+	 * Creates a scene editor ground plate
 	 * @return ground
 	 */
 	Model* createLevelEditorGroundPlateModel();
