@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -30,7 +30,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
@@ -79,7 +79,7 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 		);
 		levelEditorEntity = new Prototype(
 			id == ID_ALLOCATE?allocatePrototypeId():id,
-			Prototype_EntityType::MODEL,
+			Prototype_Type::MODEL,
 			name,
 			description,
 			"",
@@ -101,7 +101,7 @@ Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& de
 	auto modelId = cacheId + "_bv";
 	levelEditorEntity = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
-		Prototype_EntityType::TRIGGER,
+		Prototype_Type::TRIGGER,
 		name,
 		description,
 		"",
@@ -124,7 +124,7 @@ Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const
 	auto modelId = cacheId + "_bv";
 	levelEditorEntity = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
-		Prototype_EntityType::ENVIRONMENTMAPPING,
+		Prototype_Type::ENVIRONMENTMAPPING,
 		name,
 		description,
 		"",
@@ -146,7 +146,7 @@ Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& desc
 	auto model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	levelEditorEntity = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
-		Prototype_EntityType::EMPTY,
+		Prototype_Type::EMPTY,
 		name,
 		description,
 		"",
@@ -163,7 +163,7 @@ Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const str
 {
 	auto levelEditorEntity = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
-		Prototype_EntityType::PARTICLESYSTEM,
+		Prototype_Type::PARTICLESYSTEM,
 		name,
 		description,
 		"",

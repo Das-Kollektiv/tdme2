@@ -22,7 +22,7 @@ namespace prototype {
 		class PrototypeParticleSystem_Type;
 		class PrototypePhysics;
 		class PrototypePhysics_BodyType;
-		class Prototype_EntityType;
+		class Prototype_Type;
 		class PrototypeProperties;
 		class PrototypeProperty;
 }  // namespace prototype

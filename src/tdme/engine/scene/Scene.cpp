@@ -13,7 +13,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -34,7 +34,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
@@ -96,7 +96,7 @@ void Scene::computeBoundingBox()
 	Vector3 bbMin;
 	Vector3 bbMax;
 	for (auto levelEditorObject: entities) {
-		if (levelEditorObject->getPrototype()->getType() != Prototype_EntityType::MODEL) continue;
+		if (levelEditorObject->getPrototype()->getType() != Prototype_Type::MODEL) continue;
 		BoundingBox cbv;
 		cbv.fromBoundingVolumeWithTransformations(levelEditorObject->getPrototype()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
 		bbDimension.set(
@@ -145,7 +145,7 @@ void Scene::computeCenter()
 	center.set(0.0f, 0.0f, 0.0f);
 	auto entityCount = 0;
 	for (auto levelEditorObject: entities) {
-		if (levelEditorObject->getPrototype()->getType() != Prototype_EntityType::MODEL)
+		if (levelEditorObject->getPrototype()->getType() != Prototype_Type::MODEL)
 			continue;
 
 		center.add(levelEditorObject->getTransformations().getTranslation());
@@ -206,7 +206,7 @@ void Scene::addEntity(SceneEntity* entity)
 	}
 	entitiesById[entity->getId()] = entity;
 	entities.push_back(entity);
-	if (entity->getPrototype()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
+	if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
 }
 
 void Scene::removeEntity(const string& id)
@@ -216,7 +216,7 @@ void Scene::removeEntity(const string& id)
 		auto entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
 		entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
-		if (entity->getPrototype()->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
+		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
 		delete entity;
 	}
 }

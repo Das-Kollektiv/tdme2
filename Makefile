@@ -602,7 +602,7 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
 	src/tdme/engine/prototype/PrototypePhysics.cpp \
 	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
-	src/tdme/engine/prototype/Prototype_EntityType.cpp \
+	src/tdme/engine/prototype/Prototype_Type.cpp \
 	src/tdme/engine/scene/Scene.cpp \
 	src/tdme/engine/scene/SceneLight.cpp \
 	src/tdme/engine/scene/SceneEntity.cpp \

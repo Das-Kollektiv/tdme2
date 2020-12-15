@@ -16,7 +16,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/AtomicOperations.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Console.h>
@@ -40,7 +40,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::AtomicOperations;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::utilities::Exception;
 using tdme::utilities::Console;

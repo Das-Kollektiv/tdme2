@@ -24,7 +24,7 @@
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneEntity.h>
@@ -63,7 +63,7 @@ using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::Scene;
@@ -181,31 +181,31 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	if (entity == nullptr) return;
 	{
 		auto v = entity->getType();
-		if (v == Prototype_EntityType::MODEL) {
+		if (v == Prototype_Type::MODEL) {
 			if (dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
 			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == Prototype_EntityType::TRIGGER) {
+		if (v == Prototype_Type::TRIGGER) {
 			if (dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
 			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == Prototype_EntityType::ENVIRONMENTMAPPING) {
+		if (v == Prototype_Type::ENVIRONMENTMAPPING) {
 			if (dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEnvironmentMappingView();
 			}
 			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == Prototype_EntityType::EMPTY) {
+		if (v == Prototype_Type::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
 			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(entity);
 		} else
-		if (v == Prototype_EntityType::PARTICLESYSTEM) {
+		if (v == Prototype_Type::PARTICLESYSTEM) {
 			if (dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
@@ -253,7 +253,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 {
 	// check if we have a entity
 	auto entity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
-	if (entity == nullptr || entity->getType() != Prototype_EntityType::MODEL) return;
+	if (entity == nullptr || entity->getType() != Prototype_Type::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
 	if (/*entity->getModel()->hasAnimations() == true || */entity->getModel()->hasSkinning() == true) {
 		popUps->getInfoDialogScreenController()->show("Warning", "This model has animations or skinning");

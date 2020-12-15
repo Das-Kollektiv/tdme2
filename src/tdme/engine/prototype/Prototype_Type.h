@@ -9,10 +9,10 @@
 using std::string;
 
 using tdme::math::Vector3;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::utilities::Enum;
 
-class tdme::engine::prototype::Prototype_EntityType final: public Enum
+class tdme::engine::prototype::Prototype_Type final: public Enum
 {
 
 private:
@@ -22,11 +22,11 @@ private:
 	Vector3 nonEditScaleDownModeDimension;
 
 public:
-	static Prototype_EntityType* EMPTY;
-	static Prototype_EntityType* MODEL;
-	static Prototype_EntityType* PARTICLESYSTEM;
-	static Prototype_EntityType* TRIGGER;
-	static Prototype_EntityType* ENVIRONMENTMAPPING;
+	static Prototype_Type* EMPTY;
+	static Prototype_Type* MODEL;
+	static Prototype_Type* PARTICLESYSTEM;
+	static Prototype_Type* TRIGGER;
+	static Prototype_Type* ENVIRONMENTMAPPING;
 
 	/**
 	 * Public constructor
@@ -37,7 +37,7 @@ public:
 	 * @param nonEditScaleDownMode non edit scale down mode
 	 * @param nonEditScaleDownModeDimension non edit scale down mode dimension
 	 */
-	Prototype_EntityType(const string& name, int ordinal, int boundingVolumeCount, int gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension);
+	Prototype_Type(const string& name, int ordinal, int boundingVolumeCount, int gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension);
 
 	/**
 	 * @return bounding volume count
@@ -72,6 +72,6 @@ public:
 	 * @param name name
 	 * @return enum object
 	 */
-	static Prototype_EntityType* valueOf(const string& name);
+	static Prototype_Type* valueOf(const string& name);
 
 };

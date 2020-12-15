@@ -12,7 +12,7 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -29,7 +29,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 		auto entityLibrary = level.getLibrary();
 		for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
 			auto entity = entityLibrary->getPrototypeAt(i);
-			if (entity->getType() != Prototype_EntityType::MODEL) continue;
+			if (entity->getType() != Prototype_Type::MODEL) continue;
 			entity->getModel()->setImportTransformationsMatrix(entity->getModel()->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
 			z2yUpMatrix.multiply(
 				entity->getModel()->getBoundingBox()->getMin(),
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 		// objects
 		for (auto i = 0; i < level.getEntityCount(); i++) {
 			auto object = level.getEntityAt(i);
-			if (object->getPrototype()->getType() != Prototype_EntityType::MODEL) continue;
+			if (object->getPrototype()->getType() != Prototype_Type::MODEL) continue;
 			auto scale = object->getTransformations().getScale();
 			object->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
 			auto rotationX = object->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex());

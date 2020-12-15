@@ -36,7 +36,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -87,7 +87,7 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::engine::SceneConnector;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::utilities::Console;
@@ -318,11 +318,11 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == Prototype_EntityType::TRIGGER ||
-		entity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+	if (entity->getType() == Prototype_Type::TRIGGER ||
+		entity->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
-	if (entity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
+	if (entity->getType() == Prototype_Type::PARTICLESYSTEM) {
 		modelEntity = SceneConnector::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else

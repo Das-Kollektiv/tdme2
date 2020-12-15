@@ -3,7 +3,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
@@ -15,7 +15,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::model::Model;
 using tdme::engine::model::ShaderModel;
 using tdme::math::Vector3;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeParticleSystem;
@@ -96,7 +96,7 @@ char Prototype::MODEL_BOUNDINGVOLUME_IDS[][Prototype::MODEL_BOUNDINGVOLUME_COUNT
 	"model_bv.63"
 };
 
-Prototype::Prototype(int id, Prototype_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
+Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -107,10 +107,10 @@ Prototype::Prototype(int id, Prototype_EntityType* entityType, const string& nam
 	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
-	if (this->type == Prototype_EntityType::PARTICLESYSTEM) {
+	if (this->type == Prototype_Type::PARTICLESYSTEM) {
 		this->physics = new PrototypePhysics();
 	} else
-	if (this->type == Prototype_EntityType::MODEL) {
+	if (this->type == Prototype_Type::MODEL) {
 		if (model->getShaderModel() == ShaderModel::PBR) {
 			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
@@ -165,13 +165,13 @@ void Prototype::setDefaultBoundingVolumes(int maxBoundingVolumeCount)
 }
 
 void Prototype::setLODLevel2(PrototypeLODLevel* lodLevel) {
-	if (this->type != Prototype_EntityType::MODEL) return;
+	if (this->type != Prototype_Type::MODEL) return;
 	if (lodLevel2 != nullptr) delete lodLevel2;
 	lodLevel2 = lodLevel;
 }
 
 void Prototype::setLODLevel3(PrototypeLODLevel* lodLevel) {
-	if (this->type != Prototype_EntityType::MODEL) return;
+	if (this->type != Prototype_Type::MODEL) return;
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	lodLevel3 = lodLevel;
 }

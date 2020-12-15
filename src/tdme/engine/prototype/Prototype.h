@@ -23,7 +23,7 @@ using std::remove;
 using tdme::engine::Entity;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeParticleSystem;
@@ -39,7 +39,7 @@ using tdme::engine::prototype::PrototypeLODLevel;
 class tdme::engine::prototype::Prototype final
 	: public PrototypeProperties
 {
-	friend class Prototype_EntityType;
+	friend class Prototype_Type;
 
 public:
 	static constexpr int ID_NONE { -1 };
@@ -51,7 +51,7 @@ public:
 
 private:
 	int id;
-	Prototype_EntityType* type { nullptr };
+	Prototype_Type* type { nullptr };
 	string name;
 	string description;
 	string entityFileName;
@@ -92,7 +92,7 @@ public:
 	 * @param model model
 	 * @param pivot pivot
 	 */
-	Prototype(int id, Prototype_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
+	Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
 
 	/**
 	 * Destructor
@@ -109,7 +109,7 @@ public:
 	/**
 	 * @return entity type
 	 */
-	inline Prototype_EntityType* getType() {
+	inline Prototype_Type* getType() {
 		return type;
 	}
 

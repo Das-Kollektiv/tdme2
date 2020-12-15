@@ -23,7 +23,7 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -60,7 +60,7 @@ using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
@@ -436,17 +436,17 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				model->getBoundingBox()->update();
 				scale.scale(1.0f / importFixScale);
 			}
-			auto entityType = Prototype_EntityType::MODEL;
+			auto entityType = Prototype_Type::MODEL;
 			if (meshNode.node->getVertices().size() == 0) {
-				entityType = Prototype_EntityType::EMPTY;
+				entityType = Prototype_Type::EMPTY;
 				delete model;
 				model = nullptr;
 			}
 			Prototype* levelEditorEntity = nullptr;
-			if (entityType == Prototype_EntityType::MODEL && model != nullptr) {
+			if (entityType == Prototype_Type::MODEL && model != nullptr) {
 				for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
 					auto levelEditorEntityCompare = scene.getLibrary()->getPrototypeAt(i);
-					if (levelEditorEntityCompare->getType() != Prototype_EntityType::MODEL)
+					if (levelEditorEntityCompare->getType() != Prototype_Type::MODEL)
 						continue;
 
 					if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
@@ -474,7 +474,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 					);
 				}
 			} else
-			if (entityType == Prototype_EntityType::EMPTY) {
+			if (entityType == Prototype_Type::EMPTY) {
 				if (emptyEntity == nullptr) {
 					emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}

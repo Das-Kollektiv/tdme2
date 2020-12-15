@@ -49,7 +49,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
@@ -123,7 +123,7 @@ using tdme::math::Vector4;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
@@ -346,7 +346,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		}
 	} else
 	// particle system
-	if (prototype->getType() == Prototype_EntityType::PARTICLESYSTEM) {
+	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		vector<ParticleSystemEntity*> particleSystems;
 		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
 			auto particleSystem = createParticleSystem(
@@ -370,8 +370,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		}
 	} else
 	// trigger/environment mapping
-	if (prototype->getType() == Prototype_EntityType::TRIGGER ||
-		prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+	if (prototype->getType() == Prototype_Type::TRIGGER ||
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
@@ -382,7 +382,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
 		}
-		if (prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING &&
+		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
 			prototype->getBoundingVolumeCount() == 1 &&
 			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
 			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()));
@@ -436,8 +436,8 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
-		if (addEmpties == false && object->getPrototype()->getType() == Prototype_EntityType::EMPTY) continue;
-		if (addTrigger == false && object->getPrototype()->getType() == Prototype_EntityType::TRIGGER) continue;
+		if (addEmpties == false && object->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
+		if (addTrigger == false && object->getPrototype()->getType() == Prototype_Type::TRIGGER) continue;
 
 		if (object->getPrototype()->isRenderGroups() == true) {
 			auto minX = object->getTransformations().getTranslation().getX();
@@ -456,7 +456,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			entity->setPickable(pickable);
 			entity->setContributesShadows(object->getPrototype()->isContributesShadows());
 			entity->setReceivesShadows(object->getPrototype()->isReceivesShadows());
-			if (object->getPrototype()->getType() == Prototype_EntityType::EMPTY) {
+			if (object->getPrototype()->getType() == Prototype_Type::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}
 			if (object->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
@@ -535,10 +535,10 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 }
 
 Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
-	if (prototype->getType() == Prototype_EntityType::EMPTY) return nullptr;
+	if (prototype->getType() == Prototype_Type::EMPTY) return nullptr;
 
 	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
-	if (prototype->getType() == Prototype_EntityType::TRIGGER) {
+	if (prototype->getType() == Prototype_Type::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
 			auto entityBv = prototype->getBoundingVolume(j);
@@ -553,7 +553,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			boundingVolumes
 		);
 	} else
-	if (prototype->getType() == Prototype_EntityType::MODEL &&
+	if (prototype->getType() == Prototype_Type::MODEL &&
 		prototype->isTerrainMesh() == true) {
 		Object3DModel terrainModel(prototype->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
@@ -708,7 +708,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 
 		entity->fromTransformations(object->getTransformations());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
-		if (object->getPrototype()->getType() == Prototype_EntityType::EMPTY) {
+		if (object->getPrototype()->getType() == Prototype_Type::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();

@@ -29,7 +29,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
@@ -75,7 +75,7 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::ProgressCallback;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeProperty;
@@ -538,7 +538,7 @@ Prototype* SharedModelEditorView::loadModel(const string& name, const string& de
 		);
 		auto levelEditorEntity = new Prototype(
 			Prototype::ID_NONE,
-			Prototype_EntityType::MODEL,
+			Prototype_Type::MODEL,
 			name,
 			description,
 			"",

@@ -11,7 +11,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -51,7 +51,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -98,7 +98,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		static_cast< float >(jEntityRoot["py"].GetFloat()),
 		static_cast< float >(jEntityRoot["pz"].GetFloat())
 	);
-	auto modelType = Prototype_EntityType::valueOf((jEntityRoot["type"].GetString()));
+	auto modelType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
 	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
 	auto name = (jEntityRoot["name"].GetString());
 	auto description = (jEntityRoot["descr"].GetString());
@@ -115,7 +115,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			FileSystem::getInstance()->getFileName(modelFileName)
 		);
 	} else
-	if (modelType == Prototype_EntityType::EMPTY) {
+	if (modelType == Prototype_Type::EMPTY) {
 		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	}
 
@@ -185,12 +185,12 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			sound->setFixed(jSound["f"].GetBool());
 		}
 	}
-	if (modelType == Prototype_EntityType::MODEL) {
+	if (modelType == Prototype_Type::MODEL) {
 		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
 		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
-	if (modelType == Prototype_EntityType::PARTICLESYSTEM) {
+	if (modelType == Prototype_Type::PARTICLESYSTEM) {
 		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
 			levelEditorEntity->addParticleSystem();
 			parseParticleSystem(levelEditorEntity->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
@@ -215,7 +215,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
-	if (levelEditorEntity->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+	if (levelEditorEntity->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
 		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
 	}

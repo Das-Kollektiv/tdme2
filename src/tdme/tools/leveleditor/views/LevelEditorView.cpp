@@ -51,7 +51,7 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/Scene.h>
@@ -124,7 +124,7 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::ProgressCallback;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;

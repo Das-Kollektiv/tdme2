@@ -30,7 +30,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -126,7 +126,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 	entity = new Prototype(
 		-1,
-		Prototype_EntityType::PARTICLESYSTEM,
+		Prototype_Type::PARTICLESYSTEM,
 		"Untitled",
 		"",
 		"Untitled.tps",

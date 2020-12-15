@@ -18,7 +18,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
@@ -64,7 +64,7 @@ using tdme::engine::primitives::Triangle;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -139,7 +139,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* prototype)
 {
 	auto& jAllocator = jDocument.GetAllocator();
-	if (prototype->getType() == Prototype_EntityType::MODEL && prototype->getFileName().length() > 0) {
+	if (prototype->getType() == Prototype_Type::MODEL && prototype->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(prototype->getFileName());
 		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(prototype->getFileName())) + ".tm";
 		TMWriter::write(
@@ -217,7 +217,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 		jEntityRoot.AddMember("sd", jSounds, jAllocator);
 	}
 
-	if (prototype->getType() == Prototype_EntityType::PARTICLESYSTEM) {
+	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
 		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
@@ -572,7 +572,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 	jEntityRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
-	if (prototype->getType() == Prototype_EntityType::ENVIRONMENTMAPPING) {
+	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		jEntityRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
 		jEntityRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
 	}

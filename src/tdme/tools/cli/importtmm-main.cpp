@@ -19,7 +19,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_EntityType.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -44,7 +44,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_EntityType;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 			auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
 			tmm = new Prototype(
 				-1,
-				Prototype_EntityType::MODEL,
+				Prototype_Type::MODEL,
 				fileNameWithoutExtension,
 				fileNameWithoutExtension,
 				"",
