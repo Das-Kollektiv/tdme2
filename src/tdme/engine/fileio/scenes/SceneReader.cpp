@@ -94,10 +94,10 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 	scene.setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
 	scene.clearProperties();
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
-		auto& jMapProperty = jRoot["properties"].GetArray()[i];
+		auto& jSceneProperty = jRoot["properties"].GetArray()[i];
 		scene.addProperty(
-			jMapProperty["name"].GetString(),
-			jMapProperty["value"].GetString()
+			jSceneProperty["name"].GetString(),
+			jSceneProperty["value"].GetString()
 		);
 	}
 	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
@@ -150,23 +150,23 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
-		auto& jModel = jRoot["models"].GetArray()[i];
+		auto& jPrototype = jRoot["models"].GetArray()[i];
 		Prototype* prototype = PrototypeReader::read(
-			jModel["id"].GetInt(),
+			jPrototype["id"].GetInt(),
 			pathName,
-			jModel["entity"]
+			jPrototype["entity"]
 		);
 		if (prototype == nullptr) {
-			Console::println("SceneReader::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
+			Console::println("SceneReader::doImport(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
 			continue;
 		}
 		scene.getLibrary()->addPrototype(prototype);
-		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
-			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
-				auto& jModelProperty = jModel["properties"].GetArray()[j];
+		if (jPrototype.FindMember("properties") != jPrototype.MemberEnd()) {
+			for (auto j = 0; j < jPrototype["properties"].GetArray().Size(); j++) {
+				auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
 				prototype->addProperty(
-					(jModelProperty["name"].GetString()),
-					(jModelProperty["value"].GetString())
+					(jPrototypeProperty["name"].GetString()),
+					(jPrototypeProperty["value"].GetString())
 				);
 			}
 		}
@@ -177,10 +177,10 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 	scene.clearEntities();
 
 	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
-		auto& jObject = jRoot["objects"].GetArray()[i];
-		auto model = scene.getLibrary()->getPrototype(jObject["mid"].GetInt());
-		if (model == nullptr) {
-			Console::println("SceneReader::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
+		auto& jSceneEntity = jRoot["objects"].GetArray()[i];
+		auto prototype = scene.getLibrary()->getPrototype(jSceneEntity["mid"].GetInt());
+		if (prototype == nullptr) {
+			Console::println("SceneReader::doImport(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
 
 			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 			progressStepCurrent++;
@@ -189,25 +189,25 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		}
 
 		Transformations transformations;
-		transformations.setPivot(model->getPivot());
+		transformations.setPivot(prototype->getPivot());
 		transformations.setTranslation(
 			Vector3(
-				jObject["tx"].GetFloat(),
-				jObject["ty"].GetFloat(),
-				jObject["tz"].GetFloat()
+				jSceneEntity["tx"].GetFloat(),
+				jSceneEntity["ty"].GetFloat(),
+				jSceneEntity["tz"].GetFloat()
 			)
 		);
 		transformations.setScale(
 			Vector3(
-				jObject["sx"].GetFloat(),
-				jObject["sy"].GetFloat(),
-				jObject["sz"].GetFloat()
+				jSceneEntity["sx"].GetFloat(),
+				jSceneEntity["sy"].GetFloat(),
+				jSceneEntity["sz"].GetFloat()
 			)
 		);
 		Vector3 rotation(
-			jObject["rx"].GetFloat(),
-			jObject["ry"].GetFloat(),
-			jObject["rz"].GetFloat()
+			jSceneEntity["rx"].GetFloat(),
+			jSceneEntity["ry"].GetFloat(),
+			jSceneEntity["rz"].GetFloat()
 		);
 		transformations.addRotation(scene.getRotationOrder()->getAxis0(), rotation.getArray()[scene.getRotationOrder()->getAxis0VectorIndex()]);
 		transformations.addRotation(scene.getRotationOrder()->getAxis1(), rotation.getArray()[scene.getRotationOrder()->getAxis1VectorIndex()]);
@@ -215,22 +215,22 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		transformations.update();
 		auto sceneEntity = new SceneEntity(
 			objectIdPrefix != "" ?
-				objectIdPrefix + jObject["id"].GetString() :
-				(jObject["id"].GetString()),
-			 jObject.FindMember("descr") != jObject.MemberEnd()?jObject["descr"].GetString() : "",
+				objectIdPrefix + jSceneEntity["id"].GetString() :
+				(jSceneEntity["id"].GetString()),
+			 jSceneEntity.FindMember("descr") != jSceneEntity.MemberEnd()?jSceneEntity["descr"].GetString() : "",
 			 transformations,
-			 model
+			 prototype
 		);
-		if (jObject.FindMember("properties") != jObject.MemberEnd()) {
-			for (auto j = 0; j < jObject["properties"].GetArray().Size(); j++) {
-				auto& jObjectProperty = jObject["properties"].GetArray()[j];
+		if (jSceneEntity.FindMember("properties") != jSceneEntity.MemberEnd()) {
+			for (auto j = 0; j < jSceneEntity["properties"].GetArray().Size(); j++) {
+				auto& jSceneEntityProperty = jSceneEntity["properties"].GetArray()[j];
 				sceneEntity->addProperty(
-					jObjectProperty["name"].GetString(),
-					jObjectProperty["value"].GetString()
+					jSceneEntityProperty["name"].GetString(),
+					jSceneEntityProperty["value"].GetString()
 				);
 			}
 		}
-		sceneEntity->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
+		sceneEntity->setReflectionEnvironmentMappingId(jSceneEntity.FindMember("r") != jSceneEntity.MemberEnd()?jSceneEntity["r"].GetString():"");
 		scene.addEntity(sceneEntity);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
@@ -271,20 +271,20 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 }
 
 void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
-	auto entityLibrary = scene.getLibrary();
+	auto sceneLibrary = scene.getLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
 	auto modelName = nodeId;
 	modelName = StringTools::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
 	modelName = StringTools::regexReplace(modelName, "[0-9]+$", "");
-	auto haveName = entityLibrary->getPrototypeCount() == 0;
+	auto haveName = sceneLibrary->getPrototypeCount() == 0;
 	if (haveName == false) {
 		for (auto i = 0; i < 10000; i++) {
 			haveName = true;
 			auto modelNameTry = modelName;
 			if (i > 0) modelNameTry+= to_string(i);
-			for (auto entityIdx = 0; entityIdx < entityLibrary->getPrototypeCount(); entityIdx++) {
-				auto entity = entityLibrary->getPrototypeAt(entityIdx);
+			for (auto entityIdx = 0; entityIdx < sceneLibrary->getPrototypeCount(); entityIdx++) {
+				auto entity = sceneLibrary->getPrototypeAt(entityIdx);
 				if (entity->getName() == modelNameTry) {
 					haveName = false;
 					break;
@@ -359,7 +359,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 
 	scene.setRotationOrder(rotationOrder);
 
-	auto entityLibrary = scene.getLibrary();
+	auto sceneLibrary = scene.getLibrary();
 	auto nodeIdx = 0;
 	Prototype* emptyEntity = nullptr;
 	Matrix4x4 modelImportRotationMatrix;
@@ -464,7 +464,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 						modelFileName
 					  );
 					delete model;
-					prototype = entityLibrary->addModel(
+					prototype = sceneLibrary->addModel(
 						nodeIdx++,
 						meshNode.name,
 						meshNode.name,
@@ -476,7 +476,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			} else
 			if (entityType == Prototype_Type::EMPTY) {
 				if (emptyEntity == nullptr) {
-					emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
+					emptyEntity = sceneLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}
 				prototype = emptyEntity;
 			} else {

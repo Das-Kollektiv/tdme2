@@ -33,7 +33,7 @@ class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenContro
 {
 private:
 	GUIScreenNode* screenNode { nullptr };
-	GUIElementNode* entityLibraryListBox { nullptr };
+	GUIElementNode* sceneLibraryListBox { nullptr };
 	GUIElementNode* buttonEntityPlace { nullptr };
 	GUIElementNode* buttonLevelEdit { nullptr };
 	PopUps* popUps { nullptr };

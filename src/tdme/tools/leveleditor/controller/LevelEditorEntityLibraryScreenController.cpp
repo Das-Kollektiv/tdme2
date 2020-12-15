@@ -102,7 +102,7 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_leveleditor_entitylibrary.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_library_listbox"));
+		sceneLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_library_listbox"));
 		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_place"));
 		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_level_edit"));
 	} catch (Exception& exception) {
@@ -119,29 +119,29 @@ void LevelEditorEntityLibraryScreenController::dispose()
 
 void LevelEditorEntityLibraryScreenController::selectEntity(int entityId)
 {
-	MutableString entityLibraryListBoxSelection;
-	entityLibraryListBoxSelection.set(entityId);
-	entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
+	MutableString sceneLibraryListBoxSelection;
+	sceneLibraryListBoxSelection.set(entityId);
+	sceneLibraryListBox->getController()->setValue(sceneLibraryListBoxSelection);
 }
 
 void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 {
-	MutableString entityLibraryListBoxSelection;
-	auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-	entityLibraryListBoxSelection.set(entityLibraryListBox->getController()->getValue());
-	auto entityLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityLibraryListBox->getScreenNode()->getNodeById(entityLibraryListBox->getId() + "_inner")));
+	MutableString sceneLibraryListBoxSelection;
+	auto sceneLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
+	sceneLibraryListBoxSelection.set(sceneLibraryListBox->getController()->getValue());
+	auto sceneLibraryListBoxInnerNode = dynamic_cast< GUIParentNode* >((sceneLibraryListBox->getScreenNode()->getNodeById(sceneLibraryListBox->getId() + "_inner")));
 	auto idx = 1;
-	string entityLibraryListBoxSubNodesXML;
-	entityLibraryListBoxSubNodesXML =
-		entityLibraryListBoxSubNodesXML +
+	string sceneLibraryListBoxSubNodesXML;
+	sceneLibraryListBoxSubNodesXML =
+		sceneLibraryListBoxSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		entityLibraryListBox->getId() +
+		sceneLibraryListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
-		auto objectId = entityLibrary->getPrototypeAt(i)->getId();
-		auto objectName = entityLibrary->getPrototypeAt(i)->getName();
-		entityLibraryListBoxSubNodesXML =
-			entityLibraryListBoxSubNodesXML +
+	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+		auto objectId = sceneLibrary->getPrototypeAt(i)->getId();
+		auto objectName = sceneLibrary->getPrototypeAt(i)->getName();
+		sceneLibraryListBoxSubNodesXML =
+			sceneLibraryListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
 			GUIParser::escapeQuotes(objectName) +
 			"\" value=\"" +
@@ -150,25 +150,25 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 			(i == 0 ? "selected=\"true\" " : "") +
 			"/>\n";
 	}
-	entityLibraryListBoxSubNodesXML = entityLibraryListBoxSubNodesXML + "</scrollarea-vertical>\n";
+	sceneLibraryListBoxSubNodesXML = sceneLibraryListBoxSubNodesXML + "</scrollarea-vertical>\n";
 	try {
-		entityLibraryListBoxInnerNode->replaceSubNodes(entityLibraryListBoxSubNodesXML, false);
+		sceneLibraryListBoxInnerNode->replaceSubNodes(sceneLibraryListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	if (entityLibraryListBoxSelection.length() > 0) {
-		entityLibraryListBox->getController()->setValue(entityLibraryListBoxSelection);
+	if (sceneLibraryListBoxSelection.length() > 0) {
+		sceneLibraryListBox->getController()->setValue(sceneLibraryListBoxSelection);
 	}
 	onEntitySelectionChanged();
-	buttonEntityPlace->getController()->setDisabled(entityLibrary->getPrototypeCount() == 0);
+	buttonEntityPlace->getController()->setDisabled(sceneLibrary->getPrototypeCount() == 0);
 }
 
 void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+		auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 		if (prototype != nullptr) {
 			(dynamic_cast< LevelEditorView* >(view))->loadEntityFromLibrary(prototype->getId());
 		}
@@ -177,7 +177,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 
 void LevelEditorEntityLibraryScreenController::onEditEntity()
 {
-	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
 	{
 		auto v = prototype->getType();
@@ -226,7 +226,7 @@ void LevelEditorEntityLibraryScreenController::onEditLevel()
 
 void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 {
-	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
@@ -236,7 +236,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 
 void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 {
-	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
 	TDMELevelEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(prototype->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
@@ -252,7 +252,7 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 {
 	// check if we have a entity
-	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(entityLibraryListBox->getController()->getValue().getString()));
+	auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr || prototype->getType() != Prototype_Type::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
 	if (/*entity->getModel()->hasAnimations() == true || */prototype->getModel()->hasSkinning() == true) {
@@ -375,7 +375,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			public:
 				void performAction() override {
 					try {
-						auto entity = entityLibrary->addModel(
+						auto entity = sceneLibrary->addModel(
 							SceneLibrary::ID_ALLOCATE,
 							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							"",
@@ -385,7 +385,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 						);
 						entity->setDefaultBoundingVolumes();
 						prototypeLibraryScreenController->setEntityLibrary();
-						prototypeLibraryScreenController->entityLibraryListBox->getController()->setValue(MutableString(entity->getId()));
+						prototypeLibraryScreenController->sceneLibraryListBox->getController()->setValue(MutableString(entity->getId()));
 						prototypeLibraryScreenController->onEditEntity();
 					} catch (Exception& exception) {
 						prototypeLibraryScreenController->popUps->getInfoDialogScreenController()->show(
@@ -400,19 +400,19 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				/**
 				 * Public constructor
 				 * @param prototypeLibraryScreenController scene editor scene prototype library screen controller
-				 * @param entityLibrary scene prototype library
+				 * @param sceneLibrary scene prototype library
 				 */
-				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* entityLibrary)
+				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* sceneLibrary)
 					: prototypeLibraryScreenController(prototypeLibraryScreenController)
-					, entityLibrary(entityLibrary) {
+					, sceneLibrary(sceneLibrary) {
 				}
 
 			private:
 				LevelEditorEntityLibraryScreenController *prototypeLibraryScreenController;
-				SceneLibrary* entityLibrary;
+				SceneLibrary* sceneLibrary;
 			};
 
-			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
+			auto const sceneLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 			vector<string> extensions = ModelReader::getModelExtensions();
 			extensions.push_back("tmm");
 			popUps->getFileDialogScreenController()->show(
@@ -421,14 +421,14 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				extensions,
 				"",
 				true,
-				new OnCreateModel(this, entityLibrary)
+				new OnCreateModel(this, sceneLibrary)
 			);
 		} else
 		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(SceneLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
+				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -441,7 +441,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addEnvironmentMapping(SceneLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
+				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -454,7 +454,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addEmpty(SceneLibrary::ID_ALLOCATE, "New empty", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
+				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
@@ -469,7 +469,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getEntityLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
 				setEntityLibrary();
-				entityLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
+				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditEntity();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(

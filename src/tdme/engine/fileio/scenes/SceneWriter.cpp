@@ -55,7 +55,7 @@ using rapidjson::Value;
 void SceneWriter::write(const string& pathName, const string& fileName, Scene& scene)
 {
 	scene.setFileName(pathName + '/' + fileName);
-	auto entityLibrary = scene.getLibrary();
+	auto sceneLibrary = scene.getLibrary();
 	Document jDocument;
 	jDocument.SetObject();
 	auto& jAllocator = jDocument.GetAllocator();
@@ -99,34 +99,34 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		jLights.PushBack(jLight, jAllocator);
 	}
 	jDocument.AddMember("lights", jLights, jAllocator);
-	Value jEntityLibrary;
-	jEntityLibrary.SetArray();
-	for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
-		auto entity = entityLibrary->getPrototypeAt(i);
+	Value jSceneLibrary;
+	jSceneLibrary.SetArray();
+	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+		auto prototype = sceneLibrary->getPrototypeAt(i);
 		Value jEntity;
 		jEntity.SetObject();
-		PrototypeWriter::write(jDocument, jEntity, entity);
+		PrototypeWriter::write(jDocument, jEntity, prototype);
 		Value jModel;
 		jModel.SetObject();
-		jModel.AddMember("id", Value().SetInt(entity->getId()), jAllocator);
-		jModel.AddMember("type", Value(entity->getType()->getName(), jAllocator), jAllocator);
-		jModel.AddMember("name", Value(entity->getName(), jAllocator), jAllocator);
-		jModel.AddMember("descr", Value(entity->getDescription(), jAllocator), jAllocator);
+		jModel.AddMember("id", Value().SetInt(prototype->getId()), jAllocator);
+		jModel.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
+		jModel.AddMember("name", Value(prototype->getName(), jAllocator), jAllocator);
+		jModel.AddMember("descr", Value(prototype->getDescription(), jAllocator), jAllocator);
 		jModel.AddMember("entity", jEntity, jAllocator);
-		jEntityLibrary.PushBack(jModel, jAllocator);
+		jSceneLibrary.PushBack(jModel, jAllocator);
 	}
-	jDocument.AddMember("models", jEntityLibrary, jAllocator);
-	Value jMapProperties;
-	jMapProperties.SetArray();
+	jDocument.AddMember("models", jSceneLibrary, jAllocator);
+	Value jSceneProperties;
+	jSceneProperties.SetArray();
 	for (auto i = 0; i < scene.getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
-		Value jMapProperty;
-		jMapProperty.SetObject();
-		jMapProperty.AddMember("name", Value(mapProperty->getName(), jAllocator), jAllocator);
-		jMapProperty.AddMember("value", Value(mapProperty->getValue(), jAllocator), jAllocator);
-		jMapProperties.PushBack(jMapProperty, jAllocator);
+		PrototypeProperty* sceneProperty = scene.getPropertyByIndex(i);
+		Value jSceneProperty;
+		jSceneProperty.SetObject();
+		jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
+		jSceneProperty.AddMember("value", Value(sceneProperty->getValue(), jAllocator), jAllocator);
+		jSceneProperties.PushBack(jSceneProperty, jAllocator);
 	}
-	jDocument.AddMember("properties", jMapProperties, jAllocator);
+	jDocument.AddMember("properties", jSceneProperties, jAllocator);
 	Value jObjects;
 	jObjects.SetArray();
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
@@ -152,17 +152,17 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		jObject.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
 		jObject.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
 		jObject.AddMember("r", Value(sceneEntity->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
-		Value jObjectProperties;
-		jObjectProperties.SetArray();
+		Value jEntityProperties;
+		jEntityProperties.SetArray();
 		for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-			PrototypeProperty* objectProperty = sceneEntity->getPropertyByIndex(i);
-			Value jObjectProperty;
-			jObjectProperty.SetObject();
-			jObjectProperty.AddMember("name", Value(objectProperty->getName(), jAllocator), jAllocator);
-			jObjectProperty.AddMember("value", Value(objectProperty->getValue(), jAllocator), jAllocator);
-			jObjectProperties.PushBack(jObjectProperty, jAllocator);
+			PrototypeProperty* sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
+			Value jSceneEntityProperty;
+			jSceneEntityProperty.SetObject();
+			jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);
+			jSceneEntityProperty.AddMember("value", Value(sceneEntityProperty->getValue(), jAllocator), jAllocator);
+			jEntityProperties.PushBack(jSceneEntityProperty, jAllocator);
 		}
-		jObject.AddMember("properties", jObjectProperties, jAllocator);
+		jObject.AddMember("properties", jEntityProperties, jAllocator);
 		jObjects.PushBack(jObject, jAllocator);
 	}
 	jDocument.AddMember("objects", jObjects, jAllocator);

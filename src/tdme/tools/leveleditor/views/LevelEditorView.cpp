@@ -625,9 +625,9 @@ void LevelEditorView::display()
 
 	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
-		auto entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
-		for (auto i = 0; i < entityLibrary->getPrototypeCount(); i++) {
-			selectedEntity = entityLibrary->getPrototypeAt(i);
+		auto sceneLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
+		for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+			selectedEntity = sceneLibrary->getPrototypeAt(i);
 			Tools::oseThumbnail(selectedEntity);
 		}
 		reloadEntityLibrary = false;
