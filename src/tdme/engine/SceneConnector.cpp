@@ -161,24 +161,24 @@ int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 bool SceneConnector::enableEarlyZRejection = false;
 
-void SceneConnector::setLights(Engine* engine, Scene& level, const Vector3& translation)
+void SceneConnector::setLights(Engine* engine, Scene& scene, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level.getLightCount(); i++) {
-		engine->getLightAt(i)->setAmbient(Color4(level.getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(level.getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(level.getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(level.getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(level.getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(level.getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(level.getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(level.getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(level.getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(level.getLightAt(i)->isEnabled());
+	for (auto i = 0; i < Engine::LIGHTS_MAX && i < scene.getLightCount(); i++) {
+		engine->getLightAt(i)->setAmbient(Color4(scene.getLightAt(i)->getAmbient()));
+		engine->getLightAt(i)->setDiffuse(Color4(scene.getLightAt(i)->getDiffuse()));
+		engine->getLightAt(i)->setSpecular(Color4(scene.getLightAt(i)->getSpecular()));
+		engine->getLightAt(i)->setSpotDirection(scene.getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->setSpotExponent(scene.getLightAt(i)->getSpotExponent());
+		engine->getLightAt(i)->setSpotCutOff(scene.getLightAt(i)->getSpotCutOff());
+		engine->getLightAt(i)->setConstantAttenuation(scene.getLightAt(i)->getConstantAttenuation());
+		engine->getLightAt(i)->setLinearAttenuation(scene.getLightAt(i)->getLinearAttenuation());
+		engine->getLightAt(i)->setQuadraticAttenuation(scene.getLightAt(i)->getQuadraticAttenuation());
+		engine->getLightAt(i)->setEnabled(scene.getLightAt(i)->isEnabled());
 		engine->getLightAt(i)->setPosition(
 			Vector4(
-				level.getLightAt(i)->getPosition().getX() + translation.getX(),
-				level.getLightAt(i)->getPosition().getY() + translation.getY(),
-				level.getLightAt(i)->getPosition().getZ() + translation.getZ(),
+				scene.getLightAt(i)->getPosition().getX() + translation.getX(),
+				scene.getLightAt(i)->getPosition().getY() + translation.getY(),
+				scene.getLightAt(i)->getPosition().getZ() + translation.getZ(),
 				1.0f
 			)
 		);
@@ -431,43 +431,43 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	map<string, Prototype*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto object = scene.getEntityAt(i);
+		auto sceneEntity = scene.getEntityAt(i);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
-		if (addEmpties == false && object->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
-		if (addTrigger == false && object->getPrototype()->getType() == Prototype_Type::TRIGGER) continue;
+		if (addEmpties == false && sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
+		if (addTrigger == false && sceneEntity->getPrototype()->getType() == Prototype_Type::TRIGGER) continue;
 
-		if (object->getPrototype()->isRenderGroups() == true) {
-			auto minX = object->getTransformations().getTranslation().getX();
-			auto minY = object->getTransformations().getTranslation().getY();
-			auto minZ = object->getTransformations().getTranslation().getZ();
+		if (sceneEntity->getPrototype()->isRenderGroups() == true) {
+			auto minX = sceneEntity->getTransformations().getTranslation().getX();
+			auto minY = sceneEntity->getTransformations().getTranslation().getY();
+			auto minZ = sceneEntity->getTransformations().getTranslation().getZ();
 			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
-			renderGroupLevelEditorEntities[object->getPrototype()->getModel()->getId()] = object->getPrototype();
-			renderGroupEntitiesByShaderPartitionModel[object->getPrototype()->getShader() + "." + object->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(object->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getPrototype()->getModel()->getId()].push_back(&object->getTransformations());
+			renderGroupLevelEditorEntities[sceneEntity->getPrototype()->getModel()->getId()] = sceneEntity->getPrototype();
+			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()->getId()].push_back(&sceneEntity->getTransformations());
 		} else {
-			Entity* entity = createEntity(object);
+			Entity* entity = createEntity(sceneEntity);
 			if (entity == nullptr) continue;
 
 			entity->setTranslation(entity->getTranslation().clone().add(translation));
 			entity->setPickable(pickable);
-			entity->setContributesShadows(object->getPrototype()->isContributesShadows());
-			entity->setReceivesShadows(object->getPrototype()->isReceivesShadows());
-			if (object->getPrototype()->getType() == Prototype_Type::EMPTY) {
+			entity->setContributesShadows(sceneEntity->getPrototype()->isContributesShadows());
+			entity->setReceivesShadows(sceneEntity->getPrototype()->isReceivesShadows());
+			if (sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}
-			if (object->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
+			if (sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
 				entity->setScale(
-					object->getPrototype()->getType()->getNonEditScaleDownModeDimension().
+					sceneEntity->getPrototype()->getType()->getNonEditScaleDownModeDimension().
 					clone().
 					scale(
 						Vector3(
-							1.0f / (object->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
-							1.0f / (object->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
-							1.0f / (object->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+							1.0f / (sceneEntity->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+							1.0f / (sceneEntity->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+							1.0f / (sceneEntity->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
 						)
 					)
 				);
@@ -476,7 +476,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			entity->setEnabled(enable);
 
 			auto object3D = dynamic_cast<Object3D*>(entity);
-			if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(object->getReflectionEnvironmentMappingId());
+			if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(sceneEntity->getReflectionEnvironmentMappingId());
 
 			engine->addEntity(entity);
 		}
@@ -677,8 +677,8 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto object = scene.getEntityAt(i);
-		auto entity = engine->getEntity(object->getId());
+		auto sceneEntity = scene.getEntityAt(i);
+		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
 
@@ -690,8 +690,8 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 {
 	Transformations transformations;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto object = scene.getEntityAt(i);
-		auto rigidBody = world->getBody(object->getId());
+		auto sceneEntity = scene.getEntityAt(i);
+		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
 		rigidBody->setEnabled(false);
 	}
@@ -701,14 +701,14 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 {
 	// TODO: a.drewke, Object3DRenderGroups
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto object = scene.getEntityAt(i);
-		auto entity = engine->getEntity(object->getId());
+		auto sceneEntity = scene.getEntityAt(i);
+		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
 
-		entity->fromTransformations(object->getTransformations());
+		entity->fromTransformations(sceneEntity->getTransformations());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
-		if (object->getPrototype()->getType() == Prototype_Type::EMPTY) {
+		if (sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();
@@ -720,10 +720,10 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 {
 	Transformations transformations;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto object = scene.getEntityAt(i);
-		auto rigidBody = world->getBody(object->getId());
+		auto sceneEntity = scene.getEntityAt(i);
+		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
-		transformations.fromTransformations(object->getTransformations());
+		transformations.fromTransformations(sceneEntity->getTransformations());
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 		rigidBody->fromTransformations(transformations);

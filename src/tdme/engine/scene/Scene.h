@@ -57,7 +57,7 @@ private:
 	Vector3 skyModelScale;
 
 	/**
-	 * Computes level bounding box
+	 * Computes scene bounding box
 	 * @return dimension
 	 */
 	void computeBoundingBox();
@@ -237,13 +237,13 @@ public:
 	}
 
 	/**
-	 * Adds an entity to level
+	 * Adds an entity to scene
 	 * @param object object
 	 */
 	void addEntity(SceneEntity* entity);
 
 	/**
-	 * Removes an entity from level
+	 * Removes an entity from scene
 	 * @param id id
 	 */
 	void removeEntity(const string& id);
@@ -313,7 +313,7 @@ public:
 	}
 
 	/**
-	 * Update level dimension, bounding box, center
+	 * Update scene dimension, bounding box, center
 	 */
 	void update();
 

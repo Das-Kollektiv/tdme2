@@ -43,8 +43,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param scene scene
 	 */
-	SceneLibrary(Scene* level);
+	SceneLibrary(Scene* scene);
 
 	/**
 	 * Destructor

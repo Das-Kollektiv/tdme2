@@ -40,9 +40,9 @@ using tdme::utilities::StringTools;
 
 constexpr int SceneLibrary::ID_ALLOCATE;
 
-SceneLibrary::SceneLibrary(Scene* level)
+SceneLibrary::SceneLibrary(Scene* scene)
 {
-	this->scene = level;
+	this->scene = scene;
 	this->prototypeIdx = 0;
 }
 
