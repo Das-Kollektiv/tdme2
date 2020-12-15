@@ -151,7 +151,7 @@ void TDMELevelEditor::initialize() {
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
-	ScenePropertyPresets::getInstance()->setDefaultLevelProperties(levelEditorView->getLevel());
+	ScenePropertyPresets::getInstance()->setDefaultSceneProperties(levelEditorView->getLevel());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);

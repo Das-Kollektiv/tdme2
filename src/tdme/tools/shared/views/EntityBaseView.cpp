@@ -22,7 +22,7 @@ EntityBaseView::EntityBaseView(EntityBaseSubScreenController* entityBaseSubScree
 
 void EntityBaseView::initialize()
 {
-	entityBaseSubScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getObjectPropertiesPresets());
+	entityBaseSubScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
 void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& presetId)
@@ -31,7 +31,7 @@ void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& pre
 		return;
 
 	entity->clearProperties();
-	auto& objectPropertiesPreset = ScenePropertyPresets::getInstance()->getObjectPropertiesPresets();
+	auto& objectPropertiesPreset = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
 	const vector<PrototypeProperty*>* entityPropertyPresetArrayList = nullptr;
 	auto entityPropertyPresetArrayListIt = objectPropertiesPreset.find(presetId);
 	if (entityPropertyPresetArrayListIt != objectPropertiesPreset.end()) {

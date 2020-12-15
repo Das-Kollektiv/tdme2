@@ -26,7 +26,7 @@ using tdme::engine::scene::SceneLight;
 using tdme::engine::scene::ScenePropertyPresets;
 
 /**
- * Level Property Presets
+ * Scene Property Presets
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -34,8 +34,8 @@ class tdme::engine::scene::ScenePropertyPresets final
 {
 
 private:
-	vector<PrototypeProperty*> mapPropertiesPreset;
-	map<string, vector<PrototypeProperty*>> objectPropertiesPresets;
+	vector<PrototypeProperty*> scenePropertiesPreset;
+	map<string, vector<PrototypeProperty*>> entityPropertiesPresets;
 	map<string, SceneLight*> lightPresets;
 	static ScenePropertyPresets* instance;
 
@@ -53,28 +53,28 @@ public:
 	~ScenePropertyPresets();
 
 	/**
-	 * @return level editor presets instance
+	 * @return scene property presets instance
 	 */
 	static ScenePropertyPresets* getInstance();
 
 	/**
-	 * Set default level properties
-	 * @param level level
+	 * Set default scene properties
+	 * @param scene scene
 	 */
-	void setDefaultLevelProperties(Scene* level);
+	void setDefaultSceneProperties(Scene* scene);
 
 	/**
-	 * @return map properties preset
+	 * @return scene properties preset
 	 */
-	inline const vector<PrototypeProperty*>& getMapPropertiesPreset() const {
-		return mapPropertiesPreset;
+	inline const vector<PrototypeProperty*>& getScenePropertiesPreset() const {
+		return scenePropertiesPreset;
 	}
 
 	/**
-	 * @return object property presets
+	 * @return entity property presets
 	 */
-	inline const map<string, vector<PrototypeProperty*>>& getObjectPropertiesPresets() const {
-		return objectPropertiesPresets;
+	inline const map<string, vector<PrototypeProperty*>>& getEntityPropertiesPresets() const {
+		return entityPropertiesPresets;
 	}
 
 	/**

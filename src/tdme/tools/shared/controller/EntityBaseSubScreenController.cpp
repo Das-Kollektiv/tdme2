@@ -77,7 +77,7 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 		Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	setEntityPresetIds(ScenePropertyPresets::getInstance()->getObjectPropertiesPresets());
+	setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
 void EntityBaseSubScreenController::setEntityData(const string& name, const string& description)

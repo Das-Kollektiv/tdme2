@@ -13,7 +13,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 
 /**
- * Light
+ * Scene light
  * @author Andreas Drewke
  * @version $Id$
  */

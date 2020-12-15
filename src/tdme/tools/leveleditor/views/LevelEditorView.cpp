@@ -935,7 +935,7 @@ void LevelEditorView::initialize()
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
 	levelEditorScreenController->setSnapping(snappingEnabled, snappingX, snappingZ);
 	levelEditorScreenController->setMapProperties(level, "");
-	levelEditorScreenController->setObjectPresetIds(ScenePropertyPresets::getInstance()->getObjectPropertiesPresets());
+	levelEditorScreenController->setObjectPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(ScenePropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
 	auto light0 = engine->getLightAt(0);
@@ -1494,7 +1494,7 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 	if (levelEntity == nullptr) return;
 
 	levelEntity->clearProperties();
-	auto& objectPropertiesPresets = ScenePropertyPresets::getInstance()->getObjectPropertiesPresets();
+	auto& objectPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
 	const vector<PrototypeProperty*>* objectPropertyPresetVector = nullptr;
 	auto objectPropertyPresetVectorIt = objectPropertiesPresets.find(presetId);
 	if (objectPropertyPresetVectorIt != objectPropertiesPresets.end()) {

@@ -45,14 +45,14 @@ using tinyxml::TiXmlElement;
 
 ScenePropertyPresets* ScenePropertyPresets::instance = nullptr;
 
-ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string& fileName)  /* throws(Exception) */
+ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string& fileName)
 {
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(xmlContent.c_str());
 	if (xmlDocument.Error() == true) {
 		Console::println(
-			"ScenePropertyPresets::ctor():: Could not parse file '" +
+			"ScenePropertyPresets::ScenePropertyPresets():: Could not parse file '" +
 			pathName + "/" + fileName +
 			"'. Error='" +
 			xmlDocument.ErrorDesc() +
@@ -64,7 +64,7 @@ ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string&
 
 	for (auto xmlMap: getChildrenByTagName(xmlRoot, "map")) {
 		for (auto xmlProperty: getChildrenByTagName(xmlMap, "property")) {
-			mapPropertiesPreset.push_back(
+			scenePropertiesPreset.push_back(
 				new PrototypeProperty(
 					(xmlProperty->Attribute("name")),
 					(xmlProperty->Attribute("value"))
@@ -76,9 +76,9 @@ ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string&
 	for (auto xmlObject: getChildrenByTagName(xmlRoot, "object")) {
 		for (auto xmlType: getChildrenByTagName(xmlObject, "type")) {
 			auto typeId = (xmlType->Attribute("id"));
-			objectPropertiesPresets[typeId].push_back(new PrototypeProperty("preset", typeId));
+			entityPropertiesPresets[typeId].push_back(new PrototypeProperty("preset", typeId));
 			for (auto xmlProperty: getChildrenByTagName(xmlType, "property")) {
-				objectPropertiesPresets[typeId].push_back(
+				entityPropertiesPresets[typeId].push_back(
 					new PrototypeProperty(
 						(xmlProperty->Attribute("name")),
 						(xmlProperty->Attribute("value"))
@@ -113,10 +113,10 @@ ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string&
 }
 
 ScenePropertyPresets::~ScenePropertyPresets() {
-	for (auto mapPropertiesPresetEntity: mapPropertiesPreset) {
-		delete mapPropertiesPresetEntity;
+	for (auto scenePropertiesPresetEntity: scenePropertiesPreset) {
+		delete scenePropertiesPresetEntity;
 	}
-	for (auto it = objectPropertiesPresets.begin(); it != objectPropertiesPresets.end(); ++it) {
+	for (auto it = entityPropertiesPresets.begin(); it != entityPropertiesPresets.end(); ++it) {
 		for (auto propertyModelClass: it->second) {
 			delete propertyModelClass;
 		}
@@ -140,10 +140,10 @@ ScenePropertyPresets* ScenePropertyPresets::getInstance()
 	return instance;
 }
 
-void ScenePropertyPresets::setDefaultLevelProperties(Scene* level)
+void ScenePropertyPresets::setDefaultSceneProperties(Scene* scene)
 {
-	for (auto mapProperty: mapPropertiesPreset) {
-		level->addProperty(mapProperty->getName(), mapProperty->getValue());
+	for (auto sceneProperty: scenePropertiesPreset) {
+		scene->addProperty(sceneProperty->getName(), sceneProperty->getValue());
 	}
 }
 
