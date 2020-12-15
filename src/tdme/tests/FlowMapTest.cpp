@@ -128,15 +128,15 @@ void FlowMapTest::dispose()
 void FlowMapTest::initialize()
 {
 	engine->initialize();
-	SceneReader::read("resources/tests/levels/pathfinding", "test.tl", level);
-	SceneConnector::setLights(engine, level);
-	SceneConnector::addScene(engine, level, false, false, false, false);
-	SceneConnector::addScene(world, level);
+	SceneReader::read("resources/tests/levels/pathfinding", "test.tl", scene);
+	SceneConnector::setLights(engine, scene);
+	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
-	cam->setLookFrom(level.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
-	cam->setLookAt(level.getCenter());
+	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
+	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	emptyModel = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
@@ -206,9 +206,9 @@ void FlowMapTest::doPathFinding() {
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
-	auto center = level.getBoundingBox()->getCenter();
-	auto depth = Math::ceil(level.getBoundingBox()->getDimensions().getZ());
-	auto width = Math::ceil(level.getBoundingBox()->getDimensions().getX());
+	auto center = scene.getBoundingBox()->getCenter();
+	auto depth = Math::ceil(scene.getBoundingBox()->getDimensions().getZ());
+	auto width = Math::ceil(scene.getBoundingBox()->getDimensions().getX());
 	flowMap = pathFinding->createFlowMap(
 		{
 			endPlayerObject1->getTransformations().getTranslation(),

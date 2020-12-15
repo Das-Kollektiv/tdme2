@@ -32,7 +32,7 @@ private:
 	Prototype* skyPanoramaPrototype { nullptr };
 	Prototype* spherePrototype { nullptr };
 
-	Scene level;
+	Scene scene;
 
 	float skyDomeTranslation { 0.0f };
 

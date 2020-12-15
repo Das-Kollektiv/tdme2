@@ -39,7 +39,7 @@ class tdme::tests::FlowMapTest final
 private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
-	Scene level;
+	Scene scene;
 	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
 	Object3D* startPlayerObject { nullptr };

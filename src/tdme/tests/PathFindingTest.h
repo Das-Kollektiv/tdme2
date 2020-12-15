@@ -35,7 +35,7 @@ class tdme::tests::PathFindingTest final
 private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
-	Scene level;
+	Scene scene;
 	Prototype* playerModelPrototype { nullptr };
 	Object3D* playerObject { nullptr };
 	PathFinding* pathFinding { nullptr };
