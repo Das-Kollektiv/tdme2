@@ -263,13 +263,13 @@ public:
 
 	/**
 	 * Update GIZMO
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 */
 	void updateGizmo(Prototype* entity);
 
 	/**
 	 * Set GIZMO rotation
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 * @param transformations transformations
 	 */
 	void setGizmoRotation(Prototype* entity, const Transformations& transformations);

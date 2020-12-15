@@ -150,7 +150,7 @@ private:
 	FileDialogPath* audioPath { nullptr };
 
 	/**
-	 * @return level editor entity lod level or nullptr
+	 * @return prototype lod level or nullptr
 	 */
 	PrototypeLODLevel* getLODLevel(int level);
 

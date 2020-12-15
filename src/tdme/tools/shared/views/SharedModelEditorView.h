@@ -94,7 +94,7 @@ private:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param pivot pivot
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	virtual Prototype* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);

@@ -88,7 +88,7 @@ private:
 	 * @param description description
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
 	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
@@ -208,13 +208,13 @@ public:
 
 	/**
 	 * Update GIZMO
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 */
 	void updateGizmo(Prototype* entity);
 
 	/**
 	 * Set GIZMO rotation
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 * @param transformations transformations
 	 */
 	void setGizmoRotation(Prototype* entity, const Transformations& transformations);

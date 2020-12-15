@@ -37,7 +37,7 @@ public:
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return level editor entity
+	 * @return prototype
 	 */
 	inline static Prototype* read(const string& pathName, const string& fileName) {
 		return read(Prototype::ID_NONE, pathName, fileName);
@@ -50,7 +50,7 @@ public:
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return level editor entity
+	 * @return prototype
 	 */
 	static Prototype* read(int id, const string& pathName, const string& fileName);
 
@@ -61,7 +61,7 @@ public:
 	 * @param jEntityRoot JSON entity root
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return level editor entity
+	 * @return prototype
 	 */
 	static Prototype* read(int id, const string& pathName, Value& jEntityRoot);
 
@@ -78,12 +78,12 @@ private:
 	/**
 	 * Parse bounding volume
 	 * @param idx idx
-	 * @param prototype level editor entity
+	 * @param prototype prototype
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return level editor entity bounding volume
+	 * @return prototype bounding volume
 	 */
 	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv);
 

@@ -124,7 +124,7 @@ public:
 private:
 
 	/**
-	 * Update level editor entity
+	 * Update prototype
 	 */
 	void updatePrototype();
 

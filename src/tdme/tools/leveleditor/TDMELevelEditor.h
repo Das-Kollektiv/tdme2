@@ -78,7 +78,7 @@ public:
 	~TDMELevelEditor();
 
 	/**
-	 * @return level editor entity library screen controller
+	 * @return prototype library screen controller
 	 */
 	LevelEditorEntityLibraryScreenController* getLevelEditorEntityLibraryScreenController();
 
