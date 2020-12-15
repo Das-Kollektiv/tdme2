@@ -46,7 +46,7 @@ private:
 	float rotationY { 0.0f };
 	float rotationX { 0.0f };
 	Model* entityBoundingVolumeModel { nullptr };
-	ObjectDeleter<Prototype> levelEditorEntityDeleter;
+	ObjectDeleter<Prototype> prototypeDeleter;
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
 public:

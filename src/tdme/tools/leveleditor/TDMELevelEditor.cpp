@@ -77,7 +77,7 @@ TDMELevelEditor::~TDMELevelEditor() {
 	delete emptyView;
 	delete particleSystemView;
 	delete popUps;
-	delete levelEditorEntityLibraryScreenController;
+	delete prototypeLibraryScreenController;
 }
 
 TDMELevelEditor* TDMELevelEditor::getInstance() {
@@ -85,7 +85,7 @@ TDMELevelEditor* TDMELevelEditor::getInstance() {
 }
 
 LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityLibraryScreenController() {
-	return levelEditorEntityLibraryScreenController;
+	return prototypeLibraryScreenController;
 }
 
 SceneLibrary* TDMELevelEditor::getEntityLibrary() {
@@ -142,11 +142,11 @@ void TDMELevelEditor::initialize() {
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
-	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
-	levelEditorEntityLibraryScreenController->initialize();
+	prototypeLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
+	prototypeLibraryScreenController->initialize();
 	engine->getGUI()->addScreen(
-		levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
-		levelEditorEntityLibraryScreenController->getScreenNode()
+		prototypeLibraryScreenController->getScreenNode()->getId(),
+		prototypeLibraryScreenController->getScreenNode()
 	);
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);

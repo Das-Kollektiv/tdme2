@@ -43,7 +43,7 @@ private:
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool quitRequested;
-	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController { nullptr };
+	LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController { nullptr };
 	PopUps* popUps { nullptr };
 	LevelEditorView* levelEditorView { nullptr };
 	ModelEditorView* modelEditorView { nullptr };

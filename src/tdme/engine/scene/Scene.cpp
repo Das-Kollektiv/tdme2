@@ -95,10 +95,10 @@ void Scene::computeBoundingBox()
 	Vector3 bbDimension;
 	Vector3 bbMin;
 	Vector3 bbMax;
-	for (auto levelEditorObject: entities) {
-		if (levelEditorObject->getPrototype()->getType() != Prototype_Type::MODEL) continue;
+	for (auto sceneEntity: entities) {
+		if (sceneEntity->getPrototype()->getType() != Prototype_Type::MODEL) continue;
 		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(levelEditorObject->getPrototype()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
+		cbv.fromBoundingVolumeWithTransformations(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransformations());
 		bbDimension.set(
 			cbv.getDimensions().getX(),
 			cbv.getDimensions().getY(),
@@ -144,11 +144,11 @@ void Scene::computeCenter()
 {
 	center.set(0.0f, 0.0f, 0.0f);
 	auto entityCount = 0;
-	for (auto levelEditorObject: entities) {
-		if (levelEditorObject->getPrototype()->getType() != Prototype_Type::MODEL)
+	for (auto sceneEntity: entities) {
+		if (sceneEntity->getPrototype()->getType() != Prototype_Type::MODEL)
 			continue;
 
-		center.add(levelEditorObject->getTransformations().getTranslation());
+		center.add(sceneEntity->getTransformations().getTranslation());
 		entityCount++;
 	}
 	if (entityCount != 0)

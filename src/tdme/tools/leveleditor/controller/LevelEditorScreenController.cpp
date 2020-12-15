@@ -532,11 +532,11 @@ void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
 	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
 	btnObjectPropertySave->getController()->setDisabled(true);
 	btnObjectPropertyRemove->getController()->setDisabled(true);
-	auto levelEditorObject = view->getSelectedObject();
-	if (levelEditorObject == nullptr)
+	auto sceneEntity = view->getSelectedObject();
+	if (sceneEntity == nullptr)
 		return;
 
-	auto modelProperty = levelEditorObject->getProperty(objectPropertiesListBox->getController()->getValue().getString());
+	auto modelProperty = sceneEntity->getProperty(objectPropertiesListBox->getController()->getValue().getString());
 	if (modelProperty != nullptr) {
 		objectPropertyName->getController()->setValue(MutableString(modelProperty->getName()));
 		objectPropertyValue->getController()->setValue(MutableString(modelProperty->getValue()));

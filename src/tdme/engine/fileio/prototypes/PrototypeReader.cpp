@@ -84,14 +84,14 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	Document jEntityRoot;
 	jEntityRoot.Parse(jsonContent.c_str());
 
-	auto levelEditorEntity = read(id, pathName, jEntityRoot);
-	levelEditorEntity->setFileName(pathName + "/" + fileName);
-	return levelEditorEntity;
+	auto prototype = read(id, pathName, jEntityRoot);
+	prototype->setFileName(pathName + "/" + fileName);
+	return prototype;
 }
 
 Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityRoot)
 {
-	Prototype* levelEditorEntity;
+	Prototype* prototype;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
 	auto pivot = Vector3(
 		static_cast< float >(jEntityRoot["px"].GetFloat()),
@@ -119,7 +119,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	}
 
-	levelEditorEntity = new Prototype(
+	prototype = new Prototype(
 		id,
 		prototypeType,
 		name,
@@ -133,7 +133,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	auto jProperties = jEntityRoot["properties"].GetArray();
 	for (auto i = 0; i < jProperties.Size(); i++) {
 		auto& jProperty = jProperties[i];
-		levelEditorEntity->addProperty(
+		prototype->addProperty(
 			(jProperty["name"].GetString()),
 			(jProperty["value"].GetString())
 		);
@@ -142,22 +142,22 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	if (jEntityRoot.FindMember("bv") != jEntityRoot.MemberEnd()) {
 		auto boundingVolume = parseBoundingVolume(
 			0,
-			levelEditorEntity,
+			prototype,
 			pathName,
 			jEntityRoot["bv"]
 		);
-		if (boundingVolume->getBoundingVolume() != nullptr) levelEditorEntity->addBoundingVolume(0, boundingVolume);
+		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(0, boundingVolume);
 	} else
 	if (jEntityRoot.FindMember("bvs") != jEntityRoot.MemberEnd()) {
 		auto jBoundingVolumes = jEntityRoot["bvs"].GetArray();
 		auto bvIdx = 0;
 		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
-			auto boundingVolume = parseBoundingVolume(bvIdx, levelEditorEntity, pathName, jBoundingVolumes[i]);
-			if (boundingVolume->getBoundingVolume() != nullptr) levelEditorEntity->addBoundingVolume(bvIdx++, boundingVolume);
+			auto boundingVolume = parseBoundingVolume(bvIdx, prototype, pathName, jBoundingVolumes[i]);
+			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(bvIdx++, boundingVolume);
 		}
 	}
-	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && levelEditorEntity->getPhysics() != nullptr) {
-		auto physics = levelEditorEntity->getPhysics();
+	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
+		auto physics = prototype->getPhysics();
 		auto& jPhysics = jEntityRoot["p"];
 		physics->setType(PrototypePhysics_BodyType::valueOf(jPhysics["type"].GetString()));
 		physics->setMass(static_cast<float>(jPhysics["mass"].GetFloat()));
@@ -174,7 +174,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	if (jEntityRoot.FindMember("sd") != jEntityRoot.MemberEnd()) {
 		for (auto& jSound: jEntityRoot["sd"].GetArray()) {
 			auto id = jSound["i"].GetString();
-			auto sound = levelEditorEntity->addSound(id);
+			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;
 			sound->setAnimation(jSound["a"].GetString());
 			sound->setFileName(jSound["file"].GetString());
@@ -186,42 +186,42 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		}
 	}
 	if (prototypeType == Prototype_Type::MODEL) {
-		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
-		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
-		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
+		prototype->setTerrainMesh(jEntityRoot["tm"].GetBool());
+		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
+		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
 	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
 		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
-			levelEditorEntity->addParticleSystem();
-			parseParticleSystem(levelEditorEntity->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
+			prototype->addParticleSystem();
+			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
 		} else
 		if (jEntityRoot.FindMember("pss") != jEntityRoot.MemberEnd()) {
 			auto jParticleSystems = jEntityRoot["pss"].GetArray();
 			for (auto i = 0; i < jParticleSystems.Size(); i++) {
-				levelEditorEntity->addParticleSystem();
-				parseParticleSystem(levelEditorEntity->getParticleSystemAt(levelEditorEntity->getParticleSystemsCount() - 1), pathName, jParticleSystems[i]);
+				prototype->addParticleSystem();
+				parseParticleSystem(prototype->getParticleSystemAt(prototype->getParticleSystemsCount() - 1), pathName, jParticleSystems[i]);
 			}
 		}
 	}
 	if (jEntityRoot.FindMember("ds") != jEntityRoot.MemberEnd()) {
-		levelEditorEntity->setContributesShadows(jEntityRoot["ds"].GetBool());
-		levelEditorEntity->setReceivesShadows(jEntityRoot["ds"].GetBool());
+		prototype->setContributesShadows(jEntityRoot["ds"].GetBool());
+		prototype->setReceivesShadows(jEntityRoot["ds"].GetBool());
 	} else
 	if (jEntityRoot.FindMember("cs") != jEntityRoot.MemberEnd() && jEntityRoot.FindMember("rs") != jEntityRoot.MemberEnd()) {
-		levelEditorEntity->setContributesShadows(jEntityRoot["cs"].GetBool());
-		levelEditorEntity->setReceivesShadows(jEntityRoot["rs"].GetBool());
+		prototype->setContributesShadows(jEntityRoot["cs"].GetBool());
+		prototype->setReceivesShadows(jEntityRoot["rs"].GetBool());
 	}
-	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
-	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
-	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
-	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
-	if (levelEditorEntity->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
-		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
-		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
+	prototype->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
+	prototype->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
+	prototype->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
+	prototype->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
+	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
+		prototype->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
+		prototype->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
 	}
 	//
-	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
-	return levelEditorEntity;
+	if (prototype->getModel() != nullptr) ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
+	return prototype;
 }
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
@@ -238,9 +238,9 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv)
+PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)
 {
-	auto entityBoundingVolume = new PrototypeBoundingVolume(idx, levelEditorEntity);
+	auto entityBoundingVolume = new PrototypeBoundingVolume(idx, prototype);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
 	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {

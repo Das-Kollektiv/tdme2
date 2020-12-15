@@ -69,15 +69,15 @@ int SceneLibrary::allocatePrototypeId()
 
 Prototype* SceneLibrary::addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
-	Prototype* levelEditorEntity = nullptr;
+	Prototype* prototype = nullptr;
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		levelEditorEntity = PrototypeReader::read(id == ID_ALLOCATE?allocatePrototypeId():id, pathName, fileName);
+		prototype = PrototypeReader::read(id == ID_ALLOCATE?allocatePrototypeId():id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(
 			pathName,
 			fileName
 		);
-		levelEditorEntity = new Prototype(
+		prototype = new Prototype(
 			id == ID_ALLOCATE?allocatePrototypeId():id,
 			Prototype_Type::MODEL,
 			name,
@@ -89,17 +89,17 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	}
-	addPrototype(levelEditorEntity);
-	return levelEditorEntity;
+	addPrototype(prototype);
+	return prototype;
 }
 
 Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& description, float width, float height, float depth)
 {
 	auto cacheId = "leveleditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
-	Prototype* levelEditorEntity = nullptr;
+	Prototype* prototype = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto modelId = cacheId + "_bv";
-	levelEditorEntity = new Prototype(
+	prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::TRIGGER,
 		name,
@@ -110,19 +110,19 @@ Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& de
 		nullptr,
 		Vector3()
 	);
-	levelEditorEntity->addBoundingVolume(0, new PrototypeBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
-	addPrototype(levelEditorEntity);
-	return levelEditorEntity;
+	prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+	prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	addPrototype(prototype);
+	return prototype;
 }
 
 Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth)
 {
 	auto cacheId = "leveleditor.environmentmapping." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
-	Prototype* levelEditorEntity = nullptr;
+	Prototype* prototype = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto modelId = cacheId + "_bv";
-	levelEditorEntity = new Prototype(
+	prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::ENVIRONMENTMAPPING,
 		name,
@@ -133,18 +133,18 @@ Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const
 		nullptr,
 		Vector3()
 	);
-	levelEditorEntity->addBoundingVolume(0, new PrototypeBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
-	addPrototype(levelEditorEntity);
-	return levelEditorEntity;
+	prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+	prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	addPrototype(prototype);
+	return prototype;
 }
 
 Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& description)
 {
 	auto cacheId = "leveleditor.empty";
-	Prototype* levelEditorEntity = nullptr;
+	Prototype* prototype = nullptr;
 	auto model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
-	levelEditorEntity = new Prototype(
+	prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::EMPTY,
 		name,
@@ -155,13 +155,13 @@ Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& desc
 		model,
 		Vector3()
 	);
-	addPrototype(levelEditorEntity);
-	return levelEditorEntity;
+	addPrototype(prototype);
+	return prototype;
 }
 
 Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const string& description)
 {
-	auto levelEditorEntity = new Prototype(
+	auto prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::PARTICLESYSTEM,
 		name,
@@ -172,8 +172,8 @@ Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const str
 		nullptr,
 		Vector3()
 	);
-	addPrototype(levelEditorEntity);
-	return levelEditorEntity;
+	addPrototype(prototype);
+	return prototype;
 }
 
 void SceneLibrary::addPrototype(Prototype* prototype)

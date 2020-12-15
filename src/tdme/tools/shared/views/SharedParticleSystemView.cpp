@@ -521,9 +521,9 @@ void SharedParticleSystemView::loadParticleSystem()
 Prototype* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = PrototypeReader::read(pathName, fileName);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
+		auto prototype = PrototypeReader::read(pathName, fileName);
+		prototype->setDefaultBoundingVolumes();
+		return prototype;
 	}
 	return nullptr;
 }

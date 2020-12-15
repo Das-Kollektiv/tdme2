@@ -135,7 +135,7 @@ void Prototype::setModel(Model* model) {
 	this->model = model;
 }
 
-bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* levelEditorEntityBoundingVolume)
+bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBoundingVolume)
 {
 	if (idx < 0)
 		return false;
@@ -144,7 +144,7 @@ bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* levelEditorE
 		return false;
 
 	if (idx == boundingVolumes.size()) {
-		boundingVolumes.push_back(levelEditorEntityBoundingVolume);
+		boundingVolumes.push_back(prototypeBoundingVolume);
 	}
 	return false;
 }

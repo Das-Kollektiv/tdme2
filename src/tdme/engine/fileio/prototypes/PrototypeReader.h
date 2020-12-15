@@ -78,14 +78,14 @@ private:
 	/**
 	 * Parse bounding volume
 	 * @param idx idx
-	 * @param levelEditorEntity level editor entity
+	 * @param prototype level editor entity
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */
-	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* levelEditorEntity, const string& pathName, Value& jBv);
+	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv);
 
 	/**
 	 * Parse LOD level

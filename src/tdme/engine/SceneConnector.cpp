@@ -511,15 +511,15 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 					progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 				}
 				progressStepCurrent++;
-				auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
-				object3DRenderNode->setShader(levelEditorEntity->getShader());
-				object3DRenderNode->setDistanceShader(levelEditorEntity->getDistanceShader());
-				object3DRenderNode->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+				auto prototype = renderGroupLevelEditorEntities[itModel.first];
+				object3DRenderNode->setShader(prototype->getShader());
+				object3DRenderNode->setDistanceShader(prototype->getDistanceShader());
+				object3DRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 				auto objectIdx = -1;
 				for (auto transformation: itModel.second) {
 					objectIdx++;
 					if (objectIdx % renderGroupsReduceBy != 0) continue;
-					object3DRenderNode->addObject(levelEditorEntity->getModel(), *transformation);
+					object3DRenderNode->addObject(prototype->getModel(), *transformation);
 				}
 			}
 			object3DRenderNode->updateRenderGroup();
@@ -649,17 +649,17 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 
 	//
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto levelEditorObject = scene.getEntityAt(i);
+		auto sceneEntity = scene.getEntityAt(i);
 
 		//
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
-		auto rigidBody = createBody(world, levelEditorObject);
+		auto rigidBody = createBody(world, sceneEntity);
 		if (rigidBody == nullptr) continue;
 		if (translation.equals(Vector3()) == false) {
-			auto transformations = levelEditorObject->getTransformations();
+			auto transformations = sceneEntity->getTransformations();
 			transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 			transformations.update();
 			rigidBody->fromTransformations(transformations);

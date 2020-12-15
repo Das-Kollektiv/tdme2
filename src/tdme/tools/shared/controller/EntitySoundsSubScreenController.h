@@ -116,7 +116,7 @@ public:
 	/**
 	 * On sound apply
 	 * @param soundIdx sound index
-	 * @param levelEditorEntity entity
+	 * @param prototype entity
 	 */
 	void onSoundApply(int soundIdx, Prototype* entity);
 

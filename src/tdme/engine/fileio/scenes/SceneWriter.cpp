@@ -130,18 +130,18 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 	Value jObjects;
 	jObjects.SetArray();
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto levelEditorObject = scene.getEntityAt(i);
+		auto sceneEntity = scene.getEntityAt(i);
 		Value jObject;
 		jObject.SetObject();
-		auto& transformations = levelEditorObject->getTransformations();
+		auto& transformations = sceneEntity->getTransformations();
 		auto& translation = transformations.getTranslation();
 		auto& scale = transformations.getScale();
 		auto& rotationAroundXAxis = transformations.getRotation(scene.getRotationOrder()->getAxisXIndex());
 		auto& rotationAroundYAxis = transformations.getRotation(scene.getRotationOrder()->getAxisYIndex());
 		auto& rotationAroundZAxis = transformations.getRotation(scene.getRotationOrder()->getAxisZIndex());
-		jObject.AddMember("id", Value(levelEditorObject->getId(), jAllocator), jAllocator);
-		jObject.AddMember("descr", Value(levelEditorObject->getDescription(), jAllocator), jAllocator);;
-		jObject.AddMember("mid", Value(levelEditorObject->getPrototype()->getId()), jAllocator);
+		jObject.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
+		jObject.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
+		jObject.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);
 		jObject.AddMember("tx", Value(translation.getX()), jAllocator);
 		jObject.AddMember("ty", Value(translation.getY()), jAllocator);
 		jObject.AddMember("tz", Value(translation.getZ()), jAllocator);
@@ -151,11 +151,11 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		jObject.AddMember("rx", Value(rotationAroundXAxis.getAngle()), jAllocator);
 		jObject.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
 		jObject.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
-		jObject.AddMember("r", Value(levelEditorObject->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
+		jObject.AddMember("r", Value(sceneEntity->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
 		Value jObjectProperties;
 		jObjectProperties.SetArray();
-		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
-			PrototypeProperty* objectProperty = levelEditorObject->getPropertyByIndex(i);
+		for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
+			PrototypeProperty* objectProperty = sceneEntity->getPropertyByIndex(i);
 			Value jObjectProperty;
 			jObjectProperty.SetObject();
 			jObjectProperty.AddMember("name", Value(objectProperty->getName(), jAllocator), jAllocator);

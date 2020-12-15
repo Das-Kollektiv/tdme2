@@ -271,14 +271,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	//
 	auto level = TDMELevelEditor::getInstance()->getLevel();
 	auto levelEntityLibrary = level->getLibrary();
-	auto levelEditorObject = level->getEntity(objectsByEntityId[0]);
+	auto sceneEntity = level->getEntity(objectsByEntityId[0]);
 
 	// partition object
 	map<string, Model*> modelsByPartition;
 	map<string, Vector3> modelsPosition;
 	ModelTools::partition(
-		levelEditorObject->getPrototype()->getModel(),
-		levelEditorObject->getTransformations(),
+		sceneEntity->getPrototype()->getModel(),
+		sceneEntity->getTransformations(),
 		modelsByPartition,
 		modelsPosition
 	);
@@ -298,7 +298,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				pathName,
 				fileNamePartition
 			);
-			auto levelEditorEntityPartition = levelEntityLibrary->addModel(
+			auto prototypePartition = levelEntityLibrary->addModel(
 				SceneLibrary::ID_ALLOCATE,
 				model->getName(),
 				model->getName(),
@@ -306,9 +306,9 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				fileNamePartition,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
-			levelEditorEntityPartition->setShader(entity->getShader());
-			levelEditorEntityPartition->setDistanceShader(entity->getDistanceShader());
-			levelEditorEntityPartition->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+			prototypePartition->setShader(entity->getShader());
+			prototypePartition->setDistanceShader(entity->getDistanceShader());
+			prototypePartition->setDistanceShaderDistance(entity->getDistanceShaderDistance());
 
 			// avoid name collision
 			auto objectName = model->getName();
@@ -317,16 +317,16 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			}
 
 			// add to level
-			auto levelEditorObjectPartition = new SceneEntity(
+			auto sceneEntityPartition = new SceneEntity(
 				objectName,
 				"",
-				levelEditorObject->getTransformations(),
-				levelEditorEntityPartition
+				sceneEntity->getTransformations(),
+				prototypePartition
 			);
-			levelEditorEntityPartition->setTerrainMesh(levelEditorObject->getPrototype()->isTerrainMesh());
+			prototypePartition->setTerrainMesh(sceneEntity->getPrototype()->isTerrainMesh());
 
 			// add to objects
-			level->addEntity(levelEditorObjectPartition);
+			level->addEntity(sceneEntityPartition);
 		}
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
@@ -377,38 +377,38 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 					try {
 						auto entity = entityLibrary->addModel(
 							SceneLibrary::ID_ALLOCATE,
-							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
+							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							"",
-							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
-							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
+							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
+							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							Vector3(0.0f, 0.0f, 0.0f)
 						);
 						entity->setDefaultBoundingVolumes();
-						levelEditorEntityLibraryScreenController->setEntityLibrary();
-						levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(MutableString(entity->getId()));
-						levelEditorEntityLibraryScreenController->onEditEntity();
+						prototypeLibraryScreenController->setEntityLibrary();
+						prototypeLibraryScreenController->entityLibraryListBox->getController()->setValue(MutableString(entity->getId()));
+						prototypeLibraryScreenController->onEditEntity();
 					} catch (Exception& exception) {
-						levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
+						prototypeLibraryScreenController->popUps->getInfoDialogScreenController()->show(
 							"Error",
 							"An error occurred: " + string(exception.what())
 						);
 					}
-					levelEditorEntityLibraryScreenController->modelPath = levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();
-					levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->close();
+					prototypeLibraryScreenController->modelPath = prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();
+					prototypeLibraryScreenController->popUps->getFileDialogScreenController()->close();
 				}
 
 				/**
 				 * Public constructor
-				 * @param levelEditorEntityLibraryScreenController level editor entity library screen controller
+				 * @param prototypeLibraryScreenController level editor entity library screen controller
 				 * @param entityLibrary entity library
 				 */
-				OnCreateModel(LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController, SceneLibrary* entityLibrary)
-					: levelEditorEntityLibraryScreenController(levelEditorEntityLibraryScreenController)
+				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* entityLibrary)
+					: prototypeLibraryScreenController(prototypeLibraryScreenController)
 					, entityLibrary(entityLibrary) {
 				}
 
 			private:
-				LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController;
+				LevelEditorEntityLibraryScreenController *prototypeLibraryScreenController;
 				SceneLibrary* entityLibrary;
 			};
 

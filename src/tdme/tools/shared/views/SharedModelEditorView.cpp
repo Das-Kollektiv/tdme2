@@ -525,18 +525,18 @@ void SharedModelEditorView::loadModel()
 Prototype* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		auto levelEditorEntity = PrototypeReader::read(
+		auto prototype = PrototypeReader::read(
 			pathName,
 			fileName
 		);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
+		prototype->setDefaultBoundingVolumes();
+		return prototype;
 	} else {
 		auto model = ModelReader::read(
 			pathName,
 			fileName
 		);
-		auto levelEditorEntity = new Prototype(
+		auto prototype = new Prototype(
 			Prototype::ID_NONE,
 			Prototype_Type::MODEL,
 			name,
@@ -547,8 +547,8 @@ Prototype* SharedModelEditorView::loadModel(const string& name, const string& de
 			model,
 			pivot
 			);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
+		prototype->setDefaultBoundingVolumes();
+		return prototype;
 
 	}
 	return nullptr;

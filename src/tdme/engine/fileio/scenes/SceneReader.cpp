@@ -151,20 +151,20 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
 		auto& jModel = jRoot["models"].GetArray()[i];
-		Prototype* levelEditorEntity = PrototypeReader::read(
+		Prototype* prototype = PrototypeReader::read(
 			jModel["id"].GetInt(),
 			pathName,
 			jModel["entity"]
 		);
-		if (levelEditorEntity == nullptr) {
+		if (prototype == nullptr) {
 			Console::println("SceneReader::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
-		scene.getLibrary()->addPrototype(levelEditorEntity);
+		scene.getLibrary()->addPrototype(prototype);
 		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
 			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
 				auto& jModelProperty = jModel["properties"].GetArray()[j];
-				levelEditorEntity->addProperty(
+				prototype->addProperty(
 					(jModelProperty["name"].GetString()),
 					(jModelProperty["value"].GetString())
 				);
@@ -213,7 +213,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		transformations.addRotation(scene.getRotationOrder()->getAxis1(), rotation.getArray()[scene.getRotationOrder()->getAxis1VectorIndex()]);
 		transformations.addRotation(scene.getRotationOrder()->getAxis2(), rotation.getArray()[scene.getRotationOrder()->getAxis2VectorIndex()]);
 		transformations.update();
-		auto levelEditorObject = new SceneEntity(
+		auto sceneEntity = new SceneEntity(
 			objectIdPrefix != "" ?
 				objectIdPrefix + jObject["id"].GetString() :
 				(jObject["id"].GetString()),
@@ -224,14 +224,14 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		if (jObject.FindMember("properties") != jObject.MemberEnd()) {
 			for (auto j = 0; j < jObject["properties"].GetArray().Size(); j++) {
 				auto& jObjectProperty = jObject["properties"].GetArray()[j];
-				levelEditorObject->addProperty(
+				sceneEntity->addProperty(
 					jObjectProperty["name"].GetString(),
 					jObjectProperty["value"].GetString()
 				);
 			}
 		}
-		levelEditorObject->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
-		scene.addEntity(levelEditorObject);
+		sceneEntity->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
+		scene.addEntity(sceneEntity);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
@@ -328,12 +328,12 @@ void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& par
 		}
 	} else {
 		// add to node meshes, even if empty as its a empty :D
-		PrototypeMeshNode levelEditorEntityMeshNode;
-		levelEditorEntityMeshNode.id = nodeId;
-		levelEditorEntityMeshNode.name = modelName;
-		levelEditorEntityMeshNode.node = node;
-		levelEditorEntityMeshNode.transformationsMatrix.set(transformationsMatrix);
-		meshNodes.push_back(levelEditorEntityMeshNode);
+		PrototypeMeshNode prototypeMeshNode;
+		prototypeMeshNode.id = nodeId;
+		prototypeMeshNode.name = modelName;
+		prototypeMeshNode.node = node;
+		prototypeMeshNode.transformationsMatrix.set(transformationsMatrix);
+		meshNodes.push_back(prototypeMeshNode);
 	}
 }
 
@@ -442,21 +442,21 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				delete model;
 				model = nullptr;
 			}
-			Prototype* levelEditorEntity = nullptr;
+			Prototype* prototype = nullptr;
 			if (entityType == Prototype_Type::MODEL && model != nullptr) {
 				for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
-					auto levelEditorEntityCompare = scene.getLibrary()->getPrototypeAt(i);
-					if (levelEditorEntityCompare->getType() != Prototype_Type::MODEL)
+					auto prototypeCompare = scene.getLibrary()->getPrototypeAt(i);
+					if (prototypeCompare->getType() != Prototype_Type::MODEL)
 						continue;
 
-					if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
-						levelEditorEntity = levelEditorEntityCompare;
+					if (ModelUtilities::equals(model, prototypeCompare->getModel()) == true) {
+						prototype = prototypeCompare;
 						delete model;
 						model = nullptr;
 						break;
 					}
 				}
-				if (levelEditorEntity == nullptr && model != nullptr) {
+				if (prototype == nullptr && model != nullptr) {
 					auto modelFileName = meshNode.name + ".tm";
 					TMWriter::write(
 						model,
@@ -464,7 +464,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 						modelFileName
 					  );
 					delete model;
-					levelEditorEntity = entityLibrary->addModel(
+					prototype = entityLibrary->addModel(
 						nodeIdx++,
 						meshNode.name,
 						meshNode.name,
@@ -478,25 +478,25 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				if (emptyEntity == nullptr) {
 					emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}
-				levelEditorEntity = emptyEntity;
+				prototype = emptyEntity;
 			} else {
 				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
 				delete model;
 				model = nullptr;
 				continue;
 			}
-			Transformations levelEditorObjectTransformations;
-			levelEditorObjectTransformations.setTranslation(translation);
-			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
-			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
-			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
-			levelEditorObjectTransformations.setScale(scale);
-			levelEditorObjectTransformations.update();
+			Transformations sceneEntityTransformations;
+			sceneEntityTransformations.setTranslation(translation);
+			sceneEntityTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
+			sceneEntityTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
+			sceneEntityTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
+			sceneEntityTransformations.setScale(scale);
+			sceneEntityTransformations.update();
 			auto object = new SceneEntity(
 				meshNode.id,
 				meshNode.id,
-				levelEditorObjectTransformations,
-				levelEditorEntity
+				sceneEntityTransformations,
+				prototype
 			);
 			scene.addEntity(object);
 		}
