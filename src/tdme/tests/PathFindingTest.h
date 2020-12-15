@@ -36,7 +36,7 @@ private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
 	Scene level;
-	Prototype* playerModelEntity { nullptr };
+	Prototype* playerModelPrototype { nullptr };
 	Object3D* playerObject { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;

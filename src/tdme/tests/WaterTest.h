@@ -27,10 +27,10 @@ class tdme::tests::WaterTest final
 private:
 	Engine* engine { nullptr };
 
-	Prototype* skySphereEntity { nullptr };
-	Prototype* skyDomeEntity { nullptr };
-	Prototype* skyPanoramaEntity { nullptr };
-	Prototype* sphereEntity { nullptr };
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
+	Prototype* spherePrototype { nullptr };
 
 	Scene level;
 

@@ -40,7 +40,7 @@ private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
 	Scene level;
-	Prototype* playerModelEntity { nullptr };
+	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
 	Object3D* startPlayerObject { nullptr };
 	Vector3 startPlayerCellDirection;

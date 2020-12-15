@@ -75,14 +75,14 @@ PathFindingTest::PathFindingTest()
 	playerXDirection = 0.0f;
 	playerZDirection = 0.0f;
 	playerObject = nullptr;
-	playerModelEntity = nullptr;
+	playerModelPrototype = nullptr;
 }
 
 PathFindingTest::~PathFindingTest()
 {
 	delete world;
 	delete pathFinding;
-	delete playerModelEntity;
+	delete playerModelPrototype;
 }
 
 void PathFindingTest::main(int argc, char** argv)
@@ -180,17 +180,17 @@ void PathFindingTest::initialize()
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(level.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	playerModelEntity = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
-	playerModelEntity->getModel()->addAnimationSetup("walk", 0, 23, true);
-	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);
-	playerModelEntity->getModel()->addAnimationSetup("death", 109, 169, false);
-	playerObject = new Object3D("player", playerModelEntity->getModel());
+	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
+	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
+	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
+	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
+	playerObject = new Object3D("player", playerModelPrototype->getModel());
 	playerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	playerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	playerObject->update();
 	playerObject->setAnimation("walk");
-	playerObject->setContributesShadows(playerModelEntity->isContributesShadows());
-	playerObject->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	playerObject->setContributesShadows(playerModelPrototype->isContributesShadows());
+	playerObject->setReceivesShadows(playerModelPrototype->isReceivesShadows());
 	engine->addEntity(playerObject);
 	pathIdx = 0;
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, -4.5f));

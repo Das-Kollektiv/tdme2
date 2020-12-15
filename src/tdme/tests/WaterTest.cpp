@@ -148,15 +148,15 @@ void WaterTest::initialize()
 	SceneConnector::addScene(engine, level, false, false, false, false);
 
 	// load sky
-	skySphereEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
-	skyDomeEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
-	skyPanoramaEntity = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
-	sphereEntity = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
+	skySpherePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+	skyDomePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+	skyPanoramaPrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+	spherePrototype = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
 
 	// add sky
 	{
 		// sky sphere
-		auto skySphere = new Object3D("sky_sphere", skySphereEntity->getModel());
+		auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
 		skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skySphere->setShader("sky");
 		skySphere->setFrustumCulling(false);
@@ -169,7 +169,7 @@ void WaterTest::initialize()
 		engine->addEntity(skySphere);
 
 		// sky dome
-		auto skyDome = new Object3D("sky_dome", skyDomeEntity->getModel());
+		auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
 		skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyDome->setShader("sky");
 		skyDome->setFrustumCulling(false);
@@ -184,7 +184,7 @@ void WaterTest::initialize()
 		engine->addEntity(skyDome);
 
 		// sky panorama
-		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaEntity->getModel());
+		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
 		skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyPanorama->setShader("sky");
 		skyPanorama->setFrustumCulling(false);
