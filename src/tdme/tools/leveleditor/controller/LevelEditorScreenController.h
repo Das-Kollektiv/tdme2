@@ -260,29 +260,29 @@ public:
 	/**
 	 * Event callback for map properties selection
 	 */
-	void onMapPropertiesSelectionChanged();
+	void onScenePropertiesSelectionChanged();
 
 	/**
 	 * Set up map properties
 	 * @param scene map properties
 	 * @param selectedName selected name
 	 */
-	void setMapProperties(Scene& scene, const string& selectedName);
+	void setSceneProperties(Scene& scene, const string& selectedName);
 
 	/**
 	 * On map property save
 	 */
-	void onMapPropertySave();
+	void onScenePropertySave();
 
 	/**
 	 * On model property add
 	 */
-	void onMapPropertyAdd();
+	void onScenePropertyAdd();
 
 	/**
 	 * On model property remove
 	 */
-	void onMapPropertyRemove();
+	void onScenePropertyRemove();
 
 	/**
 	 * Set up object property preset ids

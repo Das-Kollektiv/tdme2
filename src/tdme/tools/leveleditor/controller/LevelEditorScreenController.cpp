@@ -408,7 +408,7 @@ void LevelEditorScreenController::unsetObject()
 	objectRotationZ->getController()->setValue(TEXT_EMPTY);
 }
 
-void LevelEditorScreenController::onMapPropertiesSelectionChanged()
+void LevelEditorScreenController::onScenePropertiesSelectionChanged()
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyName->getController()->setValue(TEXT_EMPTY);
@@ -427,7 +427,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(Scene& scene, const string& selectedName)
+void LevelEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -463,10 +463,10 @@ void LevelEditorScreenController::setMapProperties(Scene& scene, const string& s
 		Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	onMapPropertiesSelectionChanged();
+	onScenePropertiesSelectionChanged();
 }
 
-void LevelEditorScreenController::onMapPropertySave()
+void LevelEditorScreenController::onScenePropertySave()
 {
 	if (view->mapPropertySave(
 		mapPropertiesListBox->getController()->getValue().getString(),
@@ -476,14 +476,14 @@ void LevelEditorScreenController::onMapPropertySave()
 	}
 }
 
-void LevelEditorScreenController::onMapPropertyAdd()
+void LevelEditorScreenController::onScenePropertyAdd()
 {
 	if (view->mapPropertyAdd() == false) {
 		showErrorPopUp("Warning", "Adding new map property failed");
 	}
 }
 
-void LevelEditorScreenController::onMapPropertyRemove()
+void LevelEditorScreenController::onScenePropertyRemove()
 {
 	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing map property failed");
@@ -1117,7 +1117,7 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId().compare("objects_listbox") == 0) {
 	} else
 	if (node->getId().compare("map_properties_listbox") == 0) {
-		onMapPropertiesSelectionChanged();
+		onScenePropertiesSelectionChanged();
 	} else
 	if (node->getId().compare("object_properties_listbox") == 0) {
 		onObjectPropertiesSelectionChanged();
@@ -1148,13 +1148,13 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 			onMapSave();
 		} else
 		if (node->getId().compare("button_map_properties_add") == 0) {
-			onMapPropertyAdd();
+			onScenePropertyAdd();
 		} else
 		if (node->getId().compare("button_map_properties_remove") == 0) {
-			onMapPropertyRemove();
+			onScenePropertyRemove();
 		} else
 		if (node->getId().compare("button_map_properties_save") == 0) {
-			onMapPropertySave();
+			onScenePropertySave();
 		} else
 		if (node->getId().compare("button_objectdata_apply") == 0) {
 			onObjectDataApply();

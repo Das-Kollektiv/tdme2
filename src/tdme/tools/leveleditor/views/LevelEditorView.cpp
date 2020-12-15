@@ -934,7 +934,7 @@ void LevelEditorView::initialize()
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
 	levelEditorScreenController->setSnapping(snappingEnabled, snappingX, snappingZ);
-	levelEditorScreenController->setMapProperties(scene, "");
+	levelEditorScreenController->setSceneProperties(scene, "");
 	levelEditorScreenController->setObjectPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(ScenePropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
@@ -1434,7 +1434,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 bool LevelEditorView::mapPropertySave(const string& oldName, const string& name, const string& value)
 {
 	if (scene.updateProperty(oldName, name, value) == true) {
-		levelEditorScreenController->setMapProperties(scene, name);
+		levelEditorScreenController->setSceneProperties(scene, name);
 		return true;
 	}
 	return false;
@@ -1443,7 +1443,7 @@ bool LevelEditorView::mapPropertySave(const string& oldName, const string& name,
 bool LevelEditorView::mapPropertyAdd()
 {
 	if (scene.addProperty("new.property", "new.value")) {
-		levelEditorScreenController->setMapProperties(scene, "new.property");
+		levelEditorScreenController->setSceneProperties(scene, "new.property");
 		return true;
 	}
 	return false;
@@ -1457,7 +1457,7 @@ bool LevelEditorView::mapPropertyRemove(const string& name)
 		if (property == nullptr) {
 			property = scene.getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setMapProperties(scene, property == nullptr ? "" : property->getName());
+		levelEditorScreenController->setSceneProperties(scene, property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
@@ -1576,7 +1576,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 			if (prototype->getType()->getBoundingVolumeCount() != 0) prototype->setDefaultBoundingVolumes(prototype->getType()->getBoundingVolumeCount());
 		}
 		levelEditorScreenController->setSky(scene);
-		levelEditorScreenController->setMapProperties(scene, "");
+		levelEditorScreenController->setSceneProperties(scene, "");
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
