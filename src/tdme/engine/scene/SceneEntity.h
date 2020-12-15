@@ -14,7 +14,7 @@ using tdme::engine::Transformations;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Level Editor Object
+ * Scene entity
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -25,7 +25,7 @@ private:
 	string id;
 	string description;
 	Transformations transformations;
-	Prototype* entity { nullptr };
+	Prototype* prototype { nullptr };
 	string reflectionEnvironmentMappingId;
 
 public:
@@ -34,9 +34,9 @@ public:
 	 * @param id id
 	 * @param description description
 	 * @param transformations transformations
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* entity);
+	SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype);
 
 	/**
 	 * Destructor
@@ -81,18 +81,18 @@ public:
 	}
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	inline Prototype* getEntity() {
-		return entity;
+	inline Prototype* getPrototype() {
+		return prototype;
 	}
 
 	/**
-	 * Set up entity
-	 * @param entity entity
+	 * Set up prototype
+	 * @param prototype prototype
 	 */
-	inline void setEntity(Prototype* entity) {
-		this->entity = entity;
+	inline void setPrototype(Prototype* prototype) {
+		this->prototype = prototype;
 	}
 
 	/**

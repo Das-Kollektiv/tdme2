@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 		// objects
 		for (auto i = 0; i < level.getEntityCount(); i++) {
 			auto object = level.getEntityAt(i);
-			if (object->getEntity()->getType() != Prototype_EntityType::MODEL) continue;
+			if (object->getPrototype()->getType() != Prototype_EntityType::MODEL) continue;
 			auto scale = object->getTransformations().getScale();
 			object->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
 			auto rotationX = object->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex());

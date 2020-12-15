@@ -141,7 +141,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		auto& rotationAroundZAxis = transformations.getRotation(scene.getRotationOrder()->getAxisZIndex());
 		jObject.AddMember("id", Value(levelEditorObject->getId(), jAllocator), jAllocator);
 		jObject.AddMember("descr", Value(levelEditorObject->getDescription(), jAllocator), jAllocator);;
-		jObject.AddMember("mid", Value(levelEditorObject->getEntity()->getId()), jAllocator);
+		jObject.AddMember("mid", Value(levelEditorObject->getPrototype()->getId()), jAllocator);
 		jObject.AddMember("tx", Value(translation.getX()), jAllocator);
 		jObject.AddMember("ty", Value(translation.getY()), jAllocator);
 		jObject.AddMember("tz", Value(translation.getZ()), jAllocator);

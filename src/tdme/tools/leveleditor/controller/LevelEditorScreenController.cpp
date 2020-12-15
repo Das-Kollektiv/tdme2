@@ -287,7 +287,7 @@ void LevelEditorScreenController::setObjectListbox(Scene& level)
 			break;
 		}
 		auto object = level.getEntityAt(i);
-		if (object->getEntity()->isRenderGroups() == true) continue;
+		if (object->getPrototype()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =
 			objectsListBoxSubNodesXML +

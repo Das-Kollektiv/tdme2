@@ -421,7 +421,7 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createEntity(sceneEntity->getEntity(), sceneEntity->getId(), transformations);
+	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations);
 }
 
 void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -436,32 +436,32 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
-		if (addEmpties == false && object->getEntity()->getType() == Prototype_EntityType::EMPTY) continue;
-		if (addTrigger == false && object->getEntity()->getType() == Prototype_EntityType::TRIGGER) continue;
+		if (addEmpties == false && object->getPrototype()->getType() == Prototype_EntityType::EMPTY) continue;
+		if (addTrigger == false && object->getPrototype()->getType() == Prototype_EntityType::TRIGGER) continue;
 
-		if (object->getEntity()->isRenderGroups() == true) {
+		if (object->getPrototype()->isRenderGroups() == true) {
 			auto minX = object->getTransformations().getTranslation().getX();
 			auto minY = object->getTransformations().getTranslation().getY();
 			auto minZ = object->getTransformations().getTranslation().getZ();
 			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
-			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
-			renderGroupEntitiesByShaderPartitionModel[object->getEntity()->getShader() + "." + object->getEntity()->getDistanceShader() + "." + to_string(static_cast<int>(object->getEntity()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getEntity()->getModel()->getId()].push_back(&object->getTransformations());
+			renderGroupLevelEditorEntities[object->getPrototype()->getModel()->getId()] = object->getPrototype();
+			renderGroupEntitiesByShaderPartitionModel[object->getPrototype()->getShader() + "." + object->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(object->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getPrototype()->getModel()->getId()].push_back(&object->getTransformations());
 		} else {
 			Entity* entity = createEntity(object);
 			if (entity == nullptr) continue;
 
 			entity->setTranslation(entity->getTranslation().clone().add(translation));
 			entity->setPickable(pickable);
-			entity->setContributesShadows(object->getEntity()->isContributesShadows());
-			entity->setReceivesShadows(object->getEntity()->isReceivesShadows());
-			if (object->getEntity()->getType() == Prototype_EntityType::EMPTY) {
+			entity->setContributesShadows(object->getPrototype()->isContributesShadows());
+			entity->setReceivesShadows(object->getPrototype()->isReceivesShadows());
+			if (object->getPrototype()->getType() == Prototype_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}
-			if (object->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
+			if (object->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
 				entity->setScale(
-					object->getEntity()->getType()->getNonEditScaleDownModeDimension().
+					object->getPrototype()->getType()->getNonEditScaleDownModeDimension().
 					clone().
 					scale(
 						Vector3(
@@ -639,7 +639,7 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createBody(world, sceneEntity->getEntity(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
+	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
 void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -708,7 +708,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 
 		entity->fromTransformations(object->getTransformations());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
-		if (object->getEntity()->getType() == Prototype_EntityType::EMPTY) {
+		if (object->getPrototype()->getType() == Prototype_EntityType::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 		}
 		entity->update();

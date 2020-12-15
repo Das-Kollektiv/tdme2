@@ -15,12 +15,12 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeProperty;
 
-SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* entity)
+SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype)
 {
 	this->id = id;
 	this->description = description;
 	this->transformations.fromTransformations(transformations);
-	this->entity = entity;
+	this->prototype = prototype;
 }
 
 SceneEntity::~SceneEntity() {
@@ -29,8 +29,8 @@ SceneEntity::~SceneEntity() {
 PrototypeProperties* SceneEntity::getTotalProperties()
 {
 	auto properties = new PrototypeProperties();
-	for (auto i = 0; i < getEntity()->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = getEntity()->getPropertyByIndex(i);
+	for (auto i = 0; i < getPrototype()->getPropertyCount(); i++) {
+		PrototypeProperty* entityProperty = getPrototype()->getPropertyByIndex(i);
 		properties->addProperty(entityProperty->getName(), entityProperty->getValue());
 	}
 	for (auto i = 0; i < getPropertyCount(); i++) {

@@ -468,7 +468,7 @@ void LevelEditorView::handleInputEvents()
 									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
 									levelEditorObject->getTransformations().setScale(scale);
-									if ((levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+									if ((levelEditorObject->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
 										levelEditorObject->getTransformations().setRotationAngle(level.getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level.getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
@@ -486,7 +486,7 @@ void LevelEditorView::handleInputEvents()
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
 									_selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
-									(levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
+									(levelEditorObject->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 								);
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
@@ -543,7 +543,7 @@ void LevelEditorView::handleInputEvents()
 							levelEditorScreenController->selectObjectInObjectListbox(selectedEntity->getId());
 							auto levelEditorObject = level.getEntity(selectedEntity->getId());
 							if (levelEditorObject != nullptr) {
-								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getEntity()->getId());
+								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getPrototype()->getId());
 							}
 						} else {
 							resetObject(selectedEntity);
@@ -556,7 +556,7 @@ void LevelEditorView::handleInputEvents()
 						}
 						if (selectedEntityIds.size() == 1) {
 							auto levelEditorObject = level.getEntity(selectedEntity->getId());
-							if (levelEditorObject != nullptr && levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
+							if (levelEditorObject != nullptr && levelEditorObject->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
 								selectedEntity->fromTransformations(levelEditorObject->getTransformations());
 							}
 							setGizmoRotation(selectedEntity->getTransformations());
@@ -874,17 +874,17 @@ void LevelEditorView::updateGUITransformationsElements() {
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisXIndex()),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisYIndex()),
 				selectedEntity->getRotationAngle(level.getRotationOrder()->getAxisZIndex()),
-				(levelEditorObject->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
+				(levelEditorObject->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 			);
 			Vector3 objectCenter;
-			if (levelEditorObject->getEntity()->getModel() != nullptr) {
+			if (levelEditorObject->getPrototype()->getModel() != nullptr) {
 				BoundingBox bv;
-				bv.fromBoundingVolumeWithTransformations(levelEditorObject->getEntity()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
+				bv.fromBoundingVolumeWithTransformations(levelEditorObject->getPrototype()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
 				objectCenter = bv.getCenter();
 			} else {
 				objectCenter = levelEditorObject->getTransformations().getTranslation();
 			}
-			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getEntity()->getName(), objectCenter);
+			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getPrototype()->getName(), objectCenter);
 		}
 	} else
 	if (selectedEntityIds.size() > 1) {
@@ -1032,7 +1032,7 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 	auto levelEditorObject = level.getEntity(object->getId());
 	if (levelEditorObject == nullptr) return;
 	auto colorProperty = levelEditorObject->getProperty("object.color");
-	if (colorProperty == nullptr) colorProperty = levelEditorObject->getEntity()->getProperty("object.color");
+	if (colorProperty == nullptr) colorProperty = levelEditorObject->getPrototype()->getProperty("object.color");
 	if (colorProperty != nullptr) {
 		auto objectColorIt = objectColors.find(colorProperty->getValue());
 		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
@@ -1048,10 +1048,10 @@ void LevelEditorView::resetObject(Entity* entity) {
 	setStandardObjectColorEffect(entity);
 	auto levelEditorObject = level.getEntity(entity->getId());
 	if (levelEditorObject == nullptr) return;
-	if (levelEditorObject->getEntity()->getType()->hasNonEditScaleDownMode() == false) return;
+	if (levelEditorObject->getPrototype()->getType()->hasNonEditScaleDownMode() == false) return;
 	entity->fromTransformations(levelEditorObject->getTransformations());
 	entity->setScale(
-		levelEditorObject->getEntity()->getType()->getNonEditScaleDownModeDimension().
+		levelEditorObject->getPrototype()->getType()->getNonEditScaleDownModeDimension().
 		clone().
 		scale(
 			Vector3(
@@ -1221,7 +1221,7 @@ void LevelEditorView::placeObject()
 	levelEditorObjectTransformations.update();
 	for (auto i = 0; i < level.getEntityCount(); i++) {
 		auto levelEditorObject = level.getEntityAt(i);
-		if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
+		if (levelEditorObject->getPrototype() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 			return;
 		}
 	}
@@ -1416,7 +1416,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 			if (selectedEntity == nullptr) continue;
 			auto levelEntity = level.getEntity(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
-			if ((levelEntity->getEntity()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+			if ((levelEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisXIndex()).getAngle() + x);
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisYIndex()).getAngle() + y);
 				levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).setAngle(levelEntity->getTransformations().getRotation(level.getRotationOrder()->getAxisZIndex()).getAngle() + z);
@@ -1631,7 +1631,7 @@ void LevelEditorView::setPasteMode() {
 void LevelEditorView::unsetPasteMode() {
 	auto pasteObjectIdx = 0;
 	for (auto pasteObject: pasteObjects_) {
-		auto pasteModel = pasteObject->getEntity();
+		auto pasteModel = pasteObject->getPrototype();
 		auto entityId = "tdme.leveleditor.paste." + pasteModel->getName() + "." + to_string(pasteObjectIdx);
 		engine->removeEntity(entityId);
 		pasteObjectIdx++;
@@ -1657,7 +1657,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 	}
 	auto pasteObjectIdx = 0;
 	for (auto pasteObject: pasteObjects_) {
-		auto pasteModel = pasteObject->getEntity();
+		auto pasteModel = pasteObject->getPrototype();
 		Transformations levelEditorObjectTransformations;
 		levelEditorObjectTransformations.fromTransformations(pasteObject->getTransformations());
 		auto objectDiffX = pasteObject->getTransformations().getTranslation().getX() - pasteObjectsMinX;
@@ -1674,7 +1674,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 		if (displayOnly == false) {
 			for (auto i = 0; i < level.getEntityCount(); i++) {
 				auto levelEditorObject = level.getEntityAt(i);
-				if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
+				if (levelEditorObject->getPrototype() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
 					continue;
 				}
 			}
@@ -1817,7 +1817,7 @@ void LevelEditorView::updateGizmo() {
 	} else
 	if (objectCount == 1) {
 		auto selectedSceneEntity = level.getEntity(selectedEntityIds[0]);
-		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getEntity():nullptr;
+		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
 		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
 	} else {

@@ -277,7 +277,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	map<string, Model*> modelsByPartition;
 	map<string, Vector3> modelsPosition;
 	ModelTools::partition(
-		levelEditorObject->getEntity()->getModel(),
+		levelEditorObject->getPrototype()->getModel(),
 		levelEditorObject->getTransformations(),
 		modelsByPartition,
 		modelsPosition
@@ -323,7 +323,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				levelEditorObject->getTransformations(),
 				levelEditorEntityPartition
 			);
-			levelEditorEntityPartition->setTerrainMesh(levelEditorObject->getEntity()->isTerrainMesh());
+			levelEditorEntityPartition->setTerrainMesh(levelEditorObject->getPrototype()->isTerrainMesh());
 
 			// add to objects
 			level->addEntity(levelEditorObjectPartition);
