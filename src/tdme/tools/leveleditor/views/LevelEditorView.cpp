@@ -1335,24 +1335,24 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = scene.getEntity(selectedEntity->getId());
-		if (levelEntity == nullptr) return;
+		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
 
-		levelEntity->getTransformations().setTranslation(Vector3(x, y, z));
-		levelEntity->getTransformations().update();
-		selectedEntity->fromTransformations(levelEntity->getTransformations());
+		sceneEntity->getTransformations().setTranslation(Vector3(x, y, z));
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = scene.getEntity(selectedEntity->getId());
-			if (levelEntity == nullptr) continue;
-			levelEntity->getTransformations().setTranslation(
-				levelEntity->getTransformations().getTranslation().clone().add(Vector3(x, y, z))
+			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			sceneEntity->getTransformations().setTranslation(
+				sceneEntity->getTransformations().getTranslation().clone().add(Vector3(x, y, z))
 			);
-			levelEntity->getTransformations().update();
-			selectedEntity->fromTransformations(levelEntity->getTransformations());
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
@@ -1369,23 +1369,23 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = scene.getEntity(selectedEntity->getId());
-		if (levelEntity == nullptr) return;
+		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
 
-		levelEntity->getTransformations().setScale(Vector3(x, y, z));
-		levelEntity->getTransformations().update();
-		selectedEntity->fromTransformations(levelEntity->getTransformations());
+		sceneEntity->getTransformations().setScale(Vector3(x, y, z));
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = scene.getEntity(selectedEntity->getId());
-			if (levelEntity == nullptr) continue;
+			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
 
-			levelEntity->getTransformations().setScale(levelEntity->getTransformations().getScale().clone().scale(Vector3(x, y, z)));
-			levelEntity->getTransformations().update();
-			selectedEntity->fromTransformations(levelEntity->getTransformations());
+			sceneEntity->getTransformations().setScale(sceneEntity->getTransformations().getScale().clone().scale(Vector3(x, y, z)));
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
@@ -1402,27 +1402,27 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto levelEntity = scene.getEntity(selectedEntity->getId());
-		if (levelEntity == nullptr) return;
-		levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(x);
-		levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(y);
-		levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(z);
-		levelEntity->getTransformations().update();
-		selectedEntity->fromTransformations(levelEntity->getTransformations());
+		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
+		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(x);
+		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(y);
+		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(z);
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto levelEntity = scene.getEntity(selectedEntity->getId());
-			if (levelEntity == nullptr) continue;
-			if ((levelEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-				levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).getAngle() + x);
-				levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).getAngle() + y);
-				levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(levelEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).getAngle() + z);
+			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).getAngle() + x);
+				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).getAngle() + y);
+				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).getAngle() + z);
 			}
-			levelEntity->getTransformations().update();
-			selectedEntity->fromTransformations(levelEntity->getTransformations());
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
@@ -1469,16 +1469,16 @@ bool LevelEditorView::objectPropertyRemove(const string& name)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = scene.getEntity(selectedEntity->getId());
-	if (levelEntity == nullptr) return false;
+	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	if (sceneEntity == nullptr) return false;
 
-	auto idx = levelEntity->getPropertyIndex(name);
-	if (idx != -1 && levelEntity->removeProperty(name) == true) {
-		auto property = levelEntity->getPropertyByIndex(idx);
+	auto idx = sceneEntity->getPropertyIndex(name);
+	if (idx != -1 && sceneEntity->removeProperty(name) == true) {
+		auto property = sceneEntity->getPropertyByIndex(idx);
 		if (property == nullptr) {
-			property = levelEntity->getPropertyByIndex(idx - 1);
+			property = sceneEntity->getPropertyByIndex(idx - 1);
 		}
-		levelEditorScreenController->setObjectProperties("", levelEntity, property == nullptr ? "" : property->getName());
+		levelEditorScreenController->setObjectProperties("", sceneEntity, property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
@@ -1490,10 +1490,10 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return;
-	auto levelEntity = scene.getEntity(selectedEntity->getId());
-	if (levelEntity == nullptr) return;
+	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	if (sceneEntity == nullptr) return;
 
-	levelEntity->clearProperties();
+	sceneEntity->clearProperties();
 	auto& objectPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
 	const vector<PrototypeProperty*>* objectPropertyPresetVector = nullptr;
 	auto objectPropertyPresetVectorIt = objectPropertiesPresets.find(presetId);
@@ -1502,10 +1502,10 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 	}
 	if (objectPropertyPresetVector != nullptr) {
 		for (auto objectPropertyPreset: *objectPropertyPresetVector) {
-			levelEntity->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
+			sceneEntity->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
 		}
 	}
-	levelEditorScreenController->setObjectProperties(presetId, levelEntity, "");
+	levelEditorScreenController->setObjectProperties(presetId, sceneEntity, "");
 }
 
 bool LevelEditorView::objectPropertySave(const string& oldName, const string& name, const string& value)
@@ -1514,11 +1514,11 @@ bool LevelEditorView::objectPropertySave(const string& oldName, const string& na
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = scene.getEntity(selectedEntity->getId());
-	if (levelEntity == nullptr) return false;
+	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	if (sceneEntity == nullptr) return false;
 
-	if (levelEntity->updateProperty(oldName, name, value) == true) {
-		levelEditorScreenController->setObjectProperties("", levelEntity, name);
+	if (sceneEntity->updateProperty(oldName, name, value) == true) {
+		levelEditorScreenController->setObjectProperties("", sceneEntity, name);
 		return true;
 	}
 	return false;
@@ -1530,11 +1530,11 @@ bool LevelEditorView::objectPropertyAdd()
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto levelEntity = scene.getEntity(selectedEntity->getId());
-	if (levelEntity == nullptr) return false;
+	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	if (sceneEntity == nullptr) return false;
 
-	if (levelEntity->addProperty("new.property", "new.value")) {
-		levelEditorScreenController->setObjectProperties("", levelEntity, "new.property");
+	if (sceneEntity->addProperty("new.property", "new.value")) {
+		levelEditorScreenController->setObjectProperties("", sceneEntity, "new.property");
 		return true;
 	}
 	return false;
@@ -1616,9 +1616,9 @@ void LevelEditorView::copyObjects()
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
-			auto levelEntity = scene.getEntity(selectedEntity->getId());
-			if (levelEntity == nullptr) continue;
-			pasteObjects_.push_back(levelEntity);
+			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			pasteObjects_.push_back(sceneEntity);
 		}
 	}
 }
@@ -1784,9 +1784,9 @@ void LevelEditorView::updateSkyPosition() {
 
 void LevelEditorView::applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 	for (auto& selectedEntityId: selectedEntityIds) {
-		auto levelEntity = scene.getEntity(selectedEntityId);
-		if (levelEntity == nullptr) continue;
-		levelEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+		auto sceneEntity = scene.getEntity(selectedEntityId);
+		if (sceneEntity == nullptr) continue;
+		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
 }
 
