@@ -9,6 +9,7 @@
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
@@ -18,7 +19,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
@@ -64,6 +65,7 @@ using tdme::engine::Entity;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PartitionNone;
+using tdme::engine::SceneConnector;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::gui::GUI;
@@ -73,7 +75,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntitySoundsSubScreenController;
@@ -755,7 +757,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		Transformations transformations;
 		transformations.setScale(objectScale);
 		transformations.update();
-		modelEntity = Level::createEntity(entity, "model", transformations);
+		modelEntity = SceneConnector::createEntity(entity, "model", transformations);
 		if (modelEntity != nullptr) {
 			modelEntity->setPickable(true);
 			engine->addEntity(modelEntity);

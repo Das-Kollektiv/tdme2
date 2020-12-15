@@ -99,6 +99,7 @@ SRCS = \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PointsParticleSystem.cpp \
 	src/tdme/engine/Rotation.cpp \
+	src/tdme/engine/SceneConnector.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
@@ -379,7 +380,6 @@ SRCS = \
 	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
-	src/tdme/tools/leveleditor/logic/Level.cpp \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \
 	src/tdme/tools/leveleditor/views/EnvironmentMappingView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \

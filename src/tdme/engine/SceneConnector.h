@@ -8,7 +8,6 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -34,7 +33,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::logic::Level final
+class tdme::engine::SceneConnector final
 {
 
 public:
@@ -68,7 +67,7 @@ public:
 	 * @param renderNodesPartitionDepth render groups partition size / width
 	 */
 	inline static void setRenderGroupsPartitionWidth(float renderNodesPartitionWidth) {
-		Level::renderGroupsPartitionWidth = renderNodesPartitionWidth;
+		SceneConnector::renderGroupsPartitionWidth = renderNodesPartitionWidth;
 	}
 
 	/**
@@ -83,7 +82,7 @@ public:
 	 * @param renderNodesPartitionDepth render groups partition size / height
 	 */
 	inline static void setRenderGroupsPartitionHeight(float renderNodesPartitionHeight) {
-		Level::renderGroupsPartitionHeight = renderNodesPartitionHeight;
+		SceneConnector::renderGroupsPartitionHeight = renderNodesPartitionHeight;
 	}
 
 	/**
@@ -98,7 +97,7 @@ public:
 	 * @param renderNodesPartitionDepth render groups partition size / depth
 	 */
 	inline static void setRenderGroupsPartitionDepth(float renderNodesPartitionDepth) {
-		Level::renderGroupsPartitionDepth = renderNodesPartitionDepth;
+		SceneConnector::renderGroupsPartitionDepth = renderNodesPartitionDepth;
 	}
 
 	/**
@@ -106,7 +105,7 @@ public:
  	 * @param reduceBy render groups objects reduce by factor
  	 */
 	inline static void setRenderGroupsReduceBy(int reduceBy) {
-		Level::renderGroupsReduceBy = reduceBy;
+		SceneConnector::renderGroupsReduceBy = reduceBy;
 	}
 
 	/**
@@ -203,7 +202,7 @@ public:
 	 * @param enableEarlyZRejection enable early z rejection
 	 */
 	inline static void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		Level::enableEarlyZRejection = enableEarlyZRejection;
+		SceneConnector::enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 	/**

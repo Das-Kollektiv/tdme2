@@ -12,6 +12,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
@@ -41,7 +42,7 @@
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -84,6 +85,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::Rotation;
+using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelReader;
@@ -113,7 +115,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -652,7 +654,7 @@ void LevelEditorView::display()
 				transformations.addRotation(level.getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
 				if (selectedEngineEntity == nullptr && selectedEntity != nullptr) {
-					selectedEngineEntity = Level::createEntity(selectedEntity, "tdme.leveleditor.placeentity", transformations);
+					selectedEngineEntity = SceneConnector::createEntity(selectedEntity, "tdme.leveleditor.placeentity", transformations);
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
@@ -1069,8 +1071,8 @@ void LevelEditorView::loadLevel()
 	engine->reset();
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
-	Level::setLight(engine, level, Vector3());
-	Level::addLevel(engine, level, true, true, true, true);
+	SceneConnector::setLight(engine, level, Vector3());
+	SceneConnector::addLevel(engine, level, true, true, true, true);
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();
@@ -1181,7 +1183,7 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 		selectedEntityIdsById.clear();
 		levelEditorObject->setId(name);
 		level.addObject(levelEditorObject);
-		auto entity = Level::createEntity(levelEditorObject);
+		auto entity = SceneConnector::createEntity(levelEditorObject);
 		if (entity != nullptr) {
 			setHighlightObjectColorEffect(entity);
 			selectedEntityIds.push_back(entity->getId());
@@ -1230,7 +1232,7 @@ void LevelEditorView::placeObject()
 		selectedEntity
 	);
 	level.addObject(levelEditorObject);
-	auto entity = Level::createEntity(levelEditorObject);
+	auto entity = SceneConnector::createEntity(levelEditorObject);
 	if (entity != nullptr) {
 		resetObject(entity);
 		entity->setPickable(true);
@@ -1692,7 +1694,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 				levelEditorObject->addProperty(property->getName(), property->getValue());
 			}
 			level.addObject(levelEditorObject);
-			auto entity = Level::createEntity(pasteModel, levelEditorObjectId, levelEditorObjectTransformations);
+			auto entity = SceneConnector::createEntity(pasteModel, levelEditorObjectId, levelEditorObjectTransformations);
 			if (entity != nullptr) {
 				resetObject(entity);
 				entity->setPickable(true);
@@ -1704,7 +1706,7 @@ void LevelEditorView::pasteObjects(bool displayOnly)
 			if (entity != nullptr) {
 				entity->fromTransformations(levelEditorObjectTransformations);
 			} else {
-				entity = Level::createEntity(pasteModel, entityId, levelEditorObjectTransformations);
+				entity = SceneConnector::createEntity(pasteModel, entityId, levelEditorObjectTransformations);
 				if (entity != nullptr) {
 					setStandardObjectColorEffect(entity);
 					entity->setPickable(true);

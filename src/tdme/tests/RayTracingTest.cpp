@@ -11,6 +11,7 @@
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -30,7 +31,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -52,6 +53,7 @@ using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
+using tdme::engine::SceneConnector;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -71,7 +73,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::Quaternion;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -177,7 +179,7 @@ void RayTracingTest::display()
 		//rayStart = camLookFrom;
 		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
-			Level::RIGIDBODY_TYPEID_STATIC | Level::RIGIDBODY_TYPEID_DYNAMIC,
+			SceneConnector::RIGIDBODY_TYPEID_STATIC | SceneConnector::RIGIDBODY_TYPEID_DYNAMIC,
 			camLookFrom,
 			traceEnd,
 			hitPoint,
@@ -273,12 +275,12 @@ void RayTracingTest::initialize()
 		engine->addEntity(entity);
 
 		// physics
-		Level::createBody(
+		SceneConnector::createBody(
 			world,
 			interactionTable,
 			id,
 			entity->getTransformations(),
-			Level::RIGIDBODY_TYPEID_STATIC
+			SceneConnector::RIGIDBODY_TYPEID_STATIC
 		);
 
 		//
@@ -297,7 +299,7 @@ void RayTracingTest::initialize()
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("player", true, SceneConnector::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/tests/screens", "crosshair.xml"));

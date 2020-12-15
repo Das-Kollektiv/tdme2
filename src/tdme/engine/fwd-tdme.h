@@ -33,6 +33,7 @@ namespace engine {
 		class PartitionOctTree_PartitionTreeNode;
 		class PointsParticleSystem;
 		class Rotation;
+		class SceneConnector;
 		class Timing;
 		class Transformations;
 		class WindowManager;

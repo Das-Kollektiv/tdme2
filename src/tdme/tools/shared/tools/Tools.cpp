@@ -11,6 +11,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
@@ -34,7 +35,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/prototype/Prototype_EntityType.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
@@ -61,6 +62,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
+using tdme::engine::SceneConnector;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
@@ -84,7 +86,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::engine::prototype::Prototype_EntityType;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -321,7 +323,7 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (entity->getType() == Prototype_EntityType::PARTICLESYSTEM) {
-		modelEntity = Level::createEntity(entity, "model", Transformations());
+		modelEntity = SceneConnector::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else
 	if (entity->getModel() != nullptr) {

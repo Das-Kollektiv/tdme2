@@ -10,6 +10,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -21,7 +22,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
@@ -41,6 +42,7 @@ using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
+using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -52,7 +54,7 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
@@ -169,9 +171,9 @@ void PathFindingTest::initialize()
 {
 	engine->initialize();
 	SceneReader::doImport("resources/tests/levels/pathfinding", "test.tl", level);
-	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false, false);
-	Level::addLevel(world, level);
+	SceneConnector::setLight(engine, level);
+	SceneConnector::addLevel(engine, level, false, false, false, false);
+	SceneConnector::addLevel(world, level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -209,7 +211,7 @@ void PathFindingTest::doPathFinding() {
 	if (pathFinding->findPath(
 			playerObject->getTransformations().getTranslation(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
-			Level::RIGIDBODY_TYPEID_STATIC,
+			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			path
 		) == true) {
 		Console::println("Found a path: steps: " + to_string(path.size()));

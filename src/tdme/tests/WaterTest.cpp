@@ -7,6 +7,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -14,7 +15,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -36,6 +37,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::SceneConnector;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -43,7 +45,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::Quaternion;
-using tdme::tools::leveleditor::logic::Level;
+using tdme::engine::SceneConnector;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
@@ -142,8 +144,8 @@ void WaterTest::initialize()
 	engine->initialize();
 
 	SceneReader::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
-	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false, false);
+	SceneConnector::setLight(engine, level);
+	SceneConnector::addLevel(engine, level, false, false, false, false);
 
 	// load sky
 	skySphereEntity = PrototypeReader::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
