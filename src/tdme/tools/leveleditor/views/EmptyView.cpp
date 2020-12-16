@@ -139,15 +139,15 @@ void EmptyView::updateGUIElements()
 	if (prototype != nullptr) {
 		emptyScreenController->setScreenCaption("Empty - " + prototype->getName());
 		auto preset = prototype->getProperty("preset");
-		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		emptyScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		emptyScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
+		emptyScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		Vector3 dimension;
 		dimension.set(prototype->getModel()->getBoundingBox()->getMax());
 		dimension.sub(prototype->getModel()->getBoundingBox()->getMin());
 	} else {
 		emptyScreenController->setScreenCaption("Empty - no trigger loaded");
-		emptyScreenController->unsetEntityProperties();
-		emptyScreenController->unsetEntityData();
+		emptyScreenController->unsetPrototypeProperties();
+		emptyScreenController->unsetPrototypeData();
 	}
 }
 

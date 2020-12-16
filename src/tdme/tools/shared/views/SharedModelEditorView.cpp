@@ -382,8 +382,8 @@ void SharedModelEditorView::updateGUIElements()
 	if (prototype != nullptr) {
 		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
 		auto preset = prototype->getProperty("preset");
-		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
-		modelEditorScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		modelEditorScreenController->setPivot(prototype->getPivot());
 		entityPhysicsView->setBoundingVolumes(prototype);
 		entityPhysicsView->setPhysics(prototype);
@@ -398,8 +398,8 @@ void SharedModelEditorView::updateGUIElements()
 		entitySoundsView->setSounds(prototype);
 	} else {
 		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
-		modelEditorScreenController->unsetEntityProperties();
-		modelEditorScreenController->unsetEntityData();
+		modelEditorScreenController->unsetPrototypeProperties();
+		modelEditorScreenController->unsetPrototypeData();
 		modelEditorScreenController->unsetPivot();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();

@@ -376,8 +376,8 @@ void SharedParticleSystemView::updateGUIElements()
 	if (prototype != nullptr && prototype->getParticleSystemsCount() > 0) {
 		particleSystemScreenController->setScreenCaption("Particle System - " + (prototype->getFileName().length() > 0 ? FileSystem::getInstance()->getFileName(prototype->getFileName()) : prototype->getName()));
 		auto preset = prototype->getProperty("preset");
-		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
-		particleSystemScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		particleSystemScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		particleSystemScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		entityPhysicsView->setBoundingVolumes(prototype);
 		entityPhysicsView->setPhysics(prototype);
 		entitySoundsView->setSounds(prototype);
@@ -386,8 +386,8 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setParticleSystemListBox(prototype->getParticleSystemsCount(), particleSystemIdx);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no particle system");
-		particleSystemScreenController->unsetEntityProperties();
-		particleSystemScreenController->unsetEntityData();
+		particleSystemScreenController->unsetPrototypeProperties();
+		particleSystemScreenController->unsetPrototypeData();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();
 		entitySoundsView->unsetSounds();

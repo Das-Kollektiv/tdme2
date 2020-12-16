@@ -280,7 +280,7 @@ void ModelEditorScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void ModelEditorScreenController::setEntityData(const string& name, const string& description)
+void ModelEditorScreenController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubScreenController->setPrototypeData(name, description);
 	modelReload->getController()->setDisabled(false);
@@ -288,7 +288,7 @@ void ModelEditorScreenController::setEntityData(const string& name, const string
 	modelSave->getController()->setDisabled(false);
 }
 
-void ModelEditorScreenController::unsetEntityData()
+void ModelEditorScreenController::unsetPrototypeData()
 {
 	prototypeBaseSubScreenController->unsetPrototypeData();
 	modelReload->getController()->setDisabled(true);
@@ -296,12 +296,12 @@ void ModelEditorScreenController::unsetEntityData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
+void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void ModelEditorScreenController::unsetEntityProperties()
+void ModelEditorScreenController::unsetPrototypeProperties()
 {
 	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }

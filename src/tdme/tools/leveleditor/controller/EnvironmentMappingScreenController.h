@@ -77,28 +77,28 @@ public:
 	void setScreenCaption(const string& text);
 
 	/**
-	 * Set up general entity data
+	 * Set up general prototype data
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(const string& name, const string& description);
+	void setPrototypeData(const string& name, const string& description);
 
 	/**
-	 * Unset entity data
+	 * Unset prototype data
 	 */
-	void unsetEntityData();
+	void unsetPrototypeData();
 
 	/**
-	 * Set up entity properties
+	 * Set up prototype properties
 	 * @param presetId preset id
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, const string& selectedName);
 
 	/**
-	 * Unset entity properties
+	 * Unset prototype properties
 	 */
-	void unsetEntityProperties();
+	void unsetPrototypeProperties();
 
 	/**
 	 * Set generation properties
@@ -115,15 +115,7 @@ public:
 	 */
 	void onGenerationApply();
 
-	/**
-	 * On quit
-	 */
-	void onQuit();
-
-	/**
-	 * Shows the error pop up
-	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
@@ -136,4 +128,15 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
+	/**
+	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
+	 */
+	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On quit
+	 */
+	void onQuit();
 };

@@ -306,26 +306,26 @@ void ParticleSystemScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void ParticleSystemScreenController::setEntityData(const string& name, const string& description)
+void ParticleSystemScreenController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubScreenController->setPrototypeData(name, description);
 	particleSystemReload->getController()->setDisabled(false);
 	particleSystemSave->getController()->setDisabled(false);
 }
 
-void ParticleSystemScreenController::unsetEntityData()
+void ParticleSystemScreenController::unsetPrototypeData()
 {
 	prototypeBaseSubScreenController->unsetPrototypeData();
 	particleSystemReload->getController()->setDisabled(true);
 	particleSystemSave->getController()->setDisabled(true);
 }
 
-void ParticleSystemScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
+void ParticleSystemScreenController::setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void ParticleSystemScreenController::unsetEntityProperties()
+void ParticleSystemScreenController::unsetPrototypeProperties()
 {
 	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
@@ -971,7 +971,7 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 	);
 }
 
-void ParticleSystemScreenController::onEntitySave()
+void ParticleSystemScreenController::onPrototypeSave()
 {
 	class OnEntitySave: public virtual Action
 	{
@@ -1020,12 +1020,12 @@ void ParticleSystemScreenController::onParticleSystemReload()
 	view->reloadFile();
 }
 
-void ParticleSystemScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ParticleSystemScreenController::saveParticleSystem(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ParticleSystemScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ParticleSystemScreenController::loadParticleSystem(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->loadFile(pathName, fileName);
 }
@@ -1060,7 +1060,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			onParticleSystemReload();
 		} else
 		if (node->getId().compare("button_entity_save") == 0) {
-			onEntitySave();
+			onPrototypeSave();
 		} else
 		if (node->getId().compare("button_ps_type_apply") == 0) {
 			view->reset();

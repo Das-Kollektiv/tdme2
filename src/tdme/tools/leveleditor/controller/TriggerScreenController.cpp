@@ -119,22 +119,22 @@ void TriggerScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void TriggerScreenController::setEntityData(const string& name, const string& description)
+void TriggerScreenController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubScreenController->setPrototypeData(name, description);
 }
 
-void TriggerScreenController::unsetEntityData()
+void TriggerScreenController::unsetPrototypeData()
 {
 	prototypeBaseSubScreenController->unsetPrototypeData();
 }
 
-void TriggerScreenController::setEntityProperties(const string& presetId, const string& selectedName)
+void TriggerScreenController::setPrototypeProperties(const string& presetId, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void TriggerScreenController::unsetEntityProperties()
+void TriggerScreenController::unsetPrototypeProperties()
 {
 	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }

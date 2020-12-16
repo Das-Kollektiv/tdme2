@@ -122,14 +122,14 @@ void TriggerView::updateGUIElements()
 	if (prototype != nullptr) {
 		triggerScreenController->setScreenCaption("Trigger - " + prototype->getName());
 		auto preset = prototype->getProperty("preset");
-		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		triggerScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		triggerScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
+		triggerScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		entityPhysicsView->setBoundingVolumes(prototype);
 		entityPhysicsView->setPhysics(prototype);
 	} else {
 		triggerScreenController->setScreenCaption("Trigger - no trigger loaded");
-		triggerScreenController->unsetEntityProperties();
-		triggerScreenController->unsetEntityData();
+		triggerScreenController->unsetPrototypeProperties();
+		triggerScreenController->unsetPrototypeData();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();
 	}

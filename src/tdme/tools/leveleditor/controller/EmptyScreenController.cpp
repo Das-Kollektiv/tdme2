@@ -94,22 +94,22 @@ void EmptyScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void EmptyScreenController::setEntityData(const string& name, const string& description)
+void EmptyScreenController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubScreenController->setPrototypeData(name, description);
 }
 
-void EmptyScreenController::unsetEntityData()
+void EmptyScreenController::unsetPrototypeData()
 {
 	prototypeBaseSubScreenController->unsetPrototypeData();
 }
 
-void EmptyScreenController::setEntityProperties(const string& presetId, const string& selectedName)
+void EmptyScreenController::setPrototypeProperties(const string& presetId, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void EmptyScreenController::unsetEntityProperties()
+void EmptyScreenController::unsetPrototypeProperties()
 {
 	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }

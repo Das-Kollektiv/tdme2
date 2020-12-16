@@ -129,22 +129,22 @@ void EnvironmentMappingScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void EnvironmentMappingScreenController::setEntityData(const string& name, const string& description)
+void EnvironmentMappingScreenController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubScreenController->setPrototypeData(name, description);
 }
 
-void EnvironmentMappingScreenController::unsetEntityData()
+void EnvironmentMappingScreenController::unsetPrototypeData()
 {
 	prototypeBaseSubScreenController->unsetPrototypeData();
 }
 
-void EnvironmentMappingScreenController::setEntityProperties(const string& presetId, const string& selectedName)
+void EnvironmentMappingScreenController::setPrototypeProperties(const string& presetId, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void EnvironmentMappingScreenController::unsetEntityProperties()
+void EnvironmentMappingScreenController::unsetPrototypeProperties()
 {
 	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
@@ -188,16 +188,6 @@ void EnvironmentMappingScreenController::onGenerationApply() {
 	}
 }
 
-void EnvironmentMappingScreenController::onQuit()
-{
-	TDMELevelEditor::getInstance()->quit();
-}
-
-void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, const string& message)
-{
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
-}
-
 void EnvironmentMappingScreenController::onValueChanged(GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
@@ -222,4 +212,14 @@ void EnvironmentMappingScreenController::getViewPort(int& left, int& top, int& w
 	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
 	width = constraints.width;
 	height = constraints.height;
+}
+
+void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, const string& message)
+{
+	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+}
+
+void EnvironmentMappingScreenController::onQuit()
+{
+	TDMELevelEditor::getInstance()->quit();
 }

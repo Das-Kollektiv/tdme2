@@ -126,14 +126,14 @@ void EnvironmentMappingView::updateGUIElements()
 	if (prototype != nullptr) {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - " + prototype->getName());
 		auto preset = prototype->getProperty("preset");
-		environmentMappingScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		environmentMappingScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		environmentMappingScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
+		environmentMappingScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		environmentMappingScreenController->setGeneration();
 		entityPhysicsView->setBoundingVolumes(prototype);
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
-		environmentMappingScreenController->unsetEntityProperties();
-		environmentMappingScreenController->unsetEntityData();
+		environmentMappingScreenController->unsetPrototypeProperties();
+		environmentMappingScreenController->unsetPrototypeData();
 		environmentMappingScreenController->unsetGeneration();
 		entityPhysicsView->unsetBoundingVolumes();
 	}

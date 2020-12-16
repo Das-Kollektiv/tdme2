@@ -214,29 +214,29 @@ public:
 	void setScreenCaption(const string& text);
 
 	/**
-	 * Set up general entity data
+	 * Set up general prototype data
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(const string& name, const string& description);
+	void setPrototypeData(const string& name, const string& description);
 
 	/**
-	 * Unset entity data
+	 * Unset prototype data
 	 */
-	void unsetEntityData();
+	void unsetPrototypeData();
 
 	/**
-	 * Set up entity properties
+	 * Set up prototype properties
 	 * @param presetId preset id
 	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName);
 
 	/**
-	 * Unset entity properties
+	 * Unset prototype properties
 	 */
-	void unsetEntityProperties();
+	void unsetPrototypeProperties();
 
 	/**
 	 * Set pivot tab
@@ -445,11 +445,6 @@ public:
 	void unsetTools();
 
 	/**
-	 * On quit
-	 */
-	void onQuit();
-
-	/**
 	 * On model load
 	 */
 	void onModelLoad();
@@ -504,11 +499,6 @@ public:
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/**
-	 * Shows the error pop up
-	 */
-	void showErrorPopUp(const string& caption, const string& message);
-
-	/**
 	 * On value changed
 	 * @param node node
 	 */
@@ -529,5 +519,17 @@ public:
 	 * @param height height
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
+
+	/**
+	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
+	 */
+	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On quit
+	 */
+	void onQuit();
 
 };
