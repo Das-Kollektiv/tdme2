@@ -211,7 +211,7 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
-				return entity->getId() != "tdme.leveleditor.grid";
+				return entity->getId() != "tdme.sceneeditor.grid";
 			}
 
 			/**
@@ -234,8 +234,8 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 		public:
 			bool filterEntity(Entity* entity) override {
 				return
-						entity->getId() != "tdme.leveleditor.placeentity" &&
-						StringTools::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
+						entity->getId() != "tdme.sceneeditor.placeentity" &&
+						StringTools::startsWith(entity->getId(), "tdme.sceneeditor.paste.") == false &&
 						StringTools::startsWith(entity->getId(), "le.tdme.gizmo.") == false;
 			}
 
@@ -294,7 +294,7 @@ SceneEntity* SceneEditorView::getSelectedSceneEntity()
 	if (selectedEntityIds.size() != 1) return nullptr;
 
 	auto selectedEntity = scene.getEntity(selectedEntityIds[0]);
-	return selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false ? scene.getEntity(selectedEntity->getId()) : static_cast< SceneEntity* >(nullptr);
+	return selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false ? scene.getEntity(selectedEntity->getId()) : static_cast< SceneEntity* >(nullptr);
 }
 
 bool SceneEditorView::isGridEnabled()
@@ -453,7 +453,7 @@ void SceneEditorView::handleInputEvents()
 							rotations.update();
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
-								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 									auto sceneEntity = scene.getEntity(_selectedEntity->getId());
 									if (sceneEntity == nullptr) continue;
 									auto translation = sceneEntity->getTransformations().getTranslation();
@@ -504,7 +504,7 @@ void SceneEditorView::handleInputEvents()
 					if (selectedEntityIds.size() == 1) {
 						for (auto selectedEntityId: selectedEntityIds) {
 							auto _selectedEntity = engine->getEntity(selectedEntityId);
-							if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+							if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
 						}
@@ -641,7 +641,7 @@ void SceneEditorView::display()
 	}
 
 	{
-		auto selectedEngineEntity = engine->getEntity("tdme.leveleditor.placeentity");
+		auto selectedEngineEntity = engine->getEntity("tdme.sceneeditor.placeentity");
 		Vector3 worldCoordinate;
 		placeEntityValid = false;
 		pasteModeValid = false;
@@ -654,7 +654,7 @@ void SceneEditorView::display()
 				transformations.addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
 				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
-					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.leveleditor.placeentity", transformations);
+					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
@@ -834,7 +834,7 @@ void SceneEditorView::updateGUIElements()
 	sceneEditorScreenController->setSceneSize(scene.getDimension().getX(), scene.getDimension().getZ(), scene.getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			auto preset = sceneEntity->getProperty("preset");
 			sceneEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", sceneEntity, "");
@@ -866,7 +866,7 @@ void SceneEditorView::updateGUIElements()
 void SceneEditorView::updateGUITransformationsElements() {
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			sceneEditorScreenController->setEntityTransformations(
 				selectedEntity->getTranslation(),
@@ -906,7 +906,7 @@ void SceneEditorView::loadSettings()
 {
 	try {
 		Properties settings;
-		settings.load("settings", "leveleditor.properties");
+		settings.load("settings", "sceneeditor.properties");
 		gridEnabled = settings.get("grid.enabled", "false") == "true";
 		gridY = Float::parseFloat(settings.get("grid.y", "0.0"));
 		snappingEnabled = settings.get("snapping.enabled", "false") == "true";
@@ -1004,7 +1004,7 @@ void SceneEditorView::storeSettings()
 		settings.put("snapping.z", to_string(snappingZ));
 		settings.put("map.path", sceneEditorScreenController->getMapPath()->getPath());
 		settings.put("model.path", TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->getModelPath());
-		settings.store("settings", "leveleditor.properties");
+		settings.store("settings", "sceneeditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("SceneEditorView::storeSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -1083,7 +1083,7 @@ void SceneEditorView::updateGrid()
 {
 	if (gridEnabled == false) return;
 
-	string entityId = "tdme.leveleditor.grid";
+	string entityId = "tdme.sceneeditor.grid";
 	auto entity = engine->getEntity(entityId);
 	if (entity == nullptr) {
 		entity = new Object3D(entityId, levelEditorGround);
@@ -1113,12 +1113,12 @@ void SceneEditorView::updateGrid()
 
 void SceneEditorView::removeGrid()
 {
-	engine->removeEntity("tdme.leveleditor.grid");
+	engine->removeEntity("tdme.sceneeditor.grid");
 }
 
 Model* SceneEditorView::createSceneEditorGroundPlateModel()
 {
-	auto groundPlate = new Model("tdme.leveleditor.grid", "tdme.leveleditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
+	auto groundPlate = new Model("tdme.sceneeditor.grid", "tdme.sceneeditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
 	auto groundPlateMaterial = new Material("ground");
 	groundPlateMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseColor(
@@ -1148,7 +1148,7 @@ Model* SceneEditorView::createSceneEditorGroundPlateModel()
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "tdme.leveleditor.grid.facesentity");
+	FacesEntity nodeFacesEntityGround(groundNode, "tdme.sceneeditor.grid.facesentity");
 	nodeFacesEntityGround.setMaterial(groundPlateMaterial);
 	nodeFacesEntityGround.setFaces(groundFacesGround);
 	vector<FacesEntity> nodeFacesEntities;
@@ -1168,7 +1168,7 @@ bool SceneEditorView::entityDataApply(const string& name, const string& descript
 	if (selectedEntityIds.size() != 1) return false;
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.")) return false;
+	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.")) return false;
 
 	auto sceneEntity = scene.getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return false;
@@ -1205,7 +1205,7 @@ void SceneEditorView::setPlaceEntityMode() {
 void SceneEditorView::unsetPlaceEntityMode() {
 	placeEntityMode = false;
 	placeEntityValid = false;
-	engine->removeEntity("tdme.leveleditor.placeentity");
+	engine->removeEntity("tdme.sceneeditor.placeentity");
 }
 
 void SceneEditorView::placeEntity()
@@ -1249,7 +1249,7 @@ void SceneEditorView::removeEntities()
 	vector<Entity*> entitiesToRemove;
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			scene.removeEntity(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
@@ -1300,7 +1300,7 @@ void SceneEditorView::colorEntities()
 
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			auto preset = sceneEntity->getProperty("preset");
 			sceneEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", sceneEntity, "");
@@ -1615,7 +1615,7 @@ void SceneEditorView::copyEntities()
 	copiedEntities.clear();
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			copiedEntities.push_back(sceneEntity);
@@ -1632,7 +1632,7 @@ void SceneEditorView::unsetPasteMode() {
 	auto pasteEntityIdx = 0;
 	for (auto pasteEntity: copiedEntities) {
 		auto pastePrototype = pasteEntity->getPrototype();
-		auto entityId = "tdme.leveleditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntityIdx);
+		auto entityId = "tdme.sceneeditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntityIdx);
 		engine->removeEntity(entityId);
 		pasteEntityIdx++;
 	}
@@ -1701,7 +1701,7 @@ void SceneEditorView::pasteEntities(bool displayOnly)
 				engine->addEntity(entity);
 			}
 		} else {
-			auto entityId = "tdme.leveleditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntitiesIdx);
+			auto entityId = "tdme.sceneeditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntitiesIdx);
 			auto entity = engine->getEntity(entityId);
 			if (entity != nullptr) {
 				entity->fromTransformations(sceneEntityTransformations);
@@ -1804,7 +1804,7 @@ void SceneEditorView::updateGizmo() {
 	auto entityCount = 0;
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			gizmoCenter.add(sceneEntity->getTransformations().getTranslation());

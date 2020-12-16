@@ -95,7 +95,7 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 
 Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& description, float width, float height, float depth)
 {
-	auto cacheId = "leveleditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
+	auto cacheId = "sceneeditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	Prototype* prototype = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto modelId = cacheId + "_bv";
@@ -118,7 +118,7 @@ Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& de
 
 Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth)
 {
-	auto cacheId = "leveleditor.environmentmapping." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
+	auto cacheId = "sceneeditor.environmentmapping." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	Prototype* prototype = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto modelId = cacheId + "_bv";
@@ -141,7 +141,7 @@ Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const
 
 Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& description)
 {
-	auto cacheId = "leveleditor.empty";
+	auto cacheId = "sceneeditor.empty";
 	Prototype* prototype = nullptr;
 	auto model = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
 	prototype = new Prototype(
