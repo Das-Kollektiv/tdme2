@@ -49,11 +49,11 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
 /**
- * TDME Level Editor View
+ * Scene editor view
  * @author andreas.drewke
  * @version $Id: 04313d20d0978eefc881024d6e0af748196c1425 $
  */
-class tdme::tools::leveleditor::views::LevelEditorView final
+class tdme::tools::leveleditor::views::SceneEditorView final
 	: public View
 	, public GUIInputEventHandler
 	, protected Gizmo
@@ -128,12 +128,12 @@ public:
 	 * Public constructor
 	 * @param popUps pop ups
 	 */
-	LevelEditorView(PopUps* popUps);
+	SceneEditorView(PopUps* popUps);
 
 	/**
 	 * Destructor
 	 */
-	~LevelEditorView();
+	~SceneEditorView();
 
 	/**
 	 * @return pop ups

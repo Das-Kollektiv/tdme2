@@ -7,7 +7,7 @@ namespace leveleditor {
 namespace views {
 	class EmptyView;
 	class EnvironmentMappingView;
-	class LevelEditorView;
+	class SceneEditorView;
 	class SceneEditorView_EntityColor;
 	class ModelEditorView;
 	class ParticleSystemView;

@@ -19,7 +19,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/TDMESceneEditor.h>
-#include <tdme/tools/leveleditor/views/LevelEditorView.h>
+#include <tdme/tools/leveleditor/views/SceneEditorView.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -59,7 +59,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::TDMESceneEditor;
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -83,7 +83,7 @@ MutableString SceneEditorScreenController::CHECKBOX_CHECKED = MutableString("1")
 MutableString SceneEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
 MutableString SceneEditorScreenController::TEXT_EMPTY = MutableString("");
 
-SceneEditorScreenController::SceneEditorScreenController(LevelEditorView* view)
+SceneEditorScreenController::SceneEditorScreenController(SceneEditorView* view)
 {
 	this->view = view;
 	this->scenePath = new FileDialogPath(".");

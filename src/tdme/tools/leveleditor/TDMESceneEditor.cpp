@@ -12,7 +12,7 @@
 #include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
-#include <tdme/tools/leveleditor/views/LevelEditorView.h>
+#include <tdme/tools/leveleditor/views/SceneEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
@@ -36,7 +36,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
@@ -71,7 +71,7 @@ TDMESceneEditor::TDMESceneEditor() {
 }
 
 TDMESceneEditor::~TDMESceneEditor() {
-	delete levelEditorView;
+	delete sceneEditorView;
 	delete modelEditorView;
 	delete triggerView;
 	delete emptyView;
@@ -89,11 +89,11 @@ SceneEditorLibraryScreenController* TDMESceneEditor::getSceneEditorLibraryScreen
 }
 
 SceneLibrary* TDMESceneEditor::getSceneLibrary() {
-	return levelEditorView->getScene()->getLibrary();
+	return sceneEditorView->getScene()->getLibrary();
 }
 
 Scene* TDMESceneEditor::getScene() {
-	return levelEditorView->getScene();
+	return sceneEditorView->getScene();
 }
 
 void TDMESceneEditor::setView(View* view) {
@@ -128,7 +128,7 @@ void TDMESceneEditor::dispose() {
 	if (view != nullptr)
 		view->deactivate();
 
-	levelEditorView->dispose();
+	sceneEditorView->dispose();
 	modelEditorView->dispose();
 	triggerView->dispose();
 	emptyView->dispose();
@@ -149,9 +149,9 @@ void TDMESceneEditor::initialize() {
 		prototypeLibraryScreenController->getScreenNode()
 	);
 	popUps->initialize();
-	levelEditorView = new LevelEditorView(popUps);
-	levelEditorView->initialize();
-	ScenePropertyPresets::getInstance()->setDefaultSceneProperties(levelEditorView->getScene());
+	sceneEditorView = new SceneEditorView(popUps);
+	sceneEditorView->initialize();
+	ScenePropertyPresets::getInstance()->setDefaultSceneProperties(sceneEditorView->getScene());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);
@@ -162,7 +162,7 @@ void TDMESceneEditor::initialize() {
 	emptyView->initialize();
 	particleSystemView = new ParticleSystemView(popUps);
 	particleSystemView->initialize();
-	setView(levelEditorView);
+	setView(sceneEditorView);
 }
 
 void TDMESceneEditor::reshape(int width, int height) {
@@ -170,7 +170,7 @@ void TDMESceneEditor::reshape(int width, int height) {
 }
 
 void TDMESceneEditor::switchToSceneEditor() {
-	setView(levelEditorView);
+	setView(sceneEditorView);
 }
 
 void TDMESceneEditor::switchToModelEditor() {

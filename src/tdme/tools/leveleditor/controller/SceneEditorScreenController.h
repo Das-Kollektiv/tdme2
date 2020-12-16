@@ -40,7 +40,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
@@ -62,7 +62,7 @@ private:
 	static MutableString CHECKBOX_CHECKED;
 	static MutableString CHECKBOX_UNCHECKED;
 	static MutableString TEXT_EMPTY;
-	LevelEditorView* view { nullptr };
+	SceneEditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
 	GUIElementNode* btnEntityTranslationApply { nullptr };
@@ -137,7 +137,7 @@ public:
 	 * Public constructor
 	 * @param view view
 	 */
-	SceneEditorScreenController(LevelEditorView* view);
+	SceneEditorScreenController(SceneEditorView* view);
 
 	/**
 	 * @return map path

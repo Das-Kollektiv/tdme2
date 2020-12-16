@@ -20,7 +20,7 @@ using tdme::engine::Engine;
 using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
@@ -45,7 +45,7 @@ private:
 	bool quitRequested;
 	SceneEditorLibraryScreenController* prototypeLibraryScreenController { nullptr };
 	PopUps* popUps { nullptr };
-	LevelEditorView* levelEditorView { nullptr };
+	SceneEditorView* sceneEditorView { nullptr };
 	ModelEditorView* modelEditorView { nullptr };
 	TriggerView* triggerView { nullptr };
 	EnvironmentMappingView* environmentMappingView { nullptr };

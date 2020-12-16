@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 
 /**
  * Scene editor view entity color class
@@ -12,10 +12,10 @@ using tdme::tools::leveleditor::views::LevelEditorView;
  */
 class tdme::tools::leveleditor::views::SceneEditorView_EntityColor final
 {
-	friend class LevelEditorView;
+	friend class SceneEditorView;
 
 private:
-	LevelEditorView* levelEditorView { nullptr };
+	SceneEditorView* sceneEditorView { nullptr };
 
 	float colorMulR;
 	float colorMulG;
@@ -27,7 +27,7 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param levelEditorView scene editor view
+	 * @param sceneEditorView scene editor view
 	 * @param colorMulR colorMulR
 	 * @param colorMulG colorMulG
 	 * @param colorMulB colorMulB
@@ -35,5 +35,5 @@ public:
 	 * @param colorAddG colorAddG
 	 * @param colorAddB colorAddB
 	 */
-	SceneEditorView_EntityColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
+	SceneEditorView_EntityColor(SceneEditorView* sceneEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
 };

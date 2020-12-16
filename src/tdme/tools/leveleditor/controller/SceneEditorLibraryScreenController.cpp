@@ -18,7 +18,7 @@
 #include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
-#include <tdme/tools/leveleditor/views/LevelEditorView.h>
+#include <tdme/tools/leveleditor/views/SceneEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
@@ -57,7 +57,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
-using tdme::tools::leveleditor::views::LevelEditorView;
+using tdme::tools::leveleditor::views::SceneEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::tools::leveleditor::views::TriggerView;
@@ -167,10 +167,10 @@ void SceneEditorLibraryScreenController::setPrototypeLibrary()
 void SceneEditorLibraryScreenController::onPrototypeSelectionChanged()
 {
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
+	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
 		auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 		if (prototype != nullptr) {
-			(dynamic_cast< LevelEditorView* >(view))->selectPrototypeFromLibrary(prototype->getId());
+			(dynamic_cast< SceneEditorView* >(view))->selectPrototypeFromLibrary(prototype->getId());
 		}
 	}
 }
@@ -229,8 +229,8 @@ void SceneEditorLibraryScreenController::onPlacePrototype()
 	auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->setPlaceEntityMode();
+	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
+		(dynamic_cast< SceneEditorView* >(view))->setPlaceEntityMode();
 	}
 }
 
@@ -240,8 +240,8 @@ void SceneEditorLibraryScreenController::onDeletePrototype()
 	if (prototype == nullptr) return;
 	TDMESceneEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(prototype->getId());
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->loadScene();
+	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
+		(dynamic_cast< SceneEditorView* >(view))->loadScene();
 	} else {
 		TDMESceneEditor::getInstance()->switchToSceneEditor();
 	}
@@ -340,8 +340,8 @@ void SceneEditorLibraryScreenController::onPartitionPrototype()
 
 	// (re-)load scene editor view
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->loadScene();
+	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
+		(dynamic_cast< SceneEditorView* >(view))->loadScene();
 	} else {
 		TDMESceneEditor::getInstance()->switchToSceneEditor();
 	}
