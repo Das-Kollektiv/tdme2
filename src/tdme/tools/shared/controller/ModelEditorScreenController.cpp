@@ -282,7 +282,7 @@ void ModelEditorScreenController::setScreenCaption(const string& text)
 
 void ModelEditorScreenController::setEntityData(const string& name, const string& description)
 {
-	prototypeBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setPrototypeData(name, description);
 	modelReload->getController()->setDisabled(false);
 	modelReimport->getController()->setDisabled(false);
 	modelSave->getController()->setDisabled(false);
@@ -290,7 +290,7 @@ void ModelEditorScreenController::setEntityData(const string& name, const string
 
 void ModelEditorScreenController::unsetEntityData()
 {
-	prototypeBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetPrototypeData();
 	modelReload->getController()->setDisabled(true);
 	modelReimport->getController()->setDisabled(true);
 	modelSave->getController()->setDisabled(true);
@@ -298,12 +298,12 @@ void ModelEditorScreenController::unsetEntityData()
 
 void ModelEditorScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
-	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void ModelEditorScreenController::unsetEntityProperties()
 {
-	prototypeBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
 
 void ModelEditorScreenController::setPivot(const Vector3& pivot)

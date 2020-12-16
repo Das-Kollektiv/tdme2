@@ -131,22 +131,22 @@ void EnvironmentMappingScreenController::setScreenCaption(const string& text)
 
 void EnvironmentMappingScreenController::setEntityData(const string& name, const string& description)
 {
-	prototypeBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setPrototypeData(name, description);
 }
 
 void EnvironmentMappingScreenController::unsetEntityData()
 {
-	prototypeBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetPrototypeData();
 }
 
 void EnvironmentMappingScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void EnvironmentMappingScreenController::unsetEntityProperties()
 {
-	prototypeBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
 
 void EnvironmentMappingScreenController::setGeneration() {

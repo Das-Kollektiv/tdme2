@@ -308,26 +308,26 @@ void ParticleSystemScreenController::setScreenCaption(const string& text)
 
 void ParticleSystemScreenController::setEntityData(const string& name, const string& description)
 {
-	prototypeBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setPrototypeData(name, description);
 	particleSystemReload->getController()->setDisabled(false);
 	particleSystemSave->getController()->setDisabled(false);
 }
 
 void ParticleSystemScreenController::unsetEntityData()
 {
-	prototypeBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetPrototypeData();
 	particleSystemReload->getController()->setDisabled(true);
 	particleSystemSave->getController()->setDisabled(true);
 }
 
 void ParticleSystemScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
-	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void ParticleSystemScreenController::unsetEntityProperties()
 {
-	prototypeBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
 
 void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>& particleSystemTypesCollection)

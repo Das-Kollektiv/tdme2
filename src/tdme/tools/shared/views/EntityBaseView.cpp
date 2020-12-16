@@ -22,10 +22,10 @@ EntityBaseView::EntityBaseView(PrototypeBaseSubScreenController* prototypeBaseSu
 
 void EntityBaseView::initialize()
 {
-	prototypeBaseSubScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
+	prototypeBaseSubScreenController->setPrototypePresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
-void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& presetId)
+void EntityBaseView::prototypePropertiesPreset(Prototype* entity, const string& presetId)
 {
 	if (entity == nullptr)
 		return;
@@ -42,34 +42,34 @@ void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& pre
 			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
-	prototypeBaseSubScreenController->setEntityProperties(entity, presetId, "");
+	prototypeBaseSubScreenController->setPrototypeProperties(entity, presetId, "");
 }
 
-bool EntityBaseView::entityPropertySave(Prototype* entity, const string& oldName, const string& name, const string& value)
+bool EntityBaseView::prototypePropertySave(Prototype* entity, const string& oldName, const string& name, const string& value)
 {
 	if (entity == nullptr)
 		return false;
 
 	if (entity->updateProperty(oldName, name, value) == true) {
-		prototypeBaseSubScreenController->setEntityProperties(entity, "", name);
+		prototypeBaseSubScreenController->setPrototypeProperties(entity, "", name);
 		return true;
 	}
 	return false;
 }
 
-bool EntityBaseView::entityPropertyAdd(Prototype* entity)
+bool EntityBaseView::prototypePropertyAdd(Prototype* entity)
 {
 	if (entity == nullptr)
 		return false;
 
 	if (entity->addProperty("new.property", "new.value")) {
-		prototypeBaseSubScreenController->setEntityProperties(entity, "", "new.property");
+		prototypeBaseSubScreenController->setPrototypeProperties(entity, "", "new.property");
 		return true;
 	}
 	return false;
 }
 
-bool EntityBaseView::entityPropertyRemove(Prototype* entity, const string& name)
+bool EntityBaseView::prototypePropertyRemove(Prototype* entity, const string& name)
 {
 	if (entity == nullptr)
 		return false;
@@ -80,13 +80,13 @@ bool EntityBaseView::entityPropertyRemove(Prototype* entity, const string& name)
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		prototypeBaseSubScreenController->setEntityProperties(entity, "", property == nullptr ? "" : property->getName());
+		prototypeBaseSubScreenController->setPrototypeProperties(entity, "", property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;
 }
 
-void EntityBaseView::setEntityData(Prototype* entity, const string& name, const string& description)
+void EntityBaseView::setPrototypeData(Prototype* entity, const string& name, const string& description)
 {
 	if (entity == nullptr)
 		return;

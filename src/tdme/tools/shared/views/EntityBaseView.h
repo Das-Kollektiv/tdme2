@@ -40,7 +40,7 @@ public:
 	 * @param entity entity
 	 * @param presetId preset id
 	 */
-	void entityPropertiesPreset(Prototype* entity, const string& presetId);
+	void prototypePropertiesPreset(Prototype* entity, const string& presetId);
 
 	/**
 	 * Save a entity property
@@ -50,14 +50,14 @@ public:
 	 * @param value value
 	 * @return success
 	 */
-	bool entityPropertySave(Prototype* entity, const string& oldName, const string& name, const string& value);
+	bool prototypePropertySave(Prototype* entity, const string& oldName, const string& name, const string& value);
 
 	/**
 	 * Add a entity property
 	 * @param entity entity
 	 * @return success
 	 */
-	bool entityPropertyAdd(Prototype* entity);
+	bool prototypePropertyAdd(Prototype* entity);
 
 	/**
 	 * Remove a entity property from model properties
@@ -65,7 +65,7 @@ public:
 	 * @param name name
 	 * @return success
 	 */
-	bool entityPropertyRemove(Prototype* entity, const string& name);
+	bool prototypePropertyRemove(Prototype* entity, const string& name);
 
 	/**
 	 * Update current model data
@@ -73,6 +73,6 @@ public:
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(Prototype* entity, const string& name, const string& description);
+	void setPrototypeData(Prototype* entity, const string& name, const string& description);
 
 };

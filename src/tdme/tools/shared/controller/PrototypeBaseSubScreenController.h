@@ -37,18 +37,18 @@ private:
 	static MutableString TEXT_EMPTY;
 	EntityBaseView* view { nullptr };
 	PopUps* popUps { nullptr };
-	GUIElementNode* entityName { nullptr };
-	GUIElementNode* entityDescription { nullptr };
-	GUIElementNode* entityApply { nullptr };
-	GUIElementNode* entityPropertyName { nullptr };
-	GUIElementNode* entityPropertyValue { nullptr };
-	GUIElementNode* entityPropertySave { nullptr };
-	GUIElementNode* entityPropertyAdd { nullptr };
-	GUIElementNode* entityPropertyRemove { nullptr };
-	GUIElementNode* entityPropertiesList { nullptr };
-	GUIElementNode* entityPropertyPresetApply { nullptr };
-	GUIElementNode* entityPropertiesPresets { nullptr };
-	Action* onSetEntityDataAction { nullptr };
+	GUIElementNode* prototypeName { nullptr };
+	GUIElementNode* prototypeDescription { nullptr };
+	GUIElementNode* prototypeApply { nullptr };
+	GUIElementNode* prototypePropertyName { nullptr };
+	GUIElementNode* prototypePropertyValue { nullptr };
+	GUIElementNode* prototypePropertySave { nullptr };
+	GUIElementNode* prototypePropertyAdd { nullptr };
+	GUIElementNode* prototypePropertyRemove { nullptr };
+	GUIElementNode* prototypePropertiesList { nullptr };
+	GUIElementNode* prototypePropertyPresetApply { nullptr };
+	GUIElementNode* prototypePropertiesPresets { nullptr };
+	Action* onSetPrototypeDataAction { nullptr };
 
 public:
 	/**
@@ -70,76 +70,71 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * Set up general entity data
+	 * Set up general prototype data
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(const string& name, const string& description);
+	void setPrototypeData(const string& name, const string& description);
 
 	/**
 	 * Unset entity data
 	 */
-	void unsetEntityData();
+	void unsetPrototypeData();
 
 	/**
-	 * On entity data apply
+	 * On prototype data apply
 	 * @param model model
 	 */
-	void onEntityDataApply(Prototype* model);
+	void onPrototypeDataApply(Prototype* model);
 
 	/**
-	 * Set up entity property preset ids
-	 * @param entityPresetIds entity property preset ids
+	 * Set up prototype property preset ids
+	 * @param prototypePresetIds prototype property preset ids
 	 */
-	void setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds); // TODO: std container: maybe use call by reference
+	void setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds);
 
 	/**
-	 * Set up entity properties
-	 * @param entity entity
+	 * Set up prototype properties
+	 * @param prototype prototype
 	 * @param presetId preset id
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(Prototype* entity, const string& presetId, const string& selectedName);
+	void setPrototypeProperties(Prototype* prototype, const string& presetId, const string& selectedName);
 
 	/**
-	 * Unset entity properties
+	 * Unset prototype properties
 	 */
-	void unsetEntityProperties();
+	void unsetPrototypeProperties();
 
 	/**
 	 * On entity property save
 	 * @param entity entity
 	 */
-	void onEntityPropertySave(Prototype* entity);
+	void onEntityPropertySave(Prototype* prototype);
 
 	/**
-	 * On entity property add
+	 * On prototype property add
+	 * @param prototype prototype
+	 */
+	void onPrototypePropertyAdd(Prototype* prototype);
+
+	/**
+	 * On prototype property remove
 	 * @param entity entity
 	 */
-	void onEntityPropertyAdd(Prototype* entity);
+	void onPrototypePropertyRemove(Prototype* prototype);
 
 	/**
-	 * On entity property remove
-	 * @param entity entity
-	 */
-	void onEntityPropertyRemove(Prototype* entity);
-
-	/**
-	 * Shows the error pop up
-	 */
-	void showErrorPopUp(const string& caption, const string& message);
-
-	/**
-	 * On entity property preset apply
+	 * On prototype property preset apply
 	 * @param model model
 	 */
-	void onEntityPropertyPresetApply(Prototype* model);
+	void onPrototypePropertyPresetApply(Prototype* prototype);
 
 	/**
 	 * Event callback for entity properties selection
-	 * @param entity
+	 * @param prototype prototype
 	 */
-	void onEntityPropertiesSelectionChanged(Prototype* entity);
+	void onPrototypePropertiesSelectionChanged(Prototype* prototype);
 
 	/**
 	 * On value changed
@@ -155,5 +150,10 @@ public:
 	 * @param entity entity
 	 */
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
+
+	/**
+	 * Shows the error pop up
+	 */
+	void showErrorPopUp(const string& caption, const string& message);
 
 };
