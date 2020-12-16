@@ -14,7 +14,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::utilities::MutableString;
 
 /**
@@ -31,14 +31,14 @@ private:
 	GUIElementNode* displayShadowing { nullptr };
 	GUIElementNode* displayGround { nullptr };
 	PrototypeDisplayView* view { nullptr };
-	EntityPhysicsView* physicsView { nullptr };
+	PrototypePhysicsView* physicsView { nullptr };
 
 public:
 	/**
 	 * Public constructor
 	 * @param physicsView physics view
 	 */
-	PrototypeDisplaySubScreenController(EntityPhysicsView* physicsView);
+	PrototypeDisplaySubScreenController(PrototypePhysicsView* physicsView);
 
 	/**
 	 * Destructor

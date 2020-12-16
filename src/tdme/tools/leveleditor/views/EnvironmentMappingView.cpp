@@ -22,7 +22,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
@@ -51,7 +51,7 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
@@ -69,7 +69,7 @@ EnvironmentMappingView::EnvironmentMappingView(PopUps* popUps)
 EnvironmentMappingView::~EnvironmentMappingView() {
 	delete cameraRotationInputHandler;
 	delete environmentMappingScreenController;
-	delete entityPhysicsView;
+	delete prototypePhysicsView;
 }
 
 PopUps* EnvironmentMappingView::getPopUpsViews()
@@ -95,7 +95,7 @@ void EnvironmentMappingView::setPrototype(Prototype* prototype)
 
 void EnvironmentMappingView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -116,7 +116,7 @@ void EnvironmentMappingView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityPhysicsView->display(prototype);
+	prototypePhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -129,13 +129,13 @@ void EnvironmentMappingView::updateGUIElements()
 		environmentMappingScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		environmentMappingScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		environmentMappingScreenController->setGeneration();
-		entityPhysicsView->setBoundingVolumes(prototype);
+		prototypePhysicsView->setBoundingVolumes(prototype);
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
 		environmentMappingScreenController->unsetPrototypeProperties();
 		environmentMappingScreenController->unsetPrototypeData();
 		environmentMappingScreenController->unsetGeneration();
-		entityPhysicsView->unsetBoundingVolumes();
+		prototypePhysicsView->unsetBoundingVolumes();
 	}
 }
 
@@ -144,11 +144,11 @@ void EnvironmentMappingView::initialize()
 	try {
 		environmentMappingScreenController = new EnvironmentMappingScreenController(this);
 		environmentMappingScreenController->initialize();
-		entityPhysicsView = environmentMappingScreenController->getPrototypePhysicsSubScreenController()->getView();
-		entityPhysicsView->initialize();
-		entityPhysicsView->setDisplayBoundingVolume(true);
-		entityPhysicsView->setDisplayBoundingVolumeIdx(0);
-		entityPhysicsView->setGizmoTypeMask(Gizmo::GIZMOTYPE_SCALE);
+		prototypePhysicsView = environmentMappingScreenController->getPrototypePhysicsSubScreenController()->getView();
+		prototypePhysicsView->initialize();
+		prototypePhysicsView->setDisplayBoundingVolume(true);
+		prototypePhysicsView->setDisplayBoundingVolumeIdx(0);
+		prototypePhysicsView->setGizmoTypeMask(Gizmo::GIZMOTYPE_SCALE);
 		engine->getGUI()->addScreen(environmentMappingScreenController->getScreenNode()->getId(), environmentMappingScreenController->getScreenNode());
 		environmentMappingScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -179,9 +179,9 @@ void EnvironmentMappingView::dispose()
 }
 
 void EnvironmentMappingView::onRotation() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }
 
 void EnvironmentMappingView::onScale() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }

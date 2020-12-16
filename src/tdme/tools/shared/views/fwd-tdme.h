@@ -8,7 +8,7 @@ namespace views {
 	class CameraRotationInputHandler;
 	struct CameraRotationInputHandlerEventHandler;
 	class PrototypeBaseView;
-	class EntityPhysicsView;
+	class PrototypePhysicsView;
 	class PrototypeSoundsView;
 	class PrototypeDisplayView;
 	class Gizmo;

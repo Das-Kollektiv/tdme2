@@ -19,7 +19,7 @@ using tdme::tools::leveleditor::controller::TriggerScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
 
 /**
@@ -36,7 +36,7 @@ private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
 	TriggerScreenController* triggerScreenController { nullptr };
-	EntityPhysicsView* entityPhysicsView { nullptr };
+	PrototypePhysicsView* prototypePhysicsView { nullptr };
 	Prototype* prototype { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;

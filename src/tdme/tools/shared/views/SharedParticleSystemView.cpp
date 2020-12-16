@@ -41,7 +41,7 @@
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/Gizmo.h>
@@ -97,7 +97,7 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::Gizmo;
@@ -117,7 +117,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	audio = Audio::getInstance();
 	particleSystemScreenController = nullptr;
 	prototypeDisplayView = nullptr;
-	entityPhysicsView = nullptr;
+	prototypePhysicsView = nullptr;
 	prototypeSoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
@@ -210,7 +210,7 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
-	if (entityPhysicsView->isEditingBoundingVolume(prototype) == false) {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == false) {
 		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 			auto& event = engine->getGUI()->getKeyboardEvents()[i];
 			if (event.isProcessed() == true) continue;
@@ -314,7 +314,7 @@ void SharedParticleSystemView::handleInputEvents()
 		}
 	} else {
 		removeGizmo();
-		entityPhysicsView->handleInputEvents(prototype, objectScale);
+		prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	}
 	cameraRotationInputHandler->handleInputEvents();
 }
@@ -366,7 +366,7 @@ void SharedParticleSystemView::display()
 
 	// rendering
 	prototypeDisplayView->display(prototype);
-	entityPhysicsView->display(prototype);
+	prototypePhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -378,8 +378,8 @@ void SharedParticleSystemView::updateGUIElements()
 		auto preset = prototype->getProperty("preset");
 		particleSystemScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
 		particleSystemScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-		entityPhysicsView->setBoundingVolumes(prototype);
-		entityPhysicsView->setPhysics(prototype);
+		prototypePhysicsView->setBoundingVolumes(prototype);
+		prototypePhysicsView->setPhysics(prototype);
 		prototypeSoundsView->setSounds(prototype);
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
@@ -388,8 +388,8 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setScreenCaption("Particle System - no particle system");
 		particleSystemScreenController->unsetPrototypeProperties();
 		particleSystemScreenController->unsetPrototypeData();
-		entityPhysicsView->unsetBoundingVolumes();
-		entityPhysicsView->unsetPhysics();
+		prototypePhysicsView->unsetBoundingVolumes();
+		prototypePhysicsView->unsetPhysics();
 		prototypeSoundsView->unsetSounds();
 		particleSystemScreenController->unsetParticleSystemType();
 		particleSystemScreenController->unsetParticleSystemEmitter();
@@ -407,7 +407,7 @@ void SharedParticleSystemView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "particlesystem.properties");
-		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		prototypePhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
 		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get("particlesystem.path", "."));
@@ -424,7 +424,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
 		prototypeDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
-		entityPhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
+		prototypePhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
 		prototypeSoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
@@ -434,7 +434,7 @@ void SharedParticleSystemView::initialize()
 	}
 
 	loadSettings();
-	entityPhysicsView->initialize();
+	prototypePhysicsView->initialize();
 	vector<string> particleSystemTypes;
 	particleSystemTypes.push_back("None");
 	particleSystemTypes.push_back("Object Particle System");
@@ -470,7 +470,7 @@ void SharedParticleSystemView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", prototypePhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());

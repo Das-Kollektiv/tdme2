@@ -28,7 +28,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::engine::prototype::Prototype;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 
@@ -47,7 +47,7 @@ class tdme::tools::shared::controller::PrototypePhysicsSubScreenController final
 private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* modelPath { nullptr };
-	EntityPhysicsView* view { nullptr };
+	PrototypePhysicsView* view { nullptr };
 	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
 	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeApply;
 	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume;
@@ -124,7 +124,7 @@ public:
 	/**
 	 * @return view
 	 */
-	EntityPhysicsView* getView();
+	PrototypePhysicsView* getView();
 
 	/**
 	 * @return screen node

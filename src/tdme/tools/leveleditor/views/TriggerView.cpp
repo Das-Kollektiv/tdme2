@@ -22,7 +22,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -50,7 +50,7 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -65,7 +65,7 @@ TriggerView::TriggerView(PopUps* popUps)
 TriggerView::~TriggerView() {
 	delete cameraRotationInputHandler;
 	delete triggerScreenController;
-	delete entityPhysicsView;
+	delete prototypePhysicsView;
 }
 
 PopUps* TriggerView::getPopUpsViews()
@@ -91,7 +91,7 @@ void TriggerView::setPrototype(Prototype* prototype)
 
 void TriggerView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -112,7 +112,7 @@ void TriggerView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityPhysicsView->display(prototype);
+	prototypePhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -124,14 +124,14 @@ void TriggerView::updateGUIElements()
 		auto preset = prototype->getProperty("preset");
 		triggerScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		triggerScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-		entityPhysicsView->setBoundingVolumes(prototype);
-		entityPhysicsView->setPhysics(prototype);
+		prototypePhysicsView->setBoundingVolumes(prototype);
+		prototypePhysicsView->setPhysics(prototype);
 	} else {
 		triggerScreenController->setScreenCaption("Trigger - no trigger loaded");
 		triggerScreenController->unsetPrototypeProperties();
 		triggerScreenController->unsetPrototypeData();
-		entityPhysicsView->unsetBoundingVolumes();
-		entityPhysicsView->unsetPhysics();
+		prototypePhysicsView->unsetBoundingVolumes();
+		prototypePhysicsView->unsetPhysics();
 	}
 }
 
@@ -140,9 +140,9 @@ void TriggerView::initialize()
 	try {
 		triggerScreenController = new TriggerScreenController(this);
 		triggerScreenController->initialize();
-		entityPhysicsView = triggerScreenController->getPrototypePhysicsSubScreenController()->getView();
-		entityPhysicsView->initialize();
-		entityPhysicsView->setDisplayBoundingVolume(true);
+		prototypePhysicsView = triggerScreenController->getPrototypePhysicsSubScreenController()->getView();
+		prototypePhysicsView->initialize();
+		prototypePhysicsView->setDisplayBoundingVolume(true);
 		engine->getGUI()->addScreen(triggerScreenController->getScreenNode()->getId(), triggerScreenController->getScreenNode());
 		triggerScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -173,9 +173,9 @@ void TriggerView::dispose()
 }
 
 void TriggerView::onRotation() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }
 
 void TriggerView::onScale() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }

@@ -432,7 +432,7 @@ SRCS = \
 	src/tdme/tools/shared/tools/Tools.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/PrototypeBaseView.cpp \
-	src/tdme/tools/shared/views/EntityPhysicsView.cpp \
+	src/tdme/tools/shared/views/PrototypePhysicsView.cpp \
 	src/tdme/tools/shared/views/PrototypeDisplayView.cpp \
 	src/tdme/tools/shared/views/PrototypeSoundsView.cpp \
 	src/tdme/tools/shared/views/Gizmo.cpp \

@@ -34,7 +34,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -77,7 +77,7 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

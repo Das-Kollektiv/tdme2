@@ -35,7 +35,7 @@
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
@@ -81,7 +81,7 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
@@ -98,7 +98,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	audio = Audio::getInstance();
 	modelEditorScreenController = nullptr;
 	prototypeDisplayView = nullptr;
-	entityPhysicsView = nullptr;
+	prototypePhysicsView = nullptr;
 	prototypeSoundsView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
@@ -302,7 +302,7 @@ void SharedModelEditorView::optimizeModel() {
 
 void SharedModelEditorView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -371,7 +371,7 @@ void SharedModelEditorView::display()
 
 	// rendering
 	prototypeDisplayView->display(prototype);
-	entityPhysicsView->display(prototype);
+	prototypePhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 	audio->update();
@@ -385,10 +385,10 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
 		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		modelEditorScreenController->setPivot(prototype->getPivot());
-		entityPhysicsView->setBoundingVolumes(prototype);
-		entityPhysicsView->setPhysics(prototype);
-		entityPhysicsView->setTerrainMesh(prototype);
-		entityPhysicsView->setConvexMeshes(prototype);
+		prototypePhysicsView->setBoundingVolumes(prototype);
+		prototypePhysicsView->setPhysics(prototype);
+		prototypePhysicsView->setTerrainMesh(prototype);
+		prototypePhysicsView->setConvexMeshes(prototype);
 		modelEditorScreenController->setRendering(prototype);
 		modelEditorScreenController->setLODLevel(prototype, lodLevel);
 		modelEditorScreenController->setMaterials(prototype);
@@ -401,10 +401,10 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetPrototypeProperties();
 		modelEditorScreenController->unsetPrototypeData();
 		modelEditorScreenController->unsetPivot();
-		entityPhysicsView->unsetBoundingVolumes();
-		entityPhysicsView->unsetPhysics();
-		entityPhysicsView->unsetTerrainMesh();
-		entityPhysicsView->unsetConvexMeshes();
+		prototypePhysicsView->unsetBoundingVolumes();
+		prototypePhysicsView->unsetPhysics();
+		prototypePhysicsView->unsetTerrainMesh();
+		prototypePhysicsView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
@@ -424,7 +424,7 @@ void SharedModelEditorView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
-		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		prototypePhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
 		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
@@ -440,7 +440,7 @@ void SharedModelEditorView::initialize()
 	try {
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
-		entityPhysicsView = modelEditorScreenController->getPrototypePhysicsSubScreenController()->getView();
+		prototypePhysicsView = modelEditorScreenController->getPrototypePhysicsSubScreenController()->getView();
 		prototypeDisplayView = modelEditorScreenController->getPrototypeDisplaySubScreenController()->getView();
 		prototypeSoundsView = modelEditorScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
@@ -452,7 +452,7 @@ void SharedModelEditorView::initialize()
 	loadSettings();
 	modelEditorScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
 	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::OBJECT3D));
-	entityPhysicsView->initialize();
+	prototypePhysicsView->initialize();
 	updateGUIElements();
 }
 
@@ -473,7 +473,7 @@ void SharedModelEditorView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", prototypePhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
@@ -632,9 +632,9 @@ void SharedModelEditorView::onSetPrototypeData() {
 }
 
 void SharedModelEditorView::onRotation() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }
 
 void SharedModelEditorView::onScale() {
-	entityPhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype);
 }

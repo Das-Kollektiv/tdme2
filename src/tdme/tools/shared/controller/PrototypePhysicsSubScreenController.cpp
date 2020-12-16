@@ -30,7 +30,7 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -73,7 +73,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntityPhysicsView;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -85,7 +85,7 @@ using tdme::utilities::StringTools;
 PrototypePhysicsSubScreenController::PrototypePhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
 {
 	this->modelPath = modelPath;
-	this->view = new EntityPhysicsView(this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->view = new PrototypePhysicsView(this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;
@@ -97,7 +97,7 @@ PrototypePhysicsSubScreenController::~PrototypePhysicsSubScreenController() {
 	delete view;
 }
 
-EntityPhysicsView* PrototypePhysicsSubScreenController::getView()
+PrototypePhysicsView* PrototypePhysicsSubScreenController::getView()
 {
 	return view;
 }
@@ -803,26 +803,26 @@ void PrototypePhysicsSubScreenController::onActionPerformed(GUIActionListenerTyp
 		if (node->getId() == "tab_properties_boundingvolume") {
 			if (prototype != nullptr) {
 				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(prototype);
+				if (boundingVolumeIdxActivated != PrototypePhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(prototype);
 			}
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
 			if (prototype != nullptr) {
-				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				boundingVolumeIdxActivated = PrototypePhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 				view->endEditingBoundingVolume(prototype);
 			}
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_properties_terrain") == true) {
 			if (prototype != nullptr) {
-				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				boundingVolumeIdxActivated = PrototypePhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 				view->endEditingBoundingVolume(prototype);
 			}
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_") == true) {
 			if (prototype != nullptr) {
-				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+				view->setDisplayBoundingVolumeIdx(PrototypePhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 				view->endEditingBoundingVolume(prototype);
 			}
 		}
