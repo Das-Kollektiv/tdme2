@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
-using tdme::tools::shared::views::EntityBaseView;
+using tdme::tools::shared::views::PrototypeBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 
@@ -35,7 +35,7 @@ class tdme::tools::shared::controller::PrototypeBaseSubScreenController final
 {
 private:
 	static MutableString TEXT_EMPTY;
-	EntityBaseView* view { nullptr };
+	PrototypeBaseView* view { nullptr };
 	PopUps* popUps { nullptr };
 	GUIElementNode* prototypeName { nullptr };
 	GUIElementNode* prototypeDescription { nullptr };

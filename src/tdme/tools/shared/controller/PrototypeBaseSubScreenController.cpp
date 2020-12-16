@@ -16,7 +16,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
-#include <tdme/tools/shared/views/EntityBaseView.h>
+#include <tdme/tools/shared/views/PrototypeBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -39,7 +39,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::engine::prototype::PrototypeProperty;
-using tdme::tools::shared::views::EntityBaseView;
+using tdme::tools::shared::views::PrototypeBaseView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 using tdme::utilities::Console;
@@ -49,7 +49,7 @@ MutableString PrototypeBaseSubScreenController::TEXT_EMPTY = MutableString("");
 
 PrototypeBaseSubScreenController::PrototypeBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction)
 {
-	this->view = new EntityBaseView(this);
+	this->view = new PrototypeBaseView(this);
 	this->popUps = popUps;
 	this->onSetPrototypeDataAction = onSetEntityDataAction;
 }

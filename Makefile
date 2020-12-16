@@ -611,7 +611,7 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
-	src/tdme/tools/shared/views/EntityBaseView.cpp \
+	src/tdme/tools/shared/views/PrototypeBaseView.cpp \
 	src/tdme/tools/shared/views/EntityPhysicsView.cpp \
 	src/tdme/tools/shared/views/EntityDisplayView.cpp \
 	src/tdme/tools/shared/views/EntitySoundsView.cpp \

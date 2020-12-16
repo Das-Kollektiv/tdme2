@@ -14,11 +14,11 @@ using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Model base biew
+ * Model base view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityBaseView final
+class tdme::tools::shared::views::PrototypeBaseView final
 {
 private:
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
@@ -28,7 +28,7 @@ public:
 	 * Public constructor
 	 * @param prototypeBaseSubScreenController model base sub screen controller
 	 */
-	EntityBaseView(PrototypeBaseSubScreenController* prototypeBaseSubScreenController);
+	PrototypeBaseView(PrototypeBaseSubScreenController* prototypeBaseSubScreenController);
 
 	/**
 	 * Init
@@ -36,43 +36,43 @@ public:
 	void initialize();
 
 	/**
-	 * Apply entity property preset
-	 * @param entity entity
+	 * Apply prototype property preset
+	 * @param prototype prototype
 	 * @param presetId preset id
 	 */
-	void prototypePropertiesPreset(Prototype* entity, const string& presetId);
+	void prototypePropertiesPreset(Prototype* prototype, const string& presetId);
 
 	/**
-	 * Save a entity property
-	 * @param entity entity
+	 * Save a prototype property
+	 * @param prototype prototype
 	 * @param oldName old name
 	 * @param name name
 	 * @param value value
 	 * @return success
 	 */
-	bool prototypePropertySave(Prototype* entity, const string& oldName, const string& name, const string& value);
+	bool prototypePropertySave(Prototype* prototype, const string& oldName, const string& name, const string& value);
 
 	/**
-	 * Add a entity property
-	 * @param entity entity
+	 * Add a prototype property
+	 * @param prototype prototype
 	 * @return success
 	 */
-	bool prototypePropertyAdd(Prototype* entity);
+	bool prototypePropertyAdd(Prototype* prototype);
 
 	/**
-	 * Remove a entity property from model properties
-	 * @param entity entity
+	 * Remove a prototype property from prototype properties
+	 * @param prototype prototype
 	 * @param name name
 	 * @return success
 	 */
-	bool prototypePropertyRemove(Prototype* entity, const string& name);
+	bool prototypePropertyRemove(Prototype* prototype, const string& name);
 
 	/**
 	 * Update current model data
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param name name
 	 * @param description description
 	 */
-	void setPrototypeData(Prototype* entity, const string& name, const string& description);
+	void setPrototypeData(Prototype* prototype, const string& name, const string& description);
 
 };
