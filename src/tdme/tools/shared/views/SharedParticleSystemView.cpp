@@ -21,7 +21,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -77,7 +77,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::engine::SceneConnector;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -424,7 +424,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
 		entityDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
-		entityPhysicsView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
 		entitySoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);

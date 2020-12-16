@@ -14,29 +14,28 @@ using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::Triangle;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::engine::prototype::Prototype;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 
-class tdme::tools::shared::controller::EntityPhysicsSubScreenController_GenerateConvexMeshes
+/**
+ * Prototype physics sub screen controller convex mesh generation class
+ */
+class tdme::tools::shared::controller::PrototypePhysicsSubScreenController_GenerateConvexMeshes
 {
-	friend class EntityPhysicsSubScreenController;
-	friend class EntityPhysicsSubScreenController_BoundingVolumeType;
-
 public:
 	/**
 	 * Remove convex meshes
-	 * @param entityPhysicsSubScreenController entity physics sub screen controller
+	 * @param prototypePhysicsSubScreenController entity physics sub screen controller
 	 * @param entityFinal entity final
 	 */
-	static void removeConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, Prototype* entityFinal);
+	static void removeConvexMeshes(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, Prototype* entityFinal);
 
 	/**
 	 * Generateconvex meshes
-	 * @param entityPhysicsSubScreenController entity physics sub screen controller
+	 * @param prototypePhysicsSubScreenController entity physics sub screen controller
 	 * @param entityFinal entity final
 	 */
-	static void generateConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, Prototype* entityFinal);
+	static void generateConvexMeshes(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, Prototype* entityFinal);
 
 private:
 
@@ -57,6 +56,6 @@ private:
 	 */
 	static Model* createModel(const string& id, vector<Triangle>& triangles);
 
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController;
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController;
 	Prototype* entityFinal;
 };

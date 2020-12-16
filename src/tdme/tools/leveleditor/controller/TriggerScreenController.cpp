@@ -14,7 +14,7 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -39,7 +39,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
@@ -81,12 +81,12 @@ TriggerScreenController::TriggerScreenController(TriggerView* view)
 	auto const finalView = view;
 	this->modelPath = new FileDialogPath(".");
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, false);
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), modelPath, false);
 }
 
-EntityPhysicsSubScreenController* TriggerScreenController::getEntityPhysicsSubScreenController()
+PrototypePhysicsSubScreenController* TriggerScreenController::getPrototypePhysicsSubScreenController()
 {
-	return entityPhysicsSubScreenController;
+	return prototypePhysicsSubScreenController;
 }
 
 GUIScreenNode* TriggerScreenController::getScreenNode()
@@ -107,7 +107,7 @@ void TriggerScreenController::initialize()
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
-	entityPhysicsSubScreenController->initialize(screenNode);
+	prototypePhysicsSubScreenController->initialize(screenNode);
 }
 
 void TriggerScreenController::dispose()
@@ -152,13 +152,13 @@ void TriggerScreenController::showErrorPopUp(const string& caption, const string
 void TriggerScreenController::onValueChanged(GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
-	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void TriggerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypePhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void TriggerScreenController::getViewPort(int& left, int& top, int& width, int& height) {

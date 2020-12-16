@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.h>
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -47,7 +47,7 @@ using std::vector;
 
 using namespace VHACD;
 
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController_GenerateConvexMeshes;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_GenerateConvexMeshes;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
@@ -69,7 +69,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::StandardFileSystem;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -84,10 +84,10 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::MutableString;
 
-void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, Prototype* entityFinal)
+void PrototypePhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, Prototype* entityFinal)
 {
-	string meshPathName = entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
-	string meshFileName = entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName();
+	string meshPathName = prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
+	string meshFileName = prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName();
 	// delete old convex meshes
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
@@ -95,7 +95,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(E
 			break;
 		} else {
 			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolume(i)->getModelMeshFile()) == convexHullFileName) {
-				entityPhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
+				prototypePhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 			}
 			FileSystem::getInstance()->removeFile(
 				meshPathName,
@@ -105,13 +105,13 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(E
 	}
 }
 
-void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, Prototype* entityFinal)
+void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, Prototype* entityFinal)
 {
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-		entityPhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
+		prototypePhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 	}
 	map<string, MutableString> values;
-	entityPhysicsSubScreenController->getScreenNode()->getValues(values);
+	prototypePhysicsSubScreenController->getScreenNode()->getValues(values);
 	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
 	vector<string> convexMeshFileNames;
 	if (convexMeshMode == "vhacd") {
@@ -143,19 +143,19 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 		};
 
 		//
-		entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->show();
+		prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->show();
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			IVHACD::Parameters vhacdParams;
-			vhacdParams.m_resolution = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesResolution->getController()->getValue().getString());
-			vhacdParams.m_concavity = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesConcavity->getController()->getValue().getString());
-			vhacdParams.m_planeDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
-			vhacdParams.m_convexhullDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue().getString());
-			vhacdParams.m_alpha = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesAlpha->getController()->getValue().getString());
-			vhacdParams.m_beta = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesBeta->getController()->getValue().getString());
-			vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
-			vhacdParams.m_minVolumePerCH = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
-			vhacdParams.m_pca = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPCA->getController()->getValue().getString());
+			vhacdParams.m_resolution = Tools::convertToInt(prototypePhysicsSubScreenController->convexMeshesResolution->getController()->getValue().getString());
+			vhacdParams.m_concavity = Tools::convertToFloat(prototypePhysicsSubScreenController->convexMeshesConcavity->getController()->getValue().getString());
+			vhacdParams.m_planeDownsampling = Tools::convertToInt(prototypePhysicsSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
+			vhacdParams.m_convexhullDownsampling = Tools::convertToInt(prototypePhysicsSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue().getString());
+			vhacdParams.m_alpha = Tools::convertToFloat(prototypePhysicsSubScreenController->convexMeshesAlpha->getController()->getValue().getString());
+			vhacdParams.m_beta = Tools::convertToFloat(prototypePhysicsSubScreenController->convexMeshesBeta->getController()->getValue().getString());
+			vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(prototypePhysicsSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
+			vhacdParams.m_minVolumePerCH = Tools::convertToFloat(prototypePhysicsSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
+			vhacdParams.m_pca = Tools::convertToInt(prototypePhysicsSubScreenController->convexMeshesPCA->getController()->getValue().getString());
 			if (vhacdParams.m_resolution < 10000 || vhacdParams.m_resolution > 64000000) {
 				throw ExceptionBase("Resolution must be between 10000 and 64000000");
 			}
@@ -183,14 +183,14 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			if (vhacdParams.m_pca > 1) {
 				throw ExceptionBase("PCA must be between 0 and 1");
 			}
-			VHACDCallback vhacdCallback(entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController());
+			VHACDCallback vhacdCallback(prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController());
 			VHACDLogger vhacdLogger;
 			vhacdParams.m_logger = &vhacdLogger;
 			vhacdParams.m_callback = &vhacdCallback;
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
-			string meshPathName = Tools::getPath(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
-			string meshFileName = Tools::getFileName(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
 				meshFileName
@@ -245,7 +245,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 					vhacd->GetConvexHull(i, convexHull);
 					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
 					Console::println(
-						"EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): VHACD: Saving convex hull@" +
+						"PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): VHACD: Saving convex hull@" +
 						to_string(i) +
 						": " + convexHullFileName +
 						", points = " + to_string(convexHull.m_nPoints) +
@@ -265,7 +265,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			}
 		} catch (Exception &exception) {
 			convexMeshFileNames.clear();
-			entityPhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+			prototypePhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
 				"Warning: Could not create convex hulls",
 				exception.what()
 			);
@@ -273,12 +273,12 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 		}
 		vhacd->Clean();
 		vhacd->Release();
-		entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->close();
+		prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->close();
 	} else
 	if (convexMeshMode == "model") {
 		try {
-			string meshPathName = Tools::getPath(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
-			string meshFileName = Tools::getFileName(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
 				meshFileName
@@ -290,7 +290,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 					meshObject3DModel.getTriangles(nodeTriangles, i);
 					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
 					Console::println(
-						"EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +
+						"PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +
 						to_string(i) +
 						": " + convexHullFileName +
 						", triangles = " + to_string(nodeTriangles.size())
@@ -308,7 +308,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			delete meshModel;
 		} catch (Exception &exception) {
 			convexMeshFileNames.clear();
-			entityPhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+			prototypePhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
 				"Warning: Could not create convex hulls",
 				exception.what()
 			);
@@ -316,13 +316,13 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 		}
 	}
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
-		entityPhysicsSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
-		entityPhysicsSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, i);
-		entityPhysicsSubScreenController->setupModelBoundingVolumeType(entityFinal, i);
+		prototypePhysicsSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
+		prototypePhysicsSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, i);
+		prototypePhysicsSubScreenController->setupModelBoundingVolumeType(entityFinal, i);
 	}
 }
 
-Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {
+Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
@@ -384,7 +384,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	return model;
 }
 
-Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
+Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());

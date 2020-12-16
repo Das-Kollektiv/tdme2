@@ -26,7 +26,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::utilities::MutableString;
 
@@ -43,7 +43,7 @@ class tdme::tools::leveleditor::controller::TriggerScreenController final
 private:
 	static MutableString TEXT_EMPTY;
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	TriggerView* view { nullptr };
 	FileDialogPath* modelPath { nullptr };
 	GUIScreenNode* screenNode { nullptr };
@@ -60,7 +60,7 @@ public:
 	/**
 	 * @return entity physics sub screen controller
 	 */
-	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;

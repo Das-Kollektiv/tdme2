@@ -14,7 +14,7 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -43,7 +43,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
@@ -88,12 +88,12 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 	auto const finalView = view;
 	this->modelPath = new FileDialogPath(".");
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, false, 1, EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), modelPath, false, 1, PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
 }
 
-EntityPhysicsSubScreenController* EnvironmentMappingScreenController::getEntityPhysicsSubScreenController()
+PrototypePhysicsSubScreenController* EnvironmentMappingScreenController::getPrototypePhysicsSubScreenController()
 {
-	return entityPhysicsSubScreenController;
+	return prototypePhysicsSubScreenController;
 }
 
 GUIScreenNode* EnvironmentMappingScreenController::getScreenNode()
@@ -117,7 +117,7 @@ void EnvironmentMappingScreenController::initialize()
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
-	entityPhysicsSubScreenController->initialize(screenNode);
+	prototypePhysicsSubScreenController->initialize(screenNode);
 }
 
 void EnvironmentMappingScreenController::dispose()
@@ -191,19 +191,19 @@ void EnvironmentMappingScreenController::onGenerationApply() {
 void EnvironmentMappingScreenController::onValueChanged(GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
-	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypePhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_generation_apply") == 0) {
 			onGenerationApply();
 		}
 	}
-	entityPhysicsSubScreenController->getView()->setDisplayBoundingVolumeIdx(0);
+	prototypePhysicsSubScreenController->getView()->setDisplayBoundingVolumeIdx(0);
 }
 
 void EnvironmentMappingScreenController::getViewPort(int& left, int& top, int& width, int& height) {

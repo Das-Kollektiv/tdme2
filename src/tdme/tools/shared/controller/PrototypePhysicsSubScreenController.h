@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::EntityPhysicsView;
@@ -33,16 +33,16 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 
 /**
- * Entity physics sub screen controller
+ * Prototype physics sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityPhysicsSubScreenController final
+class tdme::tools::shared::controller::PrototypePhysicsSubScreenController final
 {
-	friend class EntityPhysicsSubScreenController_BoundingVolumeType;
-	friend class EntityPhysicsSubScreenController_GenerateConvexMeshes;
-	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
-	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
+	friend class PrototypePhysicsSubScreenController_BoundingVolumeType;
+	friend class PrototypePhysicsSubScreenController_GenerateConvexMeshes;
+	friend class PrototypePhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
+	friend class PrototypePhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
 
 private:
 	GUIScreenNode* screenNode { nullptr };
@@ -114,12 +114,12 @@ public:
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor
 	 */
-	~EntityPhysicsSubScreenController();
+	~PrototypePhysicsSubScreenController();
 
 	/**
 	 * @return view
@@ -150,10 +150,10 @@ public:
 
 	/**
 	 * Set up model bounding volume type
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void setupModelBoundingVolumeType(Prototype* entity, int idx);
+	void setupModelBoundingVolumeType(Prototype* prototype, int idx);
 
 	/**
 	 * Set up bounding volume types
@@ -167,7 +167,7 @@ public:
 	 * @param idx idx
 	 * @param bvType bounding volume type
 	 */
-	void selectBoundingVolume(int idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
+	void selectBoundingVolume(int idx, PrototypePhysicsSubScreenController_BoundingVolumeType* bvType);
 
 	/**
 	 * Setup sphere bounding volume
@@ -214,89 +214,89 @@ public:
 
 	/**
 	 * On pivot apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeTypeApply(Prototype* entity, int idx);
+	void onBoundingVolumeTypeApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume none apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeNoneApply(Prototype* entity, int idx);
+	void onBoundingVolumeNoneApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume sphere apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeSphereApply(Prototype* entity, int idx);
+	void onBoundingVolumeSphereApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume capsule apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeCapsuleApply(Prototype* entity, int idx);
+	void onBoundingVolumeCapsuleApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume AABB apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeAabbApply(Prototype* entity, int idx);
+	void onBoundingVolumeAabbApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume OBB apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeObbApply(Prototype* entity, int idx);
+	void onBoundingVolumeObbApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume convex mesh apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshApply(Prototype* entity, int idx);
+	void onBoundingVolumeConvexMeshApply(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume convex mesh file clicked
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshFile(Prototype* entity, int idx);
+	void onBoundingVolumeConvexMeshFile(Prototype* prototype, int idx);
 
 	/**
 	 * On bounding volume convex meshes file
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onBoundingVolumeConvexMeshesFile(Prototype* entity);
+	void onBoundingVolumeConvexMeshesFile(Prototype* prototype);
 
 	/**
 	 * On bounding volume convex meshes remove
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onBoundingVolumeConvexMeshesRemove(Prototype* entity);
+	void onBoundingVolumeConvexMeshesRemove(Prototype* prototype);
 
 	/**
 	 * On bounding volume convex meshes generate
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onBoundingVolumeConvexMeshesGenerate(Prototype* entity);
+	void onBoundingVolumeConvexMeshesGenerate(Prototype* prototype);
 
 	/**
 	 * Set terrain mesh
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setTerrainMesh(Prototype* entity);
+	void setTerrainMesh(Prototype* prototype);
 
 	/**
 	 * Shows the error pop up
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onSetTerrainMesh(Prototype* entity);
+	void onSetTerrainMesh(Prototype* prototype);
 
 	/**
 	 * Unset terrain mesh
@@ -305,9 +305,9 @@ public:
 
 	/**
 	 * Set convex meshes
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setConvexMeshes(Prototype* entity);
+	void setConvexMeshes(Prototype* prototype);
 
 	/**
 	 * Unset convex meshes
@@ -321,21 +321,21 @@ public:
 
 	/**
 	 * Set physics
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setPhysics(Prototype* entity);
+	void setPhysics(Prototype* prototype);
 
 	/**
 	 * On physics body type apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onPhysicsBodyTypeApply(Prototype* entity);
+	void onPhysicsBodyTypeApply(Prototype* prototype);
 
 	/**
 	 * On physics body apply
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onPhysicsBodyApply(Prototype* entity);
+	void onPhysicsBodyApply(Prototype* prototype);
 
 	/**
 	 * On convex mesh mode changed
@@ -345,22 +345,24 @@ public:
 
 	/**
 	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 
 	/**
 	 * On value changed
 	 * @param node node
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* entity);
+	void onValueChanged(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 };

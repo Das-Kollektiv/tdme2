@@ -8,7 +8,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
@@ -18,7 +18,7 @@ using std::string;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
@@ -37,7 +37,7 @@ private:
 	static constexpr int MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 
 	Engine* engine { nullptr };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	PopUps* popUps { nullptr };
 
 	int maxBoundingVolumeCount;
@@ -55,12 +55,12 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param entityPhysicsSubScreenController pop ups
+	 * @param prototypePhysicsSubScreenController pop ups
 	 * @param popUps model editor screen controller
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_ALL);
+	EntityPhysicsView(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, PopUps* popUps, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

@@ -7,9 +7,9 @@ namespace shared {
 namespace controller {
 	class PrototypeBaseSubScreenController;
 	class PrototypeDisplaySubScreenController;
-	class EntityPhysicsSubScreenController;
-	class EntityPhysicsSubScreenController_BoundingVolumeType;
-	class EntityPhysicsSubScreenController_GenerateConvexMeshes;
+	class PrototypePhysicsSubScreenController;
+	class PrototypePhysicsSubScreenController_BoundingVolumeType;
+	class PrototypePhysicsSubScreenController_GenerateConvexMeshes;
 	class PrototypeSoundsSubScreenController;
 	class FileDialogPath;
 	class FileDialogScreenController;

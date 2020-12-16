@@ -24,7 +24,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -75,7 +75,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -143,9 +143,9 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 	this->view = view;
 	auto const finalView = view;
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
 	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
-	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
+	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->prototypePhysicsSubScreenController->getView());
 }
 
 ParticleSystemScreenController::~ParticleSystemScreenController() {
@@ -153,7 +153,7 @@ ParticleSystemScreenController::~ParticleSystemScreenController() {
 	delete modelPath;
 	delete prototypeBaseSubScreenController;
 	delete prototypeDisplaySubScreenController;
-	delete entityPhysicsSubScreenController;
+	delete prototypePhysicsSubScreenController;
 }
 
 PrototypeDisplaySubScreenController* ParticleSystemScreenController::getPrototypeDisplaySubScreenController()
@@ -161,9 +161,9 @@ PrototypeDisplaySubScreenController* ParticleSystemScreenController::getPrototyp
 	return prototypeDisplaySubScreenController;
 }
 
-EntityPhysicsSubScreenController* ParticleSystemScreenController::getEntityPhysicsSubScreenController()
+PrototypePhysicsSubScreenController* ParticleSystemScreenController::getPrototypePhysicsSubScreenController()
 {
-	return entityPhysicsSubScreenController;
+	return prototypePhysicsSubScreenController;
 }
 
 PrototypeSoundsSubScreenController* ParticleSystemScreenController::getPrototypeSoundsSubScreenController()
@@ -293,7 +293,7 @@ void ParticleSystemScreenController::initialize()
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
 	prototypeDisplaySubScreenController->initialize(screenNode);
-	entityPhysicsSubScreenController->initialize(screenNode);
+	prototypePhysicsSubScreenController->initialize(screenNode);
 	prototypeSoundsSubScreenController->initialize(screenNode);
 }
 
@@ -1041,7 +1041,7 @@ void ParticleSystemScreenController::onValueChanged(GUIElementNode* node)
 		view->setParticleSystemIndex(Integer::parseInt(particleSystemsListbox->getController()->getValue().getString()));
 	} else {
 		prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
-		entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
+		prototypePhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 		prototypeSoundsSubScreenController->onValueChanged(node, view->getPrototype());
 	}
 }
@@ -1050,7 +1050,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 {
 	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	prototypeDisplaySubScreenController->onActionPerformed(type, node);
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypePhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	prototypeSoundsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_entity_load") == 0) {

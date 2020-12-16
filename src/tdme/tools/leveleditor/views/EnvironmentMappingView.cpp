@@ -12,7 +12,7 @@
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -41,7 +41,7 @@ using tdme::math::Vector3;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::controller::EnvironmentMappingScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::engine::prototype::Prototype;
@@ -144,7 +144,7 @@ void EnvironmentMappingView::initialize()
 	try {
 		environmentMappingScreenController = new EnvironmentMappingScreenController(this);
 		environmentMappingScreenController->initialize();
-		entityPhysicsView = environmentMappingScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView = environmentMappingScreenController->getPrototypePhysicsSubScreenController()->getView();
 		entityPhysicsView->initialize();
 		entityPhysicsView->setDisplayBoundingVolume(true);
 		entityPhysicsView->setDisplayBoundingVolumeIdx(0);

@@ -570,9 +570,9 @@ SRCS = \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
 	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
-	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController.cpp \
-	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.cpp \
-	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
 	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \

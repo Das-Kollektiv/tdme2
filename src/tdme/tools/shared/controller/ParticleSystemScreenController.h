@@ -28,7 +28,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -59,7 +59,7 @@ private:
 	static string EMITTER_SPHEREPARTICLEEMITTER;
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController { nullptr };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController { nullptr };
 	SharedParticleSystemView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
@@ -183,7 +183,7 @@ public:
 	/**
 	 * @return entity physics sub screen controller
 	 */
-	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 
 	/**
