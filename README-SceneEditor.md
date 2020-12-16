@@ -1,7 +1,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
 
-- What is TDMELevelEditor?
-    - TDME based level editor 
+- What is TDMESceneEditor?
+    - TDME based scene editor 
 
 - What is already working
     - prototype library
@@ -15,10 +15,10 @@
         - empties
         - trigger
         - environment mappings
-    - level editor
+    - scene editor
         - setting up a grid where to place prototypes on
         - setting up snapping where to align prototypes at
-        - load, save maps, showing level dimension
+        - load, save scenes, showing scene dimension
         - import scenes from model files like FBX, DAE or TM
         - setting up scene properties
             - key, value map for what ever reason
@@ -51,7 +51,7 @@
 	- TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
-    - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
+    - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
 - Credits
