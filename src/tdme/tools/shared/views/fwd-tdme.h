@@ -9,7 +9,7 @@ namespace views {
 	struct CameraRotationInputHandlerEventHandler;
 	class PrototypeBaseView;
 	class EntityPhysicsView;
-	class EntitySoundsView;
+	class PrototypeSoundsView;
 	class PrototypeDisplayView;
 	class Gizmo;
 	struct PlayableSoundView;

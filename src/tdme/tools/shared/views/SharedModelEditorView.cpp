@@ -37,7 +37,7 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PrototypeDisplayView.h>
-#include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/StringTools.h>
@@ -83,7 +83,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Properties;
@@ -99,7 +99,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	modelEditorScreenController = nullptr;
 	prototypeDisplayView = nullptr;
 	entityPhysicsView = nullptr;
-	entitySoundsView = nullptr;
+	prototypeSoundsView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
 	initModelRequestedReset = false;
@@ -395,7 +395,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setAnimations(prototype);
 		modelEditorScreenController->setPreview();
 		modelEditorScreenController->setTools();
-		entitySoundsView->setSounds(prototype);
+		prototypeSoundsView->setSounds(prototype);
 	} else {
 		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
 		modelEditorScreenController->unsetPrototypeProperties();
@@ -411,7 +411,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetAnimations();
 		modelEditorScreenController->unsetPreview();
 		modelEditorScreenController->unsetTools();
-		entitySoundsView->unsetSounds();
+		prototypeSoundsView->unsetSounds();
 	}
 }
 
@@ -442,7 +442,7 @@ void SharedModelEditorView::initialize()
 		modelEditorScreenController->initialize();
 		entityPhysicsView = modelEditorScreenController->getPrototypePhysicsSubScreenController()->getView();
 		prototypeDisplayView = modelEditorScreenController->getPrototypeDisplaySubScreenController()->getView();
-		entitySoundsView = modelEditorScreenController->getPrototypeSoundsSubScreenController()->getView();
+		prototypeSoundsView = modelEditorScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
 		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {

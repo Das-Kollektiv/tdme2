@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::engine::prototype::Prototype;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
@@ -45,7 +45,7 @@ class tdme::tools::shared::controller::PrototypeSoundsSubScreenController final
 private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* audioPath { nullptr };
-	EntitySoundsView* view { nullptr };
+	PrototypeSoundsView* view { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
 	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown;
 	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundKey;
@@ -76,7 +76,7 @@ public:
 	/**
 	 * @return view
 	 */
-	EntitySoundsView* getView();
+	PrototypeSoundsView* getView();
 
 	/**
 	 * @return screen node

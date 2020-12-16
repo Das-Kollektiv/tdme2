@@ -43,7 +43,7 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PrototypeDisplayView.h>
-#include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -99,7 +99,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
@@ -118,7 +118,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	particleSystemScreenController = nullptr;
 	prototypeDisplayView = nullptr;
 	entityPhysicsView = nullptr;
-	entitySoundsView = nullptr;
+	prototypeSoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
 	updateParticleSystemRequested = false;
@@ -380,7 +380,7 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		entityPhysicsView->setBoundingVolumes(prototype);
 		entityPhysicsView->setPhysics(prototype);
-		entitySoundsView->setSounds(prototype);
+		prototypeSoundsView->setSounds(prototype);
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
 		particleSystemScreenController->setParticleSystemListBox(prototype->getParticleSystemsCount(), particleSystemIdx);
@@ -390,7 +390,7 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->unsetPrototypeData();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();
-		entitySoundsView->unsetSounds();
+		prototypeSoundsView->unsetSounds();
 		particleSystemScreenController->unsetParticleSystemType();
 		particleSystemScreenController->unsetParticleSystemEmitter();
 		particleSystemScreenController->setParticleSystemListBox(0, particleSystemIdx);
@@ -425,7 +425,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController->initialize();
 		prototypeDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
 		entityPhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
-		entitySoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
+		prototypeSoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {

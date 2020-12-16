@@ -20,11 +20,11 @@ using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::PopUps;
 
 /**
- * Entity sounds view
+ * Prototype sounds view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntitySoundsView final
+class tdme::tools::shared::views::PrototypeSoundsView final
 {
 private:
 	Engine* engine {  };
@@ -37,7 +37,7 @@ public:
 	 * @param prototypeSoundsSubScreenController entity sounds sub screen controller
 	 * @param popUps pop ups
 	 */
-	EntitySoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps);
+	PrototypeSoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps);
 
 	/**
 	 * @return pop ups view
@@ -51,8 +51,8 @@ public:
 
 	/**
 	 * Set sounds
-	 * @param entity
+	 * @param prototype prototype
 	 */
-	void setSounds(Prototype* entity);
+	void setSounds(Prototype* prototype);
 
 };

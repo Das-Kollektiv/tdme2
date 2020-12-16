@@ -28,7 +28,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -53,7 +53,7 @@ private:
 	ModelEditorScreenController* modelEditorScreenController { nullptr };
 	PrototypeDisplayView* prototypeDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
-	EntitySoundsView* entitySoundsView { nullptr };
+	PrototypeSoundsView* prototypeSoundsView { nullptr };
 	Prototype* prototype { nullptr };
 	bool loadModelRequested;
 	bool initModelRequested;

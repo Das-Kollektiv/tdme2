@@ -26,7 +26,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
@@ -52,7 +52,7 @@ private:
 	ParticleSystemScreenController* particleSystemScreenController { nullptr };
 	PrototypeDisplayView* prototypeDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
-	EntitySoundsView* entitySoundsView { nullptr };
+	PrototypeSoundsView* prototypeSoundsView { nullptr };
 	Prototype* prototype { nullptr };
 	bool loadParticleSystemRequested;
 	bool initParticleSystemRequested;

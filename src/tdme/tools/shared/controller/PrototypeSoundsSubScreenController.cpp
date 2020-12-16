@@ -16,7 +16,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -46,7 +46,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
@@ -60,14 +60,14 @@ PrototypeSoundsSubScreenController::PrototypeSoundsSubScreenController(PlayableS
 {
 	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
-	this->view = new EntitySoundsView(this, popUps);
+	this->view = new PrototypeSoundsView(this, popUps);
 }
 
 PrototypeSoundsSubScreenController::~PrototypeSoundsSubScreenController() {
 	delete view;
 }
 
-EntitySoundsView* PrototypeSoundsSubScreenController::getView()
+PrototypeSoundsView* PrototypeSoundsSubScreenController::getView()
 {
 	return view;
 }

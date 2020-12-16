@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
 
 #include <string>
 #include <vector>
@@ -9,7 +9,7 @@
 #include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
 
-using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 
 using std::vector;
 using std::string;
@@ -20,21 +20,21 @@ using tdme::engine::Entity;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::engine::prototype::Prototype;
 
-EntitySoundsView::EntitySoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps)
+PrototypeSoundsView::PrototypeSoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps)
 {
 	this->engine = Engine::getInstance();
 	this->prototypeSoundsSubScreenController = prototypeSoundsSubScreenController;
 	this->popUps = popUps;
 }
 
-PopUps* EntitySoundsView::getPopUpsViews() {
+PopUps* PrototypeSoundsView::getPopUpsViews() {
 	return popUps;
 }
 
-void EntitySoundsView::unsetSounds() {
+void PrototypeSoundsView::unsetSounds() {
 	prototypeSoundsSubScreenController->unsetSounds();
 }
 
-void EntitySoundsView::setSounds(Prototype* entity) {
-	prototypeSoundsSubScreenController->setSounds(entity);
+void PrototypeSoundsView::setSounds(Prototype* prototype) {
+	prototypeSoundsSubScreenController->setSounds(prototype);
 }
