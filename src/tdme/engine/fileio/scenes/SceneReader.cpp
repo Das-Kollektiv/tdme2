@@ -350,26 +350,26 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 	}
 	FileSystem::getInstance()->createPath(modelPathName);
 
-	auto levelModel = ModelReader::read(pathName, fileName);
+	auto sceneModel = ModelReader::read(pathName, fileName);
 
 	if (progressCallback != nullptr) progressCallback->progress(0.1f);
 
-	auto upVector = levelModel->getUpVector();
-	RotationOrder* rotationOrder = levelModel->getRotationOrder();
+	auto upVector = sceneModel->getUpVector();
+	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
 	scene.setRotationOrder(rotationOrder);
 
 	auto sceneLibrary = scene.getLibrary();
 	auto nodeIdx = 0;
-	Prototype* emptyEntity = nullptr;
-	Matrix4x4 modelImportRotationMatrix;
-	Vector3 levelModelScale;
-	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
-	modelImportRotationMatrix.getScale(levelModelScale);
-	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
-	auto progressTotal = levelModel->getSubNodes().size();
+	Prototype* emptyPrototype = nullptr;
+	Matrix4x4 sceneModelImportRotationMatrix;
+	Vector3 sceneModelScale;
+	sceneModelImportRotationMatrix.set(sceneModel->getImportTransformationsMatrix());
+	sceneModelImportRotationMatrix.getScale(sceneModelScale);
+	sceneModelImportRotationMatrix.scale(Vector3(1.0f / sceneModelScale.getX(), 1.0f / sceneModelScale.getY(), 1.0f / sceneModelScale.getZ()));
+	auto progressTotal = sceneModel->getSubNodes().size();
 	auto progressIdx = 0;
-	for (auto nodeIt: levelModel->getSubNodes()) {
+	for (auto nodeIt: sceneModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
 		determineMeshNodes(scene, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
@@ -381,7 +381,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				rotationOrder,
 				nullptr
 			);
-			model->setImportTransformationsMatrix(levelModel->getImportTransformationsMatrix());
+			model->setImportTransformationsMatrix(sceneModel->getImportTransformationsMatrix());
 			float importFixScale = 1.0f;
 			Vector3 translation, scale, rotation;
 			Vector3 xAxis, yAxis, zAxis, tmpAxis;
@@ -403,8 +403,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				scale.scale(-1.0f);
 			}
 			nodeTransformationsMatrix.computeEulerAngles(rotation);
-			modelImportRotationMatrix.multiply(scale, scale);
-			modelImportRotationMatrix.multiply(rotation, rotation);
+			sceneModelImportRotationMatrix.multiply(scale, scale);
+			sceneModelImportRotationMatrix.multiply(rotation, rotation);
 			model->getImportTransformationsMatrix().multiply(translation, translation);
 
 			ModelTools::cloneNode(meshNode.node, model);
@@ -436,14 +436,14 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				model->getBoundingBox()->update();
 				scale.scale(1.0f / importFixScale);
 			}
-			auto entityType = Prototype_Type::MODEL;
+			auto prototypeType = Prototype_Type::MODEL;
 			if (meshNode.node->getVertices().size() == 0) {
-				entityType = Prototype_Type::EMPTY;
+				prototypeType = Prototype_Type::EMPTY;
 				delete model;
 				model = nullptr;
 			}
 			Prototype* prototype = nullptr;
-			if (entityType == Prototype_Type::MODEL && model != nullptr) {
+			if (prototypeType == Prototype_Type::MODEL && model != nullptr) {
 				for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
 					auto prototypeCompare = scene.getLibrary()->getPrototypeAt(i);
 					if (prototypeCompare->getType() != Prototype_Type::MODEL)
@@ -474,11 +474,11 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 					);
 				}
 			} else
-			if (entityType == Prototype_Type::EMPTY) {
-				if (emptyEntity == nullptr) {
-					emptyEntity = sceneLibrary->addEmpty(nodeIdx++, "Default Empty", "");
+			if (prototypeType == Prototype_Type::EMPTY) {
+				if (emptyPrototype == nullptr) {
+					emptyPrototype = sceneLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}
-				prototype = emptyEntity;
+				prototype = emptyPrototype;
 			} else {
 				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
 				delete model;
@@ -492,13 +492,13 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			sceneEntityTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
 			sceneEntityTransformations.setScale(scale);
 			sceneEntityTransformations.update();
-			auto object = new SceneEntity(
+			auto sceneEntity = new SceneEntity(
 				meshNode.id,
 				meshNode.id,
 				sceneEntityTransformations,
 				prototype
 			);
-			scene.addEntity(object);
+			scene.addEntity(sceneEntity);
 		}
 		//
 		progressIdx++;
@@ -514,7 +514,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 	);
 
 	//
-	delete levelModel;
+	delete sceneModel;
 
 	//
 	if (progressCallback != nullptr) progressCallback->progress(1.0f);

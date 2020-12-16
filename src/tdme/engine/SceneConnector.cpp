@@ -475,8 +475,8 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			entity->update();
 			entity->setEnabled(enable);
 
-			auto object3D = dynamic_cast<Object3D*>(entity);
-			if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(sceneEntity->getReflectionEnvironmentMappingId());
+			auto object = dynamic_cast<Object3D*>(entity);
+			if (object != nullptr) object->setReflectionEnvironmentMappingId(sceneEntity->getReflectionEnvironmentMappingId());
 
 			engine->addEntity(entity);
 		}

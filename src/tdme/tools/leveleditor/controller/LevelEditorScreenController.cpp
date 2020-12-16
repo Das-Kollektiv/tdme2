@@ -86,7 +86,7 @@ MutableString LevelEditorScreenController::TEXT_EMPTY = MutableString("");
 LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
-	this->mapPath = new FileDialogPath(".");
+	this->scenePath = new FileDialogPath(".");
 	this->modelPath = new FileDialogPath(".");
 }
 
@@ -97,7 +97,7 @@ GUIScreenNode* LevelEditorScreenController::getScreenNode()
 
 FileDialogPath* LevelEditorScreenController::getMapPath()
 {
-	return mapPath;
+	return scenePath;
 }
 
 void LevelEditorScreenController::initialize()
@@ -112,56 +112,56 @@ void LevelEditorScreenController::initialize()
 		snappingX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_x"));
 		snappingZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_z"));
 		snappingEnabled = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_enabled"));
-		mapWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_width"));
-		mapDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_depth"));
-		mapHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_height"));
-		mapPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_property_name"));
-		mapPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_property_value"));
-		mapPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_save"));
-		mapPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_remove"));
-		mapPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_properties_listbox"));
-		mapSkyModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model"));
-		btnMapSkyModelLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_load"));
-		btnMapSkyModelClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_clear"));
-		mapSkyModelScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model_scale"));
-		btnMapSkyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_apply"));
-		objectName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_name"));
-		objectDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_description"));
-		objectModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_model"));
-		objectCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_center"));
-		btnObjectDataApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_objectdata_apply"));
-		btnObjectTranslationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_translation_apply"));
-		btnObjectScaleApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_scale_apply"));
-		btnObjectRotationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rotation_apply"));
-		btnObjectColor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_color"));
-		btnObjectCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_center"));
-		btnObjectRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_remove"));
-		objectTranslationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_x"));
-		objectTranslationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_y"));
-		objectTranslationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_z"));
-		objectScaleX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_x"));
-		objectScaleY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_y"));
-		objectScaleZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_z"));
-		objectRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_x"));
-		objectRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_y"));
-		objectRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_z"));
-		objectPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_property_name"));
-		objectPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_property_value"));
-		btnObjectPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_save"));
-		btnObjectPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_remove"));
-		btnObjectPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_add"));
-		btnObjectPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_remove"));
-		btnObjectPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_presetapply"));
-		objectPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_listbox"));
-		objectPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_presets"));
-		objectsListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("objects_listbox"));
-		objectReflectionsEnvironmentmappingDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_reflections_environmentmapping"));
-		btnObjectReflectionsEnvironmentmappingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_reflections_environmentmapping_apply"));
-		mapWidth->getController()->setDisabled(true);
-		mapDepth->getController()->setDisabled(true);
-		mapHeight->getController()->setDisabled(true);
-		objectModel->getController()->setDisabled(true);
-		objectCenter->getController()->setDisabled(true);
+		sceneWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_width"));
+		sceneDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_depth"));
+		sceneHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_height"));
+		scenePropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_property_name"));
+		scenePropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_property_value"));
+		scenePropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_save"));
+		scenePropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_remove"));
+		scenePropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_properties_listbox"));
+		sceneSkyModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model"));
+		btnSceneSkyModelLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_load"));
+		btnSceneSkyModelClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_clear"));
+		sceneSkyModelScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model_scale"));
+		btnSceneSkyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_apply"));
+		entityName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_name"));
+		entityDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_description"));
+		entityModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_model"));
+		entityCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_center"));
+		btnEntityDataApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_objectdata_apply"));
+		btnEntityTranslationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_translation_apply"));
+		btnEntityScaleApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_scale_apply"));
+		btnEntityRotationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rotation_apply"));
+		btnEntityColor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_color"));
+		btnEntityCenter = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_center"));
+		btnEntityRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_remove"));
+		entityTranslationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_x"));
+		entityTranslationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_y"));
+		entityTranslationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_translation_z"));
+		entityScaleX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_x"));
+		entityScaleY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_y"));
+		entityScaleZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_scale_z"));
+		entityRotationX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_x"));
+		entityRotationY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_y"));
+		entityRotationZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_rotation_z"));
+		entityPropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_property_name"));
+		entityPropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_property_value"));
+		btnEntityPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_save"));
+		btnEntityPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_remove"));
+		btnEntityPropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_add"));
+		btnEntityPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_remove"));
+		btnEntityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_properties_presetapply"));
+		entityPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_listbox"));
+		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_presets"));
+		entitiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("objects_listbox"));
+		entityReflectionsEnvironmentmappingDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_reflections_environmentmapping"));
+		btnEntityReflectionsEnvironmentmappingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_reflections_environmentmapping_apply"));
+		sceneWidth->getController()->setDisabled(true);
+		sceneDepth->getController()->setDisabled(true);
+		sceneHeight->getController()->setDisabled(true);
+		entityModel->getController()->setDisabled(true);
+		entityCenter->getController()->setDisabled(true);
 		for (auto i = 0; i < 4; i++) {
 			lightsPresets[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("presets_light" + to_string(i)));
 			lightsAmbient[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("light" + to_string(i) + "_ambient"));
@@ -206,239 +206,239 @@ void LevelEditorScreenController::setSnapping(bool snappingEnabled, float snappi
 	this->snappingZ->getController()->setValue(MutableString(Tools::formatFloat(snappingZ)));
 }
 
-void LevelEditorScreenController::setLevelSize(float width, float depth, float height)
+void LevelEditorScreenController::setSceneSize(float width, float depth, float height)
 {
-	mapWidth->getController()->setValue(MutableString(Tools::formatFloat(width)));
-	mapDepth->getController()->setValue(MutableString(Tools::formatFloat(depth)));
-	mapHeight->getController()->setValue(MutableString(Tools::formatFloat(height)));
+	sceneWidth->getController()->setValue(MutableString(Tools::formatFloat(width)));
+	sceneDepth->getController()->setValue(MutableString(Tools::formatFloat(depth)));
+	sceneHeight->getController()->setValue(MutableString(Tools::formatFloat(height)));
 }
 
-void LevelEditorScreenController::unsetObjectProperties()
+void LevelEditorScreenController::unsetEntityProperties()
 {
-	objectPropertiesPresets->getController()->setValue(MutableString("none"));
-	objectPropertiesPresets->getController()->setDisabled(true);
-	btnObjectPropertyPresetApply->getController()->setDisabled(true);
-	objectPropertiesListBox->getController()->setDisabled(true);
-	btnObjectPropertyAdd->getController()->setDisabled(true);
-	btnObjectPropertyRemove->getController()->setDisabled(true);
-	btnObjectPropertySave->getController()->setDisabled(true);
-	objectPropertyName->getController()->setValue(TEXT_EMPTY);
-	objectPropertyName->getController()->setDisabled(true);
-	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
-	objectPropertyValue->getController()->setDisabled(true);
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(objectPropertiesListBox->getId() + "_inner")));
-	objectPropertiesListBoxInnerNode->clearSubNodes();
+	entityPropertiesPresets->getController()->setValue(MutableString("none"));
+	entityPropertiesPresets->getController()->setDisabled(true);
+	btnEntityPropertyPresetApply->getController()->setDisabled(true);
+	entityPropertiesListBox->getController()->setDisabled(true);
+	btnEntityPropertyAdd->getController()->setDisabled(true);
+	btnEntityPropertyRemove->getController()->setDisabled(true);
+	btnEntityPropertySave->getController()->setDisabled(true);
+	entityPropertyName->getController()->setValue(TEXT_EMPTY);
+	entityPropertyName->getController()->setDisabled(true);
+	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
+	entityPropertyValue->getController()->setDisabled(true);
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesListBox->getScreenNode()->getNodeById(entityPropertiesListBox->getId() + "_inner")));
+	entityPropertiesListBoxInnerNode->clearSubNodes();
 }
 
-const string LevelEditorScreenController::getObjectPropertyPresetSelection()
+const string LevelEditorScreenController::getEntityPropertyPresetSelection()
 {
 	return "";
 }
 
-void LevelEditorScreenController::setObjectData(const string& name, const string& description, const string& modelName, const Vector3& center)
+void LevelEditorScreenController::setEntityData(const string& name, const string& description, const string& modelName, const Vector3& center)
 {
-	objectName->getController()->setDisabled(false);
-	objectName->getController()->setValue(MutableString(name));
-	objectDescription->getController()->setDisabled(false);
-	objectDescription->getController()->setValue(MutableString(description));
-	objectModel->getController()->setValue(MutableString(modelName));
-	objectCenter->getController()->setValue(MutableString().append(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
-	btnObjectDataApply->getController()->setDisabled(false);
+	entityName->getController()->setDisabled(false);
+	entityName->getController()->setValue(MutableString(name));
+	entityDescription->getController()->setDisabled(false);
+	entityDescription->getController()->setValue(MutableString(description));
+	entityModel->getController()->setValue(MutableString(modelName));
+	entityCenter->getController()->setValue(MutableString().append(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
+	btnEntityDataApply->getController()->setDisabled(false);
 }
 
-void LevelEditorScreenController::unsetObjectData()
+void LevelEditorScreenController::unsetEntityData()
 {
-	objectName->getController()->setValue(TEXT_EMPTY);
-	objectName->getController()->setDisabled(true);
-	objectDescription->getController()->setValue(TEXT_EMPTY);
-	objectDescription->getController()->setDisabled(true);
-	objectModel->getController()->setValue(TEXT_EMPTY);
-	objectModel->getController()->setDisabled(true);
-	objectCenter->getController()->setValue(TEXT_EMPTY);
-	objectCenter->getController()->setDisabled(true);
-	btnObjectDataApply->getController()->setDisabled(true);
+	entityName->getController()->setValue(TEXT_EMPTY);
+	entityName->getController()->setDisabled(true);
+	entityDescription->getController()->setValue(TEXT_EMPTY);
+	entityDescription->getController()->setDisabled(true);
+	entityModel->getController()->setValue(TEXT_EMPTY);
+	entityModel->getController()->setDisabled(true);
+	entityCenter->getController()->setValue(TEXT_EMPTY);
+	entityCenter->getController()->setDisabled(true);
+	btnEntityDataApply->getController()->setDisabled(true);
 }
 
-void LevelEditorScreenController::onObjectDataApply()
+void LevelEditorScreenController::onEntityDataApply()
 {
-	if (view->objectDataApply(objectName->getController()->getValue().getString(), objectDescription->getController()->getValue().getString()) == false) {
+	if (view->entityDataApply(entityName->getController()->getValue().getString(), entityDescription->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Changing object data failed");
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(Scene& scene)
+void LevelEditorScreenController::setEntityListbox(Scene& scene)
 {
-	auto selectedObjects = objectsListBox->getController()->getValue();
-	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
+	auto selectedObjects = entitiesListBox->getController()->getValue();
+	auto entitiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entitiesListBox->getScreenNode()->getNodeById(entitiesListBox->getId() + "_inner")));
 	auto idx = 1;
-	string objectsListBoxSubNodesXML = "";
-	objectsListBoxSubNodesXML =
-		objectsListBoxSubNodesXML +
+	string entitiesListBoxSubNodesXML = "";
+	entitiesListBoxSubNodesXML =
+		entitiesListBoxSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		objectsListBox->getId() +
+		entitiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	auto objectIdx = 0;
+	auto entityIdx = 0;
 	for (int i = 0; i < scene.getEntityCount(); i++) {
-		if (objectIdx > 25000) {
-			objectsListBoxSubNodesXML =
+		if (entityIdx > 25000) {
+			entitiesListBoxSubNodesXML =
 				"<scrollarea-vertical id=\"" +
-				objectsListBox->getId() +
+				entitiesListBox->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto object = scene.getEntityAt(i);
-		if (object->getPrototype()->isRenderGroups() == true) continue;
-		auto objectId = object->getId();
-		objectsListBoxSubNodesXML =
-			objectsListBoxSubNodesXML +
+		auto entity = scene.getEntityAt(i);
+		if (entity->getPrototype()->isRenderGroups() == true) continue;
+		auto entityId = entity->getId();
+		entitiesListBoxSubNodesXML =
+			entitiesListBoxSubNodesXML +
 			"<selectbox-multiple-option text=\"" +
-			GUIParser::escapeQuotes(objectId) +
+			GUIParser::escapeQuotes(entityId) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(objectId) +
+			GUIParser::escapeQuotes(entityId) +
 			"\" " +
 			"/>\n";
-		objectIdx++;
+		entityIdx++;
 	}
-	objectsListBoxSubNodesXML =
-		objectsListBoxSubNodesXML +
+	entitiesListBoxSubNodesXML =
+		entitiesListBoxSubNodesXML +
 		"</scrollarea-vertical>\n";
 	try {
-		objectsListBoxInnerNode->replaceSubNodes(objectsListBoxSubNodesXML, false);
+		entitiesListBoxInnerNode->replaceSubNodes(entitiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setObjectListbox(): An error occurred: "));
+		Console::print(string("LevelEditorScreenController::setEntityListbox(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	objectsListBox->getController()->setValue(selectedObjects);
+	entitiesListBox->getController()->setValue(selectedObjects);
 }
 
-void LevelEditorScreenController::unselectObjectInObjectListBox(const string& objectId)
+void LevelEditorScreenController::unselectEntitiesInEntityListBox(const string& entityId)
 {
-	auto selectedObjects = objectsListBox->getController()->getValue();
-	auto value = MutableString().set(u'|').append(objectId).append(u'|');
-	auto pos = selectedObjects.indexOf(value);
-	if (pos != -1) selectedObjects.delete_(pos, value.length());
-	objectsListBox->getController()->setValue(selectedObjects);
+	auto selectedEntities = entitiesListBox->getController()->getValue();
+	auto value = MutableString().set('|').append(entityId).append('|');
+	auto pos = selectedEntities.indexOf(value);
+	if (pos != -1) selectedEntities.delete_(pos, value.length());
+	entitiesListBox->getController()->setValue(selectedEntities);
 }
 
-void LevelEditorScreenController::unselectObjectsInObjectListBox()
+void LevelEditorScreenController::unselectEntitiesInEntityListBox()
 {
-	objectsListBox->getController()->setValue(MutableString());
+	entitiesListBox->getController()->setValue(MutableString());
 }
 
-void LevelEditorScreenController::selectObjectInObjectListbox(const string& objectId)
+void LevelEditorScreenController::selectEntityInEntityListbox(const string& entityId)
 {
-	auto selectedObjects = objectsListBox->getController()->getValue();
-	auto value = MutableString().set(u'|').append(objectId).append(u'|');
-	auto pos = selectedObjects.indexOf(value);
-	if (pos == -1) selectedObjects.append(value);
-	objectsListBox->getController()->setValue(selectedObjects);
+	auto selectedEntities = entitiesListBox->getController()->getValue();
+	auto value = MutableString().set('|').append(entityId).append('|');
+	auto pos = selectedEntities.indexOf(value);
+	if (pos == -1) selectedEntities.append(value);
+	entitiesListBox->getController()->setValue(selectedEntities);
 }
 
-void LevelEditorScreenController::onObjectsSelect()
+void LevelEditorScreenController::onEntitiesSelect()
 {
-	vector<string> selectedObjectList;
+	vector<string> selectedEntityList;
 	StringTokenizer t;
-	t.tokenize(objectsListBox->getController()->getValue().getString(), "|");
+	t.tokenize(entitiesListBox->getController()->getValue().getString(), "|");
 	while (t.hasMoreTokens()) {
-		selectedObjectList.push_back(t.nextToken());
+		selectedEntityList.push_back(t.nextToken());
 	}
-	if (selectedObjectList.empty() == false)
-		view->selectObjects(selectedObjectList);
+	if (selectedEntityList.empty() == false)
+		view->selectEntities(selectedEntityList);
 
 }
 
-void LevelEditorScreenController::onObjectsUnselect()
+void LevelEditorScreenController::onEntitiesUnselect()
 {
-	view->unselectObjects();
+	view->unselectEntities();
 }
 
-void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
+void LevelEditorScreenController::setEntityTransformations(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
 {
-	btnObjectTranslationApply->getController()->setDisabled(false);
-	btnObjectScaleApply->getController()->setDisabled(false);
-	btnObjectRotationApply->getController()->setDisabled(false);
-	btnObjectColor->getController()->setDisabled(false);
-	btnObjectCenter->getController()->setDisabled(false);
-	btnObjectRemove->getController()->setDisabled(false);
-	objectTranslationX->getController()->setDisabled(false);
-	objectTranslationY->getController()->setDisabled(false);
-	objectTranslationZ->getController()->setDisabled(false);
-	objectScaleX->getController()->setDisabled(false);
-	objectScaleY->getController()->setDisabled(false);
-	objectScaleZ->getController()->setDisabled(false);
-	objectRotationX->getController()->setDisabled(disableRotation);
-	objectRotationY->getController()->setDisabled(disableRotation);
-	objectRotationZ->getController()->setDisabled(disableRotation);
-	objectTranslationX->getController()->setValue(MutableString(Tools::formatFloat(translation.getX())));
-	objectTranslationY->getController()->setValue(MutableString(Tools::formatFloat(translation.getY())));
-	objectTranslationZ->getController()->setValue(MutableString(Tools::formatFloat(translation.getZ())));
-	objectScaleX->getController()->setValue(MutableString(Tools::formatFloat(scale.getX())));
-	objectScaleY->getController()->setValue(MutableString(Tools::formatFloat(scale.getY())));
-	objectScaleZ->getController()->setValue(MutableString(Tools::formatFloat(scale.getZ())));
-	objectRotationX->getController()->setValue(MutableString(Tools::formatFloat(rotationX)));
-	objectRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotationY)));
-	objectRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotationZ)));
+	btnEntityTranslationApply->getController()->setDisabled(false);
+	btnEntityScaleApply->getController()->setDisabled(false);
+	btnEntityRotationApply->getController()->setDisabled(false);
+	btnEntityColor->getController()->setDisabled(false);
+	btnEntityCenter->getController()->setDisabled(false);
+	btnEntityRemove->getController()->setDisabled(false);
+	entityTranslationX->getController()->setDisabled(false);
+	entityTranslationY->getController()->setDisabled(false);
+	entityTranslationZ->getController()->setDisabled(false);
+	entityScaleX->getController()->setDisabled(false);
+	entityScaleY->getController()->setDisabled(false);
+	entityScaleZ->getController()->setDisabled(false);
+	entityRotationX->getController()->setDisabled(disableRotation);
+	entityRotationY->getController()->setDisabled(disableRotation);
+	entityRotationZ->getController()->setDisabled(disableRotation);
+	entityTranslationX->getController()->setValue(MutableString(Tools::formatFloat(translation.getX())));
+	entityTranslationY->getController()->setValue(MutableString(Tools::formatFloat(translation.getY())));
+	entityTranslationZ->getController()->setValue(MutableString(Tools::formatFloat(translation.getZ())));
+	entityScaleX->getController()->setValue(MutableString(Tools::formatFloat(scale.getX())));
+	entityScaleY->getController()->setValue(MutableString(Tools::formatFloat(scale.getY())));
+	entityScaleZ->getController()->setValue(MutableString(Tools::formatFloat(scale.getZ())));
+	entityRotationX->getController()->setValue(MutableString(Tools::formatFloat(rotationX)));
+	entityRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotationY)));
+	entityRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotationZ)));
 }
 
-void LevelEditorScreenController::unsetObject()
+void LevelEditorScreenController::unsetEntityTransformations()
 {
-	btnObjectTranslationApply->getController()->setDisabled(true);
-	btnObjectScaleApply->getController()->setDisabled(true);
-	btnObjectRotationApply->getController()->setDisabled(true);
-	btnObjectColor->getController()->setDisabled(true);
-	btnObjectCenter->getController()->setDisabled(true);
-	btnObjectRemove->getController()->setDisabled(true);
-	objectTranslationX->getController()->setDisabled(true);
-	objectTranslationY->getController()->setDisabled(true);
-	objectTranslationZ->getController()->setDisabled(true);
-	objectScaleX->getController()->setDisabled(true);
-	objectScaleY->getController()->setDisabled(true);
-	objectScaleZ->getController()->setDisabled(true);
-	objectRotationX->getController()->setDisabled(true);
-	objectRotationY->getController()->setDisabled(true);
-	objectRotationZ->getController()->setDisabled(true);
-	objectTranslationX->getController()->setValue(TEXT_EMPTY);
-	objectTranslationY->getController()->setValue(TEXT_EMPTY);
-	objectTranslationZ->getController()->setValue(TEXT_EMPTY);
-	objectScaleX->getController()->setValue(TEXT_EMPTY);
-	objectScaleY->getController()->setValue(TEXT_EMPTY);
-	objectScaleZ->getController()->setValue(TEXT_EMPTY);
-	objectRotationX->getController()->setValue(TEXT_EMPTY);
-	objectRotationY->getController()->setValue(TEXT_EMPTY);
-	objectRotationZ->getController()->setValue(TEXT_EMPTY);
+	btnEntityTranslationApply->getController()->setDisabled(true);
+	btnEntityScaleApply->getController()->setDisabled(true);
+	btnEntityRotationApply->getController()->setDisabled(true);
+	btnEntityColor->getController()->setDisabled(true);
+	btnEntityCenter->getController()->setDisabled(true);
+	btnEntityRemove->getController()->setDisabled(true);
+	entityTranslationX->getController()->setDisabled(true);
+	entityTranslationY->getController()->setDisabled(true);
+	entityTranslationZ->getController()->setDisabled(true);
+	entityScaleX->getController()->setDisabled(true);
+	entityScaleY->getController()->setDisabled(true);
+	entityScaleZ->getController()->setDisabled(true);
+	entityRotationX->getController()->setDisabled(true);
+	entityRotationY->getController()->setDisabled(true);
+	entityRotationZ->getController()->setDisabled(true);
+	entityTranslationX->getController()->setValue(TEXT_EMPTY);
+	entityTranslationY->getController()->setValue(TEXT_EMPTY);
+	entityTranslationZ->getController()->setValue(TEXT_EMPTY);
+	entityScaleX->getController()->setValue(TEXT_EMPTY);
+	entityScaleY->getController()->setValue(TEXT_EMPTY);
+	entityScaleZ->getController()->setValue(TEXT_EMPTY);
+	entityRotationX->getController()->setValue(TEXT_EMPTY);
+	entityRotationY->getController()->setValue(TEXT_EMPTY);
+	entityRotationZ->getController()->setValue(TEXT_EMPTY);
 }
 
 void LevelEditorScreenController::onScenePropertiesSelectionChanged()
 {
-	mapPropertyName->getController()->setDisabled(true);
-	mapPropertyName->getController()->setValue(TEXT_EMPTY);
-	mapPropertyValue->getController()->setDisabled(true);
-	mapPropertyValue->getController()->setValue(TEXT_EMPTY);
-	mapPropertySave->getController()->setDisabled(true);
-	mapPropertyRemove->getController()->setDisabled(true);
-	auto mapProperty = view->getScene()->getProperty(mapPropertiesListBox->getController()->getValue().getString());
+	scenePropertyName->getController()->setDisabled(true);
+	scenePropertyName->getController()->setValue(TEXT_EMPTY);
+	scenePropertyValue->getController()->setDisabled(true);
+	scenePropertyValue->getController()->setValue(TEXT_EMPTY);
+	scenePropertySave->getController()->setDisabled(true);
+	scenePropertyRemove->getController()->setDisabled(true);
+	auto mapProperty = view->getScene()->getProperty(scenePropertiesListBox->getController()->getValue().getString());
 	if (mapProperty != nullptr) {
-		mapPropertyName->getController()->setValue(MutableString(mapProperty->getName()));
-		mapPropertyValue->getController()->setValue(MutableString(mapProperty->getValue()));
-		mapPropertyName->getController()->setDisabled(false);
-		mapPropertyValue->getController()->setDisabled(false);
-		mapPropertySave->getController()->setDisabled(false);
-		mapPropertyRemove->getController()->setDisabled(false);
+		scenePropertyName->getController()->setValue(MutableString(mapProperty->getName()));
+		scenePropertyValue->getController()->setValue(MutableString(mapProperty->getValue()));
+		scenePropertyName->getController()->setDisabled(false);
+		scenePropertyValue->getController()->setDisabled(false);
+		scenePropertySave->getController()->setDisabled(false);
+		scenePropertyRemove->getController()->setDisabled(false);
 	}
 }
 
 void LevelEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
 {
-	mapPropertyName->getController()->setDisabled(true);
-	mapPropertyValue->getController()->setDisabled(true);
-	mapPropertySave->getController()->setDisabled(true);
-	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((mapPropertiesListBox->getScreenNode()->getNodeById(mapPropertiesListBox->getId() + "_inner")));
+	scenePropertyName->getController()->setDisabled(true);
+	scenePropertyValue->getController()->setDisabled(true);
+	scenePropertySave->getController()->setDisabled(true);
+	auto mapPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((scenePropertiesListBox->getScreenNode()->getNodeById(scenePropertiesListBox->getId() + "_inner")));
 	auto idx = 1;
 	string mapPropertiesListBoxSubNodesXML = "";
 	mapPropertiesListBoxSubNodesXML =
 		mapPropertiesListBoxSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		mapPropertiesListBox->getId() +
+		scenePropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < scene.getPropertyCount(); i++) {
 		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
@@ -460,7 +460,7 @@ void LevelEditorScreenController::setSceneProperties(Scene& scene, const string&
 	try {
 		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setMapProperties(): An error occurred: "));
+		Console::print(string("LevelEditorScreenController::setSceneProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	onScenePropertiesSelectionChanged();
@@ -468,151 +468,151 @@ void LevelEditorScreenController::setSceneProperties(Scene& scene, const string&
 
 void LevelEditorScreenController::onScenePropertySave()
 {
-	if (view->mapPropertySave(
-		mapPropertiesListBox->getController()->getValue().getString(),
-		mapPropertyName->getController()->getValue().getString(),
-		mapPropertyValue->getController()->getValue().getString()) == false) {
-		showErrorPopUp("Warning", "Saving map property failed");
+	if (view->scenePropertySave(
+		scenePropertiesListBox->getController()->getValue().getString(),
+		scenePropertyName->getController()->getValue().getString(),
+		scenePropertyValue->getController()->getValue().getString()) == false) {
+		showErrorPopUp("Warning", "Saving scene property failed");
 	}
 }
 
 void LevelEditorScreenController::onScenePropertyAdd()
 {
-	if (view->mapPropertyAdd() == false) {
-		showErrorPopUp("Warning", "Adding new map property failed");
+	if (view->scenePropertyAdd() == false) {
+		showErrorPopUp("Warning", "Adding new scene property failed");
 	}
 }
 
 void LevelEditorScreenController::onScenePropertyRemove()
 {
-	if (view->mapPropertyRemove(mapPropertiesListBox->getController()->getValue().getString()) == false) {
-		showErrorPopUp("Warning", "Removing map property failed");
+	if (view->scenePropertyRemove(scenePropertiesListBox->getController()->getValue().getString()) == false) {
+		showErrorPopUp("Warning", "Removing scene property failed");
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PrototypeProperty*>>& objectPresetIds)
+void LevelEditorScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
 {
-	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(objectPropertiesPresets->getId() + "_inner")));
+	auto entitityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
-	string objectPropertiesPresetsInnerNodeSubNodesXML = "";
-	objectPropertiesPresetsInnerNodeSubNodesXML =
-		objectPropertiesPresetsInnerNodeSubNodesXML +
+	string entityPropertiesPresetsInnerNodeSubNodesXML = "";
+	entityPropertiesPresetsInnerNodeSubNodesXML =
+		entityPropertiesPresetsInnerNodeSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		objectPropertiesPresets->getId() +
+		entityPropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto it: objectPresetIds) {
-		auto modelPresetId = it.first;
-		objectPropertiesPresetsInnerNodeSubNodesXML =
-			objectPropertiesPresetsInnerNodeSubNodesXML +
+	for (auto it: entityPresetIds) {
+		auto entityPresetId = it.first;
+		entityPropertiesPresetsInnerNodeSubNodesXML =
+			entityPropertiesPresetsInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(modelPresetId) +
+			GUIParser::escapeQuotes(entityPresetId) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(modelPresetId) +
+			GUIParser::escapeQuotes(entityPresetId) +
 			"\" " +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
 		idx++;
 	}
-	objectPropertiesPresetsInnerNodeSubNodesXML =
-		objectPropertiesPresetsInnerNodeSubNodesXML +
+	entityPropertiesPresetsInnerNodeSubNodesXML =
+		entityPropertiesPresetsInnerNodeSubNodesXML +
 		"</scrollarea-vertical>\n";
 	try {
-		objectPropertiesPresetsInnerNode->replaceSubNodes(objectPropertiesPresetsInnerNodeSubNodesXML, true);
+		entitityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setObjectPresetIds(): An error occurred: "));
+		Console::print(string("LevelEditorScreenController::setEntityPresetIds(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void LevelEditorScreenController::onObjectPropertiesSelectionChanged()
+void LevelEditorScreenController::onEntityPropertiesSelectionChanged()
 {
-	objectPropertyName->getController()->setDisabled(true);
-	objectPropertyName->getController()->setValue(TEXT_EMPTY);
-	objectPropertyValue->getController()->setDisabled(true);
-	objectPropertyValue->getController()->setValue(TEXT_EMPTY);
-	btnObjectPropertySave->getController()->setDisabled(true);
-	btnObjectPropertyRemove->getController()->setDisabled(true);
-	auto sceneEntity = view->getSelectedObject();
+	entityPropertyName->getController()->setDisabled(true);
+	entityPropertyName->getController()->setValue(TEXT_EMPTY);
+	entityPropertyValue->getController()->setDisabled(true);
+	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
+	btnEntityPropertySave->getController()->setDisabled(true);
+	btnEntityPropertyRemove->getController()->setDisabled(true);
+	auto sceneEntity = view->getSelectedSceneEntity();
 	if (sceneEntity == nullptr)
 		return;
 
-	auto modelProperty = sceneEntity->getProperty(objectPropertiesListBox->getController()->getValue().getString());
-	if (modelProperty != nullptr) {
-		objectPropertyName->getController()->setValue(MutableString(modelProperty->getName()));
-		objectPropertyValue->getController()->setValue(MutableString(modelProperty->getValue()));
-		objectPropertyName->getController()->setDisabled(false);
-		objectPropertyValue->getController()->setDisabled(false);
-		btnObjectPropertySave->getController()->setDisabled(false);
-		btnObjectPropertyRemove->getController()->setDisabled(false);
+	auto entityProperty = sceneEntity->getProperty(entityPropertiesListBox->getController()->getValue().getString());
+	if (entityProperty != nullptr) {
+		entityPropertyName->getController()->setValue(MutableString(entityProperty->getName()));
+		entityPropertyValue->getController()->setValue(MutableString(entityProperty->getValue()));
+		entityPropertyName->getController()->setDisabled(false);
+		entityPropertyValue->getController()->setDisabled(false);
+		btnEntityPropertySave->getController()->setDisabled(false);
+		btnEntityPropertyRemove->getController()->setDisabled(false);
 	}
 }
 
-void LevelEditorScreenController::setObjectProperties(const string& presetId, SceneEntity* object, const string& selectedName)
+void LevelEditorScreenController::setEntityProperties(const string& presetId, SceneEntity* entity, const string& selectedName)
 {
-	objectPropertiesPresets->getController()->setDisabled(false);
-	btnObjectPropertyPresetApply->getController()->setDisabled(false);
-	objectPropertiesListBox->getController()->setDisabled(false);
-	btnObjectPropertyAdd->getController()->setDisabled(false);
-	btnObjectPropertyRemove->getController()->setDisabled(false);
-	btnObjectPropertySave->getController()->setDisabled(true);
-	objectPropertyName->getController()->setDisabled(true);
-	objectPropertyValue->getController()->setDisabled(true);
-	objectPropertiesPresets->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
-	auto objectPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesListBox->getScreenNode()->getNodeById(objectPropertiesListBox->getId() + "_inner")));
+	entityPropertiesPresets->getController()->setDisabled(false);
+	btnEntityPropertyPresetApply->getController()->setDisabled(false);
+	entityPropertiesListBox->getController()->setDisabled(false);
+	btnEntityPropertyAdd->getController()->setDisabled(false);
+	btnEntityPropertyRemove->getController()->setDisabled(false);
+	btnEntityPropertySave->getController()->setDisabled(true);
+	entityPropertyName->getController()->setDisabled(true);
+	entityPropertyValue->getController()->setDisabled(true);
+	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
+	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesListBox->getScreenNode()->getNodeById(entityPropertiesListBox->getId() + "_inner")));
 	auto idx = 1;
-	string objectPropertiesListBoxSubNodesXML = "";
-	objectPropertiesListBoxSubNodesXML =
-		objectPropertiesListBoxSubNodesXML +
+	string entityPropertiesListBoxSubNodesXML = "";
+	entityPropertiesListBoxSubNodesXML =
+		entityPropertiesListBoxSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		objectPropertiesListBox->getId() +
+		entityPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < object->getPropertyCount(); i++) {
-	PrototypeProperty* objectProperty = object->getPropertyByIndex(i);
-		objectPropertiesListBoxSubNodesXML =
-			objectPropertiesListBoxSubNodesXML +
+	for (auto i = 0; i < entity->getPropertyCount(); i++) {
+		PrototypeProperty* entityProperty = entity->getPropertyByIndex(i);
+		entityPropertiesListBoxSubNodesXML =
+			entityPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(objectProperty->getName()) +
+			GUIParser::escapeQuotes(entityProperty->getName()) +
 			": " +
-			GUIParser::escapeQuotes(objectProperty->getValue()) +
+			GUIParser::escapeQuotes(entityProperty->getValue()) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(objectProperty->getName()) +
+			GUIParser::escapeQuotes(entityProperty->getName()) +
 			"\" " +
-			(selectedName.length() > 0 && objectProperty->getName() == selectedName? "selected=\"true\" " : "") +
+			(selectedName.length() > 0 && entityProperty->getName() == selectedName? "selected=\"true\" " : "") +
 			"/>\n";
 	}
-	objectPropertiesListBoxSubNodesXML =
-		objectPropertiesListBoxSubNodesXML +
+	entityPropertiesListBoxSubNodesXML =
+		entityPropertiesListBoxSubNodesXML +
 		"</scrollarea-vertical>\n";
 	try {
-		objectPropertiesListBoxInnerNode->replaceSubNodes(objectPropertiesListBoxSubNodesXML, false);
+		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setObjectProperties(): An error occurred: "));
+		Console::print(string("LevelEditorScreenController::setEntityProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	onObjectPropertiesSelectionChanged();
+	onEntityPropertiesSelectionChanged();
 }
 
-void LevelEditorScreenController::onObjectPropertySave()
+void LevelEditorScreenController::onEntityPropertySave()
 {
-	if (view->objectPropertySave(
-		objectPropertiesListBox->getController()->getValue().getString(),
-		objectPropertyName->getController()->getValue().getString(),
-		objectPropertyValue->getController()->getValue().getString()) == false) {
+	if (view->entityPropertySave(
+		entityPropertiesListBox->getController()->getValue().getString(),
+		entityPropertyName->getController()->getValue().getString(),
+		entityPropertyValue->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Saving object property failed");
 	}
 }
 
-void LevelEditorScreenController::onObjectPropertyAdd()
+void LevelEditorScreenController::onEntityPropertyAdd()
 {
-	if (view->objectPropertyAdd() == false) {
-		showErrorPopUp("Warning", "Adding new object property failed");
+	if (view->entityPropertyAdd() == false) {
+		showErrorPopUp("Warning", "Adding new entity property failed");
 	}
 }
 
-void LevelEditorScreenController::onObjectPropertyRemove()
+void LevelEditorScreenController::onEntityPropertyRemove()
 {
-	if (view->objectPropertyRemove(objectPropertiesListBox->getController()->getValue().getString()) == false) {
-		showErrorPopUp("Warning", "Removing object property failed");
+	if (view->entityPropertyRemove(entityPropertiesListBox->getController()->getValue().getString()) == false) {
+		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
 
@@ -621,24 +621,24 @@ void LevelEditorScreenController::onQuit()
 	TDMELevelEditor::getInstance()->quit();
 }
 
-void LevelEditorScreenController::onObjectTranslationApply()
+void LevelEditorScreenController::onEntityTranslationApply()
 {
 	try {
-		auto x = Float::parseFloat(objectTranslationX->getController()->getValue().getString());
-		auto y = Float::parseFloat(objectTranslationY->getController()->getValue().getString());
-		auto z = Float::parseFloat(objectTranslationZ->getController()->getValue().getString());
-		view->objectTranslationApply(x, y, z);
+		auto x = Float::parseFloat(entityTranslationX->getController()->getValue().getString());
+		auto y = Float::parseFloat(entityTranslationY->getController()->getValue().getString());
+		auto z = Float::parseFloat(entityTranslationZ->getController()->getValue().getString());
+		view->entityTranslationApply(x, y, z);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
 }
 
-void LevelEditorScreenController::onObjectScaleApply()
+void LevelEditorScreenController::onEntityScaleApply()
 {
 	try {
-		auto x = Float::parseFloat(objectScaleX->getController()->getValue().getString());
-		auto y = Float::parseFloat(objectScaleY->getController()->getValue().getString());
-		auto z = Float::parseFloat(objectScaleZ->getController()->getValue().getString());
+		auto x = Float::parseFloat(entityScaleX->getController()->getValue().getString());
+		auto y = Float::parseFloat(entityScaleY->getController()->getValue().getString());
+		auto z = Float::parseFloat(entityScaleZ->getController()->getValue().getString());
 		if (x < -500.0f || x > 500.0f)
 			throw ExceptionBase("x scale must be within -500 .. +500");
 
@@ -648,18 +648,18 @@ void LevelEditorScreenController::onObjectScaleApply()
 		if (z < -500.0f || z > 500.0f)
 			throw ExceptionBase("z scale must be within -500 .. +500");
 
-		view->objectScaleApply(x, y, z);
+		view->entityScaleApply(x, y, z);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
 }
 
-void LevelEditorScreenController::onObjectRotationsApply()
+void LevelEditorScreenController::onEntityRotationsApply()
 {
 	try {
-		auto x = Float::parseFloat(objectRotationX->getController()->getValue().getString());
-		auto y = Float::parseFloat(objectRotationY->getController()->getValue().getString());
-		auto z = Float::parseFloat(objectRotationZ->getController()->getValue().getString());
+		auto x = Float::parseFloat(entityRotationX->getController()->getValue().getString());
+		auto y = Float::parseFloat(entityRotationY->getController()->getValue().getString());
+		auto z = Float::parseFloat(entityRotationZ->getController()->getValue().getString());
 		if (x < -360.0f || x > 360.0f)
 			throw ExceptionBase("x axis rotation must be within -360 .. +360");
 
@@ -669,35 +669,35 @@ void LevelEditorScreenController::onObjectRotationsApply()
 		if (z < -360.0f || z > 360.0f)
 			throw ExceptionBase("z axis rotation must be within -360 .. +360");
 
-		view->objectRotationsApply(x, y, z);
+		view->entityRotationsApply(x, y, z);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
 }
 
-void LevelEditorScreenController::onObjectRemove()
+void LevelEditorScreenController::onEntityRemove()
 {
-	view->removeObjects();
+	view->removeEntities();
 }
 
-void LevelEditorScreenController::onObjectColor()
+void LevelEditorScreenController::onEntityColor()
 {
-	view->colorObject();
+	view->colorEntities();
 }
 
-void LevelEditorScreenController::onObjectCenter()
+void LevelEditorScreenController::onEntityCenter()
 {
-	view->centerObject();
+	view->centerEntity();
 }
 
-void LevelEditorScreenController::onMapLoad()
+void LevelEditorScreenController::onSceneLoad()
 {
-	class OnMapLoadAction: public virtual Action
+	class OnSceneLoadAction: public virtual Action
 	{
 	public:
 		void performAction() override {
-			levelEditorScreenController->view->loadMap(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			levelEditorScreenController->mapPath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			levelEditorScreenController->view->loadScene(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			levelEditorScreenController->scenePath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -705,7 +705,7 @@ void LevelEditorScreenController::onMapLoad()
 		 * Public constructor
 		 * @param levelEditorScreenController scene editor screen controller
 		 */
-		OnMapLoadAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		OnSceneLoadAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
 		}
 
 	private:
@@ -715,23 +715,23 @@ void LevelEditorScreenController::onMapLoad()
 	vector<string> extensions = ModelReader::getModelExtensions();
 	extensions.push_back("tl");
 	view->getPopUps()->getFileDialogScreenController()->show(
-		mapPath->getPath(),
+		scenePath->getPath(),
 		"Load from: ",
 		extensions,
 		view->getFileName(),
 		true,
-		new OnMapLoadAction(this)
+		new OnSceneLoadAction(this)
 	);
 }
 
-void LevelEditorScreenController::onMapSave()
+void LevelEditorScreenController::onSceneSave()
 {
-	class OnMapSaveAction: public virtual Action
+	class OnSceneSaveAction: public virtual Action
 	{
 	public:
 		void performAction() override {
-			levelEditorScreenController->view->saveMap(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			levelEditorScreenController->mapPath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			levelEditorScreenController->view->saveScene(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			levelEditorScreenController->scenePath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -739,7 +739,7 @@ void LevelEditorScreenController::onMapSave()
 		 * Public constructor
 		 * @param levelEditorScreenController scene editor screen controller
 		 */
-		OnMapSaveAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		OnSceneSaveAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
 		}
 
 	private:
@@ -750,12 +750,12 @@ void LevelEditorScreenController::onMapSave()
 		"tl",
 	};
 	view->getPopUps()->getFileDialogScreenController()->show(
-		mapPath->getPath(),
+		scenePath->getPath(),
 		"Save to: ",
 		extensions,
 		view->getFileName(),
 		false,
-		new OnMapSaveAction(this)
+		new OnSceneSaveAction(this)
 	);
 }
 
@@ -786,9 +786,9 @@ void LevelEditorScreenController::onSnappingApply()
 	}
 }
 
-void LevelEditorScreenController::onObjectPropertyPresetApply()
+void LevelEditorScreenController::onEntityPropertyPresetApply()
 {
-	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue().getString());
+	view->entityPropertiesPreset(entityPropertiesPresets->getController()->getValue().getString());
 }
 
 void LevelEditorScreenController::setLightPresetsIds(const map<string, SceneLight*>& lightPresetIds)
@@ -979,19 +979,19 @@ void LevelEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
 	}
 }
 
-void LevelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void LevelEditorScreenController::saveScene(const string& pathName, const string& fileName)
 {
-	view->saveMap(pathName, fileName);
+	view->saveScene(pathName, fileName);
 }
 
-void LevelEditorScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void LevelEditorScreenController::loadScene(const string& pathName, const string& fileName)
 {
-	view->loadMap(pathName, fileName);
+	view->loadScene(pathName, fileName);
 }
 
 void LevelEditorScreenController::setSky(Scene& scene) {
-	mapSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
-	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
+	sceneSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
+	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
 }
 
 void LevelEditorScreenController::onMapSkyModelLoad() {
@@ -1000,7 +1000,7 @@ void LevelEditorScreenController::onMapSkyModelLoad() {
 
 	public:
 		void performAction() override {
-			levelEditorScreenController->mapSkyModel->getController()->setValue(
+			levelEditorScreenController->sceneSkyModel->getController()->setValue(
 				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
 				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
@@ -1024,22 +1024,22 @@ void LevelEditorScreenController::onMapSkyModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		mapSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(mapSkyModel->getController()->getValue().getString()),
+		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
-		Tools::getFileName(mapSkyModel->getController()->getValue().getString()),
+		Tools::getFileName(sceneSkyModel->getController()->getValue().getString()),
 		true,
 		new OnMapSkyModelLoad(this)
 	);
 }
 
 void LevelEditorScreenController::onMapSkyModelClear() {
-	mapSkyModel->getController()->setValue(MutableString());
+	sceneSkyModel->getController()->setValue(MutableString());
 }
 
 void LevelEditorScreenController::onMapSkyApply() {
 	try {
-		auto skyModelScale = Tools::convertToVector3(mapSkyModelScale->getController()->getValue().getString());
+		auto skyModelScale = Tools::convertToVector3(sceneSkyModelScale->getController()->getValue().getString());
 		if (skyModelScale.getX() < 0.01f || skyModelScale.getX() > 150.0f)
 			throw ExceptionBase("x scale must be within 0.01 .. 150.0");
 
@@ -1050,13 +1050,13 @@ void LevelEditorScreenController::onMapSkyApply() {
 			throw ExceptionBase("z scale must be within 0.01 .. 150.0");
 
 		view->getScene()->setSkyModelScale(skyModelScale);
-		view->getScene()->setSkyModelFileName(mapSkyModel->getController()->getValue().getString());
+		view->getScene()->setSkyModelFileName(sceneSkyModel->getController()->getValue().getString());
 		auto model =
-			mapSkyModel->getController()->getValue().getString().empty() == true?
+			sceneSkyModel->getController()->getValue().getString().empty() == true?
 				nullptr:
 				ModelReader::read(
-					Tools::getPath(mapSkyModel->getController()->getValue().getString()),
-					Tools::getFileName(mapSkyModel->getController()->getValue().getString())
+					Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
+					Tools::getFileName(sceneSkyModel->getController()->getValue().getString())
 				);
 		view->getScene()->setSkyModel(model);
 		setSky(*view->getScene());
@@ -1066,16 +1066,16 @@ void LevelEditorScreenController::onMapSkyApply() {
 	view->updateSky();
 }
 
-void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
-	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
-	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
-	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
-	auto environmentMappingIdsDropDownInnerNode = dynamic_cast< GUIParentNode* >((objectReflectionsEnvironmentmappingDropDown->getScreenNode()->getNodeById(objectReflectionsEnvironmentmappingDropDown->getId() + "_inner")));
+void LevelEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
+	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
+	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
+	auto environmentMappingIdsDropDownInnerNode = dynamic_cast< GUIParentNode* >((entityReflectionsEnvironmentmappingDropDown->getScreenNode()->getNodeById(entityReflectionsEnvironmentmappingDropDown->getId() + "_inner")));
 	string environmentMappingIdsInnerNodeSubNodesXML = "";
 	environmentMappingIdsInnerNodeSubNodesXML =
 		environmentMappingIdsInnerNodeSubNodesXML +
 		"<scrollarea-vertical id=\"" +
-		objectReflectionsEnvironmentmappingDropDown->getId() +
+		entityReflectionsEnvironmentmappingDropDown->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 	environmentMappingIdsInnerNodeSubNodesXML =
 		environmentMappingIdsInnerNodeSubNodesXML +
@@ -1106,10 +1106,10 @@ void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(Scene&
 	}
 }
 
-void LevelEditorScreenController::unsetObjectReflectionsEnvironmentMappings() {
-	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(true);
-	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
-	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(true);
+void LevelEditorScreenController::unsetEntityReflectionsEnvironmentMappings() {
+	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(true);
+	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(true);
 }
 
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
@@ -1120,7 +1120,7 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 		onScenePropertiesSelectionChanged();
 	} else
 	if (node->getId().compare("object_properties_listbox") == 0) {
-		onObjectPropertiesSelectionChanged();
+		onEntityPropertiesSelectionChanged();
 	} else {
 		Console::println(string("LevelEditorScreenController::onValueChanged: " + node->getId()));
 	}
@@ -1130,10 +1130,10 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_objects_select") == 0) {
-			onObjectsSelect();
+			onEntitiesSelect();
 		} else
 		if (node->getId().compare("button_objects_unselect") == 0) {
-			onObjectsUnselect();
+			onEntitiesUnselect();
 		} else
 		if (node->getId().compare("button_grid_apply") == 0) {
 			onGridApply();
@@ -1142,10 +1142,10 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 			onSnappingApply();
 		} else
 		if (node->getId().compare("button_map_load") == 0) {
-			onMapLoad();
+			onSceneLoad();
 		} else
 		if (node->getId().compare("button_map_save") == 0) {
-			onMapSave();
+			onSceneSave();
 		} else
 		if (node->getId().compare("button_map_properties_add") == 0) {
 			onScenePropertyAdd();
@@ -1157,37 +1157,37 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 			onScenePropertySave();
 		} else
 		if (node->getId().compare("button_objectdata_apply") == 0) {
-			onObjectDataApply();
+			onEntityDataApply();
 		} else
 		if (node->getId().compare("button_translation_apply") == 0) {
-			onObjectTranslationApply();
+			onEntityTranslationApply();
 		} else
 		if (node->getId().compare("button_scale_apply") == 0) {
-			onObjectScaleApply();
+			onEntityScaleApply();
 		} else
 		if (node->getId().compare("button_rotation_apply") == 0) {
-			onObjectRotationsApply();
+			onEntityRotationsApply();
 		} else
 		if (node->getId().compare("button_object_color") == 0) {
-			onObjectColor();
+			onEntityColor();
 		} else
 		if (node->getId().compare("button_object_center") == 0) {
-			onObjectCenter();
+			onEntityCenter();
 		} else
 		if (node->getId().compare("button_object_remove") == 0) {
-			onObjectRemove();
+			onEntityRemove();
 		} else
 		if (node->getId().compare("button_object_properties_presetapply") == 0) {
-			onObjectPropertyPresetApply();
+			onEntityPropertyPresetApply();
 		} else
 		if (node->getId().compare("button_object_properties_add") == 0) {
-			onObjectPropertyAdd();
+			onEntityPropertyAdd();
 		} else
 		if (node->getId().compare("button_object_properties_remove") == 0) {
-			onObjectPropertyRemove();
+			onEntityPropertyRemove();
 		} else
 		if (node->getId().compare("button_object_properties_save") == 0) {
-			onObjectPropertySave();
+			onEntityPropertySave();
 		} else
 		if (node->getId().compare("button_light0_presetapply") == 0) {
 			onLight0PresetApply();
@@ -1235,7 +1235,7 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 			onMapSkyApply();
 		} else
 		if (node->getId().compare("button_object_reflections_environmentmapping_apply") == 0) {
-			view->applyReflectionEnvironmentMappingId(objectReflectionsEnvironmentmappingDropDown->getController()->getValue().getString());
+			view->applyReflectionEnvironmentMappingId(entityReflectionsEnvironmentmappingDropDown->getController()->getValue().getString());
 		}
 	}
 }

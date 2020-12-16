@@ -138,14 +138,14 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 		sceneLibraryListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-		auto objectId = sceneLibrary->getPrototypeAt(i)->getId();
-		auto objectName = sceneLibrary->getPrototypeAt(i)->getName();
+		auto prototypeId = sceneLibrary->getPrototypeAt(i)->getId();
+		auto prototypeName = sceneLibrary->getPrototypeAt(i)->getName();
 		sceneLibraryListBoxSubNodesXML =
 			sceneLibraryListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(objectName) +
+			GUIParser::escapeQuotes(prototypeName) +
 			"\" value=\"" +
-			to_string(objectId) +
+			to_string(prototypeId) +
 			"\" " +
 			(i == 0 ? "selected=\"true\" " : "") +
 			"/>\n";
@@ -230,7 +230,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 	if (prototype == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->setPlaceObjectMode();
+		(dynamic_cast< LevelEditorView* >(view))->setPlaceEntityMode();
 	}
 }
 
@@ -241,7 +241,7 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 	TDMELevelEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(prototype->getId());
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
+		(dynamic_cast< LevelEditorView* >(view))->loadScene();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
@@ -311,14 +311,14 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			prototypePartition->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 
 			// avoid name collision
-			auto objectName = model->getName();
-			while (scene->getEntity(objectName) != nullptr) {
-				objectName+= ".p";
+			auto sceneEntityName = model->getName();
+			while (scene->getEntity(sceneEntityName) != nullptr) {
+				sceneEntityName+= ".p";
 			}
 
 			// add to scene
 			auto sceneEntityPartition = new SceneEntity(
-				objectName,
+				sceneEntityName,
 				"",
 				sceneEntity->getTransformations(),
 				prototypePartition
@@ -341,7 +341,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	// (re-)load scene editor view
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->loadLevel();
+		(dynamic_cast< LevelEditorView* >(view))->loadScene();
 	} else {
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
@@ -375,7 +375,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			public:
 				void performAction() override {
 					try {
-						auto entity = sceneLibrary->addModel(
+						auto prototype = sceneLibrary->addModel(
 							SceneLibrary::ID_ALLOCATE,
 							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							"",
@@ -383,9 +383,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 							prototypeLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
 							Vector3(0.0f, 0.0f, 0.0f)
 						);
-						entity->setDefaultBoundingVolumes();
+						prototype->setDefaultBoundingVolumes();
 						prototypeLibraryScreenController->setEntityLibrary();
-						prototypeLibraryScreenController->sceneLibraryListBox->getController()->setValue(MutableString(entity->getId()));
+						prototypeLibraryScreenController->sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 						prototypeLibraryScreenController->onEditEntity();
 					} catch (Exception& exception) {
 						prototypeLibraryScreenController->popUps->getInfoDialogScreenController()->show(

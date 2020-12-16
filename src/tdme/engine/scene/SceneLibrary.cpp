@@ -47,8 +47,8 @@ SceneLibrary::SceneLibrary(Scene* scene)
 }
 
 SceneLibrary::~SceneLibrary() {
-	for (auto entity: prototypes) {
-		delete entity;
+	for (auto prototype: prototypes) {
+		delete prototype;
 	}
 }
 

@@ -153,12 +153,12 @@ public:
 	/**
 	 * @return selected entity
 	 */
-	Prototype* getSelectedEntity();
+	Prototype* getSelectedPrototype();
 
 	/**
 	 * @return selected scene editor object
 	 */
-	SceneEntity* getSelectedObject();
+	SceneEntity* getSelectedSceneEntity();
 
 	/**
 	 * @return grid enabled
@@ -210,20 +210,20 @@ public:
 	void display() override;
 
 	/**
-	 * Select objects
+	 * Select entities
 	 * @param entityIds object ids
 	 */
-	void selectObjects(const vector<string>& entityIds);
+	void selectEntities(const vector<string>& entityIds);
 
 	/**
 	 * Select objects by id
 	 */
-	void unselectObjects();
+	void unselectEntities();
 
 	/**
-	 * Updates objects list box
+	 * Updates entity list box
 	 */
-	void setObjectsListBox();
+	void setEntityListBox();
 
 	/**
 	 * Unselect light presets
@@ -239,128 +239,128 @@ public:
 	/**
 	 * Loads a scene from internal scene representation to tdme
 	 */
-	void loadLevel();
+	void loadScene();
 
 	/**
 	 * On object data apply
 	 * @param name name
 	 * @param description description
 	 */
-	bool objectDataApply(const string& name, const string& description);
+	bool entityDataApply(const string& name, const string& description);
 
 	/**
 	 * Initialize place entity mode
 	 */
-	void setPlaceObjectMode();
+	void setPlaceEntityMode();
 
 	/**
 	 * Finish place entity mode
 	 */
-	void unsetPlaceObjectMode();
+	void unsetPlaceEntityMode();
 
 	/**
-	 * Places selected model on selected object
+	 * Places selected entity on selected object
 	 */
-	void placeObject();
+	void placeEntity();
 
 	/**
-	 * Removes selected object
+	 * Removes selected entities
 	 */
-	void removeObjects();
+	void removeEntities();
 
 	/**
-	 * Centers selected objects
+	 * Centers selected entities
 	 */
-	void colorObject();
+	void colorEntities();
 
 	/**
-	 * Centers selected objects
+	 * Centers selected entities
 	 */
-	void centerObject();
+	void centerEntity();
 
 	/**
-	 * Apply object translation
+	 * Apply entity translation
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 */
-	void objectTranslationApply(float x, float y, float z);
+	void entityTranslationApply(float x, float y, float z);
 
 	/**
-	 * Apply object scale
+	 * Apply entity scale
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 */
-	void objectScaleApply(float x, float y, float z);
+	void entityScaleApply(float x, float y, float z);
 
 	/**
-	 * Apply object rotations
+	 * Apply entity rotations
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 */
-	void objectRotationsApply(float x, float y, float z);
+	void entityRotationsApply(float x, float y, float z);
 
 	/**
-	 * Save a map property
+	 * Save a scene property
 	 * @param oldName old name
 	 * @param name name
 	 * @param value value
 	 * @return success
 	 */
-	bool mapPropertySave(const string& oldName, const string& name, const string& value);
+	bool scenePropertySave(const string& oldName, const string& name, const string& value);
 
 	/**
-	 * Add a map property
+	 * Add a scene property
 	 * @return success
 	 */
-	bool mapPropertyAdd();
+	bool scenePropertyAdd();
 
 	/**
-	 * Remove a map property from model properties
+	 * Remove a scene property from model properties
 	 * @param name name
 	 * @return success
 	 */
-	bool mapPropertyRemove(const string& name);
+	bool scenePropertyRemove(const string& name);
 
 	/**
-	 * Remove a object property from object properties
+	 * Remove a entity property from object properties
 	 * @param name name
 	 * @return success
 	 */
-	bool objectPropertyRemove(const string& name);
+	bool entityPropertyRemove(const string& name);
 
 	/**
-	 * Apply object property preset
+	 * Apply entity property preset
 	 * @param presetId preset id
 	 */
-	void objectPropertiesPreset(const string& presetId);
+	void entityPropertiesPreset(const string& presetId);
 
 	/**
-	 * Save a model property
+	 * Save a entity property
 	 * @param oldName old name
 	 * @param name name
 	 * @param value value
 	 * @return success
 	 */
-	bool objectPropertySave(const string& oldName, const string& name, const string& value);
+	bool entityPropertySave(const string& oldName, const string& name, const string& value);
 
 	/**
-	 * Add a model property
+	 * Add a entity property
 	 * @return success
 	 */
-	bool objectPropertyAdd();
+	bool entityPropertyAdd();
 
 	/**
-	 * Triggers loading a map
+	 * Triggers loading a scene
 	 */
-	void loadMap(const string& path, const string& file);
+	void loadScene(const string& path, const string& file);
 
 	/**
-	 * Triggers saving a map
+	 * Triggers saving a scene
 	 */
-	void saveMap(const string& pathName, const string& fileName);
+	void saveScene(const string& pathName, const string& fileName);
 
 
 	/**
@@ -436,22 +436,22 @@ private:
 	void storeSettings();
 
 	/**
-	 * Set highlight object color effect
+	 * Set highlight entity color effect
 	 * @param object object
 	 */
-	void setHighlightObjectColorEffect(Entity* object);
+	void setHighlightEntityColorEffect(Entity* object);
 
 	/**
-	 * Set standard object color effect
+	 * Set standard entity color effect
 	 * @param object object
 	 */
-	void setStandardObjectColorEffect(Entity* object);
+	void setStandardEntityColorEffect(Entity* object);
 
 	/**
 	 * Reset scale to scene editor object scale
 	 * @param object object
 	 */
-	void resetObject(Entity* object);
+	void resetEntity(Entity* object);
 
 	/**
 	 * Update dynamic grid
@@ -470,9 +470,9 @@ private:
 	Model* createLevelEditorGroundPlateModel();
 
 	/**
-	 * Copy current selected objects
+	 * Copy current selected entities
 	 */
-	void copyObjects();
+	void copyEntities();
 
 	/**
 	 * Set paste mode
@@ -485,10 +485,10 @@ private:
 	void unsetPasteMode();
 
 	/**
-	 * Paste objects
+	 * Paste entities
 	 * @param displayOnly display only
 	 */
-	void pasteObjects(bool displayOnly);
+	void pasteEntities(bool displayOnly);
 
 	/**
 	 * Update gizmo

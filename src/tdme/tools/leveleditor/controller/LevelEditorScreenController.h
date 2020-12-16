@@ -65,55 +65,55 @@ private:
 	LevelEditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
-	GUIElementNode* btnObjectTranslationApply { nullptr };
-	GUIElementNode* btnObjectScaleApply { nullptr };
-	GUIElementNode* btnObjectRotationApply { nullptr };
-	GUIElementNode* btnObjectColor { nullptr };
-	GUIElementNode* btnObjectCenter { nullptr };
-	GUIElementNode* btnObjectRemove { nullptr };
+	GUIElementNode* btnEntityTranslationApply { nullptr };
+	GUIElementNode* btnEntityScaleApply { nullptr };
+	GUIElementNode* btnEntityRotationApply { nullptr };
+	GUIElementNode* btnEntityColor { nullptr };
+	GUIElementNode* btnEntityCenter { nullptr };
+	GUIElementNode* btnEntityRemove { nullptr };
 	GUIElementNode* gridYPosition { nullptr };
 	GUIElementNode* gridEnabled { nullptr };
 	GUIElementNode* snappingX { nullptr };
 	GUIElementNode* snappingZ { nullptr };
 	GUIElementNode* snappingEnabled { nullptr };
-	GUIElementNode* mapWidth { nullptr };
-	GUIElementNode* mapDepth { nullptr };
-	GUIElementNode* mapHeight { nullptr };
-	GUIElementNode* mapPropertyName { nullptr };
-	GUIElementNode* mapPropertyValue { nullptr };
-	GUIElementNode* mapPropertySave { nullptr };
-	GUIElementNode* mapPropertyRemove { nullptr };
-	GUIElementNode* mapPropertiesListBox { nullptr };
-	GUIElementNode* mapSkyModel { nullptr };
-	GUIElementNode* btnMapSkyModelLoad { nullptr };
-	GUIElementNode* btnMapSkyModelClear { nullptr };
-	GUIElementNode* mapSkyModelScale { nullptr };
-	GUIElementNode* btnMapSkyApply { nullptr };
-	GUIElementNode* objectName { nullptr };
-	GUIElementNode* objectDescription { nullptr };
-	GUIElementNode* objectModel { nullptr };
-	GUIElementNode* objectCenter { nullptr };
-	GUIElementNode* btnObjectDataApply { nullptr };
-	GUIElementNode* objectTranslationX { nullptr };
-	GUIElementNode* objectTranslationY { nullptr };
-	GUIElementNode* objectTranslationZ { nullptr };
-	GUIElementNode* objectScaleX { nullptr };
-	GUIElementNode* objectScaleY { nullptr };
-	GUIElementNode* objectScaleZ { nullptr };
-	GUIElementNode* objectRotationX { nullptr };
-	GUIElementNode* objectRotationY { nullptr };
-	GUIElementNode* objectRotationZ { nullptr };
-	GUIElementNode* objectPropertyName { nullptr };
-	GUIElementNode* objectPropertyValue { nullptr };
-	GUIElementNode* btnObjectPropertySave { nullptr };
-	GUIElementNode* btnObjectPropertyAdd { nullptr };
-	GUIElementNode* btnObjectPropertyRemove { nullptr };
-	GUIElementNode* btnObjectPropertyPresetApply { nullptr };
-	GUIElementNode* objectPropertiesListBox { nullptr };
-	GUIElementNode* objectPropertiesPresets { nullptr };
-	GUIElementNode* objectsListBox { nullptr };
-	GUIElementNode* objectReflectionsEnvironmentmappingDropDown { nullptr };
-	GUIElementNode* btnObjectReflectionsEnvironmentmappingApply { nullptr };
+	GUIElementNode* sceneWidth { nullptr };
+	GUIElementNode* sceneDepth { nullptr };
+	GUIElementNode* sceneHeight { nullptr };
+	GUIElementNode* scenePropertyName { nullptr };
+	GUIElementNode* scenePropertyValue { nullptr };
+	GUIElementNode* scenePropertySave { nullptr };
+	GUIElementNode* scenePropertyRemove { nullptr };
+	GUIElementNode* scenePropertiesListBox { nullptr };
+	GUIElementNode* sceneSkyModel { nullptr };
+	GUIElementNode* btnSceneSkyModelLoad { nullptr };
+	GUIElementNode* btnSceneSkyModelClear { nullptr };
+	GUIElementNode* sceneSkyModelScale { nullptr };
+	GUIElementNode* btnSceneSkyApply { nullptr };
+	GUIElementNode* entityName { nullptr };
+	GUIElementNode* entityDescription { nullptr };
+	GUIElementNode* entityModel { nullptr };
+	GUIElementNode* entityCenter { nullptr };
+	GUIElementNode* btnEntityDataApply { nullptr };
+	GUIElementNode* entityTranslationX { nullptr };
+	GUIElementNode* entityTranslationY { nullptr };
+	GUIElementNode* entityTranslationZ { nullptr };
+	GUIElementNode* entityScaleX { nullptr };
+	GUIElementNode* entityScaleY { nullptr };
+	GUIElementNode* entityScaleZ { nullptr };
+	GUIElementNode* entityRotationX { nullptr };
+	GUIElementNode* entityRotationY { nullptr };
+	GUIElementNode* entityRotationZ { nullptr };
+	GUIElementNode* entityPropertyName { nullptr };
+	GUIElementNode* entityPropertyValue { nullptr };
+	GUIElementNode* btnEntityPropertySave { nullptr };
+	GUIElementNode* btnEntityPropertyAdd { nullptr };
+	GUIElementNode* btnEntityPropertyRemove { nullptr };
+	GUIElementNode* btnEntityPropertyPresetApply { nullptr };
+	GUIElementNode* entityPropertiesListBox { nullptr };
+	GUIElementNode* entityPropertiesPresets { nullptr };
+	GUIElementNode* entitiesListBox { nullptr };
+	GUIElementNode* entityReflectionsEnvironmentmappingDropDown { nullptr };
+	GUIElementNode* btnEntityReflectionsEnvironmentmappingApply { nullptr };
 	array<GUIElementNode*, 4> lightsPresets;
 	array<GUIElementNode*, 4> lightsAmbient;
 	array<GUIElementNode*, 4> lightsDiffuse;
@@ -129,7 +129,7 @@ private:
 	array<GUIElementNode*, 4> ligthsSpotDirectionCompute;
 	array<GUIElementNode*, 4> lightsEnabled;
 	GUIElementNode* viewPort { nullptr };
-	FileDialogPath* mapPath { nullptr };
+	FileDialogPath* scenePath { nullptr };
 	FileDialogPath* modelPath { nullptr };
 
 public:
@@ -178,71 +178,71 @@ public:
 	 * @param depth depth
 	 * @param height height
 	 */
-	void setLevelSize(float width, float depth, float height);
+	void setSceneSize(float width, float depth, float height);
 
 	/**
-	 * Unset object properties
+	 * Unset entity properties
 	 */
-	void unsetObjectProperties();
+	void unsetEntityProperties();
 
 	/**
-	 * @return object property preset selection
+	 * @return entity property preset selection
 	 */
-	const string getObjectPropertyPresetSelection();
+	const string getEntityPropertyPresetSelection();
 
 	/**
-	 * Set up general object data
+	 * Set up general entity data
 	 * @param name name
 	 * @param description description
 	 * @param modelName model name
 	 * @param center center
 	 */
-	void setObjectData(const string& name, const string& description, const string& modelName, const Vector3& center);
+	void setEntityData(const string& name, const string& description, const string& modelName, const Vector3& center);
 
 	/**
-	 * Unset model data
+	 * Unset entity data
 	 */
-	void unsetObjectData();
+	void unsetEntityData();
 
 	/**
-	 * On object data apply
+	 * On entity data apply
 	 */
-	void onObjectDataApply();
+	void onEntityDataApply();
 
 	/**
-	 * Set up object list box
-	 * @param scene object by ids hash map
+	 * Set up entity list box
+	 * @param scene scene
 	 */
-	void setObjectListbox(Scene& scene);
+	void setEntityListbox(Scene& scene);
 
 	/**
-	 * Unselect objects in object list box
+	 * Unselect entities in object list box
 	 */
-	void unselectObjectInObjectListBox(const string& objectId);
+	void unselectEntitiesInEntityListBox(const string& entityId);
 
 	/**
-	 * Unselect objects in object list box
+	 * Unselect entities in object list box
 	 */
-	void unselectObjectsInObjectListBox();
+	void unselectEntitiesInEntityListBox();
 
 	/**
-	 * Select a object in object list box
+	 * Select a entity in object list box
 	 * @param objectId object id
 	 */
-	void selectObjectInObjectListbox(const string& objectId);
+	void selectEntityInEntityListbox(const string& entityId);
 
 	/**
-	 * On objects select button click event
+	 * On entities select button click event
 	 */
-	void onObjectsSelect();
+	void onEntitiesSelect();
 
 	/**
-	 * On objects unselect button click event
+	 * On entities unselect button click event
 	 */
-	void onObjectsUnselect();
+	void onEntitiesUnselect();
 
 	/**
-	 * Set up object
+	 * Set up entity transformations
 	 * @param translation translation
 	 * @param scale scale
 	 * @param rotationX rotation x
@@ -250,73 +250,73 @@ public:
 	 * @param rotationZ rotation z
 	 * @oaram disableRotation disable rotation input fields
 	 */
-	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation);
+	void setEntityTransformations(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation);
 
 	/**
-	 * Unset current object
+	 * Unset current entity
 	 */
-	void unsetObject();
+	void unsetEntityTransformations();
 
 	/**
-	 * Event callback for map properties selection
+	 * Event callback for scebe properties selection
 	 */
 	void onScenePropertiesSelectionChanged();
 
 	/**
-	 * Set up map properties
+	 * Set up scene properties
 	 * @param scene map properties
 	 * @param selectedName selected name
 	 */
 	void setSceneProperties(Scene& scene, const string& selectedName);
 
 	/**
-	 * On map property save
+	 * On scene property save
 	 */
 	void onScenePropertySave();
 
 	/**
-	 * On model property add
+	 * On scene property add
 	 */
 	void onScenePropertyAdd();
 
 	/**
-	 * On model property remove
+	 * On scene property remove
 	 */
 	void onScenePropertyRemove();
 
 	/**
-	 * Set up object property preset ids
+	 * Set up entity property preset ids
 	 * @param objectPresetIds object property preset ids
 	 */
-	void setObjectPresetIds(const map<string, vector<PrototypeProperty*>>& objectPresetIds);
+	void setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds);
 
 	/**
-	 * Event callback for object properties selection
+	 * Event callback for entity properties selection
 	 */
-	void onObjectPropertiesSelectionChanged();
+	void onEntityPropertiesSelectionChanged();
 
 	/**
-	 * Set up object properties
+	 * Set up entity properties
 	 * @param presetId preset id
-	 * @param object object properties
+	 * @param entity entity
 	 * @param selectedName selected name
 	 */
-	void setObjectProperties(const string& presetId, SceneEntity* object, const string& selectedName);
+	void setEntityProperties(const string& presetId, SceneEntity* entity, const string& selectedName);
 
 	/**
-	 * On object property save
+	 * On entity property save
 	 */
-	void onObjectPropertySave();
+	void onEntityPropertySave();
 
 	/**
-	 * On object property add
+	 * On entity property add
 	 */
-	void onObjectPropertyAdd();
+	void onEntityPropertyAdd();
 
 	/**
-	 * On object property remove
+	 * On entity property remove
 	 */
-	void onObjectPropertyRemove();
+	void onEntityPropertyRemove();
 
 	/**
 	 * On quit action
@@ -324,44 +324,44 @@ public:
 	void onQuit();
 
 	/**
-	 * On object translation apply action
+	 * On entity translation apply action
 	 */
-	void onObjectTranslationApply();
+	void onEntityTranslationApply();
 
 	/**
-	 * On object scale apply action
+	 * On entity scale apply action
 	 */
-	void onObjectScaleApply();
+	void onEntityScaleApply();
 
 	/**
-	 * On object rotations apply action
+	 * On entity rotations apply action
 	 */
-	void onObjectRotationsApply();
+	void onEntityRotationsApply();
 
 	/**
-	 * On object remove action
+	 * On entity remove action
 	 */
-	void onObjectRemove();
+	void onEntityRemove();
 
 	/**
-	 * On object color action
+	 * On entity color action
 	 */
-	void onObjectColor();
+	void onEntityColor();
 
 	/**
-	 * On object center action
+	 * On entity center action
 	 */
-	void onObjectCenter();
+	void onEntityCenter();
 
 	/**
-	 * On map load action
+	 * On scene load action
 	 */
-	void onMapLoad();
+	void onSceneLoad();
 
 	/**
-	 * On map save action
+	 * On scene save action
 	 */
-	void onMapSave();
+	void onSceneSave();
 
 	/**
 	 * On grid apply button
@@ -374,9 +374,9 @@ public:
 	void onSnappingApply();
 
 	/**
-	 * On object property preset apply
+	 * On entity property preset apply
 	 */
-	void onObjectPropertyPresetApply();
+	void onEntityPropertyPresetApply();
 
 	/**
 	 * Set up light presets
@@ -489,14 +489,14 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void saveFile(const string& pathName, const string& fileName);
+	void saveScene(const string& pathName, const string& fileName);
 
 	/**
 	 * Load file
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadFile(const string& pathName, const string& fileName);
+	void loadScene(const string& pathName, const string& fileName);
 
 	/**
 	 * Set sky
@@ -524,12 +524,12 @@ public:
 	 * @param scene scene
 	 * @param selectedEnvironmentMappingId selected environment mapping id
 	 */
-	void setObjectReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId);
+	void setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId);
 
 	/**
 	 * Unset object reflections environment mappings
 	 */
-	void unsetObjectReflectionsEnvironmentMappings();
+	void unsetEntityReflectionsEnvironmentMappings();
 
 	/**
 	 * Shows the error pop up

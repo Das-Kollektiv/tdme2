@@ -73,8 +73,8 @@ Scene::~Scene() {
 	for (auto light: lights) {
 		delete light;
 	}
-	for (auto object: entities) {
-		delete object;
+	for (auto entity: entities) {
+		delete entity;
 	}
 	delete library;
 }
