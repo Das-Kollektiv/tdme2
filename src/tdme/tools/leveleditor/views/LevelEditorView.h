@@ -39,7 +39,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::leveleditor::controller::LevelEditorScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorScreenController;
 using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -66,7 +66,7 @@ private:
 	float snappingX;
 	float snappingZ;
 	bool snappingEnabled;
-	LevelEditorScreenController* levelEditorScreenController { nullptr };
+	SceneEditorScreenController* sceneEditorScreenController { nullptr };
 	Engine* engine { nullptr };
 	Prototype* selectedPrototype { nullptr };
 	bool reloadEntityLibrary;

@@ -1,4 +1,4 @@
-#include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorScreenController.h>
 
 #include <array>
 #include <vector>
@@ -44,7 +44,7 @@ using std::vector;
 using std::string;
 using std::to_string;
 
-using tdme::tools::leveleditor::controller::LevelEditorScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
@@ -79,28 +79,28 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Console;
 
-MutableString LevelEditorScreenController::CHECKBOX_CHECKED = MutableString("1");
-MutableString LevelEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
-MutableString LevelEditorScreenController::TEXT_EMPTY = MutableString("");
+MutableString SceneEditorScreenController::CHECKBOX_CHECKED = MutableString("1");
+MutableString SceneEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
+MutableString SceneEditorScreenController::TEXT_EMPTY = MutableString("");
 
-LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
+SceneEditorScreenController::SceneEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
 	this->scenePath = new FileDialogPath(".");
 	this->modelPath = new FileDialogPath(".");
 }
 
-GUIScreenNode* LevelEditorScreenController::getScreenNode()
+GUIScreenNode* SceneEditorScreenController::getScreenNode()
 {
 	return screenNode;
 }
 
-FileDialogPath* LevelEditorScreenController::getMapPath()
+FileDialogPath* SceneEditorScreenController::getMapPath()
 {
 	return scenePath;
 }
 
-void LevelEditorScreenController::initialize()
+void SceneEditorScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_leveleditor.xml");
@@ -180,40 +180,40 @@ void LevelEditorScreenController::initialize()
 		}
 		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
  	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void LevelEditorScreenController::dispose()
+void SceneEditorScreenController::dispose()
 {
 }
 
-void LevelEditorScreenController::setScreenCaption(const string& text)
+void SceneEditorScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
 }
 
-void LevelEditorScreenController::setGrid(bool enabled, float gridY)
+void SceneEditorScreenController::setGrid(bool enabled, float gridY)
 {
 	gridEnabled->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	gridYPosition->getController()->setValue(MutableString(Tools::formatFloat(gridY)));
 }
 
-void LevelEditorScreenController::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
+void SceneEditorScreenController::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
 	this->snappingEnabled->getController()->setValue(snappingEnabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	this->snappingX->getController()->setValue(MutableString(Tools::formatFloat(snappingX)));
 	this->snappingZ->getController()->setValue(MutableString(Tools::formatFloat(snappingZ)));
 }
 
-void LevelEditorScreenController::setSceneSize(float width, float depth, float height)
+void SceneEditorScreenController::setSceneSize(float width, float depth, float height)
 {
 	sceneWidth->getController()->setValue(MutableString(Tools::formatFloat(width)));
 	sceneDepth->getController()->setValue(MutableString(Tools::formatFloat(depth)));
 	sceneHeight->getController()->setValue(MutableString(Tools::formatFloat(height)));
 }
 
-void LevelEditorScreenController::unsetEntityProperties()
+void SceneEditorScreenController::unsetEntityProperties()
 {
 	entityPropertiesPresets->getController()->setValue(MutableString("none"));
 	entityPropertiesPresets->getController()->setDisabled(true);
@@ -230,12 +230,12 @@ void LevelEditorScreenController::unsetEntityProperties()
 	entityPropertiesListBoxInnerNode->clearSubNodes();
 }
 
-const string LevelEditorScreenController::getEntityPropertyPresetSelection()
+const string SceneEditorScreenController::getEntityPropertyPresetSelection()
 {
 	return "";
 }
 
-void LevelEditorScreenController::setEntityData(const string& name, const string& description, const string& modelName, const Vector3& center)
+void SceneEditorScreenController::setEntityData(const string& name, const string& description, const string& modelName, const Vector3& center)
 {
 	entityName->getController()->setDisabled(false);
 	entityName->getController()->setValue(MutableString(name));
@@ -246,7 +246,7 @@ void LevelEditorScreenController::setEntityData(const string& name, const string
 	btnEntityDataApply->getController()->setDisabled(false);
 }
 
-void LevelEditorScreenController::unsetEntityData()
+void SceneEditorScreenController::unsetEntityData()
 {
 	entityName->getController()->setValue(TEXT_EMPTY);
 	entityName->getController()->setDisabled(true);
@@ -259,14 +259,14 @@ void LevelEditorScreenController::unsetEntityData()
 	btnEntityDataApply->getController()->setDisabled(true);
 }
 
-void LevelEditorScreenController::onEntityDataApply()
+void SceneEditorScreenController::onEntityDataApply()
 {
 	if (view->entityDataApply(entityName->getController()->getValue().getString(), entityDescription->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Changing object data failed");
 	}
 }
 
-void LevelEditorScreenController::setEntityListbox(Scene& scene)
+void SceneEditorScreenController::setEntityListbox(Scene& scene)
 {
 	auto selectedObjects = entitiesListBox->getController()->getValue();
 	auto entitiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entitiesListBox->getScreenNode()->getNodeById(entitiesListBox->getId() + "_inner")));
@@ -305,13 +305,13 @@ void LevelEditorScreenController::setEntityListbox(Scene& scene)
 	try {
 		entitiesListBoxInnerNode->replaceSubNodes(entitiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setEntityListbox(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::setEntityListbox(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	entitiesListBox->getController()->setValue(selectedObjects);
 }
 
-void LevelEditorScreenController::unselectEntitiesInEntityListBox(const string& entityId)
+void SceneEditorScreenController::unselectEntitiesInEntityListBox(const string& entityId)
 {
 	auto selectedEntities = entitiesListBox->getController()->getValue();
 	auto value = MutableString().set('|').append(entityId).append('|');
@@ -320,12 +320,12 @@ void LevelEditorScreenController::unselectEntitiesInEntityListBox(const string& 
 	entitiesListBox->getController()->setValue(selectedEntities);
 }
 
-void LevelEditorScreenController::unselectEntitiesInEntityListBox()
+void SceneEditorScreenController::unselectEntitiesInEntityListBox()
 {
 	entitiesListBox->getController()->setValue(MutableString());
 }
 
-void LevelEditorScreenController::selectEntityInEntityListbox(const string& entityId)
+void SceneEditorScreenController::selectEntityInEntityListbox(const string& entityId)
 {
 	auto selectedEntities = entitiesListBox->getController()->getValue();
 	auto value = MutableString().set('|').append(entityId).append('|');
@@ -334,7 +334,7 @@ void LevelEditorScreenController::selectEntityInEntityListbox(const string& enti
 	entitiesListBox->getController()->setValue(selectedEntities);
 }
 
-void LevelEditorScreenController::onEntitiesSelect()
+void SceneEditorScreenController::onEntitiesSelect()
 {
 	vector<string> selectedEntityList;
 	StringTokenizer t;
@@ -347,12 +347,12 @@ void LevelEditorScreenController::onEntitiesSelect()
 
 }
 
-void LevelEditorScreenController::onEntitiesUnselect()
+void SceneEditorScreenController::onEntitiesUnselect()
 {
 	view->unselectEntities();
 }
 
-void LevelEditorScreenController::setEntityTransformations(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
+void SceneEditorScreenController::setEntityTransformations(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
 {
 	btnEntityTranslationApply->getController()->setDisabled(false);
 	btnEntityScaleApply->getController()->setDisabled(false);
@@ -380,7 +380,7 @@ void LevelEditorScreenController::setEntityTransformations(const Vector3& transl
 	entityRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotationZ)));
 }
 
-void LevelEditorScreenController::unsetEntityTransformations()
+void SceneEditorScreenController::unsetEntityTransformations()
 {
 	btnEntityTranslationApply->getController()->setDisabled(true);
 	btnEntityScaleApply->getController()->setDisabled(true);
@@ -408,7 +408,7 @@ void LevelEditorScreenController::unsetEntityTransformations()
 	entityRotationZ->getController()->setValue(TEXT_EMPTY);
 }
 
-void LevelEditorScreenController::onScenePropertiesSelectionChanged()
+void SceneEditorScreenController::onScenePropertiesSelectionChanged()
 {
 	scenePropertyName->getController()->setDisabled(true);
 	scenePropertyName->getController()->setValue(TEXT_EMPTY);
@@ -427,7 +427,7 @@ void LevelEditorScreenController::onScenePropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
+void SceneEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
 {
 	scenePropertyName->getController()->setDisabled(true);
 	scenePropertyValue->getController()->setDisabled(true);
@@ -460,13 +460,13 @@ void LevelEditorScreenController::setSceneProperties(Scene& scene, const string&
 	try {
 		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setSceneProperties(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::setSceneProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	onScenePropertiesSelectionChanged();
 }
 
-void LevelEditorScreenController::onScenePropertySave()
+void SceneEditorScreenController::onScenePropertySave()
 {
 	if (view->scenePropertySave(
 		scenePropertiesListBox->getController()->getValue().getString(),
@@ -476,21 +476,21 @@ void LevelEditorScreenController::onScenePropertySave()
 	}
 }
 
-void LevelEditorScreenController::onScenePropertyAdd()
+void SceneEditorScreenController::onScenePropertyAdd()
 {
 	if (view->scenePropertyAdd() == false) {
 		showErrorPopUp("Warning", "Adding new scene property failed");
 	}
 }
 
-void LevelEditorScreenController::onScenePropertyRemove()
+void SceneEditorScreenController::onScenePropertyRemove()
 {
 	if (view->scenePropertyRemove(scenePropertiesListBox->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing scene property failed");
 	}
 }
 
-void LevelEditorScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
+void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
 {
 	auto entitityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -519,12 +519,12 @@ void LevelEditorScreenController::setEntityPresetIds(const map<string, vector<Pr
 	try {
 		entitityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setEntityPresetIds(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::setEntityPresetIds(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void LevelEditorScreenController::onEntityPropertiesSelectionChanged()
+void SceneEditorScreenController::onEntityPropertiesSelectionChanged()
 {
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyName->getController()->setValue(TEXT_EMPTY);
@@ -547,7 +547,7 @@ void LevelEditorScreenController::onEntityPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setEntityProperties(const string& presetId, SceneEntity* entity, const string& selectedName)
+void SceneEditorScreenController::setEntityProperties(const string& presetId, SceneEntity* entity, const string& selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	btnEntityPropertyPresetApply->getController()->setDisabled(false);
@@ -586,13 +586,13 @@ void LevelEditorScreenController::setEntityProperties(const string& presetId, Sc
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setEntityProperties(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::setEntityProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	onEntityPropertiesSelectionChanged();
 }
 
-void LevelEditorScreenController::onEntityPropertySave()
+void SceneEditorScreenController::onEntityPropertySave()
 {
 	if (view->entityPropertySave(
 		entityPropertiesListBox->getController()->getValue().getString(),
@@ -602,26 +602,26 @@ void LevelEditorScreenController::onEntityPropertySave()
 	}
 }
 
-void LevelEditorScreenController::onEntityPropertyAdd()
+void SceneEditorScreenController::onEntityPropertyAdd()
 {
 	if (view->entityPropertyAdd() == false) {
 		showErrorPopUp("Warning", "Adding new entity property failed");
 	}
 }
 
-void LevelEditorScreenController::onEntityPropertyRemove()
+void SceneEditorScreenController::onEntityPropertyRemove()
 {
 	if (view->entityPropertyRemove(entityPropertiesListBox->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
 
-void LevelEditorScreenController::onQuit()
+void SceneEditorScreenController::onQuit()
 {
 	TDMELevelEditor::getInstance()->quit();
 }
 
-void LevelEditorScreenController::onEntityTranslationApply()
+void SceneEditorScreenController::onEntityTranslationApply()
 {
 	try {
 		auto x = Float::parseFloat(entityTranslationX->getController()->getValue().getString());
@@ -633,7 +633,7 @@ void LevelEditorScreenController::onEntityTranslationApply()
 	}
 }
 
-void LevelEditorScreenController::onEntityScaleApply()
+void SceneEditorScreenController::onEntityScaleApply()
 {
 	try {
 		auto x = Float::parseFloat(entityScaleX->getController()->getValue().getString());
@@ -654,7 +654,7 @@ void LevelEditorScreenController::onEntityScaleApply()
 	}
 }
 
-void LevelEditorScreenController::onEntityRotationsApply()
+void SceneEditorScreenController::onEntityRotationsApply()
 {
 	try {
 		auto x = Float::parseFloat(entityRotationX->getController()->getValue().getString());
@@ -675,41 +675,41 @@ void LevelEditorScreenController::onEntityRotationsApply()
 	}
 }
 
-void LevelEditorScreenController::onEntityRemove()
+void SceneEditorScreenController::onEntityRemove()
 {
 	view->removeEntities();
 }
 
-void LevelEditorScreenController::onEntityColor()
+void SceneEditorScreenController::onEntityColor()
 {
 	view->colorEntities();
 }
 
-void LevelEditorScreenController::onEntityCenter()
+void SceneEditorScreenController::onEntityCenter()
 {
 	view->centerEntity();
 }
 
-void LevelEditorScreenController::onSceneLoad()
+void SceneEditorScreenController::onSceneLoad()
 {
 	class OnSceneLoadAction: public virtual Action
 	{
 	public:
 		void performAction() override {
-			levelEditorScreenController->view->loadScene(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			levelEditorScreenController->scenePath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
-			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+			sceneEditorScreenController->view->loadScene(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			sceneEditorScreenController->scenePath->setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param levelEditorScreenController scene editor screen controller
+		 * @param sceneEditorScreenController scene editor screen controller
 		 */
-		OnSceneLoadAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		OnSceneLoadAction(SceneEditorScreenController* sceneEditorScreenController): sceneEditorScreenController(sceneEditorScreenController) {
 		}
 
 	private:
-		LevelEditorScreenController* levelEditorScreenController;
+		SceneEditorScreenController* sceneEditorScreenController;
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
@@ -724,26 +724,26 @@ void LevelEditorScreenController::onSceneLoad()
 	);
 }
 
-void LevelEditorScreenController::onSceneSave()
+void SceneEditorScreenController::onSceneSave()
 {
 	class OnSceneSaveAction: public virtual Action
 	{
 	public:
 		void performAction() override {
-			levelEditorScreenController->view->saveScene(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			levelEditorScreenController->scenePath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
-			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+			sceneEditorScreenController->view->saveScene(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			sceneEditorScreenController->scenePath->setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param levelEditorScreenController scene editor screen controller
+		 * @param sceneEditorScreenController scene editor screen controller
 		 */
-		OnSceneSaveAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		OnSceneSaveAction(SceneEditorScreenController* sceneEditorScreenController): sceneEditorScreenController(sceneEditorScreenController) {
 		}
 
 	private:
-		LevelEditorScreenController* levelEditorScreenController;
+		SceneEditorScreenController* sceneEditorScreenController;
 	};
 
 	vector<string> extensions = {
@@ -759,7 +759,7 @@ void LevelEditorScreenController::onSceneSave()
 	);
 }
 
-void LevelEditorScreenController::onGridApply()
+void SceneEditorScreenController::onGridApply()
 {
 	try {
 		auto gridY = Float::parseFloat(gridYPosition->getController()->getValue().getString());
@@ -773,7 +773,7 @@ void LevelEditorScreenController::onGridApply()
 	}
 }
 
-void LevelEditorScreenController::onSnappingApply()
+void SceneEditorScreenController::onSnappingApply()
 {
 	try {
 		auto snappingXValue = Float::parseFloat(snappingX->getController()->getValue().getString());
@@ -786,12 +786,12 @@ void LevelEditorScreenController::onSnappingApply()
 	}
 }
 
-void LevelEditorScreenController::onEntityPropertyPresetApply()
+void SceneEditorScreenController::onEntityPropertyPresetApply()
 {
 	view->entityPropertiesPreset(entityPropertiesPresets->getController()->getValue().getString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(const map<string, SceneLight*>& lightPresetIds)
+void SceneEditorScreenController::setLightPresetsIds(const map<string, SceneLight*>& lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(lightsPresets[i]->getId() + "_inner")));
@@ -821,17 +821,17 @@ void LevelEditorScreenController::setLightPresetsIds(const map<string, SceneLigh
 		try {
 			lightPresetsInnerNode->replaceSubNodes(lightPresetsInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("LevelEditorScreenController::setLightPresetsIds(): An error occurred: "));
+			Console::print(string("SceneEditorScreenController::setLightPresetsIds(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 	}
 }
 
-void LevelEditorScreenController::unselectLightPresets()
+void SceneEditorScreenController::unselectLightPresets()
 {
 }
 
-void LevelEditorScreenController::setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void SceneEditorScreenController::setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
 	lightsAmbient[i]->getController()->setValue(MutableString(Tools::formatFloat(ambient.getRed())).append(", ").append(Tools::formatFloat(ambient.getGreen())).append(", ").append(Tools::formatFloat(ambient.getBlue())).append(", ").append(Tools::formatFloat(ambient.getAlpha())));
 	lightsDiffuse[i]->getController()->setValue(MutableString(Tools::formatFloat(diffuse.getRed())).append(", ").append(Tools::formatFloat(diffuse.getGreen())).append(", ").append(Tools::formatFloat(diffuse.getBlue())).append(", ").append(Tools::formatFloat(diffuse.getAlpha())));
@@ -859,27 +859,27 @@ void LevelEditorScreenController::setLight(int i, const Color4& ambient, const C
 	ligthsSpotDirectionCompute[i]->getController()->setDisabled(enabled == false);
 }
 
-void LevelEditorScreenController::onLight0Apply()
+void SceneEditorScreenController::onLight0Apply()
 {
 	onLightApply(0);
 }
 
-void LevelEditorScreenController::onLight1Apply()
+void SceneEditorScreenController::onLight1Apply()
 {
 	onLightApply(1);
 }
 
-void LevelEditorScreenController::onLight2Apply()
+void SceneEditorScreenController::onLight2Apply()
 {
 	onLightApply(2);
 }
 
-void LevelEditorScreenController::onLight3Apply()
+void SceneEditorScreenController::onLight3Apply()
 {
 	onLightApply(3);
 }
 
-void LevelEditorScreenController::onLightApply(int lightIdx)
+void SceneEditorScreenController::onLightApply(int lightIdx)
 {
 	try {
 		auto enabled = lightsEnabled[lightIdx]->getController()->getValue().equals(CHECKBOX_CHECKED);
@@ -915,27 +915,27 @@ void LevelEditorScreenController::onLightApply(int lightIdx)
 	}
 }
 
-void LevelEditorScreenController::onLight0PresetApply()
+void SceneEditorScreenController::onLight0PresetApply()
 {
 	onLightPresetApply(0);
 }
 
-void LevelEditorScreenController::onLight1PresetApply()
+void SceneEditorScreenController::onLight1PresetApply()
 {
 	onLightPresetApply(1);
 }
 
-void LevelEditorScreenController::onLight2PresetApply()
+void SceneEditorScreenController::onLight2PresetApply()
 {
 	onLightPresetApply(2);
 }
 
-void LevelEditorScreenController::onLight3PresetApply()
+void SceneEditorScreenController::onLight3PresetApply()
 {
 	onLightPresetApply(3);
 }
 
-void LevelEditorScreenController::onLightPresetApply(int lightIdx)
+void SceneEditorScreenController::onLightPresetApply(int lightIdx)
 {
 	auto lightPresets = ScenePropertyPresets::getInstance()->getLightPresets();
 	SceneLight* lightPreset = nullptr;
@@ -946,27 +946,27 @@ void LevelEditorScreenController::onLightPresetApply(int lightIdx)
 	view->applyLight(lightIdx, lightPreset->getAmbient(), lightPreset->getDiffuse(), lightPreset->getSpecular(), lightPreset->getPosition(), lightPreset->getConstantAttenuation(), lightPreset->getLinearAttenuation(), lightPreset->getQuadraticAttenuation(), lightPreset->getSpotTo(), lightPreset->getSpotDirection(), lightPreset->getSpotExponent(), lightPreset->getSpotCutOff(), lightPreset->isEnabled());
 }
 
-void LevelEditorScreenController::onLight0SpotDirectionCompute()
+void SceneEditorScreenController::onLight0SpotDirectionCompute()
 {
 	onLightSpotDirectionCompute(0);
 }
 
-void LevelEditorScreenController::onLight1SpotDirectionCompute()
+void SceneEditorScreenController::onLight1SpotDirectionCompute()
 {
 	onLightSpotDirectionCompute(1);
 }
 
-void LevelEditorScreenController::onLight2SpotDirectionCompute()
+void SceneEditorScreenController::onLight2SpotDirectionCompute()
 {
 	onLightSpotDirectionCompute(2);
 }
 
-void LevelEditorScreenController::onLight3SpotDirectionCompute()
+void SceneEditorScreenController::onLight3SpotDirectionCompute()
 {
 	onLightSpotDirectionCompute(3);
 }
 
-void LevelEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
+void SceneEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
 {
 	try {
 		view->computeSpotDirection(
@@ -979,47 +979,47 @@ void LevelEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
 	}
 }
 
-void LevelEditorScreenController::saveScene(const string& pathName, const string& fileName)
+void SceneEditorScreenController::saveScene(const string& pathName, const string& fileName)
 {
 	view->saveScene(pathName, fileName);
 }
 
-void LevelEditorScreenController::loadScene(const string& pathName, const string& fileName)
+void SceneEditorScreenController::loadScene(const string& pathName, const string& fileName)
 {
 	view->loadScene(pathName, fileName);
 }
 
-void LevelEditorScreenController::setSky(Scene& scene) {
+void SceneEditorScreenController::setSky(Scene& scene) {
 	sceneSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
 	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
 }
 
-void LevelEditorScreenController::onMapSkyModelLoad() {
+void SceneEditorScreenController::onMapSkyModelLoad() {
 	class OnMapSkyModelLoad: public virtual Action
 	{
 
 	public:
 		void performAction() override {
-			levelEditorScreenController->sceneSkyModel->getController()->setValue(
-				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+			sceneEditorScreenController->sceneSkyModel->getController()->setValue(
+				sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+				sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			levelEditorScreenController->modelPath->setPath(
-				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			sceneEditorScreenController->modelPath->setPath(
+				sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
 		 * @param modelEditorScreenController model editor screen controller
 		 */
-		OnMapSkyModelLoad(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		OnMapSkyModelLoad(SceneEditorScreenController* sceneEditorScreenController): sceneEditorScreenController(sceneEditorScreenController) {
 		}
 
 	private:
-		LevelEditorScreenController* levelEditorScreenController;
+		SceneEditorScreenController* sceneEditorScreenController;
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
@@ -1033,11 +1033,11 @@ void LevelEditorScreenController::onMapSkyModelLoad() {
 	);
 }
 
-void LevelEditorScreenController::onMapSkyModelClear() {
+void SceneEditorScreenController::onMapSkyModelClear() {
 	sceneSkyModel->getController()->setValue(MutableString());
 }
 
-void LevelEditorScreenController::onMapSkyApply() {
+void SceneEditorScreenController::onMapSkyApply() {
 	try {
 		auto skyModelScale = Tools::convertToVector3(sceneSkyModelScale->getController()->getValue().getString());
 		if (skyModelScale.getX() < 0.01f || skyModelScale.getX() > 150.0f)
@@ -1066,7 +1066,7 @@ void LevelEditorScreenController::onMapSkyApply() {
 	view->updateSky();
 }
 
-void LevelEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
+void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
 	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
 	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
@@ -1101,18 +1101,18 @@ void LevelEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene&
 	try {
 		environmentMappingIdsDropDownInnerNode->replaceSubNodes(environmentMappingIdsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(): An error occurred: "));
+		Console::print(string("SceneEditorScreenController::setObjectReflectionsEnvironmentMappings(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void LevelEditorScreenController::unsetEntityReflectionsEnvironmentMappings() {
+void SceneEditorScreenController::unsetEntityReflectionsEnvironmentMappings() {
 	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(true);
 	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(true);
 }
 
-void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
+void SceneEditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("objects_listbox") == 0) {
 	} else
@@ -1122,11 +1122,11 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId().compare("object_properties_listbox") == 0) {
 		onEntityPropertiesSelectionChanged();
 	} else {
-		Console::println(string("LevelEditorScreenController::onValueChanged: " + node->getId()));
+		Console::println(string("SceneEditorScreenController::onValueChanged: " + node->getId()));
 	}
 }
 
-void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void SceneEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_objects_select") == 0) {
@@ -1240,13 +1240,13 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 	}
 }
 
-void LevelEditorScreenController::showErrorPopUp(const string& caption, const string& message)
+void SceneEditorScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	Console::println(string(caption + ":" + message));
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void LevelEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+void SceneEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPort->getComputedConstraints();
 	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
 	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;

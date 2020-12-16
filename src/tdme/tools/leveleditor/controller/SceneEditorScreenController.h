@@ -49,11 +49,11 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::utilities::MutableString;
 
 /**
- * Level Editor Screen Controller
+ * Scene Editor Screen Controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::controller::LevelEditorScreenController final
+class tdme::tools::leveleditor::controller::SceneEditorScreenController final
 	: public ScreenController
 	, public GUIActionListener
 	, public GUIChangeListener
@@ -137,7 +137,7 @@ public:
 	 * Public constructor
 	 * @param view view
 	 */
-	LevelEditorScreenController(LevelEditorView* view);
+	SceneEditorScreenController(LevelEditorView* view);
 
 	/**
 	 * @return map path
