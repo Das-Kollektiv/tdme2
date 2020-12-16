@@ -1,11 +1,11 @@
-#include <tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.h>
+#include <tdme/tools/leveleditor/views/SceneEditorView_EntityColor.h>
 
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 
-using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
+using tdme::tools::leveleditor::views::SceneEditorView_EntityColor;
 using tdme::tools::leveleditor::views::LevelEditorView;
 
-LevelEditorView_ObjectColor::LevelEditorView_ObjectColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB)
+SceneEditorView_EntityColor::SceneEditorView_EntityColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB)
 {
 	this->levelEditorView = levelEditorView;
 	this->colorMulR = colorMulR;

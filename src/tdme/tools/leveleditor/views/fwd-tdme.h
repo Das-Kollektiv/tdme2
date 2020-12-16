@@ -8,7 +8,7 @@ namespace views {
 	class EmptyView;
 	class EnvironmentMappingView;
 	class LevelEditorView;
-	class LevelEditorView_ObjectColor;
+	class SceneEditorView_EntityColor;
 	class ModelEditorView;
 	class ParticleSystemView;
 	class TriggerView;

@@ -563,7 +563,7 @@ SRCS = \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \
 	src/tdme/tools/leveleditor/views/EnvironmentMappingView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \
-	src/tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.cpp \
+	src/tdme/tools/leveleditor/views/SceneEditorView_EntityColor.cpp \
 	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/ParticleSystemView.cpp \
 	src/tdme/tools/leveleditor/views/TriggerView.cpp \

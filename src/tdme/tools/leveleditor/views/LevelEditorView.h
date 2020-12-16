@@ -40,7 +40,7 @@ using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::controller::SceneEditorScreenController;
-using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
+using tdme::tools::leveleditor::views::SceneEditorView_EntityColor;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
@@ -59,7 +59,7 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 	, protected Gizmo
 {
 private:
-	static vector<string> OBJECTCOLOR_NAMES;
+	static vector<string> ENTITYCOLOR_NAMES;
 	static constexpr int MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 	static constexpr int MOUSE_PANNING_NONE { 0 };
 	static constexpr int MOUSE_ROTATION_NONE { 0 };
@@ -70,7 +70,7 @@ private:
 	Engine* engine { nullptr };
 	Prototype* selectedPrototype { nullptr };
 	bool reloadEntityLibrary;
-	map<string, LevelEditorView_ObjectColor*> objectColors;
+	map<string, SceneEditorView_EntityColor*> entityColors;
 	Rotation* camLookRotationX { nullptr };
 	Rotation* camLookRotationY { nullptr };
 	float camScale;
@@ -81,7 +81,7 @@ private:
 	int mouseDownLastX;
 	int mouseDownLastY;
 	bool mouseDragging;
-	Entity* mouseDraggingLastObject;
+	Entity* mouseDraggingLastEntity;
 	int mousePanningSide;
 	int mousePanningForward;
 	int mouseRotationX;
@@ -117,7 +117,7 @@ private:
 	Scene scene;
 	vector<string> selectedEntityIds;
 	set<string> selectedEntityIdsById;
-	vector<SceneEntity*> pasteObjects_;
+	vector<SceneEntity*> copiedEntities;
 	PopUps* popUps;
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };

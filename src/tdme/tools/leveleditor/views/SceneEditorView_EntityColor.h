@@ -6,11 +6,11 @@
 using tdme::tools::leveleditor::views::LevelEditorView;
 
 /**
- * Object Color
+ * Scene editor view entity color class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::LevelEditorView_ObjectColor final
+class tdme::tools::leveleditor::views::SceneEditorView_EntityColor final
 {
 	friend class LevelEditorView;
 
@@ -35,5 +35,5 @@ public:
 	 * @param colorAddG colorAddG
 	 * @param colorAddB colorAddB
 	 */
-	LevelEditorView_ObjectColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
+	SceneEditorView_EntityColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
 };

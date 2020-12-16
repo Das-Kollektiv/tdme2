@@ -43,7 +43,7 @@
 #include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/SceneEditorScreenController.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.h>
+#include <tdme/tools/leveleditor/views/SceneEditorView_EntityColor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -116,7 +116,7 @@ using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::controller::SceneEditorScreenController;
 using tdme::engine::SceneConnector;
-using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
+using tdme::tools::leveleditor::views::SceneEditorView_EntityColor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -142,7 +142,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Exception;
 using tdme::utilities::Console;
 
-vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
+vector<string> LevelEditorView::ENTITYCOLOR_NAMES = {
 	"blue",
 	"yellow",
 	"magenta",
@@ -189,16 +189,16 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDragging = false;
-	mouseDraggingLastObject = nullptr;
+	mouseDraggingLastEntity = nullptr;
 	gridEnabled = false;
 	gridY = 0.0f;
-	objectColors["red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
-	objectColors["green"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
-	objectColors["blue"] = new LevelEditorView_ObjectColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
-	objectColors["yellow"] = new LevelEditorView_ObjectColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f);
-	objectColors["magenta"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
-	objectColors["cyan"] = new LevelEditorView_ObjectColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
-	objectColors["none"] = new LevelEditorView_ObjectColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+	entityColors["red"] = new SceneEditorView_EntityColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
+	entityColors["green"] = new SceneEditorView_EntityColor(this, 0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
+	entityColors["blue"] = new SceneEditorView_EntityColor(this, 0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
+	entityColors["yellow"] = new SceneEditorView_EntityColor(this, 1.5f, 1.5f, 0.8f, 0.5f, 0.5f, 0.0f);
+	entityColors["magenta"] = new SceneEditorView_EntityColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
+	entityColors["cyan"] = new SceneEditorView_EntityColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
+	entityColors["none"] = new SceneEditorView_EntityColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 	camScale = 1.0f;
 	camLookRotationX->update();
 	camLookRotationY->update();
@@ -256,13 +256,13 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 LevelEditorView::~LevelEditorView() {
 	delete camLookRotationX;
 	delete camLookRotationY;
-	delete objectColors["red"];
-	delete objectColors["green"];
-	delete objectColors["blue"];
-	delete objectColors["yellow"];
-	delete objectColors["magenta"];
-	delete objectColors["cyan"];
-	delete objectColors["none"];
+	delete entityColors["red"];
+	delete entityColors["green"];
+	delete entityColors["blue"];
+	delete entityColors["yellow"];
+	delete entityColors["magenta"];
+	delete entityColors["cyan"];
+	delete entityColors["none"];
 	delete levelEditorGround;
 	delete entityPickingFilterNoGrid;
 	delete entityPickingFilterPlacing;
@@ -293,8 +293,8 @@ SceneEntity* LevelEditorView::getSelectedSceneEntity()
 {
 	if (selectedEntityIds.size() != 1) return nullptr;
 
-	auto selectedObject = scene.getEntity(selectedEntityIds[0]);
-	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? scene.getEntity(selectedObject->getId()) : static_cast< SceneEntity* >(nullptr);
+	auto selectedEntity = scene.getEntity(selectedEntityIds[0]);
+	return selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false ? scene.getEntity(selectedEntity->getId()) : static_cast< SceneEntity* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -413,14 +413,14 @@ void LevelEditorView::handleInputEvents()
 				mouseDragging = true;
 				mouseDownLastX = event.getXUnscaled();
 				mouseDownLastY = event.getYUnscaled();
-				mouseDraggingLastObject = nullptr;
+				mouseDraggingLastEntity = nullptr;
 			}
 		} else {
 			if (mouseDragging == true) {
 				mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 				mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 				mouseDragging = false;
-				mouseDraggingLastObject = nullptr;
+				mouseDraggingLastEntity = nullptr;
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
@@ -518,7 +518,7 @@ void LevelEditorView::handleInputEvents()
 						vector<Entity*> entitiesToRemove;
 						for (auto selectedEntityId: selectedEntityIds) {
 							auto selectedEntity = engine->getEntity(selectedEntityId);
-							if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
+							if (mouseDragging == true && mouseDraggingLastEntity == selectedEntity) {
 								// no op
 							} else {
 								if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
@@ -563,7 +563,7 @@ void LevelEditorView::handleInputEvents()
 						}
 						if (selectedEntityIds.size() > 1) setGizmoRotation(Transformations());
 					}
-					mouseDraggingLastObject = selectedEntity;
+					mouseDraggingLastEntity = selectedEntity;
 					updateGizmo();
 					updateGUIElements();
 				}
@@ -876,15 +876,15 @@ void LevelEditorView::updateGUITransformationsElements() {
 				selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisZIndex()),
 				(sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 			);
-			Vector3 objectCenter;
+			Vector3 entityCenter;
 			if (sceneEntity->getPrototype()->getModel() != nullptr) {
 				BoundingBox bv;
 				bv.fromBoundingVolumeWithTransformations(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransformations());
-				objectCenter = bv.getCenter();
+				entityCenter = bv.getCenter();
 			} else {
-				objectCenter = sceneEntity->getTransformations().getTranslation();
+				entityCenter = sceneEntity->getTransformations().getTranslation();
 			}
-			sceneEditorScreenController->setEntityData(sceneEntity->getId(), sceneEntity->getDescription(), sceneEntity->getPrototype()->getName(), objectCenter);
+			sceneEditorScreenController->setEntityData(sceneEntity->getId(), sceneEntity->getDescription(), sceneEntity->getPrototype()->getName(), entityCenter);
 		}
 	} else
 	if (selectedEntityIds.size() > 1) {
@@ -1017,28 +1017,28 @@ void LevelEditorView::dispose()
 	storeSettings();
 }
 
-void LevelEditorView::setHighlightEntityColorEffect(Entity* object)
+void LevelEditorView::setHighlightEntityColorEffect(Entity* entity)
 {
-	auto red = objectColors["red"];
-	object->setEffectColorAdd(Color4(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f));
-	object->setEffectColorMul(Color4(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f));
+	auto red = entityColors["red"];
+	entity->setEffectColorAdd(Color4(red->colorAddR, red->colorAddG, red->colorAddB, 0.0f));
+	entity->setEffectColorMul(Color4(red->colorMulR, red->colorMulG, red->colorMulB, 1.0f));
 }
 
-void LevelEditorView::setStandardEntityColorEffect(Entity* object)
+void LevelEditorView::setStandardEntityColorEffect(Entity* entity)
 {
-	auto color = objectColors["none"];
-	object->setEffectColorAdd(Color4(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f));
-	object->setEffectColorMul(Color4(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f));
-	auto sceneEntity = scene.getEntity(object->getId());
+	auto color = entityColors["none"];
+	entity->setEffectColorAdd(Color4(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f));
+	entity->setEffectColorMul(Color4(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f));
+	auto sceneEntity = scene.getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	auto colorProperty = sceneEntity->getProperty("object.color");
 	if (colorProperty == nullptr) colorProperty = sceneEntity->getPrototype()->getProperty("object.color");
 	if (colorProperty != nullptr) {
-		auto objectColorIt = objectColors.find(colorProperty->getValue());
-		auto objectColor = objectColorIt != objectColors.end() ? objectColorIt->second : nullptr;
-		if (objectColor != nullptr) {
-			object->setEffectColorAdd(Color4(object->getEffectColorAdd().getRed() + objectColor->colorAddR, object->getEffectColorAdd().getGreen() + objectColor->colorAddG, object->getEffectColorAdd().getBlue() + objectColor->colorAddB, 0.0f));
-			object->setEffectColorMul(Color4(object->getEffectColorMul().getRed() * objectColor->colorMulR, object->getEffectColorMul().getGreen() * objectColor->colorMulG, object->getEffectColorMul().getBlue() * objectColor->colorMulB, 1.0f));
+		auto entityColorIt = entityColors.find(colorProperty->getValue());
+		auto entityColor = entityColorIt != entityColors.end() ? entityColorIt->second : nullptr;
+		if (entityColor != nullptr) {
+			entity->setEffectColorAdd(Color4(entity->getEffectColorAdd().getRed() + entityColor->colorAddR, entity->getEffectColorAdd().getGreen() + entityColor->colorAddG, entity->getEffectColorAdd().getBlue() + entityColor->colorAddB, 0.0f));
+			entity->setEffectColorMul(Color4(entity->getEffectColorMul().getRed() * entityColor->colorMulR, entity->getEffectColorMul().getGreen() * entityColor->colorMulG, entity->getEffectColorMul().getBlue() * entityColor->colorMulB, 1.0f));
 		}
 	}
 }
@@ -1276,15 +1276,15 @@ void LevelEditorView::colorEntities()
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		auto sceneEntity = scene.getEntity(selectedEntityId);
 		if (sceneEntity == nullptr) continue;
-		auto color = OBJECTCOLOR_NAMES[0];
+		auto color = ENTITYCOLOR_NAMES[0];
 		auto colorProperty = sceneEntity->getProperty("object.color");
 		if (colorProperty == nullptr) {
 			sceneEntity->addProperty("object.color", color);
 		} else {
 			color = colorProperty->getValue();
-			for (auto i = 0; i < OBJECTCOLOR_NAMES.size(); i++) {
-				if (StringTools::equalsIgnoreCase(color, OBJECTCOLOR_NAMES[i]) == true) {
-					color = OBJECTCOLOR_NAMES[(i + 1) % OBJECTCOLOR_NAMES.size()];
+			for (auto i = 0; i < ENTITYCOLOR_NAMES.size(); i++) {
+				if (StringTools::equalsIgnoreCase(color, ENTITYCOLOR_NAMES[i]) == true) {
+					color = ENTITYCOLOR_NAMES[(i + 1) % ENTITYCOLOR_NAMES.size()];
 					break;
 				}
 			}
@@ -1494,15 +1494,15 @@ void LevelEditorView::entityPropertiesPreset(const string& presetId)
 	if (sceneEntity == nullptr) return;
 
 	sceneEntity->clearProperties();
-	auto& objectPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
-	const vector<PrototypeProperty*>* objectPropertyPresetVector = nullptr;
-	auto objectPropertyPresetVectorIt = objectPropertiesPresets.find(presetId);
-	if (objectPropertyPresetVectorIt != objectPropertiesPresets.end()) {
-		objectPropertyPresetVector = &objectPropertyPresetVectorIt->second;
+	auto& entityPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
+	const vector<PrototypeProperty*>* entityPropertyPresetVector = nullptr;
+	auto entityPropertyPresetVectorIt = entityPropertiesPresets.find(presetId);
+	if (entityPropertyPresetVectorIt != entityPropertiesPresets.end()) {
+		entityPropertyPresetVector = &entityPropertyPresetVectorIt->second;
 	}
-	if (objectPropertyPresetVector != nullptr) {
-		for (auto objectPropertyPreset: *objectPropertyPresetVector) {
-			sceneEntity->addProperty(objectPropertyPreset->getName(), objectPropertyPreset->getValue());
+	if (entityPropertyPresetVector != nullptr) {
+		for (auto entityPropertyPreset: *entityPropertyPresetVector) {
+			sceneEntity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
 	sceneEditorScreenController->setEntityProperties(presetId, sceneEntity, "");
@@ -1612,13 +1612,13 @@ void LevelEditorView::saveScene(const string& pathName, const string& fileName)
 
 void LevelEditorView::copyEntities()
 {
-	pasteObjects_.clear();
+	copiedEntities.clear();
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			pasteObjects_.push_back(sceneEntity);
+			copiedEntities.push_back(sceneEntity);
 		}
 	}
 }
@@ -1629,12 +1629,12 @@ void LevelEditorView::setPasteMode() {
 }
 
 void LevelEditorView::unsetPasteMode() {
-	auto pasteObjectIdx = 0;
-	for (auto pasteObject: pasteObjects_) {
-		auto pasteModel = pasteObject->getPrototype();
-		auto entityId = "tdme.leveleditor.paste." + pasteModel->getName() + "." + to_string(pasteObjectIdx);
+	auto pasteEntityIdx = 0;
+	for (auto pasteEntity: copiedEntities) {
+		auto pastePrototype = pasteEntity->getPrototype();
+		auto entityId = "tdme.leveleditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntityIdx);
 		engine->removeEntity(entityId);
-		pasteObjectIdx++;
+		pasteEntityIdx++;
 	}
 	pasteMode = false;
 	pasteModeValid = false;
@@ -1642,71 +1642,71 @@ void LevelEditorView::unsetPasteMode() {
 
 void LevelEditorView::pasteEntities(bool displayOnly)
 {
-	auto pasteObjectsMinX = Float::MAX_VALUE;
-	auto pasteObjectsMinZ = Float::MAX_VALUE;
-	auto pasteObjectsMinY = Float::MAX_VALUE;
-	for (auto object: pasteObjects_) {
-		auto entity = engine->getEntity(object->getId());
+	auto pasteEntitiesMinX = Float::MAX_VALUE;
+	auto pasteEntitiesMinZ = Float::MAX_VALUE;
+	auto pasteEntitiesMinY = Float::MAX_VALUE;
+	for (auto copiedEntity: copiedEntities) {
+		auto entity = engine->getEntity(copiedEntity->getId());
 		if (entity == nullptr) continue;
 		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(entity->getBoundingBox(), object->getTransformations());
-		auto& objectBBMinXYZ = cbv.getMin().getArray();
-		if (objectBBMinXYZ[0] < pasteObjectsMinX) pasteObjectsMinX = objectBBMinXYZ[0];
-		if (objectBBMinXYZ[1] < pasteObjectsMinY) pasteObjectsMinY = objectBBMinXYZ[1];
-		if (objectBBMinXYZ[2] < pasteObjectsMinZ) pasteObjectsMinZ = objectBBMinXYZ[2];
+		cbv.fromBoundingVolumeWithTransformations(entity->getBoundingBox(), copiedEntity->getTransformations());
+		auto& entityBBMinXYZ = cbv.getMin().getArray();
+		if (entityBBMinXYZ[0] < pasteEntitiesMinX) pasteEntitiesMinX = entityBBMinXYZ[0];
+		if (entityBBMinXYZ[1] < pasteEntitiesMinY) pasteEntitiesMinY = entityBBMinXYZ[1];
+		if (entityBBMinXYZ[2] < pasteEntitiesMinZ) pasteEntitiesMinZ = entityBBMinXYZ[2];
 	}
-	auto pasteObjectIdx = 0;
-	for (auto pasteObject: pasteObjects_) {
-		auto pasteModel = pasteObject->getPrototype();
+	auto pasteEntitiesIdx = 0;
+	for (auto copiedEntity: copiedEntities) {
+		auto pastePrototype = copiedEntity->getPrototype();
 		Transformations sceneEntityTransformations;
-		sceneEntityTransformations.fromTransformations(pasteObject->getTransformations());
-		auto objectDiffX = pasteObject->getTransformations().getTranslation().getX() - pasteObjectsMinX;
-		auto objectDiffY = pasteObject->getTransformations().getTranslation().getY() - pasteObjectsMinY;
-		auto objectDiffZ = pasteObject->getTransformations().getTranslation().getZ() - pasteObjectsMinZ;
+		sceneEntityTransformations.fromTransformations(copiedEntity->getTransformations());
+		auto entityDiffX = copiedEntity->getTransformations().getTranslation().getX() - pasteEntitiesMinX;
+		auto entityDiffY = copiedEntity->getTransformations().getTranslation().getY() - pasteEntitiesMinY;
+		auto entityDiffZ = copiedEntity->getTransformations().getTranslation().getZ() - pasteEntitiesMinZ;
 		sceneEntityTransformations.setTranslation(
 			Vector3(
-				placeEntityTranslation.getX() + objectDiffX,
-				placeEntityTranslation.getY() + objectDiffY,
-				placeEntityTranslation.getZ() + objectDiffZ
+				placeEntityTranslation.getX() + entityDiffX,
+				placeEntityTranslation.getY() + entityDiffY,
+				placeEntityTranslation.getZ() + entityDiffZ
 			)
 		);
 		sceneEntityTransformations.update();
 		if (displayOnly == false) {
 			for (auto i = 0; i < scene.getEntityCount(); i++) {
 				auto sceneEntity = scene.getEntityAt(i);
-				if (sceneEntity->getPrototype() == pasteModel && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
+				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
 					continue;
 				}
 			}
 		}
 		if (displayOnly == false) {
 			//
-			auto sceneEntityId = pasteModel->getName() + "_" + to_string(scene.allocateEntityId());
+			auto sceneEntityId = pastePrototype->getName() + "_" + to_string(scene.allocateEntityId());
 			auto sceneEntity = new SceneEntity(
 				sceneEntityId,
 				"",
 				sceneEntityTransformations,
-				pasteModel
+				pastePrototype
 			 );
-			PrototypeProperties* properties = pasteObject;
+			PrototypeProperties* properties = copiedEntity;
 			for (int i = 0; i < properties->getPropertyCount(); i++) {
 				PrototypeProperty* property = properties->getPropertyByIndex(i);
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene.addEntity(sceneEntity);
-			auto entity = SceneConnector::createEntity(pasteModel, sceneEntityId, sceneEntityTransformations);
+			auto entity = SceneConnector::createEntity(pastePrototype, sceneEntityId, sceneEntityTransformations);
 			if (entity != nullptr) {
 				resetEntity(entity);
 				entity->setPickable(true);
 				engine->addEntity(entity);
 			}
 		} else {
-			auto entityId = "tdme.leveleditor.paste." + pasteModel->getName() + "." + to_string(pasteObjectIdx);
+			auto entityId = "tdme.leveleditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntitiesIdx);
 			auto entity = engine->getEntity(entityId);
 			if (entity != nullptr) {
 				entity->fromTransformations(sceneEntityTransformations);
 			} else {
-				entity = SceneConnector::createEntity(pasteModel, entityId, sceneEntityTransformations);
+				entity = SceneConnector::createEntity(pastePrototype, entityId, sceneEntityTransformations);
 				if (entity != nullptr) {
 					setStandardEntityColorEffect(entity);
 					entity->setPickable(true);
@@ -1714,7 +1714,7 @@ void LevelEditorView::pasteEntities(bool displayOnly)
 				}
 			}
 		}
-		pasteObjectIdx++;
+		pasteEntitiesIdx++;
 	}
 	if (displayOnly == false) sceneEditorScreenController->setEntityListbox(scene);
 }
@@ -1801,27 +1801,27 @@ void LevelEditorView::updateGizmo() {
 
 	//
 	Vector3 gizmoCenter;
-	auto objectCount = 0;
+	auto entityCount = 0;
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto sceneEntity = scene.getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			gizmoCenter.add(sceneEntity->getTransformations().getTranslation());
-			objectCount++;
+			entityCount++;
 		}
 	}
-	if (objectCount == 0) {
+	if (entityCount == 0) {
 		removeGizmo();
 		return;
 	} else
-	if (objectCount == 1) {
+	if (entityCount == 1) {
 		auto selectedSceneEntity = scene.getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
 		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
 	} else {
-		gizmoCenter.scale(1.0f / objectCount);
+		gizmoCenter.scale(1.0f / entityCount);
 	}
 
 	//
