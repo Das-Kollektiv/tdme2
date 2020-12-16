@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Console.h>
@@ -17,7 +17,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utilities::MutableString;
 using tdme::utilities::Console;
@@ -28,7 +28,7 @@ MutableString PrototypeDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableS
 
 PrototypeDisplaySubScreenController::PrototypeDisplaySubScreenController(EntityPhysicsView* physicsView)
 {
-	view = new EntityDisplayView(this);
+	view = new PrototypeDisplayView(this);
 	this->physicsView = physicsView;
 }
 
@@ -36,7 +36,7 @@ PrototypeDisplaySubScreenController::~PrototypeDisplaySubScreenController() {
 	delete view;
 }
 
-EntityDisplayView* PrototypeDisplaySubScreenController::getView()
+PrototypeDisplayView* PrototypeDisplaySubScreenController::getView()
 {
 	return view;
 }

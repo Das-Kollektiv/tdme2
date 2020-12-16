@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/PrototypeDisplayView.h>
 
 #include <string>
 #include <vector>
@@ -8,7 +8,7 @@
 #include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
 
-using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::PrototypeDisplayView;
 
 using std::vector;
 using std::string;
@@ -18,7 +18,7 @@ using tdme::engine::Entity;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::engine::prototype::Prototype;
 
-EntityDisplayView::EntityDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController)
+PrototypeDisplayView::PrototypeDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController)
 {
 	this->engine = Engine::getInstance();
 	this->prototypeDisplaySubScreenController = prototypeDisplaySubScreenController;
@@ -26,12 +26,12 @@ EntityDisplayView::EntityDisplayView(PrototypeDisplaySubScreenController* protot
 	displayShadowing = true;
 }
 
-EntityDisplayView::~EntityDisplayView() {
+PrototypeDisplayView::~PrototypeDisplayView() {
 }
 
-void EntityDisplayView::display(Prototype* entity)
+void PrototypeDisplayView::display(Prototype* prototype)
 {
-	if (entity != nullptr) {
+	if (prototype != nullptr) {
 		auto model = engine->getEntity("model");
 		if (model != nullptr) model->setContributesShadows(displayShadowing);
 		if (model != nullptr) model->setReceivesShadows(displayShadowing);

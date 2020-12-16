@@ -17,11 +17,11 @@ using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::engine::prototype::Prototype;
 
 /**
- * Entity display view
+ * Prototype display view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityDisplayView final
+class tdme::tools::shared::views::PrototypeDisplayView final
 {
 private:
 	Engine* engine { nullptr };
@@ -34,12 +34,12 @@ public:
 	 * Public constructor
 	 * @param prototypeDisplaySubScreenController entity display sub screen controller
 	 */
-	EntityDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController);
+	PrototypeDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController);
 
 	/**
 	 * Destructor
 	 */
-	 ~EntityDisplayView();
+	 ~PrototypeDisplayView();
 
 	/**
 	 * @return display ground plate
@@ -73,8 +73,8 @@ public:
 
 	/**
 	 * Display
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	 void display(Prototype* entity);
+	 void display(Prototype* prototype);
 
 };

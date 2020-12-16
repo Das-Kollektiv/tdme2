@@ -36,7 +36,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
-#include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -82,7 +82,7 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
@@ -97,7 +97,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	engine = Engine::getInstance();
 	audio = Audio::getInstance();
 	modelEditorScreenController = nullptr;
-	entityDisplayView = nullptr;
+	prototypeDisplayView = nullptr;
 	entityPhysicsView = nullptr;
 	entitySoundsView = nullptr;
 	loadModelRequested = false;
@@ -370,7 +370,7 @@ void SharedModelEditorView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityDisplayView->display(prototype);
+	prototypeDisplayView->display(prototype);
 	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
@@ -425,8 +425,8 @@ void SharedModelEditorView::loadSettings()
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
 		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
-		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
-		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
+		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
+		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 		modelEditorScreenController->getAudioPath()->setPath(settings.get("audio.path", "."));
 	} catch (Exception& exception) {
@@ -441,7 +441,7 @@ void SharedModelEditorView::initialize()
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
 		entityPhysicsView = modelEditorScreenController->getPrototypePhysicsSubScreenController()->getView();
-		entityDisplayView = modelEditorScreenController->getPrototypeDisplaySubScreenController()->getView();
+		prototypeDisplayView = modelEditorScreenController->getPrototypeDisplaySubScreenController()->getView();
 		entitySoundsView = modelEditorScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
 		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
@@ -474,8 +474,8 @@ void SharedModelEditorView::storeSettings()
 	try {
 		Properties settings;
 		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
-		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
-		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
+		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
+		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
 		settings.put("audio.path", modelEditorScreenController->getAudioPath()->getPath());
 		settings.store("settings", "modeleditor.properties");

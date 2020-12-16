@@ -42,7 +42,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
-#include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
@@ -98,7 +98,7 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PlayableSoundView;
@@ -116,7 +116,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	engine = Engine::getInstance();
 	audio = Audio::getInstance();
 	particleSystemScreenController = nullptr;
-	entityDisplayView = nullptr;
+	prototypeDisplayView = nullptr;
 	entityPhysicsView = nullptr;
 	entitySoundsView = nullptr;
 	loadParticleSystemRequested = false;
@@ -365,7 +365,7 @@ void SharedParticleSystemView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityDisplayView->display(prototype);
+	prototypeDisplayView->display(prototype);
 	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
@@ -408,8 +408,8 @@ void SharedParticleSystemView::loadSettings()
 		Properties settings;
 		settings.load("settings", "particlesystem.properties");
 		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
-		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
-		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
+		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
+		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get("particlesystem.path", "."));
 		particleSystemScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
@@ -423,7 +423,7 @@ void SharedParticleSystemView::initialize()
 	try {
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
-		entityDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
+		prototypeDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
 		entityPhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
 		entitySoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
@@ -471,8 +471,8 @@ void SharedParticleSystemView::storeSettings()
 	try {
 		Properties settings;
 		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
-		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
-		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
+		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
+		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());
 		settings.put("model.path", particleSystemScreenController->getModelPath()->getPath());
 		settings.store("settings", "particlesystem.properties");

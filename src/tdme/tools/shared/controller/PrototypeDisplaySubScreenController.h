@@ -13,7 +13,7 @@
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utilities::MutableString;
 
@@ -30,7 +30,7 @@ private:
 	GUIElementNode* displayBoundingVolume { nullptr };
 	GUIElementNode* displayShadowing { nullptr };
 	GUIElementNode* displayGround { nullptr };
-	EntityDisplayView* view { nullptr };
+	PrototypeDisplayView* view { nullptr };
 	EntityPhysicsView* physicsView { nullptr };
 
 public:
@@ -48,7 +48,7 @@ public:
 	/**
 	 * @return view
 	 */
-	EntityDisplayView* getView();
+	PrototypeDisplayView* getView();
 
 	/**
 	 * Init

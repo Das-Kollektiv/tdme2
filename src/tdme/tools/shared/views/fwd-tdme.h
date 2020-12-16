@@ -10,7 +10,7 @@ namespace views {
 	class PrototypeBaseView;
 	class EntityPhysicsView;
 	class EntitySoundsView;
-	class EntityDisplayView;
+	class PrototypeDisplayView;
 	class Gizmo;
 	struct PlayableSoundView;
 	class PopUps;
