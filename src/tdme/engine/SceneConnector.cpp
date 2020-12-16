@@ -428,7 +428,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
-	map<string, Prototype*> renderGroupLevelEditorEntities;
+	map<string, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -446,7 +446,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
-			renderGroupLevelEditorEntities[sceneEntity->getPrototype()->getModel()->getId()] = sceneEntity->getPrototype();
+			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()->getId()] = sceneEntity->getPrototype();
 			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()->getId()].push_back(&sceneEntity->getTransformations());
 		} else {
 			Entity* entity = createEntity(sceneEntity);
@@ -511,7 +511,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 					progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 				}
 				progressStepCurrent++;
-				auto prototype = renderGroupLevelEditorEntities[itModel.first];
+				auto prototype = renderGroupSceneEditorEntities[itModel.first];
 				object3DRenderNode->setShader(prototype->getShader());
 				object3DRenderNode->setDistanceShader(prototype->getDistanceShader());
 				object3DRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());

@@ -202,7 +202,7 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	camScale = 1.0f;
 	camLookRotationX->update();
 	camLookRotationY->update();
-	levelEditorGround = createLevelEditorGroundPlateModel();
+	levelEditorGround = createSceneEditorGroundPlateModel();
 	engine = Engine::getInstance();
 
 	{
@@ -830,7 +830,7 @@ void SceneEditorView::unselectEntities()
 
 void SceneEditorView::updateGUIElements()
 {
-	sceneEditorScreenController->setScreenCaption("Level Editor - " + Tools::getFileName(scene.getFileName()));
+	sceneEditorScreenController->setScreenCaption("Scene Editor - " + Tools::getFileName(scene.getFileName()));
 	sceneEditorScreenController->setSceneSize(scene.getDimension().getX(), scene.getDimension().getZ(), scene.getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
@@ -1116,7 +1116,7 @@ void SceneEditorView::removeGrid()
 	engine->removeEntity("tdme.leveleditor.grid");
 }
 
-Model* SceneEditorView::createLevelEditorGroundPlateModel()
+Model* SceneEditorView::createSceneEditorGroundPlateModel()
 {
 	auto groundPlate = new Model("tdme.leveleditor.grid", "tdme.leveleditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
 	auto groundPlateMaterial = new Material("ground");

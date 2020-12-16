@@ -56,8 +56,8 @@ void TDMESceneEditor::main(int argc, char** argv) {
 	Console::println(string("TDMESceneEditor " + VERSION));
 	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
 	Console::println();
-	auto tdmeLevelEditor = new TDMESceneEditor();
-	tdmeLevelEditor->run(argc, argv, "TDMESceneEditor");
+	auto tdmeSceneEditor = new TDMESceneEditor();
+	tdmeSceneEditor->run(argc, argv, "TDMESceneEditor");
 }
 
 TDMESceneEditor::TDMESceneEditor() {

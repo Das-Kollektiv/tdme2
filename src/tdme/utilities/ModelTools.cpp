@@ -363,7 +363,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 }
 
 void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix) {
-	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in LevelEditor if doing partitioning
+	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in SceneEditor if doing partitioning
 	Vector3 faceCenter;
 
 	Matrix4x4 transformationsMatrix;

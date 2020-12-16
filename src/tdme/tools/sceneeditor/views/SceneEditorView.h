@@ -467,7 +467,7 @@ private:
 	 * Creates a scene editor ground plate
 	 * @return ground
 	 */
-	Model* createLevelEditorGroundPlateModel();
+	Model* createSceneEditorGroundPlateModel();
 
 	/**
 	 * Copy current selected entities

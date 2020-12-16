@@ -241,7 +241,7 @@ public:
 	void removeBoundingVolume(int idx);
 
 	/**
-	 * Set default bounding volumes(to be used with LevelEditor)
+	 * Set default bounding volumes(to be used with SceneEditor)
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
 	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);

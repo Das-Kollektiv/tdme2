@@ -1,7 +1,7 @@
 <screen id="screen_leveleditor" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
 		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
-			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Level Editor" width="100%" horizontal-align="center" height="auto" />
+			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Scene Editor" width="100%" horizontal-align="center" height="auto" />
 		</panel>
 		<layout width="100%" height="*" alignment="horizontal">
 			<element id="viewport" width="100%" height="100%" ignore-events="true">

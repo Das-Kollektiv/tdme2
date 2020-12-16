@@ -57,8 +57,8 @@ void TDMEModelEditor::main(int argc, char** argv)
 	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 
-	auto tdmeLevelEditor = new TDMEModelEditor();
-	tdmeLevelEditor->run(argc, argv, "TDMEModelEditor");
+	auto tdmeModelEditor = new TDMEModelEditor();
+	tdmeModelEditor->run(argc, argv, "TDMEModelEditor");
 }
 
 TDMEModelEditor* TDMEModelEditor::getInstance()
