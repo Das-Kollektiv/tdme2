@@ -21,8 +21,7 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::ModelEditorView final
-	: public SharedModelEditorView
+class tdme::tools::leveleditor::views::ModelEditorView final: public SharedModelEditorView
 {
 public:
 	/**
@@ -32,7 +31,7 @@ public:
 	ModelEditorView(PopUps* popUps);
 
 	// overridden methods
-	virtual void onSetEntityData() override;
+	virtual void onSetPrototypeData() override;
 	virtual void onLoadModel(Prototype* oldEntity, Prototype* entity) override;
 	virtual void onInitAdditionalScreens() override;
 

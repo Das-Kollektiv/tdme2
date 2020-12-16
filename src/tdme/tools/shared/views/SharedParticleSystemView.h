@@ -53,7 +53,7 @@ private:
 	EntityDisplayView* entityDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
 	EntitySoundsView* entitySoundsView { nullptr };
-	Prototype* entity { nullptr };
+	Prototype* prototype { nullptr };
 	bool loadParticleSystemRequested;
 	bool initParticleSystemRequested;
 	bool updateParticleSystemRequested;
@@ -121,9 +121,9 @@ public:
 	PopUps* getPopUpsViews();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	Prototype* getEntity();
+	Prototype* getPrototype();
 
 	/**
 	 * Reset view
@@ -131,9 +131,10 @@ public:
 	void reset();
 
 	/**
-	 * Set entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(Prototype* entity);
+	void setPrototype(Prototype* prototype);
 
 	/**
 	 * @return particle system index

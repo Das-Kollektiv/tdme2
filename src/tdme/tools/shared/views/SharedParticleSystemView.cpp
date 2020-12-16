@@ -124,7 +124,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	entity = new Prototype(
+	prototype = new Prototype(
 		-1,
 		Prototype_Type::PARTICLESYSTEM,
 		"Untitled",
@@ -135,7 +135,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 		nullptr,
 		Vector3()
 	);
-	entity->setDefaultBoundingVolumes();
+	prototype->setDefaultBoundingVolumes();
 }
 
 SharedParticleSystemView::~SharedParticleSystemView() {
@@ -147,9 +147,9 @@ PopUps* SharedParticleSystemView::getPopUpsViews()
 	return popUps;
 }
 
-Prototype* SharedParticleSystemView::getEntity()
+Prototype* SharedParticleSystemView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
 void SharedParticleSystemView::reset()
@@ -157,13 +157,13 @@ void SharedParticleSystemView::reset()
 	engine->reset();
 }
 
-void SharedParticleSystemView::setEntity(Prototype* entity)
+void SharedParticleSystemView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
+	this->prototype = prototype;
 	this->particleSystemIdx = 0;
 	initParticleSystemRequested = true;
-	entity->setDefaultBoundingVolumes();
+	prototype->setDefaultBoundingVolumes();
 }
 
 void SharedParticleSystemView::initParticleSystemRequest()
@@ -177,12 +177,12 @@ void SharedParticleSystemView::updateParticleSystemRequest() {
 
 void SharedParticleSystemView::initParticleSystem()
 {
-	if (entity == nullptr)
+	if (prototype == nullptr)
 		return;
 
-	particleSystemFile = entity->getFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(entity);
+	particleSystemFile = prototype->getFileName();
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::oseThumbnail(prototype);
 	updateGUIElements();
 }
 
@@ -200,7 +200,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	PrototypeWriter::write(pathName, fileName, entity);
+	PrototypeWriter::write(pathName, fileName, prototype);
 }
 
 void SharedParticleSystemView::reloadFile()
@@ -210,15 +210,15 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
-	if (entityPhysicsView->isEditingBoundingVolume(entity) == false) {
+	if (entityPhysicsView->isEditingBoundingVolume(prototype) == false) {
 		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 			auto& event = engine->getGUI()->getKeyboardEvents()[i];
 			if (event.isProcessed() == true) continue;
 			auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
-			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(entity); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(prototype); event.setProcessed(true); }
 		}
 		for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 			auto& event = engine->getGUI()->getMouseEvents()[i];
@@ -233,7 +233,7 @@ void SharedParticleSystemView::handleInputEvents()
 					if (getGizmoMode() != GIZMOMODE_NONE) {
 						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
 						setGizmoMode(GIZMOMODE_NONE);
-						updateGizmo(entity);
+						updateGizmo(prototype);
 					}
 					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
@@ -296,13 +296,13 @@ void SharedParticleSystemView::handleInputEvents()
 								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								localTransformations.update();
 								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
-								setGizmoRotation(entity, localTransformations);
+								setGizmoRotation(prototype, localTransformations);
 								applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), true);
 							}
 							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
-								updateGizmo(entity);
+								updateGizmo(prototype);
 							}
 						}
 						mouseDownLastX = event.getXUnscaled();
@@ -314,7 +314,7 @@ void SharedParticleSystemView::handleInputEvents()
 		}
 	} else {
 		removeGizmo();
-		entityPhysicsView->handleInputEvents(entity, objectScale);
+		entityPhysicsView->handleInputEvents(prototype, objectScale);
 	}
 	cameraRotationInputHandler->handleInputEvents();
 }
@@ -365,25 +365,25 @@ void SharedParticleSystemView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityDisplayView->display(entity);
-	entityPhysicsView->display(entity);
+	entityDisplayView->display(prototype);
+	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
 
 void SharedParticleSystemView::updateGUIElements()
 {
-	if (entity != nullptr && entity->getParticleSystemsCount() > 0) {
-		particleSystemScreenController->setScreenCaption("Particle System - " + (entity->getFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getFileName()) : entity->getName()));
-		auto preset = entity->getProperty("preset");
-		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
-		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
-		entityPhysicsView->setBoundingVolumes(entity);
-		entityPhysicsView->setPhysics(entity);
-		entitySoundsView->setSounds(entity);
+	if (prototype != nullptr && prototype->getParticleSystemsCount() > 0) {
+		particleSystemScreenController->setScreenCaption("Particle System - " + (prototype->getFileName().length() > 0 ? FileSystem::getInstance()->getFileName(prototype->getFileName()) : prototype->getName()));
+		auto preset = prototype->getProperty("preset");
+		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		particleSystemScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		entityPhysicsView->setBoundingVolumes(prototype);
+		entityPhysicsView->setPhysics(prototype);
+		entitySoundsView->setSounds(prototype);
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
-		particleSystemScreenController->setParticleSystemListBox(entity->getParticleSystemsCount(), particleSystemIdx);
+		particleSystemScreenController->setParticleSystemListBox(prototype->getParticleSystemsCount(), particleSystemIdx);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no particle system");
 		particleSystemScreenController->unsetEntityProperties();
@@ -503,8 +503,8 @@ void SharedParticleSystemView::loadParticleSystem()
 {
 	Console::println(string("Particle system file: " + particleSystemFile));
 	try {
-		auto oldEntity = entity;
-		setEntity(
+		auto oldEntity = prototype;
+		setPrototype(
 			loadParticleSystem(
 				particleSystemFile,
 				"",
@@ -512,7 +512,7 @@ void SharedParticleSystemView::loadParticleSystem()
 				FileSystem::getInstance()->getFileName(particleSystemFile)
 			)
 		);
-		onLoadParticleSystem(oldEntity, entity);
+		onLoadParticleSystem(oldEntity, prototype);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
@@ -540,16 +540,16 @@ void SharedParticleSystemView::setParticleSystemIndex(int idx) {
 	Console::println("SharedParticleSystemView::setParticleSystemIndex(): " + to_string(idx));
 	this->particleSystemIdx = idx;
 	updateGUIElements();
-	updateGizmo(entity);
+	updateGizmo(prototype);
 	totalDeltaScale.set(0.0, 0.0f, 0.0f);
 }
 
 void SharedParticleSystemView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
-	auto soundDefinition = entity->getSound(soundId);
+	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(entity->getFileName()),
+			Tools::getPath(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());
@@ -608,7 +608,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		);
 		transformations.setScale(objectScaleInverted);
 		transformations.update();
-		auto particleSystem = entity->getParticleSystemAt(particleSystemIdx);
+		auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 		auto emitterType = particleSystem->getEmitter();
 		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
 			// no op
@@ -757,7 +757,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		Transformations transformations;
 		transformations.setScale(objectScale);
 		transformations.update();
-		modelEntity = SceneConnector::createEntity(entity, "model", transformations);
+		modelEntity = SceneConnector::createEntity(prototype, "model", transformations);
 		if (modelEntity != nullptr) {
 			modelEntity->setPickable(true);
 			engine->addEntity(modelEntity);

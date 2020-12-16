@@ -103,7 +103,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	loadModelRequested = false;
 	initModelRequested = false;
 	initModelRequestedReset = false;
-	entity = nullptr;
+	prototype = nullptr;
 	modelFile = "";
 	lodLevel = 1;
 	audioStarted = -1LL;
@@ -121,28 +121,28 @@ PopUps* SharedModelEditorView::getPopUps()
 	return popUps;
 }
 
-Prototype* SharedModelEditorView::getEntity()
+Prototype* SharedModelEditorView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
-void SharedModelEditorView::setEntity(Prototype* entity)
+void SharedModelEditorView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
+	this->prototype = prototype;
 	lodLevel = 1;
 	initModelRequested = true;
 	initModelRequestedReset = false;
 }
 
-void SharedModelEditorView::resetEntity()
+void SharedModelEditorView::resetPrototype()
 {
 	engine->reset();
 	initModelRequested = true;
 	initModelRequestedReset = true;
 }
 
-void SharedModelEditorView::reimportEntity()
+void SharedModelEditorView::reimportPrototype()
 {
 	engine->reset();
 	initModelRequested = true;
@@ -151,17 +151,17 @@ void SharedModelEditorView::reimportEntity()
 
 void SharedModelEditorView::initModel()
 {
-	if (entity == nullptr) return;
+	if (prototype == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
 	if (attachment1Model != nullptr) {
 		delete attachment1Model;
 		attachment1Model = nullptr;
 	}
-	modelFile = entity->getFileName().length() > 0 ? entity->getFileName() : entity->getModelFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
-	Tools::oseThumbnail(entity);
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
+	modelFile = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
+	Tools::oseThumbnail(prototype);
+	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
@@ -187,8 +187,8 @@ void SharedModelEditorView::setLodLevel(int lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
-		modelEditorScreenController->setMaterials(entity);
-		modelEditorScreenController->setAnimations(entity);
+		modelEditorScreenController->setMaterials(prototype);
+		modelEditorScreenController->setAnimations(prototype);
 	}
 }
 
@@ -200,7 +200,7 @@ void SharedModelEditorView::loadFile(const string& pathName, const string& fileN
 
 void SharedModelEditorView::reimportModel(const string& pathName, const string& fileName)
 {
-	if (entity == nullptr) return;
+	if (prototype == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
 	if (attachment1Model != nullptr) {
@@ -214,7 +214,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 	};
 	// store old animation setups
 	map<string, AnimationSetupStruct> originalAnimationSetups;
-	for (auto animationSetupIt: entity->getModel()->getAnimationSetups()) {
+	for (auto animationSetupIt: prototype->getModel()->getAnimationSetups()) {
 		auto animationSetup = animationSetupIt.second;
 		originalAnimationSetups[animationSetup->getId()] = {
 			.loop = animationSetup->isLoop(),
@@ -247,11 +247,11 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 			animationSetup->setSpeed(originalAnimationSetup.speed);
 		}
 		// set model in entity
-		entity->setModel(model);
+		prototype->setModel(model);
 	} catch (Exception& exception) {
 		modelEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
 	}
-	reimportEntity();
+	reimportPrototype();
 	if (log.size() > 0) {
 		modelEditorScreenController->showErrorPopUp("Warning", log);
 	}
@@ -259,7 +259,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 
 void SharedModelEditorView::saveFile(const string& pathName, const string& fileName)
 {
-	PrototypeWriter::write(pathName, fileName, entity);
+	PrototypeWriter::write(pathName, fileName, prototype);
 }
 
 void SharedModelEditorView::reloadFile()
@@ -269,12 +269,12 @@ void SharedModelEditorView::reloadFile()
 
 void SharedModelEditorView::pivotApply(float x, float y, float z)
 {
-	if (entity == nullptr) return;
-	entity->getPivot().set(x, y, z);
+	if (prototype == nullptr) return;
+	prototype->getPivot().set(x, y, z);
 }
 
 void SharedModelEditorView::computeNormals() {
-	if (entity == nullptr || entity->getModel() == nullptr) return;
+	if (prototype == nullptr || prototype->getModel() == nullptr) return;
 	engine->removeEntity("model");
 	class ComputeNormalsProgressCallback: public ProgressCallback {
 	private:
@@ -287,22 +287,22 @@ void SharedModelEditorView::computeNormals() {
 		}
 	};
 	popUps->getProgressBarScreenController()->show();
-	ModelTools::computeNormals(entity->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
+	ModelTools::computeNormals(prototype->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
 	popUps->getProgressBarScreenController()->close();
-	resetEntity();
+	resetPrototype();
 }
 
 void SharedModelEditorView::optimizeModel() {
-	if (entity == nullptr || entity->getModel() == nullptr) return;
+	if (prototype == nullptr || prototype->getModel() == nullptr) return;
 	engine->removeEntity("model");
-	entity->setModel(ModelTools::optimizeModel(entity->unsetModel()));
+	prototype->setModel(ModelTools::optimizeModel(prototype->unsetModel()));
 	initModelRequested = true;
-	modelEditorScreenController->setMaterials(entity);
+	modelEditorScreenController->setMaterials(prototype);
 }
 
 void SharedModelEditorView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(entity, objectScale);
+	entityPhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -370,8 +370,8 @@ void SharedModelEditorView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityDisplayView->display(entity);
-	entityPhysicsView->display(entity);
+	entityDisplayView->display(prototype);
+	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 	audio->update();
@@ -379,23 +379,23 @@ void SharedModelEditorView::display()
 
 void SharedModelEditorView::updateGUIElements()
 {
-	if (entity != nullptr) {
-		modelEditorScreenController->setScreenCaption("Model Editor - " + (entity->getFileName().length() > 0 ? Tools::getFileName(entity->getFileName()) : Tools::getFileName(entity->getModelFileName())));
-		auto preset = entity->getProperty("preset");
-		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
-		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
-		modelEditorScreenController->setPivot(entity->getPivot());
-		entityPhysicsView->setBoundingVolumes(entity);
-		entityPhysicsView->setPhysics(entity);
-		entityPhysicsView->setTerrainMesh(entity);
-		entityPhysicsView->setConvexMeshes(entity);
-		modelEditorScreenController->setRendering(entity);
-		modelEditorScreenController->setLODLevel(entity, lodLevel);
-		modelEditorScreenController->setMaterials(entity);
-		modelEditorScreenController->setAnimations(entity);
+	if (prototype != nullptr) {
+		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
+		auto preset = prototype->getProperty("preset");
+		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		modelEditorScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		modelEditorScreenController->setPivot(prototype->getPivot());
+		entityPhysicsView->setBoundingVolumes(prototype);
+		entityPhysicsView->setPhysics(prototype);
+		entityPhysicsView->setTerrainMesh(prototype);
+		entityPhysicsView->setConvexMeshes(prototype);
+		modelEditorScreenController->setRendering(prototype);
+		modelEditorScreenController->setLODLevel(prototype, lodLevel);
+		modelEditorScreenController->setMaterials(prototype);
+		modelEditorScreenController->setAnimations(prototype);
 		modelEditorScreenController->setPreview();
 		modelEditorScreenController->setTools();
-		entitySoundsView->setSounds(entity);
+		entitySoundsView->setSounds(prototype);
 	} else {
 		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
 		modelEditorScreenController->unsetEntityProperties();
@@ -506,8 +506,8 @@ void SharedModelEditorView::loadModel()
 {
 	Console::println(string("Model file: " + modelFile));
 	try {
-		auto oldEntity = entity;
-		setEntity(
+		auto oldEntity = prototype;
+		setPrototype(
 			loadModel(
 				FileSystem::getInstance()->getFileName(modelFile),
 				"",
@@ -516,7 +516,7 @@ void SharedModelEditorView::loadModel()
 				Vector3()
 			)
 		);
-		onLoadModel(oldEntity, entity);
+		onLoadModel(oldEntity, prototype);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
@@ -589,11 +589,11 @@ void SharedModelEditorView::addAttachment1(const string& nodeId, const string& a
 void SharedModelEditorView::playSound(const string& soundId) {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	audio->removeEntity("sound");
-	auto soundDefinition = entity->getSound(soundId);
+	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(entity->getFileName()),
+			Tools::getPath(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());
@@ -619,22 +619,22 @@ void SharedModelEditorView::playSound(const string& soundId) {
 
 void SharedModelEditorView::updateRendering() {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
-	if (object == nullptr || entity == nullptr) return;
+	if (object == nullptr || prototype == nullptr) return;
 	engine->removeEntity("model");
-	object->setShader(entity->getShader());
-	object->setDistanceShader(entity->getDistanceShader());
-	object->setDistanceShaderDistance(entity->getDistanceShaderDistance());
-	ModelTools::prepareForShader(entity->getModel(), entity->getShader());
-	resetEntity();
+	object->setShader(prototype->getShader());
+	object->setDistanceShader(prototype->getDistanceShader());
+	object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+	ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
+	resetPrototype();
 }
 
-void SharedModelEditorView::onSetEntityData() {
+void SharedModelEditorView::onSetPrototypeData() {
 }
 
 void SharedModelEditorView::onRotation() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }
 
 void SharedModelEditorView::onScale() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }

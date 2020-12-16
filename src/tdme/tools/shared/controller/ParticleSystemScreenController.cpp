@@ -322,7 +322,7 @@ void ParticleSystemScreenController::unsetEntityData()
 
 void ParticleSystemScreenController::setEntityProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void ParticleSystemScreenController::unsetEntityProperties()
@@ -411,7 +411,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 {
 	particleSystemTypes->getController()->setDisabled(false);
 	particleSystemTypeApply->getController()->setDisabled(false);
-	auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
+	auto particleSystem = view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex());
 	particleSystemType->getActiveConditions().removeAll();
 	{
 		auto v = particleSystem->getType();
@@ -464,7 +464,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 {
 	try {
-		auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
+		auto particleSystem = view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex());
 		{
 			auto v = particleSystem->getType();
 			if (v == PrototypeParticleSystem_Type::NONE) {
@@ -516,16 +516,16 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 	particleSystemType->getActiveConditions().removeAll();
 	particleSystemType->getActiveConditions().add(particleSystemTypeString);
 	if (particleSystemTypeString == TYPE_NONE) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::NONE);
+		view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::NONE);
 	} else
 	if (particleSystemTypeString == TYPE_OBJECTPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM);
+		view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM);
 	} else
 	if (particleSystemTypeString == TYPE_POINTSPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM);
+		view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM);
 	} else
 	if (particleSystemTypeString == TYPE_FOGPARTICLESYSTEM) {
-		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM);
+		view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex())->setType(PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM);
 	} else {
 		Console::println(
 			string(
@@ -541,7 +541,7 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 
 void ParticleSystemScreenController::onParticleSystemEmitterApply()
 {
-	auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
+	auto particleSystem = view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex());
 	auto particleSystemEmitterString = particleSystemEmitters->getController()->getValue().getString();
 	particleSystemEmitter->getActiveConditions().removeAll();
 	particleSystemEmitter->getActiveConditions().add(particleSystemEmitterString);
@@ -576,7 +576,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterApply()
 void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 {
 	try {
-		auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());;
+		auto particleSystem = view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex());;
 		{
 			auto v = particleSystem->getEmitter();
 			if (v == PrototypeParticleSystem_Emitter::NONE)
@@ -771,7 +771,7 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 	particleSystemEmitters->getController()->setDisabled(false);
 	particleSystemEmitterApply->getController()->setDisabled(false);
 	particleSystemEmitter->getActiveConditions().removeAll();
-	auto particleSystem = view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex());
+	auto particleSystem = view->getPrototype()->getParticleSystemAt(view->getParticleSystemIndex());
 	{
 		auto v = particleSystem->getEmitter();
 		if (v == PrototypeParticleSystem_Emitter::NONE) {
@@ -997,7 +997,7 @@ void ParticleSystemScreenController::onEntitySave()
 		ParticleSystemScreenController* particleSystemScreenController;
 	};
 
-	auto fileName = view->getEntity()->getFileName();
+	auto fileName = view->getPrototype()->getFileName();
 	if (fileName.length() == 0) {
 		fileName = "untitle.tps";
 	}
@@ -1040,18 +1040,18 @@ void ParticleSystemScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "particlesystems_listbox") {
 		view->setParticleSystemIndex(Integer::parseInt(particleSystemsListbox->getController()->getValue().getString()));
 	} else {
-		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
-		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
-		entitySoundsSubScreenController->onValueChanged(node, view->getEntity());
+		entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+		entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
+		entitySoundsSubScreenController->onValueChanged(node, view->getPrototype());
 	}
 }
 
 void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
-	entitySoundsSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	entitySoundsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_entity_load") == 0) {
 			onParticleSystemLoad();
@@ -1250,11 +1250,11 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			fpsTransparencyTexture->getController()->setValue(MutableString());
 		} else
 		if (node->getId() == "button_particlesystem_add") {
-			view->getEntity()->addParticleSystem();
-			view->setParticleSystemIndex(view->getEntity()->getParticleSystemsCount() - 1);
+			view->getPrototype()->addParticleSystem();
+			view->setParticleSystemIndex(view->getPrototype()->getParticleSystemsCount() - 1);
 		} else
 		if (node->getId() == "button_particlesystem_remove") {
-			view->getEntity()->removeParticleSystemAt(view->getParticleSystemIndex());
+			view->getPrototype()->removeParticleSystemAt(view->getParticleSystemIndex());
 			view->setParticleSystemIndex(view->getParticleSystemIndex() - 1);
 		}
 	}

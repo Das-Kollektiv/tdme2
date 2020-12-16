@@ -106,7 +106,7 @@ void EmptyScreenController::unsetEntityData()
 
 void EmptyScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void EmptyScreenController::unsetEntityProperties()
@@ -126,12 +126,12 @@ void EmptyScreenController::showErrorPopUp(const string& caption, const string& 
 
 void EmptyScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void EmptyScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void EmptyScreenController::getViewPort(int& left, int& top, int& width, int& height) {

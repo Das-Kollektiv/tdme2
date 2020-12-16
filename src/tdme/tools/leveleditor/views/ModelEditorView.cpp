@@ -28,7 +28,7 @@ ModelEditorView::ModelEditorView(PopUps* popUps)
 {
 }
 
-void ModelEditorView::onSetEntityData()
+void ModelEditorView::onSetPrototypeData()
 {
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }

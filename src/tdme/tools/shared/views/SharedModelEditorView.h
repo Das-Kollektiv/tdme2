@@ -54,7 +54,7 @@ private:
 	EntityDisplayView* entityDisplayView { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
 	EntitySoundsView* entitySoundsView { nullptr };
-	Prototype* entity { nullptr };
+	Prototype* prototype { nullptr };
 	bool loadModelRequested;
 	bool initModelRequested;
 	bool initModelRequestedReset;
@@ -127,24 +127,25 @@ public:
 	PopUps* getPopUps();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	Prototype* getEntity();
+	Prototype* getPrototype();
 
 	/**
-	 * Set entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(Prototype* entity);
+	void setPrototype(Prototype* prototype);
 
 	/**
-	 * Reset entity
+	 * Reset prototype
 	 */
-	void resetEntity();
+	void resetPrototype();
 
 	/**
-	 * Reimport entity
+	 * Reimport prototype
 	 */
-	void reimportEntity();
+	void reimportPrototype();
 
 	/**
 	 * @return current model file name
@@ -206,20 +207,15 @@ public:
 	 */
 	void optimizeModel();
 
-	// overridden methods
-	void handleInputEvents() override;
-
-	/**
-	 * Renders the scene
-	 */
-	void display() override;
-
 	/**
 	 * Init GUI elements
 	 */
 	void updateGUIElements();
 
 	// overridden methods
+	// overridden methods
+	void handleInputEvents() override;
+	void display() override;
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;
@@ -239,9 +235,9 @@ public:
 	virtual void onLoadModel(Prototype* oldEntity, Prototype* entity);
 
 	/**
-	 * On set entity data hook
+	 * On set prototype data hook
 	 */
-	virtual void onSetEntityData();
+	virtual void onSetPrototypeData();
 
 	/**
 	 * Play animation

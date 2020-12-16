@@ -37,7 +37,7 @@ private:
 	PopUps* popUps { nullptr };
 	TriggerScreenController* triggerScreenController { nullptr };
 	EntityPhysicsView* entityPhysicsView { nullptr };
-	Prototype* entity { nullptr };
+	Prototype* prototype { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;
 
@@ -59,19 +59,15 @@ public:
 	PopUps* getPopUpsViews();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	Prototype* getEntity();
+	Prototype* getPrototype();
 
 	/**
-	 * @return selected entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(Prototype* entity);
-
-	/**
-	 * Renders the scene
-	 */
-	void display() override;
+	void setPrototype(Prototype* prototype);
 
 	/**
 	 * Init GUI elements
@@ -79,6 +75,7 @@ public:
 	void updateGUIElements();
 
 	// overridden methods
+	void display() override;
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;

@@ -73,25 +73,25 @@ PopUps* TriggerView::getPopUpsViews()
 	return popUps;
 }
 
-Prototype* TriggerView::getEntity()
+Prototype* TriggerView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
-void TriggerView::setEntity(Prototype* entity)
+void TriggerView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
-	entity->setDefaultBoundingVolumes();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(entity);
+	this->prototype = prototype;
+	prototype->setDefaultBoundingVolumes();
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
 	updateGUIElements();
 }
 
 void TriggerView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(entity, objectScale);
+	entityPhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -112,20 +112,20 @@ void TriggerView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityPhysicsView->display(entity);
+	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
 
 void TriggerView::updateGUIElements()
 {
-	if (entity != nullptr) {
-		triggerScreenController->setScreenCaption("Trigger - " + entity->getName());
-		auto preset = entity->getProperty("preset");
+	if (prototype != nullptr) {
+		triggerScreenController->setScreenCaption("Trigger - " + prototype->getName());
+		auto preset = prototype->getProperty("preset");
 		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
-		entityPhysicsView->setBoundingVolumes(entity);
-		entityPhysicsView->setPhysics(entity);
+		triggerScreenController->setEntityData(prototype->getName(), prototype->getDescription());
+		entityPhysicsView->setBoundingVolumes(prototype);
+		entityPhysicsView->setPhysics(prototype);
 	} else {
 		triggerScreenController->setScreenCaption("Trigger - no trigger loaded");
 		triggerScreenController->unsetEntityProperties();
@@ -173,9 +173,9 @@ void TriggerView::dispose()
 }
 
 void TriggerView::onRotation() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }
 
 void TriggerView::onScale() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }

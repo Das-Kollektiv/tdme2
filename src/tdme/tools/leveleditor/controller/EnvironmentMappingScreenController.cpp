@@ -141,7 +141,7 @@ void EnvironmentMappingScreenController::unsetEntityData()
 
 void EnvironmentMappingScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void EnvironmentMappingScreenController::unsetEntityProperties()
@@ -150,8 +150,8 @@ void EnvironmentMappingScreenController::unsetEntityProperties()
 }
 
 void EnvironmentMappingScreenController::setGeneration() {
-	auto renderPassMask = view->getEntity()->getEnvironmentMapRenderPassMask();
-	int64_t frequency = view->getEntity()->getEnvironmentMapTimeRenderUpdateFrequency();
+	auto renderPassMask = view->getPrototype()->getEnvironmentMapRenderPassMask();
+	int64_t frequency = view->getPrototype()->getEnvironmentMapTimeRenderUpdateFrequency();
 	string renderPassMaskString;
 	auto renderPass = 1;
 	for (auto i = 0; i < 31; i++) {
@@ -181,8 +181,8 @@ void EnvironmentMappingScreenController::onGenerationApply() {
 		for (auto renderPass: StringTools::tokenize(generationRenderPasses->getController()->getValue().getString(), "|")) renderPassMask|= Integer::parseInt(renderPass);
 		auto frequencyString = generationFrequency->getController()->getValue().getString();
 		auto frequency = frequencyString.empty() == true?-1LL:Integer::parseInt(frequencyString);
-		view->getEntity()->setEnvironmentMapTimeRenderUpdateFrequency(frequency);
-		view->getEntity()->setEnvironmentMapRenderPassMask(renderPassMask);
+		view->getPrototype()->setEnvironmentMapTimeRenderUpdateFrequency(frequency);
+		view->getPrototype()->setEnvironmentMapRenderPassMask(renderPassMask);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -200,14 +200,14 @@ void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, c
 
 void EnvironmentMappingScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
-	entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
+	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_generation_apply") == 0) {
 			onGenerationApply();

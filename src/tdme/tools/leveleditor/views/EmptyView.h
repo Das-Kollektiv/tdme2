@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -30,13 +29,12 @@ class tdme::tools::leveleditor::views::EmptyView final
 	, public GUIInputEventHandler
 {
 private:
-	Engine* engine {  };
-
-	PopUps* popUps {  };
-	EmptyScreenController* emptyScreenController {  };
-	Prototype* entity {  };
-	bool initModelRequested {  };
-	CameraRotationInputHandler* cameraRotationInputHandler {  };
+	Engine* engine { nullptr };
+	PopUps* popUps { nullptr };
+	EmptyScreenController* emptyScreenController { nullptr };
+	Prototype* prototype { nullptr };
+	bool initModelRequested { nullptr };
+	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;
 
 	/**
@@ -62,21 +60,15 @@ public:
 	PopUps* getPopUpsViews();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	Prototype* getEntity();
+	Prototype* getPrototype();
 
 	/**
-	 * @return selected entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(Prototype* entity);
-
-	void handleInputEvents() override;
-
-	/**
-	 * Renders the scene
-	 */
-	void display() override;
+	void setPrototype(Prototype* entity);
 
 	/**
 	 * Init GUI elements
@@ -84,6 +76,8 @@ public:
 	void updateGUIElements();
 
 	// overridden methods
+	void handleInputEvents() override;
+	void display() override;
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;

@@ -54,7 +54,7 @@ EmptyView::EmptyView(PopUps* popUps)
 	this->popUps = popUps;
 	emptyScreenController = nullptr;
 	initModelRequested = false;
-	entity = nullptr;
+	prototype = nullptr;
 	engine = Engine::getInstance();
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
@@ -69,26 +69,26 @@ PopUps* EmptyView::getPopUpsViews()
 	return popUps;
 }
 
-Prototype* EmptyView::getEntity()
+Prototype* EmptyView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
-void EmptyView::setEntity(Prototype* entity)
+void EmptyView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
+	this->prototype = prototype;
 	initModelRequested = true;
 }
 
 void EmptyView::initModel()
 {
-	if (entity == nullptr)
+	if (prototype == nullptr)
 		return;
 
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(entity);
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::oseThumbnail(prototype);
+	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto model = engine->getEntity("model");
 	auto ground = engine->getEntity("ground");
 	model->setContributesShadows(false);
@@ -136,14 +136,14 @@ void EmptyView::display()
 
 void EmptyView::updateGUIElements()
 {
-	if (entity != nullptr) {
-		emptyScreenController->setScreenCaption("Empty - " + entity->getName());
-		auto preset = entity->getProperty("preset");
+	if (prototype != nullptr) {
+		emptyScreenController->setScreenCaption("Empty - " + prototype->getName());
+		auto preset = prototype->getProperty("preset");
 		emptyScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		emptyScreenController->setEntityData(entity->getName(), entity->getDescription());
+		emptyScreenController->setEntityData(prototype->getName(), prototype->getDescription());
 		Vector3 dimension;
-		dimension.set(entity->getModel()->getBoundingBox()->getMax());
-		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
+		dimension.set(prototype->getModel()->getBoundingBox()->getMax());
+		dimension.sub(prototype->getModel()->getBoundingBox()->getMin());
 	} else {
 		emptyScreenController->setScreenCaption("Empty - no trigger loaded");
 		emptyScreenController->unsetEntityProperties();

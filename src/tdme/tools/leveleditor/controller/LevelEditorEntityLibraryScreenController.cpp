@@ -185,31 +185,31 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 			if (dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToModelEditor();
 			}
-			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
+			(dynamic_cast<ModelEditorView*>(TDMELevelEditor::getInstance()->getView()))->setPrototype(prototype);
 		} else
 		if (v == Prototype_Type::TRIGGER) {
 			if (dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToTriggerView();
 			}
-			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
+			(dynamic_cast<TriggerView*>(TDMELevelEditor::getInstance()->getView()))->setPrototype(prototype);
 		} else
 		if (v == Prototype_Type::ENVIRONMENTMAPPING) {
 			if (dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEnvironmentMappingView();
 			}
-			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
+			(dynamic_cast<EnvironmentMappingView*>(TDMELevelEditor::getInstance()->getView()))->setPrototype(prototype);
 		} else
 		if (v == Prototype_Type::EMPTY) {
 			if (dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToEmptyView();
 			}
-			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
+			(dynamic_cast< EmptyView* >(TDMELevelEditor::getInstance()->getView()))->setPrototype(prototype);
 		} else
 		if (v == Prototype_Type::PARTICLESYSTEM) {
 			if (dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()) != nullptr == false) {
 				TDMELevelEditor::getInstance()->switchToParticleSystemView();
 			}
-			(dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()))->setEntity(prototype);
+			(dynamic_cast<ParticleSystemView*>(TDMELevelEditor::getInstance()->getView()))->setPrototype(prototype);
 		}
 	}
 

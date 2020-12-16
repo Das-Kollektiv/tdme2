@@ -131,7 +131,7 @@ void TriggerScreenController::unsetEntityData()
 
 void TriggerScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void TriggerScreenController::unsetEntityProperties()
@@ -151,14 +151,14 @@ void TriggerScreenController::showErrorPopUp(const string& caption, const string
 
 void TriggerScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
-	entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
+	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void TriggerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void TriggerScreenController::getViewPort(int& left, int& top, int& width, int& height) {

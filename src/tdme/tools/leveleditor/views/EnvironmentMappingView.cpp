@@ -61,7 +61,7 @@ EnvironmentMappingView::EnvironmentMappingView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	environmentMappingScreenController = nullptr;
-	entity = nullptr;
+	prototype = nullptr;
 	engine = Engine::getInstance();
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 }
@@ -77,25 +77,25 @@ PopUps* EnvironmentMappingView::getPopUpsViews()
 	return popUps;
 }
 
-Prototype* EnvironmentMappingView::getEntity()
+Prototype* EnvironmentMappingView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
-void EnvironmentMappingView::setEntity(Prototype* entity)
+void EnvironmentMappingView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
-	entity->setDefaultBoundingVolumes(1);
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(entity);
+	this->prototype = prototype;
+	prototype->setDefaultBoundingVolumes(1);
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
 	updateGUIElements();
 }
 
 void EnvironmentMappingView::handleInputEvents()
 {
-	entityPhysicsView->handleInputEvents(entity, objectScale);
+	entityPhysicsView->handleInputEvents(prototype, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -116,20 +116,20 @@ void EnvironmentMappingView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityPhysicsView->display(entity);
+	entityPhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
 
 void EnvironmentMappingView::updateGUIElements()
 {
-	if (entity != nullptr) {
-		environmentMappingScreenController->setScreenCaption("Environment Mapping - " + entity->getName());
-		auto preset = entity->getProperty("preset");
+	if (prototype != nullptr) {
+		environmentMappingScreenController->setScreenCaption("Environment Mapping - " + prototype->getName());
+		auto preset = prototype->getProperty("preset");
 		environmentMappingScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
-		environmentMappingScreenController->setEntityData(entity->getName(), entity->getDescription());
+		environmentMappingScreenController->setEntityData(prototype->getName(), prototype->getDescription());
 		environmentMappingScreenController->setGeneration();
-		entityPhysicsView->setBoundingVolumes(entity);
+		entityPhysicsView->setBoundingVolumes(prototype);
 	} else {
 		environmentMappingScreenController->setScreenCaption("Environment Mapping - no environment mapping loaded");
 		environmentMappingScreenController->unsetEntityProperties();
@@ -179,9 +179,9 @@ void EnvironmentMappingView::dispose()
 }
 
 void EnvironmentMappingView::onRotation() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }
 
 void EnvironmentMappingView::onScale() {
-	entityPhysicsView->updateGizmo(entity);
+	entityPhysicsView->updateGizmo(prototype);
 }
