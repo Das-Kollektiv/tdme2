@@ -36,7 +36,7 @@ void ModelEditorView::onSetEntityData()
 void ModelEditorView::onLoadModel(Prototype* oldEntity, Prototype* entity)
 {
 	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), entity->getId());
-	TDMELevelEditor::getInstance()->getEntityLibrary()->removePrototype(oldEntity->getId());
+	TDMELevelEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
@@ -47,7 +47,7 @@ void ModelEditorView::onInitAdditionalScreens()
 
 Prototype* ModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
-	return TDMELevelEditor::getInstance()->getEntityLibrary()->addModel(
+	return TDMELevelEditor::getInstance()->getSceneLibrary()->addModel(
 		SceneLibrary::ID_ALLOCATE,
 		name,
 		description,

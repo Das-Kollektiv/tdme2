@@ -42,7 +42,7 @@ void ParticleSystemView::onSetEntityData()
 void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity)
 {
 	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), newEntity->getId());
-	TDMELevelEditor::getInstance()->getEntityLibrary()->removePrototype(oldEntity->getId());
+	TDMELevelEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 }
 
@@ -51,7 +51,7 @@ Prototype* ParticleSystemView::loadParticleSystem(const string& name, const stri
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
 		auto prototype = PrototypeReader::read(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		prototype->setDefaultBoundingVolumes();
-		TDMELevelEditor::getInstance()->getEntityLibrary()->addPrototype(prototype);
+		TDMELevelEditor::getInstance()->getSceneLibrary()->addPrototype(prototype);
 		return prototype;
 	}
 	return nullptr;

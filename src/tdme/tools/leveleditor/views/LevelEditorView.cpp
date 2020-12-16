@@ -167,7 +167,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	mouseRotationX = LevelEditorView::MOUSE_ROTATION_NONE;
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
 	reloadEntityLibrary = false;
-	selectedEntity = nullptr;
+	selectedPrototype = nullptr;
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
@@ -286,7 +286,7 @@ Scene* LevelEditorView::getScene()
 
 Prototype* LevelEditorView::getSelectedPrototype()
 {
-	return selectedEntity;
+	return selectedPrototype;
 }
 
 SceneEntity* LevelEditorView::getSelectedSceneEntity()
@@ -340,9 +340,9 @@ void LevelEditorView::setSnapping(bool snappingEnabled, float snappingX, float s
 	this->snappingZ = snappingZ;
 }
 
-void LevelEditorView::loadEntityFromLibrary(int id)
+void LevelEditorView::selectPrototypeFromLibrary(int id)
 {
-	selectedEntity = TDMELevelEditor::getInstance()->getEntityLibrary()->getPrototype(id);
+	selectedPrototype = TDMELevelEditor::getInstance()->getSceneLibrary()->getPrototype(id);
 }
 
 void LevelEditorView::handleInputEvents()
@@ -625,10 +625,10 @@ void LevelEditorView::display()
 
 	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
-		auto sceneLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
+		auto sceneLibrary = TDMELevelEditor::getInstance()->getSceneLibrary();
 		for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-			selectedEntity = sceneLibrary->getPrototypeAt(i);
-			Tools::oseThumbnail(selectedEntity);
+			selectedPrototype = sceneLibrary->getPrototypeAt(i);
+			Tools::oseThumbnail(selectedPrototype);
 		}
 		reloadEntityLibrary = false;
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
@@ -653,8 +653,8 @@ void LevelEditorView::display()
 				transformations.addRotation(scene.getRotationOrder()->getAxis1(), 0.0f);
 				transformations.addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
-				if (selectedEngineEntity == nullptr && selectedEntity != nullptr) {
-					selectedEngineEntity = SceneConnector::createEntity(selectedEntity, "tdme.leveleditor.placeentity", transformations);
+				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
+					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.leveleditor.placeentity", transformations);
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
@@ -1213,7 +1213,7 @@ void LevelEditorView::placeEntity()
 	Transformations sceneEntityTransformations;
 	sceneEntityTransformations.setTranslation(placeEntityTranslation);
 	sceneEntityTransformations.setScale(Vector3(1.0f, 1.0f, 1.0f));
-	sceneEntityTransformations.setPivot(selectedEntity->getPivot());
+	sceneEntityTransformations.setPivot(selectedPrototype->getPivot());
 	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis0(), 0.0f);
 	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis1(), 0.0f);
 	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
@@ -1221,15 +1221,15 @@ void LevelEditorView::placeEntity()
 	sceneEntityTransformations.update();
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
-		if (sceneEntity->getPrototype() == selectedEntity && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
+		if (sceneEntity->getPrototype() == selectedPrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
 			return;
 		}
 	}
 	auto sceneEntity = new SceneEntity(
-		selectedEntity->getName() + "_" + to_string(scene.allocateEntityId()),
+		selectedPrototype->getName() + "_" + to_string(scene.allocateEntityId()),
 		"",
 		sceneEntityTransformations,
-		selectedEntity
+		selectedPrototype
 	);
 	scene.addEntity(sceneEntity);
 	auto entity = SceneConnector::createEntity(sceneEntity);
@@ -1543,7 +1543,7 @@ bool LevelEditorView::entityPropertyAdd()
 void LevelEditorView::loadScene(const string& path, const string& file)
 {
 	engine->reset();
-	selectedEntity = nullptr;
+	selectedPrototype = nullptr;
 	try {
 		bool haveModelFile = false;
 		for (auto &modelExtension: ModelReader::getModelExtensions()) {

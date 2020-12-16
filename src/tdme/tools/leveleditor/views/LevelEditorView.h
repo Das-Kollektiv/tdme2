@@ -68,7 +68,7 @@ private:
 	bool snappingEnabled;
 	LevelEditorScreenController* levelEditorScreenController { nullptr };
 	Engine* engine { nullptr };
-	Prototype* selectedEntity { nullptr };
+	Prototype* selectedPrototype { nullptr };
 	bool reloadEntityLibrary;
 	map<string, LevelEditorView_ObjectColor*> objectColors;
 	Rotation* camLookRotationX { nullptr };
@@ -201,7 +201,7 @@ public:
 	 * Load selected entity from library
 	 * @param id id
 	 */
-	void loadEntityFromLibrary(int id);
+	void selectPrototypeFromLibrary(int id);
 	void handleInputEvents() override;
 
 	/**

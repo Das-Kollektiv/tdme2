@@ -85,7 +85,7 @@ public:
 	/**
 	 * @return scene prototype library
 	 */
-	SceneLibrary* getEntityLibrary();
+	SceneLibrary* getSceneLibrary();
 
 	/**
 	 * @return scene
