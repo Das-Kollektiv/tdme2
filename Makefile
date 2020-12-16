@@ -554,7 +554,7 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
-	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
+	src/tdme/tools/leveleditor/TDMESceneEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.cpp \
@@ -875,7 +875,7 @@ MAIN_SRCS = \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
-	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
+	src/tdme/tools/leveleditor/TDMESceneEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \

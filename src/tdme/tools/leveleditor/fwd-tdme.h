@@ -5,7 +5,7 @@
 namespace tdme {
 namespace tools {
 namespace leveleditor {
-			class TDMELevelEditor;
+			class TDMESceneEditor;
 }  // namespace leveleditor
 }  // namespace tools
 }  // namespace tdme

@@ -374,7 +374,7 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
-	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
+	src/tdme/tools/leveleditor/TDMESceneEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.cpp \
@@ -656,7 +656,7 @@ all: \
 	levelfixmodelszup2yup \
 	fixdoxygen \
 	optimizemodel \
-	TDMELevelEditor \
+	TDMESceneEditor \
 	TDMEModelEditor \
 	TDMEParticleSystem \
 	clean-mains
@@ -790,8 +790,8 @@ fixdoxygen:
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-TDMELevelEditor:
-	cl /FeTDMELevelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+TDMESceneEditor:
+	cl /FeTDMESceneEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMESceneEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMEModelEditor:
 	cl /FeTDMEModelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

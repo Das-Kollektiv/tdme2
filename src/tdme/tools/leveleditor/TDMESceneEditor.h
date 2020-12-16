@@ -30,16 +30,16 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
 /**
- * TDME Level Editor
+ * TDME Scene Editor
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::TDMELevelEditor final
+class tdme::tools::leveleditor::TDMESceneEditor final
 	: public virtual Application
 {
 private:
 	static string VERSION;
-	static TDMELevelEditor* instance;
+	static TDMESceneEditor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool quitRequested;
@@ -65,17 +65,17 @@ public:
 	/**
 	 * @return scene editor instance
 	 */
-	static TDMELevelEditor* getInstance();
+	static TDMESceneEditor* getInstance();
 
 	/**
 	 * Public constructor
 	 */
-	TDMELevelEditor();
+	TDMESceneEditor();
 
 	/**
 	 * Destructor
 	 */
-	~TDMELevelEditor();
+	~TDMESceneEditor();
 
 	/**
 	 * @return prototype library screen controller
@@ -131,7 +131,7 @@ public:
 	/**
 	 * Switch to scene editor
 	 */
-	void switchToLevelEditor();
+	void switchToSceneEditor();
 
 	/**
 	 * Switch to model editor

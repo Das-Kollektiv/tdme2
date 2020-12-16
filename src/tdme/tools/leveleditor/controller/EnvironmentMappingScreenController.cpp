@@ -20,7 +20,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -49,7 +49,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -66,7 +66,7 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 	public:
 		void performAction() override {
 			finalView->updateGUIElements();
-			TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
+			TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 		}
 
 		/**
@@ -221,5 +221,5 @@ void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, c
 
 void EnvironmentMappingScreenController::onQuit()
 {
-	TDMELevelEditor::getInstance()->quit();
+	TDMESceneEditor::getInstance()->quit();
 }

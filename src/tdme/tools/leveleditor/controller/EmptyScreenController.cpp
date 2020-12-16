@@ -13,7 +13,7 @@
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -32,7 +32,7 @@ using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -44,7 +44,7 @@ EmptyScreenController::EmptyScreenController(EmptyView* view)
 	public:
 		void performAction() override {
 			finalView->updateGUIElements();
-			TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
+			TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 		}
 
 		/**
@@ -116,7 +116,7 @@ void EmptyScreenController::unsetPrototypeProperties()
 
 void EmptyScreenController::onQuit()
 {
-	TDMELevelEditor::getInstance()->quit();
+	TDMESceneEditor::getInstance()->quit();
 }
 
 void EmptyScreenController::showErrorPopUp(const string& caption, const string& message)

@@ -9,7 +9,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.h>
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
@@ -38,7 +38,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::controller::EnvironmentMappingScreenController;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
@@ -164,7 +164,7 @@ void EnvironmentMappingView::activate()
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(environmentMappingScreenController->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }

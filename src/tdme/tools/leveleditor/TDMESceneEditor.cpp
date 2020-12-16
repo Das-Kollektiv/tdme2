@@ -1,4 +1,4 @@
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 
 #include <cstdlib>
 #include <string>
@@ -26,7 +26,7 @@
 
 using std::string;
 
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::utilities::Time;
 
 using tdme::engine::Engine;
@@ -48,21 +48,21 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
 
-string TDMELevelEditor::VERSION = "1.9.9";
+string TDMESceneEditor::VERSION = "1.9.9";
 
-TDMELevelEditor* TDMELevelEditor::instance = nullptr;
+TDMESceneEditor* TDMESceneEditor::instance = nullptr;
 
-void TDMELevelEditor::main(int argc, char** argv) {
-	Console::println(string("TDMELevelEditor " + VERSION));
+void TDMESceneEditor::main(int argc, char** argv) {
+	Console::println(string("TDMESceneEditor " + VERSION));
 	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
 	Console::println();
-	auto tdmeLevelEditor = new TDMELevelEditor();
-	tdmeLevelEditor->run(argc, argv, "TDMELevelEditor");
+	auto tdmeLevelEditor = new TDMESceneEditor();
+	tdmeLevelEditor->run(argc, argv, "TDMESceneEditor");
 }
 
-TDMELevelEditor::TDMELevelEditor() {
+TDMESceneEditor::TDMESceneEditor() {
 	Tools::loadSettings(this);
-	TDMELevelEditor::instance = this;
+	TDMESceneEditor::instance = this;
 	engine = Engine::getInstance();
 	view = nullptr;
 	popUps = new PopUps();
@@ -70,7 +70,7 @@ TDMELevelEditor::TDMELevelEditor() {
 
 }
 
-TDMELevelEditor::~TDMELevelEditor() {
+TDMESceneEditor::~TDMESceneEditor() {
 	delete levelEditorView;
 	delete modelEditorView;
 	delete triggerView;
@@ -80,23 +80,23 @@ TDMELevelEditor::~TDMELevelEditor() {
 	delete prototypeLibraryScreenController;
 }
 
-TDMELevelEditor* TDMELevelEditor::getInstance() {
+TDMESceneEditor* TDMESceneEditor::getInstance() {
 	return instance;
 }
 
-SceneEditorLibraryScreenController* TDMELevelEditor::getSceneEditorLibraryScreenController() {
+SceneEditorLibraryScreenController* TDMESceneEditor::getSceneEditorLibraryScreenController() {
 	return prototypeLibraryScreenController;
 }
 
-SceneLibrary* TDMELevelEditor::getSceneLibrary() {
+SceneLibrary* TDMESceneEditor::getSceneLibrary() {
 	return levelEditorView->getScene()->getLibrary();
 }
 
-Scene* TDMELevelEditor::getScene() {
+Scene* TDMESceneEditor::getScene() {
 	return levelEditorView->getScene();
 }
 
-void TDMELevelEditor::setView(View* view) {
+void TDMESceneEditor::setView(View* view) {
 	if (this->view != nullptr)
 		this->view->deactivate();
 
@@ -106,15 +106,15 @@ void TDMELevelEditor::setView(View* view) {
 
 }
 
-View* TDMELevelEditor::getView() {
+View* TDMESceneEditor::getView() {
 	return view;
 }
 
-void TDMELevelEditor::quit() {
+void TDMESceneEditor::quit() {
 	quitRequested = true;
 }
 
-void TDMELevelEditor::display() {
+void TDMESceneEditor::display() {
 	engine->display();
 	if (view != nullptr)
 		view->display();
@@ -124,7 +124,7 @@ void TDMELevelEditor::display() {
 	}
 }
 
-void TDMELevelEditor::dispose() {
+void TDMESceneEditor::dispose() {
 	if (view != nullptr)
 		view->deactivate();
 
@@ -137,7 +137,7 @@ void TDMELevelEditor::dispose() {
 	Tools::oseDispose();
 }
 
-void TDMELevelEditor::initialize() {
+void TDMESceneEditor::initialize() {
 	engine->initialize();
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
@@ -165,31 +165,31 @@ void TDMELevelEditor::initialize() {
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(int width, int height) {
+void TDMESceneEditor::reshape(int width, int height) {
 	engine->reshape(width, height);
 }
 
-void TDMELevelEditor::switchToLevelEditor() {
+void TDMESceneEditor::switchToSceneEditor() {
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::switchToModelEditor() {
+void TDMESceneEditor::switchToModelEditor() {
 	setView(modelEditorView);
 }
 
-void TDMELevelEditor::switchToTriggerView() {
+void TDMESceneEditor::switchToTriggerView() {
 	setView(triggerView);
 }
 
-void TDMELevelEditor::switchToEnvironmentMappingView() {
+void TDMESceneEditor::switchToEnvironmentMappingView() {
 	setView(environmentMappingView);
 }
 
-void TDMELevelEditor::switchToEmptyView() {
+void TDMESceneEditor::switchToEmptyView() {
 	setView(emptyView);
 }
 
-void TDMELevelEditor::switchToParticleSystemView() {
+void TDMESceneEditor::switchToParticleSystemView() {
 	setView(particleSystemView);
 }
 

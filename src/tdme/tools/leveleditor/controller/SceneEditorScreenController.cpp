@@ -18,7 +18,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -58,7 +58,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -618,7 +618,7 @@ void SceneEditorScreenController::onEntityPropertyRemove()
 
 void SceneEditorScreenController::onQuit()
 {
-	TDMELevelEditor::getInstance()->quit();
+	TDMESceneEditor::getInstance()->quit();
 }
 
 void SceneEditorScreenController::onEntityTranslationApply()

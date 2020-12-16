@@ -5,7 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/tools/leveleditor/TDMELevelEditor.h>
+#include <tdme/tools/leveleditor/TDMESceneEditor.h>
 #include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -21,7 +21,7 @@ using tdme::tools::leveleditor::views::ParticleSystemView;
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::leveleditor::TDMELevelEditor;
+using tdme::tools::leveleditor::TDMESceneEditor;
 using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
@@ -36,14 +36,14 @@ ParticleSystemView::ParticleSystemView(PopUps* popUps)
 
 void ParticleSystemView::onSetEntityData()
 {
-	TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
+	TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 }
 
 void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity)
 {
-	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), newEntity->getId());
-	TDMELevelEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
-	TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
+	TDMESceneEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), newEntity->getId());
+	TDMESceneEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
+	TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 }
 
 Prototype* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
@@ -51,7 +51,7 @@ Prototype* ParticleSystemView::loadParticleSystem(const string& name, const stri
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
 		auto prototype = PrototypeReader::read(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		prototype->setDefaultBoundingVolumes();
-		TDMELevelEditor::getInstance()->getSceneLibrary()->addPrototype(prototype);
+		TDMESceneEditor::getInstance()->getSceneLibrary()->addPrototype(prototype);
 		return prototype;
 	}
 	return nullptr;
@@ -59,5 +59,5 @@ Prototype* ParticleSystemView::loadParticleSystem(const string& name, const stri
 
 void ParticleSystemView::onInitAdditionalScreens()
 {
-	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 }
