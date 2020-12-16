@@ -236,7 +236,7 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 				return
 						entity->getId() != "tdme.leveleditor.placeentity" &&
 						StringTools::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
-						StringTools::startsWith(entity->getId(), "le.tdme.leveleditor.gizmo.") == false;
+						StringTools::startsWith(entity->getId(), "le.tdme.gizmo.") == false;
 			}
 
 			/**
