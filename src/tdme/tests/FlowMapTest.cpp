@@ -138,7 +138,7 @@ void FlowMapTest::initialize()
 	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
 	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	emptyModel = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
+	emptyModel = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
 	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);

@@ -143,7 +143,7 @@ Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& desc
 {
 	auto cacheId = "leveleditor.empty";
 	Prototype* prototype = nullptr;
-	auto model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
+	auto model = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
 	prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::EMPTY,

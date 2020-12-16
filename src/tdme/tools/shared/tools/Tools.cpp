@@ -259,7 +259,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
+	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;

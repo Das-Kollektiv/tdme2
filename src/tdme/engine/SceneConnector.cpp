@@ -288,7 +288,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 
 Entity* SceneConnector::createEmpty(const string& id, const Transformations& transformations) {
 	if (emptyModel == nullptr) {
-		emptyModel = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
+		emptyModel = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
 	}
 	auto entity = new Object3D(
 		id,

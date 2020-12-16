@@ -554,19 +554,19 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
-	src/tdme/tools/leveleditor/TDMESceneEditor.cpp \
-	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/SceneEditorScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
-	src/tdme/tools/leveleditor/views/EmptyView.cpp \
-	src/tdme/tools/leveleditor/views/EnvironmentMappingView.cpp \
-	src/tdme/tools/leveleditor/views/SceneEditorView.cpp \
-	src/tdme/tools/leveleditor/views/SceneEditorView_EntityColor.cpp \
-	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \
-	src/tdme/tools/leveleditor/views/ParticleSystemView.cpp \
-	src/tdme/tools/leveleditor/views/TriggerView.cpp \
+	src/tdme/tools/sceneeditor/TDMESceneEditor.cpp \
+	src/tdme/tools/sceneeditor/controller/EmptyScreenController.cpp \
+	src/tdme/tools/sceneeditor/controller/EnvironmentMappingScreenController.cpp \
+	src/tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.cpp \
+	src/tdme/tools/sceneeditor/controller/SceneEditorScreenController.cpp \
+	src/tdme/tools/sceneeditor/controller/TriggerScreenController.cpp \
+	src/tdme/tools/sceneeditor/views/EmptyView.cpp \
+	src/tdme/tools/sceneeditor/views/EnvironmentMappingView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
+	src/tdme/tools/sceneeditor/views/ModelEditorView.cpp \
+	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
+	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
 	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
@@ -875,7 +875,7 @@ MAIN_SRCS = \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
-	src/tdme/tools/leveleditor/TDMESceneEditor-main.cpp \
+	src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \

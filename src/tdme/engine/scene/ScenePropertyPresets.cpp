@@ -130,7 +130,7 @@ ScenePropertyPresets* ScenePropertyPresets::getInstance()
 {
 	if (instance == nullptr) {
 		try {
-			instance = new ScenePropertyPresets("resources/engine/tools/leveleditor/gd", "presets.xml");
+			instance = new ScenePropertyPresets("resources/engine/tools/sceneeditor/gd", "presets.xml");
 		} catch (Exception& exception) {
 			Console::println(string(" ScenePropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));

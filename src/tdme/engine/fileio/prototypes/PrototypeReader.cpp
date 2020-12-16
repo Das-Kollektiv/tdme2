@@ -116,7 +116,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		);
 	} else
 	if (prototypeType == Prototype_Type::EMPTY) {
-		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
+		model = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
 	}
 
 	prototype = new Prototype(
