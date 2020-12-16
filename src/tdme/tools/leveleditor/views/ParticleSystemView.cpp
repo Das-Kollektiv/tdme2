@@ -6,7 +6,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -22,7 +22,7 @@ using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -36,14 +36,14 @@ ParticleSystemView::ParticleSystemView(PopUps* popUps)
 
 void ParticleSystemView::onSetEntityData()
 {
-	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+	TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 }
 
 void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* newEntity)
 {
 	TDMELevelEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), newEntity->getId());
 	TDMELevelEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
-	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+	TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 }
 
 Prototype* ParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
@@ -59,5 +59,5 @@ Prototype* ParticleSystemView::loadParticleSystem(const string& name, const stri
 
 void ParticleSystemView::onInitAdditionalScreens()
 {
-	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 }

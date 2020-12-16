@@ -1,4 +1,4 @@
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 
 #include <string>
 
@@ -40,7 +40,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::utilities::ModelTools;
@@ -75,28 +75,28 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 using tdme::utilities::MutableString;
 
-LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps)
+SceneEditorLibraryScreenController::SceneEditorLibraryScreenController(PopUps* popUps)
 {
 	this->popUps = popUps;
 	this->modelPath = ".";
 }
 
-GUIScreenNode* LevelEditorEntityLibraryScreenController::getScreenNode()
+GUIScreenNode* SceneEditorLibraryScreenController::getScreenNode()
 {
 	return screenNode;
 }
 
-const string& LevelEditorEntityLibraryScreenController::getModelPath()
+const string& SceneEditorLibraryScreenController::getModelPath()
 {
 	return modelPath;
 }
 
-void LevelEditorEntityLibraryScreenController::setModelPath(const string& modelPath)
+void SceneEditorLibraryScreenController::setModelPath(const string& modelPath)
 {
 	this->modelPath = modelPath;
 }
 
-void LevelEditorEntityLibraryScreenController::initialize()
+void SceneEditorLibraryScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_leveleditor_entitylibrary.xml");
@@ -106,25 +106,25 @@ void LevelEditorEntityLibraryScreenController::initialize()
 		buttonEntityPlace = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_place"));
 		buttonLevelEdit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_level_edit"));
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorEntityLibraryScreenController::initialize(): An error occurred: "));
+		Console::print(string("SceneEditorLibraryScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
 }
 
-void LevelEditorEntityLibraryScreenController::dispose()
+void SceneEditorLibraryScreenController::dispose()
 {
 }
 
-void LevelEditorEntityLibraryScreenController::selectEntity(int entityId)
+void SceneEditorLibraryScreenController::selectPrototype(int prototypeId)
 {
 	MutableString sceneLibraryListBoxSelection;
-	sceneLibraryListBoxSelection.set(entityId);
+	sceneLibraryListBoxSelection.set(prototypeId);
 	sceneLibraryListBox->getController()->setValue(sceneLibraryListBoxSelection);
 }
 
-void LevelEditorEntityLibraryScreenController::setEntityLibrary()
+void SceneEditorLibraryScreenController::setPrototypeLibrary()
 {
 	MutableString sceneLibraryListBoxSelection;
 	auto sceneLibrary = TDMELevelEditor::getInstance()->getSceneLibrary();
@@ -154,17 +154,17 @@ void LevelEditorEntityLibraryScreenController::setEntityLibrary()
 	try {
 		sceneLibraryListBoxInnerNode->replaceSubNodes(sceneLibraryListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorEntityLibraryScreenController::setEntityLibrary(): An error occurred: "));
+		Console::print(string("SceneEditorLibraryScreenController::setEntityLibrary(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	if (sceneLibraryListBoxSelection.length() > 0) {
 		sceneLibraryListBox->getController()->setValue(sceneLibraryListBoxSelection);
 	}
-	onEntitySelectionChanged();
+	onPrototypeSelectionChanged();
 	buttonEntityPlace->getController()->setDisabled(sceneLibrary->getPrototypeCount() == 0);
 }
 
-void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
+void SceneEditorLibraryScreenController::onPrototypeSelectionChanged()
 {
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
@@ -175,7 +175,7 @@ void LevelEditorEntityLibraryScreenController::onEntitySelectionChanged()
 	}
 }
 
-void LevelEditorEntityLibraryScreenController::onEditEntity()
+void SceneEditorLibraryScreenController::onEditPrototype()
 {
 	auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
@@ -217,14 +217,14 @@ void LevelEditorEntityLibraryScreenController::onEditEntity()
 	buttonLevelEdit->getController()->setDisabled(false);
 }
 
-void LevelEditorEntityLibraryScreenController::onEditLevel()
+void SceneEditorLibraryScreenController::onEditScene()
 {
 	TDMELevelEditor::getInstance()->switchToLevelEditor();
 	buttonEntityPlace->getController()->setDisabled(false);
 	buttonLevelEdit->getController()->setDisabled(true);
 }
 
-void LevelEditorEntityLibraryScreenController::onPlaceEntity()
+void SceneEditorLibraryScreenController::onPlacePrototype()
 {
 	auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
@@ -234,7 +234,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 	}
 }
 
-void LevelEditorEntityLibraryScreenController::onDeleteEntity()
+void SceneEditorLibraryScreenController::onDeletePrototype()
 {
 	auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
@@ -246,12 +246,12 @@ void LevelEditorEntityLibraryScreenController::onDeleteEntity()
 		TDMELevelEditor::getInstance()->switchToLevelEditor();
 	}
 	TDMELevelEditor::getInstance()->getScene()->getLibrary()->removePrototype(prototype->getId());
-	setEntityLibrary();
+	setPrototypeLibrary();
 }
 
-void LevelEditorEntityLibraryScreenController::onPartitionEntity()
+void SceneEditorLibraryScreenController::onPartitionPrototype()
 {
-	// check if we have a entity
+	// check if we have a prototype
 	auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr || prototype->getType() != Prototype_Type::MODEL) return;
 	// TODO: there can always be the tdme default animation, do not do skinned objects
@@ -260,7 +260,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 		return;
 	}
 
-	// check if entity exists only once
+	// check if prototype exists only once
 	vector<string> entitiesByPrototypeId;
 	TDMELevelEditor::getInstance()->getScene()->getEntitiesByPrototypeId(prototype->getId(), entitiesByPrototypeId);
 	if (entitiesByPrototypeId.size() != 1) {
@@ -292,7 +292,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 			auto model = modelsByPartitionIt.second;
 			auto fileNamePartition = StringTools::substring(fileName, 0, StringTools::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
 
-			// create entity
+			// create model
 			TMWriter::write(
 				model,
 				pathName,
@@ -351,23 +351,23 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	scene->getLibrary()->removePrototype(prototype->getId());
 
 	//
-	setEntityLibrary();
+	setPrototypeLibrary();
 }
 
-void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* node)
+void SceneEditorLibraryScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId().compare("entity_library_listbox") == 0) {
-		onEntitySelectionChanged();
+		onPrototypeSelectionChanged();
 	} else
 	if (node->getId().compare("dropdown_entity_action") == 0) {
 		if (node->getController()->getValue().getString() == "edit") {
-			onEditEntity();
+			onEditPrototype();
 		} else
 		if (node->getController()->getValue().getString() == "delete") {
-			onDeleteEntity();
+			onDeletePrototype();
 		} else
 		if (node->getController()->getValue().getString() == "partition") {
-			onPartitionEntity();
+			onPartitionPrototype();
 		} else
 		if (node->getController()->getValue().getString() == "create_model") {
 			class OnCreateModel: public virtual Action
@@ -384,9 +384,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 							Vector3(0.0f, 0.0f, 0.0f)
 						);
 						prototype->setDefaultBoundingVolumes();
-						prototypeLibraryScreenController->setEntityLibrary();
+						prototypeLibraryScreenController->setPrototypeLibrary();
 						prototypeLibraryScreenController->sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
-						prototypeLibraryScreenController->onEditEntity();
+						prototypeLibraryScreenController->onEditPrototype();
 					} catch (Exception& exception) {
 						prototypeLibraryScreenController->popUps->getInfoDialogScreenController()->show(
 							"Error",
@@ -402,13 +402,13 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 * @param prototypeLibraryScreenController scene editor scene prototype library screen controller
 				 * @param sceneLibrary scene prototype library
 				 */
-				OnCreateModel(LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* sceneLibrary)
+				OnCreateModel(SceneEditorLibraryScreenController* prototypeLibraryScreenController, SceneLibrary* sceneLibrary)
 					: prototypeLibraryScreenController(prototypeLibraryScreenController)
 					, sceneLibrary(sceneLibrary) {
 				}
 
 			private:
-				LevelEditorEntityLibraryScreenController *prototypeLibraryScreenController;
+				SceneEditorLibraryScreenController *prototypeLibraryScreenController;
 				SceneLibrary* sceneLibrary;
 			};
 
@@ -427,9 +427,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		if (node->getController()->getValue().getString() == "create_trigger") {
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->addTrigger(SceneLibrary::ID_ALLOCATE, "New trigger", "", 1.0f, 1.0f, 1.0f);
-				setEntityLibrary();
+				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
-				onEditEntity();
+				onEditPrototype();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					"Error",
@@ -440,9 +440,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		if (node->getController()->getValue().getString() == "create_environmentmapping") {
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->addEnvironmentMapping(SceneLibrary::ID_ALLOCATE, "New environment mapping", "", 1.0f, 1.0f, 1.0f);
-				setEntityLibrary();
+				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
-				onEditEntity();
+				onEditPrototype();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					"Error",
@@ -453,9 +453,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		if (node->getController()->getValue().getString() == "create_empty") {
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->addEmpty(SceneLibrary::ID_ALLOCATE, "New empty", "");
-				setEntityLibrary();
+				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
-				onEditEntity();
+				onEditPrototype();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					"Error",
@@ -468,9 +468,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 		if (node->getController()->getValue().getString() == "create_particlesystem") {
 			try {
 				auto prototype = TDMELevelEditor::getInstance()->getSceneLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
-				setEntityLibrary();
+				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
-				onEditEntity();
+				onEditPrototype();
 			} catch (Exception& exception) {
 				popUps->getInfoDialogScreenController()->show(
 					"Error",
@@ -478,19 +478,19 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				 );
 			}
 		} else {
-			Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue().getString());
+			Console::println("SceneEditorLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue().getString());
 		}
 		node->getController()->setValue(MutableString("action"));
 	}
 }
 
-void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void SceneEditorLibraryScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_entity_place") == 0) {
-			onPlaceEntity();
+			onPlacePrototype();
 		} else if (node->getId().compare("button_level_edit") == 0) {
-			onEditLevel();
+			onEditScene();
 		}
 	}
 }

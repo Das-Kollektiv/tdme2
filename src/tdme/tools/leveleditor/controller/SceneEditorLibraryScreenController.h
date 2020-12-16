@@ -22,11 +22,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::PopUps;
 
 /**
- * Level editor model library screen controller
+ * Scene editor prototype library screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController final
+class tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController final
 	: public ScreenController
 	, public GUIActionListener
 	, public GUIChangeListener
@@ -43,7 +43,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	LevelEditorEntityLibraryScreenController(PopUps* popUps);
+	SceneEditorLibraryScreenController(PopUps* popUps);
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;
@@ -62,45 +62,45 @@ public:
 	void dispose() override;
 
 	/**
-	 * Select entity by entity id
-	 * @param entityId entity id
+	 * Select prototype by prototype id
+	 * @param prototypeId prototype id
 	 */
-	void selectEntity(int entityId);
+	void selectPrototype(int prototypeId);
 
 	/**
 	 * Set up complete scene prototype library
 	 */
-	void setEntityLibrary();
+	void setPrototypeLibrary();
 
 	/**
-	 * On entity selection changed
+	 * On prototype selection changed
 	 */
-	void onEntitySelectionChanged();
+	void onPrototypeSelectionChanged();
 
 	/**
-	 * On edit entity
+	 * On edit prototype
 	 */
-	void onEditEntity();
+	void onEditPrototype();
 
 	/**
 	 * On edit scene
 	 */
-	void onEditLevel();
+	void onEditScene();
 
 	/**
-	 * place object button clicked
+	 * place prototype button clicked
 	 */
-	void onPlaceEntity();
+	void onPlacePrototype();
 
 	/**
-	 * place model entity clicked
+	 * place delete prototype clicked
 	 */
-	void onDeleteEntity();
+	void onDeletePrototype();
 
 	/**
-	 * partition entity
+	 * partition prototype
 	 */
-	void onPartitionEntity();
+	void onPartitionPrototype();
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

@@ -17,7 +17,7 @@ using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
@@ -43,7 +43,7 @@ private:
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool quitRequested;
-	LevelEditorEntityLibraryScreenController* prototypeLibraryScreenController { nullptr };
+	SceneEditorLibraryScreenController* prototypeLibraryScreenController { nullptr };
 	PopUps* popUps { nullptr };
 	LevelEditorView* levelEditorView { nullptr };
 	ModelEditorView* modelEditorView { nullptr };
@@ -80,7 +80,7 @@ public:
 	/**
 	 * @return prototype library screen controller
 	 */
-	LevelEditorEntityLibraryScreenController* getLevelEditorEntityLibraryScreenController();
+	SceneEditorLibraryScreenController* getSceneEditorLibraryScreenController();
 
 	/**
 	 * @return scene prototype library

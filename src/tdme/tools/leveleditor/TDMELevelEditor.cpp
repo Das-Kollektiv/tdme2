@@ -9,7 +9,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
@@ -33,7 +33,7 @@ using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
@@ -84,7 +84,7 @@ TDMELevelEditor* TDMELevelEditor::getInstance() {
 	return instance;
 }
 
-LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityLibraryScreenController() {
+SceneEditorLibraryScreenController* TDMELevelEditor::getSceneEditorLibraryScreenController() {
 	return prototypeLibraryScreenController;
 }
 
@@ -142,7 +142,7 @@ void TDMELevelEditor::initialize() {
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
-	prototypeLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
+	prototypeLibraryScreenController = new SceneEditorLibraryScreenController(popUps);
 	prototypeLibraryScreenController->initialize();
 	engine->getGUI()->addScreen(
 		prototypeLibraryScreenController->getScreenNode()->getId(),

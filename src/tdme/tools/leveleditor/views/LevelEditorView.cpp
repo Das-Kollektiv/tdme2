@@ -40,7 +40,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.h>
@@ -113,7 +113,7 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using tdme::engine::SceneConnector;
 using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
@@ -543,7 +543,7 @@ void LevelEditorView::handleInputEvents()
 							levelEditorScreenController->selectEntityInEntityListbox(selectedEntity->getId());
 							auto sceneEntity = scene.getEntity(selectedEntity->getId());
 							if (sceneEntity != nullptr) {
-								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(sceneEntity->getPrototype()->getId());
+								TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->selectPrototype(sceneEntity->getPrototype()->getId());
 							}
 						} else {
 							resetEntity(selectedEntity);
@@ -631,7 +631,7 @@ void LevelEditorView::display()
 			Tools::oseThumbnail(selectedPrototype);
 		}
 		reloadEntityLibrary = false;
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+		TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 	}
 
 	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
@@ -913,7 +913,7 @@ void LevelEditorView::loadSettings()
 		snappingX = Float::parseFloat(settings.get("snapping.x", "1.0"));
 		snappingZ = Float::parseFloat(settings.get("snapping.z", "1.0"));
 		levelEditorScreenController->getMapPath()->setPath(settings.get("map.path", "."));
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get("model.path", "."));
+		TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setModelPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -965,11 +965,11 @@ void LevelEditorView::activate()
 	engine->setShadowMapLightEyeDistanceScale(1.0f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(levelEditorScreenController->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
-	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+	TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
@@ -1003,7 +1003,7 @@ void LevelEditorView::storeSettings()
 		settings.put("snapping.x", to_string(snappingX));
 		settings.put("snapping.z", to_string(snappingZ));
 		settings.put("map.path", levelEditorScreenController->getMapPath()->getPath());
-		settings.put("model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
+		settings.put("model.path", TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getModelPath());
 		settings.store("settings", "leveleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorView::storeSettings(): An error occurred: "));

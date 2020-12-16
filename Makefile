@@ -557,7 +557,7 @@ SRCS = \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.cpp \
+	src/tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \

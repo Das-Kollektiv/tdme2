@@ -13,7 +13,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/EmptyScreenController.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::EmptyScreenController;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::engine::prototype::Prototype;
@@ -172,7 +172,7 @@ void EmptyView::activate()
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(emptyScreenController->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }

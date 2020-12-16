@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
+#include <tdme/tools/leveleditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
@@ -40,7 +40,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
+using tdme::tools::leveleditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
@@ -66,7 +66,7 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 	public:
 		void performAction() override {
 			finalView->updateGUIElements();
-			TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+			TDMELevelEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 		}
 
 		/**
