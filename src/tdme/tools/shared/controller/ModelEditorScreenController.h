@@ -30,9 +30,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -52,9 +52,9 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 
 private:
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
-	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
+	PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
-	EntitySoundsSubScreenController* entitySoundsSubScreenController { nullptr };
+	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController { nullptr };
 	SharedModelEditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
@@ -178,7 +178,7 @@ public:
 	/**
 	 * @return entity display sub screen controller
 	 */
-	EntityDisplaySubScreenController* getEntityDisplaySubScreenController();
+	PrototypeDisplaySubScreenController* getPrototypeDisplaySubScreenController();
 
 	/**
 	 * @return entity bounding volume sub screen controller
@@ -188,7 +188,7 @@ public:
 	/**
 	 * @return entity sounds sub screen controller
 	 */
-	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
+	PrototypeSoundsSubScreenController* getPrototypeSoundsSubScreenController();
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;

@@ -31,16 +31,16 @@ using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
 /**
- * Entity sounds sub screen controller
+ * Prototype sounds sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntitySoundsSubScreenController final
+class tdme::tools::shared::controller::PrototypeSoundsSubScreenController final
 {
-	friend class EntitySoundsSubScreenController_BoundingVolumeType;
-	friend class EntitySoundsSubScreenController_GenerateConvexMeshes;
-	friend class EntitySoundsSubScreenController_onBoundingVolumeConvexMeshesFile;
-	friend class EntitySoundsSubScreenController_onBoundingVolumeConvexMeshFile;
+	friend class PrototypeSoundsSubScreenController_BoundingVolumeType;
+	friend class PrototypeSoundsSubScreenController_GenerateConvexMeshes;
+	friend class PrototypeSoundsSubScreenController_onBoundingVolumeConvexMeshesFile;
+	friend class PrototypeSoundsSubScreenController_onBoundingVolumeConvexMeshFile;
 
 private:
 	GUIScreenNode* screenNode { nullptr };
@@ -66,12 +66,12 @@ public:
 	 * @param popUps pop ups
 	 * @param audioPath audio path
 	 */
-	EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
+	PrototypeSoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
 
 	/**
 	 * Destructor
 	 */
-	~EntitySoundsSubScreenController();
+	~PrototypeSoundsSubScreenController();
 
 	/**
 	 * @return view
@@ -109,16 +109,16 @@ public:
 
 	/**
 	 * Set physics
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setSounds(Prototype* entity);
+	void setSounds(Prototype* prototype);
 
 	/**
 	 * On sound apply
 	 * @param soundIdx sound index
-	 * @param prototype entity
+	 * @param prototype prototype
 	 */
-	void onSoundApply(int soundIdx, Prototype* entity);
+	void onSoundApply(int soundIdx, Prototype* prototype);
 
 	/**
 	 * On sound clear
@@ -134,6 +134,8 @@ public:
 
 	/**
 	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 
@@ -142,14 +144,14 @@ public:
 	 * @param node node
 	 * @param entity entity
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* entity);
+	void onValueChanged(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 };

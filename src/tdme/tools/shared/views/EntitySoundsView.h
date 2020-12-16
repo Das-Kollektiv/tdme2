@@ -15,7 +15,7 @@ using std::string;
 
 
 using tdme::engine::Engine;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::PopUps;
 
@@ -28,16 +28,16 @@ class tdme::tools::shared::views::EntitySoundsView final
 {
 private:
 	Engine* engine {  };
-	EntitySoundsSubScreenController* entitySoundsSubScreenController {  };
+	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController {  };
 	PopUps* popUps {  };
 
 public:
 	/**
 	 * Public constructor
-	 * @param entitySoundsSubScreenController entity sounds sub screen controller
+	 * @param prototypeSoundsSubScreenController entity sounds sub screen controller
 	 * @param popUps pop ups
 	 */
-	EntitySoundsView(EntitySoundsSubScreenController* entitySoundsSubScreenController, PopUps* popUps);
+	EntitySoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps);
 
 	/**
 	 * @return pop ups view

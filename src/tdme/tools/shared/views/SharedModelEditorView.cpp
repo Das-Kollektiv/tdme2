@@ -18,9 +18,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -66,7 +66,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -441,8 +441,8 @@ void SharedModelEditorView::initialize()
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
 		entityPhysicsView = modelEditorScreenController->getEntityPhysicsSubScreenController()->getView();
-		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
-		entitySoundsView = modelEditorScreenController->getEntitySoundsSubScreenController()->getView();
+		entityDisplayView = modelEditorScreenController->getPrototypeDisplaySubScreenController()->getView();
+		entitySoundsView = modelEditorScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
 		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -450,7 +450,7 @@ void SharedModelEditorView::initialize()
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
-	modelEditorScreenController->getEntityDisplaySubScreenController()->setupDisplay();
+	modelEditorScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
 	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::OBJECT3D));
 	entityPhysicsView->initialize();
 	updateGUIElements();

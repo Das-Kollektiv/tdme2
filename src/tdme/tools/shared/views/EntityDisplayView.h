@@ -13,7 +13,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::Engine;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::engine::prototype::Prototype;
 
 /**
@@ -25,16 +25,16 @@ class tdme::tools::shared::views::EntityDisplayView final
 {
 private:
 	Engine* engine { nullptr };
-	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
+	PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController { nullptr };
 	bool displayGroundPlate;
 	bool displayShadowing;
 
 public:
 	/**
 	 * Public constructor
-	 * @param entityDisplaySubScreenController entity display sub screen controller
+	 * @param prototypeDisplaySubScreenController entity display sub screen controller
 	 */
-	EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController);
+	EntityDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController);
 
 	/**
 	 * Destructor

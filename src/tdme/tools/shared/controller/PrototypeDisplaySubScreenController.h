@@ -18,11 +18,11 @@ using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utilities::MutableString;
 
 /**
- * Entity display sub screen controller
+ * Prototype display sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityDisplaySubScreenController final
+class tdme::tools::shared::controller::PrototypeDisplaySubScreenController final
 {
 private:
 	static MutableString CHECKBOX_CHECKED;
@@ -38,12 +38,12 @@ public:
 	 * Public constructor
 	 * @param physicsView physics view
 	 */
-	EntityDisplaySubScreenController(EntityPhysicsView* physicsView);
+	PrototypeDisplaySubScreenController(EntityPhysicsView* physicsView);
 
 	/**
 	 * Destructor
 	 */
-	~EntityDisplaySubScreenController();
+	~PrototypeDisplaySubScreenController();
 
 	/**
 	 * @return view

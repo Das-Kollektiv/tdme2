@@ -569,11 +569,11 @@ SRCS = \
 	src/tdme/tools/leveleditor/views/TriggerView.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
-	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.cpp \
-	src/tdme/tools/shared/controller/EntitySoundsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \

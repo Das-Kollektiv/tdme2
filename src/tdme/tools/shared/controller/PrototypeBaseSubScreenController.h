@@ -27,7 +27,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::MutableString;
 
 /**
- * Entity base sub screen controller
+ * Prototype base sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -153,6 +153,8 @@ public:
 
 	/**
 	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 

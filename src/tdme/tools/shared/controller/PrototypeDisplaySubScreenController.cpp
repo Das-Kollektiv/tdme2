@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -11,7 +11,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -23,66 +23,66 @@ using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-MutableString EntityDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
-MutableString EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");
+MutableString PrototypeDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
+MutableString PrototypeDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");
 
-EntityDisplaySubScreenController::EntityDisplaySubScreenController(EntityPhysicsView* physicsView)
+PrototypeDisplaySubScreenController::PrototypeDisplaySubScreenController(EntityPhysicsView* physicsView)
 {
 	view = new EntityDisplayView(this);
 	this->physicsView = physicsView;
 }
 
-EntityDisplaySubScreenController::~EntityDisplaySubScreenController() {
+PrototypeDisplaySubScreenController::~PrototypeDisplaySubScreenController() {
 	delete view;
 }
 
-EntityDisplayView* EntityDisplaySubScreenController::getView()
+EntityDisplayView* PrototypeDisplaySubScreenController::getView()
 {
 	return view;
 }
 
-void EntityDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
+void PrototypeDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
 		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_boundingvolume"));
 		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_shadowing"));
 		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_ground"));
 	} catch (Exception& exception) {
-		Console::print(string("EntityDisplaySubScreenController::initialize(): An error occurred: "));
+		Console::print(string("PrototypeDisplaySubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void EntityDisplaySubScreenController::setupDisplay()
+void PrototypeDisplaySubScreenController::setupDisplay()
 {
 	displayShadowing->getController()->setValue(view->isDisplayShadowing() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	displayGround->getController()->setValue(view->isDisplayGroundPlate() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	displayBoundingVolume->getController()->setValue(physicsView->isDisplayBoundingVolume() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 }
 
-void EntityDisplaySubScreenController::onDisplayApply()
+void PrototypeDisplaySubScreenController::onDisplayApply()
 {
 	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED));
 	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals(CHECKBOX_CHECKED));
 	physicsView->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED));
 }
 
-bool EntityDisplaySubScreenController::getDisplayShadowing()
+bool PrototypeDisplaySubScreenController::getDisplayShadowing()
 {
 	return displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
-bool EntityDisplaySubScreenController::getDisplayGround()
+bool PrototypeDisplaySubScreenController::getDisplayGround()
 {
 	return displayGround->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
-bool EntityDisplaySubScreenController::getDisplayBoundingVolume()
+bool PrototypeDisplaySubScreenController::getDisplayBoundingVolume()
 {
 	return displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
-void EntityDisplaySubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void PrototypeDisplaySubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_display_apply") == 0) {

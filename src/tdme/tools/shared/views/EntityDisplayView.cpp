@@ -5,7 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
 
 using tdme::tools::shared::views::EntityDisplayView;
@@ -15,13 +15,13 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::engine::prototype::Prototype;
 
-EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController)
+EntityDisplayView::EntityDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController)
 {
 	this->engine = Engine::getInstance();
-	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
+	this->prototypeDisplaySubScreenController = prototypeDisplaySubScreenController;
 	displayGroundPlate = true;
 	displayShadowing = true;
 }

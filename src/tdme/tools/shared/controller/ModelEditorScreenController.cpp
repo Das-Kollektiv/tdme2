@@ -22,9 +22,9 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -66,9 +66,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -119,14 +119,14 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	auto const finalView = view;
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUps(), modelPath, true);
-	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUps(), audioPath);
-	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
+	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUps(), audioPath);
+	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
 }
 
 ModelEditorScreenController::~ModelEditorScreenController() {
 	delete modelPath;
 	delete prototypeBaseSubScreenController;
-	delete entityDisplaySubScreenController;
+	delete prototypeDisplaySubScreenController;
 	delete entityPhysicsSubScreenController;
 }
 
@@ -134,9 +134,9 @@ SharedModelEditorView* ModelEditorScreenController::getView() {
 	return view;
 }
 
-EntityDisplaySubScreenController* ModelEditorScreenController::getEntityDisplaySubScreenController()
+PrototypeDisplaySubScreenController* ModelEditorScreenController::getPrototypeDisplaySubScreenController()
 {
-	return entityDisplaySubScreenController;
+	return prototypeDisplaySubScreenController;
 }
 
 EntityPhysicsSubScreenController* ModelEditorScreenController::getEntityPhysicsSubScreenController()
@@ -144,9 +144,9 @@ EntityPhysicsSubScreenController* ModelEditorScreenController::getEntityPhysicsS
 	return entityPhysicsSubScreenController;
 }
 
-EntitySoundsSubScreenController* ModelEditorScreenController::getEntitySoundsSubScreenController()
+PrototypeSoundsSubScreenController* ModelEditorScreenController::getPrototypeSoundsSubScreenController()
 {
-	return entitySoundsSubScreenController;
+	return prototypeSoundsSubScreenController;
 }
 
 GUIScreenNode* ModelEditorScreenController::getScreenNode()
@@ -266,9 +266,9 @@ void ModelEditorScreenController::initialize()
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
-	entityDisplaySubScreenController->initialize(screenNode);
+	prototypeDisplaySubScreenController->initialize(screenNode);
 	entityPhysicsSubScreenController->initialize(screenNode);
-	entitySoundsSubScreenController->initialize(screenNode);
+	prototypeSoundsSubScreenController->initialize(screenNode);
 }
 
 void ModelEditorScreenController::dispose()
@@ -1933,16 +1933,16 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 	} else {
 		prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
 		entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
-		entitySoundsSubScreenController->onValueChanged(node, view->getPrototype());
+		prototypeSoundsSubScreenController->onValueChanged(node, view->getPrototype());
 	}
 }
 
 void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
-	entityDisplaySubScreenController->onActionPerformed(type, node);
+	prototypeDisplaySubScreenController->onActionPerformed(type, node);
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
-	entitySoundsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeSoundsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_model_load") == 0) {
 			onModelLoad();

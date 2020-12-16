@@ -20,9 +20,9 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -76,9 +76,9 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::engine::SceneConnector;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -423,9 +423,9 @@ void SharedParticleSystemView::initialize()
 	try {
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
-		entityDisplayView = particleSystemScreenController->getEntityDisplaySubScreenController()->getView();
+		entityDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
 		entityPhysicsView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
-		entitySoundsView = particleSystemScreenController->getEntitySoundsSubScreenController()->getView();
+		entitySoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -449,7 +449,7 @@ void SharedParticleSystemView::initialize()
 	particleSystemEmitters.push_back("Circle Particle Emitter Plane Velocity");
 	particleSystemEmitters.push_back("Sphere Particle Emitter");
 	particleSystemScreenController->setParticleSystemEmitters(particleSystemEmitters);
-	particleSystemScreenController->getEntityDisplaySubScreenController()->setupDisplay();
+	particleSystemScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
 	updateGUIElements();
 	initParticleSystemRequested = true;
 }

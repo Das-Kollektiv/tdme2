@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 
 #include <string>
 
@@ -30,7 +30,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::AnimationSetup;
@@ -56,27 +56,27 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-EntitySoundsSubScreenController::EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
+PrototypeSoundsSubScreenController::PrototypeSoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
 {
 	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
 	this->view = new EntitySoundsView(this, popUps);
 }
 
-EntitySoundsSubScreenController::~EntitySoundsSubScreenController() {
+PrototypeSoundsSubScreenController::~PrototypeSoundsSubScreenController() {
 	delete view;
 }
 
-EntitySoundsView* EntitySoundsSubScreenController::getView()
+EntitySoundsView* PrototypeSoundsSubScreenController::getView()
 {
 	return view;
 }
 
-GUIScreenNode* EntitySoundsSubScreenController::getScreenNode() {
+GUIScreenNode* PrototypeSoundsSubScreenController::getScreenNode() {
 	return screenNode;
 }
 
-void EntitySoundsSubScreenController::initialize(GUIScreenNode* screenNode)
+void PrototypeSoundsSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	try {
@@ -94,12 +94,12 @@ void EntitySoundsSubScreenController::initialize(GUIScreenNode* screenNode)
 			soundsSoundApply[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_apply_" + to_string(i)));
 		}
 	} catch (Exception& exception) {
-		Console::print(string("EntitySoundsSubScreenController::initialize(): An error occurred: "));
+		Console::print(string("PrototypeSoundsSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void EntitySoundsSubScreenController::setSoundAnimationDropDown(int soundIdx, Model* model) {
+void PrototypeSoundsSubScreenController::setSoundAnimationDropDown(int soundIdx, Model* model) {
 	auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((soundsSoundAnimationDropDown[soundIdx]->getScreenNode()->getNodeById(soundsSoundAnimationDropDown[soundIdx]->getId() + "_inner")));
 	auto idx = 0;
 	string animationsDropDownInnerNodeSubNodesXML = "";
@@ -125,7 +125,7 @@ void EntitySoundsSubScreenController::setSoundAnimationDropDown(int soundIdx, Mo
 	try {
 		animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("void EntitySoundsSubScreenController::setSounds(): An error occurred: "));
+		Console::print(string("void PrototypeSoundsSubScreenController::setSounds(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
@@ -133,7 +133,7 @@ void EntitySoundsSubScreenController::setSoundAnimationDropDown(int soundIdx, Mo
 
 }
 
-void EntitySoundsSubScreenController::unsetSound(int soundIdx) {
+void PrototypeSoundsSubScreenController::unsetSound(int soundIdx) {
 	setSoundAnimationDropDown(soundIdx, nullptr);
 	soundsSoundKey[soundIdx]->getController()->setValue(MutableString(""));
 	soundsSoundKey[soundIdx]->getController()->setDisabled(true);
@@ -156,17 +156,17 @@ void EntitySoundsSubScreenController::unsetSound(int soundIdx) {
 	soundsSoundApply[soundIdx]->getController()->setDisabled(true);
 }
 
-void EntitySoundsSubScreenController::unsetSounds() {
+void PrototypeSoundsSubScreenController::unsetSounds() {
 	for (auto i = 0; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 		unsetSound(i);
 	}
 }
 
-void EntitySoundsSubScreenController::setSounds(Prototype* entity) {
+void PrototypeSoundsSubScreenController::setSounds(Prototype* prototype) {
 	auto i = 0;
-	auto& sounds = entity->getSounds();
+	auto& sounds = prototype->getSounds();
 	for (auto sound: sounds) {
-		setSoundAnimationDropDown(i, entity->getModel());
+		setSoundAnimationDropDown(i, prototype->getModel());
 		soundsSoundKey[i]->getController()->setValue(MutableString(sound->getId()));
 		soundsSoundKey[i]->getController()->setDisabled(false);
 		soundsSoundAnimationDropDown[i]->getController()->setValue(MutableString(sound->getAnimation()));
@@ -189,7 +189,7 @@ void EntitySoundsSubScreenController::setSounds(Prototype* entity) {
 		i++;
 	}
 	for (; i < sounds.size() + 1 && i < Prototype::MODEL_SOUNDS_COUNT; i++) {
-		setSoundAnimationDropDown(i, entity->getModel());
+		setSoundAnimationDropDown(i, prototype->getModel());
 		soundsSoundKey[i]->getController()->setValue(MutableString(""));
 		soundsSoundKey[i]->getController()->setDisabled(false);
 		soundsSoundAnimationDropDown[i]->getController()->setValue(MutableString(""));
@@ -216,27 +216,27 @@ void EntitySoundsSubScreenController::setSounds(Prototype* entity) {
 
 }
 
-void EntitySoundsSubScreenController::onSoundClear(int soundIdx) {
+void PrototypeSoundsSubScreenController::onSoundClear(int soundIdx) {
 	soundsSoundFile[soundIdx]->getController()->setValue(MutableString(""));
 }
 
-void EntitySoundsSubScreenController::onSoundLoad(int soundIdx) {
+void PrototypeSoundsSubScreenController::onSoundLoad(int soundIdx) {
 	class LoadSoundAction: public virtual Action
 	{
 	public:
-		LoadSoundAction(EntitySoundsSubScreenController* entitySoundsSubScreenController, int soundIdx): entitySoundsSubScreenController(entitySoundsSubScreenController), soundIdx(soundIdx) {
+		LoadSoundAction(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, int soundIdx): prototypeSoundsSubScreenController(prototypeSoundsSubScreenController), soundIdx(soundIdx) {
 		}
 		void performAction() override {
-			entitySoundsSubScreenController->soundsSoundFile[soundIdx]->getController()->setValue(
-				entitySoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+			prototypeSoundsSubScreenController->soundsSoundFile[soundIdx]->getController()->setValue(
+				prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				entitySoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName()
 			);
-			entitySoundsSubScreenController->audioPath->setPath(entitySoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			entitySoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			prototypeSoundsSubScreenController->audioPath->setPath(prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
 		}
 	private:
-		EntitySoundsSubScreenController* entitySoundsSubScreenController;
+		PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController;
 		int soundIdx;
 	};
 
@@ -252,17 +252,17 @@ void EntitySoundsSubScreenController::onSoundLoad(int soundIdx) {
 }
 
 
-void EntitySoundsSubScreenController::onSoundApply(int soundIdx, Prototype* entity) {
+void PrototypeSoundsSubScreenController::onSoundApply(int soundIdx, Prototype* prototype) {
 	try {
 		PrototypeAudio* sound = nullptr;
-		if (soundIdx == entity->getSounds().size()) {
-			sound = entity->addSound(soundsSoundKey[soundIdx]->getController()->getValue().getString());
+		if (soundIdx == prototype->getSounds().size()) {
+			sound = prototype->addSound(soundsSoundKey[soundIdx]->getController()->getValue().getString());
 		} else {
-			sound = entity->getSound(entity->getSounds()[soundIdx]->getId());
+			sound = prototype->getSound(prototype->getSounds()[soundIdx]->getId());
 		}
 		if (sound == nullptr) throw ExceptionBase("Sound could not be loaded or created");
 		if (sound->getId() != soundsSoundKey[soundIdx]->getController()->getValue().getString()) {
-			if (entity->renameSound(sound->getId(), soundsSoundKey[soundIdx]->getController()->getValue().getString()) == false) {
+			if (prototype->renameSound(sound->getId(), soundsSoundKey[soundIdx]->getController()->getValue().getString()) == false) {
 				throw ExceptionBase("Key could not be renamed");
 			}
 		}
@@ -280,21 +280,21 @@ void EntitySoundsSubScreenController::onSoundApply(int soundIdx, Prototype* enti
 	}
 }
 
-void EntitySoundsSubScreenController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeSoundsSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntitySoundsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* entity) {
+void PrototypeSoundsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
 }
 
-void EntitySoundsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
+void PrototypeSoundsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (StringTools::startsWith(node->getId(), "sounds_sound_apply_") == true) {
 		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_apply_").size()));
-		onSoundApply(soundIdx, entity);
-		setSounds(entity);
+		onSoundApply(soundIdx, prototype);
+		setSounds(prototype);
 	} else
 	if (StringTools::startsWith(node->getId(), "sounds_sound_clear_") == true) {
 		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_clear_").size()));
