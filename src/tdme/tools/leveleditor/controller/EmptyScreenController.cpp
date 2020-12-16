@@ -10,7 +10,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
@@ -29,7 +29,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::leveleditor::TDMELevelEditor;
@@ -62,7 +62,7 @@ EmptyScreenController::EmptyScreenController(EmptyView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 }
 
 GUIScreenNode* EmptyScreenController::getScreenNode()
@@ -82,7 +82,7 @@ void EmptyScreenController::initialize()
 		Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	entityBaseSubScreenController->initialize(screenNode);
+	prototypeBaseSubScreenController->initialize(screenNode);
 }
 
 void EmptyScreenController::dispose()
@@ -96,22 +96,22 @@ void EmptyScreenController::setScreenCaption(const string& text)
 
 void EmptyScreenController::setEntityData(const string& name, const string& description)
 {
-	entityBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setEntityData(name, description);
 }
 
 void EmptyScreenController::unsetEntityData()
 {
-	entityBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetEntityData();
 }
 
 void EmptyScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void EmptyScreenController::unsetEntityProperties()
 {
-	entityBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetEntityProperties();
 }
 
 void EmptyScreenController::onQuit()
@@ -126,12 +126,12 @@ void EmptyScreenController::showErrorPopUp(const string& caption, const string& 
 
 void EmptyScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void EmptyScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void EmptyScreenController::getViewPort(int& left, int& top, int& width, int& height) {

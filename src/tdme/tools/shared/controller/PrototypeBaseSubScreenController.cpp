@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 
 #include <map>
 #include <string>
@@ -26,7 +26,7 @@ using std::map;
 using std::vector;
 using std::string;
 
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
@@ -45,21 +45,21 @@ using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-MutableString EntityBaseSubScreenController::TEXT_EMPTY = MutableString("");
+MutableString PrototypeBaseSubScreenController::TEXT_EMPTY = MutableString("");
 
-EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction)
+PrototypeBaseSubScreenController::PrototypeBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction)
 {
 	this->view = new EntityBaseView(this);
 	this->popUps = popUps;
 	this->onSetEntityDataAction = onSetEntityDataAction;
 }
 
-EntityBaseSubScreenController::~EntityBaseSubScreenController() {
+PrototypeBaseSubScreenController::~PrototypeBaseSubScreenController() {
 	delete view;
 	delete onSetEntityDataAction;
 }
 
-void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
+void PrototypeBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
 		entityName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_name"));
@@ -74,13 +74,13 @@ void EntityBaseSubScreenController::initialize(GUIScreenNode* screenNode)
 		entityPropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_presetapply"));
 		entityPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_properties_presets"));
 	} catch (Exception& exception) {
-		Console::print(string("EntityBaseSubScreenController::initialize(): An error occurred: "));
+		Console::print(string("PrototypeBaseSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
-void EntityBaseSubScreenController::setEntityData(const string& name, const string& description)
+void PrototypeBaseSubScreenController::setEntityData(const string& name, const string& description)
 {
 	entityName->getController()->setDisabled(false);
 	entityName->getController()->setValue(name);
@@ -89,7 +89,7 @@ void EntityBaseSubScreenController::setEntityData(const string& name, const stri
 	entityApply->getController()->setDisabled(false);
 }
 
-void EntityBaseSubScreenController::unsetEntityData()
+void PrototypeBaseSubScreenController::unsetEntityData()
 {
 	entityName->getController()->setValue(TEXT_EMPTY);
 	entityName->getController()->setDisabled(true);
@@ -98,7 +98,7 @@ void EntityBaseSubScreenController::unsetEntityData()
 	entityApply->getController()->setDisabled(true);
 }
 
-void EntityBaseSubScreenController::onEntityDataApply(Prototype* model)
+void PrototypeBaseSubScreenController::onEntityDataApply(Prototype* model)
 {
 	if (model == nullptr)
 		return;
@@ -107,7 +107,7 @@ void EntityBaseSubScreenController::onEntityDataApply(Prototype* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
+void PrototypeBaseSubScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
 {
 	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -133,12 +133,12 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<
 	try {
 		entityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("EntityBaseSubScreenController::setEntityPresetIds(): An error occurred: "));
+		Console::print(string("PrototypeBaseSubScreenController::setEntityPresetIds(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void EntityBaseSubScreenController::setEntityProperties(Prototype* entity, const string& presetId, const string& selectedName)
+void PrototypeBaseSubScreenController::setEntityProperties(Prototype* entity, const string& presetId, const string& selectedName)
 {
 	entityPropertiesPresets->getController()->setDisabled(false);
 	entityPropertyPresetApply->getController()->setDisabled(false);
@@ -175,13 +175,13 @@ void EntityBaseSubScreenController::setEntityProperties(Prototype* entity, const
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("EntityBaseSubScreenController::setEntityProperties(): An error occurred: "));
+		Console::print(string("PrototypeBaseSubScreenController::setEntityProperties(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	onEntityPropertiesSelectionChanged(entity);
 }
 
-void EntityBaseSubScreenController::unsetEntityProperties()
+void PrototypeBaseSubScreenController::unsetEntityProperties()
 {
 	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + "_inner")));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
@@ -198,7 +198,7 @@ void EntityBaseSubScreenController::unsetEntityProperties()
 	entityPropertyValue->getController()->setDisabled(true);
 }
 
-void EntityBaseSubScreenController::onEntityPropertySave(Prototype* entity)
+void PrototypeBaseSubScreenController::onEntityPropertySave(Prototype* entity)
 {
 	if (view->entityPropertySave(
 		entity,
@@ -209,31 +209,31 @@ void EntityBaseSubScreenController::onEntityPropertySave(Prototype* entity)
 	}
 }
 
-void EntityBaseSubScreenController::onEntityPropertyAdd(Prototype* entity)
+void PrototypeBaseSubScreenController::onEntityPropertyAdd(Prototype* entity)
 {
 	if (view->entityPropertyAdd(entity) == false) {
 		showErrorPopUp("Warning", "Adding new entity property failed");
 	}
 }
 
-void EntityBaseSubScreenController::onEntityPropertyRemove(Prototype* entity)
+void PrototypeBaseSubScreenController::onEntityPropertyRemove(Prototype* entity)
 {
 	if (view->entityPropertyRemove(entity, entityPropertiesList->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing entity property failed");
 	}
 }
 
-void EntityBaseSubScreenController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeBaseSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntityBaseSubScreenController::onEntityPropertyPresetApply(Prototype* model)
+void PrototypeBaseSubScreenController::onEntityPropertyPresetApply(Prototype* model)
 {
 	view->entityPropertiesPreset(model, entityPropertiesPresets->getController()->getValue().getString());
 }
 
-void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(Prototype* entity)
+void PrototypeBaseSubScreenController::onEntityPropertiesSelectionChanged(Prototype* entity)
 {
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyName->getController()->setValue(TEXT_EMPTY);
@@ -252,7 +252,7 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(Prototype
 	}
 }
 
-void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, Prototype* model)
+void PrototypeBaseSubScreenController::onValueChanged(GUIElementNode* node, Prototype* model)
 {
 	if (node == entityPropertiesList) {
 		onEntityPropertiesSelectionChanged(model);
@@ -260,7 +260,7 @@ void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, Prototy
 	}
 }
 
-void EntityBaseSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
+void PrototypeBaseSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
 {
 	if (type == GUIActionListenerType::PERFORMED)
 	{

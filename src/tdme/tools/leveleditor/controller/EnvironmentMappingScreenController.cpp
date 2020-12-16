@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -42,7 +42,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -87,7 +87,7 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 	this->view = view;
 	auto const finalView = view;
 	this->modelPath = new FileDialogPath(".");
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, false, 1, EntityPhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
 }
 
@@ -116,7 +116,7 @@ void EnvironmentMappingScreenController::initialize()
 		Console::print(string("EnvironmentMappingScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	entityBaseSubScreenController->initialize(screenNode);
+	prototypeBaseSubScreenController->initialize(screenNode);
 	entityPhysicsSubScreenController->initialize(screenNode);
 }
 
@@ -131,22 +131,22 @@ void EnvironmentMappingScreenController::setScreenCaption(const string& text)
 
 void EnvironmentMappingScreenController::setEntityData(const string& name, const string& description)
 {
-	entityBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setEntityData(name, description);
 }
 
 void EnvironmentMappingScreenController::unsetEntityData()
 {
-	entityBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetEntityData();
 }
 
 void EnvironmentMappingScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void EnvironmentMappingScreenController::unsetEntityProperties()
 {
-	entityBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetEntityProperties();
 }
 
 void EnvironmentMappingScreenController::setGeneration() {
@@ -200,13 +200,13 @@ void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, c
 
 void EnvironmentMappingScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
 	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void EnvironmentMappingScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_generation_apply") == 0) {

@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::EntitySoundsSubScreenController;
@@ -57,7 +57,7 @@ private:
 	static string EMITTER_CIRCLEPARTICLEEMITTER;
 	static string EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
 	static string EMITTER_SPHEREPARTICLEEMITTER;
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	EntitySoundsSubScreenController* entitySoundsSubScreenController { nullptr };

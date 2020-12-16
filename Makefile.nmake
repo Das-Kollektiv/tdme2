@@ -388,7 +388,7 @@ SRCS = \
 	src/tdme/tools/leveleditor/views/ParticleSystemView.cpp \
 	src/tdme/tools/leveleditor/views/TriggerView.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
-	src/tdme/tools/shared/controller/EntityBaseSubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.cpp \

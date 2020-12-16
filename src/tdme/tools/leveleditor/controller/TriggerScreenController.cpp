@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::TriggerView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -80,7 +80,7 @@ TriggerScreenController::TriggerScreenController(TriggerView* view)
 	this->view = view;
 	auto const finalView = view;
 	this->modelPath = new FileDialogPath(".");
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, false);
 }
 
@@ -106,7 +106,7 @@ void TriggerScreenController::initialize()
 		Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	entityBaseSubScreenController->initialize(screenNode);
+	prototypeBaseSubScreenController->initialize(screenNode);
 	entityPhysicsSubScreenController->initialize(screenNode);
 }
 
@@ -121,22 +121,22 @@ void TriggerScreenController::setScreenCaption(const string& text)
 
 void TriggerScreenController::setEntityData(const string& name, const string& description)
 {
-	entityBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setEntityData(name, description);
 }
 
 void TriggerScreenController::unsetEntityData()
 {
-	entityBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetEntityData();
 }
 
 void TriggerScreenController::setEntityProperties(const string& presetId, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setEntityProperties(view->getPrototype(), presetId, selectedName);
 }
 
 void TriggerScreenController::unsetEntityProperties()
 {
-	entityBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetEntityProperties();
 }
 
 void TriggerScreenController::onQuit()
@@ -151,13 +151,13 @@ void TriggerScreenController::showErrorPopUp(const string& caption, const string
 
 void TriggerScreenController::onValueChanged(GUIElementNode* node)
 {
-	entityBaseSubScreenController->onValueChanged(node, view->getPrototype());
+	prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
 	entityPhysicsSubScreenController->onValueChanged(node, view->getPrototype());
 }
 
 void TriggerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 }
 

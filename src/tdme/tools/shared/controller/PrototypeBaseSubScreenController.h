@@ -31,7 +31,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityBaseSubScreenController final
+class tdme::tools::shared::controller::PrototypeBaseSubScreenController final
 {
 private:
 	static MutableString TEXT_EMPTY;
@@ -56,12 +56,12 @@ public:
 	 * @param popUps view
 	 * @param onSetEntityDataAction on set entity data action
 	 */
-	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
+	PrototypeBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
 
 	/**
 	 * Destructor
 	 */
-	~EntityBaseSubScreenController();
+	~PrototypeBaseSubScreenController();
 
 	/**
 	 * Init

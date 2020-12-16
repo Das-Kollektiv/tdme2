@@ -5,7 +5,7 @@ namespace tdme {
 namespace tools {
 namespace shared {
 namespace controller {
-	class EntityBaseSubScreenController;
+	class PrototypeBaseSubScreenController;
 	class EntityDisplaySubScreenController;
 	class EntityPhysicsSubScreenController;
 	class EntityPhysicsSubScreenController_BoundingVolumeType;

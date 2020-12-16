@@ -29,7 +29,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntitySoundsSubScreenController;
@@ -51,7 +51,7 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 {
 
 private:
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	EntitySoundsSubScreenController* entitySoundsSubScreenController { nullptr };

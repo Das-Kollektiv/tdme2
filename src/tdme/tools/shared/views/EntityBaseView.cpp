@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
@@ -10,19 +10,19 @@
 using std::string;
 
 using tdme::tools::shared::views::EntityBaseView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::engine::prototype::PrototypeProperty;
 
-EntityBaseView::EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController)
+EntityBaseView::EntityBaseView(PrototypeBaseSubScreenController* prototypeBaseSubScreenController)
 {
-	this->entityBaseSubScreenController = entityBaseSubScreenController;
+	this->prototypeBaseSubScreenController = prototypeBaseSubScreenController;
 }
 
 void EntityBaseView::initialize()
 {
-	entityBaseSubScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
+	prototypeBaseSubScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
 void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& presetId)
@@ -42,7 +42,7 @@ void EntityBaseView::entityPropertiesPreset(Prototype* entity, const string& pre
 			entity->addProperty(entityPropertyPreset->getName(), entityPropertyPreset->getValue());
 		}
 	}
-	entityBaseSubScreenController->setEntityProperties(entity, presetId, "");
+	prototypeBaseSubScreenController->setEntityProperties(entity, presetId, "");
 }
 
 bool EntityBaseView::entityPropertySave(Prototype* entity, const string& oldName, const string& name, const string& value)
@@ -51,7 +51,7 @@ bool EntityBaseView::entityPropertySave(Prototype* entity, const string& oldName
 		return false;
 
 	if (entity->updateProperty(oldName, name, value) == true) {
-		entityBaseSubScreenController->setEntityProperties(entity, "", name);
+		prototypeBaseSubScreenController->setEntityProperties(entity, "", name);
 		return true;
 	}
 	return false;
@@ -63,7 +63,7 @@ bool EntityBaseView::entityPropertyAdd(Prototype* entity)
 		return false;
 
 	if (entity->addProperty("new.property", "new.value")) {
-		entityBaseSubScreenController->setEntityProperties(entity, "", "new.property");
+		prototypeBaseSubScreenController->setEntityProperties(entity, "", "new.property");
 		return true;
 	}
 	return false;
@@ -80,7 +80,7 @@ bool EntityBaseView::entityPropertyRemove(Prototype* entity, const string& name)
 		if (property == nullptr) {
 			property = entity->getPropertyByIndex(idx - 1);
 		}
-		entityBaseSubScreenController->setEntityProperties(entity, "", property == nullptr ? "" : property->getName());
+		prototypeBaseSubScreenController->setEntityProperties(entity, "", property == nullptr ? "" : property->getName());
 		return true;
 	}
 	return false;

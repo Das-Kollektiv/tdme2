@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::views::EmptyView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::utilities::MutableString;
 
 /**
@@ -37,7 +37,7 @@ class tdme::tools::leveleditor::controller::EmptyScreenController final
 	, public GUIChangeListener
 {
 private:
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	EmptyView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };

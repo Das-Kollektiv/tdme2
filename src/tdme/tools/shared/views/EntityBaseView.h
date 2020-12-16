@@ -10,7 +10,7 @@
 
 using std::string;
 
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::engine::prototype::Prototype;
 
 /**
@@ -21,14 +21,14 @@ using tdme::engine::prototype::Prototype;
 class tdme::tools::shared::views::EntityBaseView final
 {
 private:
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 
 public:
 	/**
 	 * Public constructor
-	 * @param entityBaseSubScreenController model base sub screen controller
+	 * @param prototypeBaseSubScreenController model base sub screen controller
 	 */
-	EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController);
+	EntityBaseView(PrototypeBaseSubScreenController* prototypeBaseSubScreenController);
 
 	/**
 	 * Init

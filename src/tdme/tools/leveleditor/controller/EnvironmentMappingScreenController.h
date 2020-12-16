@@ -25,7 +25,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::views::EnvironmentMappingView;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::utilities::MutableString;
@@ -42,7 +42,7 @@ class tdme::tools::leveleditor::controller::EnvironmentMappingScreenController f
 {
 private:
 	static MutableString TEXT_EMPTY;
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	EnvironmentMappingView* view { nullptr };
 	FileDialogPath* modelPath { nullptr };
