@@ -65,6 +65,8 @@ void processFile(const string& fileName) {
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
 		for (auto line: fileContent) {
+			StringTools::replace(line, "\n", "");
+			StringTools::replace(line, "\r", "");
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "#include ") == true) {
 				if (startLineIdx == -1) {
@@ -76,6 +78,8 @@ void processFile(const string& fileName) {
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
 				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx);
+				startLineIdx = -1;
+				endLineIdx = -1;
 			}
 		}
 	}
@@ -86,6 +90,8 @@ void processFile(const string& fileName) {
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
 		for (auto line: fileContent) {
+			StringTools::replace(line, "\n", "");
+			StringTools::replace(line, "\r", "");
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "using ") == true) {
 				if (startLineIdx == -1) {
@@ -97,6 +103,8 @@ void processFile(const string& fileName) {
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
 				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx);
+				startLineIdx = -1;
+				endLineIdx = -1;
 			}
 		}
 	}
