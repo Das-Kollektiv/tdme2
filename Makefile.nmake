@@ -653,9 +653,10 @@ all: \
 	create-installer \
 	generatelicenses \
 	importtmm \
-	levelfixmodelszup2yup \
 	fixdoxygen \
 	optimizemodel \
+	scenefixmodelszup2yup \
+	sortincludes \
 	TDMESceneEditor \
 	TDMEModelEditor \
 	TDMEParticleSystem \
@@ -781,14 +782,17 @@ generatelicenses:
 importtmm:
 	cl /Feimporttmm /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-scenefixmodelszup2yup:
-	cl /Felevelfixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
-
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+scenefixmodelszup2yup:
+	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+sortincludes:
+    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMESceneEditor:
 	cl /FeTDMESceneEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

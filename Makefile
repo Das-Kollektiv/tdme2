@@ -882,11 +882,12 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/create-installer-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmm-main.cpp \
+	src/tdme/tools/cli/optimizemodel-main.cpp \
 	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp \
-	src/tdme/tools/cli/optimizemodel-main.cpp
+	src/tdme/tools/cli/sortincludes-main.cpp
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
