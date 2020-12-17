@@ -66,7 +66,7 @@ using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Node;
 using tdme::engine::model::Material;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -165,7 +165,7 @@ private:
 
 	static AnimationProcessingTarget animationProcessingTarget;
 
-	static EZRShaderPre* ezrShaderPre;
+	static EZRShader* ezrShaderPre;
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;

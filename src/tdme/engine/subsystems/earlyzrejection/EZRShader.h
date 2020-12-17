@@ -16,7 +16,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
 using tdme::math::Matrix4x4;
 
 /**
@@ -24,30 +24,30 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::earlyzrejection::EZRShaderPre final
+class tdme::engine::subsystems::earlyzrejection::EZRShader final
 {
 private:
-	struct EZRShaderPreContext {
-		EZRShaderPreImplementation* implementation { nullptr };
+	struct EZRShaderContext {
+		EZRShaderImplementation* implementation { nullptr };
 	};
 
-	map<string, EZRShaderPreImplementation*> shader;
+	map<string, EZRShaderImplementation*> shader;
 	bool running { false };
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	vector<EZRShaderPreContext> contexts;
+	vector<EZRShaderContext> contexts;
 
 public:
 	/**
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	EZRShaderPre(Renderer* renderer);
+	EZRShader(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~EZRShaderPre();
+	~EZRShader();
 
 	/**
 	 * @return if initialized and ready to use

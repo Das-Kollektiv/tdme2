@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.h>
 
 #include <string>
 
@@ -8,27 +8,27 @@
 
 using std::string;
 
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool EZRShaderPreDefaultImplementation::isSupported(Renderer* renderer) {
+bool EZRShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-EZRShaderPreDefaultImplementation::EZRShaderPreDefaultImplementation(Renderer* renderer): EZRShaderPreBaseImplementation(renderer)
+EZRShaderDefaultImplementation::EZRShaderDefaultImplementation(Renderer* renderer): EZRShaderBaseImplementation(renderer)
 {
 }
 
-EZRShaderPreDefaultImplementation::~EZRShaderPreDefaultImplementation() {
+EZRShaderDefaultImplementation::~EZRShaderDefaultImplementation() {
 }
 
-const string EZRShaderPreDefaultImplementation::getId() {
+const string EZRShaderDefaultImplementation::getId() {
 	return "default";
 }
 
-void EZRShaderPreDefaultImplementation::initialize()
+void EZRShaderDefaultImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -54,6 +54,6 @@ void EZRShaderPreDefaultImplementation::initialize()
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
-	EZRShaderPreBaseImplementation::initialize();
+	EZRShaderBaseImplementation::initialize();
 }
 

@@ -54,7 +54,7 @@
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -133,7 +133,7 @@ using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -182,7 +182,7 @@ PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-EZRShaderPre* Engine::ezrShaderPre = nullptr;
+EZRShader* Engine::ezrShaderPre = nullptr;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
@@ -733,7 +733,7 @@ void Engine::initialize()
 	}
 
 	// TODO: make this configurable
-	ezrShaderPre = new EZRShaderPre(renderer);
+	ezrShaderPre = new EZRShader(renderer);
 	ezrShaderPre->initialize();
 
 	// initialize shadow mapping

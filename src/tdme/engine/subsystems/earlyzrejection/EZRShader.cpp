@@ -1,35 +1,35 @@
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderBaseImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 
-EZRShaderPre::EZRShaderPre(Renderer* renderer): renderer(renderer)
+EZRShader::EZRShader(Renderer* renderer): renderer(renderer)
 {
-	if (EZRShaderPreDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new EZRShaderPreDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (EZRShaderDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new EZRShaderDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
-EZRShaderPre::~EZRShaderPre() {
+EZRShader::~EZRShader() {
 	for (auto shaderIt: shader) {
 		delete shaderIt.second;
 	}
 }
 
-bool EZRShaderPre::isInitialized()
+bool EZRShader::isInitialized()
 {
 	bool initialized = true;
 	for (auto shaderIt: shader) {
@@ -38,20 +38,20 @@ bool EZRShaderPre::isInitialized()
 	return initialized;
 }
 
-void EZRShaderPre::initialize()
+void EZRShader::initialize()
 {
 	for (auto shaderIt: shader) {
 		shaderIt.second->initialize();
 	}
 }
 
-void EZRShaderPre::useProgram(Engine* engine)
+void EZRShader::useProgram(Engine* engine)
 {
 	running = true;
 	this->engine = engine;
 }
 
-void EZRShaderPre::unUseProgram()
+void EZRShader::unUseProgram()
 {
 	running = false;
 	auto i = 0;
@@ -65,34 +65,34 @@ void EZRShaderPre::unUseProgram()
 	engine = nullptr;
 }
 
-void EZRShaderPre::updateMatrices(void* context)
+void EZRShader::updateMatrices(void* context)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateMatrices(renderer, context);
 }
 
-void EZRShaderPre::updateTextureMatrix(void* context) {
+void EZRShader::updateTextureMatrix(void* context) {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-void EZRShaderPre::updateMaterial(void* context)
+void EZRShader::updateMaterial(void* context)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
-void EZRShaderPre::bindTexture(void* context, int32_t textureId)
+void EZRShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->bindTexture(renderer, context, textureId);
 }
 
-void EZRShaderPre::setShader(void* context, const string& id) {
+void EZRShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];

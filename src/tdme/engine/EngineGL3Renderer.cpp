@@ -1,7 +1,7 @@
 #include <tdme/engine/EngineGL3Renderer.h>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -10,7 +10,7 @@
 
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::Engine;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;

@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -12,7 +12,7 @@
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -21,21 +21,21 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 
-EZRShaderPreBaseImplementation::EZRShaderPreBaseImplementation(Renderer* renderer)
+EZRShaderBaseImplementation::EZRShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
 }
 
-EZRShaderPreBaseImplementation::~EZRShaderPreBaseImplementation() {
+EZRShaderBaseImplementation::~EZRShaderBaseImplementation() {
 }
 
-bool EZRShaderPreBaseImplementation::isInitialized()
+bool EZRShaderBaseImplementation::isInitialized()
 {
 	return initialized;
 }
 
-void EZRShaderPreBaseImplementation::initialize()
+void EZRShaderBaseImplementation::initialize()
 {
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -79,7 +79,7 @@ void EZRShaderPreBaseImplementation::initialize()
 	initialized = true;
 }
 
-void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+void EZRShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
 	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
@@ -87,11 +87,11 @@ void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
-void EZRShaderPreBaseImplementation::unUseProgram(void* context)
+void EZRShaderBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void EZRShaderPreBaseImplementation::updateMatrices(Renderer* renderer, void* context)
+void EZRShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
@@ -106,11 +106,11 @@ void EZRShaderPreBaseImplementation::updateMatrices(Renderer* renderer, void* co
 	}
 }
 
-void EZRShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
+void EZRShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
-void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void EZRShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
 	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
@@ -119,7 +119,7 @@ void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* co
 	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
-void EZRShaderPreBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void EZRShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:

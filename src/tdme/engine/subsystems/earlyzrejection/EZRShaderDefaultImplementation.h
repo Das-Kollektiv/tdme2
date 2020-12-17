@@ -4,19 +4,19 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.h>
 
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderBaseImplementation;
 
 /**
  * Early z rejection default shader class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation: public EZRShaderPreBaseImplementation
+class tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation: public EZRShaderBaseImplementation
 {
 public:
 	/**
@@ -29,12 +29,12 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	EZRShaderPreDefaultImplementation(Renderer* renderer);
+	EZRShaderDefaultImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~EZRShaderPreDefaultImplementation();
+	~EZRShaderDefaultImplementation();
 
 	// overridden methods
 	virtual const string getId() override;

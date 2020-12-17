@@ -19,12 +19,12 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation
+struct tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation
 {
 	/**
 	 * Destructor
 	 */
-	virtual ~EZRShaderPreImplementation() {}
+	virtual ~EZRShaderImplementation() {}
 
 	/**
 	 * @return shader id
