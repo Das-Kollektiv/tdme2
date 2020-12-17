@@ -28,19 +28,19 @@ SceneEntity::~SceneEntity() {
 
 PrototypeProperties* SceneEntity::getTotalProperties()
 {
-	auto properties = new PrototypeProperties();
+	auto totalProperties = new PrototypeProperties();
 	for (auto i = 0; i < getPrototype()->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = getPrototype()->getPropertyByIndex(i);
-		properties->addProperty(entityProperty->getName(), entityProperty->getValue());
+		auto prototypeProperty = getPrototype()->getPropertyByIndex(i);
+		totalProperties->addProperty(prototypeProperty->getName(), prototypeProperty->getValue());
 	}
 	for (auto i = 0; i < getPropertyCount(); i++) {
-		PrototypeProperty* objectProperty = getPropertyByIndex(i);
-		auto property = properties->getProperty(objectProperty->getName());
-		if (property != nullptr) {
-			properties->updateProperty(property->getName(), objectProperty->getName(), objectProperty->getValue());
+		auto entityProperty = getPropertyByIndex(i);
+		auto totalProperty = totalProperties->getProperty(entityProperty->getName());
+		if (totalProperty != nullptr) {
+			totalProperties->updateProperty(totalProperty->getName(), entityProperty->getName(), entityProperty->getValue());
 		} else {
-			properties->addProperty(objectProperty->getName(), objectProperty->getValue());
+			totalProperties->addProperty(entityProperty->getName(), entityProperty->getValue());
 		}
 	}
-	return properties;
+	return totalProperties;
 }
