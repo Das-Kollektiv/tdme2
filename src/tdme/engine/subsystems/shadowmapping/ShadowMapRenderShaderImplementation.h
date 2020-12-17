@@ -38,14 +38,14 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	virtual void initialize() = 0;
 
 	/**
-	 * Use render shadow mapping program
+	 * Use shadow map render shader program
 	 * @param engine engine
 	 * @param context context
 	 */
 	virtual void useProgram(Engine* engine, void* context) = 0;
 
 	/**
-	 * Un use render shadow mapping program
+	 * Un use shadow map render shader program
 	 * @param context context
 	 */
 	virtual void unUseProgram(void* context) = 0;
@@ -57,7 +57,7 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	virtual void updateMatrices(void* context) = 0;
 
 	/**
-	 * Set up pre program texture matrix
+	 * Update texture matrix
 	 * @param renderer renderer
 	 * @param context contet
 	 */
@@ -91,7 +91,7 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	 * @param context contet
 	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
-	virtual void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) = 0;
+	virtual void setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) = 0;
 
 	/**
 	 * Set light id

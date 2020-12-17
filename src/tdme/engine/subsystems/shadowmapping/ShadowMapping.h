@@ -34,7 +34,7 @@ private:
 	enum ShadowMapping_RunState {NONE, CREATE, RENDER};
 
 	Renderer* renderer { nullptr };
-	EntityRenderer* object3DRenderer { nullptr };
+	EntityRenderer* entityRenderer { nullptr };
 
 	Matrix4x4 shadowTransformationsMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
@@ -51,9 +51,9 @@ public:
 	 * Constructor
 	 * @param engine engine
 	 * @param renderer renderer
-	 * @param object3DRenderer object 3d renderer
+	 * @param entityRenderer entityRenderer
 	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer);
+	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* entityRenderer);
 
 	/**
 	 * Destructor
@@ -73,8 +73,9 @@ public:
 	void reshape(int32_t width, int32_t height);
 
 	/**
-	 * @return shadow map
+	 * Get shadow map
 	 * @param idx index
+	 * @return shadow map
 	 */
 	ShadowMap* getShadowMap(int idx);
 
@@ -84,7 +85,7 @@ public:
 	void createShadowMaps();
 
 	/**
-	 * Render shadow maps
+	 * Render shadow maps to world
 	 * @param visibleObjects visible objects
 	 */
 	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
@@ -107,7 +108,7 @@ public:
 	void endObjectTransformations();
 
 	/**
-	 * Update model view and projection matrix
+	 * Update matrices
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
@@ -132,7 +133,7 @@ public:
 	void setShader(void* context, const string& id);
 
 	/**
-	 * Upload light
+	 * Update light
 	 * @param lightId light id
 	 */
 	void updateLight(void* context, int32_t lightId);

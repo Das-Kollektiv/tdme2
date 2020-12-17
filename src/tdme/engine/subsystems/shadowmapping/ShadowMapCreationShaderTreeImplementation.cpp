@@ -32,8 +32,7 @@ void ShadowMapCreationShaderTreeImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
-	// load shadow mapping shaders
-	//	pre render
+	// load shadow map creation shaders
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
@@ -62,8 +61,7 @@ void ShadowMapCreationShaderTreeImplementation::initialize()
 	);
 	if (fragmentShaderId == 0) return;
 
-	// create shadow mapping render program
-	//	pre
+	// create shadow map creation shader render program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);

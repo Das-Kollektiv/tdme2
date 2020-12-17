@@ -37,32 +37,32 @@ struct tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation
 	virtual bool isInitialized() = 0;
 
 	/**
-	 * Init shadow mapping
+	 * Init EZR render shader program implementation
 	 */
 	virtual void initialize() = 0;
 
 	/**
-	 * Use pre render shadow mapping program
+	 * Use EZR render shader program
 	 * @param engine engine
 	 * @param context context
 	 */
 	virtual void useProgram(Engine* engine, void* context) = 0;
 
 	/**
-	 * Un use pre render shadow mapping program
+	 * Unuse EZR render shader program
 	 * @param context context
 	 */
 	virtual void unUseProgram(void* context) = 0;
 
 	/**
-	 * Set up pre program mvp matrix
+	 * Update matrices
 	 * @param renderer renderer
 	 * @param context context
 	 */
 	virtual void updateMatrices(Renderer* renderer, void* context) = 0;
 
 	/**
-	 * Set up pre program texture matrix
+	 * update texture matrix
 	 * @param renderer renderer
 	 * @param context context
 	 */

@@ -38,7 +38,7 @@ private:
 	Matrix4x4 depthBiasMVPMatrix;
 
 	/**
-	 * Init frame buffer
+	 * Initialize shadow map
 	 */
 	void initialize();
 
@@ -50,7 +50,7 @@ private:
 	void reshape(int32_t width, int32_t height);
 
 	/**
-	 * Disposes this shadow mapping
+	 * Disposes this shadow map
 	 */
 	void dispose();
 
@@ -66,7 +66,7 @@ private:
 	Camera* getCamera();
 
 	/**
-	 * Renders given objects to shadow map
+	 * Create shadow map
 	 * @param light light
 	 */
 	void createShadowMap(Light* light);

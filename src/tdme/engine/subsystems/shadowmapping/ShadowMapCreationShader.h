@@ -54,29 +54,29 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Init shadow mapping
+	 * Init shadow map creation shader program
 	 */
 	void initialize();
 
 	/**
-	 * Use pre render shadow mapping program
+	 * Use shadow map creation shader program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
 	/**
-	 * Un use pre render shadow mapping program
+	 * Unuse shadow map creation shader program
 	 */
 	void unUseProgram();
 
 	/**
-	 * Set up pre program mvp matrix
+	 * Set up matrices
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
 
 	/**
-	 * Set up pre program texture matrix
+	 * Set up texture matrix
 	 * @param context context
 	 */
 	void updateTextureMatrix(void* context);

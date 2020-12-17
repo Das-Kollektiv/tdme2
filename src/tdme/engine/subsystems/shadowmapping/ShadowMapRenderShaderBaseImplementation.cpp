@@ -208,7 +208,7 @@ void ShadowMapRenderShaderBaseImplementation::bindTexture(Renderer* renderer, vo
 	}
 }
 
-void ShadowMapRenderShaderBaseImplementation::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapRenderShaderBaseImplementation::setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
 {
 	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
 }

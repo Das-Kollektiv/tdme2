@@ -104,12 +104,12 @@ void ShadowMapRenderShader::bindTexture(void* context, int32_t textureId)
 	shadowMappingShaderRenderContext.implementation->bindTexture(renderer, context, textureId);
 }
 
-void ShadowMapRenderShader::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapRenderShader::setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
 {
 	this->depthBiasMVPMatrix = depthBiasMVPMatrix;
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
-	shadowMappingShaderRenderContext.implementation->setProgramDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
+	shadowMappingShaderRenderContext.implementation->setDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
 }
 
 void ShadowMapRenderShader::setRenderLightId(int32_t lightId) {
@@ -131,6 +131,6 @@ void ShadowMapRenderShader::setShader(void* context, const string& id) {
 		shadowMappingShaderRenderContext.implementation->useProgram(engine, context);
 	}
 
-	shadowMappingShaderRenderContext.implementation->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	shadowMappingShaderRenderContext.implementation->setDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 	shadowMappingShaderRenderContext.implementation->setRenderLightId(lightId);
 }

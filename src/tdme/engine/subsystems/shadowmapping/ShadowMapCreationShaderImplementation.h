@@ -37,31 +37,31 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplement
 	virtual bool isInitialized() = 0;
 
 	/**
-	 * Init shadow mapping
+	 * Init shadow map creation program
 	 */
 	virtual void initialize() = 0;
 
 	/**
-	 * Use pre render shadow mapping program
+	 * Use shadow map creation program
 	 * @param engine engine
 	 * @param context context
 	 */
 	virtual void useProgram(Engine* engine, void* context) = 0;
 
 	/**
-	 * Un use pre render shadow mapping program
+	 * Unuse shadow map creation program
 	 * @param context context
 	 */
 	virtual void unUseProgram(void* context) = 0;
 
 	/**
-	 * Set up pre program mvp matrix
+	 * Set up program matrices
 	 * @param context context
 	 */
 	virtual void updateMatrices(void* context) = 0;
 
 	/**
-	 * Set up pre program texture matrix
+	 * Set up program texture matrix
 	 * @param renderer renderer
 	 * @param context context
 	 */

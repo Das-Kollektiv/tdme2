@@ -56,18 +56,18 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Init shadow mapping
+	 * Initialize shadow map render shader program
 	 */
 	void initialize();
 
 	/**
-	 * Use render shadow mapping program
+	 * Use shadow map render shader program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
 	/**
-	 * Un use render shadow mapping program
+	 * Unuse shadow map render shader program
 	 */
 	void unUseProgram();
 
@@ -78,7 +78,7 @@ public:
 	void updateMatrices(void* context);
 
 	/**
-	 * Set up pre program texture matrix
+	 * Update up texture matrix
 	 * @param context context
 	 */
 	void updateTextureMatrix(void* context);
@@ -108,7 +108,7 @@ public:
 	 * @param context context
 	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
-	void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix);
+	void setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix);
 
 	/**
 	 * Set light id

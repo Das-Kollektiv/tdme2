@@ -55,30 +55,30 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Init shadow mapping
+	 * Init EZR shader
 	 */
 	void initialize();
 
 	/**
-	 * Use pre render shadow mapping program
+	 * Use EZR render shader program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
 	/**
-	 * Un use pre render shadow mapping program
+	 * Unuse EZR render shader program
 	 */
 	void unUseProgram();
 
 	/**
-	 * Set up pre program mvp matrix
+	 * Update program matrices
 	 * @param renderer renderer
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
 
 	/**
-	 * Set up pre program texture matrix
+	 * Set up program texture matrix
 	 * @param context context
 	 * @param renderer renderer
 	 */

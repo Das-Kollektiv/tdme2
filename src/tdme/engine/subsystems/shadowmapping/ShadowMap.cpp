@@ -264,7 +264,7 @@ void ShadowMap::createShadowMap(Light* light)
 	// only draw opaque face entities as shadows will not be produced from transparent objects
 	for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 		auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-		shadowMapping->object3DRenderer->render(
+		shadowMapping->entityRenderer->render(
 			renderPass,
 			visibleObjects,
 			false,

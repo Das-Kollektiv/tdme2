@@ -34,11 +34,11 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 
-ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer)
+ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* entityRenderer)
 {
 	this->engine = engine;
 	this->renderer = renderer;
-	this->object3DRenderer = object3DRenderer;
+	this->entityRenderer = entityRenderer;
 	shadowMaps.resize(engine->getLightCount());
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		shadowMaps[i] = nullptr;
@@ -151,7 +151,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		// 	only opaque face entities as shadows will not be produced on transparent faces
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-			object3DRenderer->render(
+			entityRenderer->render(
 				renderPass,
 				visibleObjectsReceivingShadows,
 				false,
@@ -324,7 +324,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBias
 	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
 	// upload
-	Engine::getShadowMapRenderShader()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
 void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
@@ -333,7 +333,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
 		return;
 
 	// upload
-	Engine::getShadowMapRenderShader()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
 void ShadowMapping::setShader(void* context, const string& id) {
