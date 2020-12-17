@@ -8,9 +8,9 @@
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -27,8 +27,8 @@ using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -80,9 +80,9 @@ void ShadowMapping::createShadowMaps()
 				shadowMaps[i] = shadowMap;
 			}
 			// render
-			Engine::getShadowMappingShaderPre()->useProgram(engine);
+			Engine::getShadowMapCreationShader()->useProgram(engine);
 			shadowMaps[i]->render(light);
-			Engine::getShadowMappingShaderPre()->unUseProgram();
+			Engine::getShadowMapCreationShader()->unUseProgram();
 		} else {
 			if (shadowMaps[i] != nullptr) {
 				// dispose shadow map
@@ -116,7 +116,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
-	auto shader = Engine::getShadowMappingShaderRender();
+	auto shader = Engine::getShadowMapRenderShader();
 	//	do not allow writing to depth buffer
 	renderer->disableDepthBufferWriting();
 	// user shader program
@@ -234,13 +234,13 @@ void ShadowMapping::updateTextureMatrix(void* context)
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateTextureMatrix(context);
+				Engine::getShadowMapCreationShader()->updateTextureMatrix(context);
 				goto end_switch0;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateTextureMatrix(context);
+				Engine::getShadowMapRenderShader()->updateTextureMatrix(context);
 				goto end_switch0;
 			}
 		} else {
@@ -259,10 +259,10 @@ void ShadowMapping::updateMatrices(void* context)
 	// delegate to shader
 	{
 		if (runState == ShadowMapping_RunState::PRE) {
-			Engine::getShadowMappingShaderPre()->updateMatrices(context);
+			Engine::getShadowMapCreationShader()->updateMatrices(context);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {
-			Engine::getShadowMappingShaderRender()->updateMatrices(context);
+			Engine::getShadowMapRenderShader()->updateMatrices(context);
 		} else {
 			Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 		}
@@ -276,13 +276,13 @@ void ShadowMapping::updateMaterial(void* context) {
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateMaterial(context);
+				Engine::getShadowMapCreationShader()->updateMaterial(context);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateMaterial(context);
+				Engine::getShadowMapRenderShader()->updateMaterial(context);
 				goto end_switch0;;
 			}
 		}
@@ -292,7 +292,7 @@ void ShadowMapping::updateMaterial(void* context) {
 
 void ShadowMapping::updateLight(void* context, int32_t lightId) {
 	if (runState == ShadowMapping_RunState::RENDER) {
-		Engine::getShadowMappingShaderRender()->updateLight(context, lightId);
+		Engine::getShadowMapRenderShader()->updateLight(context, lightId);
 	}
 }
 
@@ -303,13 +303,13 @@ void ShadowMapping::bindTexture(void* context, int32_t textureId) {
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->bindTexture(context, textureId);
+				Engine::getShadowMapCreationShader()->bindTexture(context, textureId);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->bindTexture(context, textureId);
+				Engine::getShadowMapRenderShader()->bindTexture(context, textureId);
 				goto end_switch0;;
 			}
 		}
@@ -324,7 +324,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBias
 	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
 	// upload
-	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
 void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
@@ -333,7 +333,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
 		return;
 
 	// upload
-	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
 void ShadowMapping::setShader(void* context, const string& id) {
@@ -342,10 +342,10 @@ void ShadowMapping::setShader(void* context, const string& id) {
 			// no op
 		} else
 		if (runState == ShadowMapping_RunState::PRE) {
-			Engine::getShadowMappingShaderPre()->setShader(context, id);
+			Engine::getShadowMapCreationShader()->setShader(context, id);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {
-			Engine::getShadowMappingShaderRender()->setShader(context, id);
+			Engine::getShadowMapRenderShader()->setShader(context, id);
 		} else {
 			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
 		}

@@ -5,12 +5,12 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
 #include <tdme/math/fwd-tdme.h>
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
 using tdme::math::Matrix4x4;
 
 /**
@@ -18,7 +18,7 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation: public ShadowMappingShaderPreImplementation
+class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation: public ShadowMapCreationShaderImplementation
 {
 protected:
 	Renderer* renderer { nullptr };
@@ -45,12 +45,12 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderPreBaseImplementation(Renderer* renderer);
+	ShadowMapCreationShaderBaseImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~ShadowMappingShaderPreBaseImplementation();
+	~ShadowMapCreationShaderBaseImplementation();
 
 	// overridden methods
 	virtual bool isInitialized() override;

@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreTreeImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.h>
 
 #include <string>
 
@@ -8,27 +8,27 @@
 
 using std::to_string;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreTreeImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderPreTreeImplementation::isSupported(Renderer* renderer) {
+bool ShadowMapCreationShaderFoliageImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderPreTreeImplementation::ShadowMappingShaderPreTreeImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
+ShadowMapCreationShaderFoliageImplementation::ShadowMapCreationShaderFoliageImplementation(Renderer* renderer): ShadowMapCreationShaderBaseImplementation(renderer)
 {
 }
 
-ShadowMappingShaderPreTreeImplementation::~ShadowMappingShaderPreTreeImplementation() {
+ShadowMapCreationShaderFoliageImplementation::~ShadowMapCreationShaderFoliageImplementation() {
 }
 
-const string ShadowMappingShaderPreTreeImplementation::getId() {
-	return "tree";
+const string ShadowMapCreationShaderFoliageImplementation::getId() {
+	return "foliage";
 }
 
-void ShadowMappingShaderPreTreeImplementation::initialize()
+void ShadowMapCreationShaderFoliageImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -37,8 +37,8 @@ void ShadowMappingShaderPreTreeImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_vertexshader.vert",
-		"#define HAVE_TREE",
+		"creation_vertexshader.vert",
+		"#define HAVE_FOLIAGE",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"
@@ -51,14 +51,14 @@ void ShadowMappingShaderPreTreeImplementation::initialize()
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_tree_transform_matrix.inc.glsl"
+			"create_foliage_transform_matrix.inc.glsl"
 		)
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_fragmentshader.frag"
+		"creation_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -69,6 +69,6 @@ void ShadowMappingShaderPreTreeImplementation::initialize()
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
-	ShadowMappingShaderPreBaseImplementation::initialize();
+	ShadowMapCreationShaderBaseImplementation::initialize();
 }
 

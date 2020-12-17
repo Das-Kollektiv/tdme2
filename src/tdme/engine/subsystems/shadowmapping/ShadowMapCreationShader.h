@@ -16,39 +16,37 @@ using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
 using tdme::math::Matrix4x4;
 
 /**
- * Shadow mapping shader to render shadow maps
+ * Shadow mapping shader to create a shadow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
+class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader final
 {
 private:
-	struct ShadowMappingShaderRenderContext {
-		ShadowMappingShaderRenderImplementation* implementation { nullptr };
+	struct ShadowMapCreationShaderContext {
+		ShadowMapCreationShaderImplementation* implementation { nullptr };
 	};
-	map<string, ShadowMappingShaderRenderImplementation*> shader;
+	map<string, ShadowMapCreationShaderImplementation*> shader;
 	bool running { false };
-	Matrix4x4 depthBiasMVPMatrix;
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	vector<ShadowMappingShaderRenderContext> contexts;
-	int32_t lightId { -1 };
+	vector<ShadowMapCreationShaderContext> contexts;
 
 public:
 	/**
-	 * Public constructor
+	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderRender(Renderer* renderer);
+	ShadowMapCreationShader(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~ShadowMappingShaderRender();
+	~ShadowMapCreationShader();
 
 	/**
 	 * @return if initialized and ready to use
@@ -61,18 +59,18 @@ public:
 	void initialize();
 
 	/**
-	 * Use render shadow mapping program
+	 * Use pre render shadow mapping program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
 	/**
-	 * Un use render shadow mapping program
+	 * Un use pre render shadow mapping program
 	 */
 	void unUseProgram();
 
 	/**
-	 * Update matrices
+	 * Set up pre program mvp matrix
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
@@ -90,13 +88,6 @@ public:
 	void updateMaterial(void* context);
 
 	/**
-	 * Update light
-	 * @param context context
-	 * @param lightId light id
-	 */
-	void updateLight(void* context, int32_t lightId);
-
-	/**
 	 * Bind texture
 	 * @param context context
 	 * @param textureId texture id
@@ -104,21 +95,9 @@ public:
 	void bindTexture(void* context, int32_t textureId);
 
 	/**
-	 * Set up program depth bias mvp matrix
-	 * @param context context
-	 * @param depthBiasMVPMatrix depth bias mvp matrix
-	 */
-	void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix);
-
-	/**
-	 * Set light id
-	 * @param lightId light id to render
-	 */
-	void setRenderLightId(int32_t lightId);
-
-	/**
 	 * Set shader
-	 * @param id id
+	 * @param context
+	 * @param id shader id
 	 */
 	void setShader(void* context, const string& id);
 

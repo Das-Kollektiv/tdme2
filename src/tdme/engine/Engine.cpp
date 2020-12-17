@@ -75,8 +75,8 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/gui/GUI.h>
@@ -152,8 +152,8 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::gui::GUI;
@@ -183,8 +183,8 @@ PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 EZRShader* Engine::ezrShader = nullptr;
-ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
-ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
+ShadowMapCreationShader* Engine::shadowMappingShaderPre = nullptr;
+ShadowMapRenderShader* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
 LinesShader* Engine::linesShader = nullptr;
@@ -739,9 +739,9 @@ void Engine::initialize()
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println(string("TDME::Using shadow mapping"));
-		shadowMappingShaderPre = new ShadowMappingShaderPre(renderer);
+		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
 		shadowMappingShaderPre->initialize();
-		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
+		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
@@ -760,7 +760,7 @@ void Engine::initialize()
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
 
 	CHECK_INITIALIZED("EZRShader", ezrShader);
-	CHECK_INITIALIZED("ShadowMappingShaderPre", shadowMappingShaderPre);
+	CHECK_INITIALIZED("ShadowMapCreationShader", shadowMappingShaderPre);
 	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
 	CHECK_INITIALIZED("LightingShader", lightingShader);
 	CHECK_INITIALIZED("ParticlesShader", particlesShader);

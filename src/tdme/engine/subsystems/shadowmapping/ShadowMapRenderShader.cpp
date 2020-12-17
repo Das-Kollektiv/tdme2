@@ -1,41 +1,41 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderTreeImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderTreeImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-ShadowMappingShaderRender::ShadowMappingShaderRender(Renderer* renderer): renderer(renderer)
+ShadowMapRenderShader::ShadowMapRenderShader(Renderer* renderer): renderer(renderer)
 {
-	if (ShadowMappingShaderRenderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
-	if (ShadowMappingShaderRenderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
-	if (ShadowMappingShaderRenderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMappingShaderRenderTreeImplementation(renderer);
+	if (ShadowMapRenderShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMapRenderShaderDefaultImplementation(renderer);
+	if (ShadowMapRenderShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMapRenderShaderFoliageImplementation(renderer);
+	if (ShadowMapRenderShaderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMapRenderShaderTreeImplementation(renderer);
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
-ShadowMappingShaderRender::~ShadowMappingShaderRender()
+ShadowMapRenderShader::~ShadowMapRenderShader()
 {
 	for (auto shaderIt: shader) {
 		delete shaderIt.second;
 	}
 }
 
-bool ShadowMappingShaderRender::isInitialized()
+bool ShadowMapRenderShader::isInitialized()
 {
 	bool initialized = true;
 	for (auto shaderIt: shader) {
@@ -44,20 +44,20 @@ bool ShadowMappingShaderRender::isInitialized()
 	return initialized;
 }
 
-void ShadowMappingShaderRender::initialize()
+void ShadowMapRenderShader::initialize()
 {
 	for (auto shaderIt: shader) {
 		shaderIt.second->initialize();
 	}
 }
 
-void ShadowMappingShaderRender::useProgram(Engine* engine)
+void ShadowMapRenderShader::useProgram(Engine* engine)
 {
 	running = true;
 	this->engine = engine;
 }
 
-void ShadowMappingShaderRender::unUseProgram()
+void ShadowMapRenderShader::unUseProgram()
 {
 	running = false;
 	auto i = 0;
@@ -71,40 +71,40 @@ void ShadowMappingShaderRender::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMappingShaderRender::updateMatrices(void* context)
+void ShadowMapRenderShader::updateMatrices(void* context)
 {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
 	shadowMappingShaderRenderContext.implementation->updateMatrices(context);
 }
 
-void ShadowMappingShaderRender::updateTextureMatrix(void* context) {
+void ShadowMapRenderShader::updateTextureMatrix(void* context) {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
 	shadowMappingShaderRenderContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-void ShadowMappingShaderRender::updateMaterial(void* context)
+void ShadowMapRenderShader::updateMaterial(void* context)
 {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
 	shadowMappingShaderRenderContext.implementation->updateMaterial(renderer, context);
 }
 
-void ShadowMappingShaderRender::updateLight(void* context, int32_t lightId) {
+void ShadowMapRenderShader::updateLight(void* context, int32_t lightId) {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
 	shadowMappingShaderRenderContext.implementation->updateLight(renderer, context, lightId);
 }
 
-void ShadowMappingShaderRender::bindTexture(void* context, int32_t textureId)
+void ShadowMapRenderShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
 	shadowMappingShaderRenderContext.implementation->bindTexture(renderer, context, textureId);
 }
 
-void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapRenderShader::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
 {
 	this->depthBiasMVPMatrix = depthBiasMVPMatrix;
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
@@ -112,11 +112,11 @@ void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(void* context, cons
 	shadowMappingShaderRenderContext.implementation->setProgramDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
 }
 
-void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {
+void ShadowMapRenderShader::setRenderLightId(int32_t lightId) {
 	this->lightId = lightId;
 }
 
-void ShadowMappingShaderRender::setShader(void* context, const string& id) {
+void ShadowMapRenderShader::setShader(void* context, const string& id) {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderRenderContext.implementation;
 

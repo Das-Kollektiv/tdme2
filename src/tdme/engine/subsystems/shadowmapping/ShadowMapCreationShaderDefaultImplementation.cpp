@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.h>
 
 #include <string>
 
@@ -8,27 +8,27 @@
 
 using std::to_string;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderPreDefaultImplementation::isSupported(Renderer* renderer) {
+bool ShadowMapCreationShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
+ShadowMapCreationShaderDefaultImplementation::ShadowMapCreationShaderDefaultImplementation(Renderer* renderer): ShadowMapCreationShaderBaseImplementation(renderer)
 {
 }
 
-ShadowMappingShaderPreDefaultImplementation::~ShadowMappingShaderPreDefaultImplementation() {
+ShadowMapCreationShaderDefaultImplementation::~ShadowMapCreationShaderDefaultImplementation() {
 }
 
-const string ShadowMappingShaderPreDefaultImplementation::getId() {
+const string ShadowMapCreationShaderDefaultImplementation::getId() {
 	return "default";
 }
 
-void ShadowMappingShaderPreDefaultImplementation::initialize()
+void ShadowMapCreationShaderDefaultImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -37,13 +37,13 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_vertexshader.vert"
+		"creation_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_fragmentshader.frag"
+		"creation_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -54,6 +54,6 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
-	ShadowMappingShaderPreBaseImplementation::initialize();
+	ShadowMapCreationShaderBaseImplementation::initialize();
 }
 

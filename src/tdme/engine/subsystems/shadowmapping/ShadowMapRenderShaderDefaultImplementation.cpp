@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.h>
 
 #include <string>
 
@@ -8,28 +8,28 @@
 
 using std::to_string;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderRenderDefaultImplementation::isSupported(Renderer* renderer) {
+bool ShadowMapRenderShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderRenderDefaultImplementation::ShadowMappingShaderRenderDefaultImplementation(Renderer* renderer): ShadowMappingShaderRenderBaseImplementation(renderer)
+ShadowMapRenderShaderDefaultImplementation::ShadowMapRenderShaderDefaultImplementation(Renderer* renderer): ShadowMapRenderShaderBaseImplementation(renderer)
 {
 }
 
-ShadowMappingShaderRenderDefaultImplementation::~ShadowMappingShaderRenderDefaultImplementation()
+ShadowMapRenderShaderDefaultImplementation::~ShadowMapRenderShaderDefaultImplementation()
 {
 }
 
-const string ShadowMappingShaderRenderDefaultImplementation::getId() {
+const string ShadowMapRenderShaderDefaultImplementation::getId() {
 	return "default";
 }
 
-void ShadowMappingShaderRenderDefaultImplementation::initialize()
+void ShadowMapRenderShaderDefaultImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -53,5 +53,5 @@ void ShadowMappingShaderRenderDefaultImplementation::initialize()
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 
-	ShadowMappingShaderRenderBaseImplementation::initialize();
+	ShadowMapRenderShaderBaseImplementation::initialize();
 }

@@ -4,19 +4,19 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderBaseImplementation.h>
 
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
 
 /**
- * Shadow mapping default shader class to create shadow map
+ * Shadow mapping tree shader class to create shadow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation: public ShadowMappingShaderPreBaseImplementation
+class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation: public ShadowMapCreationShaderBaseImplementation
 {
 public:
 	/**
@@ -29,12 +29,12 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderPreDefaultImplementation(Renderer* renderer);
+	ShadowMapCreationShaderTreeImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~ShadowMappingShaderPreDefaultImplementation();
+	~ShadowMapCreationShaderTreeImplementation();
 
 	// overridden methods
 	virtual const string getId() override;

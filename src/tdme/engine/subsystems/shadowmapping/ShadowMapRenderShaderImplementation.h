@@ -15,12 +15,12 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation
+struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation
 {
 	/**
 	 * Destructor
 	 */
-	virtual ~ShadowMappingShaderRenderImplementation() {}
+	virtual ~ShadowMapRenderShaderImplementation() {}
 
 	/**
 	 * @return shader id

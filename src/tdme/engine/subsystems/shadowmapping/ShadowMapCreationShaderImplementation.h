@@ -19,12 +19,12 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation
+struct tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation
 {
 	/**
 	 * Destructor
 	 */
-	virtual ~ShadowMappingShaderPreImplementation() {}
+	virtual ~ShadowMapCreationShaderImplementation() {}
 
 	/**
 	 * @return shader id

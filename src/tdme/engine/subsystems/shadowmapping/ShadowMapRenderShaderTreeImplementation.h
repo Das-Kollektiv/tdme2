@@ -5,20 +5,20 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderBaseImplementation.h>
 
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderTreeImplementation;
 
 /**
- * Shadow mapping foliage shader to render shadow map
+ * Shadow mapping tree shader to render shadow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation: public ShadowMappingShaderRenderBaseImplementation
+class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderTreeImplementation: public ShadowMapRenderShaderBaseImplementation
 {
 public:
 	/**
@@ -31,12 +31,12 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderRenderFoliageImplementation(Renderer* renderer);
+	ShadowMapRenderShaderTreeImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~ShadowMappingShaderRenderFoliageImplementation();
+	virtual ~ShadowMapRenderShaderTreeImplementation();
 
 	// overridden methods
 	virtual const string getId() override;

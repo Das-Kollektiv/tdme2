@@ -1,40 +1,40 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreTreeImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
 using tdme::engine::Engine;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreTreeImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 
-ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer): renderer(renderer)
+ShadowMapCreationShader::ShadowMapCreationShader(Renderer* renderer): renderer(renderer)
 {
-	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
-	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
-	if (ShadowMappingShaderPreTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMappingShaderPreTreeImplementation(renderer);
+	if (ShadowMapCreationShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMapCreationShaderDefaultImplementation(renderer);
+	if (ShadowMapCreationShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMapCreationShaderFoliageImplementation(renderer);
+	if (ShadowMapCreationShaderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMapCreationShaderTreeImplementation(renderer);
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
-ShadowMappingShaderPre::~ShadowMappingShaderPre() {
+ShadowMapCreationShader::~ShadowMapCreationShader() {
 	for (auto shaderIt: shader) {
 		delete shaderIt.second;
 	}
 }
 
-bool ShadowMappingShaderPre::isInitialized()
+bool ShadowMapCreationShader::isInitialized()
 {
 	bool initialized = true;
 	for (auto shaderIt: shader) {
@@ -43,20 +43,20 @@ bool ShadowMappingShaderPre::isInitialized()
 	return initialized;
 }
 
-void ShadowMappingShaderPre::initialize()
+void ShadowMapCreationShader::initialize()
 {
 	for (auto shaderIt: shader) {
 		shaderIt.second->initialize();
 	}
 }
 
-void ShadowMappingShaderPre::useProgram(Engine* engine)
+void ShadowMapCreationShader::useProgram(Engine* engine)
 {
 	running = true;
 	this->engine = engine;
 }
 
-void ShadowMappingShaderPre::unUseProgram()
+void ShadowMapCreationShader::unUseProgram()
 {
 	running = false;
 	auto i = 0;
@@ -70,34 +70,34 @@ void ShadowMappingShaderPre::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMappingShaderPre::updateMatrices(void* context)
+void ShadowMapCreationShader::updateMatrices(void* context)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->updateMatrices(context);
 }
 
-void ShadowMappingShaderPre::updateTextureMatrix(void* context) {
+void ShadowMapCreationShader::updateTextureMatrix(void* context) {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-void ShadowMappingShaderPre::updateMaterial(void* context)
+void ShadowMapCreationShader::updateMaterial(void* context)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
-void ShadowMappingShaderPre::bindTexture(void* context, int32_t textureId)
+void ShadowMapCreationShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->bindTexture(renderer, context, textureId);
 }
 
-void ShadowMappingShaderPre::setShader(void* context, const string& id) {
+void ShadowMapCreationShader::setShader(void* context, const string& id) {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderPreContext.implementation;
 

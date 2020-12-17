@@ -83,8 +83,8 @@ using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::gui::GUI;
@@ -166,8 +166,8 @@ private:
 	static AnimationProcessingTarget animationProcessingTarget;
 
 	static EZRShader* ezrShader;
-	static ShadowMappingShaderPre* shadowMappingShaderPre;
-	static ShadowMappingShaderRender* shadowMappingShaderRender;
+	static ShadowMapCreationShader* shadowMappingShaderPre;
+	static ShadowMapRenderShader* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
 	static LinesShader* linesShader;
@@ -316,14 +316,14 @@ private:
 	/**
 	 * @return shadow mapping shader
 	 */
-	inline static ShadowMappingShaderPre* getShadowMappingShaderPre() {
+	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
 		return shadowMappingShaderPre;
 	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
-	inline static ShadowMappingShaderRender* getShadowMappingShaderRender() {
+	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
 		return shadowMappingShaderRender;
 	}
 

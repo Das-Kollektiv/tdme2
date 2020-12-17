@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.h>
 
 #include <string>
 
@@ -8,28 +8,28 @@
 
 using std::to_string;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderRenderFoliageImplementation::isSupported(Renderer* renderer) {
+bool ShadowMapRenderShaderFoliageImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderRenderFoliageImplementation::ShadowMappingShaderRenderFoliageImplementation(Renderer* renderer): ShadowMappingShaderRenderBaseImplementation(renderer)
+ShadowMapRenderShaderFoliageImplementation::ShadowMapRenderShaderFoliageImplementation(Renderer* renderer): ShadowMapRenderShaderBaseImplementation(renderer)
 {
 }
 
-ShadowMappingShaderRenderFoliageImplementation::~ShadowMappingShaderRenderFoliageImplementation()
+ShadowMapRenderShaderFoliageImplementation::~ShadowMapRenderShaderFoliageImplementation()
 {
 }
 
-const string ShadowMappingShaderRenderFoliageImplementation::getId() {
+const string ShadowMapRenderShaderFoliageImplementation::getId() {
 	return "foliage";
 }
 
-void ShadowMappingShaderRenderFoliageImplementation::initialize()
+void ShadowMapRenderShaderFoliageImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -68,5 +68,5 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 
-	ShadowMappingShaderRenderBaseImplementation::initialize();
+	ShadowMapRenderShaderBaseImplementation::initialize();
 }

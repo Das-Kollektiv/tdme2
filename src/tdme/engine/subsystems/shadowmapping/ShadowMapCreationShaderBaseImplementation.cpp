@@ -1,4 +1,4 @@
-	#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
+	#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderBaseImplementation.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -12,7 +12,7 @@
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -21,21 +21,21 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 
-ShadowMappingShaderPreBaseImplementation::ShadowMappingShaderPreBaseImplementation(Renderer* renderer)
+ShadowMapCreationShaderBaseImplementation::ShadowMapCreationShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
 }
 
-ShadowMappingShaderPreBaseImplementation::~ShadowMappingShaderPreBaseImplementation() {
+ShadowMapCreationShaderBaseImplementation::~ShadowMapCreationShaderBaseImplementation() {
 }
 
-bool ShadowMappingShaderPreBaseImplementation::isInitialized()
+bool ShadowMapCreationShaderBaseImplementation::isInitialized()
 {
 	return initialized;
 }
 
-void ShadowMappingShaderPreBaseImplementation::initialize()
+void ShadowMapCreationShaderBaseImplementation::initialize()
 {
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -81,7 +81,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 	initialized = true;
 }
 
-void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+void ShadowMapCreationShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
 	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
@@ -89,11 +89,11 @@ void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* 
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
-void ShadowMappingShaderPreBaseImplementation::unUseProgram(void* context)
+void ShadowMapCreationShaderBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateMatrices(void* context)
+void ShadowMapCreationShaderBaseImplementation::updateMatrices(void* context)
 {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
@@ -110,11 +110,11 @@ void ShadowMappingShaderPreBaseImplementation::updateMatrices(void* context)
 	}
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
+void ShadowMapCreationShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void ShadowMapCreationShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
 	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
@@ -123,7 +123,7 @@ void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer
 	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
-void ShadowMappingShaderPreBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void ShadowMapCreationShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:

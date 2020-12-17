@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderBaseImplementation.h>
 
 #include <string>
 
@@ -19,7 +19,7 @@ using std::to_string;
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -31,22 +31,22 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(Renderer* renderer)
+ShadowMapRenderShaderBaseImplementation::ShadowMapRenderShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
 }
 
-ShadowMappingShaderRenderBaseImplementation::~ShadowMappingShaderRenderBaseImplementation()
+ShadowMapRenderShaderBaseImplementation::~ShadowMapRenderShaderBaseImplementation()
 {
 }
 
-bool ShadowMappingShaderRenderBaseImplementation::isInitialized()
+bool ShadowMapRenderShaderBaseImplementation::isInitialized()
 {
 	return initialized;
 }
 
-void ShadowMappingShaderRenderBaseImplementation::initialize()
+void ShadowMapRenderShaderBaseImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -125,7 +125,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	initialized = true;
 }
 
-void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, void* context)
+void ShadowMapRenderShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, renderProgramId);
 	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
@@ -134,11 +134,11 @@ void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, voi
 	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(context, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::unUseProgram(void* context)
+void ShadowMapRenderShaderBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateMatrices(void* context) {
+void ShadowMapRenderShaderBaseImplementation::updateMatrices(void* context) {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
@@ -163,11 +163,11 @@ void ShadowMappingShaderRenderBaseImplementation::updateMatrices(void* context) 
 	}
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
+void ShadowMapRenderShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void ShadowMapRenderShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
 	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
@@ -176,7 +176,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* rende
 	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId) {
+void ShadowMapRenderShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId) {
 	if (lightId != this->lightId) {
 		return;
 	}
@@ -199,7 +199,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
 	renderer->setProgramUniformFloat(context, renderUniformTexturePixelHeight, 1.0f / static_cast< float >(Engine::getShadowMapHeight()));
 }
 
-void ShadowMappingShaderRenderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void ShadowMapRenderShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
@@ -208,11 +208,11 @@ void ShadowMappingShaderRenderBaseImplementation::bindTexture(Renderer* renderer
 	}
 }
 
-void ShadowMappingShaderRenderBaseImplementation::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapRenderShaderBaseImplementation::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
 {
 	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::setRenderLightId(int32_t lightId) {
+void ShadowMapRenderShaderBaseImplementation::setRenderLightId(int32_t lightId) {
 	this->lightId = lightId;
 }

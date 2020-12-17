@@ -386,16 +386,16 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreTreeImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp \
-	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderTreeImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderBaseImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderBaseImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp \
 	src/tdme/gui/GUI.cpp \
