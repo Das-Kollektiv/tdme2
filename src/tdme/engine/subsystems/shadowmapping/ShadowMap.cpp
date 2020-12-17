@@ -107,7 +107,7 @@ Camera* ShadowMap::getCamera()
 	return lightCamera;
 }
 
-void ShadowMap::render(Light* light)
+void ShadowMap::createShadowMap(Light* light)
 {
 	// use default context
 	// TODO: object->preRender only uses default context, lets see how to make this multithreaded

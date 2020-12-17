@@ -64,7 +64,7 @@ void ShadowMapping::reshape(int32_t width, int32_t height)
 
 void ShadowMapping::createShadowMaps()
 {
-	runState = ShadowMapping_RunState::PRE;
+	runState = ShadowMapping_RunState::CREATE;
 	// disable color rendering, we only want to write to the Z-Buffer
 	renderer->setColorMask(false, false, false, false);
 	// render backfaces only, avoid self-shadowing
@@ -81,7 +81,7 @@ void ShadowMapping::createShadowMaps()
 			}
 			// render
 			Engine::getShadowMapCreationShader()->useProgram(engine);
-			shadowMaps[i]->render(light);
+			shadowMaps[i]->createShadowMap(light);
 			Engine::getShadowMapCreationShader()->unUseProgram();
 		} else {
 			if (shadowMaps[i] != nullptr) {
@@ -232,7 +232,7 @@ void ShadowMapping::updateTextureMatrix(void* context)
 	// upload
 	{
 		auto v = runState;
-		if (v == ShadowMapping_RunState::PRE) {
+		if (v == ShadowMapping_RunState::CREATE) {
 			{
 				Engine::getShadowMapCreationShader()->updateTextureMatrix(context);
 				goto end_switch0;
@@ -258,7 +258,7 @@ void ShadowMapping::updateMatrices(void* context)
 	if (runState == ShadowMapping_RunState::NONE) return;
 	// delegate to shader
 	{
-		if (runState == ShadowMapping_RunState::PRE) {
+		if (runState == ShadowMapping_RunState::CREATE) {
 			Engine::getShadowMapCreationShader()->updateMatrices(context);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {
@@ -274,7 +274,7 @@ void ShadowMapping::updateMaterial(void* context) {
 		return;
 	{
 		auto v = runState;
-		if (v == ShadowMapping_RunState::PRE) {
+		if (v == ShadowMapping_RunState::CREATE) {
 			{
 				Engine::getShadowMapCreationShader()->updateMaterial(context);
 				goto end_switch0;;
@@ -301,7 +301,7 @@ void ShadowMapping::bindTexture(void* context, int32_t textureId) {
 		return;
 	{
 		auto v = runState;
-		if (v == ShadowMapping_RunState::PRE) {
+		if (v == ShadowMapping_RunState::CREATE) {
 			{
 				Engine::getShadowMapCreationShader()->bindTexture(context, textureId);
 				goto end_switch0;;
@@ -341,7 +341,7 @@ void ShadowMapping::setShader(void* context, const string& id) {
 		if (runState == ShadowMapping_RunState::NONE) {
 			// no op
 		} else
-		if (runState == ShadowMapping_RunState::PRE) {
+		if (runState == ShadowMapping_RunState::CREATE) {
 			Engine::getShadowMapCreationShader()->setShader(context, id);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {

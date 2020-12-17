@@ -31,7 +31,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 	friend class ShadowMap;
 
 private:
-	enum ShadowMapping_RunState {NONE, PRE, RENDER};
+	enum ShadowMapping_RunState {NONE, CREATE, RENDER};
 
 	Renderer* renderer { nullptr };
 	EntityRenderer* object3DRenderer { nullptr };
@@ -73,15 +73,15 @@ public:
 	void reshape(int32_t width, int32_t height);
 
 	/**
-	 * Create shadow maps
-	 */
-	void createShadowMaps();
-
-	/**
 	 * @return shadow map
 	 * @param idx index
 	 */
 	ShadowMap* getShadowMap(int idx);
+
+	/**
+	 * Create shadow maps
+	 */
+	void createShadowMaps();
 
 	/**
 	 * Render shadow maps

@@ -69,7 +69,7 @@ private:
 	 * Renders given objects to shadow map
 	 * @param light light
 	 */
-	void render(Light* light);
+	void createShadowMap(Light* light);
 
 	/**
 	 * Computes shadow texture matrix and stores it
