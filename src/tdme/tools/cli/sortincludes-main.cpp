@@ -46,7 +46,8 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
 	for (auto fileName: files) {
-		if (StringTools::endsWith(fileName, ".h") == true) {
+		if (StringTools::endsWith(fileName, ".h") == true ||
+			StringTools::endsWith(fileName, ".cpp") == true) {
 			totalFiles.push_back(folder + "/" + fileName);
 		} else {
 			scanDir(folder + "/" + fileName, totalFiles);
