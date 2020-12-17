@@ -66,7 +66,7 @@ void processFile(const string& fileName) {
 		auto lineIdx = 0;
 		for (auto line: fileContent) {
 			newFileContent.push_back(line);
-			if (StringTools::startsWith(line, "#include") == true) {
+			if (StringTools::startsWith(line, "#include ") == true) {
 				if (startLineIdx == -1) {
 					startLineIdx = lineIdx;
 					endLineIdx = lineIdx;
@@ -79,8 +79,27 @@ void processFile(const string& fileName) {
 			}
 		}
 	}
-	for (auto line: fileContent) Console::println(line);
-	for (auto line: newFileContent) Console::println(line);
+	fileContent = newFileContent;
+	newFileContent.clear();
+	{
+		auto startLineIdx = -1;
+		auto endLineIdx = -1;
+		auto lineIdx = 0;
+		for (auto line: fileContent) {
+			newFileContent.push_back(line);
+			if (StringTools::startsWith(line, "using ") == true) {
+				if (startLineIdx == -1) {
+					startLineIdx = lineIdx;
+					endLineIdx = lineIdx;
+				} else {
+					endLineIdx = lineIdx;
+				}
+			} else
+			if (startLineIdx != -1 && endLineIdx != -1) {
+				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx);
+			}
+		}
+	}
 	FileSystem::getInstance()->setContentFromStringArray(".", fileName, newFileContent);
 }
 
