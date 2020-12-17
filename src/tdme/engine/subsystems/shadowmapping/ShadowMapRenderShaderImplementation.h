@@ -6,8 +6,8 @@
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

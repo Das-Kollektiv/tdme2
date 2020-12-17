@@ -1,12 +1,17 @@
 #include <tdme/tools/sceneeditor/controller/SceneEditorScreenController.h>
 
 #include <array>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -16,39 +21,39 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/sceneeditor/views/SceneEditorView.h>
+#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/Scene.h>
-#include <tdme/engine/scene/SceneLight.h>
-#include <tdme/engine/scene/SceneEntity.h>
-#include <tdme/engine/scene/ScenePropertyPresets.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utilities/Float.h>
-#include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::tools::sceneeditor::controller::SceneEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
-using tdme::gui::GUIParser;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::ScenePropertyPresets;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -56,28 +61,23 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneLight;
-using tdme::engine::scene::SceneEntity;
-using tdme::engine::scene::ScenePropertyPresets;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
-using tdme::utilities::Exception;
-using tdme::utilities::ExceptionBase;
-using tdme::utilities::Console;
 
 MutableString SceneEditorScreenController::CHECKBOX_CHECKED = MutableString("1");
 MutableString SceneEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");

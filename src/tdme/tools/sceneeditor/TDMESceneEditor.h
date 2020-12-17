@@ -4,28 +4,28 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/tools/sceneeditor/fwd-tdme.h>
-#include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
-#include <tdme/tools/sceneeditor/views/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
+#include <tdme/tools/sceneeditor/fwd-tdme.h>
+#include <tdme/tools/sceneeditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::string;
 
 using tdme::application::Application;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Engine;
 using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::sceneeditor::views::EmptyView;
 using tdme::tools::sceneeditor::views::EnvironmentMappingView;
-using tdme::tools::sceneeditor::views::SceneEditorView;
 using tdme::tools::sceneeditor::views::ModelEditorView;
 using tdme::tools::sceneeditor::views::ParticleSystemView;
+using tdme::tools::sceneeditor::views::SceneEditorView;
 using tdme::tools::sceneeditor::views::TriggerView;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneLibrary;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 

@@ -2,14 +2,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderImplementation.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
-using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

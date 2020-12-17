@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -11,16 +10,17 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/sceneeditor/views/EnvironmentMappingView.h>
-#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
+#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -31,8 +31,6 @@
 using std::string;
 using std::to_string;
 
-using tdme::tools::sceneeditor::controller::EnvironmentMappingScreenController;
-using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -40,16 +38,18 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
+using tdme::tools::sceneeditor::controller::EnvironmentMappingScreenController;
 using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::sceneeditor::views::EnvironmentMappingView;
-using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
+using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::sceneeditor::TDMESceneEditor;
+using tdme::tools::shared::views::PrototypePhysicsView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;

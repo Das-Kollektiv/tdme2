@@ -8,8 +8,8 @@
 
 using std::to_string;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 

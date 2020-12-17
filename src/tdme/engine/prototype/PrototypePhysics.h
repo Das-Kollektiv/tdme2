@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
 
-using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
+using tdme::math::Vector3;
 
 /**
  * Prototype physics body definitions

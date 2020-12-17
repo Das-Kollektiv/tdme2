@@ -2,17 +2,17 @@
 
 #include <string>
 
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/LODObject3D.h>
 
 using tdme::engine::prototype::PrototypeLODLevel;
 
 using std::string;
 
-using tdme::engine::LODObject3D;
-using tdme::engine::model::Model;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Model;
+using tdme::engine::LODObject3D;
 
 PrototypeLODLevel::PrototypeLODLevel(
 	LODObject3D::LODLevelType type,

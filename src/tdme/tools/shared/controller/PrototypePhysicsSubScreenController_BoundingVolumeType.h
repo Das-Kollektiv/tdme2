@@ -7,8 +7,8 @@
 
 using std::string;
 
-using tdme::utilities::Enum;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_BoundingVolumeType;
+using tdme::utilities::Enum;
 
 /**
  * Prototype physics sub screen controller bounding volume type enum

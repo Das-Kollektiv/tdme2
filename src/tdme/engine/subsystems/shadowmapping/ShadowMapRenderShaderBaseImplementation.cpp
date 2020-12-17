@@ -2,14 +2,14 @@
 
 #include <string>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -17,14 +17,14 @@
 
 using std::to_string;
 
-using tdme::engine::Engine;
-using tdme::engine::Timing;
-using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplementation;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

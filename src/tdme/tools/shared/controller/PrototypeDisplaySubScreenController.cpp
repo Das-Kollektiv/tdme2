@@ -7,21 +7,21 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/shared/views/PrototypeDisplayView.h>
 #include <tdme/tools/shared/views/PrototypePhysicsView.h>
-#include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 
-using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
 using tdme::tools::shared::views::PrototypeDisplayView;
 using tdme::tools::shared::views::PrototypePhysicsView;
-using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
 
 MutableString PrototypeDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
 MutableString PrototypeDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");

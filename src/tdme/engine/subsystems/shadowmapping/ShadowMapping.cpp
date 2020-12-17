@@ -3,32 +3,32 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
+using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
+using tdme::engine::Engine;
+using tdme::engine::Light;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;

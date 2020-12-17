@@ -4,36 +4,36 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
-using std::to_string;
 using std::string;
+using std::to_string;
 
 using tdme::engine::scene::SceneLibrary;
 
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
-using tdme::math::Vector3;
-using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
+using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::StringTools;

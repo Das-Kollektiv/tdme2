@@ -7,10 +7,9 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
@@ -24,33 +23,34 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/ModelTools.h>
 
 using std::array;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
+using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::Capsule;
+using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+using tdme::utilities::ModelTools;
 
 constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_X;
 

@@ -5,32 +5,32 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
-#include <tdme/tools/shared/views/View.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/tools/shared/views/View.h>
 
 using std::string;
 
 using tdme::audio::Audio;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::ParticleSystemEntity;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::PrototypePhysicsView;
-using tdme::tools::shared::views::PrototypeDisplayView;
-using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::Gizmo;
-using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeDisplayView;
+using tdme::tools::shared::views::PrototypePhysicsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
+using tdme::tools::shared::views::View;
 
 /**
  * TDME particle system view

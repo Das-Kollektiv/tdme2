@@ -3,9 +3,11 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
+#include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTokenizer.h>
@@ -17,9 +19,11 @@ using std::to_string;
 using std::vector;
 
 using tdme::application::Application;
+using tdme::math::Math;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTokenizer;
@@ -55,6 +59,33 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
+static int string_compare(const string& lhs, const string& rhs) {
+	if (StringTools::startsWith(lhs, "#include <tdme/tdme.h>") == true) return true; else
+	if (StringTools::startsWith(rhs, "#include <tdme/tdme.h>") == true) return false;
+	auto charCount = Math::min((int32_t)lhs.size(), (int32_t)rhs.size());
+	for (auto i = 0; i < charCount; i++) {
+		if (lhs[i] == rhs[i]) {
+			// no op
+		} else {
+			auto charLHS = lhs[i];
+			auto charLCLHS = Character::toLowerCase(lhs[i]);
+			auto charLHSLowerCase = charLHS == charLCLHS;
+			auto charRHS = rhs[i];
+			auto charLCRHS = Character::toLowerCase(rhs[i]);
+			auto charRHSLowerCase = charRHS == charLCRHS;
+			if (charLHSLowerCase == true && charRHSLowerCase == false) {
+				return true;
+			} else
+			if (charLHSLowerCase == false && charRHSLowerCase == true) {
+				return false;
+			} else {
+				return lhs < rhs;
+			}
+		}
+	}
+	return lhs.size() < rhs.size();
+}
+
 void processFile(const string& fileName) {
 	Console::println("Processing file: " + fileName);
 	vector<string> fileContent;
@@ -66,8 +97,6 @@ void processFile(const string& fileName) {
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
 		for (auto line: fileContent) {
-			StringTools::replace(line, "\n", "");
-			StringTools::replace(line, "\r", "");
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "#include ") == true) {
 				if (startLineIdx == -1) {
@@ -78,7 +107,7 @@ void processFile(const string& fileName) {
 				}
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
-				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx);
+				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, string_compare);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
@@ -92,8 +121,6 @@ void processFile(const string& fileName) {
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
 		for (auto line: fileContent) {
-			StringTools::replace(line, "\n", "");
-			StringTools::replace(line, "\r", "");
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "using ") == true) {
 				if (startLineIdx == -1) {
@@ -104,7 +131,7 @@ void processFile(const string& fileName) {
 				}
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
-				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx);
+				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, string_compare);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
@@ -125,11 +152,11 @@ int main(int argc, char** argv)
 		Application::exit(1);
 	}
 
-	auto pathToHeaders = string(argv[1]);
+	auto pathToSource = string(argv[1]);
 
 	Console::println("Scanning files");
 	vector<string> files;
-	scanDir(pathToHeaders, files);
+	scanDir(pathToSource, files);
 
 	Console::println("Processing files");
 	for (auto fileName: files) {

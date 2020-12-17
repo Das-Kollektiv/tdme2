@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -12,22 +14,21 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/ScenePropertyPresets.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
-#include <tdme/tools/shared/views/PrototypeBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/tools/shared/views/PrototypeBaseView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::gui::GUIParser;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::ScenePropertyPresets;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -35,15 +36,14 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUIParser;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::ScenePropertyPresets;
-using tdme::engine::prototype::PrototypeProperty;
-using tdme::tools::shared::views::PrototypeBaseView;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::views::PopUps;
-using tdme::utilities::MutableString;
+using tdme::tools::shared::views::PrototypeBaseView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
 
 MutableString PrototypeBaseSubScreenController::TEXT_EMPTY = MutableString("");
 

@@ -4,8 +4,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/particlesystem/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
@@ -15,8 +15,8 @@ using std::string;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::SharedParticleSystemView;
+using tdme::tools::shared::views::View;
 
 /**
  * TDME Particle System

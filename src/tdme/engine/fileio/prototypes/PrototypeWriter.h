@@ -14,9 +14,9 @@
 using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::filesystem::FileSystemException;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Document;
 using rapidjson::Value;

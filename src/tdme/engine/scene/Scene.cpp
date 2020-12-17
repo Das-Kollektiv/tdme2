@@ -5,40 +5,40 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/math/Vector4.h>
-#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
-#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
 using std::map;
 using std::remove;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::scene::Scene;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::math::Vector3;
-using tdme::math::Vector4;
-using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
-using tdme::engine::scene::SceneEntity;
+using tdme::engine::Transformations;
+using tdme::math::Vector3;
+using tdme::math::Vector4;
 using tdme::utilities::Console;
 
 Scene::Scene()

@@ -3,8 +3,8 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::model::Color4;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::math::Vector3;
 
 PrototypeParticleSystem_SphereParticleEmitter::PrototypeParticleSystem_SphereParticleEmitter()

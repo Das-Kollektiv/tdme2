@@ -2,23 +2,23 @@
 
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ShaderModel.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/StringTools.h>
 
-using tdme::engine::prototype::Prototype;
 using tdme::engine::model::Model;
 using tdme::engine::model::ShaderModel;
-using tdme::math::Vector3;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
 constexpr int Prototype::ID_NONE;

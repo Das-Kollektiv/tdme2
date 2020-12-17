@@ -3,20 +3,20 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
-#include <tdme/engine/prototype/Prototype.h>
 
 using tdme::tools::shared::views::PrototypeDisplayView;
 
-using std::vector;
 using std::string;
+using std::vector;
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
-using tdme::engine::prototype::Prototype;
 
 PrototypeDisplayView::PrototypeDisplayView(PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController)
 {

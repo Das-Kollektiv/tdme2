@@ -5,21 +5,21 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 
 using std::string;
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
-using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 

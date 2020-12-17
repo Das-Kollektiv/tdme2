@@ -2,14 +2,14 @@
 
 #include <string>
 
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Enum.h>
 
 using std::string;
 
-using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::math::Vector3;
 using tdme::utilities::Enum;
 
 /**

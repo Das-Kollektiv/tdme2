@@ -4,14 +4,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::string;
 
-using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::engine::prototype::Prototype;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 
 /**
  * Model base view

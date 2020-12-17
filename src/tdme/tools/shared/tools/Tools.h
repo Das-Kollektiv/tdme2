@@ -9,23 +9,23 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/tools/fwd-tdme.h>
 
 using std::array;
 using std::string;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
+using tdme::engine::Light;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::engine::prototype::Prototype;
 
 /**
  * Thumbnail generator

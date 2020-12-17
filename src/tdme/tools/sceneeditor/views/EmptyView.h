@@ -2,22 +2,22 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
 
-using tdme::tools::shared::views::View;
-using tdme::gui::events::GUIInputEventHandler;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::sceneeditor::controller::EmptyScreenController;
-using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::View;
 
 /**
  * Empty View

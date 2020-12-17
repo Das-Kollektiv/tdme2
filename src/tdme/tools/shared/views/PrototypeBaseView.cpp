@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 
 using std::string;
 
-using tdme::tools::shared::views::PrototypeBaseView;
-using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::ScenePropertyPresets;
 using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::ScenePropertyPresets;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::views::PrototypeBaseView;
 
 PrototypeBaseView::PrototypeBaseView(PrototypeBaseSubScreenController* prototypeBaseSubScreenController)
 {

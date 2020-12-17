@@ -9,30 +9,33 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/tools/shared/controller/ScreenController.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
 
 using std::array;
 using std::map;
 using std::string;
 using std::vector;
 
-using tdme::tools::shared::controller::ScreenController;
-using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIChangeListener;
 using tdme::engine::model::Color4;
+using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLight;
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
@@ -42,10 +45,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::sceneeditor::views::SceneEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneEntity;
-using tdme::engine::scene::SceneLight;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::tools::shared::controller::ScreenController;
 using tdme::utilities::MutableString;
 
 /**

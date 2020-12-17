@@ -3,8 +3,8 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::model::Color4;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::math::Vector3;
 
 PrototypeParticleSystem_BoundingBoxParticleEmitter::PrototypeParticleSystem_BoundingBoxParticleEmitter()

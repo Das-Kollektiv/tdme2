@@ -9,9 +9,9 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

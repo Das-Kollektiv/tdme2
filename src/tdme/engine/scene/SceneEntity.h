@@ -3,15 +3,15 @@
 #include <string>
 
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
-#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 
 using std::string;
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::Transformations;
-using tdme::engine::prototype::Prototype;
 
 /**
  * Scene entity definition

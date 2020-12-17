@@ -1,22 +1,22 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::Engine;
-using tdme::engine::Timing;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
-using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderTreeImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 
 ShadowMapRenderShader::ShadowMapRenderShader(Renderer* renderer): renderer(renderer)

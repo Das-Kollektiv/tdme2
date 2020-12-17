@@ -2,20 +2,16 @@
 
 #include <string>
 
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -26,35 +22,34 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
-#include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/engine/LODObject3D.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utilities/Float.h>
-#include <tdme/utilities/StringTools.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <rapidjson/document.h>
 
 using std::string;
 
-using tdme::engine::LODObject3D;
-using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
-using tdme::math::Vector3;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemException;
-using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -65,14 +60,19 @@ using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
-using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::LODObject3D;
+using tdme::math::Vector3;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
-using tdme::utilities::Float;
-using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::ModelTools;
+using tdme::utilities::StringTools;
 
 using rapidjson::Document;
 using rapidjson::Value;

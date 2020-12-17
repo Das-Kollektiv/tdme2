@@ -5,18 +5,18 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
+using tdme::math::Vector3;
 
 /**
  * Scene prototype library definition

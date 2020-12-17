@@ -11,9 +11,9 @@
 
 using std::string;
 
-using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::ExceptionBase;

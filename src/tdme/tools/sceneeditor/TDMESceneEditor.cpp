@@ -5,20 +5,20 @@
 
 #include <tdme/utilities/Time.h>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/gui/GUI.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/sceneeditor/views/EmptyView.h>
 #include <tdme/tools/sceneeditor/views/EnvironmentMappingView.h>
-#include <tdme/tools/sceneeditor/views/SceneEditorView.h>
 #include <tdme/tools/sceneeditor/views/ModelEditorView.h>
 #include <tdme/tools/sceneeditor/views/ParticleSystemView.h>
+#include <tdme/tools/sceneeditor/views/SceneEditorView.h>
 #include <tdme/tools/sceneeditor/views/TriggerView.h>
-#include <tdme/engine/scene/SceneLibrary.h>
-#include <tdme/engine/scene/Scene.h>
-#include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
@@ -29,20 +29,20 @@ using std::string;
 using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::utilities::Time;
 
-using tdme::engine::Engine;
 using tdme::engine::model::Color4;
-using tdme::gui::GUI;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
-using tdme::tools::sceneeditor::views::EmptyView;
-using tdme::tools::sceneeditor::views::EnvironmentMappingView;
-using tdme::tools::sceneeditor::views::SceneEditorView;
-using tdme::tools::sceneeditor::views::ModelEditorView;
-using tdme::tools::sceneeditor::views::ParticleSystemView;
-using tdme::tools::sceneeditor::views::TriggerView;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::ScenePropertyPresets;
+using tdme::engine::Engine;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
+using tdme::tools::sceneeditor::views::EmptyView;
+using tdme::tools::sceneeditor::views::EnvironmentMappingView;
+using tdme::tools::sceneeditor::views::ModelEditorView;
+using tdme::tools::sceneeditor::views::ParticleSystemView;
+using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::views::TriggerView;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;

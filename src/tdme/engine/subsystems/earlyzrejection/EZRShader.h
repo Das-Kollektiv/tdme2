@@ -6,17 +6,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::vector;
 using std::map;
 using std::string;
+using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

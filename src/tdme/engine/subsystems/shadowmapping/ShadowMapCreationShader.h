@@ -14,9 +14,9 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

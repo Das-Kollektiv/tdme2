@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/Transformations.h>
 
 using std::string;
 
-using tdme::engine::scene::SceneEntity;
-using tdme::engine::Transformations;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::Transformations;
 
 SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype)
 {

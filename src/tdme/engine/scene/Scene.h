@@ -9,26 +9,26 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::set;
 using std::string;
 using std::vector;
 
-using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
-using tdme::math::Vector3;
+using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
-using tdme::engine::scene::SceneEntity;
+using tdme::math::Vector3;
 
 /**
  * Scene definition

@@ -9,8 +9,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::engine::prototype::PrototypeProperty;
 

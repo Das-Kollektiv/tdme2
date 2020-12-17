@@ -6,8 +6,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/tools/shared/controller/fwd-tdme.h>
 
 using std::string;
 using std::vector;

@@ -2,26 +2,26 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
-#include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
+#include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 
 using std::string;
 
-using tdme::tools::sceneeditor::views::ModelEditorView;
-using tdme::engine::Engine;
-using tdme::gui::GUI;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::sceneeditor::TDMESceneEditor;
-using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
+using tdme::engine::Engine;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
+using tdme::tools::sceneeditor::views::ModelEditorView;
+using tdme::tools::sceneeditor::TDMESceneEditor;
 
 ModelEditorView::ModelEditorView(PopUps* popUps)
 	: SharedModelEditorView(popUps)

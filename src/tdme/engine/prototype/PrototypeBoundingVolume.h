@@ -6,15 +6,15 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/math/fwd-tdme.h>
 
 using std::string;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
+using tdme::math::Vector3;
 
 /**
  * Prototype bounding volume definition

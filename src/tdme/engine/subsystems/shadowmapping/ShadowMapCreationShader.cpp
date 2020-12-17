@@ -1,21 +1,21 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
 
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
-using tdme::engine::Engine;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderFoliageImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 

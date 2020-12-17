@@ -2,12 +2,6 @@
 
 #include <tdme/math/Math.h>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/EntityHierarchy.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -16,17 +10,23 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Sphere.h>
-#include <tdme/gui/GUI.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Rotation.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -37,12 +37,6 @@ using tdme::tools::shared::views::PrototypePhysicsView;
 
 using tdme::math::Math;
 
-using tdme::engine::Engine;
-using tdme::engine::Entity;
-using tdme::engine::EntityHierarchy;
-using tdme::engine::Object3D;
-using tdme::engine::Rotation;
-using tdme::engine::Transformations;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -50,17 +44,23 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
-using tdme::gui::GUI;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::Engine;
+using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
+using tdme::engine::Object3D;
+using tdme::engine::Rotation;
+using tdme::engine::Transformations;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;

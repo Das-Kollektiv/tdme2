@@ -7,8 +7,8 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 #include <rapidjson/document.h>
 
@@ -17,8 +17,8 @@ using std::string;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;

@@ -4,24 +4,24 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/math/Matrix4x4.h>
-#include <tdme/engine/fileio/fwd-tdme.h>
-#include <tdme/engine/fileio/scenes/fwd-tdme.h>
-#include <tdme/engine/scene/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <rapidjson/document.h>
+#include <tdme/engine/fileio/fwd-tdme.h>
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/engine/fileio/scenes/fwd-tdme.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::model::Node;
-using tdme::math::Matrix4x4;
 using tdme::engine::fileio::ProgressCallback;
+using tdme::engine::model::Node;
 using tdme::engine::scene::Scene;
+using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;

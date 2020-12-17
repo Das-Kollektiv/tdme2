@@ -1,19 +1,19 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/application/Application.h>
-#include <tdme/utilities/ObjectDeleter.h>
-#include <tdme/tests/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/tests/fwd-tdme.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
 using tdme::utilities::ObjectDeleter;
 
 /**

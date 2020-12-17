@@ -6,17 +6,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
-using tdme::engine::prototype::Prototype;
 using tdme::tools::shared::views::PopUps;
 
 /**

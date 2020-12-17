@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -16,14 +16,14 @@ using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
-using tdme::tools::shared::views::PrototypeBaseView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeBaseView;
 using tdme::utilities::MutableString;
 
 /**

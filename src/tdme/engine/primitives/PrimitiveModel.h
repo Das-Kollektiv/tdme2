@@ -6,10 +6,10 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;

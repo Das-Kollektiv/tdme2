@@ -1,35 +1,35 @@
 #include <tdme/tools/shared/views/Gizmo.h>
 
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::tools::shared::views::Gizmo;
 
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Object3D;
-using tdme::engine::model::Node;
-using tdme::engine::model::Model;
-using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;

@@ -2,8 +2,8 @@
 
 #include <tdme/tools/sceneeditor/views/SceneEditorView.h>
 
-using tdme::tools::sceneeditor::views::SceneEditorView_EntityColor;
 using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::views::SceneEditorView_EntityColor;
 
 SceneEditorView_EntityColor::SceneEditorView_EntityColor(SceneEditorView* sceneEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB)
 {

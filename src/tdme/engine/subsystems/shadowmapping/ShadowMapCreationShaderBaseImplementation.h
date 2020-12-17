@@ -8,9 +8,9 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
 #include <tdme/math/fwd-tdme.h>
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

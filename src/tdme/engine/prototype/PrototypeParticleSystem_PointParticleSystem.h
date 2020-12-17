@@ -9,6 +9,7 @@
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -17,7 +18,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
-using tdme::engine::prototype::PrototypeParticleSystem;
 
 /**
  * Prototype point particle system definition

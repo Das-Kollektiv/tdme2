@@ -8,10 +8,10 @@
 
 using std::string;
 
-using tdme::math::Vector3;
-using tdme::utilities::Enum;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::math::Vector3;
 using tdme::tools::shared::views::Gizmo;
+using tdme::utilities::Enum;
 
 Prototype_Type::Prototype_Type(const string& name, int ordinal, int boundingVolumeCount, int32_t gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension):
 	Enum(name, ordinal), boundingVolumeCount(boundingVolumeCount), gizmoTypeMask(gizmoTypeMask), nonEditScaleDownMode(nonEditScaleDownMode), nonEditScaleDownModeDimension(nonEditScaleDownModeDimension)

@@ -9,16 +9,16 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/scene/Scene.h>
-#include <tdme/engine/scene/SceneLight.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -26,20 +26,20 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::scene::ScenePropertyPresets;
 using tdme::application::Application;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
+using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::scene::ScenePropertyPresets;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneLight;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::tools::shared::tools::Tools;
-using tdme::utilities::Exception;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
 

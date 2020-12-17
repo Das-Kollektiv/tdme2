@@ -2,24 +2,24 @@
 
 #include <string>
 
-#include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/PrototypeSoundsView.h>
-#include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
+#include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -32,23 +32,23 @@ using std::to_string;
 
 using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 
-using tdme::engine::model::Model;
 using tdme::engine::model::AnimationSetup;
-using tdme::gui::GUIParser;
+using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUIParser;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeAudio;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

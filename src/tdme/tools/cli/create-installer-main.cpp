@@ -6,8 +6,8 @@
 #include <ext/zlib/zlib.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
+#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>

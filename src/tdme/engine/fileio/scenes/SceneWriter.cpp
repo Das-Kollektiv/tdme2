@@ -1,26 +1,26 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include <string>
 
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Rotation.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/SceneLibrary.h>
-#include <tdme/engine/scene/Scene.h>
-#include <tdme/engine/scene/SceneLight.h>
-#include <tdme/engine/scene/SceneEntity.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -29,28 +29,28 @@
 using std::ostringstream;
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneWriter;
-using tdme::engine::Rotation;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLibrary;
+using tdme::engine::scene::SceneLight;
+using tdme::engine::Rotation;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::engine::fileio::prototypes::PrototypeWriter;
-using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneLibrary;
-using tdme::engine::scene::SceneLight;
-using tdme::engine::scene::SceneEntity;
-using tdme::engine::prototype::PrototypeProperty;
 
 using rapidjson::Document;
 using rapidjson::StringBuffer;
-using rapidjson::Writer;
 using rapidjson::Value;
+using rapidjson::Writer;
 
 void SceneWriter::write(const string& pathName, const string& fileName, Scene& scene)
 {

@@ -3,18 +3,18 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
 
 using std::string;
 
-using tdme::tools::shared::views::SharedModelEditorView;
-using tdme::math::Vector3;
 using tdme::engine::prototype::Prototype;
+using tdme::math::Vector3;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::SharedModelEditorView;
 
 /**
  * Model editor view

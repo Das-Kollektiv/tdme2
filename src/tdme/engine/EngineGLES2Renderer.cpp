@@ -1,19 +1,19 @@
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/EngineGLES2Renderer.h>
+#include <tdme/gui/renderer/GUIShader.h>
 
-using tdme::engine::EngineGLES2Renderer;
-using tdme::engine::Engine;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::engine::Engine;
+using tdme::engine::EngineGLES2Renderer;
 using tdme::gui::renderer::GUIShader;
 
 EngineGLES2Renderer::EngineGLES2Renderer(Engine *engine) :

@@ -4,14 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 
 using std::string;
 
 using tdme::engine::model::Model;
-using tdme::math::Vector3;
+using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -20,7 +20,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
-using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::math::Vector3;
 
 /**
  * Prototype object particle system definition

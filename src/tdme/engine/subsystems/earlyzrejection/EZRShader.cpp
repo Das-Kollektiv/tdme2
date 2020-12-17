@@ -1,18 +1,18 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderImplementation.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderBaseImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 

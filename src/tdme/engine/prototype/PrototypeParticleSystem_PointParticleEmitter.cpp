@@ -3,8 +3,8 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::model::Color4;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::math::Vector3;
 
 PrototypeParticleSystem_PointParticleEmitter::PrototypeParticleSystem_PointParticleEmitter()

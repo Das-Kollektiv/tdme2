@@ -4,17 +4,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/scenes/fwd-tdme.h>
-#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::os::filesystem::FileSystemException;
 using tdme::engine::scene::Scene;
+using tdme::os::filesystem::FileSystemException;
 
 /**
  * Scene writer

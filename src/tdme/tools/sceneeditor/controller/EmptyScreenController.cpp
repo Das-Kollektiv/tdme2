@@ -2,40 +2,40 @@
 
 #include <string>
 
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/sceneeditor/views/EmptyView.h>
-#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/sceneeditor/TDMESceneEditor.h>
-#include <tdme/utilities/MutableString.h>
+#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
+#include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
-using tdme::tools::sceneeditor::controller::EmptyScreenController;
-using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
+using tdme::tools::sceneeditor::controller::EmptyScreenController;
 using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
 using tdme::tools::sceneeditor::views::EmptyView;
-using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
-using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::views::PopUps;
 using tdme::tools::sceneeditor::TDMESceneEditor;
-using tdme::utilities::MutableString;
+using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
 
 EmptyScreenController::EmptyScreenController(EmptyView* view)
 {
