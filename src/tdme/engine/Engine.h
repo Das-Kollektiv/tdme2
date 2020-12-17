@@ -165,7 +165,7 @@ private:
 
 	static AnimationProcessingTarget animationProcessingTarget;
 
-	static EZRShader* ezrShaderPre;
+	static EZRShader* ezrShader;
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;

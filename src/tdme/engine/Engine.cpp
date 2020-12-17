@@ -182,7 +182,7 @@ PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-EZRShader* Engine::ezrShaderPre = nullptr;
+EZRShader* Engine::ezrShader = nullptr;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
@@ -298,7 +298,7 @@ Engine::~Engine() {
 		delete postProcessingShader;
 		delete texture2DRenderShader;
 		delete guiShader;
-		delete ezrShaderPre;
+		delete ezrShader;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
@@ -733,8 +733,8 @@ void Engine::initialize()
 	}
 
 	// TODO: make this configurable
-	ezrShaderPre = new EZRShader(renderer);
-	ezrShaderPre->initialize();
+	ezrShader = new EZRShader(renderer);
+	ezrShader->initialize();
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
@@ -759,7 +759,7 @@ void Engine::initialize()
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
 
-	CHECK_INITIALIZED("EZRShader", ezrShaderPre);
+	CHECK_INITIALIZED("EZRShader", ezrShader);
 	CHECK_INITIALIZED("ShadowMappingShaderPre", shadowMappingShaderPre);
 	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
 	CHECK_INITIALIZED("LightingShader", lightingShader);
@@ -772,7 +772,7 @@ void Engine::initialize()
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
-	initialized &= ezrShaderPre == nullptr ? true : ezrShaderPre->isInitialized();
+	initialized &= ezrShader == nullptr ? true : ezrShader->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -2018,11 +2018,11 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 	}
 
 	// do depth buffer writing aka early z rejection
-	if (useEZR == true && ezrShaderPre != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
+	if (useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
 		// disable color rendering, we only want to write to the Z-Buffer
 		renderer->setColorMask(false, false, false, false);
 		// render
-		ezrShaderPre->useProgram(this);
+		ezrShader->useProgram(this);
 		// only draw opaque face entities of objects marked as EZR objects
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
@@ -2037,7 +2037,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 			}
 		}
 		// done
-		ezrShaderPre->unUseProgram();
+		ezrShader->unUseProgram();
 		// restore disable color rendering
 		renderer->setColorMask(true, true, true, true);
 	}
