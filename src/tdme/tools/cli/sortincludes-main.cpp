@@ -56,6 +56,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 }
 
 void processFile(const string& fileName) {
+	Console::println("Processing file: " + fileName);
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	vector<string> newFileContent;
@@ -81,6 +82,7 @@ void processFile(const string& fileName) {
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
+			lineIdx++;
 		}
 	}
 	fileContent = newFileContent;
@@ -106,6 +108,7 @@ void processFile(const string& fileName) {
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
+			lineIdx++;
 		}
 	}
 	FileSystem::getInstance()->setContentFromStringArray(".", fileName, newFileContent);
