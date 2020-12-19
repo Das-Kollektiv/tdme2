@@ -108,6 +108,10 @@ SRCS = \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
 	src/tdme/engine/fileio/models/WFObjWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
+	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
+	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
@@ -139,6 +143,31 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/prototype/Prototype.cpp \
+    src/tdme/engine/prototype/PrototypeAudio.cpp \
+	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.cpp \
+	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
+	src/tdme/engine/prototype/PrototypePhysics.cpp \
+	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
+	src/tdme/engine/prototype/PrototypeProperties.cpp \
+	src/tdme/engine/prototype/PrototypeProperty.cpp \
+	src/tdme/engine/prototype/Prototype_Type.cpp \
+	src/tdme/engine/scene/Scene.cpp \
+	src/tdme/engine/scene/SceneEntity.cpp \
+	src/tdme/engine/scene/SceneLibrary.cpp \
+	src/tdme/engine/scene/SceneLight.cpp \
+	src/tdme/engine/scene/ScenePropertyPresets.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
@@ -374,6 +403,7 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
+	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/sceneeditor/TDMESceneEditor.cpp \
 	src/tdme/tools/sceneeditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/sceneeditor/controller/EnvironmentMappingScreenController.cpp \
@@ -382,61 +412,31 @@ SRCS = \
 	src/tdme/tools/sceneeditor/controller/TriggerScreenController.cpp \
 	src/tdme/tools/sceneeditor/views/EmptyView.cpp \
 	src/tdme/tools/sceneeditor/views/EnvironmentMappingView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
 	src/tdme/tools/sceneeditor/views/ModelEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
 	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
-	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
-	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
-	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ProgressBarScreenController.cpp \
-	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
-	src/tdme/engine/fileio/scenes/SceneReader.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
-	src/tdme/engine/prototype/Prototype.cpp \
-    src/tdme/engine/prototype/PrototypeAudio.cpp \
-	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
-	src/tdme/engine/scene/SceneLibrary.cpp \
-	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.cpp \
-	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
-	src/tdme/engine/prototype/PrototypePhysics.cpp \
-	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
-	src/tdme/engine/prototype/Prototype_Type.cpp \
-	src/tdme/engine/scene/Scene.cpp \
-	src/tdme/engine/scene/SceneLight.cpp \
-	src/tdme/engine/scene/SceneEntity.cpp \
-	src/tdme/engine/scene/ScenePropertyPresets.cpp \
-	src/tdme/engine/prototype/PrototypeProperties.cpp \
-	src/tdme/engine/prototype/PrototypeProperty.cpp \
+	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
+	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
+	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
+	src/tdme/tools/shared/views/Gizmo.cpp \
+	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/PrototypeBaseView.cpp \
 	src/tdme/tools/shared/views/PrototypePhysicsView.cpp \
 	src/tdme/tools/shared/views/PrototypeDisplayView.cpp \
 	src/tdme/tools/shared/views/PrototypeSoundsView.cpp \
-	src/tdme/tools/shared/views/Gizmo.cpp \
-	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \

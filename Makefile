@@ -343,9 +343,9 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/engine/prototype/Prototype_Type.cpp \
 	src/tdme/engine/scene/Scene.cpp \
+	src/tdme/engine/scene/SceneEntity.cpp \
 	src/tdme/engine/scene/SceneLibrary.cpp \
 	src/tdme/engine/scene/SceneLight.cpp \
-	src/tdme/engine/scene/SceneEntity.cpp \
 	src/tdme/engine/scene/ScenePropertyPresets.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
@@ -592,10 +592,10 @@ SRCS = \
 	src/tdme/tools/sceneeditor/controller/TriggerScreenController.cpp \
 	src/tdme/tools/sceneeditor/views/EmptyView.cpp \
 	src/tdme/tools/sceneeditor/views/EnvironmentMappingView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
 	src/tdme/tools/sceneeditor/views/ModelEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
+	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
 	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
