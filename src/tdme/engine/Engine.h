@@ -390,7 +390,7 @@ private:
 
 	/**
 	 * Determine entity type
-	 * @param entities given entities to investigate
+	 * @param entity entity to investigate
 	 * @param decomposedEntities decomposed entities
 	 */
 	void determineEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
