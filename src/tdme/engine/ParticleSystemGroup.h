@@ -85,6 +85,11 @@ public:
 	 */
 	~ParticleSystemGroup();
 
+	// overridden method
+	inline EntityType getEntityType() {
+		return ENTITY_PARTICLESYSTEMGROUP;
+	}
+
 	/**
 	 * @return particle systems
 	 */
