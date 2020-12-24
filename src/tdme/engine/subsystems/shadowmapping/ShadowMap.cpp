@@ -124,9 +124,8 @@ void ShadowMap::createShadowMap(Light* light)
 					auto org = static_cast<Object3DRenderGroup*>(entity);
 					auto orgEntity = org->getEntity();
 					if (orgEntity != nullptr) {
-						auto orgEntityType = orgEntity->getEntityType();
 						if (orgEntity->isContributesShadows() == false) continue;
-						switch(orgEntityType) {
+						switch(orgEntity->getEntityType()) {
 							case Entity::ENTITY_OBJECT3D:
 								{
 									auto object = static_cast<Object3D*>(orgEntity);
