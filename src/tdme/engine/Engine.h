@@ -389,18 +389,18 @@ private:
 	Engine();
 
 	/**
-	 * Determine entity type
-	 * @param entity entity to investigate
+	 * Decompose entity type
+	 * @param entity entity to decompose
 	 * @param decomposedEntities decomposed entities
 	 */
-	void determineEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
+	void decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
 
 	/**
-	 * Determine entity types
-	 * @param entities given entities to investigate
+	 * Decompose entity types
+	 * @param entities given entities to decompose
 	 * @param decomposedEntities decomposed entities
 	 */
-	void determineEntityTypes(
+	void decomposeEntityTypes(
 		const vector<Entity*>& entities,
 		DecomposedEntities& decomposedEntities
 	);
