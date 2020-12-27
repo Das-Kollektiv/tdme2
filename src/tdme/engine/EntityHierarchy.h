@@ -135,7 +135,7 @@ public:
 	virtual ~EntityHierarchy();
 
 	// overridden method
-	inline EntityType getEntityType() {
+	inline EntityType getEntityType() override {
 		return ENTITY_ENTITYHIERARCHY;
 	}
 

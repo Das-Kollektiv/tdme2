@@ -145,7 +145,7 @@ public:
 	~Object3DRenderGroup();
 
 	// overridden methods
-	inline EntityType getEntityType() {
+	inline EntityType getEntityType() override {
 		return ENTITY_OBJECT3DRENDERGROUP;
 	}
 

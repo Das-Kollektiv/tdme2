@@ -86,7 +86,7 @@ public:
 	~ParticleSystemGroup();
 
 	// overridden method
-	inline EntityType getEntityType() {
+	inline EntityType getEntityType() override {
 		return ENTITY_PARTICLESYSTEMGROUP;
 	}
 

@@ -1013,6 +1013,8 @@ inline void Engine::determineEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.environmentMappingEntities.push_back(eme);
 			}
 			break;
+		default:
+			break;
 	}
 }
 

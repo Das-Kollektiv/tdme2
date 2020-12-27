@@ -144,6 +144,8 @@ void ShadowMap::createShadowMap(Light* light)
 									}
 								}
 								break;
+							default:
+								break;
 						}
 					}
 				}
@@ -203,6 +205,8 @@ void ShadowMap::createShadowMap(Light* light)
 						visibleObjects.push_back(object);
 					}
 				}
+				break;
+			default:
 				break;
 		}
 	}

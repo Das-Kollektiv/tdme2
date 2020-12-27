@@ -141,7 +141,7 @@ public:
 	~LODObject3D();
 
 	// overridden method
-	inline EntityType getEntityType() {
+	inline EntityType getEntityType() override {
 		return ENTITY_LODOBJECT3D;
 	}
 

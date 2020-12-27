@@ -164,7 +164,7 @@ public:
 	Object3D(const string& id, Model* model);
 
 	// overridden methods
-	inline EntityType getEntityType() {
+	inline EntityType getEntityType() override {
 		return ENTITY_OBJECT3D;
 	}
 
