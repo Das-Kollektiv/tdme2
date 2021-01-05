@@ -120,6 +120,7 @@ void TDMEParticleSystem::dispose()
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
 		view->dispose();
+		delete particleSystemView->getPrototype();
 		view = nullptr;
 	}
 	engine->dispose();

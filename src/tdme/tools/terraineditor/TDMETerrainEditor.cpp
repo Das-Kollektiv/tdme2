@@ -120,6 +120,7 @@ void TDMETerrainEditor::dispose()
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
 		view->dispose();
+		delete terrainEditorView->getPrototype();
 		view = nullptr;
 	}
 	engine->dispose();
