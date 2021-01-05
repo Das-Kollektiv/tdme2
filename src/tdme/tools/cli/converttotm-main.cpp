@@ -2,6 +2,7 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/Version.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -11,6 +12,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::application::Application;
+using tdme::engine::Version;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::os::filesystem::FileSystem;
@@ -21,8 +23,8 @@ using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("converttotm 1.9.9"));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("converttotm ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 2) {
 		Console::println("Usage: converttotm inputfile1 [inputfileN]");

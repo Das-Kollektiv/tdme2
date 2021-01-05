@@ -2,6 +2,7 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/Version.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -12,6 +13,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::application::Application;
+using tdme::engine::Version;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::AnimationSetup;
@@ -23,8 +25,8 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("copyanimationsetups 1.9.9"));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("copyanimationsetups ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc != 3) {
 		Console::println("Usage: copyanimationsetups sourcefile targetfile.tm");

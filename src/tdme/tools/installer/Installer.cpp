@@ -13,6 +13,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/Action.h>
@@ -62,6 +63,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::model::Color4;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::Action;
@@ -1321,8 +1323,8 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 
 void Installer::main(int argc, char** argv)
 {
-	Console::println(string("Installer 1.9.9"));
-	Console::println(string("Programmed 2019-2020 by Andreas Drewke, drewke.net."));
+	Console::println(string("Installer ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc > 1) {
 		Console::println("Usage: Installer");

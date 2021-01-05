@@ -10,6 +10,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
@@ -34,6 +35,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
@@ -53,9 +55,10 @@ string TDMESceneEditor::VERSION = "1.9.9";
 TDMESceneEditor* TDMESceneEditor::instance = nullptr;
 
 void TDMESceneEditor::main(int argc, char** argv) {
-	Console::println(string("TDMESceneEditor " + VERSION));
-	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("TDMESceneEditor ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
+
 	auto tdmeSceneEditor = new TDMESceneEditor();
 	tdmeSceneEditor->run(argc, argv, "TDMESceneEditor");
 }
