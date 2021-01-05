@@ -124,18 +124,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	prototype = new Prototype(
-		-1,
-		Prototype_Type::PARTICLESYSTEM,
-		"Untitled",
-		"",
-		"Untitled.tps",
-		"",
-		"",
-		nullptr,
-		Vector3()
-	);
-	prototype->setDefaultBoundingVolumes();
+	prototype = nullptr;
 }
 
 SharedParticleSystemView::~SharedParticleSystemView() {

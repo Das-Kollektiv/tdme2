@@ -1,4 +1,4 @@
-#include <tdme/tools/sceneeditor/views/EmptyView.h>
+#include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 
 #include <string>
 
@@ -13,11 +13,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/sceneeditor/controller/EmptyScreenController.h>
-#include <tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.h>
 #include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -37,55 +36,54 @@ using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
-using tdme::tools::sceneeditor::controller::EmptyScreenController;
-using tdme::tools::sceneeditor::controller::SceneEditorLibraryScreenController;
-using tdme::tools::sceneeditor::views::EmptyView;
-using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::TerrainEditorScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EmptyView::EmptyView(PopUps* popUps)
+SharedTerrainEditorView::SharedTerrainEditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
-	emptyScreenController = nullptr;
+	terrainEditorScreenController = nullptr;
 	initModelRequested = false;
 	prototype = nullptr;
 	engine = Engine::getInstance();
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 
-EmptyView::~EmptyView() {
-	delete emptyScreenController;
+SharedTerrainEditorView::~SharedTerrainEditorView() {
+	delete terrainEditorScreenController;
 	delete cameraRotationInputHandler;
 }
 
-PopUps* EmptyView::getPopUpsViews()
+PopUps* SharedTerrainEditorView::getPopUpsViews()
 {
 	return popUps;
 }
 
-Prototype* EmptyView::getPrototype()
+Prototype* SharedTerrainEditorView::getPrototype()
 {
 	return prototype;
 }
 
-void EmptyView::setPrototype(Prototype* prototype)
+void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
 	this->prototype = prototype;
 	initModelRequested = true;
 }
 
-void EmptyView::initModel()
+void SharedTerrainEditorView::initModel()
 {
 	if (prototype == nullptr)
 		return;
 
+	/*
 	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
@@ -98,15 +96,17 @@ void EmptyView::initModel()
 	if (modelBoundingVolume != nullptr) {
 		modelBoundingVolume->setEnabled(false);
 	}
+	*/
+
 	updateGUIElements();
 }
 
-void EmptyView::handleInputEvents()
+void SharedTerrainEditorView::handleInputEvents()
 {
 	cameraRotationInputHandler->handleInputEvents();
 }
 
-void EmptyView::display()
+void SharedTerrainEditorView::display()
 {
 	// commands
 	if (initModelRequested == true) {
@@ -116,13 +116,13 @@ void EmptyView::display()
 	}
 
 	// viewport
-	auto xScale = (float)engine->getWidth() / (float)emptyScreenController->getScreenNode()->getScreenWidth();
-	auto yScale = (float)engine->getHeight() / (float)emptyScreenController->getScreenNode()->getScreenHeight();
+	auto xScale = (float)engine->getWidth() / (float)terrainEditorScreenController->getScreenNode()->getScreenWidth();
+	auto yScale = (float)engine->getHeight() / (float)terrainEditorScreenController->getScreenNode()->getScreenHeight();
 	auto viewPortLeft = 0;
 	auto viewPortTop = 0;
 	auto viewPortWidth = 0;
 	auto viewPortHeight = 0;
-	emptyScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+	terrainEditorScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 	viewPortLeft = (int)((float)viewPortLeft * xScale);
 	viewPortTop = (int)((float)viewPortTop * yScale);
 	viewPortWidth = (int)((float)viewPortWidth * xScale);
@@ -134,51 +134,57 @@ void EmptyView::display()
 	engine->getGUI()->render();
 }
 
-void EmptyView::updateGUIElements()
+void SharedTerrainEditorView::updateGUIElements()
 {
 	if (prototype != nullptr) {
-		emptyScreenController->setScreenCaption("Empty - " + prototype->getName());
+		terrainEditorScreenController->setScreenCaption("Terrain Editor - " + prototype->getName());
 		auto preset = prototype->getProperty("preset");
-		emptyScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
-		emptyScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
+		terrainEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
+		terrainEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 	} else {
-		emptyScreenController->setScreenCaption("Empty - no empty loaded");
-		emptyScreenController->unsetPrototypeProperties();
-		emptyScreenController->unsetPrototypeData();
+		terrainEditorScreenController->setScreenCaption("Terrain Editor - no terrain loaded");
+		terrainEditorScreenController->unsetPrototypeProperties();
+		terrainEditorScreenController->unsetPrototypeData();
 	}
 }
 
-void EmptyView::initialize()
+void SharedTerrainEditorView::initialize()
 {
 	try {
-		emptyScreenController = new EmptyScreenController(this);
-		emptyScreenController->initialize();
-		engine->getGUI()->addScreen(emptyScreenController->getScreenNode()->getId(), emptyScreenController->getScreenNode());
-		emptyScreenController->getScreenNode()->setInputEventHandler(this);
+		terrainEditorScreenController = new TerrainEditorScreenController(this);
+		terrainEditorScreenController->initialize();
+		engine->getGUI()->addScreen(terrainEditorScreenController->getScreenNode()->getId(), terrainEditorScreenController->getScreenNode());
+		terrainEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
-		Console::print(string("EmptyView::initialize(): An error occurred: "));
+		Console::print(string("SharedTerrainEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	updateGUIElements();
 }
 
-void EmptyView::activate()
+void SharedTerrainEditorView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
-	engine->getGUI()->addRenderScreen(emptyScreenController->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(terrainEditorScreenController->getScreenNode()->getId());
+	onInitAdditionalScreens();
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
-void EmptyView::deactivate()
+void SharedTerrainEditorView::deactivate()
 {
 }
 
-void EmptyView::dispose()
+void SharedTerrainEditorView::dispose()
 {
 	Engine::getInstance()->reset();
+}
+
+void SharedTerrainEditorView::onSetPrototypeData() {
+}
+
+void SharedTerrainEditorView::onInitAdditionalScreens() {
 }

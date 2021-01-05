@@ -16,6 +16,7 @@ namespace views {
 	class PopUps;
 	class SharedModelEditorView;
 	class SharedParticleSystemView;
+	class SharedTerrainEditorView;
 	struct View;
 }  // namespace views
 }  // namespace shared

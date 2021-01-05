@@ -583,6 +583,7 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
+	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/sceneeditor/TDMESceneEditor.cpp \
 	src/tdme/tools/sceneeditor/controller/EmptyScreenController.cpp \
@@ -596,6 +597,7 @@ SRCS = \
 	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
 	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
+	src/tdme/tools/sceneeditor/views/TerrainEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
@@ -609,6 +611,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
 	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
 	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/TerrainEditorScreenController.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/Gizmo.cpp \
@@ -619,7 +622,8 @@ SRCS = \
 	src/tdme/tools/shared/views/PrototypeSoundsView.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
-	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
+	src/tdme/tools/shared/views/SharedTerrainEditorView.cpp \
+	src/tdme/tools/terraineditor/TDMETerrainEditor.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
 	src/tdme/utilities/Enum.cpp \
@@ -878,6 +882,7 @@ MAIN_SRCS = \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp \
+	src/tdme/tools/terraineditor/TDMETerrainEditor-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \

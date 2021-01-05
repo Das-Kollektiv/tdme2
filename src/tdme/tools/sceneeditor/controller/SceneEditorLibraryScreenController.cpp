@@ -24,6 +24,7 @@
 #include <tdme/tools/sceneeditor/views/ModelEditorView.h>
 #include <tdme/tools/sceneeditor/views/ParticleSystemView.h>
 #include <tdme/tools/sceneeditor/views/SceneEditorView.h>
+#include <tdme/tools/sceneeditor/views/TerrainEditorView.h>
 #include <tdme/tools/sceneeditor/views/TriggerView.h>
 #include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -62,6 +63,7 @@ using tdme::tools::sceneeditor::views::EnvironmentMappingView;
 using tdme::tools::sceneeditor::views::ModelEditorView;
 using tdme::tools::sceneeditor::views::ParticleSystemView;
 using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::views::TerrainEditorView;
 using tdme::tools::sceneeditor::views::TriggerView;
 using tdme::tools::sceneeditor::TDMESceneEditor;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -210,6 +212,12 @@ void SceneEditorLibraryScreenController::onEditPrototype()
 				TDMESceneEditor::getInstance()->switchToParticleSystemView();
 			}
 			(dynamic_cast<ParticleSystemView*>(TDMESceneEditor::getInstance()->getView()))->setPrototype(prototype);
+		} else
+		if (v == Prototype_Type::TERRAIN) {
+			if (dynamic_cast<TerrainEditorView*>(TDMESceneEditor::getInstance()->getView()) != nullptr == false) {
+				TDMESceneEditor::getInstance()->switchToTerrainEditorView();
+			}
+			(dynamic_cast<TerrainEditorView*>(TDMESceneEditor::getInstance()->getView()))->setPrototype(prototype);
 		}
 	}
 
@@ -468,6 +476,19 @@ void SceneEditorLibraryScreenController::onValueChanged(GUIElementNode* node)
 		if (node->getController()->getValue().getString() == "create_particlesystem") {
 			try {
 				auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->addParticleSystem(SceneLibrary::ID_ALLOCATE, "New particle system", "");
+				setPrototypeLibrary();
+				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
+				onEditPrototype();
+			} catch (Exception& exception) {
+				popUps->getInfoDialogScreenController()->show(
+					"Error",
+					"An error occurred: " + (string(exception.what()))
+				 );
+			}
+		} else
+		if (node->getController()->getValue().getString() == "create_terrain") {
+			try {
+				auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->addTerrain(SceneLibrary::ID_ALLOCATE, "New terrain", "");
 				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
 				onEditPrototype();

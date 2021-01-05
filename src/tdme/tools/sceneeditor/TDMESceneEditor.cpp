@@ -19,6 +19,7 @@
 #include <tdme/tools/sceneeditor/views/ModelEditorView.h>
 #include <tdme/tools/sceneeditor/views/ParticleSystemView.h>
 #include <tdme/tools/sceneeditor/views/SceneEditorView.h>
+#include <tdme/tools/sceneeditor/views/TerrainEditorView.h>
 #include <tdme/tools/sceneeditor/views/TriggerView.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -44,13 +45,12 @@ using tdme::tools::sceneeditor::views::EnvironmentMappingView;
 using tdme::tools::sceneeditor::views::ModelEditorView;
 using tdme::tools::sceneeditor::views::ParticleSystemView;
 using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::views::TerrainEditorView;
 using tdme::tools::sceneeditor::views::TriggerView;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
-
-string TDMESceneEditor::VERSION = "1.9.9";
 
 TDMESceneEditor* TDMESceneEditor::instance = nullptr;
 
@@ -165,6 +165,8 @@ void TDMESceneEditor::initialize() {
 	emptyView->initialize();
 	particleSystemView = new ParticleSystemView(popUps);
 	particleSystemView->initialize();
+	terrainEditorView = new TerrainEditorView(popUps);
+	terrainEditorView->initialize();
 	setView(sceneEditorView);
 }
 
@@ -196,3 +198,6 @@ void TDMESceneEditor::switchToParticleSystemView() {
 	setView(particleSystemView);
 }
 
+void TDMESceneEditor::switchToTerrainEditorView() {
+	setView(terrainEditorView);
+}

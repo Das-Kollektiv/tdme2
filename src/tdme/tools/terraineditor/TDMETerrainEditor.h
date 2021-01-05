@@ -6,35 +6,35 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/tools/particlesystem/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/tools/shared/views/SharedParticleSystemView.h>
+#include <tdme/tools/shared/views/SharedTerrainEditorView.h>
+#include <tdme/tools/terraineditor/fwd-tdme.h>
 
 using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::SharedParticleSystemView;
+using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::tools::shared::views::View;
 
 /**
- * TDME Particle System
+ * TDME terrain editor
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tools::particlesystem::TDMEParticleSystem final
+class tdme::tools::terraineditor::TDMETerrainEditor final
 	: public virtual Application
 {
 private:
-	static TDMEParticleSystem* instance;
+	static TDMETerrainEditor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool viewInitialized;
 	View* viewNew { nullptr };
 	bool quitRequested;
 	PopUps* popUps { nullptr };
-	SharedParticleSystemView* particleSystemView { nullptr };
+	SharedTerrainEditorView* terrainEditorView { nullptr };
 
 public:
 
@@ -50,17 +50,17 @@ public:
 	/**
 	 * @return particle system instance
 	 */
-	static TDMEParticleSystem* getInstance();
+	static TDMETerrainEditor* getInstance();
 
 	/**
 	 * Public constructor
 	 */
-	TDMEParticleSystem();
+	TDMETerrainEditor();
 
 	/**
 	 * Destructor
 	 */
-	~TDMEParticleSystem();
+	~TDMETerrainEditor();
 
 	/**
 	 * Set up new view

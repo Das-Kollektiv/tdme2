@@ -2,10 +2,10 @@
 #include <string>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Version.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -14,9 +14,9 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::application::Application;
-using tdme::engine::Version;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
+using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;

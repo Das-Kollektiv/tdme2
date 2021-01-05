@@ -51,6 +51,7 @@
 										<dropdown-option text="Create environment mapping" value="create_environmentmapping" />
 										<dropdown-option text="Create trigger" value="create_trigger" />
 										<dropdown-option text="Create empty" value="create_empty" />
+										<dropdown-option text="Create terrain" value="create_terrain" />
 										<dropdown-option text="Partition" value="partition" />
 										<!-- 
 										<dropdown-option text="Create light" value="create_light" />

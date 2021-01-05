@@ -17,7 +17,7 @@
 
 using std::string;
 
-using tdme::tools::viewer::TDMEModelEditor;
+using tdme::tools::modeleditor::TDMEModelEditor;
 
 using tdme::utilities::Time;
 
@@ -30,8 +30,6 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
-
-string TDMEModelEditor::VERSION = "1.9.9";
 
 TDMEModelEditor* TDMEModelEditor::instance = nullptr;
 

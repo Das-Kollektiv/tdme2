@@ -176,6 +176,23 @@ Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const str
 	return prototype;
 }
 
+Prototype* SceneLibrary::addTerrain(int id, const string& name, const string& description)
+{
+	auto prototype = new Prototype(
+		id == ID_ALLOCATE?allocatePrototypeId():id,
+		Prototype_Type::TERRAIN,
+		name,
+		description,
+		"",
+		"",
+		"",
+		nullptr,
+		Vector3()
+	);
+	addPrototype(prototype);
+	return prototype;
+}
+
 void SceneLibrary::addPrototype(Prototype* prototype)
 {
 

@@ -1,4 +1,4 @@
-#include <tdme/tools/particlesystem/TDMEParticleSystem.h>
+#include <tdme/tools/terraineditor/TDMETerrainEditor.h>
 
 #include <cstdlib>
 #include <string>
@@ -13,13 +13,13 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/shared/views/SharedParticleSystemView.h>
+#include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
 
-using tdme::tools::particlesystem::TDMEParticleSystem;
+using tdme::tools::terraineditor::TDMETerrainEditor;
 
 using tdme::utilities::Time;
 
@@ -31,61 +31,61 @@ using tdme::engine::Version;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::SharedParticleSystemView;
+using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
 
-TDMEParticleSystem* TDMEParticleSystem::instance = nullptr;
+TDMETerrainEditor* TDMETerrainEditor::instance = nullptr;
 
-TDMEParticleSystem::TDMEParticleSystem()
+TDMETerrainEditor::TDMETerrainEditor()
 {
 	Tools::loadSettings(this);
-	TDMEParticleSystem::instance = this;
+	TDMETerrainEditor::instance = this;
 	engine = Engine::getInstance();
 	view = nullptr;
 	viewInitialized = false;
 	viewNew = nullptr;
 	popUps = new PopUps();
-	particleSystemView = nullptr;
+	terrainEditorView = nullptr;
 	quitRequested = false;
 }
 
-TDMEParticleSystem::~TDMEParticleSystem() {
+TDMETerrainEditor::~TDMETerrainEditor() {
 	delete popUps;
-	delete particleSystemView;
+	delete terrainEditorView;
 }
 
-void TDMEParticleSystem::main(int argc, char** argv)
+void TDMETerrainEditor::main(int argc, char** argv)
 {
-	Console::println(string("TDMEParticleSystem ") + Version::getVersion());
+	Console::println(string("TDMETerrainEditor ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
 
-	auto tdmeParticleSystem = new TDMEParticleSystem();
-	tdmeParticleSystem->run(argc, argv, "TDMEParticleSystem");
+	auto tdmeTerrainEditor = new TDMETerrainEditor();
+	tdmeTerrainEditor->run(argc, argv, "TDMETerrainEditor");
 }
 
-TDMEParticleSystem* TDMEParticleSystem::getInstance()
+TDMETerrainEditor* TDMETerrainEditor::getInstance()
 {
 	return instance;
 }
 
-void TDMEParticleSystem::setView(View* view)
+void TDMETerrainEditor::setView(View* view)
 {
 	viewNew = view;
 }
 
-View* TDMEParticleSystem::getView()
+View* TDMETerrainEditor::getView()
 {
 	return view;
 }
 
-void TDMEParticleSystem::quit()
+void TDMETerrainEditor::quit()
 {
 	quitRequested = true;
 }
 
-void TDMEParticleSystem::display()
+void TDMETerrainEditor::display()
 {
 	if (viewNew != nullptr) {
 		if (view != nullptr && viewInitialized == true) {
@@ -115,7 +115,7 @@ void TDMEParticleSystem::display()
 	}
 }
 
-void TDMEParticleSystem::dispose()
+void TDMETerrainEditor::dispose()
 {
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
@@ -126,21 +126,21 @@ void TDMEParticleSystem::dispose()
 	Tools::oseDispose();
 }
 
-void TDMEParticleSystem::initialize()
+void TDMETerrainEditor::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(particleSystemView = new SharedParticleSystemView(popUps));
-	particleSystemView->setPrototype(
+	setView(terrainEditorView = new SharedTerrainEditorView(popUps));
+	terrainEditorView->setPrototype(
 		new Prototype(
 			-1,
-			Prototype_Type::PARTICLESYSTEM,
+			Prototype_Type::TERRAIN,
 			"Untitled",
 			"",
-			"Untitled.tps",
+			"Untitled.ter",
 			"",
 			"",
 			nullptr,
@@ -149,7 +149,7 @@ void TDMEParticleSystem::initialize()
 	);
 }
 
-void TDMEParticleSystem::reshape(int width, int height)
+void TDMETerrainEditor::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }
