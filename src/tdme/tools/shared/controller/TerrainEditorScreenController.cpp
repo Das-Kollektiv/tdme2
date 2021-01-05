@@ -47,11 +47,11 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 		 * @param TerrainEditorScreenController empty screen controller
 		 * @param finalView final view
 		 */
-		OnSetEntityDataAction(TerrainEditorScreenController* TerrainEditorScreenController, SharedTerrainEditorView* finalView): TerrainEditorScreenController(TerrainEditorScreenController), finalView(finalView) {
+		OnSetEntityDataAction(TerrainEditorScreenController* TerrainEditorScreenController, SharedTerrainEditorView* finalView): terrainEditorScreenController(terrainEditorScreenController), finalView(finalView) {
 		}
 
 	private:
-		TerrainEditorScreenController* TerrainEditorScreenController;
+		TerrainEditorScreenController* terrainEditorScreenController;
 		SharedTerrainEditorView* finalView;
 	};
 
