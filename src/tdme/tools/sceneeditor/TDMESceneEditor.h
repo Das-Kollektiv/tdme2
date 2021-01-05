@@ -39,7 +39,7 @@ class tdme::tools::sceneeditor::TDMESceneEditor final
 	: public virtual Application
 {
 private:
-		static TDMESceneEditor* instance;
+	static TDMESceneEditor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool quitRequested;

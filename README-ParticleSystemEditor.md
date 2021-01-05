@@ -35,7 +35,7 @@
         - also set up gain, pitch, looping, fixed and offset for each sound
 
 - Links
-	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
     - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
