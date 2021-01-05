@@ -90,30 +90,42 @@
 							<layout width="auto" height="auto" alignment="horizontal">
 								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Operation" width="145" height="auto"/>
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-									<radiobutton id="brush_operation_addition" name="brush_operation" value="addition" width="20" height="auto" />
+									<radiobutton id="brush_operation_addition" name="brush_operation" value="add" width="20" height="auto" />
 									<space width="5" />
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Addition" width="100" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Add" width="70" height="auto"/>
 								</layout>
 								<space width="5" />
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-									<radiobutton id="brush_operation_subtraction" name="brush_operation" value="subtraction" width="20" height="auto" />
+									<radiobutton id="brush_operation_subtraction" name="brush_operation" value="subtract" width="20" height="auto" />
 									<space width="5" />
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Subtraction" width="100" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Subtract" width="70" height="auto"/>
 								</layout>
 								<space width="5" />
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 									<radiobutton id="brush_operation_flatten" name="brush_operation" value="flatten" width="20" height="auto" />
 									<space width="5" />
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Flatten" width="100" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Flatten" width="70" height="auto"/>
 								</layout>
 								<space width="5" />
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-									<radiobutton id="brush_operation_soften" name="brush_operation" value="soften" width="20" height="auto" />
+									<radiobutton id="brush_operation_delete" name="brush_operation" value="delete" width="20" height="auto" />
 									<space width="5" />
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Soften" width="100" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Delete" width="70" height="auto"/>
+								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_soften" name="brush_operation" value="smooth" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Smooth" width="70" height="auto"/>
 								</layout>
 							</layout>
-							<space height="20" />
+							<space height="10" />
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="brush_strength" name="brush_strength" width="*" height="auto" text="0.1" />
+							</layout>
+							<space height="10" />
 							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
 								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
 								<space width="5" />
