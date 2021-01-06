@@ -65,7 +65,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
@@ -87,7 +87,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// node
-	auto node = new Node(model, nullptr, "node", "node");
+	auto node = new Node(model, nullptr, "primitive", "primitive");
 	// triangle vertices indexes
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -124,7 +124,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	faces.push_back(Face(node, (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5));
 	faces.push_back(Face(node, (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5));
 	// faces entity
-	FacesEntity nodeFacesEntity(node, "faces entity");
+	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
 	nodeFacesEntity.setMaterial(material);
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
@@ -148,7 +148,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
@@ -170,7 +170,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// node
-	auto node = new Node(model, nullptr, "node", "node");
+	auto node = new Node(model, nullptr, "primitive", "primitive");
 	// triangle vertices indexes
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -208,7 +208,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	faces.push_back(Face(node, fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5));
 	faces.push_back(Face(node, fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5));
 	// faces entity
-	FacesEntity nodeFacesEntity(node, "faces entity");
+	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
 	nodeFacesEntity.setMaterial(material);
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
@@ -234,7 +234,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
@@ -256,7 +256,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// node
-	auto node = new Node(model, nullptr, "node", "node");
+	auto node = new Node(model, nullptr, "primitive", "primitive");
 	// vertices
 	vector<Vector3> vertices;
 	for (auto ySegment = 0; ySegment < segmentsY + 1; ySegment++)
@@ -314,7 +314,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 		}
 	}
 	// set up faces entity
-	FacesEntity nodeFacesEntity(node, "faces entity");
+	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
 	nodeFacesEntity.setMaterial(material);
 	nodeFacesEntity.setFaces(faces);
 	// node faces entities
@@ -366,7 +366,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
@@ -388,7 +388,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// node
-	auto node = new Node(model, nullptr, "node", "node");
+	auto node = new Node(model, nullptr, "primitive", "primitive");
 	// vertices
 	vector<Vector3> vertices;
 	//	bottom half sphere
@@ -469,7 +469,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 		}
 	}
 	// node faces entities
-	FacesEntity nodeFacesEntity(node, "faces entity");
+	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
 	nodeFacesEntity.setMaterial(material);
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
@@ -499,7 +499,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not do scaling of bounding volumes
 	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(1.01f));
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(
 		Color4(

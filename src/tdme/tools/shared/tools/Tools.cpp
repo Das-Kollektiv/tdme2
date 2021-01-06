@@ -277,7 +277,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "tdme.ground.facesentitites");
+	FacesEntity nodeFacesEntityGround(groundNode, "ground.facesentity");
 	nodeFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntityGround.setFaces(groundFacesGround);
@@ -353,7 +353,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			);
 		}
 	}
-	FacesEntity nodeFacesEntityTerrain(terrainNode, "tdme.terrain.facesentitites");
+	FacesEntity nodeFacesEntityTerrain(terrainNode, "terrain.facesentity");
 	nodeFacesEntityTerrain.setMaterial(terrainMaterial);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntityTerrain.setFaces(terrainFacesGround);
