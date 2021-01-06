@@ -1,35 +1,43 @@
 #include <string>
 
-#include "TerrainEditorScreenController.h"
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
+using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 
 TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditorView* view)
@@ -73,6 +81,13 @@ void TerrainEditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
 		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
+		terrainDimensionWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_dimension_width"));
+		terrainDimensionDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_dimension_depth"));
+		btnTerrainDimensionApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_dimension_apply"));
+		brushStrength = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_strength"));
+		brushFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file"));
+		brushFileLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file_load"));
+		brushFileClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file_clear"));
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -122,6 +137,28 @@ void TerrainEditorScreenController::onValueChanged(GUIElementNode* node)
 void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare(btnTerrainDimensionApply->getId()) == 0) {
+			onApplyTerrainDimension();
+		}
+	}
+}
+
+void TerrainEditorScreenController::setTerrainDimension(float width, float height) {
+	terrainDimensionWidth->getController()->setValue(MutableString(width));
+	terrainDimensionDepth->getController()->setValue(MutableString(height));
+}
+
+void TerrainEditorScreenController::onApplyTerrainDimension() {
+	try {
+		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
+		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
+		auto prototype = view->getPrototype();
+		prototype->setModel(Tools::createTerrainModel(width, depth, 0.0f));
+		view->setPrototype(prototype);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

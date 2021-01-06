@@ -255,7 +255,7 @@ float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	auto modelId = "ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
-	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -277,7 +277,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "ground node faces entity ground");
+	FacesEntity nodeFacesEntityGround(groundNode, "tdme.ground.facesentitites");
 	nodeFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntityGround.setFaces(groundFacesGround);
@@ -290,6 +290,91 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	ground->getSubNodes()["ground"] = groundNode;
 	ModelTools::prepareForIndexedRendering(ground);
 	return ground;
+}
+
+Model* Tools::createTerrainModel(float width, float depth, float y)
+{
+	auto modelId = "terrain" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
+	auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+	auto terrainMaterial = new Material("terrain");
+	terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	terrainMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	terrainMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
+	terrainModel->getMaterials()["ground"] = terrainMaterial;
+	auto terrainNode = new Node(terrainModel, nullptr, "terrain", "terrain");
+	vector<Vector3> terrainVertices;
+	vector<Vector3> terrainNormals;
+	vector<TextureCoordinate> terrainTextureCoordinates;
+	vector<Face> terrainFacesGround;
+	#define STEP_SIZE	0.5f
+	for (float x = 0.0f; x < width; x+= STEP_SIZE) {
+		Console::println(to_string(depth) + ": " + to_string(terrainVertices.size()));
+		for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
+			auto vertexIdx = terrainVertices.size();
+			terrainVertices.push_back(Vector3(x, y, z));
+			terrainVertices.push_back(Vector3(x, y, z + STEP_SIZE));
+			terrainVertices.push_back(Vector3(x + STEP_SIZE, y, z + STEP_SIZE));
+			terrainVertices.push_back(Vector3(x + STEP_SIZE, y, z));
+			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+			terrainTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
+			terrainTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
+			terrainTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+			terrainTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
+			terrainFacesGround.push_back(
+				Face(
+					terrainNode,
+					vertexIdx + 0,
+					vertexIdx + 1,
+					vertexIdx + 2,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 1,
+					vertexIdx + 2
+				)
+			);
+			terrainFacesGround.push_back(
+				Face(
+					terrainNode,
+					vertexIdx + 2,
+					vertexIdx + 3,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 0,
+					vertexIdx + 2,
+					vertexIdx + 3,
+					vertexIdx + 0
+				)
+			);
+		}
+	}
+	FacesEntity nodeFacesEntityTerrain(terrainNode, "tdme.terrain.facesentitites");
+	nodeFacesEntityTerrain.setMaterial(terrainMaterial);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntityTerrain.setFaces(terrainFacesGround);
+	nodeFacesEntities.push_back(nodeFacesEntityTerrain);
+	terrainNode->setVertices(terrainVertices);
+	terrainNode->setNormals(terrainNormals);
+	terrainNode->setTextureCoordinates(terrainTextureCoordinates);
+	terrainNode->setFacesEntities(nodeFacesEntities);
+	terrainModel->getNodes()["ground"] = terrainNode;
+	terrainModel->getSubNodes()["ground"] = terrainNode;
+	auto boundingBox = terrainModel->getBoundingBox();
+	Console::println(
+		"bb: " +
+		to_string(boundingBox->getMin().getX()) + ";" +
+		to_string(boundingBox->getMin().getY()) + ";" +
+		to_string(boundingBox->getMin().getZ()) + " -> " +
+		to_string(boundingBox->getMax().getX()) + ";" +
+		to_string(boundingBox->getMax().getY()) + ";" +
+		to_string(boundingBox->getMax().getZ())
+	);
+	return terrainModel;
 }
 
 void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)

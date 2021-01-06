@@ -162,6 +162,15 @@ public:
 	static Model* createGroundModel(float width, float depth, float y);
 
 	/**
+	 * Creates a terrain model
+	 * @param width width
+	 * @param depth depth
+	 * @param y float y
+	 * @return ground model
+	 */
+	static Model* createTerrainModel(float width, float depth, float y);
+
+	/**
 	 * Set up entity in given engine with look from rotations and scale
 	 * @param entity entity
 	 * @param engine engine

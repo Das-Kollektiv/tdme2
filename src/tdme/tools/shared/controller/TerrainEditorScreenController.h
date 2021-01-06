@@ -41,6 +41,13 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
 	GUIElementNode* viewPort { nullptr };
+	GUIElementNode* terrainDimensionWidth { nullptr };
+	GUIElementNode* terrainDimensionDepth { nullptr };
+	GUIElementNode* btnTerrainDimensionApply { nullptr };
+	GUIElementNode* brushStrength { nullptr };
+	GUIElementNode* brushFile { nullptr };
+	GUIElementNode* brushFileLoad { nullptr };
+	GUIElementNode* brushFileClear { nullptr };
 
 public:
 	/**
@@ -87,6 +94,18 @@ public:
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+
+	/**
+	 * Set terrain dimension
+	 * @param width width
+	 * @param height height
+	 */
+	void setTerrainDimension(float width, float height);
+
+	/**
+	 * On apply terrain dimension
+	 */
+	void onApplyTerrainDimension();
 
 	/**
 	 * Get viewport rectangle

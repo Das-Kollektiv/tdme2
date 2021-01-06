@@ -83,21 +83,23 @@ void SharedTerrainEditorView::initModel()
 	if (prototype == nullptr)
 		return;
 
-	/*
-	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(prototype);
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
-	auto model = engine->getEntity("model");
-	auto ground = engine->getEntity("ground");
-	model->setContributesShadows(false);
-	model->setReceivesShadows(false);
-	ground->setEnabled(false);
-	auto modelBoundingVolume = engine->getEntity("model_bv");
-	if (modelBoundingVolume != nullptr) {
-		modelBoundingVolume->setEnabled(false);
+	//
+	if (prototype->getModel() != nullptr) {
+		Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+		Tools::oseThumbnail(prototype);
+		cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
+		auto model = engine->getEntity("model");
+		auto ground = engine->getEntity("ground");
+		model->setContributesShadows(false);
+		model->setReceivesShadows(false);
+		ground->setEnabled(false);
+		auto modelBoundingVolume = engine->getEntity("model_bv");
+		if (modelBoundingVolume != nullptr) {
+			modelBoundingVolume->setEnabled(false);
+		}
 	}
-	*/
 
+	//
 	updateGUIElements();
 }
 
@@ -141,10 +143,20 @@ void SharedTerrainEditorView::updateGUIElements()
 		auto preset = prototype->getProperty("preset");
 		terrainEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		terrainEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
+		if (prototype->getModel() != nullptr) {
+			auto boundingBox = prototype->getModel()->getBoundingBox();
+			terrainEditorScreenController->setTerrainDimension(
+				boundingBox->getMax().getX() - boundingBox->getMin().getX(),
+				boundingBox->getMax().getZ() - boundingBox->getMin().getZ()
+			);
+		} else {
+			terrainEditorScreenController->setTerrainDimension(64.0f, 64.0f);
+		}
 	} else {
 		terrainEditorScreenController->setScreenCaption("Terrain Editor - no terrain loaded");
 		terrainEditorScreenController->unsetPrototypeProperties();
 		terrainEditorScreenController->unsetPrototypeData();
+		terrainEditorScreenController->setTerrainDimension(64.0f, 64.0f);
 	}
 }
 
