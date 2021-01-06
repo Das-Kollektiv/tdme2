@@ -14,7 +14,7 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
-using tdme::tools::shared::views::CameraRotationInputHandler;
+using tdme::tools::shared::views::CameraInputHandler;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
@@ -35,8 +35,7 @@ private:
 	TerrainEditorScreenController* terrainEditorScreenController { nullptr };
 	Prototype* prototype { nullptr };
 	bool initModelRequested { false };
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
-	Vector3 objectScale;
+	CameraInputHandler* cameraInputHandler { nullptr };
 
 	/**
 	 * Init entity

@@ -9,6 +9,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -18,7 +19,7 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/CameraRotationInputHandler.h>
+#include <tdme/tools/shared/views/CameraInputHandler.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -32,6 +33,7 @@ using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -40,7 +42,7 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::CameraRotationInputHandler;
+using tdme::tools::shared::views::CameraInputHandler;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
@@ -53,12 +55,12 @@ SharedTerrainEditorView::SharedTerrainEditorView(PopUps* popUps)
 	initModelRequested = false;
 	prototype = nullptr;
 	engine = Engine::getInstance();
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+	cameraInputHandler = new CameraInputHandler(engine);
 }
 
 SharedTerrainEditorView::~SharedTerrainEditorView() {
 	delete terrainEditorScreenController;
-	delete cameraRotationInputHandler;
+	delete cameraInputHandler;
 }
 
 PopUps* SharedTerrainEditorView::getPopUpsViews()
@@ -85,14 +87,16 @@ void SharedTerrainEditorView::initModel()
 
 	//
 	if (prototype->getModel() != nullptr) {
-		Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+		engine->removeEntity("terrain");
+		auto terrainObject3D = new Object3D("terrain", prototype->getModel());
+		terrainObject3D->setShader("terrain");
+		terrainObject3D->setContributesShadows(true);
+		terrainObject3D->setReceivesShadows(true);
+		engine->addEntity(terrainObject3D);
+		Vector3 sceneCenter = prototype->getModel()->getBoundingBox()->getCenter();
+		sceneCenter.set(Vector3(sceneCenter.getX(), prototype->getModel()->getBoundingBox()->getMax().getY() + 3.0f, sceneCenter.getZ()));
+		cameraInputHandler->setSceneCenter(sceneCenter);
 		Tools::oseThumbnail(prototype);
-		cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
-		auto model = engine->getEntity("model");
-		auto ground = engine->getEntity("ground");
-		model->setContributesShadows(false);
-		model->setReceivesShadows(false);
-		ground->setEnabled(false);
 		auto modelBoundingVolume = engine->getEntity("model_bv");
 		if (modelBoundingVolume != nullptr) {
 			modelBoundingVolume->setEnabled(false);
@@ -105,7 +109,7 @@ void SharedTerrainEditorView::initModel()
 
 void SharedTerrainEditorView::handleInputEvents()
 {
-	cameraRotationInputHandler->handleInputEvents();
+	cameraInputHandler->handleInputEvents();
 }
 
 void SharedTerrainEditorView::display()
@@ -113,7 +117,7 @@ void SharedTerrainEditorView::display()
 	// commands
 	if (initModelRequested == true) {
 		initModel();
-		cameraRotationInputHandler->reset();
+		cameraInputHandler->reset();
 		initModelRequested = false;
 	}
 
@@ -184,6 +188,23 @@ void SharedTerrainEditorView::activate()
 	onInitAdditionalScreens();
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+
+	// lights
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
+	{
+		auto light0 = engine->getLightAt(0);
+		light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+		light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
+		light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+		light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+		light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
+		light0->setConstantAttenuation(0.5f);
+		light0->setLinearAttenuation(0.0f);
+		light0->setQuadraticAttenuation(0.0f);
+		light0->setSpotExponent(0.0f);
+		light0->setSpotCutOff(180.0f);
+		light0->setEnabled(true);
+	}
 }
 
 void SharedTerrainEditorView::deactivate()

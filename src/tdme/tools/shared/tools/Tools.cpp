@@ -300,7 +300,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	terrainMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	terrainMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
-	terrainModel->getMaterials()["ground"] = terrainMaterial;
+	terrainModel->getMaterials()[terrainMaterial->getId()] = terrainMaterial;
 	auto terrainNode = new Node(terrainModel, nullptr, "terrain", "terrain");
 	vector<Vector3> terrainVertices;
 	vector<Vector3> terrainNormals;
@@ -481,7 +481,7 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
-	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));

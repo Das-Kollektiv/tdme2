@@ -64,7 +64,7 @@ public:
 	 * @param engine engine
 	 * @param eventHandler event handler
 	 */
-	CameraInputHandler(Engine* engine, CameraInputHandlerEventHandler* eventHandler);
+	CameraInputHandler(Engine* engine, CameraInputHandlerEventHandler* eventHandler = nullptr);
 
 	/**
 	 * Destructor
