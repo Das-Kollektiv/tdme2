@@ -631,10 +631,10 @@ void SharedModelEditorView::updateRendering() {
 void SharedModelEditorView::onSetPrototypeData() {
 }
 
-void SharedModelEditorView::onRotation() {
+void SharedModelEditorView::onCameraRotation() {
 	prototypePhysicsView->updateGizmo(prototype);
 }
 
-void SharedModelEditorView::onScale() {
+void SharedModelEditorView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
 }

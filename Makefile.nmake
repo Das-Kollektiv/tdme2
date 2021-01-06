@@ -433,6 +433,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/TerrainEditorScreenController.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
+	src/tdme/tools/shared/views/CameraInputHandler.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \

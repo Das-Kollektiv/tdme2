@@ -5,6 +5,8 @@ namespace tdme {
 namespace tools {
 namespace shared {
 namespace views {
+	class CameraInputHandler;
+	struct CameraInputHandlerEventHandler;
 	class CameraRotationInputHandler;
 	struct CameraRotationInputHandlerEventHandler;
 	class PrototypeBaseView;

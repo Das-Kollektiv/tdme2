@@ -4,16 +4,21 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 /**
- * Camera Rotation Input Handler Event Handler
+ * Camera Input Handler Event Handler
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::tools::shared::views::CameraRotationInputHandlerEventHandler
+struct tdme::tools::shared::views::CameraInputHandlerEventHandler
 {
 	/**
 	 * Destructor
 	 */
-	virtual ~CameraRotationInputHandlerEventHandler() {}
+	virtual ~CameraInputHandlerEventHandler() {}
+
+	/**
+	 * On translation event to be overloaded
+	 */
+	virtual void onCameraTranslation() = 0;
 
 	/**
 	 * On rotation event to be overloaded

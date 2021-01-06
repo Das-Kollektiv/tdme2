@@ -287,6 +287,10 @@ SRCS = \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
 	src/tdme/engine/fileio/models/WFObjWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
+	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
+	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
@@ -318,10 +322,6 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
-	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
-	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
@@ -613,6 +613,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/TerrainEditorScreenController.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
+	src/tdme/tools/shared/views/CameraInputHandler.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
