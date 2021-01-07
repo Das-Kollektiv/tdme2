@@ -1,4 +1,4 @@
-<screen id="installer_folder" background-color="#ffffff" min-width="1024" min-height="768" max-width="1920" max-height="1280">
+<screen id="installer_folder" background-color="{$color.font_highlight}" min-width="1024" min-height="768" max-width="1920" max-height="1280">
 	<layout alignment="vertical" width="100%" height="100%">
 
 		<layout padding="20" vertical-align="center" alignment="horizontal" width="100%" height="80">
@@ -24,7 +24,7 @@
 			<space height="20"/>
 
 			<layout vertical-align="center" alignment="horizontal" width="100%" height="40">
-				<layout background-color="#ffffff" vertical-align="center" alignment="horizontal" width="*" height="auto">
+				<layout background-color="{$color.font_highlight}" vertical-align="center" alignment="horizontal" width="*" height="auto">
 					<input id="install_folder" width="100%" maxlength="120" text="{$installfolder}" />
 				</layout>
 				<space width="10"/>

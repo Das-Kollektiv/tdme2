@@ -2,15 +2,15 @@
 	<layout alignment="vertical" width="auto">
 		<layer width="auto" height="auto">
 			<!-- normal -->
-			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,selected,mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,selected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
 			<!-- mouse over -->
-			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,selected" show-on="mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#FFFFFF" />
+			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,selected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 			<!-- selected -->
-			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,unselected" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#FFFFFF"/>
+			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" hide-on="disabled,unselected" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 			<!-- disabled -->
-			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" show-on="disabled" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+			<text padding-top="5" padding-bottom="5" padding-right="30" width="auto" show-on="disabled" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
 		</layer>
-		<layout id="{$id}_inner" border="1" padding-top="5" padding-bottom="5" width="auto" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="#585858">
+		<layout id="{$id}_inner" border="1" padding-top="5" padding-bottom="5" width="auto" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_foreground}">
 			{__InnerXML__}
 		</layout>
 	</layout>

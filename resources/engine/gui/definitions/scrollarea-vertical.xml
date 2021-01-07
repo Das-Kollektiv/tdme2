@@ -1,8 +1,8 @@
-<layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="horizontal" background-color="#3E3E3E" padding="{$padding}" focusable="true">
+<layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="horizontal" background-color="{$color.element_midground}" padding="{$padding}" focusable="true">
 	<layout id="{$id}_inner" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" overflow-y="scroll" width="*" height="100%">
 		{__InnerXML__}
 	</layout>
-	<layout id="{$id}_scrollbar_vertical_layout" alignment="vertical" width="auto" height="100%"  background-color="#58585800">
-		<vertical-scrollbar-internal id="{$id}_scrollbar_vertical_layout_bar" border="2" border-color="#58585800" width="10" height="*" color-none="#585858" color-mouseover="#5680C2" color-dragging="#5680C2" />
+	<layout id="{$id}_scrollbar_vertical_layout" alignment="vertical" width="auto" height="100%"  background-color="{$color.element_foreground}00">
+		<vertical-scrollbar-internal id="{$id}_scrollbar_vertical_layout_bar" border="2" border-color="{$color.element_foreground}00" width="10" height="*" color-none="{$color.element_foreground}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
 	</layout>
 </layout>

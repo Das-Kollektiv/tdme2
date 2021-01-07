@@ -4,25 +4,25 @@
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked,mouseover" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#F0F0F0" src="resources/engine/images/checkbox_invisible.png" />
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/checkbox_invisible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	<!-- unchecked, mouse over -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#ffffff" src="resources/engine/images/checkbox_invisible.png" />
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/checkbox_invisible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- unchecked, disabled -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#B0B0B0" src="resources/engine/images/checkbox_invisible.png" />
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/checkbox_invisible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 
 	
@@ -30,25 +30,25 @@
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked,mouseover" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#F0F0F0" src="resources/engine/images/checkbox_visible.png" />
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/checkbox_visible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	<!-- checked, mouse over -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#ffffff" src="resources/engine/images/checkbox_visible.png" />
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/checkbox_visible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- checked, disabled -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
 		<space width="5"/>
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="#B0B0B0" src="resources/engine/images/checkbox_visible.png" />
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/checkbox_visible.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 
 </element>

@@ -1,5 +1,5 @@
 <element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<layout alignment="horizontal" width="100%" height="auto" background-color="#F0F0F0">
+	<layout alignment="horizontal" width="100%" height="auto" background-color="{$color.font_normal}">
 	
 		<element show-on="enabled" id="{$id}_arrow" width="15" height="20" horizontal-align="center" vertical-align="center">
 			<!-- Image needs transparency and white arrow so that I can do effects on it -->
@@ -11,28 +11,28 @@
 		
 		<layer width="*" height="auto">
 			<!-- unfocused, unselected, no mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected,mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#000000" background-color="#F0F0F0" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected,mouseover" font="{$font.default}" text="{$text}" color="#000000" background-color="{$color.font_normal}" />
 			<!-- unfocused, unselected, mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected" show-on="mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#000000" background-color="#B0B0FF" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected" show-on="mouseover" font="{$font.default}" text="{$text}" color="#000000" background-color="#B0B0FF" />
 			<!-- unfocused, selected, no mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected,mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#FFFFFF" background-color="#8080FF" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="#8080FF" />
 			<!-- unfocused, selected, mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected" show-on="mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#FFFFFF" background-color="#B0B0FF" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="#B0B0FF" />
 			<!-- focussed, unselected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,selected" show-on="focussed" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" background-color="#B0B0FF" color="#000000" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,selected" show-on="focussed" font="{$font.default}" text="{$text}" background-color="#B0B0FF" color="#000000" />
 			<!-- focussed, selected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,unselected" show-on="focussed" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" background-color="#B0B0FF" color="#FFFFFF" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,unselected" show-on="focussed" font="{$font.default}" text="{$text}" background-color="#B0B0FF" color="{$color.font_highlight}" />
 			<!-- disabled, unselected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#D0D0D0" background-color="#A0A0A0" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="{$font.default}" text="{$text}" color="#D0D0D0" background-color="{$color.button_normal}" />
 			<!-- disabled, selected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#D0D0D0" background-color="#808080" />
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="{$font.default}" text="{$text}" color="#D0D0D0" background-color="#808080" />
 		</layer>
 		
 	</layout>
 </element>
-<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto" background-color="#F0F0F0">
+<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto" background-color="{$color.font_normal}">
 	<space width="30" />
-	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto" background-color="#f0f0f0">
+	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto" background-color="{$color.font_normal}">
 		{__InnerXML__}
 	</layout>
 </layout>

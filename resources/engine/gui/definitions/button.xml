@@ -1,26 +1,26 @@
 <element id="{$id}" width="{$width}" height="{$height}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}">
 	<!-- normal -->
-	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#A0A0A0">
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="{$color.button_normal}">
 		<image src="{$image}" />
 		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
-		<text id="{$id}_text_unselected" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
+		<text id="{$id}_text_unselected" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 	</layout>
 	<!-- mouse over -->
-	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#5680C2">
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="{$color.focus}">
 		<image src="{$image}"/>
 		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
-		<text id="{$id}_text_mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
+		<text id="{$id}_text_mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 	</layout>
 	<!-- clicked -->
-	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#5680C2" >
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="{$color.focus}" >
 		<image src="{$image}"/>
 		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
-		<text id="{$id}_text_click" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
+		<text id="{$id}_text_click" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 	</layout>
 	<!-- disabled -->
-	<layout width="{$width}" height="{$height}" padding="10" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#707070" >
+	<layout width="{$width}" height="{$height}" padding="10" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="{$color.button_disabled}" >
 		<image src="{$image}"/>
 		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
-		<text id="{$id}_text_disabled" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0"/>
+		<text id="{$id}_text_disabled" font="{$font.default}" text="{$text}" color="{$color.font_disabled}"/>
 	</layout>
 </element>

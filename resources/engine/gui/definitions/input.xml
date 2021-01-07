@@ -1,3 +1,3 @@
-<element id="{$id}" width="{$width}" height="{$height}" name="{$name}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" background-color="#3E3E3E">
-	<input-internal id="{$id}_text-input" padding="5" width="100%" height="auto" font="resources/engine/fonts/Roboto_14_mono.fnt" color="#F0F0F0" color-disabled="#B0B0B0" text="{$text}" maxlength="{$maxlength}"/>
+<element id="{$id}" width="{$width}" height="{$height}" name="{$name}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" background-color="{$color.element_midground}">
+	<input-internal id="{$id}_text-input" padding="5" width="100%" height="auto" font="{$font.default}" color="{$color.font_normal}" color-disabled="{$color.font_disabled}" text="{$text}" maxlength="{$maxlength}"/>
 </element>

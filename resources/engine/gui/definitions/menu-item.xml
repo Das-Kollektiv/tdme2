@@ -8,16 +8,16 @@
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
 		</layout>
 	
 		<!-- mouse over -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" background-color="#5680C2" >
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" background-color="{$color.focus}" >
 			<space width="5" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#FFFFFF" />
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 		</layout>
 	
 		<!-- disabled -->
@@ -26,13 +26,13 @@
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
 		</layout>
 			
 		<!-- shortcut and child -->
 		<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 			<space width="*" />
-			<text padding-right="5" padding-top="2" padding-bottom="2" height="25" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$shortcut}" color="#B0B0B0" />
+			<text padding-right="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$shortcut}" color="{$color.font_disabled}" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
 			</layout>

@@ -1,4 +1,4 @@
-<screen id="screen_main" background-color="#373737" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+<screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
 	
 		<layout padding="5" alignment="horizontal" width="100%" height="40">
@@ -82,60 +82,60 @@
 							
 							<space height="10"/>
 							
-							<scrollarea-vertical background-color="#3E3E3E" width="100%" height="*" focusable="true">
+							<scrollarea-vertical background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 								
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
 									<space height="5"/>
-									<text font="resources/engine/fonts/Roboto_14_mono.fnt" text="terrain_dirt.png" color="#C0C0C0"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 							
 							</scrollarea-vertical>
@@ -164,7 +164,7 @@
 							<layout alignment="horizontal" width="100%" height="24">
 							</layout>
 						
-							<element border="1" id="viewport" width="100%" height="*" background-color="#3E3E3E" focusable="true">
+							<element border="1" id="viewport" width="100%" height="*" background-color="{$color.element_midground}" focusable="true">
 							</element>
 							
 						</layout>
@@ -195,7 +195,7 @@
 								
 								<space height="10"/>
 							
-								<scrollarea-vertical border="1" background-color="#3E3E3E" width="100%" height="*" focusable="true">
+								<scrollarea-vertical border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 								
 								</scrollarea-vertical>
 								
