@@ -138,13 +138,7 @@
 				</tab-content>
 				<tab-content tab-id="tab3" vertical-align="top">
 					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="100%">
-						<space height="*" />
-						<element horizontal-align="center" vertical-align="center">
-							<image hide-on="mouseover,click" src="resources/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" />
-							<image show-on="mouseover" src="resources/tests/screens/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
-							<image show-on="click" src="resources/tests/screens/images/button_click.png" horizontal-align="center" vertical-align="center" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="ImageBtn!" color="#ffffff" horizontal-align="center" vertical-align="center" />
-						</element>
+
 						<space height="*" />
 						<button id="test_text_button" width="150" name="button" text="Active Button" />
 						<space height="*" />
@@ -153,6 +147,13 @@
 						<button id="test_text_button3" width="150" name="button3" text="Disabled Button" disabled="true"/>
 						<space height="*" />
 						<button id="test_text_button4" name="button4" image="resources/engine/images/folder.png" />
+						<space height="*" />						
+						<element horizontal-align="center" vertical-align="center">
+							<image hide-on="mouseover,click" src="resources/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="mouseover" src="resources/tests/screens/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="click" src="resources/tests/screens/images/button_click.png" horizontal-align="center" vertical-align="center" />
+							<text font="resources/engine/fonts/Roboto_20.fnt" text="ImageBtn!" color="#ffffff" horizontal-align="center" vertical-align="center" />
+						</element>
 						<space height="*" />
 						<image-button
 							id="image-button"
@@ -163,6 +164,7 @@
 							src-disabled="resources/tests/screens/images/button_normal.png"
 						/>
 						<space height="*" />
+						
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab4" vertical-align="top">
