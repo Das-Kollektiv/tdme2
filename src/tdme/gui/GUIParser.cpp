@@ -64,6 +64,7 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -130,6 +131,7 @@ using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Properties;
 
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
@@ -138,6 +140,7 @@ using tinyxml::TiXmlAttribute;
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
+Properties* GUIParser::themeProperties = new Properties();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
@@ -146,10 +149,14 @@ GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, 
 
 GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName)
 {
-	// replace attributes from element
+	// replace with parameters
 	auto newXML = xml;
-	for (auto parametersIt: parameters) {
-		newXML = StringTools::replace(newXML, "{$" + parametersIt.first + "}", escapeQuotes(parametersIt.second));
+	for (auto& parameterIt: parameters) {
+		newXML = StringTools::replace(newXML, "{$" + parameterIt.first + "}", escapeQuotes(parameterIt.second));
+	}
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
 	}
 
 	//
@@ -240,8 +247,15 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& pathName, const s
 
 void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 {
+	// replace with parameters
+	auto newXML = xml;
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+	}
+
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse((string("<gui-element>") + xml + string("</gui-element>")).c_str());
+	xmlDocument.Parse((string("<gui-element>") + newXML + string("</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
 		throw GUIParserException(
 			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "': \n\n" + xml
@@ -1086,6 +1100,11 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
 	auto newGuiElementTemplateXML = templateXML;
 
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+	}
+
 	// replace attributes given
 	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
 		auto attributeKey = string(attribute->Name());
@@ -1167,6 +1186,12 @@ void GUIParser::addElement(GUIElement* guiElement)
 
 void GUIParser::initialize()
 {
+	try {
+		themeProperties->load("./resources/engine/gui/themes", "theme_default.properties");
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 	try {
 		GUIElement* guiElement = new GUICheckbox();
 		addElement(guiElement);
