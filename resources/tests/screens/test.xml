@@ -1,16 +1,21 @@
-<screen id="test" background-color="#202020" min-width="1024" min-height="768" max-width="2048" max-height="1536">
-	<panel left="5%" top="5%" width="90%" height="90%" alignment="vertical" horizontal-align="center"> 
+<screen id="test" background-color="#373737" min-width="1024" min-height="768" max-width="2048" max-height="1536">
+	<layout background-color="#373737" padding="5" width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center"> 
 		<menu-header>
 			<menu-header-item text="File">
 				<menu-item text="Quit" id="menu_file_quit" />
 			</menu-header-item>
 			<menu-header-item text="Edit">
-				<menu-item text="Cut" id="menu_edit_cut" />
+				<menu-item image="resources/engine/images/folder.png" text="Cut" shortcut="ctrl + F4" id="menu_edit_cut" />
 				<menu-item text="Copy" id="menu_edit_copy" />
 				<menu-item text="Paste" id="menu_edit_paste" />
 				<menu-item text="Delete" id="menu_edit_delete" />
+				<space height="5"/>
+					<space height="1" width="100%" border-top="1" />
+					<space height="5"/>
 				<menu-item text="Disabled Item" disabled="true" />
-				<menu-item text="Select All" id="menu_edit_select_all" />
+				<menu-item id="menu_edit_select_all">
+					<checkbox name="checkboxall" value="1" selected="true" text="Check me!"/>
+				</menu-item >
 			</menu-header-item>
 			<menu-header-item text="Disabled Item" disabled="true" />
 			<space width="*"/>
@@ -18,11 +23,7 @@
 				<menu-item text="About" id="menu_help_about" />
 			</menu-header-item>
 		</menu-header>
-		<space height="5%" />
-		<layout width="80%" padding="10" border="1" border-color="red" alignment="none" horizontal-align="center" vertical-align="center" background-color="#909090">
-			<text font="resources/engine/fonts/Roboto_20.fnt" text="test headline" color="#ffffff" />
-		</layout>
-		<space height="5%" />
+		<space height="20"/>
 		<tabs width="100%" height="*">
 			<tabs-header>
 				<tab id="tab1" text="Radio+Checkbox"/>
@@ -39,58 +40,36 @@
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
 					<layout width="100%" height="100%" padding="10" horizontal-align="center" alignment="horizontal">
-						<layout border="1" padding="10" alignment="vertical" vertical-align="center" horizontal-align="center" width="50%">
-							<layout padding="2" width="100%" alignment="horizontal">
-								<checkbox name="checkbox1" value="1" disabled="true" selected="true" />
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="Check me!" color="#000000" height="100%" vertical-align="center" />
-							</layout>
-							<layout padding="2" width="100%" alignment="horizontal">
-								<checkbox name="checkbox2" value="1" selected="true" />
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="No! Check me!" color="#000000" height="100%" vertical-align="center"  />
-							</layout>
-							<layout padding="2" width="100%" alignment="horizontal">
-								<checkbox name="checkbox3" value="1" selected="true" />
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="Rather check me!" color="#000000" height="100%" vertical-align="center" />
-							</layout>
+						<layout padding="10" alignment="vertical" vertical-align="center" horizontal-align="left" width="50%">
+						
+							<checkbox name="checkbox1" value="1" disabled="true" selected="true" text="Check me!"/>
+							<checkbox name="checkbox4" value="1" disabled="true" selected="false" text="Can't check me!"/>
+							<checkbox name="checkbox2" value="1" selected="true" text="No! Check me!"/>
+							<checkbox name="checkbox3" value="1" selected="true" text="Rather check me!" />
+							<checkbox template="checkbox_template_visible.xml" name="checkbox5" value="1" selected="true" text="Visibility" />
+							<checkbox template="checkbox_template_locked.xml" name="checkbox6" value="1" selected="true" text="Lock Mode" />
+								
 						</layout>
-						<layout border="1" padding="10" alignment="vertical" vertical-align="center" horizontal-align="center" background-color="#f0f0f0" width="50%">
-							<layout padding="2" width="100%" alignment="horizontal">
-								<radiobutton name="radio" value="1" disabled="true"/>
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="Select me!" color="#000000" />
-							</layout>
-							<layout padding="2" width="100%" alignment="horizontal">
-								<radiobutton name="radio" value="2" selected="true" />
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="No! Select me!" color="#000000" />
-							</layout>
-							<layout padding="2" width="100%" alignment="horizontal">
-								<radiobutton name="radio" value="3" />
-								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto_20.fnt" text="Do select me!" color="#000000" />
-							</layout>
+						
+						<layout padding="10" alignment="vertical" vertical-align="center" horizontal-align="left" width="50%">
+						
+							<radiobutton name="radio" value="1" disabled="true" selected="true" text="Select me!"/>
+							<radiobutton name="radio" value="4" disabled="true" text="Can't select me!"/>
+							<radiobutton name="radio" value="2" selected="true" text="No! Select me!" />
+							<radiobutton name="radio" value="3" text="Do select me!" />
+
 						</layout>
+						
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab2" vertical-align="top">
 					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%">
+
 						<layout horizontal-align="center" alignment="none" width="80%">
-							<layout border="1" padding="10" alignment="horizontal" vertical-align="center" horizontal-align="center" background-color="#f0f0f0" width="80%">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Some" color="#000000" />
-								<space width="10" />
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="text" color="#000000" />
-								<space width="10" />
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="here" color="#000000" />
-							</layout>
-						</layout>
-						<space height="10" />
-						<layout horizontal-align="center" alignment="none" width="80%">
+						
 							<selectbox name="select">
 								<scrollarea-vertical id="sasb" width="100%" height="200">
-									<selectbox-parent-option text="Option A,B,C,D" value="1">
+									<selectbox-parent-option image="resources/engine/images/folder.png" text="Option A,B,C,D" value="1">
 										<selectbox-option text="Option A" value="1.1" />
 										<selectbox-option text="Option B" value="1.2" />
 										<selectbox-option text="Option C" value="1.3" />
@@ -120,6 +99,7 @@
 									<selectbox-option text="Option U" value="7" />
 								</scrollarea-vertical>
 							</selectbox>
+							
 						</layout>
 						<space height="10" />
 						<layout horizontal-align="center" alignment="none" width="80%">
@@ -168,11 +148,13 @@
 							<text font="resources/engine/fonts/Roboto_20.fnt" text="ImageBtn!" color="#ffffff" horizontal-align="center" vertical-align="center" />
 						</element>
 						<space height="*" />
-						<button id="test_text_button" name="button" text="Test get/setValues()" />
+						<button id="test_text_button" width="150" name="button" text="Active Button" />
 						<space height="*" />
-						<button id="test_text_button2" name="button2" text="Test manipulating GUI" />
+						<button id="test_text_button2" width="150" name="button2" image="resources/engine/images/folder.png" text="Icon Button" />
 						<space height="*" />
-						<button id="test_text_button3" name="button3" text="Disabled Button" disabled="true"/>
+						<button id="test_text_button3" width="150" name="button3" text="Disabled Button" disabled="true"/>
+						<space height="*" />
+						<button id="test_text_button4" name="button4" image="resources/engine/images/folder.png" />
 						<space height="*" />
 						<image-button
 							id="image-button"
@@ -199,6 +181,17 @@
 									<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
 									<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
 								</scrollarea-vertical>
+							</dropdown>
+							<space height="20" />
+							<dropdown name="dropdown2" text="Click me and select a drop down option">
+								<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" selected="true"/>
+								<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
+								<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
+								<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" />
+								<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" />
+								<dropdown-option text="Option F" value="6" on-mouse-click="dropdownvaluetext.condition=f" />
+								<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
+								<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
 							</dropdown>
 							<space height="20" />
 							<text font="resources/engine/fonts/Roboto_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
@@ -330,5 +323,5 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 				</tab-content>
 			</tabs-content>
 		</tabs>
-	</panel>
+	</layout>
 </screen>

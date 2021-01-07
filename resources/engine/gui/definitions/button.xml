@@ -1,26 +1,26 @@
-<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" border="2" border-color-top="#C0C0C0" border-color-left="#C0C0C0" border-color-bottom="#404040" border-color-right="#404040" name="{$name}" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" >
-	<!-- unselected, no mouse over -->
-	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="#FFFFFF">
-		<space width="*" />
-		<text font="resources/engine/fonts/Roboto_20.fnt" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" />
-		<space width="*" />
+<element id="{$id}" width="{$width}" height="{$height}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}">
+	<!-- normal -->
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#A0A0A0">
+		<image src="{$image}" />
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_unselected" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
 	</layout>
 	<!-- mouse over -->
-	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="#B0B0FF">
-		<space width="*" />
-		<text font="resources/engine/fonts/Roboto_20.fnt" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" />
-		<space width="*" />
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#5680C2">
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_mouseover" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
 	</layout>
 	<!-- clicked -->
-	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="#B0B0FF">
-		<space width="*" />
-		<text font="resources/engine/fonts/Roboto_20.fnt" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" />
-		<space width="*" />
+	<layout width="{$width}" height="{$height}" padding="10" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#5680C2" >
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_click" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff"/>
 	</layout>
 	<!-- disabled -->
-	<layout width="{$width}" height="{$height}" padding="5" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="#A0A0A0">
-		<space width="*" />
-		<text font="resources/engine/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" horizontal-align="center" vertical-align="center" />
-		<space width="*" />
+	<layout width="{$width}" height="{$height}" padding="10" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/slider_vertical.png" background-image-scale9="4" background-image-effect-color-mul="#707070" >
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_disabled" font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0"/>
 	</layout>
 </element>

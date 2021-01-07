@@ -1,4 +1,4 @@
-<layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="horizontal" background-color="{$background-color}" border="1" padding="{$padding}" focusable="true">
+<layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="horizontal" background-color="#3E3E3E" padding="{$padding}" focusable="true">
 	<layout id="{$id}_inner" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" overflow-y="scroll" width="*" height="100%">
 		{__InnerXML__}
 	</layout>

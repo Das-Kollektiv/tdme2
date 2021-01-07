@@ -1,30 +1,54 @@
 <element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<!-- unchecked, no mouse over -->
-	<image effect-color-mul="#F0F0F0" hide-on="disabled,focus,checked,mouseover" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#000000" hide-on="disabled,focus,checked,mouseover" src="resources/engine/images/checkbox_border.png" />
+
+	<!-- unchecked -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked,mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#F0F0F0" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+	</layout>
 	<!-- unchecked, mouse over -->
-	<image effect-color-mul="#B0B0FF" hide-on="disabled,focus,checked" show-on="mouseover" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#000000" hide-on="disabled,focus,checked" show-on="mouseover" src="resources/engine/images/checkbox_border.png" />
-	<!-- checked, no mouse over -->
-	<image effect-color-mul="#8080FF" hide-on="disabled,focus,unchecked,mouseover" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#000000" hide-on="disabled,focus,unchecked,mouseover" src="resources/engine/images/checkbox_border.png" />
-	<image effect-color-mul="#FFFFFF" hide-on="disabled,focus,unchecked,mouseover" src="resources/engine/images/checkbox_mark.png" />
-	<!-- checked, mouse over -->
-	<image effect-color-mul="#B0B0FF" hide-on="disabled,focus,unchecked" show-on="mouseover" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#000000" hide-on="disabled,focus,unchecked" show-on="mouseover" src="resources/engine/images/checkbox_border.png" />
-	<image effect-color-mul="#FFFFFF" hide-on="disabled,focus,unchecked" show-on="mouseover" src="resources/engine/images/checkbox_mark.png" />
-	<!-- unchecked, focus -->
-	<image effect-color-mul="#B0B0FF" hide-on="disabled,checked" show-on="focus" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#8080FF" hide-on="disabled,checked" show-on="focus" src="resources/engine/images/checkbox_border.png" />
-	<!-- checked, focus -->
-	<image effect-color-mul="#B0B0FF" hide-on="disabled,unchecked" show-on="focus" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#8080FF" hide-on="disabled,unchecked" show-on="focus" src="resources/engine/images/checkbox_border.png" />
-	<image effect-color-mul="#FFFFFF" hide-on="disabled,unchecked" show-on="focus" src="resources/engine/images/checkbox_mark.png" />
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#ffffff" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff" />
+	</layout>
 	<!-- unchecked, disabled -->
-	<image effect-color-mul="#A0A0A0" hide-on="checked" show-on="disabled" src="resources/engine/images/checkbox_background.png" />	
-	<image effect-color-mul="#A0A0A0" hide-on="checked" show-on="disabled" src="resources/engine/images/checkbox_border.png" />
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#B0B0B0" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+	</layout>
+
+	
+	<!-- checked -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked,mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#F0F0F0" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#F0F0F0" />
+	</layout>
+	<!-- checked, mouse over -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#ffffff" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#ffffff" />
+	</layout>
 	<!-- checked, disabled -->
-	<image effect-color-mul="#A0A0A0" hide-on="unchecked" show-on="disabled" src="resources/engine/images/checkbox_background.png" />
-	<image effect-color-mul="#A0A0A0" hide-on="unchecked" show-on="disabled" src="resources/engine/images/checkbox_border.png" />
-	<image effect-color-mul="#FFFFFF" hide-on="unchecked" show-on="disabled" src="resources/engine/images/checkbox_mark.png" />
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="#B0B0B0" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="resources/engine/fonts/Roboto_14_mono.fnt" text="{$text}" color="#B0B0B0" />
+	</layout>
+
 </element>

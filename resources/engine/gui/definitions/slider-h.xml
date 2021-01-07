@@ -1,3 +1,4 @@
-<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" focusable="true" width="223" height="52" background-image="resources/engine/images/slider_horizontal_background.png" value="{$value}" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" horizontal-align="left">
-	<image id="{$id}_slider" src="resources/engine/images/slider_horizontal.png" width="26" height="50" />
+<element id="{$id}" name="{$name}" disabled="{$disabled}" focusable="true" width="250" height="auto" value="{$value}" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" vertical-align="center">
+	<panel width="100%" height="4" background-color="#373737" />
+	<image effect-color-mul="#A0A0A0" id="{$id}_slider" src="resources/engine/images/slider_horizontal.png" />
 </element>

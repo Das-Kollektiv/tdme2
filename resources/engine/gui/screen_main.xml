@@ -61,20 +61,16 @@
 							<space height="10"/>
 							
 							<selectbox id="selectbox_projectlibrary" boder="0">
-								<scrollarea-vertical background-color="#3E3E3E" width="100%" height="200" focusable="true">
+								<scrollarea-vertical width="100%" height="200" focusable="true">
 								
-									<selectbox-parent-option text="Option A,B,C,D" value="1">
-										<selectbox-option text="Option A" value="1.1" />
-										<selectbox-option text="Option B" value="1.2" />
-										<selectbox-option text="Option C" value="1.3" />
-										<selectbox-option text="Option D" value="1.4" />
-									</selectbox-parent-option>
-									
-									<selectbox-parent-option text="Option F,G,H,I" value="2">
-										<selectbox-option text="Option F" value="2.1" />
-										<selectbox-option text="Option G" value="2.2" />
-										<selectbox-option text="Option H" value="2.3" />
-										<selectbox-option text="Option I" value="2.4" />
+									<selectbox-parent-option text="resources" value="1">
+										<selectbox-option text="textures" value="1.1" />
+										<selectbox-option text="models" value="1.2" />
+										<selectbox-option text="scenes" value="1.3" />
+										<selectbox-option text="particles" value="1.4" />
+										<selectbox-parent-option text="gui" value="1.5">
+											<selectbox-option text="definitions" value="1.5.1" />
+										</selectbox-parent-option>
 									</selectbox-parent-option>
 					
 								</scrollarea-vertical>

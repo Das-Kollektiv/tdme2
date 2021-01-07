@@ -47,6 +47,7 @@ LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
 LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string& fileName)  /* throws(Exception) */
 {
+	/*
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(xmlContent.c_str());
@@ -87,7 +88,6 @@ LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string&
 			}
 		}
 	}
-
 	auto lightId = 0;
 	for (auto xmlLights: getChildrenByTagName(xmlRoot, "lights")) {
 		for (auto xmlType: getChildrenByTagName(xmlLights, "type")) {
@@ -110,6 +110,7 @@ LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string&
 			}
 		}
 	}
+	*/
 }
 
 LevelPropertyPresets::~LevelPropertyPresets() {

@@ -118,7 +118,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& 
 {
 	auto cacheId = "leveleditor.empty";
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	auto model = ModelReader::read("resources/engine/models", "empty.dae");
+	auto model = ModelReader::read("resources/engine/models", "empty.tm");
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::EMPTY,

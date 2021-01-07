@@ -288,7 +288,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 Entity* Level::createEmpty(const string& id, const Transformations& transformations) {
 	if (emptyModel == nullptr) {
-		emptyModel = ModelReader::read("resources/engine/models", "empty.dae");
+		emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	}
 	auto entity = new Object3D(
 		id,
