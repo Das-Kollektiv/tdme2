@@ -34,10 +34,10 @@ definition_contextmenu
 
 
 resources
-	maps
+	scenes
+	templates
 	meshes
 	music
-	objects
 	particles
 	scripts
 	sounds
@@ -47,14 +47,15 @@ resources
 	images
 
 
-object   = tmm
-texture  = png
-script 	 = wss
-sound  	 = ogg
-screen 	 = xml
-mesh   	 = tm
-map    	 = tl
-particle = tps
+template 	= tet
+texture  	= png
+script 	 	= tsr
+sound  	 	= ogg
+gui 	 	= xml
+mesh   	 	= tme
+animation	= tan
+scene  	 	= tsc
+particle 	= tps
 
 
 icons

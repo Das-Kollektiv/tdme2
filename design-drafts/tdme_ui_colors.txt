@@ -1,23 +1,30 @@
-Axis
+axis
 
-x	FF3352
-y	8BDC00
-z	2890FF
-
-
-white
-
-D9D9D9 (könnte dunkler sein)
-FFFFFF
+x	FF3352 (xaxis)
+y	8BDC00 (yaxis)
+z	2890FF (zaxis)
 
 
-grey (brauche noch eine heller und eine dunklere farbe)
+font
 
-585858
-3E3E3E
-373737
+B0B0B0 (font_disabled)
+F0F0F0 (font_normal)
+FFFFFF (font_highlight)
 
 
-blue (sollte mit fokus farbe identisch sein)
+elements
 
-5680C2
+373737 (element_background)
+3E3E3E (element_midground)
+585858 (element_foreground)
+
+
+buttons
+
+707070  (button_disabled)
+A0A0A0  (button_normal)
+
+
+focus
+
+5680C2 (focus)
