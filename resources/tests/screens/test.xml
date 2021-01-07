@@ -196,7 +196,7 @@
 								<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
 							</dropdown>
 							<space height="20" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
+							<text font="{$font.default}" text="Lorem ipsum dolor sit amet," color="#000000" />
 							<text font="resources/engine/fonts/Roboto_20.fnt" text="consetetur sadipscing elitr," color="#000000" />
 							<text font="resources/engine/fonts/Roboto_20.fnt" text="sed diam nonumy eirmod tempor invidunt " color="#000000" />
 							<text font="resources/engine/fonts/Roboto_20.fnt" text="ut labore et dolore magna aliquyam erat" color="#000000" />

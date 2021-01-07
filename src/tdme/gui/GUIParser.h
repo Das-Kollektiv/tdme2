@@ -23,8 +23,10 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
-using tinyxml::TiXmlElement;
 using tdme::os::filesystem::FileSystemException;
+using tdme::utilities::Properties;
+
+using tinyxml::TiXmlElement;
 
 /**
  * GUI parser
@@ -36,6 +38,7 @@ class tdme::gui::GUIParser final
 
 private:
 	static map<string, GUIElement*>* elements;
+	static Properties* themeProperties;
 
 public:
 
