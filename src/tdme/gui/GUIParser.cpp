@@ -17,6 +17,7 @@
 #include <tdme/gui/elements/GUIMenuHeader.h>
 #include <tdme/gui/elements/GUIMenuHeaderItem.h>
 #include <tdme/gui/elements/GUIMenuItem.h>
+#include <tdme/gui/elements/GUIMenuSeparator.h>
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
@@ -86,6 +87,7 @@ using tdme::gui::elements::GUIKnob;
 using tdme::gui::elements::GUIMenuHeader;
 using tdme::gui::elements::GUIMenuHeaderItem;
 using tdme::gui::elements::GUIMenuItem;
+using tdme::gui::elements::GUIMenuSeparator;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
@@ -1369,6 +1371,13 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIMenuItem();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuSeparator();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
