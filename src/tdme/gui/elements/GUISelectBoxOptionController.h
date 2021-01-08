@@ -35,6 +35,7 @@ private:
 	static string CONDITION_UNSELECTED;
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
+	static string CONDITION_CHILD;
 	GUIParentNode* selectBoxNode { nullptr };
 	bool initialPostLayout;
 	bool selected;

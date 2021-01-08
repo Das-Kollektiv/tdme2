@@ -83,7 +83,8 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseDoubleClickExpression,
 	const string& onMouseOverExpression,
 	const string& onMouseOutExpression,
-	const string& onChangeExpression
+	const string& onChangeExpression,
+	const string& parentElementId
 	) :
 	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
@@ -100,6 +101,7 @@ GUIElementNode::GUIElementNode(
 	this->onMouseOverExpression = onMouseOverExpression;
 	this->onMouseOutExpression = onMouseOutExpression;
 	this->onChangeExpression = onChangeExpression;
+	this->parentElementId = parentElementId;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
 }
@@ -301,6 +303,10 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 
 void GUIElementNode::executeOnChangeExpression() {
 	if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
+}
+
+const string& GUIElementNode::getParentElementNodeId() {
+	return parentElementId;
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

@@ -88,12 +88,13 @@ private:
 	/**
 	 * Parse GUI node
 	 * @param guiParentNode gui parent node
+	 * @param parentElementId parent element id
 	 * @param xmlParentNode xml parent node
 	 * @param guiElement gui element
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement);
+	static void parseGUINode(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* xmlParentNode, GUIElement* guiElement);
 
 	/**
 	 * Returns immediate children tags
@@ -113,12 +114,32 @@ private:
 	/**
 	 * Parse template
 	 * @param guiParentNode GUI parent node
+	 * @param parentElementId parent element id
 	 * @param node template xml node
 	 * @param _template template
 	 * @param attributes attributes
 	 * @param guiElement GUI element
 	 */
-	static void parseTemplate(GUIParentNode* guiParentNode, TiXmlElement* node, const string& _template, const unordered_map<string, string>& attributes, GUIElement* guiElement);
+	static void parseTemplate(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& _template, const unordered_map<string, string>& attributes, GUIElement* guiElement);
+
+	/**
+	 * Parse inner XML
+	 * @param guiParentNode GUI parent node
+	 * @param parentElementId parent element id
+	 * @param node template xml node
+	 * @param _template template
+	 * @param attributes attributes
+	 * @param guiElement GUI element
+	 */
+	static void parseInnerXML(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& _template, const unordered_map<string, string>& attributes, GUIElement* guiElement);
+
+	/**
+	 * Parse factor
+	 * @param guiParentNode gui parent node
+	 * @param factor factor
+	 * @return factor
+	 */
+	static int parseFactor(GUIParentNode* guiParentNode, const string& factor);
 
 public:
 

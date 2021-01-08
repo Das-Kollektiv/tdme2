@@ -373,9 +373,10 @@ public:
 	 * @param top top
 	 * @param width width
 	 * @param height height
+	 * @param factor factor
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
 	/**
 	 * Get color

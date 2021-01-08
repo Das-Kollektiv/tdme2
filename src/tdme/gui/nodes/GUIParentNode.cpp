@@ -216,7 +216,7 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 	this->childrenRenderOffsetY = childrenRenderOffsetY;
 }
 
-GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
+GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor)
 {
 	GUINode_RequestedConstraints constraints;
 	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
@@ -227,6 +227,10 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), -1);
 	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
 	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), -1);
+	if (constraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.left*= factor;
+	if (constraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.top*= factor;
+	if (constraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.width*= factor;
+	if (constraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.height*= factor;
 	return constraints;
 }
 
