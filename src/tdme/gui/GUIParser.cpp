@@ -1224,7 +1224,7 @@ int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
 			parentElementNode = dynamic_cast<GUIElementNode*>(guiParentNode->getScreenNode()->getNodeById(parentElementNode->getParentElementNodeId()));
 			if (parentElementNode != nullptr) childIdx++;
 		}
-		return childIdx - 2;
+		return Math::clamp(childIdx - 3, 1, Integer::MAX_VALUE); // TODO: check me!
 	} else {
 		return Integer::parseInt(factor);
 	}
