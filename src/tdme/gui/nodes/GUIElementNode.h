@@ -60,6 +60,7 @@ private:
 	string onMouseOverExpression;
 	string onMouseOutExpression;
 	string onChangeExpression;
+	string parentElementId;
 
 protected:
 	/**
@@ -99,6 +100,7 @@ protected:
 	 * @param onMouseOver on mouse over expression
 	 * @param onMouseOut on mouse out expression
 	 * @param onChangeExpression on change expression
+	 * @param parentElementId parent element id
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,
@@ -129,7 +131,8 @@ protected:
 		const string& onMouseDoubleClickExpression,
 		const string& onMouseOver,
 		const string& onMouseOut,
-		const string& onChangeExpression
+		const string& onChangeExpression,
+		const string& parentElementId
 	);
 
 public:
@@ -200,6 +203,11 @@ public:
 	 * @param expression expression
 	 */
 	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
+
+	/**
+	 * @return parent element id
+	 */
+	const string& getParentElementNodeId();
 
 	/**
 	 * @return active conditions
