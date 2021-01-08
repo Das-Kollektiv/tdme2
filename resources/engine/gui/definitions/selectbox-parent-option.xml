@@ -1,8 +1,8 @@
 <element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<layer width="auto" >
+	<layer width="100%" >
 		
 		<!-- normal -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
 			<space width="15"/>
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
@@ -11,7 +11,7 @@
 		</layout>
 	
 		<!-- mouse over -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" background-color="{$color.focus}" >
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" background-color="{$color.focus}" >
 			<space width="15"/>		
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
@@ -20,7 +20,7 @@
 		</layout>
 	
 		<!-- disabled -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
 			<space width="15"/>
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
@@ -29,7 +29,7 @@
 		</layout>
 		
 		<!-- selected -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover" >
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover" >
 			<space width="15"/>
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
@@ -38,7 +38,7 @@
 		</layout>
 	
 		<!-- selected, mouse over -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected" show-on="mouseover" background-color="{$color.focus}" >	
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected" show-on="mouseover" background-color="{$color.focus}" >	
 			<space width="15"/>
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
@@ -47,7 +47,7 @@
 		</layout>
 		
 		<!-- arrow -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
 			<element show-on="enabled" id="{$id}_arrow" width="15" height="25" horizontal-align="center" vertical-align="center">
 				<image effect-color-mul="{$color.font_normal}" hide-on="opened,mouseover" src="resources/engine/images/arrow_right.png" vertical-align="center" />
 				<image effect-color-mul="{$color.font_highlight}" hide-on="opened" src="resources/engine/images/arrow_right.png" vertical-align="center" />

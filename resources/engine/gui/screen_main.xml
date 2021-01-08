@@ -7,36 +7,26 @@
 				<menu-header-item text="File">
 					<menu-item text="New Project" id="menu_file_new" />
 					<menu-item text="Open Project" id="menu_file_open" />
-					<space height="5"/>
-					<space height="1" width="100%" border-top="1" />
-					<space height="5"/>
+					<menu-separator />
 					<menu-item text="Save all" id="menu_file_saveall" />
-					<space height="5"/>
-					<space height="1" width="100%" border-top="1" />
-					<space height="5"/>
+					<menu-separator />
 					<menu-item text="Quit" id="menu_file_quit" />
 				</menu-header-item>
 				<menu-header-item text="Edit">
 					<menu-item text="Undo" id="menu_edit_undo" />
 					<menu-item text="Redo" id="menu_edit_redo" />
-					<space height="5"/>
-					<space height="1" width="100%" border-top="1" />
-					<space height="5"/>
+					<menu-separator />
 					<menu-item text="Cut" id="menu_edit_cut" />
 					<menu-item text="Copy" id="menu_edit_copy" />
 					<menu-item text="Paste" id="menu_edit_paste" />
-					<space height="5"/>
-					<space height="1" width="100%" border-top="1" />
-					<space height="5"/>
+					<menu-separator />
 					<menu-item text="Delete" id="menu_edit_delete" />
 				</menu-header-item>
 				<menu-header-item text="Help">
 					<menu-item text="Documentation" id="menu_help_documentation" />
 					<menu-item text="Community" id="menu_help_community" />
 					<menu-item text="Bug Tracker" id="menu_help_bugtracker" />
-					<space height="5"/>
-					<space height="1" width="100%" border-top="1" />
-					<space height="5"/>
+					<menu-separator />
 					<menu-item text="About" id="menu_help_about" />
 				</menu-header-item>
 			</menu-header>
