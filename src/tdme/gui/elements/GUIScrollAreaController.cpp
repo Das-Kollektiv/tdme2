@@ -134,6 +134,30 @@ void GUIScrollAreaController::dispose()
 
 void GUIScrollAreaController::postLayout()
 {
+	{
+		auto const contentNode = dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+		float elementHeight = contentNode->getComputedConstraints().height;
+		float contentHeight = contentNode->getContentHeight();
+		auto scrollableHeight = contentHeight - elementHeight;
+		if (contentHeight > elementHeight) {
+			dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("vertical-scrollbar");
+		} else {
+			dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("vertical-scrollbar");
+			contentNode->setChildrenRenderOffsetY(0.0f);
+		}
+	}
+	{
+		auto const contentNode = dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+		float elementWidth = contentNode->getComputedConstraints().width;
+		float contentWidth = contentNode->getContentWidth();
+		auto scrollableWidth = contentWidth - elementWidth;
+		if (contentWidth > elementWidth) {
+			dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("horizontal-scrollbar");
+		} else {
+			contentNode->setChildrenRenderOffsetX(0.0f);
+			dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("horizontal-scrollbar");
+		}
+	}
 }
 
 void GUIScrollAreaController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

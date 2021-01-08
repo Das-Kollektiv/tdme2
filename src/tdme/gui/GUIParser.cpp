@@ -21,8 +21,6 @@
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
-#include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
-#include <tdme/gui/elements/GUIScrollAreaVertical.h>
 #include <tdme/gui/elements/GUISelectBox.h>
 #include <tdme/gui/elements/GUISelectBoxMultiple.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
@@ -92,8 +90,6 @@ using tdme::gui::elements::GUIMenuSeparator;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
-using tdme::gui::elements::GUIScrollAreaHorizontal;
-using tdme::gui::elements::GUIScrollAreaVertical;
 using tdme::gui::elements::GUISelectBox;
 using tdme::gui::elements::GUISelectBoxMultiple;
 using tdme::gui::elements::GUISelectBoxMultipleOption;
@@ -1388,20 +1384,6 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIInput();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUIScrollAreaVertical();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUIScrollAreaHorizontal();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
