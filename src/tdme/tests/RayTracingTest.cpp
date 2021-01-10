@@ -249,8 +249,8 @@ void RayTracingTest::initialize()
 	light0->setEnabled(true);
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
 	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
@@ -290,8 +290,8 @@ void RayTracingTest::initialize()
 	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
 	auto capsuleBig = bvDeleter.add(new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f));
 	auto capsuleBigModel = modelDeleter.add(PrimitiveModel::createModel(capsuleBig, "capsulebig_model"));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("player", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);

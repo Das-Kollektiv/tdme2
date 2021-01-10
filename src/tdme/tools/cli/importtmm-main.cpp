@@ -55,7 +55,7 @@ using tdme::utilities::StringTools;
 
 static Model* createModel(const string& id, vector<Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
