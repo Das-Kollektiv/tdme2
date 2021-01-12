@@ -1,7 +1,7 @@
 screen_main
-screen_progressbar
-screen_import
-screen_infodialog
+popup_progressbar
+popup_import
+popup_infodialog
 
 template_files_thumbnail
 template_files_text
@@ -35,7 +35,7 @@ definition_contextmenu
 
 resources
 	scenes
-	templates
+	prototypes
 	meshes
 	music
 	particles
@@ -47,7 +47,7 @@ resources
 	images
 
 
-template 	= tet
+prototype 	= prt
 texture  	= png
 script 	 	= tsr
 sound  	 	= ogg
