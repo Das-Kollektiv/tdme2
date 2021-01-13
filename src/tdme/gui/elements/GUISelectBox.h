@@ -24,7 +24,8 @@ using tdme::os::filesystem::FileSystemException;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBox final: public GUIElement
+class tdme::gui::elements::GUISelectBox final
+	: public GUIElement
 {
 
 private:

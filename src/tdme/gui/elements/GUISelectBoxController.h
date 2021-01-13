@@ -30,13 +30,13 @@ class tdme::gui::elements::GUISelectBoxController final
 {
 	friend class GUISelectBox;
 	friend class GUISelectBoxOptionController;
-	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
+	static constexpr char VALUE_DELIMITER { '|' };
 	vector<GUINode*> childControllerNodes;
-	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
+	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
 	bool disabled;
 	MutableString value;
 
@@ -57,29 +57,39 @@ private:
 	void unselect();
 
 	/**
+	 * Unfocus all nodes
+	 */
+	void unfocus();
+
+	/**
 	 * Determine select box option controllers
 	 */
-	void determineSelectBoxOptionControllers();
+	void determineSelectBoxMultipleOptionControllers();
 
 	/**
-	 * Get selected option idx
+	 * Get focussed option idx
 	 */
-	int32_t getSelectedOptionIdx();
+	int32_t getFocussedOptionIdx();
 
 	/**
-	 * Select current option
+	 * Select current options
 	 */
 	void selectCurrent();
 
 	/**
-	 * Select next node
+	 * Focus next node
 	 */
-	void selectNext();
+	void focusNext();
 
 	/**
-	 * Select previous
+	 * Focus previous
 	 */
-	void selectPrevious();
+	void focusPrevious();
+
+	/**
+	 * Toggle selected node
+	 */
+	void toggle();
 
 	/**
 	 * Toggle open state of current parent option
@@ -95,6 +105,7 @@ public:
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;

@@ -13,7 +13,6 @@
 
 using tdme::gui::elements::GUISelectBoxParentOptionController;
 using tdme::gui::GUI;
-using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementController;

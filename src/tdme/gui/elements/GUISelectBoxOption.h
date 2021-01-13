@@ -24,23 +24,20 @@ using tdme::os::filesystem::FileSystemException;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxOption final
-	: public GUIElement
+class tdme::gui::elements::GUISelectBoxOption final: public GUIElement
 {
 
 private:
 	static string NAME;
 
 public:
-	/**
-	 * Public constructor
-	 */
-	GUISelectBoxOption();
-
-	// overridden methods
 	const string& getName() override;
 	const string getTemplate(const string& pathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
+	/**
+	 * Public constructor
+	 */
+	GUISelectBoxOption();
 };

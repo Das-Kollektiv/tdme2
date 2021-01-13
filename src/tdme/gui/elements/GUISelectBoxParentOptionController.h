@@ -20,8 +20,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxParentOptionController final
-	: public GUISelectBoxOptionController
+class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUISelectBoxOptionController
 {
 	friend class GUISelectBoxController;
 	friend class GUISelectBoxOptionController;

@@ -33,12 +33,6 @@ namespace elements {
 	class GUIScrollAreaController;
 	class GUISelectBox;
 	class GUISelectBoxController;
-	class GUISelectBoxMultiple;
-	class GUISelectBoxMultipleController;
-	class GUISelectBoxMultipleOption;
-	class GUISelectBoxMultipleOptionController;
-	class GUISelectBoxMultipleParentOption;
-	class GUISelectBoxMultipleParentOptionController;
 	class GUISelectBoxOption;
 	class GUISelectBoxOptionController;
 	class GUISelectBoxParentOption;

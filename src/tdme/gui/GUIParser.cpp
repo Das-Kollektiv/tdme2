@@ -22,9 +22,6 @@
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
 #include <tdme/gui/elements/GUISelectBox.h>
-#include <tdme/gui/elements/GUISelectBoxMultiple.h>
-#include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
-#include <tdme/gui/elements/GUISelectBoxMultipleParentOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
 #include <tdme/gui/elements/GUISelectBoxParentOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
@@ -91,9 +88,6 @@ using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
 using tdme::gui::elements::GUISelectBox;
-using tdme::gui::elements::GUISelectBoxMultiple;
-using tdme::gui::elements::GUISelectBoxMultipleOption;
-using tdme::gui::elements::GUISelectBoxMultipleParentOption;
 using tdme::gui::elements::GUISelectBoxOption;
 using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
@@ -1313,14 +1307,7 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBoxMultiple();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUISelectBoxMultipleOption();
+		GUIElement* guiElement = new GUISelectBoxParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
@@ -1454,20 +1441,6 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIMenuSeparator();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUISelectBoxParentOption();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUISelectBoxMultipleParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
