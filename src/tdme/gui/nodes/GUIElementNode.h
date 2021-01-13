@@ -61,6 +61,7 @@ private:
 	string onMouseOutExpression;
 	string onChangeExpression;
 	string parentElementId;
+	vector<string> options;
 
 protected:
 	/**
@@ -101,6 +102,7 @@ protected:
 	 * @param onMouseOut on mouse out expression
 	 * @param onChangeExpression on change expression
 	 * @param parentElementId parent element id
+	 * @param options options
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,
@@ -132,7 +134,8 @@ protected:
 		const string& onMouseOver,
 		const string& onMouseOut,
 		const string& onChangeExpression,
-		const string& parentElementId
+		const string& parentElementId,
+		const string& options
 	);
 
 public:
@@ -208,6 +211,11 @@ public:
 	 * @return parent element id
 	 */
 	const string& getParentElementNodeId();
+
+	/**
+	 * @returns if option is among given options
+	 */
+	bool hasOption(const string& option);
 
 	/**
 	 * @return active conditions

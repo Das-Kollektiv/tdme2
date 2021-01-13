@@ -160,7 +160,6 @@
                 - radio button
                 - scrollarea
                 - selectbox including tree view
-                - selectbox with multiple selection including tree view
                 - slider horizontal
                 - slider vertical
                 - tabs

@@ -272,8 +272,8 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 GUINode_Alignments GUINode::createAlignments(const string& horizontal, const string& vertical)
 {
 	GUINode_Alignments alignments;
-	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringTools::toUpperCase(horizontal) : "LEFT");
-	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringTools::toUpperCase(vertical) : "TOP");
+	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0?StringTools::toUpperCase(horizontal):"LEFT");
+	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0?StringTools::toUpperCase(vertical):"TOP");
 	return alignments;
 }
 

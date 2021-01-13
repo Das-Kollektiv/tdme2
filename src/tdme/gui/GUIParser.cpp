@@ -661,7 +661,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-over"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-out"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-change"))),
-					parentElementId
+					parentElementId,
+					string(AVOID_NULLPTR_STRING(node->Attribute("options")))
 				);
 				guiParentNode->addSubNode(guiElementNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
