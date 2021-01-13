@@ -1,38 +1,77 @@
-<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<layout alignment="horizontal" width="100%" height="auto" background-color="{$color.font_normal}">
+<element id="{$id}" parent-id="{$parent-id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layer width="100%" >
+		
+		<!-- normal -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover,focussed" >
+			<space show-on="child" width="45" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>			
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />			
+		</layout>
 	
-		<element show-on="enabled" id="{$id}_arrow" width="15" height="20" horizontal-align="center" vertical-align="center">
-			<!-- Image needs transparency and white arrow so that I can do effects on it -->
-			<image effect-color-mul="#8080A0" hide-on="opened,mouseover" src="resources/engine/images/arrow_right.png" vertical-align="center" />
-			<image effect-color-mul="#8080FF" hide-on="opened" src="resources/engine/images/arrow_right.png" vertical-align="center" />
-			<image effect-color-mul="#8080A0" hide-on="closed,mouseover" src="resources/engine/images/arrow_down.png" vertical-align="center" />
-			<image effect-color-mul="#8080FF" hide-on="closed" src="resources/engine/images/arrow_down.png" vertical-align="center" />
-		</element>
+		<!-- mouse over / focussed -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover,focussed" background-color="{$color.focus}" >
+			<space show-on="child" width="45" factor="{__TreeDepth__}" />
+			<space width="15"/>		
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+		</layout>
+	
+		<!-- disabled -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
+			<space show-on="child" width="45" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		</layout>
 		
-		<layer width="*" height="auto">
-			<!-- unfocused, unselected, no mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected,mouseover" font="{$font.default}" text="{$text}" color="#000000" background-color="{$color.font_normal}" />
-			<!-- unfocused, unselected, mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected" show-on="mouseover" font="{$font.default}" text="{$text}" color="#000000" background-color="#B0B0FF" />
-			<!-- unfocused, selected, no mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="#8080FF" />
-			<!-- unfocused, selected, mouse over -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="#B0B0FF" />
-			<!-- focussed, unselected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,selected" show-on="focussed" font="{$font.default}" text="{$text}" background-color="#B0B0FF" color="#000000" />
-			<!-- focussed, selected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,unselected" show-on="focussed" font="{$font.default}" text="{$text}" background-color="#B0B0FF" color="{$color.font_highlight}" />
-			<!-- disabled, unselected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="{$font.default}" text="{$text}" color="#D0D0D0" background-color="{$color.button_normal}" />
-			<!-- disabled, selected -->
-			<text padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="{$font.default}" text="{$text}" color="#D0D0D0" background-color="#808080" />
-		</layer>
+		<!-- selected -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover, focussed" background-color="{$color.focus}" >
+			<space show-on="child" width="45" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+		</layout>
+	
+		<!-- <!-- selected, mouse over --> -->
+		<!-- <layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected" show-on="mouseover" background-color="{$color.focus}" > -->
+			<!-- <space show-on="child" width="45" factor="{__TreeDepth__}" />		 -->
+			<!-- <space width="15"/> -->
+			<!-- <layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center"> -->
+				<!-- <image src="{$image}" /> -->
+			<!-- </layout> -->
+			<!-- <text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" /> -->
+		<!-- </layout> -->
 		
-	</layout>
+		<!-- arrow -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
+			<space show-on="child" width="45" factor="{__TreeDepth__}" />
+			<element show-on="enabled" id="{$id}_arrow" width="15" height="25" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_normal}" hide-on="opened,mouseover" src="resources/engine/images/arrow_right.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_highlight}" hide-on="opened" src="resources/engine/images/arrow_right.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_normal}" hide-on="closed,mouseover" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_highlight}" hide-on="closed" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+			</element>	
+		</layout>
+		
+	</layer>
+		
 </element>
-<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto" background-color="{$color.font_normal}">
-	<space width="30" />
-	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto" background-color="{$color.font_normal}">
-		{__InnerXML__}
+
+<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto">
+	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto">
+		<inner-xml parent-id="{$id}"> 
+			<![CDATA[
+				{__InnerXML__}
+			]]>
+		</inner-xml>
 	</layout>
 </layout>
