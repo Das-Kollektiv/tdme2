@@ -493,6 +493,15 @@ public:
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
 
 	/**
+	 * Get event position clamped to node constraints
+	 * 	TODO: use Vector2 instead of array<float, 2>
+	 * @param event event
+	 * @param position x,y position clamped to node constraints
+	 * @return void
+	 */
+	virtual void getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position);
+
+	/**
 	 * @return first parent node in tree with controller node attached
 	 */
 	virtual GUIParentNode* getParentControllerNode();
