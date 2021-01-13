@@ -72,13 +72,13 @@
 										<selectbox-multiple-option text="Option B" value="1.2" />
 										<selectbox-multiple-option text="Option C" value="1.3" />
 										<selectbox-multiple-option text="Option D" value="1.4" />
-									</selectbox-parent-option>
+									</selectbox-multiple-parent-option>
 									<selectbox-multiple-parent-option text="Option F,G,H,I" value="2">
 										<selectbox-multiple-option text="Option F" value="2.1" />
 										<selectbox-multiple-option text="Option G" value="2.2" />
 										<selectbox-multiple-option text="Option H" value="2.3" />
 										<selectbox-multiple-option text="Option I" value="2.4" />
-									</selectbox-parent-option>
+									</selectbox-multiple-parent-option>
 									<selectbox-multiple-parent-option text="Option J,K,L,M,N,O,P,Q" value="3">
 										<selectbox-multiple-option text="Option J" value="3.1" />
 										<selectbox-multiple-option text="Option K" value="3.2" />
@@ -94,15 +94,15 @@
 												<selectbox-multiple-option text="Option XY" value="3.6.2" />
 												<selectbox-multiple-option text="Option XZ" value="3.6.3" />
 												<selectbox-multiple-option text="Option YX" value="3.6.4" />
-											</selectbox-parent-option>
-										</selectbox-parent-option>
-									</selectbox-parent-option>
+											</selectbox-multiple-parent-option>
+										</selectbox-multiple-parent-option>
+									</selectbox-multiple-parent-option>
 									<selectbox-multiple-option text="Option R" value="4" />
 									<selectbox-multiple-option text="Option S" value="5" />
 									<selectbox-multiple-option text="Option T" value="6" />
 									<selectbox-multiple-option text="Option U" value="7" />
 								</scrollarea>
-							</selectbox>
+							</selectbox-multiple>
 							
 						</layout>
 					</layout>
