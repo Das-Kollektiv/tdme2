@@ -13,7 +13,7 @@
 				<image effect-color-mul="{$color.font_normal}" hide-on="closed" src="resources/engine/images/arrow_up.png" vertical-align="center" />
 			</element>
 		</layout>
-		<layout id="{$id}_inner"  width="100%" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_midground}">
+		<layout id="{$id}_inner" padding="{$padding}" width="100%" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_midground}">
 			{__InnerXML__}
 		</layout>
 	</layout>
