@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
+#include <algorithm>
 #include <set>
 #include <string>
 
@@ -27,6 +28,9 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::begin;
+using std::end;
+using std::find;
 using std::set;
 using std::to_string;
 
@@ -84,7 +88,8 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseOverExpression,
 	const string& onMouseOutExpression,
 	const string& onChangeExpression,
-	const string& parentElementId
+	const string& parentElementId,
+	const string& options
 	) :
 	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
@@ -104,6 +109,12 @@ GUIElementNode::GUIElementNode(
 	this->parentElementId = parentElementId;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
+	{
+		StringTokenizer t;
+		t.tokenize(StringTools::trim(options), ",");
+		while (t.hasMoreTokens() == true) this->options.push_back(StringTools::toLowerCase(StringTools::trim(t.nextToken())));
+
+	}
 }
 
 string GUIElementNode::CONDITION_ALWAYS = "always";
@@ -307,6 +318,10 @@ void GUIElementNode::executeOnChangeExpression() {
 
 const string& GUIElementNode::getParentElementNodeId() {
 	return parentElementId;
+}
+
+bool GUIElementNode::hasOption(const string& option) {
+	return find(begin(options), end(options), option) != end(options);
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

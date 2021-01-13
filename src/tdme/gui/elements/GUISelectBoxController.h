@@ -38,6 +38,7 @@ private:
 	vector<GUINode*> childControllerNodes;
 	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
 	bool disabled;
+	bool multipleSelection;
 	MutableString value;
 
 	/**
@@ -50,6 +51,11 @@ private:
 	 * Init
 	 */
 	void init();
+
+	/**
+	 * @return if multiple selection is enabled
+	 */
+	bool isMultipleSelection();
 
 	/**
 	 * Unselect all nodes
@@ -90,6 +96,11 @@ private:
 	 * Toggle selected node
 	 */
 	void toggle();
+
+	/**
+	 * Select focussed node
+	 */
+	void select();
 
 	/**
 	 * Toggle open state of current parent option
