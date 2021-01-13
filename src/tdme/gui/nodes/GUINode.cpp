@@ -258,7 +258,7 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 		return value;
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT)) {
-		return static_cast< int32_t >((parentValue / 100.0 * value));
+		return static_cast<int32_t>((parentValue / 100.0 * value));
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)) {
 		return autoValue;
@@ -987,8 +987,8 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
 		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
 	if (belongsToElement == true) {
-		position[0] = static_cast< int32_t >((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
-		position[1] = static_cast< int32_t >((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
+		position[0] = static_cast<int32_t>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
+		position[1] = static_cast<int32_t>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
 	}
 	return belongsToElement;
 }
@@ -1010,19 +1010,32 @@ void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float,
 	float top = computedConstraints.top + computedConstraints.alignmentTop;
 	float bottom = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - 1;
 	if (eventX < left) {
-		position[0] = static_cast< int32_t >((eventX - left));
+		position[0] = static_cast<int32_t>((eventX - left));
 	} else if (eventX > right) {
-		position[0] = static_cast< int32_t >((eventX - right));
+		position[0] = static_cast<int32_t>((eventX - right));
 	} else {
 		position[0] = 0;
 	}
 	if (eventY < top) {
-		position[1] = static_cast< int32_t >((eventY - top));
+		position[1] = static_cast<int32_t>((eventY - top));
 	} else if (eventY > bottom) {
-		position[1] = static_cast< int32_t >((eventY - bottom));
+		position[1] = static_cast<int32_t>((eventY - bottom));
 	} else {
 		position[1] = 0;
 	}
+}
+
+void GUINode::getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position) {
+	auto eventXScreen = event->getX();
+	auto eventYScreen = event->getY();
+	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
+	auto eventY = eventYScreen + computeParentChildrenRenderOffsetYTotal();
+	auto left = computedConstraints.left + computedConstraints.alignmentLeft;
+	auto right = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width - 1;
+	auto top = computedConstraints.top + computedConstraints.alignmentTop;
+	auto bottom = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - 1;
+	position[0] = Math::clamp(static_cast<int32_t>(eventX), left, right) - left;
+	position[1] = Math::clamp(static_cast<int32_t>(eventY), top, bottom) - top;
 }
 
 GUIParentNode* GUINode::getParentControllerNode()

@@ -187,7 +187,7 @@
 				</tab-content>
 				<tab-content tab-id="tab5" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="none" width="100%" height="auto">
-						<input name="input" width="80%" maxlength="120" text="Enter some text here" />
+						<input name="input" width="80%" maxlength="120" text="" hint="This is the mighty hint" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
