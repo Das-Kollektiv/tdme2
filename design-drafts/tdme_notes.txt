@@ -28,8 +28,9 @@ definition_selectbox
 definition_slider
 definition_tab
 definition_table
-definition_hirarchy
+definition_parentoption
 definition_contextmenu
+definition_tooltip
 
 
 
