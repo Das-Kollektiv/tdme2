@@ -33,7 +33,15 @@ string GUIInputController::CONDITION_ENABLED = "enabled";
 GUIInputController::GUIInputController(GUINode* node)
 	: GUIElementController(node)
 {
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = dynamic_cast<GUIElementNode*>(node)->isDisabled();
+}
+
+void GUIInputController::onValueChange() {
+	if (inputNode->getText().getString().empty() == true) {
+		dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("hint");
+	} else {
+		dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("hint");
+	}
 }
 
 bool GUIInputController::isDisabled()
@@ -43,18 +51,21 @@ bool GUIInputController::isDisabled()
 
 void GUIInputController::setDisabled(bool disabled)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 }
 
 void GUIInputController::initialize()
 {
-	textInputNode = dynamic_cast< GUIInputInternalNode* >(node->getScreenNode()->getNodeById(node->getId() + "_text-input"));
+	inputNode = dynamic_cast<GUIInputInternalNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text-input"));
 
 	//
 	GUIElementController::initialize();
+
+	//
+	onValueChange();
 }
 
 void GUIInputController::dispose()
@@ -70,7 +81,7 @@ void GUIInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
-		node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
+		node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(node));
 		event->setProcessed(true);
 	}
 }
@@ -99,11 +110,12 @@ bool GUIInputController::hasValue()
 
 const MutableString& GUIInputController::getValue()
 {
-	return textInputNode->getText();
+	return inputNode->getText();
 }
 
 void GUIInputController::setValue(const MutableString& value)
 {
-	textInputNode->getText().set(value);
-	dynamic_cast<GUIInputInternalController*>(textInputNode->getController())->reset();
+	inputNode->getText().set(value);
+	dynamic_cast<GUIInputInternalController*>(inputNode->getController())->reset();
+	onValueChange();
 }
