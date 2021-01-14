@@ -1,10 +1,10 @@
 <element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" >
 	<!-- normal -->
-	<text id="{$id}_unselected" padding-top="2" padding-bottom="2" width="100%" hide-on="selected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
+	<text id="{$id}_unselected" padding-left="5" padding-top="2" padding-bottom="2" width="100%" hide-on="selected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 	<!-- mouse over / focussed -->
-	<text id="{$id}_unselected,mouseover" padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="{$color.focus}" />
+	<text id="{$id}_unselected,mouseover" padding-left="5" padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="{$color.focus}" />
 	<!-- selected -->
-	<text id="{$id}_selected" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	<text id="{$id}_selected" padding-left="5" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 	<!-- <!-- selected, mouse over --> -->
 	<!-- <text id="{$id}_selected,mouseover" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="{$color.focus}" /> -->
 </element>
