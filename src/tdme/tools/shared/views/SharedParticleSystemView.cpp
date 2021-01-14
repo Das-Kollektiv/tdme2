@@ -538,7 +538,7 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(prototype->getFileName()),
+			Tools::getPathName(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());

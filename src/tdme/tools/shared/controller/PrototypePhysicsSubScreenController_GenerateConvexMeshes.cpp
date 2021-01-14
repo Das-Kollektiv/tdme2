@@ -189,7 +189,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 			vhacdParams.m_callback = &vhacdCallback;
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
-			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPathName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
@@ -277,7 +277,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 	} else
 	if (convexMeshMode == "model") {
 		try {
-			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPathName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,

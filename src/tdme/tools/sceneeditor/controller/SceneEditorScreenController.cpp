@@ -1024,7 +1024,7 @@ void SceneEditorScreenController::onMapSkyModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
+		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(sceneSkyModel->getController()->getValue().getString()),
@@ -1055,7 +1055,7 @@ void SceneEditorScreenController::onMapSkyApply() {
 			sceneSkyModel->getController()->getValue().getString().empty() == true?
 				nullptr:
 				ModelReader::read(
-					Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
+					Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
 					Tools::getFileName(sceneSkyModel->getController()->getValue().getString())
 				);
 		view->getScene()->setSkyModel(model);

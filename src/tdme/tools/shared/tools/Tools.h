@@ -171,6 +171,17 @@ public:
 	static Model* createTerrainModel(float width, float depth, float y);
 
 	/**
+	 * Update terrain model by applying a brush
+	 * @param terrainModel terrain model
+	 * @param brushCenterPosition brush center position
+	 * @param brushTextureFileName brush texture file name
+	 * @param brushScale brush scale
+	 * @param brushStrength brush strength
+	 *
+	 */
+	static void updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength);
+
+	/**
 	 * Set up entity in given engine with look from rotations and scale
 	 * @param entity entity
 	 * @param engine engine
@@ -196,14 +207,14 @@ public:
 	static const string getApplicationRootPath(const string& fileName);
 
 	/**
-	 * Get path
+	 * Get path of given file name
 	 * @param fileName file name
 	 * @return path
 	 */
-	static const string getPath(const string& fileName);
+	static const string getPathName(const string& fileName);
 
 	/**
-	 * Get file name of given path
+	 * Get file name of given file name
 	 * @param fileName file name
 	 * @return file name
 	 */

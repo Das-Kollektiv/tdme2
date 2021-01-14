@@ -695,8 +695,8 @@ void Application::setIcon() {
 				glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
 			}
 			GLFWimage glfwIcon;
-			glfwIcon.width = texture->getWidth();
-			glfwIcon.height = texture->getHeight();
+			glfwIcon.width = texture->getTextureWidth();
+			glfwIcon.height = texture->getTextureHeight();
 			glfwIcon.pixels = glfwPixels;
 			glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
 			texture->releaseReference();

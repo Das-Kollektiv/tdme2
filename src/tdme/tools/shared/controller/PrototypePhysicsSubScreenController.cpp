@@ -535,7 +535,7 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(Proto
 	auto const prototypeFinal = prototype;
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		Tools::getPath(convexMeshesFile->getController()->getValue().getString()),
+		Tools::getPathName(convexMeshesFile->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(convexMeshesFile->getController()->getValue().getString()),

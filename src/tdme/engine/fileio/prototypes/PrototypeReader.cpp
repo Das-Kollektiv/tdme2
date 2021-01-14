@@ -235,7 +235,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	);
 	auto applicationRoot = Tools::getApplicationRootPath(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
+	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
 }
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)

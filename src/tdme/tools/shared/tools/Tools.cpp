@@ -5,6 +5,8 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -56,6 +58,8 @@ using tdme::tools::shared::tools::Tools;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -304,11 +308,9 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	auto terrainNode = new Node(terrainModel, nullptr, "terrain", "terrain");
 	vector<Vector3> terrainVertices;
 	vector<Vector3> terrainNormals;
-	vector<TextureCoordinate> terrainTextureCoordinates;
 	vector<Face> terrainFacesGround;
 	#define STEP_SIZE	0.5f
 	for (float x = 0.0f; x < width; x+= STEP_SIZE) {
-		Console::println(to_string(depth) + ": " + to_string(terrainVertices.size()));
 		for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 			auto vertexIdx = terrainVertices.size();
 			terrainVertices.push_back(Vector3(x, y, z));
@@ -319,10 +321,6 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-			terrainTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-			terrainTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-			terrainTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
-			terrainTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
 			terrainFacesGround.push_back(
 				Face(
 					terrainNode,
@@ -331,10 +329,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 					vertexIdx + 2,
 					vertexIdx + 0,
 					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 1,
-					vertexIdx + 2
+					vertexIdx + 0
 				)
 			);
 			terrainFacesGround.push_back(
@@ -345,9 +340,6 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 					vertexIdx + 0,
 					vertexIdx + 0,
 					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 2,
-					vertexIdx + 3,
 					vertexIdx + 0
 				)
 			);
@@ -360,21 +352,80 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	nodeFacesEntities.push_back(nodeFacesEntityTerrain);
 	terrainNode->setVertices(terrainVertices);
 	terrainNode->setNormals(terrainNormals);
-	terrainNode->setTextureCoordinates(terrainTextureCoordinates);
 	terrainNode->setFacesEntities(nodeFacesEntities);
-	terrainModel->getNodes()["ground"] = terrainNode;
-	terrainModel->getSubNodes()["ground"] = terrainNode;
+	terrainModel->getNodes()[terrainNode->getId()] = terrainNode;
+	terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode;
 	auto boundingBox = terrainModel->getBoundingBox();
-	Console::println(
-		"bb: " +
-		to_string(boundingBox->getMin().getX()) + ";" +
-		to_string(boundingBox->getMin().getY()) + ";" +
-		to_string(boundingBox->getMin().getZ()) + " -> " +
-		to_string(boundingBox->getMax().getX()) + ";" +
-		to_string(boundingBox->getMax().getY()) + ";" +
-		to_string(boundingBox->getMax().getZ())
-	);
 	return terrainModel;
+}
+
+void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength) {
+	// get terrain node
+	auto terrainNode = terrainModel->getNodeById("terrain");
+	if (terrainNode == nullptr) return;
+
+	// load texture
+	Texture* texture = nullptr;
+	try {
+		texture = TextureReader::read(getPathName(brushTextureFileName), getFileName(brushTextureFileName), false, false);
+	} catch (Exception &exception) {
+		Console::println(string("Tools::updateTerrainModel(): An error occurred: ") + exception.what());
+	}
+
+	// apply brush
+	if (texture != nullptr) {
+		#define brushScale	0.5f
+		auto terrainVertices = terrainNode->getVertices();
+		auto verticesPerZ = static_cast<int>((terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
+		auto textureData = texture->getTextureData();
+		auto textureWidth = texture->getTextureWidth();
+		auto textureHeight = texture->getTextureHeight();
+		auto textureBytePerPixel = texture->getDepth() == 32?4:3;
+		for (auto z = 0.0f; z < textureHeight * brushScale; z+= STEP_SIZE) {
+			auto brushPosition =
+				brushCenterPosition.
+				clone().
+				sub(
+					Vector3(
+						(static_cast<float>(textureWidth) * brushScale) / 2.0f,
+						0.0f,
+						((static_cast<float>(textureHeight) * brushScale) / 2.0f)
+					)
+				).
+				add(
+					Vector3(
+						0.0f,
+						0.0f,
+						z
+					)
+				);
+			for (auto x = 0.0f; x < textureWidth * brushScale; x+= STEP_SIZE) {
+				auto textureX = static_cast<int>(x / brushScale);
+				auto textureY = static_cast<int>(z / brushScale);
+				auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
+				auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
+				auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
+				auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
+				auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
+				auto terrainModelX = static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
+				auto terrainModelZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
+				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 0].add(Vector3(0.0f, appliedStrength, 0.0f));
+				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 1].add(Vector3(0.0f, appliedStrength, 0.0f));
+				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 2].add(Vector3(0.0f, appliedStrength, 0.0f));
+				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 3].add(Vector3(0.0f, appliedStrength, 0.0f));
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+			}
+		}
+		terrainNode->setVertices(terrainVertices);
+		// ModelTools::computeNormals(terrainModel);
+		texture->releaseReference();
+	}
 }
 
 void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
@@ -559,7 +610,7 @@ const string Tools::getApplicationRootPath(const string& fileName)
 	return "";
 }
 
-const string Tools::getPath(const string& fileName)
+const string Tools::getPathName(const string& fileName)
 {
 	return FileSystem::getInstance()->getPathName(fileName);
 }

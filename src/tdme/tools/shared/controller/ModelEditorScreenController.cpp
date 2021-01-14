@@ -536,7 +536,7 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 	if (entityLodLevel == nullptr) return;
 	auto extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
+		entityLodLevel->getFileName() != ""?Tools::getPathName(entityLodLevel->getFileName()):modelPath->getPath(),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(entityLodLevel->getFileName()),
@@ -566,7 +566,7 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 		entityLodLevel->setModel(
 			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
 				ModelReader::read(
-					Tools::getPath(entityLodLevel->getFileName()),
+					Tools::getPathName(entityLodLevel->getFileName()),
 					Tools::getFileName(entityLodLevel->getFileName())
 				):
 				nullptr
@@ -843,17 +843,17 @@ void ModelEditorScreenController::onMaterialApply() {
 		specularMaterialProperties->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
 		specularMaterialProperties->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseTexture(
-			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
-			Tools::getPath(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setNormalTexture(
-			Tools::getPath(materialsMaterialNormalTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialNormalTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialNormalTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setSpecularTexture(
-			Tools::getPath(materialsMaterialSpecularTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialSpecularTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
@@ -862,18 +862,18 @@ void ModelEditorScreenController::onMaterialApply() {
 		if (pbrMaterialProperties != nullptr) {
 			pbrMaterialProperties->setBaseColorFactor(Tools::convertToColor4(materialsMaterialPBRBaseColorFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setBaseColorTexture(
-				Tools::getPath(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setMetallicFactor(Tools::convertToFloat(materialsMaterialPBRMetallicFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setRoughnessFactor(Tools::convertToFloat(materialsMaterialPBRRoughnessFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setMetallicRoughnessTexture(
-				Tools::getPath(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setNormalScale(Tools::convertToFloat(materialsMaterialPBRNormalScale->getController()->getValue().getString()));
 			pbrMaterialProperties->setNormalTexture(
-				Tools::getPath(materialsMaterialPBRNormalTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRNormalTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRNormalTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setExposure(Tools::convertToFloat(materialsMaterialPBRExposure->getController()->getValue().getString()));
@@ -1627,7 +1627,7 @@ void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
+		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPathName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),

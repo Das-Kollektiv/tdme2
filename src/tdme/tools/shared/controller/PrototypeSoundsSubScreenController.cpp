@@ -242,7 +242,7 @@ void PrototypeSoundsSubScreenController::onSoundLoad(int soundIdx) {
 
 	vector<string> extensions = {{"ogg"}};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPath(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
+		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPathName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
 		"Load from: ",
 		extensions,
 		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getFileName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):"",

@@ -293,7 +293,7 @@ void SceneEditorLibraryScreenController::onPartitionPrototype()
 
 	try {
 		// add partitions to scene
-		auto pathName = Tools::getPath(prototype->getModelFileName());
+		auto pathName = Tools::getPathName(prototype->getModelFileName());
 		auto fileName = Tools::getFileName(prototype->getModelFileName());
 		for (auto modelsByPartitionIt: modelsByPartition) {
 			auto key = modelsByPartitionIt.first;
