@@ -1,14 +1,14 @@
-<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" vertical-align="bottom">
 	<!-- normal -->
 	<text background-color="{$color.element_midground}" hide-on="disabled,selected,mouseover" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
-	<!-- unselected, mouse over -->
+	<!-- mouse over -->
 	<text background-color="{$color.element_midground}" hide-on="disabled,selected" show-on="mouseover" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 	<!-- selected -->
-	<text background-color="{$color.element_foreground}" hide-on="disabled,unselected,mouseover" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" border-left="1" border-right="1" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	<text background-color="{$color.element_foreground}" hide-on="disabled,unselected,mouseover" width="auto" height="30" padding-top="2" padding-left="10" padding-right="10" border-left="1" border-right="1" border-color="{$color.element_frame}" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 	<!-- selected, mouse over -->
-	<text background-color="{$color.element_foreground}" hide-on="disabled,unselected" show-on="mouseover" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" border-left="1" border-right="1" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
-	<!-- unselected, disabled -->
+	<text background-color="{$color.element_foreground}" hide-on="disabled,unselected" show-on="mouseover" width="auto" height="30" padding-top="2" padding-left="10" padding-right="10" border-left="1" border-right="1" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	<!-- disabled -->
 	<text background-color="{$color.button_normal}" hide-on="selected" show-on="disabled" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
-	<!-- selected, disabled -->
-	<text background-color="{$color.button_normal}" hide-on="unselected" show-on="disabled" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+	<!-- <!-- selected, disabled --> -->
+	<!-- <text background-color="{$color.button_normal}" hide-on="unselected" show-on="disabled" width="auto" height="24" padding-top="2" padding-left="10" padding-right="10" horizontal-align="center" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" /> -->
 </element>
