@@ -310,13 +310,22 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	vector<Vector3> terrainNormals;
 	vector<Face> terrainFacesGround;
 	#define STEP_SIZE	0.5f
+	auto verticesPerZ = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	for (float x = 0.0f; x < width; x+= STEP_SIZE) {
-		for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
+		terrainVertices.push_back(Vector3(x, y, 0.0f));
+	}
+	for (float z = STEP_SIZE; z < depth; z+= STEP_SIZE) {
+		terrainVertices.push_back(Vector3(0.0f, y, z));
+		for (float x = STEP_SIZE; x < width; x+= STEP_SIZE) {
+			auto normalIdx = terrainNormals.size();
 			auto vertexIdx = terrainVertices.size();
+
 			terrainVertices.push_back(Vector3(x, y, z));
-			terrainVertices.push_back(Vector3(x, y, z + STEP_SIZE));
-			terrainVertices.push_back(Vector3(x + STEP_SIZE, y, z + STEP_SIZE));
-			terrainVertices.push_back(Vector3(x + STEP_SIZE, y, z));
+
+			auto vertexIdxTop = vertexIdx - verticesPerZ;
+			auto vertexIdxTopLeft = vertexIdx - 1 - verticesPerZ;
+			auto vertexIdxLeft = vertexIdx - 1;
+
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
@@ -324,23 +333,23 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			terrainFacesGround.push_back(
 				Face(
 					terrainNode,
-					vertexIdx + 0,
-					vertexIdx + 1,
-					vertexIdx + 2,
-					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 0
+					vertexIdxTop,
+					vertexIdxTopLeft,
+					vertexIdxLeft,
+					normalIdx + 0,
+					normalIdx + 1,
+					normalIdx + 2
 				)
 			);
 			terrainFacesGround.push_back(
 				Face(
 					terrainNode,
-					vertexIdx + 2,
-					vertexIdx + 3,
-					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 0,
-					vertexIdx + 0
+					vertexIdxLeft,
+					vertexIdx,
+					vertexIdxTop,
+					normalIdx + 2,
+					normalIdx + 3,
+					normalIdx + 0
 				)
 			);
 		}
@@ -376,7 +385,7 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 	if (texture != nullptr) {
 		#define brushScale	0.5f
 		auto terrainVertices = terrainNode->getVertices();
-		auto verticesPerZ = static_cast<int>((terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
+		auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
 		auto textureData = texture->getTextureData();
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
@@ -409,10 +418,7 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
 				auto terrainModelX = static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
 				auto terrainModelZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
-				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 0].add(Vector3(0.0f, appliedStrength, 0.0f));
-				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 1].add(Vector3(0.0f, appliedStrength, 0.0f));
-				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 2].add(Vector3(0.0f, appliedStrength, 0.0f));
-				terrainVertices[terrainModelZ * verticesPerZ * 4 + terrainModelX * 4 + 3].add(Vector3(0.0f, appliedStrength, 0.0f));
+				terrainVertices[terrainModelZ * verticesPerZ + terrainModelX].add(Vector3(0.0f, appliedStrength, 0.0f));
 				brushPosition.add(
 					Vector3(
 						STEP_SIZE,
@@ -423,7 +429,7 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 			}
 		}
 		terrainNode->setVertices(terrainVertices);
-		// ModelTools::computeNormals(terrainModel);
+		ModelTools::computeNormals(terrainModel);
 		texture->releaseReference();
 	}
 }
