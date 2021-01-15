@@ -41,6 +41,8 @@ private:
 	bool multipleSelection;
 	MutableString value;
 
+	bool keyControl;
+
 	/**
 	 * Private constructor
 	 * @param node node
@@ -56,6 +58,11 @@ private:
 	 * @return if multiple selection is enabled
 	 */
 	bool isMultipleSelection();
+
+	/**
+	 * @return is control down
+	 */
+	bool isKeyControlDown();
 
 	/**
 	 * Unselect all nodes

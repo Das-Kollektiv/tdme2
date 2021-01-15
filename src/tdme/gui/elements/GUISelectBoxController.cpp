@@ -11,7 +11,6 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUISelectBoxController;
@@ -47,6 +46,10 @@ void GUISelectBoxController::init()
 
 bool GUISelectBoxController::isMultipleSelection() {
 	return multipleSelection;
+}
+
+bool GUISelectBoxController::isKeyControlDown() {
+	return keyControl;
 }
 
 bool GUISelectBoxController::isDisabled()
@@ -214,6 +217,15 @@ void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent
 {
 	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
+		if (event->getType() != GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
+			auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+			#if defined(GLFW3) || defined(VUKAN)
+				if (event->getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
+			#else
+				keyControl = event->isControlDown();
+			#endif
+		}
+
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
@@ -269,6 +281,7 @@ void GUISelectBoxController::onFocusGained()
 
 void GUISelectBoxController::onFocusLost()
 {
+	keyControl = false;
 }
 
 bool GUISelectBoxController::hasValue()
