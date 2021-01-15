@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="20" name="{$name}" disabled="{$disabled}" focusable="false" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+<element id="{$id}" width="auto" height="auto" name="{$name}" disabled="{$disabled}" focusable="false" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
 	<layout alignment="vertical" width="auto">
 		<layer width="auto" height="auto">
 			<!-- normal -->

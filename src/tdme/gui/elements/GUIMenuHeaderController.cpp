@@ -86,6 +86,22 @@ int GUIMenuHeaderController::getSelectedHeaderItemIdx()
 	return menuHeaderItemControllerIdx;
 }
 
+bool GUIMenuHeaderController::isOpen() {
+	determineMenuHeaderItemControllers();
+	for (auto menuHeaderItemController: menuHeaderItemControllers) {
+		if (menuHeaderItemController->isOpen() == true) return true;
+	}
+	return false;
+}
+
+void GUIMenuHeaderController::unselect() {
+	determineMenuHeaderItemControllers();
+	for (auto menuHeaderItemController: menuHeaderItemControllers) {
+		menuHeaderItemController->unselect();
+		if (menuHeaderItemController->isOpen() == true) menuHeaderItemController->toggleOpenState();
+	}
+}
+
 void GUIMenuHeaderController::selectNext()
 {
 	determineMenuHeaderItemControllers();

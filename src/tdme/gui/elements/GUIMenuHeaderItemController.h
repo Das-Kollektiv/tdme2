@@ -40,6 +40,7 @@ private:
 	static string CONDITION_CLOSED;
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
+	GUIElementNode* menuHeaderNode { nullptr };
 	vector<GUINode*> childControllerNodes;
 	vector<GUIMenuItemController*> menuItemControllers;
 	bool open;
@@ -59,7 +60,7 @@ private:
 	void init();
 
 	/**
-	 * @return drop down open state
+	 * @return menu open state
 	 */
 	bool isOpen();
 
