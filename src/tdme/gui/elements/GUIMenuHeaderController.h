@@ -26,6 +26,7 @@ class tdme::gui::elements::GUIMenuHeaderController final
 	: public GUINodeController
 {
 	friend class GUIMenuHeader;
+	friend class GUIMenuHeaderItemController;
 
 private:
 	vector<GUINode*> childControllerNodes;
@@ -54,6 +55,16 @@ private:
 	 * @return selected header item index
 	 */
 	int getSelectedHeaderItemIdx();
+
+	/**
+	 * @return if menu is open
+	 */
+	bool isOpen();
+
+	/**
+	 * Unselect
+	 */
+	void unselect();
 
 	/**
 	 * Select next node

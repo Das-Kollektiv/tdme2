@@ -1,6 +1,9 @@
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
 
+#include <string>
+
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/elements/GUIMenuHeaderController.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
 #include <tdme/gui/elements/GUIMenuItemController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -16,8 +19,11 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::to_string;
+
 using tdme::gui::elements::GUIMenuHeaderItemController;
 using tdme::gui::GUI;
+using tdme::gui::elements::GUIMenuHeaderController;
 using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -42,7 +48,7 @@ GUIMenuHeaderItemController::GUIMenuHeaderItemController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();
-	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
+	this->selected = (dynamic_cast<GUIElementNode*>(node))->isSelected();
 }
 
 void GUIMenuHeaderItemController::init()
@@ -73,13 +79,22 @@ void GUIMenuHeaderItemController::unselect()
 
 void GUIMenuHeaderItemController::initialize()
 {
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	(dynamic_cast<GUIElementNode*>(node))->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 
 	//
 	GUIElementController::initialize();
 
 	//
 	if (this->selected == true) select(); else unselect();
+
+	//
+	menuHeaderNode = dynamic_cast<GUIElementNode*>(node->getParentControllerNode());
+	while (true == true) {
+		if (dynamic_cast<GUIMenuHeaderController*>(menuHeaderNode->getController()) != nullptr) {
+			break;
+		}
+		menuHeaderNode = dynamic_cast<GUIElementNode*>(menuHeaderNode->getParentControllerNode());
+	}
 }
 
 void GUIMenuHeaderItemController::dispose()
@@ -99,7 +114,7 @@ bool GUIMenuHeaderItemController::isOpen()
 void GUIMenuHeaderItemController::toggleOpenState()
 {
 	(dynamic_cast<GUIElementNode*>(node))->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
-	open = open == true ? false : true;
+	open = open == true?false:true;
 	(dynamic_cast<GUIElementNode*>(node))->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	if (open == true) select(); else unselect();
 }
@@ -182,18 +197,35 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	GUIElementController::handleMouseEvent(node, event);
 	if (isDisabled() == true) return;
 	auto elementNode  = dynamic_cast<GUIElementNode*>(this->node);
-	if (event->getButton() == MOUSE_BUTTON_LEFT) {
-		if (node == this->node && node->isEventBelongingToNode(event) == true) {
-			auto& nodeConditions = (dynamic_cast<GUIElementNode*>(node))->getActiveConditions();
-			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+	auto menuHeaderController = dynamic_cast<GUIMenuHeaderController*>(menuHeaderNode->getController());
+	auto menuOpened = menuHeaderController->isOpen();
+	if (menuOpened == false) {
+		if (node == this->node &&
+			event->getButton() == MOUSE_BUTTON_LEFT &&
+			event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
+			node->isEventBelongingToNode(event) == true) {
+			if (open == false) {
 				event->setProcessed(true);
 				toggleOpenState();
 			}
-		} else {
-			if (open == true) {
-				auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
-				if (node == this->node && innerNode->isEventBelongingToNode(event) == false) {
+		}
+	} else {
+		if (open == true &&
+			node == this->node &&
+			event->getButton() == MOUSE_BUTTON_LEFT &&
+			event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+			auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
+			if (innerNode->isEventBelongingToNode(event) == false) {
+				event->setProcessed(true);
+				toggleOpenState();
+			}
+		} else
+		if (node == this->node &&
+			event->getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+			if (node == this->node && node->isEventBelongingToNode(event) == true) {
+				if (open == false) {
 					event->setProcessed(true);
+					menuHeaderController->unselect();
 					toggleOpenState();
 				}
 			}
