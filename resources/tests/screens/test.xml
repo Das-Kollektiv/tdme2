@@ -21,7 +21,7 @@
 				<menu-item text="About" id="menu_help_about" />
 			</menu-header-item>
 		</menu-header>
-		<space height="20"/>
+		<space height="10"/>
 		<tabs width="100%" height="*">
 			<tabs-header>
 				<tab id="tab1" text="Radio+Checkbox"/>
@@ -228,7 +228,7 @@
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
-					<scrollarea id="bbb" width="80%" height="80%" padding="5">
+					<scrollarea id="bbb" width="80%" height="80%" padding="5" border="1">
 						<multiline-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left">
 							<![CDATA[
 Lorem ipsum dolor sit amet consectetur adipiscing elit, urna consequat felis vehicula class ultricies mollis dictumst, aenean non a in donec nulla. Phasellus ante pellentesque erat cum risus consequat imperdiet aliquam, integer placerat et turpis mi eros nec lobortis taciti, vehicula nisl litora tellus ligula porttitor metus.

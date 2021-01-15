@@ -8,31 +8,31 @@
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+			<text padding-left="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
 		</layout>
 	
 		<!-- mouse over -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" background-color="{$color.focus}" >
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,selected" background-color="{$color.focus}" >
 			<space width="5" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+			<text padding-left="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
 		</layout>
 	
 		<!-- disabled -->
-		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
 			<space width="5" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<image src="{$image}" />
 			</layout>
-			<text padding-left="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+			<text padding-left="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
 		</layout>
 			
 		<!-- shortcut and child -->
 		<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 			<space width="*" />
-			<text padding-right="5" padding-top="2" padding-bottom="2" height="25" font="{$font.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+			<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$shortcut}" color="{$color.font_disabled}" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
 			</layout>
