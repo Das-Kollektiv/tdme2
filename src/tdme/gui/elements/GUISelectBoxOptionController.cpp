@@ -1,5 +1,7 @@
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 
+#include <string>
+
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
@@ -176,7 +178,7 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			(dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController()))->unfocus();
-			if (multipleSelection == true) {
+			if (multipleSelection == true && dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isKeyControlDown() == true) {
 				toggle();
 				focus();
 			} else {
