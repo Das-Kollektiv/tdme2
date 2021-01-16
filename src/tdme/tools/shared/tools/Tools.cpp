@@ -296,21 +296,44 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
+static inline int getTerrainModelTopVertexIdx(int vertexIdx, int verticesPerZ, int zMax) {
+	if (vertexIdx < verticesPerZ) return -1;
+	return vertexIdx - verticesPerZ;
+}
+
+static inline int getTerrainModelBottomVertexIdx(int vertexIdx, int verticesPerZ, int zMax) {
+	if (vertexIdx >= (zMax - 1) * verticesPerZ) return -1;
+	return vertexIdx + verticesPerZ;
+}
+
+static inline int getTerrainModelLeftVertexIdx(int vertexIdx, int verticesPerZ, int zMax) {
+	if (vertexIdx < 1) return -1;
+	return vertexIdx - 1;
+}
+
+static inline int getTerrainModelRightVertexIdx(int vertexIdx, int verticesPerZ, int zMax) {
+	if (vertexIdx > zMax * verticesPerZ - 1) return -1;
+	return vertexIdx + 1;
+}
+
 Model* Tools::createTerrainModel(float width, float depth, float y)
 {
 	auto modelId = "terrain" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
 	auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	auto terrainMaterial = new Material("terrain");
 	terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
-	terrainMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	terrainMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
+	// TODO: Fix me! The textures seem to be much too dark
+	terrainMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(2.0f, 2.0f, 2.0f, 0.0f));
+	terrainMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	terrainMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 	terrainModel->getMaterials()[terrainMaterial->getId()] = terrainMaterial;
 	auto terrainNode = new Node(terrainModel, nullptr, "terrain", "terrain");
 	vector<Vector3> terrainVertices;
 	vector<Vector3> terrainNormals;
-	vector<Face> terrainFacesGround;
+	vector<Face> terrainFaces;
 	#define STEP_SIZE	0.5f
 	auto verticesPerZ = static_cast<int>(Math::ceil(width / STEP_SIZE));
+	auto zMax = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 	for (float x = 0.0f; x < width; x+= STEP_SIZE) {
 		terrainVertices.push_back(Vector3(x, y, 0.0f));
 	}
@@ -322,15 +345,16 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 
 			terrainVertices.push_back(Vector3(x, y, z));
 
-			auto vertexIdxTop = vertexIdx - verticesPerZ;
-			auto vertexIdxTopLeft = vertexIdx - 1 - verticesPerZ;
-			auto vertexIdxLeft = vertexIdx - 1;
+			auto vertexIdxTop = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
+			auto vertexIdxTopLeft = getTerrainModelLeftVertexIdx(getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax), verticesPerZ, zMax);
+			auto vertexIdxLeft = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
 
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-			terrainFacesGround.push_back(
+
+			terrainFaces.push_back(
 				Face(
 					terrainNode,
 					vertexIdxTop,
@@ -341,7 +365,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 					normalIdx + 2
 				)
 			);
-			terrainFacesGround.push_back(
+			terrainFaces.push_back(
 				Face(
 					terrainNode,
 					vertexIdxLeft,
@@ -357,7 +381,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	FacesEntity nodeFacesEntityTerrain(terrainNode, "terrain.facesentity");
 	nodeFacesEntityTerrain.setMaterial(terrainMaterial);
 	vector<FacesEntity> nodeFacesEntities;
-	nodeFacesEntityTerrain.setFaces(terrainFacesGround);
+	nodeFacesEntityTerrain.setFaces(terrainFaces);
 	nodeFacesEntities.push_back(nodeFacesEntityTerrain);
 	terrainNode->setVertices(terrainVertices);
 	terrainNode->setNormals(terrainNormals);
@@ -366,6 +390,100 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode;
 	auto boundingBox = terrainModel->getBoundingBox();
 	return terrainModel;
+}
+
+inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainVertices, int vertexIdx, int verticesPerZ) {
+	Vector3 vertexNormal;
+	if (vertexIdx == -1) {
+		Console::println("Tools::computeTerrainVertexNormal(): no vertex normal available: invalid vertex idx");
+		return vertexNormal.set(0.0f, 1.0f, 0.0f);
+	}
+	auto zMax = terrainVertices.size() / verticesPerZ;
+	auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
+	auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
+	auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
+	auto bottomVertexIdx = getTerrainModelBottomVertexIdx(vertexIdx, verticesPerZ, zMax);
+	auto rightVertexIdx = getTerrainModelRightVertexIdx(vertexIdx, verticesPerZ, zMax);
+	auto bottomRightVertexIdx = getTerrainModelRightVertexIdx(bottomVertexIdx, verticesPerZ, zMax);
+	Vector3 triangleNormal;
+	int normalCount = 0;
+	if (topVertexIdx != -1 && topLeftVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[topVertexIdx],
+				terrainVertices[topLeftVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (topLeftVertexIdx != -1 && leftVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[topLeftVertexIdx],
+				terrainVertices[leftVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (leftVertexIdx != -1 && bottomVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[leftVertexIdx],
+				terrainVertices[bottomVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (bottomVertexIdx != -1 && bottomRightVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[bottomVertexIdx],
+				terrainVertices[bottomRightVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (bottomRightVertexIdx != -1 && rightVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[bottomRightVertexIdx],
+				terrainVertices[rightVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (rightVertexIdx != -1 && topVertexIdx != -1) {
+		ModelTools::computeNormal(
+			{
+				terrainVertices[rightVertexIdx],
+				terrainVertices[topVertexIdx],
+				terrainVertices[vertexIdx]
+			},
+			triangleNormal
+		);
+		vertexNormal.add(triangleNormal);
+		normalCount++;
+	}
+	if (normalCount > 0) {
+		return vertexNormal.normalize();
+	}
+	Console::println("Tools::computeTerrainVertexNormal(): no vertex normal available: normal count == 0");
+	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
 void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength) {
@@ -385,7 +503,10 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 	if (texture != nullptr) {
 		#define brushScale	0.5f
 		auto terrainVertices = terrainNode->getVertices();
+		auto terrainNormals = terrainNode->getNormals();
 		auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
+		auto normalsPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE) - 1;
+		auto zMax = terrainVertices.size() / verticesPerZ;
 		auto textureData = texture->getTextureData();
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
@@ -428,9 +549,53 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				);
 			}
 		}
+		for (auto z = 0.0f; z < textureHeight * brushScale + STEP_SIZE * 2; z+= STEP_SIZE) {
+			auto brushPosition =
+				brushCenterPosition.
+				clone().
+				sub(
+					Vector3(
+						(static_cast<float>(textureWidth) * brushScale) / 2.0f,
+						0.0f,
+						((static_cast<float>(textureHeight) * brushScale) / 2.0f)
+					)
+				).
+				add(
+					Vector3(
+						0.0f,
+						0.0f,
+						z
+					)
+				);
+			for (auto x = 0.0f; x < textureWidth * brushScale + STEP_SIZE * 2; x+= STEP_SIZE) {
+				auto terrainModelX = static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
+				auto terrainModelZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
+				auto vertexIdx = terrainModelZ * verticesPerZ + terrainModelX;
+				auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
+				auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
+				auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
+				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 0)] = computeTerrainVertexNormal(terrainVertices, topVertexIdx, verticesPerZ);
+				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 1)] = computeTerrainVertexNormal(terrainVertices, topLeftVertexIdx, verticesPerZ);
+				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 2)] = computeTerrainVertexNormal(terrainVertices, leftVertexIdx, verticesPerZ);
+				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 3)] = computeTerrainVertexNormal(terrainVertices, vertexIdx, verticesPerZ);
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+			}
+		}
 		terrainNode->setVertices(terrainVertices);
-		ModelTools::computeNormals(terrainModel);
+		terrainNode->setNormals(terrainNormals);
 		texture->releaseReference();
+		// prepare for indexed rendering;
+		// we can only render indexed models so far,
+		// my plan is to keep non indexed model as base, always change that, and then copy vertices and normals to a indexed one and reindex, should work \o/
+		// lets see about performance
+		ModelTools::prepareForIndexedRendering(terrainModel);
+
 	}
 }
 
