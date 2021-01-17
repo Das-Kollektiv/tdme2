@@ -51,7 +51,7 @@
 							<space height="10"/>
 							
 							<selectbox id="selectbox_projectlibrary" boder="0">
-								<scrollarea-vertical width="100%" height="200" focusable="true">
+								<scrollarea width="100%" height="200" focusable="true">
 								
 									<selectbox-parent-option text="resources" value="1">
 										<selectbox-option text="textures" value="1.1" />
@@ -63,7 +63,7 @@
 										</selectbox-parent-option>
 									</selectbox-parent-option>
 					
-								</scrollarea-vertical>
+								</scrollarea>
 							</selectbox>
 							
 							<space height="20"/>
@@ -72,7 +72,7 @@
 							
 							<space height="10"/>
 							
-							<scrollarea-vertical background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+							<scrollarea background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
@@ -128,7 +128,7 @@
 									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
 								</layout>
 							
-							</scrollarea-vertical>
+							</scrollarea>
 							
 						</layout>
 			
@@ -185,9 +185,9 @@
 								
 								<space height="10"/>
 							
-								<scrollarea-vertical border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+								<scrollarea border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 								
-								</scrollarea-vertical>
+								</scrollarea>
 								
 							</layout>
 						</tab-content>	

@@ -24,7 +24,7 @@
 		<space height="10"/>
 		<tabs width="100%" height="*">
 			<tabs-header>
-				<tab id="tab1" text="Radio+Checkbox"/>
+				<tab id="tab1" image="resources/engine/images/folder.png" text="Radio+Checkbox"/>
 				<tab id="tab2" text="Selectbox" />
 				<tab id="tab3" text="Buttons" />
 				<tab id="tab4" text="Dropdown" />
