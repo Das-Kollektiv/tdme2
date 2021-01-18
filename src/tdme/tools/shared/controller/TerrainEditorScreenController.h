@@ -1,18 +1,21 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::vector;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -20,6 +23,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedTerrainEditorView;
@@ -48,6 +52,7 @@ private:
 	GUIElementNode* brushFile { nullptr };
 	GUIElementNode* brushFileLoad { nullptr };
 	GUIElementNode* brushFileClear { nullptr };
+	vector<Vector3> terrainVerticesVector;
 
 public:
 	/**

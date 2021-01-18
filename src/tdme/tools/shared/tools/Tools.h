@@ -3,6 +3,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
@@ -15,6 +16,7 @@
 
 using std::array;
 using std::string;
+using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::model::Color4;
@@ -72,49 +74,49 @@ public:
 	 * @param text text
 	 * @param array array
 	 */
-	static void convertToArray(const string& text, array<float, 3>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 3>& array);
 
 	/**
 	 * Convert string to array
 	 * @param text text
 	 * @param array array
 	 */
-	static void convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 4>& array);
 
 	/**
 	 * Convert to vector 3
 	 * @param text text
 	 * @return vector3
 	 */
-	static Vector3 convertToVector3(const string& text) /* throws(NumberFormatException) */;
+	static Vector3 convertToVector3(const string& text);
 
 	/**
 	 * Convert to vector 4
 	 * @param text text
 	 * @return vector4
 	 */
-	static Vector4 convertToVector4(const string& text) /* throws(NumberFormatException) */;
+	static Vector4 convertToVector4(const string& text);
 
 	/**
 	 * Convert to color 4
 	 * @param text text
 	 * @return color4
 	 */
-	static Color4 convertToColor4(const string& text) /* throws(NumberFormatException) */;
+	static Color4 convertToColor4(const string& text);
 
 	/**
 	 * Convert string to float
 	 * @param text text
 	 * @return float
 	 */
-	static float convertToFloat(const string& text) /* throws(NumberFormatException) */;
+	static float convertToFloat(const string& text);
 
 	/**
 	 * Convert string to int
 	 * @param text text
 	 * @return int
 	 */
-	static int convertToInt(const string& text) /* throws(NumberFormatException) */;
+	static int convertToInt(const string& text);
 
 	/**
 	 * Convert string to int
@@ -166,20 +168,22 @@ public:
 	 * @param width width
 	 * @param depth depth
 	 * @param y float y
+	 * @param terrainVerticesVector terrain vertices vector
 	 * @return ground model
 	 */
-	static Model* createTerrainModel(float width, float depth, float y);
+	static Model* createTerrainModel(float width, float depth, float y, vector<Vector3>& terrainVerticesVector);
 
 	/**
 	 * Update terrain model by applying a brush
 	 * @param terrainModel terrain model
+	 * @param terrainVerticesVector terrain vertices vector
 	 * @param brushCenterPosition brush center position
 	 * @param brushTextureFileName brush texture file name
 	 * @param brushScale brush scale
 	 * @param brushStrength brush strength
 	 *
 	 */
-	static void updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength);
+	static void updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVerticesVector, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength);
 
 	/**
 	 * Set up entity in given engine with look from rotations and scale

@@ -154,8 +154,8 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
 		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
 		auto prototype = view->getPrototype();
-		auto terrainModel = Tools::createTerrainModel(width, depth, 0.0f);
-		Tools::updateTerrainModel(terrainModel, Vector3(32.0f, 0.0f, 32.0f), "./resources/engine/textures/terrain_brush_soft.png", 0.5f, 3.0f);
+		auto terrainModel = Tools::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
+		Tools::updateTerrainModel(terrainModel, terrainVerticesVector, Vector3(32.0f, 0.0f, 32.0f), "./resources/engine/textures/terrain_brush_soft.png", 0.5f, 3.0f);
 		prototype->setModel(terrainModel);
 		view->setPrototype(prototype);
 	} catch (Exception& exception) {

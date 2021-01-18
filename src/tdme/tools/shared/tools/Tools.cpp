@@ -316,7 +316,7 @@ static inline int getTerrainModelRightVertexIdx(int vertexIdx, int verticesPerZ,
 	return vertexIdx + 1;
 }
 
-Model* Tools::createTerrainModel(float width, float depth, float y)
+Model* Tools::createTerrainModel(float width, float depth, float y, vector<Vector3>& terrainVerticesVector)
 {
 	auto modelId = "terrain" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
 	auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
@@ -334,20 +334,17 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	#define STEP_SIZE	0.5f
 	auto verticesPerZ = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto zMax = static_cast<int>(Math::ceil(depth / STEP_SIZE));
-	for (float x = 0.0f; x < width; x+= STEP_SIZE) {
-		terrainVertices.push_back(Vector3(x, y, 0.0f));
-	}
-	for (float z = STEP_SIZE; z < depth; z+= STEP_SIZE) {
-		terrainVertices.push_back(Vector3(0.0f, y, z));
-		for (float x = STEP_SIZE; x < width; x+= STEP_SIZE) {
+	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
+		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
 			auto normalIdx = terrainNormals.size();
 			auto vertexIdx = terrainVertices.size();
 
-			terrainVertices.push_back(Vector3(x, y, z));
+			terrainVerticesVector.push_back(Vector3(x, y, z));
 
-			auto vertexIdxTop = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
-			auto vertexIdxTopLeft = getTerrainModelLeftVertexIdx(vertexIdxTop, verticesPerZ, zMax);
-			auto vertexIdxLeft = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
+			terrainVertices.push_back(Vector3(x, y, z - STEP_SIZE));
+			terrainVertices.push_back(Vector3(x - STEP_SIZE, y, z - STEP_SIZE));
+			terrainVertices.push_back(Vector3(x - STEP_SIZE, y, z));
+			terrainVertices.push_back(Vector3(x, y, z));
 
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
@@ -357,9 +354,9 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			terrainFaces.push_back(
 				Face(
 					terrainNode,
-					vertexIdxTop,
-					vertexIdxTopLeft,
-					vertexIdxLeft,
+					vertexIdx + 0,
+					vertexIdx + 1,
+					vertexIdx + 2,
 					normalIdx + 0,
 					normalIdx + 1,
 					normalIdx + 2
@@ -368,9 +365,9 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			terrainFaces.push_back(
 				Face(
 					terrainNode,
-					vertexIdxLeft,
-					vertexIdx,
-					vertexIdxTop,
+					vertexIdx + 2,
+					vertexIdx + 3,
+					vertexIdx + 0,
 					normalIdx + 2,
 					normalIdx + 3,
 					normalIdx + 0
@@ -392,13 +389,13 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 	return terrainModel;
 }
 
-inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainVertices, int vertexIdx, int verticesPerZ) {
+inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainVerticesVector, int vertexIdx, int verticesPerZ) {
 	Vector3 vertexNormal;
 	if (vertexIdx == -1) {
 		Console::println("Tools::computeTerrainVertexNormal(): no vertex normal available: invalid vertex idx");
 		return vertexNormal.set(0.0f, 1.0f, 0.0f);
 	}
-	auto zMax = terrainVertices.size() / verticesPerZ;
+	auto zMax = terrainVerticesVector.size() / verticesPerZ;
 	auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
 	auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
 	auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
@@ -410,9 +407,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (topVertexIdx != -1 && topLeftVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[topVertexIdx],
-				terrainVertices[topLeftVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[topVertexIdx],
+				terrainVerticesVector[topLeftVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -422,9 +419,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (topLeftVertexIdx != -1 && leftVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[topLeftVertexIdx],
-				terrainVertices[leftVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[topLeftVertexIdx],
+				terrainVerticesVector[leftVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -434,9 +431,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (leftVertexIdx != -1 && bottomVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[leftVertexIdx],
-				terrainVertices[bottomVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[leftVertexIdx],
+				terrainVerticesVector[bottomVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -446,9 +443,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (bottomVertexIdx != -1 && bottomRightVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[bottomVertexIdx],
-				terrainVertices[bottomRightVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[bottomVertexIdx],
+				terrainVerticesVector[bottomRightVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -458,9 +455,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (bottomRightVertexIdx != -1 && rightVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[bottomRightVertexIdx],
-				terrainVertices[rightVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[bottomRightVertexIdx],
+				terrainVerticesVector[rightVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -470,9 +467,9 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	if (rightVertexIdx != -1 && topVertexIdx != -1) {
 		ModelTools::computeNormal(
 			{
-				terrainVertices[rightVertexIdx],
-				terrainVertices[topVertexIdx],
-				terrainVertices[vertexIdx]
+				terrainVerticesVector[rightVertexIdx],
+				terrainVerticesVector[topVertexIdx],
+				terrainVerticesVector[vertexIdx]
 			},
 			triangleNormal
 		);
@@ -486,7 +483,7 @@ inline static Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainV
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
-void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength) {
+void Tools::updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVerticesVector, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength) {
 	// get terrain node
 	auto terrainNode = terrainModel->getNodeById("terrain");
 	if (terrainNode == nullptr) return;
@@ -505,8 +502,8 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 		auto terrainVertices = terrainNode->getVertices();
 		auto terrainNormals = terrainNode->getNormals();
 		auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
-		auto normalsPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE) - 1;
-		auto zMax = terrainVertices.size() / verticesPerZ;
+		auto normalsPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
+		auto zMax = terrainVerticesVector.size() / verticesPerZ;
 		auto textureData = texture->getTextureData();
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
@@ -539,7 +536,12 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
 				auto terrainModelX = static_cast<int>(Math::ceil((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
 				auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
-				terrainVertices[terrainModelZ * verticesPerZ + terrainModelX].add(Vector3(0.0f, appliedStrength, 0.0f));
+				auto terrainVertexHeight = terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX].add(Vector3(0.0f, appliedStrength, 0.0f))[1];
+				auto terrainVerticesIdx = (terrainModelZ * verticesPerZ * 4) + (terrainModelX * 4);
+				terrainVertices[terrainVerticesIdx + 3][1] = terrainVertexHeight; // original
+				terrainVertices[terrainVerticesIdx + (verticesPerZ * 4) + 0][1] = terrainVertexHeight; // top
+				terrainVertices[terrainVerticesIdx + (verticesPerZ * 4) + (1 * 4) + 1][1] = terrainVertexHeight; // top left
+				terrainVertices[terrainVerticesIdx + (1 * 4) + 2][1] = terrainVertexHeight; // left
 				brushPosition.add(
 					Vector3(
 						STEP_SIZE,
@@ -574,11 +576,11 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
 				auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
 				auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
-				auto normalIdx = ((terrainModelZ - 1) * normalsPerZ * 4) + ((terrainModelX - 1) * 4);
-				terrainNormals[normalIdx + 0] = computeTerrainVertexNormal(terrainVertices, topVertexIdx, verticesPerZ);
-				terrainNormals[normalIdx + 1] = computeTerrainVertexNormal(terrainVertices, topLeftVertexIdx, verticesPerZ);
-				terrainNormals[normalIdx + 2] = computeTerrainVertexNormal(terrainVertices, leftVertexIdx, verticesPerZ);
-				terrainNormals[normalIdx + 3] = computeTerrainVertexNormal(terrainVertices, vertexIdx, verticesPerZ);
+				auto normalIdx = (terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4);
+				terrainNormals[normalIdx + 0] = computeTerrainVertexNormal(terrainVerticesVector, topVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 1] = computeTerrainVertexNormal(terrainVerticesVector, topLeftVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 2] = computeTerrainVertexNormal(terrainVerticesVector, leftVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 3] = computeTerrainVertexNormal(terrainVerticesVector, vertexIdx, verticesPerZ);
 				brushPosition.add(
 					Vector3(
 						STEP_SIZE,
@@ -591,11 +593,6 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 		terrainNode->setVertices(terrainVertices);
 		terrainNode->setNormals(terrainNormals);
 		texture->releaseReference();
-		// prepare for indexed rendering;
-		// we can only render indexed models so far,
-		// my plan is to keep non indexed model as base, always change that, and then copy vertices and normals to a indexed one and reindex, should work \o/
-		// lets see about performance
-		ModelTools::prepareForIndexedRendering(terrainModel);
 	}
 }
 
