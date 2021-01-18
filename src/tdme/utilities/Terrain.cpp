@@ -56,8 +56,6 @@ Model* Terrain::createTerrainModel(float width, float depth, float y, vector<Vec
 	vector<Vector3> terrainVertices;
 	vector<Vector3> terrainNormals;
 	vector<Face> terrainFaces;
-	auto verticesPerZ = static_cast<int>(Math::ceil(width / STEP_SIZE));
-	auto zMax = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
 			auto normalIdx = terrainNormals.size();
@@ -113,16 +111,16 @@ Model* Terrain::createTerrainModel(float width, float depth, float y, vector<Vec
 	return terrainModel;
 }
 
-inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<Vector3>& terrainVerticesVector, int vertexIdx, int verticesPerZ) {
+inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<Vector3>& terrainVerticesVector, int vertexIdx, int verticesPerX) {
 	Vector3 vertexNormal;
 	if (vertexIdx == -1) return vertexNormal.set(0.0f, 1.0f, 0.0f);
-	auto zMax = terrainVerticesVector.size() / verticesPerZ;
-	auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
-	auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
-	auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
-	auto bottomVertexIdx = getTerrainModelBottomVertexIdx(vertexIdx, verticesPerZ, zMax);
-	auto rightVertexIdx = getTerrainModelRightVertexIdx(vertexIdx, verticesPerZ, zMax);
-	auto bottomRightVertexIdx = getTerrainModelRightVertexIdx(bottomVertexIdx, verticesPerZ, zMax);
+	auto verticesPerZ = terrainVerticesVector.size() / verticesPerX;
+	auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+	auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerX, verticesPerZ);
+	auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+	auto bottomVertexIdx = getTerrainModelBottomVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+	auto rightVertexIdx = getTerrainModelRightVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+	auto bottomRightVertexIdx = getTerrainModelRightVertexIdx(bottomVertexIdx, verticesPerX, verticesPerZ);
 	Vector3 triangleNormal;
 	int normalCount = 0;
 	if (topVertexIdx != -1 && topLeftVertexIdx != -1) {
@@ -211,7 +209,8 @@ void Terrain::applyBrushToTerrainModel(
 	Texture* brushTexture,
 	float brushScale,
 	float brushStrength,
-	BrushOperation brushOperation
+	BrushOperation brushOperation,
+	float flattenHeight
 ) {
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
@@ -225,10 +224,7 @@ void Terrain::applyBrushToTerrainModel(
 	auto terrainVertices = terrainNode->getVertices();
 	auto terrainNormals = terrainNode->getNormals();
 	auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
-	auto normalsPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
 	auto verticesPerX = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE);
-	auto normalsPerX = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE);
-	auto zMax = terrainVerticesVector.size() / verticesPerZ;
 	auto textureData = brushTexture->getTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
@@ -263,7 +259,7 @@ void Terrain::applyBrushToTerrainModel(
 			auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 			if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
 				terrainModelZ < 0 || terrainModelZ >= verticesPerZ) continue;
-			auto terrainVertexHeight = terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX][1];
+			auto terrainVertexHeight = terrainVerticesVector[terrainModelZ * verticesPerX + terrainModelX][1];
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
 					terrainVertexHeight+= appliedStrength;
@@ -271,15 +267,21 @@ void Terrain::applyBrushToTerrainModel(
 				case BRUSHOPERATION_SUBTRACT:
 					terrainVertexHeight-= appliedStrength;
 					break;
+				case BRUSHOPERATION_FLATTEN:
+					terrainVertexHeight = flattenHeight;
+					break;
+				case BRUSHOPERATION_DELETE:
+					terrainVertexHeight = 0.0f;
+					break;
 				default:
 					break;
 					// no op
 			}
-			terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX][1] = terrainVertexHeight;
-			auto terrainVerticesIdx = (terrainModelZ * verticesPerZ * 4) + (terrainModelX * 4);
+			terrainVerticesVector[terrainModelZ * verticesPerX + terrainModelX][1] = terrainVertexHeight;
+			auto terrainVerticesIdx = (terrainModelZ * verticesPerX * 4) + (terrainModelX * 4);
 			terrainVertices[terrainVerticesIdx + 3][1] = terrainVertexHeight; // original
-			if (terrainModelZ < verticesPerZ - 1) terrainVertices[terrainVerticesIdx + (verticesPerZ * 4) + 0][1] = terrainVertexHeight; // top
-			if (terrainModelZ < verticesPerZ - 1 && terrainModelX < verticesPerX - 1) terrainVertices[terrainVerticesIdx + (verticesPerZ * 4) + (1 * 4) + 1][1] = terrainVertexHeight; // top left
+			if (terrainModelZ < verticesPerZ - 1) terrainVertices[terrainVerticesIdx + (verticesPerX * 4) + 0][1] = terrainVertexHeight; // top
+			if (terrainModelZ < verticesPerZ - 1 && terrainModelX < verticesPerX - 1) terrainVertices[terrainVerticesIdx + (verticesPerX * 4) + (1 * 4) + 1][1] = terrainVertexHeight; // top left
 			if (terrainModelX < verticesPerX - 1) terrainVertices[terrainVerticesIdx + (1 * 4) + 2][1] = terrainVertexHeight; // left
 			brushPosition.add(
 				Vector3(
@@ -313,15 +315,15 @@ void Terrain::applyBrushToTerrainModel(
 			auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 			if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
 				terrainModelZ < 0 || terrainModelZ >= verticesPerZ) continue;
-			auto vertexIdx = terrainModelZ * verticesPerZ + terrainModelX;
-			auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
-			auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
-			auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
-			auto normalIdx = (terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4);
-			terrainNormals[normalIdx + 0] = computeTerrainVertexNormal(terrainVerticesVector, topVertexIdx, verticesPerZ);
-			terrainNormals[normalIdx + 1] = computeTerrainVertexNormal(terrainVerticesVector, topLeftVertexIdx, verticesPerZ);
-			terrainNormals[normalIdx + 2] = computeTerrainVertexNormal(terrainVerticesVector, leftVertexIdx, verticesPerZ);
-			terrainNormals[normalIdx + 3] = computeTerrainVertexNormal(terrainVerticesVector, vertexIdx, verticesPerZ);
+			auto vertexIdx = terrainModelZ * verticesPerX + terrainModelX;
+			auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+			auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerX, verticesPerZ);
+			auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+			auto normalIdx = (terrainModelZ * verticesPerX * 4) + (terrainModelX * 4);
+			terrainNormals[normalIdx + 0] = computeTerrainVertexNormal(terrainVerticesVector, topVertexIdx, verticesPerX);
+			terrainNormals[normalIdx + 1] = computeTerrainVertexNormal(terrainVerticesVector, topLeftVertexIdx, verticesPerX);
+			terrainNormals[normalIdx + 2] = computeTerrainVertexNormal(terrainVerticesVector, leftVertexIdx, verticesPerX);
+			terrainNormals[normalIdx + 3] = computeTerrainVertexNormal(terrainVerticesVector, vertexIdx, verticesPerX);
 			brushPosition.add(
 				Vector3(
 					STEP_SIZE,
@@ -333,4 +335,26 @@ void Terrain::applyBrushToTerrainModel(
 	}
 	terrainNode->setVertices(terrainVertices);
 	terrainNode->setNormals(terrainNormals);
+}
+
+bool Terrain::getTerrainModelFlattenHeight(
+	Model* terrainModel,
+	vector<Vector3>& terrainVerticesVector,
+	const Vector3& brushCenterPosition,
+	float& flattenHeight
+) {
+	// check if we have a model
+	if (terrainModel == nullptr) return false;
+	// get terrain node
+	auto terrainNode = terrainModel->getNodeById("terrain");
+	if (terrainNode == nullptr) return false;
+
+	// apply brush
+	auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
+	auto verticesPerX = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE);
+	auto terrainModelX = static_cast<int>(Math::ceil((brushCenterPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
+	auto terrainModelZ = static_cast<int>(Math::ceil((brushCenterPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
+	if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
+		terrainModelZ < 0 || terrainModelZ >= verticesPerZ) return false;
+	return terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX][1];
 }
