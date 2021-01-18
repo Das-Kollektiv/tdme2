@@ -346,7 +346,7 @@ Model* Tools::createTerrainModel(float width, float depth, float y)
 			terrainVertices.push_back(Vector3(x, y, z));
 
 			auto vertexIdxTop = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
-			auto vertexIdxTopLeft = getTerrainModelLeftVertexIdx(getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax), verticesPerZ, zMax);
+			auto vertexIdxTopLeft = getTerrainModelLeftVertexIdx(vertexIdxTop, verticesPerZ, zMax);
 			auto vertexIdxLeft = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
 
 			terrainNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
@@ -537,8 +537,8 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 				auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
 				auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
-				auto terrainModelX = static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
-				auto terrainModelZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
+				auto terrainModelX = static_cast<int>(Math::ceil((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
+				auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 				terrainVertices[terrainModelZ * verticesPerZ + terrainModelX].add(Vector3(0.0f, appliedStrength, 0.0f));
 				brushPosition.add(
 					Vector3(
@@ -549,7 +549,7 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 				);
 			}
 		}
-		for (auto z = 0.0f; z < textureHeight * brushScale + STEP_SIZE * 2; z+= STEP_SIZE) {
+		for (auto z = -STEP_SIZE * 8.0f; z < textureHeight * brushScale + STEP_SIZE * 16.0f; z+= STEP_SIZE) {
 			auto brushPosition =
 				brushCenterPosition.
 				clone().
@@ -557,27 +557,28 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 					Vector3(
 						(static_cast<float>(textureWidth) * brushScale) / 2.0f,
 						0.0f,
-						((static_cast<float>(textureHeight) * brushScale) / 2.0f)
+						(static_cast<float>(textureHeight) * brushScale) / 2.0f
 					)
 				).
 				add(
 					Vector3(
-						0.0f,
+						-STEP_SIZE * 8.0f,
 						0.0f,
 						z
 					)
 				);
-			for (auto x = 0.0f; x < textureWidth * brushScale + STEP_SIZE * 2; x+= STEP_SIZE) {
-				auto terrainModelX = static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
-				auto terrainModelZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
+			for (auto x = -STEP_SIZE * 8.0f; x < textureWidth * brushScale + STEP_SIZE * 16.0f; x+= STEP_SIZE) {
+				auto terrainModelX = static_cast<int>(Math::ceil((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE));
+				auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 				auto vertexIdx = terrainModelZ * verticesPerZ + terrainModelX;
 				auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerZ, zMax);
 				auto topLeftVertexIdx = getTerrainModelLeftVertexIdx(topVertexIdx, verticesPerZ, zMax);
 				auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerZ, zMax);
-				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 0)] = computeTerrainVertexNormal(terrainVertices, topVertexIdx, verticesPerZ);
-				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 1)] = computeTerrainVertexNormal(terrainVertices, topLeftVertexIdx, verticesPerZ);
-				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 2)] = computeTerrainVertexNormal(terrainVertices, leftVertexIdx, verticesPerZ);
-				terrainNormals[(terrainModelZ * normalsPerZ * 4) + (terrainModelX * 4 + 3)] = computeTerrainVertexNormal(terrainVertices, vertexIdx, verticesPerZ);
+				auto normalIdx = ((terrainModelZ - 1) * normalsPerZ * 4) + ((terrainModelX - 1) * 4);
+				terrainNormals[normalIdx + 0] = computeTerrainVertexNormal(terrainVertices, topVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 1] = computeTerrainVertexNormal(terrainVertices, topLeftVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 2] = computeTerrainVertexNormal(terrainVertices, leftVertexIdx, verticesPerZ);
+				terrainNormals[normalIdx + 3] = computeTerrainVertexNormal(terrainVertices, vertexIdx, verticesPerZ);
 				brushPosition.add(
 					Vector3(
 						STEP_SIZE,
@@ -595,7 +596,6 @@ void Tools::updateTerrainModel(Model* terrainModel, const Vector3& brushCenterPo
 		// my plan is to keep non indexed model as base, always change that, and then copy vertices and normals to a indexed one and reindex, should work \o/
 		// lets see about performance
 		ModelTools::prepareForIndexedRendering(terrainModel);
-
 	}
 }
 
