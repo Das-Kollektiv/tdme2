@@ -7,6 +7,8 @@ namespace utilities {
 	class Buffer;
 	class ByteBuffer;
 	class Character;
+	class Console;
+	class ExceptionBase;
 	class Enum;
 	class Float;
 	class FloatBuffer;
@@ -30,7 +32,6 @@ namespace utilities {
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
-	class Console;
-	class ExceptionBase;
+	class Terrain;
 }  // namespace utilities
 }  // namespace tdme

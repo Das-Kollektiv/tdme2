@@ -627,6 +627,8 @@ SRCS = \
 	src/tdme/tools/terraineditor/TDMETerrainEditor.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
+	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/HashLink.cpp \
@@ -641,8 +643,7 @@ SRCS = \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
-	src/tdme/utilities/ExceptionBase.cpp \
-	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/Terrain.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \

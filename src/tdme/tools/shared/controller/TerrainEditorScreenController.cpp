@@ -11,13 +11,13 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
-#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::string;
 using std::to_string;
@@ -32,13 +32,13 @@ using tdme::gui::GUIParser;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
-using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
+using tdme::utilities::Terrain;
 
 TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditorView* view)
 {
@@ -154,7 +154,7 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
 		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
 		auto prototype = view->getPrototype();
-		auto terrainModel = Tools::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
+		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
 		prototype->setModel(terrainModel);
 		view->setPrototype(prototype);
 	} catch (Exception& exception) {
@@ -166,7 +166,7 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	auto prototype = view->getPrototype();
 	auto terrainModel = prototype->getModel();
 	if (terrainModel == nullptr) return;
-	Tools::updateTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, "./resources/engine/textures/terrain_brush_soft.png", 0.5f, 0.05f);
+	Terrain::updateTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, "./resources/engine/textures/terrain_brush_soft.png", 0.5f, 0.05f);
 }
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

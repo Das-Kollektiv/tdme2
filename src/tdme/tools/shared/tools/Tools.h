@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -162,28 +161,6 @@ public:
 	 * @return ground model
 	 */
 	static Model* createGroundModel(float width, float depth, float y);
-
-	/**
-	 * Creates a terrain model
-	 * @param width width
-	 * @param depth depth
-	 * @param y float y
-	 * @param terrainVerticesVector terrain vertices vector
-	 * @return ground model
-	 */
-	static Model* createTerrainModel(float width, float depth, float y, vector<Vector3>& terrainVerticesVector);
-
-	/**
-	 * Update terrain model by applying a brush
-	 * @param terrainModel terrain model
-	 * @param terrainVerticesVector terrain vertices vector
-	 * @param brushCenterPosition brush center position
-	 * @param brushTextureFileName brush texture file name
-	 * @param brushScale brush scale
-	 * @param brushStrength brush strength
-	 *
-	 */
-	static void updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVerticesVector, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength);
 
 	/**
 	 * Set up entity in given engine with look from rotations and scale
