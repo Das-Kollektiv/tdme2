@@ -113,6 +113,12 @@ public:
 	void onApplyTerrainDimension();
 
 	/**
+	 * Apply current brush at given brush center position
+	 * @param brushCenterPosition brush center position
+	 */
+	void applyBrush(const Vector3& brushCenterPosition);
+
+	/**
 	 * Get viewport rectangle
 	 * @param left left
 	 * @param top top

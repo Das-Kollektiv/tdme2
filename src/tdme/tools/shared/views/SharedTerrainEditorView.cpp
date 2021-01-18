@@ -13,6 +13,8 @@
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -37,6 +39,8 @@ using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -109,6 +113,19 @@ void SharedTerrainEditorView::initModel()
 
 void SharedTerrainEditorView::handleInputEvents()
 {
+	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
+		auto& event = engine->getGUI()->getMouseEvents()[i];
+		if (event.isProcessed() == true) continue;
+
+		if ((event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
+			event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) &&
+			event.getButton() == MOUSE_BUTTON_LEFT) {
+			Vector3 worldCoordinate;
+			engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), worldCoordinate);
+			terrainEditorScreenController->applyBrush(worldCoordinate);
+			event.setProcessed(true);
+		}
+	}
 	cameraInputHandler->handleInputEvents();
 }
 
