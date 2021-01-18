@@ -56,7 +56,6 @@ Model* Terrain::createTerrainModel(float width, float depth, float y, vector<Vec
 	vector<Vector3> terrainVertices;
 	vector<Vector3> terrainNormals;
 	vector<Face> terrainFaces;
-	#define STEP_SIZE	0.5f
 	auto verticesPerZ = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto zMax = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
@@ -208,31 +207,34 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<Vector3>& 
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
-void Terrain::updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVerticesVector, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength) {
+void Terrain::updateTerrainModel(
+	Model* terrainModel,
+	vector<Vector3>& terrainVerticesVector,
+	const Vector3& brushCenterPosition,
+	Texture* brushTexture,
+	float brushScale,
+	float brushStrength,
+	BrushOperation brushOperation
+) {
+	// check if we have a texture
+	if (brushTexture == nullptr) return;
+	// check if we have a model
+	if (terrainModel == nullptr) return;
 	// get terrain node
 	auto terrainNode = terrainModel->getNodeById("terrain");
 	if (terrainNode == nullptr) return;
 
-	// load texture
-	Texture* texture = nullptr;
-	try {
-		texture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
-	} catch (Exception &exception) {
-		Console::println(string("Terrain::updateTerrainModel(): An error occurred: ") + exception.what());
-	}
-
 	// apply brush
-	if (texture != nullptr) {
-		#define brushScale	0.5f
+	if (brushTexture != nullptr) {
 		auto terrainVertices = terrainNode->getVertices();
 		auto terrainNormals = terrainNode->getNormals();
 		auto verticesPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
 		auto normalsPerZ = static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getMax().getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE);
 		auto zMax = terrainVerticesVector.size() / verticesPerZ;
-		auto textureData = texture->getTextureData();
-		auto textureWidth = texture->getTextureWidth();
-		auto textureHeight = texture->getTextureHeight();
-		auto textureBytePerPixel = texture->getDepth() == 32?4:3;
+		auto textureData = brushTexture->getTextureData();
+		auto textureWidth = brushTexture->getTextureWidth();
+		auto textureHeight = brushTexture->getTextureHeight();
+		auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
 		for (auto z = 0.0f; z < textureHeight * brushScale; z+= STEP_SIZE) {
 			auto brushPosition =
 				brushCenterPosition.
@@ -317,6 +319,5 @@ void Terrain::updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVe
 		}
 		terrainNode->setVertices(terrainVertices);
 		terrainNode->setNormals(terrainNormals);
-		texture->releaseReference();
 	}
 }

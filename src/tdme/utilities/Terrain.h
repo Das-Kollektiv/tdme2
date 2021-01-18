@@ -4,11 +4,13 @@
 
 #include <vector>
 
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 
@@ -19,7 +21,6 @@ using tdme::math::Vector3;
 class tdme::utilities::Terrain
 {
 private:
-
 	/**
 	 * @return terrain model vertex index at top of given vertex index
 	 */
@@ -62,6 +63,16 @@ private:
 	static const Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainVerticesVector, int vertexIdx, int verticesPerZ);
 
 public:
+	static constexpr float STEP_SIZE { 0.5f };
+
+	enum BrushOperation {
+		BRUSHOPERATION_ADD,
+		BRUSHOPERATION_SUBTRACT,
+		BRUSHOPERATION_FLATTEN,
+		BRUSHOPERATION_DELETE,
+		BRUSHOPERATION_SMOOTH
+	};
+
 	/**
 	 * Creates a terrain model
 	 * @param width width
@@ -77,11 +88,20 @@ public:
 	 * @param terrainModel terrain model
 	 * @param terrainVerticesVector terrain vertices vector
 	 * @param brushCenterPosition brush center position
-	 * @param brushTextureFileName brush texture file name
+	 * @param brushTexture brush texture
 	 * @param brushScale brush scale
 	 * @param brushStrength brush strength
+	 * @param brushOperation brush operation
 	 *
 	 */
-	static void updateTerrainModel(Model* terrainModel, vector<Vector3>& terrainVerticesVector, const Vector3& brushCenterPosition, const string& brushTextureFileName, float brushScale, float brushStrength);
+	static void updateTerrainModel(
+		Model* terrainModel,
+		vector<Vector3>& terrainVerticesVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushScale,
+		float brushStrength,
+		BrushOperation brushOperation
+	);
 
 };

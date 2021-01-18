@@ -1,5 +1,7 @@
 #include <string>
 
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -11,6 +13,7 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 #include <tdme/utilities/Console.h>
@@ -22,6 +25,8 @@
 using std::string;
 using std::to_string;
 
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -32,6 +37,7 @@ using tdme::gui::GUIParser;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
+using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
@@ -80,23 +86,27 @@ void TerrainEditorScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
-		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
-		terrainDimensionWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_dimension_width"));
-		terrainDimensionDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_dimension_depth"));
-		btnTerrainDimensionApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_dimension_apply"));
-		brushStrength = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_strength"));
-		brushFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file"));
-		brushFileLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file_load"));
-		brushFileClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("brush_file_clear"));
+		viewPort = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("viewport"));
+		terrainDimensionWidth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_dimension_width"));
+		terrainDimensionDepth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_dimension_depth"));
+		btnTerrainDimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_apply"));
+		brushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_scale"));
+		brushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_strength"));
+		brushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file"));
+		brushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_load"));
+		brushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_clear"));
+		btnBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_brush_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
+	onApplyBrush();
 }
 
 void TerrainEditorScreenController::dispose()
 {
+	if (_brushTexture != nullptr) _brushTexture->releaseReference();
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -140,6 +150,9 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare(btnTerrainDimensionApply->getId()) == 0) {
 			onApplyTerrainDimension();
+		} else
+		if (node->getId().compare(btnBrushApply->getId()) == 0) {
+			onApplyBrush();
 		}
 	}
 }
@@ -154,6 +167,7 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
 		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
 		auto prototype = view->getPrototype();
+		terrainVerticesVector.clear();
 		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
 		prototype->setModel(terrainModel);
 		view->setPrototype(prototype);
@@ -162,11 +176,54 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 	}
 }
 
+void TerrainEditorScreenController::onApplyBrush() {
+	try {
+		// texture
+		if (_brushTexture != nullptr) _brushTexture->releaseReference();
+		_brushTexture = nullptr;
+
+		// operation
+		map<string, MutableString> values;
+		screenNode->getValues(values);
+		auto brushOperationName = values["brush_operation"].getString();
+		_brushOperation = Terrain::BRUSHOPERATION_ADD;
+		if (brushOperationName == "add") {
+			_brushOperation = Terrain::BRUSHOPERATION_ADD;
+		} else
+		if (brushOperationName == "subtract") {
+			_brushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+		} else
+		if (brushOperationName == "flatten") {
+			_brushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+		} else
+		if (brushOperationName == "delete") {
+			_brushOperation = Terrain::BRUSHOPERATION_DELETE;
+		} else
+		if (brushOperationName == "smooth") {
+			_brushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+		}
+
+		// scale, strength
+		_brushScale = Float::parseFloat(brushScale->getController()->getValue().getString());
+		_brushStrength = Float::parseFloat(brushStrength->getController()->getValue().getString());
+
+		if (_brushScale < 0.1f || _brushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
+		if (_brushStrength <= 0.0f || _brushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
+
+		// texture
+		auto brushTextureFileName = brushFile->getController()->getValue().getString();
+		_brushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+	} catch (Exception& exception) {
+		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPosition) {
 	auto prototype = view->getPrototype();
 	auto terrainModel = prototype->getModel();
 	if (terrainModel == nullptr) return;
-	Terrain::updateTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, "./resources/engine/textures/terrain_brush_soft.png", 0.5f, 0.05f);
+	Terrain::updateTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, _brushTexture, _brushScale, _brushStrength, _brushOperation);
 }
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

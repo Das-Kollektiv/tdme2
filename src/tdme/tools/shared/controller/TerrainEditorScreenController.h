@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -12,11 +13,12 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::string;
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -27,7 +29,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedTerrainEditorView;
-using tdme::utilities::MutableString;
+using tdme::utilities::Terrain;
 
 /**
  * Terrain editor screen controller
@@ -48,11 +50,18 @@ private:
 	GUIElementNode* terrainDimensionWidth { nullptr };
 	GUIElementNode* terrainDimensionDepth { nullptr };
 	GUIElementNode* btnTerrainDimensionApply { nullptr };
+	GUIElementNode* brushScale { nullptr };
 	GUIElementNode* brushStrength { nullptr };
 	GUIElementNode* brushFile { nullptr };
 	GUIElementNode* brushFileLoad { nullptr };
 	GUIElementNode* brushFileClear { nullptr };
+	GUIElementNode* btnBrushApply { nullptr };
 	vector<Vector3> terrainVerticesVector;
+
+	float _brushScale { 1.0f };
+	float _brushStrength { 1.0f };
+	Texture* _brushTexture { nullptr };
+	Terrain::BrushOperation _brushOperation { Terrain::BRUSHOPERATION_ADD };
 
 public:
 	/**
@@ -111,6 +120,11 @@ public:
 	 * On apply terrain dimension
 	 */
 	void onApplyTerrainDimension();
+
+	/**
+	 * On apply brush
+	 */
+	void onApplyBrush();
 
 	/**
 	 * Apply current brush at given brush center position
