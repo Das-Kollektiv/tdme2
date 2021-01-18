@@ -117,13 +117,20 @@ void SharedTerrainEditorView::handleInputEvents()
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
 
-		if ((event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
-			event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) &&
-			event.getButton() == MOUSE_BUTTON_LEFT) {
-			Vector3 worldCoordinate;
-			engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), worldCoordinate);
-			terrainEditorScreenController->applyBrush(worldCoordinate);
-			event.setProcessed(true);
+		if (event.getButton() == MOUSE_BUTTON_LEFT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
+				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				Vector3 worldCoordinate;
+				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), worldCoordinate);
+				if (terrainEditorScreenController->determineCurrentBrushFlattenHeight(worldCoordinate) == true) {
+					terrainEditorScreenController->applyBrush(worldCoordinate);
+				}
+				event.setProcessed(true);
+			} else
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				event.setProcessed(true);
+			}
 		}
 	}
 	cameraInputHandler->handleInputEvents();

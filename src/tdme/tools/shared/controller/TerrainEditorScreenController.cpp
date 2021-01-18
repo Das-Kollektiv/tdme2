@@ -223,8 +223,28 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	auto prototype = view->getPrototype();
 	auto terrainModel = prototype->getModel();
 	if (terrainModel == nullptr) return;
-	Terrain::applyBrushToTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, currentBrushTexture, currentBrushScale, currentBrushStrength, currentBrushOperation);
+	Terrain::applyBrushToTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, currentBrushTexture, currentBrushScale, currentBrushStrength, currentBrushOperation, currentBrushFlattenHeight);
 }
+
+bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition) {
+	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN) return true;
+	if (haveCurrentBrushFlattenHeight == true) return true;
+	auto prototype = view->getPrototype();
+	auto terrainModel = prototype->getModel();
+	if (terrainModel == nullptr) return false;
+	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelFlattenHeight(
+		terrainModel,
+		terrainVerticesVector,
+		brushCenterPosition,
+		currentBrushFlattenHeight
+	);
+	return haveCurrentBrushFlattenHeight;
+}
+
+void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
+	haveCurrentBrushFlattenHeight = false;
+}
+
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPort->getComputedConstraints();

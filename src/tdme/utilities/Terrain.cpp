@@ -268,10 +268,10 @@ void Terrain::applyBrushToTerrainModel(
 					terrainVertexHeight-= appliedStrength;
 					break;
 				case BRUSHOPERATION_FLATTEN:
-					terrainVertexHeight = flattenHeight;
+					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + flattenHeight * Math::clamp(appliedStrength, 0.0f, 1.0f);
 					break;
 				case BRUSHOPERATION_DELETE:
-					terrainVertexHeight = 0.0f;
+					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + 0.0f * Math::clamp(appliedStrength, 0.0f, 1.0f);
 					break;
 				default:
 					break;
@@ -356,5 +356,6 @@ bool Terrain::getTerrainModelFlattenHeight(
 	auto terrainModelZ = static_cast<int>(Math::ceil((brushCenterPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 	if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
 		terrainModelZ < 0 || terrainModelZ >= verticesPerZ) return false;
-	return terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX][1];
+	flattenHeight = terrainVerticesVector[terrainModelZ * verticesPerZ + terrainModelX][1];
+	return true;
 }

@@ -58,6 +58,8 @@ private:
 	GUIElementNode* btnBrushApply { nullptr };
 	vector<Vector3> terrainVerticesVector;
 
+	bool haveCurrentBrushFlattenHeight { false };
+	float currentBrushFlattenHeight { 0.0f };
 	float currentBrushScale { 1.0f };
 	float currentBrushStrength { 1.0f };
 	Texture* currentBrushTexture { nullptr };
@@ -131,6 +133,18 @@ public:
 	 * @param brushCenterPosition brush center position
 	 */
 	void applyBrush(const Vector3& brushCenterPosition);
+
+	/**
+	 * Determine current brush flatten height
+	 * @param brushCenterPosition brush center position
+	 * @return success
+	 */
+	bool determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition);
+
+	/**
+	 * Unset current brush flatten height
+	 */
+	void unsetCurrentBrushFlattenHeight();
 
 	/**
 	 * Get viewport rectangle
