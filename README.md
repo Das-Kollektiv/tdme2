@@ -224,7 +224,8 @@
     - documentation
 
 - What is WIP or planned
-    - Reflections via environment mapping
+    - Terrain Editor
+    - Reflections via environment mapping(GL2, GLES2, Vulkan support is still missing)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
