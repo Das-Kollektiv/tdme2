@@ -90,7 +90,7 @@
 							<layout width="auto" height="auto" alignment="horizontal">
 								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Operation" width="145" height="auto"/>
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-									<radiobutton id="brush_operation_add" name="brush_operation" value="add" width="20" height="auto" />
+									<radiobutton id="brush_operation_add" name="brush_operation" value="add" width="20" height="auto" selected="true" />
 									<space width="5" />
 									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Add" width="70" height="auto"/>
 								</layout>
@@ -130,7 +130,7 @@
 								<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
 									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="brush_strength" name="brush_strength" width="*" height="auto" text="0.1" />
+									<input id="brush_strength" name="brush_strength" width="*" height="auto" text="1.0" />
 								</layout>
 							</layout>
 							<space height="10" />

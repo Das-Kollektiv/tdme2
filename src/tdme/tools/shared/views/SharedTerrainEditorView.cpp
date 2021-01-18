@@ -11,6 +11,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -37,6 +38,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
+using tdme::engine::Timing;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -120,14 +122,12 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-				Vector3 worldCoordinate;
-				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), worldCoordinate);
-				if (terrainEditorScreenController->determineCurrentBrushFlattenHeight(worldCoordinate) == true) {
-					terrainEditorScreenController->applyBrush(worldCoordinate);
-				}
+				brushingEnabled = true;
+				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				brushingEnabled = false;
 				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 				event.setProcessed(true);
 			}
@@ -143,6 +143,11 @@ void SharedTerrainEditorView::display()
 		initModel();
 		cameraInputHandler->reset();
 		initModelRequested = false;
+	}
+
+	// actually do the brushing
+	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushFlattenHeight(brushCenterPosition) == true) {
+		terrainEditorScreenController->applyBrush(brushCenterPosition, engine->getTiming()->getDeltaTime());
 	}
 
 	// viewport

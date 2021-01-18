@@ -36,6 +36,8 @@ private:
 	Prototype* prototype { nullptr };
 	bool initModelRequested { false };
 	CameraInputHandler* cameraInputHandler { nullptr };
+	bool brushingEnabled { false };
+	Vector3 brushCenterPosition;
 
 	/**
 	 * Init entity

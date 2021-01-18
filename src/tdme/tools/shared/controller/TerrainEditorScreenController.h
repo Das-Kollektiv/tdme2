@@ -131,8 +131,9 @@ public:
 	/**
 	 * Apply current brush at given brush center position
 	 * @param brushCenterPosition brush center position
+	 * @param deltaTime delta time between last frame and this frame
 	 */
-	void applyBrush(const Vector3& brushCenterPosition);
+	void applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Determine current brush flatten height

@@ -219,11 +219,20 @@ void TerrainEditorScreenController::onApplyBrush() {
 	}
 }
 
-void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPosition) {
+void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	auto terrainModel = prototype->getModel();
 	if (terrainModel == nullptr) return;
-	Terrain::applyBrushToTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, currentBrushTexture, currentBrushScale, currentBrushStrength, currentBrushOperation, currentBrushFlattenHeight);
+	Terrain::applyBrushToTerrainModel(
+		terrainModel,
+		terrainVerticesVector,
+		brushCenterPosition,
+		currentBrushTexture,
+		currentBrushScale,
+		currentBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+		currentBrushOperation,
+		currentBrushFlattenHeight
+	);
 }
 
 bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition) {

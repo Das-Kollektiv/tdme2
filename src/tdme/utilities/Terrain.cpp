@@ -259,7 +259,8 @@ void Terrain::applyBrushToTerrainModel(
 			auto terrainModelZ = static_cast<int>(Math::ceil((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE));
 			if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
 				terrainModelZ < 0 || terrainModelZ >= verticesPerZ) continue;
-			auto terrainVertexHeight = terrainVerticesVector[terrainModelZ * verticesPerX + terrainModelX][1];
+			auto vertexIdx = terrainModelZ * verticesPerX + terrainModelX;
+			auto terrainVertexHeight = terrainVerticesVector[vertexIdx][1];
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
 					terrainVertexHeight+= appliedStrength;
@@ -273,9 +274,34 @@ void Terrain::applyBrushToTerrainModel(
 				case BRUSHOPERATION_DELETE:
 					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + 0.0f * Math::clamp(appliedStrength, 0.0f, 1.0f);
 					break;
-				default:
+				case BRUSHOPERATION_SMOOTH:
+					auto terrainVertexHeightNeighbours = 0.0f;
+					auto terrainVertexHeightNeighbourCount = 0;
+					auto topVertexIdx = getTerrainModelTopVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+					auto leftVertexIdx = getTerrainModelLeftVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+					auto bottomVertexIdx = getTerrainModelBottomVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+					auto rightVertexIdx = getTerrainModelRightVertexIdx(vertexIdx, verticesPerX, verticesPerZ);
+					if (topVertexIdx != -1) {
+						terrainVertexHeightNeighbourCount++;
+						terrainVertexHeightNeighbours+= terrainVerticesVector[topVertexIdx][1];
+					}
+					if (leftVertexIdx != -1) {
+						terrainVertexHeightNeighbourCount++;
+						terrainVertexHeightNeighbours+= terrainVerticesVector[leftVertexIdx][1];
+					}
+					if (bottomVertexIdx != -1) {
+						terrainVertexHeightNeighbourCount++;
+						terrainVertexHeightNeighbours+= terrainVerticesVector[bottomVertexIdx][1];
+					}
+					if (rightVertexIdx != -1) {
+						terrainVertexHeightNeighbourCount++;
+						terrainVertexHeightNeighbours+= terrainVerticesVector[rightVertexIdx][1];
+					}
+					if (terrainVertexHeightNeighbourCount > 0) {
+						auto terrainVertexHeightSmoothed = terrainVertexHeightNeighbours / static_cast<float>(terrainVertexHeightNeighbourCount);
+						terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + terrainVertexHeightSmoothed * Math::clamp(appliedStrength, 0.0f, 1.0f);
+					}
 					break;
-					// no op
 			}
 			terrainVerticesVector[terrainModelZ * verticesPerX + terrainModelX][1] = terrainVertexHeight;
 			auto terrainVerticesIdx = (terrainModelZ * verticesPerX * 4) + (terrainModelX * 4);
