@@ -58,10 +58,10 @@ private:
 	GUIElementNode* btnBrushApply { nullptr };
 	vector<Vector3> terrainVerticesVector;
 
-	float _brushScale { 1.0f };
-	float _brushStrength { 1.0f };
-	Texture* _brushTexture { nullptr };
-	Terrain::BrushOperation _brushOperation { Terrain::BRUSHOPERATION_ADD };
+	float currentBrushScale { 1.0f };
+	float currentBrushStrength { 1.0f };
+	Texture* currentBrushTexture { nullptr };
+	Terrain::BrushOperation currentBrushOperation { Terrain::BRUSHOPERATION_ADD };
 
 public:
 	/**

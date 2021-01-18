@@ -84,7 +84,7 @@ public:
 	static Model* createTerrainModel(float width, float depth, float y, vector<Vector3>& terrainVerticesVector);
 
 	/**
-	 * Update terrain model by applying a brush
+	 * Apply brush to terrain model
 	 * @param terrainModel terrain model
 	 * @param terrainVerticesVector terrain vertices vector
 	 * @param brushCenterPosition brush center position
@@ -94,7 +94,7 @@ public:
 	 * @param brushOperation brush operation
 	 *
 	 */
-	static void updateTerrainModel(
+	static void applyBrushToTerrainModel(
 		Model* terrainModel,
 		vector<Vector3>& terrainVerticesVector,
 		const Vector3& brushCenterPosition,

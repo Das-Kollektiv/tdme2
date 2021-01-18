@@ -106,7 +106,7 @@ void TerrainEditorScreenController::initialize()
 
 void TerrainEditorScreenController::dispose()
 {
-	if (_brushTexture != nullptr) _brushTexture->releaseReference();
+	if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -179,40 +179,40 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 void TerrainEditorScreenController::onApplyBrush() {
 	try {
 		// texture
-		if (_brushTexture != nullptr) _brushTexture->releaseReference();
-		_brushTexture = nullptr;
+		if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
+		currentBrushTexture = nullptr;
 
 		// operation
 		map<string, MutableString> values;
 		screenNode->getValues(values);
 		auto brushOperationName = values["brush_operation"].getString();
-		_brushOperation = Terrain::BRUSHOPERATION_ADD;
+		currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		if (brushOperationName == "add") {
-			_brushOperation = Terrain::BRUSHOPERATION_ADD;
+			currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		} else
 		if (brushOperationName == "subtract") {
-			_brushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+			currentBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
 		} else
 		if (brushOperationName == "flatten") {
-			_brushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+			currentBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
 		} else
 		if (brushOperationName == "delete") {
-			_brushOperation = Terrain::BRUSHOPERATION_DELETE;
+			currentBrushOperation = Terrain::BRUSHOPERATION_DELETE;
 		} else
 		if (brushOperationName == "smooth") {
-			_brushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+			currentBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
 		}
 
 		// scale, strength
-		_brushScale = Float::parseFloat(brushScale->getController()->getValue().getString());
-		_brushStrength = Float::parseFloat(brushStrength->getController()->getValue().getString());
+		currentBrushScale = Float::parseFloat(brushScale->getController()->getValue().getString());
+		currentBrushStrength = Float::parseFloat(brushStrength->getController()->getValue().getString());
 
-		if (_brushScale < 0.1f || _brushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
-		if (_brushStrength <= 0.0f || _brushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
+		if (currentBrushScale < 0.1f || currentBrushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
+		if (currentBrushStrength <= 0.0f || currentBrushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
 
 		// texture
 		auto brushTextureFileName = brushFile->getController()->getValue().getString();
-		_brushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+		currentBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -223,7 +223,7 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	auto prototype = view->getPrototype();
 	auto terrainModel = prototype->getModel();
 	if (terrainModel == nullptr) return;
-	Terrain::updateTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, _brushTexture, _brushScale, _brushStrength, _brushOperation);
+	Terrain::applyBrushToTerrainModel(terrainModel, terrainVerticesVector, brushCenterPosition, currentBrushTexture, currentBrushScale, currentBrushStrength, currentBrushOperation);
 }
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

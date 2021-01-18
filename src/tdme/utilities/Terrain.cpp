@@ -207,7 +207,7 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<Vector3>& 
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
-void Terrain::updateTerrainModel(
+void Terrain::applyBrushToTerrainModel(
 	Model* terrainModel,
 	vector<Vector3>& terrainVerticesVector,
 	const Vector3& brushCenterPosition,

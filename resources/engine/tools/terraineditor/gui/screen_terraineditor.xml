@@ -120,10 +120,18 @@
 								</layout>
 							</layout>
 							<space height="10" />
-							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
-								<space width="5" />
-								<input id="brush_strength" name="brush_strength" width="*" height="auto" text="0.1" />
+							<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center">
+								<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Scale" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="brush_scale" name="brush_scale" width="*" height="auto" text="1.0" />
+								</layout>
+								<space width="10" />
+								<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="brush_strength" name="brush_strength" width="*" height="auto" text="0.1" />
+								</layout>
 							</layout>
 							<space height="10" />
 							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
@@ -134,6 +142,10 @@
 								<button id="brush_file_load" name="brush_file_load" text="Load" width="60" height="auto" />
 								<space width="10" />
 								<button id="brush_file_clear" name="brush_file_clear" text="Clear" width="60" height="auto" />
+							</layout>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+								<button id="button_brush_apply" name="button_brush_apply" text="Apply" />
 							</layout>
 						</layout>
 					</tab-content>
