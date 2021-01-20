@@ -1,3 +1,4 @@
+
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 
 #include <tdme/gui/GUI.h>
@@ -5,9 +6,9 @@
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
@@ -17,14 +18,14 @@ using tdme::gui::elements::GUITabController;
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUITabsHeaderController::GUITabsHeaderController(GUINode* node)
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	this->focus = false;
 }
@@ -41,10 +42,14 @@ void GUITabsHeaderController::setDisabled(bool disabled)
 void GUITabsHeaderController::initialize()
 {
 	tabsNode = required_dynamic_cast<GUIParentNode*>(node)->getParentControllerNode();
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUITabsHeaderController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUITabsHeaderController::postLayout()
@@ -145,6 +150,7 @@ void GUITabsHeaderController::selectCurrent()
 
 void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
@@ -155,6 +161,7 @@ void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 
 void GUITabsHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 	if (node == this->node) {
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
@@ -178,6 +185,7 @@ void GUITabsHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 
 void GUITabsHeaderController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUITabsHeaderController::onFocusGained()

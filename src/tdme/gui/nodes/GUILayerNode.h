@@ -104,6 +104,4 @@ public:
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
-private:
-	void init();
 };

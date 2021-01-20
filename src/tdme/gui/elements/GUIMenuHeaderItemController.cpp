@@ -47,13 +47,8 @@ string GUIMenuHeaderItemController::CONDITION_UNSELECTED = "unselected";
 GUIMenuHeaderItemController::GUIMenuHeaderItemController(GUINode* node)
 	: GUIElementController(node)
 {
-	init();
 	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
-}
-
-void GUIMenuHeaderItemController::init()
-{
-	open = false;
+	this->open = false;
 }
 
 bool GUIMenuHeaderItemController::isSelected()
