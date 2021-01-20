@@ -74,11 +74,6 @@ private:
 	float guiEffectOffsetX;
 	float guiEffectOffsetY;
 
-	/**
-	 * Initialize
-	 */
-	void init();
-
 public:
 	/**
 	 * Public constructor

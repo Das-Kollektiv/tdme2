@@ -1145,7 +1145,11 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 	newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
 
 	// add root tag
-	newGuiElementTemplateXML =  "<gui-element>\n" + newGuiElementTemplateXML + "</gui-element>\n";
+	if (guiElement != nullptr) {
+		newGuiElementTemplateXML =  "<" + guiElement->getName() + ">\n" + newGuiElementTemplateXML + "</" + guiElement->getName() + ">\n";
+	} else {
+		newGuiElementTemplateXML =  "<template>\n" + newGuiElementTemplateXML + "</template>\n";
+	}
 
 	// parse
 	TiXmlDocument newGuiElementDocument;

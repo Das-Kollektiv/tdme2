@@ -55,11 +55,6 @@ private:
 	GUIMenuHeaderItemController(GUINode* node);
 
 	/**
-	 * Initialize
-	 */
-	void init();
-
-	/**
 	 * @return menu open state
 	 */
 	bool isOpen();

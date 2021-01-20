@@ -31,7 +31,6 @@ map<string, vector<GUIElementNode*>>* GUIRadioButtonController::radioButtonGroup
 GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 	: GUIElementController(node)
 {
-	init();
 	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 	(*radioButtonGroupNodesByName)[
@@ -39,10 +38,6 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 		"_radiobuttongroup_" +
 		required_dynamic_cast<GUIElementNode*>(node)->getName()
 	].push_back(required_dynamic_cast<GUIElementNode*>(node));
-}
-
-void GUIRadioButtonController::init()
-{
 }
 
 bool GUIRadioButtonController::isSelected()

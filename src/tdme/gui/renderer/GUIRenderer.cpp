@@ -38,19 +38,6 @@ using tdme::utilities::Console;
 GUIRenderer::GUIRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
-	init();
-}
-
-GUIRenderer::~GUIRenderer() {
-	delete sbIndicesByteBuffer;
-	delete fbVerticesByteBuffer;
-	delete fbColorsByteBuffer;
-	delete fbTextureCoordinatesByteBuffer;
-}
-
-
-void GUIRenderer::init()
-{
 	sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t)));
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
@@ -64,6 +51,14 @@ void GUIRenderer::init()
 	guiEffectOffsetX = 0.0f;
 	guiEffectOffsetY = 0.0f;
 }
+
+GUIRenderer::~GUIRenderer() {
+	delete sbIndicesByteBuffer;
+	delete fbVerticesByteBuffer;
+	delete fbColorsByteBuffer;
+	delete fbTextureCoordinatesByteBuffer;
+}
+
 
 constexpr int32_t GUIRenderer::QUAD_COUNT;
 
