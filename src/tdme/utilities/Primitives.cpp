@@ -1,4 +1,4 @@
-#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/utilities/Primitives.h>
 
 #include <array>
 #include <string>
@@ -44,23 +44,23 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
+using tdme::utilities::Primitives;
 
-constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_X;
+constexpr int32_t Primitives::SPHERE_SEGMENTS_X;
 
-constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_Y;
+constexpr int32_t Primitives::SPHERE_SEGMENTS_Y;
 
-constexpr int32_t PrimitiveModel::CAPSULE_SEGMENTS_X;
+constexpr int32_t Primitives::CAPSULE_SEGMENTS_X;
 
-constexpr int32_t PrimitiveModel::CAPSULE_SEGMENTS_Y;
+constexpr int32_t Primitives::CAPSULE_SEGMENTS_Y;
 
-Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const string& id)
+Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string& id)
 {
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
@@ -143,7 +143,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	return model;
 }
 
-Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id)
+Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id)
 {
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
@@ -227,7 +227,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	return model;
 }
 
-Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY)
+Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY)
 {
 	// sphere properties
 	auto radius = sphere->getRadius();
@@ -334,7 +334,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	return model;
 }
 
-Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY)
+Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY)
 {
 	// capsule properties
 	auto radius = capsule->getRadius();
@@ -489,12 +489,12 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	return model;
 }
 
-Model* PrimitiveModel::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
-	Console::println("PrimitiveModel::createConvexMeshModel(): This is not supported. Rather load the model and use PrimitiveModel::setupConvexMeshModel().");
+Model* Primitives::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
+	Console::println("Primitives::createConvexMeshModel(): This is not supported. Rather load the model and use Primitives::setupConvexMeshModel().");
 	return nullptr;
 }
 
-void PrimitiveModel::setupConvexMeshModel(Model* model)
+void Primitives::setupConvexMeshModel(Model* model)
 {
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not do scaling of bounding volumes
@@ -523,7 +523,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	setupConvexMeshMaterial(model->getSubNodes(), material);
 }
 
-void PrimitiveModel::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
+void Primitives::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
 {
 	for (auto it: nodes) {
 		Node* node = it.second;
@@ -536,26 +536,26 @@ void PrimitiveModel::setupConvexMeshMaterial(const map<string, Node*>& nodes, Ma
 	}
 }
 
-Model* PrimitiveModel::createModel(BoundingBox* boundingVolume, const string& id)
+Model* Primitives::createModel(BoundingBox* boundingVolume, const string& id)
 {
-	return PrimitiveModel::createBoundingBoxModel(boundingVolume, id);
+	return Primitives::createBoundingBoxModel(boundingVolume, id);
 }
 
-Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string& id)
+Model* Primitives::createModel(BoundingVolume* boundingVolume, const string& id)
 {
 	if (dynamic_cast<OrientedBoundingBox*>(boundingVolume) != nullptr) {
-		return PrimitiveModel::createOrientedBoundingBoxModel(dynamic_cast< OrientedBoundingBox* >(boundingVolume), id);
+		return Primitives::createOrientedBoundingBoxModel(dynamic_cast< OrientedBoundingBox* >(boundingVolume), id);
 	} else
 	if (dynamic_cast<Sphere*>(boundingVolume) != nullptr) {
-		return PrimitiveModel::createSphereModel(dynamic_cast< Sphere* >(boundingVolume), id, SPHERE_SEGMENTS_X, SPHERE_SEGMENTS_Y);
+		return Primitives::createSphereModel(dynamic_cast< Sphere* >(boundingVolume), id, SPHERE_SEGMENTS_X, SPHERE_SEGMENTS_Y);
 	} else
 	if (dynamic_cast<Capsule*>(boundingVolume) != nullptr) {
-		return PrimitiveModel::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
+		return Primitives::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
 	} else
 	if (dynamic_cast<ConvexMesh*>(boundingVolume) != nullptr) {
-		return PrimitiveModel::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
+		return Primitives::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
 	} else {
-		Console::println(string("PrimitiveModel::createModel(): unsupported bounding volume"));
+		Console::println(string("Primitives::createModel(): unsupported bounding volume"));
 		return nullptr;
 	}
 }

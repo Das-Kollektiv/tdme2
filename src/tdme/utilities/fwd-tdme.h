@@ -25,6 +25,7 @@ namespace utilities {
 	class PathFinding;
 	class PathFindingNode;
 	class PathFindingCustomTest;
+	class Primitives;
 	class Properties;
 	class Reference;
 	class RTTI;

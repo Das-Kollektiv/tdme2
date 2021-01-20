@@ -12,10 +12,10 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/sceneeditor/TDMESceneEditor.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -39,10 +39,10 @@ using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::engine::Timing;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;

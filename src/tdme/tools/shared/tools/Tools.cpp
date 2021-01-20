@@ -19,7 +19,6 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -46,6 +45,7 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -72,7 +72,6 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -98,6 +97,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
+using tdme::utilities::Primitives;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -571,7 +571,7 @@ Model* Tools::getDefaultObb() {
 			OrientedBoundingBox::AABB_AXIS_Z,
 			Vector3(0.5f, 0.5f, 0.5f)
 		);
-		defaultOBB = PrimitiveModel::createModel(&obb, "tdme.obb.default");
+		defaultOBB = Primitives::createModel(&obb, "tdme.obb.default");
 	}
 	return defaultOBB;
 

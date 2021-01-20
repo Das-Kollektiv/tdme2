@@ -14,8 +14,8 @@
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
-using tdme::engine::Timing;
 using tdme::engine::Rotation;
+using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::GUI;

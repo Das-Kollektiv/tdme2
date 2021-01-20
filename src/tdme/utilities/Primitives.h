@@ -21,6 +21,7 @@ using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
+using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 
@@ -29,7 +30,7 @@ using tdme::engine::primitives::Sphere;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::primitives::PrimitiveModel final
+class tdme::utilities::Primitives final
 {
 private:
 	static constexpr int32_t SPHERE_SEGMENTS_X { 20 };

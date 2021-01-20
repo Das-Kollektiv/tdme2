@@ -318,7 +318,6 @@ SRCS = \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
 	src/tdme/engine/primitives/LineSegment.cpp \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
-	src/tdme/engine/primitives/PrimitiveModel.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
@@ -638,6 +637,7 @@ SRCS = \
 	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
+	src/tdme/utilities/Primitives.cpp \
 	src/tdme/utilities/Properties.cpp \
 	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
