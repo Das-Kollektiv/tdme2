@@ -15,7 +15,7 @@
 		border-right="1" 
 		border-color="{$color.element_background}"
 		border-top="2"
-		border-color-top="red"
+		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
 		
@@ -51,7 +51,7 @@
 		border-right="1" 
 		border-color="{$color.element_frame}"
 		border-top="2"
-		border-color-top="red"
+		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_foreground}"
 		
@@ -88,7 +88,7 @@
 		border-right="1" 
 		border-color="{$color.element_frame}"
 		border-top="2"
-		border-color-top="red"
+		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_foreground}"
 		
@@ -124,7 +124,7 @@
 		border-right="1" 
 		border-color="{$color.element_background}"
 		border-top="2"
-		border-color-top="red"
+		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
 		

@@ -39,6 +39,7 @@ unordered_map<string, string> GUITab::getAttributes(GUIScreenNode* screenNode)
 {
 	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
+	attributes["type-color"] = "transparent";
 	return attributes;
 }
 

@@ -23,7 +23,7 @@
 		</menu-header>
 		<space height="10"/>
 		<tabs width="100%" height="*">
-			<tabs-header scrollable="true">
+			<tabs-header>
 				<tab id="tab1" image="resources/engine/images/folder.png" text="Radio+Checkbox" closeable="true"/>
 				<tab id="tab2" text="Selectbox" closeable="true" />
 				<tab id="tab3" text="Buttons" closeable="true"/>
@@ -33,7 +33,7 @@
 				<tab id="tab7" text="Sliders + Knob" />
 				<tab id="tab8" text="Scale9" />
 				<tab id="tab9" text="Template" />
-				<tab id="tab10" text="Conditions" closeable="true" />
+				<tab id="tab10" text="Conditions" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
