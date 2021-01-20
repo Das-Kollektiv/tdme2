@@ -242,9 +242,9 @@ private:
 	ShadowMapping* shadowMapping { nullptr };
 	float shadowMapLightEyeDistanceScale { 1.0f };
 
-	map<string, Entity*> entitiesById;
-	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
-	map<string, Entity*> noFrustumCullingEntitiesById;
+	unordered_map<string, Entity*> entitiesById;
+	unordered_map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
+	unordered_map<string, Entity*> noFrustumCullingEntitiesById;
 
 	DecomposedEntities visibleDecomposedEntities;
 
