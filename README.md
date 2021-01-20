@@ -207,6 +207,7 @@
             - mutex
             - read write lock
             - semaphore
+            - spin lock
             - thread
     - Installer
         - TDME2 itself and TDME2 applications can be installed with TDME2 installer, which supports
