@@ -83,7 +83,7 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = dynamic_cast< GUIHorizontalScrollbarInternalController* >(this->controller);
+	auto controller = required_dynamic_cast<GUIHorizontalScrollbarInternalController*>(this->controller);
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();
 	auto left = barLeft;

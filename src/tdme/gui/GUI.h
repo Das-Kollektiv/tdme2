@@ -19,11 +19,14 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
 
 using std::map;
 using std::set;
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::Engine;
@@ -38,7 +41,17 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::Time;
+
+template<typename T, typename U>
+static T required_dynamic_cast(U u)
+{
+	auto t = dynamic_cast<T>(u);
+	if (t == nullptr) throw ExceptionBase("required_dynamic_cast did fail");
+	return t;
+}
 
 /**
  * GUI module class

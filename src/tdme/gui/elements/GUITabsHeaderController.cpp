@@ -40,7 +40,7 @@ void GUITabsHeaderController::setDisabled(bool disabled)
 
 void GUITabsHeaderController::initialize()
 {
-	tabsNode = (dynamic_cast< GUIParentNode* >(node))->getParentControllerNode();
+	tabsNode = required_dynamic_cast<GUIParentNode*>(node)->getParentControllerNode();
 }
 
 void GUITabsHeaderController::dispose()
@@ -58,13 +58,13 @@ bool GUITabsHeaderController::hasFocus()
 
 void GUITabsHeaderController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
-			auto guiTabController = dynamic_cast< GUITabController* >(childController);
-			if (static_cast< GUINode* >(guiTabController->getNode()->getParentControllerNode()) != node)
+		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
+			auto guiTabController = required_dynamic_cast<GUITabController*>(childController);
+			if (static_cast<GUINode*>(guiTabController->getNode()->getParentControllerNode()) != node)
 				continue;
 
 			guiTabController->setSelected(false);
@@ -75,13 +75,13 @@ void GUITabsHeaderController::unselect()
 void GUITabsHeaderController::determineTabControllers()
 {
 	tabControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast< GUIParentNode* >(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUITabController* >(childController) != nullptr) {
-			auto guiTabController = dynamic_cast< GUITabController* >(childController);
-			if (static_cast< GUINode* >(guiTabController->getNode()->getParentControllerNode()) != node)
+		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
+			auto guiTabController = required_dynamic_cast<GUITabController*>(childController);
+			if (static_cast<GUINode*>(guiTabController->getNode()->getParentControllerNode()) != node)
 				continue;
 
 			if (guiTabController->isDisabled() == true)
@@ -115,7 +115,7 @@ void GUITabsHeaderController::selectNext()
 		tabControllerIdx += tabControllers.size();
 
 	tabControllers[tabControllerIdx]->setSelected(true);
-	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
 	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
@@ -129,7 +129,7 @@ void GUITabsHeaderController::selectPrevious()
 		tabControllerIdx += tabControllers.size();
 
 	tabControllers[tabControllerIdx]->setSelected(true);
-	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
 	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
@@ -139,7 +139,7 @@ void GUITabsHeaderController::selectCurrent()
 	auto tabControllerIdx = getSelectedTabIdx();
 	unselect();
 	tabControllers[tabControllerIdx]->setSelected(true);
-	auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
+	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
 	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
 }
 
@@ -148,7 +148,7 @@ void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }

@@ -83,7 +83,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);
+	auto controller = required_dynamic_cast<GUIVerticalScrollbarInternalController*>(this->controller);
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
 	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;

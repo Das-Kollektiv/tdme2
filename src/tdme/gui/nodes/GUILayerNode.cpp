@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -20,6 +21,8 @@ using std::set;
 using std::to_string;
 
 using tdme::gui::nodes::GUILayerNode;
+
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
@@ -142,8 +145,8 @@ void GUILayerNode::layoutSubNodes()
 			guiSubNode->computedConstraints.width = width;
 			doLayoutSubNodes = true;
 		}
-		if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr && doLayoutSubNodes == true) {
-			(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+		if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr && doLayoutSubNodes == true) {
+			(required_dynamic_cast<GUIParentNode*>(guiSubNode))->layoutSubNodes();
 		}
 	}
 	setTop(computedConstraints.top);

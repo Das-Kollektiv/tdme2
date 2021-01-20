@@ -241,8 +241,8 @@ void GUIScreenNode::layout(GUINode* node)
 void GUIScreenNode::forceLayout(GUINode* node)
 {
 	// do the magic
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-		auto parentNode = dynamic_cast<GUIParentNode*>(node);
+	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		parentNode->layouted = true;
 		parentNode->layoutSubNodes();
 		parentNode->layoutSubNodes();
@@ -324,8 +324,8 @@ bool GUIScreenNode::removeNode(GUINode* node)
 			elementNodeToNodeMappingIt.second.erase(node->getId());
 		}
 	}
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-		auto parentNode = dynamic_cast< GUIParentNode* >(node);
+	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 			removeNode(parentNode->subNodes[i]);
 		}
@@ -365,16 +365,16 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	if (parentNode->conditionsMet == false) {
 		return;
 	}
-	if (dynamic_cast< GUIElementNode* >(parentNode) != nullptr) {
-		auto parentElementNode = dynamic_cast< GUIElementNode* >(parentNode);
+	if (dynamic_cast<GUIElementNode*>(parentNode) != nullptr) {
+		auto parentElementNode = required_dynamic_cast<GUIElementNode*>(parentNode);
 		if (parentElementNode->focusable == true && (parentElementNode->getController() == nullptr || parentElementNode->getController()->isDisabled() == false)) {
-			focusableNodes.push_back(dynamic_cast< GUIElementNode* >(parentNode));
+			focusableNodes.push_back(required_dynamic_cast<GUIElementNode*>(parentNode));
 		}
 	}
 	for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 		auto subNode = parentNode->subNodes[i];
-		if (dynamic_cast< GUIParentNode* >(subNode) != nullptr) {
-			determineFocussedNodes(dynamic_cast< GUIParentNode* >(subNode), focusableNodes);
+		if (dynamic_cast<GUIParentNode*>(subNode) != nullptr) {
+			determineFocussedNodes(required_dynamic_cast<GUIParentNode*>(subNode), focusableNodes);
 		}
 	}
 }
@@ -512,10 +512,10 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
+		if (dynamic_cast<GUIElementNode*>(childControllerNode) != nullptr == false)
 			continue;
 
-		auto guiElementNode = (dynamic_cast< GUIElementNode* >(childControllerNode));
+		auto guiElementNode = required_dynamic_cast<GUIElementNode*>(childControllerNode);
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
 			auto& name = guiElementNode->getName();
@@ -533,10 +533,10 @@ void GUIScreenNode::setValues(const map<string, MutableString>& values)
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
+		if (dynamic_cast<GUIElementNode*>(childControllerNode) != nullptr == false)
 			continue;
 
-		auto guiElementNode = (dynamic_cast< GUIElementNode* >(childControllerNode));
+		auto guiElementNode = required_dynamic_cast<GUIElementNode*>(childControllerNode);
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
 			auto name = guiElementNode->getName();

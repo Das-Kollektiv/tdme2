@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIScreenNode;
 GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node)
 	: GUINodeController(node)
 {
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 }
 
 string GUIElementIgnoreEventsController::CONDITION_DISABLED= "disabled";
@@ -31,10 +31,10 @@ bool GUIElementIgnoreEventsController::isDisabled()
 
 void GUIElementIgnoreEventsController::setDisabled(bool disabled)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 }
 
 void GUIElementIgnoreEventsController::initialize()
@@ -54,8 +54,8 @@ void GUIElementIgnoreEventsController::handleMouseEvent(GUINode* node, GUIMouseE
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
-				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
+			if (required_dynamic_cast<GUIElementNode*>(node)->isFocusable() == true) {
+				node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
 			}
 		}
 	}

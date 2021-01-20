@@ -319,8 +319,8 @@ void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childContr
 		if (node->controller != nullptr) {
 			childControllerNodes.push_back(node);
 		}
-		if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-			(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
+		if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+			(required_dynamic_cast<GUIParentNode*>(node))->getChildControllerNodesInternal(childControllerNodes);
 		}
 	}
 }

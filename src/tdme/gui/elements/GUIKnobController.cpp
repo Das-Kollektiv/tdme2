@@ -52,7 +52,7 @@ void GUIKnobController::setDisabled(bool disabled) {
 
 void GUIKnobController::initialize() {
 	knobNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_knob");
-	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+	setValue(MutableString(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 
 	//
 	GUIElementController::initialize();
@@ -70,7 +70,7 @@ void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		this->node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(this->node));
+		this->node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(this->node));
 		event->setProcessed(true);
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
@@ -87,7 +87,7 @@ void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 			1.0f
 		);
 		updateKnob();
-		node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+		node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 		mouseLastX = event->getX();
 		event->setProcessed(true);
 	}
@@ -102,7 +102,7 @@ void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* eve
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
 						updateKnob();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast< GUIElementNode* >(this->node));
 					}
 				}
 				break;
@@ -111,7 +111,7 @@ void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* eve
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
 						updateKnob();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast< GUIElementNode* >(this->node));
 					}
 				}
 				break;
@@ -144,5 +144,5 @@ void GUIKnobController::setValue(const MutableString& value) {
 }
 
 void GUIKnobController::updateKnob() {
-	dynamic_cast<GUIImageNode*>(knobNode)->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter((-valueFloat * (360.0f - 60.0f)) - 210.f));
+	required_dynamic_cast<GUIImageNode*>(knobNode)->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter((-valueFloat * (360.0f - 60.0f)) - 210.f));
 }

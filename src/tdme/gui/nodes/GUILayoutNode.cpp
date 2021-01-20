@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -17,6 +18,8 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUILayoutNode;
+
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
@@ -173,8 +176,8 @@ void GUILayoutNode::layoutSubNodes()
 						guiSubNode->computedConstraints.height = 0;
 					}
 					finalNodesHeight += guiSubNode->computedConstraints.height;
-					if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-						(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
 					}
 				}
 			}
@@ -239,8 +242,8 @@ void GUILayoutNode::layoutSubNodes()
 						guiSubNode->computedConstraints.width = 0;
 					}
 					finalNodesWidth += guiSubNode->computedConstraints.width;
-					if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-						(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
 					}
 				}
 			}
