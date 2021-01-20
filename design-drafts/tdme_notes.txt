@@ -54,7 +54,7 @@ script 	 	= tsr
 sound  	 	= ogg
 gui 	 	= xml
 mesh   	 	= tme
-animation	= tan
+(animation	= tan)
 scene  	 	= tsc
 particle 	= tps
 

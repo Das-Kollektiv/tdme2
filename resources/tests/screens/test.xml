@@ -24,9 +24,9 @@
 		<space height="10"/>
 		<tabs width="100%" height="*">
 			<tabs-header scrollable="true">
-				<tab id="tab1" image="resources/engine/images/folder.png" text="Radio+Checkbox"/>
+				<tab id="tab1" image="resources/engine/images/folder.png" text="Radio+Checkbox" closeable="true"/>
 				<tab id="tab2" text="Selectbox" closeable="true" />
-				<tab id="tab3" text="Buttons" />
+				<tab id="tab3" text="Buttons" closeable="true"/>
 				<tab id="tab4" text="Dropdown" />
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
@@ -148,11 +148,11 @@
 					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="100%">
 
 						<space height="*" />
-						<button id="test_text_button" width="150" name="button" text="Active Button" />
+						<button id="test_text_button" width="150" height="40" name="button" text="Active Button" />
 						<space height="*" />
-						<button id="test_text_button2" width="150" name="button2" image="resources/engine/images/folder.png" text="Icon Button" />
+						<button id="test_text_button2" width="150" height="40" name="button2" image="resources/engine/images/folder.png" text="Icon Button" />
 						<space height="*" />
-						<button id="test_text_button3" width="150" name="button3" text="Disabled Button" disabled="true"/>
+						<button id="test_text_button3" width="150" height="40" name="button3" text="Disabled Button" disabled="true"/>
 						<space height="*" />
 						<button id="test_text_button4" name="button4" image="resources/engine/images/folder.png" />
 						<space height="*" />						
