@@ -50,11 +50,6 @@ private:
 	GUISelectBoxController(GUINode* node);
 
 	/**
-	 * Init
-	 */
-	void init();
-
-	/**
 	 * @return if multiple selection is enabled
 	 */
 	bool isMultipleSelection();

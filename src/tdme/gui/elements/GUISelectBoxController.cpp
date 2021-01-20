@@ -35,13 +35,9 @@ string GUISelectBoxController::CONDITION_ENABLED = "enabled";
 GUISelectBoxController::GUISelectBoxController(GUINode* node)
 	: GUIElementController(node)
 {
-	init();
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 	this->multipleSelection = required_dynamic_cast<GUIElementNode*>(node)->hasOption("multiple");
-}
-
-void GUISelectBoxController::init()
-{
+	this->keyControl = false;
 }
 
 bool GUISelectBoxController::isMultipleSelection() {
