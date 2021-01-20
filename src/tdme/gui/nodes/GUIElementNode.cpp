@@ -293,12 +293,14 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 		// image node specific data
 		if (subCommand == "maskmaxvalue") {
 			auto imageNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(nodeId));
-			if (StringTools::endsWith(value, ".value") == true) {
-				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
-				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
-				if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
-			} else {
-				imageNode->setMaskMaxValue(Float::parseFloat(value));
+			if (imageNode != nullptr) {
+				if (StringTools::endsWith(value, ".value") == true) {
+					auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
+					auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
+					if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
+				} else {
+					imageNode->setMaskMaxValue(Float::parseFloat(value));
+				}
 			}
 		} else
 		if (StringTools::startsWith(command,"delay(") == true &&

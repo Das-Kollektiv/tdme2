@@ -50,10 +50,10 @@ void GUIProgressBarController::setDisabled(bool disabled) {
 }
 
 void GUIProgressBarController::initialize() {
-	backgroundNode = dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_background"));
-	barNode = dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_bar"));
-	textNode = dynamic_cast<GUITextNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_text"));
-	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+	backgroundNode = required_dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_background"));
+	barNode = required_dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_bar"));
+	textNode = required_dynamic_cast<GUITextNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_text"));
+	setValue(MutableString(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 	GUIElementController::initialize();
 }
 

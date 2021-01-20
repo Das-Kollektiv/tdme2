@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -18,6 +19,8 @@
 #include <tdme/utilities/Time.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
+
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -63,7 +66,7 @@ void GUIInputInternalController::setDisabled(bool disabled)
 void GUIInputInternalController::initialize()
 {
 	this->node->getScreenNode()->addTickNode(this->node);
-	inputNode = dynamic_cast<GUIElementNode*>(node->getParentControllerNode());
+	inputNode = required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode());
 }
 
 void GUIInputInternalController::dispose()
@@ -105,7 +108,7 @@ GUIInputInternalController::CursorMode GUIInputInternalController::getCursorMode
 
 void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	auto disabled = (dynamic_cast<GUIInputController*>(inputNode->getController()))->isDisabled();
+	auto disabled = required_dynamic_cast<GUIInputController*>(inputNode->getController())->isDisabled();
 	if (disabled == true) {
 		return;
 	}
@@ -118,7 +121,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		(event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true ||
 		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true) &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
-		auto textInputNode = (dynamic_cast<GUIInputInternalNode*>(node));
+		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 		index = textInputNode->getFont()->getTextIndexByX(
 			textInputNode->getText(),
 			offset,
@@ -147,7 +150,7 @@ void GUIInputInternalController::checkOffset()
 		offset = index;
 		return;
 	}
-	auto textInputNode = (dynamic_cast<GUIInputInternalNode*>(node));
+	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 	auto textInputNodeConstraints = textInputNode->computedConstraints;
 	auto textInputNodeBorder = textInputNode->border;
 	auto textInputNodePadding = textInputNode->padding;
@@ -160,12 +163,12 @@ void GUIInputInternalController::checkOffset()
 
 void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
-	auto disabled = (dynamic_cast<GUIInputController*>(inputNode->getController()))->isDisabled();
+	auto disabled = required_dynamic_cast<GUIInputController*>(inputNode->getController())->isDisabled();
 	if (disabled == true) {
 		return;
 	}
 	if (node == this->node) {
-		auto textInputNode = (dynamic_cast<GUIInputInternalNode*>(node));
+		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 		auto keyChar = event->getKeyChar();
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
@@ -179,8 +182,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 					index++;
 					resetCursorMode();
 					checkOffset();
-					dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-					node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+					required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 				}
 			}
 		} else {
@@ -216,8 +219,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 								index--;
 								checkOffset();
 								resetCursorMode();
-								dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -230,8 +233,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 							if (index < textInputNode->getText().length()) {
 								textInputNode->getText().delete_(index, 1);
 								resetCursorMode();
-								dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -241,7 +244,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+							node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 						}
 					}
 				}
@@ -276,7 +279,7 @@ void GUIInputInternalController::tick()
 			return;
 		}
 		draggingTickLast = now;
-		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
+		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 		if (dragPosition[0] < 0) {
 			if (index > 0) {
 				index--;

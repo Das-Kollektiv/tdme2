@@ -26,7 +26,7 @@ GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalControll
 {
 	state = STATE_NONE;
 	mouseXOffset = -1;
-	contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
+	contentNode = required_dynamic_cast<GUILayoutNode*>(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
 	contentWidth = 0;
 }
 

@@ -52,7 +52,7 @@ void GUISelectBoxParentOptionController::initialize()
 	private:
 		GUISelectBoxParentOptionController* selectBoxParentOptionController { nullptr };
 	};
-	arrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
+	arrowNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
 	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	arrowNode->getScreenNode()->addActionListener(arrowNodeActionListener = new ArrowNodeActionListener(this));
 	//

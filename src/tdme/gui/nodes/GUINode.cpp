@@ -1162,8 +1162,8 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
-		auto parentNode = dynamic_cast< GUIParentNode* >(node);
+	if (dynamic_cast<GUIParentNode*>(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
+		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		for (auto subNode: parentNode->subNodes) {
 			dumpNode(subNode, depth, indent + 1, depthIdx + 1);
 		}

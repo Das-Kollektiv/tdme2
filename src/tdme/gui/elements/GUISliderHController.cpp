@@ -47,7 +47,7 @@ void GUISliderHController::setDisabled(bool disabled) {
 
 void GUISliderHController::initialize() {
 	sliderNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_slider");
-	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+	setValue(MutableString(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 	GUIElementController::initialize();
 }
 
@@ -64,7 +64,7 @@ void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	array<float, 2> nodeMousePosition;
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		this->node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(this->node));
+		this->node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(this->node));
 		event->setProcessed(true);
 	} else
 	if (event->getButton() == MOUSE_BUTTON_LEFT &&
@@ -79,7 +79,7 @@ void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		);
 		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth());
 		updateSlider();
-		node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(this->node));
+		node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 	}
 }
 
@@ -92,7 +92,7 @@ void GUISliderHController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
 						updateSlider();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 					}
 				}
 				break;
@@ -101,7 +101,7 @@ void GUISliderHController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
 						updateSlider();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast<GUIElementNode*>(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 					}
 				}
 				break;

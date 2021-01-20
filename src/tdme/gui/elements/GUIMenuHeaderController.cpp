@@ -60,12 +60,12 @@ bool GUIMenuHeaderController::hasFocus()
 void GUIMenuHeaderController::determineMenuHeaderItemControllers()
 {
 	menuHeaderItemControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast<GUIMenuHeaderItemController*>(childController) != nullptr) {
-			auto menuHeaderItemController = dynamic_cast< GUIMenuHeaderItemController* >(childController);
+			auto menuHeaderItemController = required_dynamic_cast< GUIMenuHeaderItemController* >(childController);
 			if (menuHeaderItemController->isDisabled() == true)
 				continue;
 			menuHeaderItemControllers.push_back(menuHeaderItemController);
@@ -141,7 +141,7 @@ void GUIMenuHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }
