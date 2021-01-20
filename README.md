@@ -160,11 +160,8 @@
                 - menu
                 - progress bar
                 - radio button
-                - scrollarea both
-                - scrollarea horizontal
-                - scrollarea vertical
+                - scrollarea
                 - selectbox including tree view
-                - selectbox with multiple selection including tree view
                 - slider horizontal
                 - slider vertical
                 - tabs

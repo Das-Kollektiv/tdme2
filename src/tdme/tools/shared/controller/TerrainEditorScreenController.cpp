@@ -82,7 +82,7 @@ GUIScreenNode* TerrainEditorScreenController::getScreenNode()
 void TerrainEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/terraineditor/gui", "screen_terraineditor.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_terraineditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

@@ -273,24 +273,15 @@ SRCS = \
 	src/tdme/gui/elements/GUIMenuHeaderItemController.cpp \
 	src/tdme/gui/elements/GUIMenuItem.cpp \
 	src/tdme/gui/elements/GUIMenuItemController.cpp \
+	src/tdme/gui/elements/GUIMenuSeparator.cpp \
 	src/tdme/gui/elements/GUIProgressBar.cpp \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \
 	src/tdme/gui/elements/GUIRadioButtonController.cpp \
 	src/tdme/gui/elements/GUIScrollArea.cpp \
 	src/tdme/gui/elements/GUIScrollAreaController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaHorizontal.cpp \
-	src/tdme/gui/elements/GUIScrollAreaHorizontalController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaVertical.cpp \
-	src/tdme/gui/elements/GUIScrollAreaVerticalController.cpp \
 	src/tdme/gui/elements/GUISelectBox.cpp \
 	src/tdme/gui/elements/GUISelectBoxController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultiple.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleOption.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleOptionController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleParentOption.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleParentOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxParentOption.cpp \

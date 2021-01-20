@@ -214,7 +214,7 @@ void PrototypePhysicsSubScreenController::setupBoundingVolumeTypes(int idx, int 
 	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast<GUIParentNode*>((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(boundingVolumeTypeDropDown[idx]->getId() + "_inner")));
 	auto bvIdx = 0;
 	string boundingVolumeTypeDropDownSubNodesXML = "";
-	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<scrollarea-vertical width=\"100%\" height=\"80\">";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<scrollarea width=\"100%\" height=\"80\">";
 	boundingVolumeTypeCount = 0;
 	if ((boundingVolumeTypeMask & BOUNDINGVOLUMETYPE_NONE) == BOUNDINGVOLUMETYPE_NONE) {
 		boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("None") + "\" value=\"" + to_string(0) + "\" />\n";
@@ -240,7 +240,7 @@ void PrototypePhysicsSubScreenController::setupBoundingVolumeTypes(int idx, int 
 		boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("Convex Mesh") + "\" value=\"" + to_string(5) + "\" />\n";
 		boundingVolumeTypeCount++;
 	}
-	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "</scrollarea-vertical>";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "</scrollarea>";
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
 	} catch (Exception& exception) {

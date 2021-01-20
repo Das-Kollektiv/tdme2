@@ -167,7 +167,7 @@ FileDialogPath* ModelEditorScreenController::getAudioPath()
 void ModelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/modeleditor/gui", "screen_modeleditor.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_modeleditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
@@ -344,19 +344,19 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 	try {
 		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingShader->getId() + "_inner")))->replaceSubNodes(
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 				renderingShader->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
 				renderingShadersDropDownSubNodesXML +
-				"</scrollarea-vertical>\n",
+				"</scrollarea>\n",
 			false
 		);
 		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingDistanceShader->getId() + "_inner")))->replaceSubNodes(
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 				renderingDistanceShader->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
 				renderingShadersDropDownSubNodesXML +
-				"</scrollarea-vertical>\n",
+				"</scrollarea>\n",
 			false
 		);
 	} catch (Exception& exception) {
@@ -589,7 +589,7 @@ void ModelEditorScreenController::setMaterials(Prototype* entity) {
 		string materialsDropDownInnerNodeSubNodesXML = "";
 		materialsDropDownInnerNodeSubNodesXML =
 				materialsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			materialsDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		// materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
@@ -605,7 +605,7 @@ void ModelEditorScreenController::setMaterials(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -647,11 +647,11 @@ void ModelEditorScreenController::unsetMaterials() {
 		string materialsDropDownInnerNodeSubNodesXML = "";
 		materialsDropDownInnerNodeSubNodesXML =
 				materialsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			materialsDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" />";
-		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1263,7 +1263,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 		string animationsDropDownInnerNodeSubNodesXML = "";
 		animationsDropDownInnerNodeSubNodesXML =
 			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			animationsDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
@@ -1279,7 +1279,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1296,7 +1296,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = "";
 		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
 			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			animationsAnimationOverlayFromNodeIdDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"70\">\n";
 		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
@@ -1317,7 +1317,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsAnimationOverlayFromNodeIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1485,7 +1485,7 @@ void ModelEditorScreenController::setPreview() {
 		string animationsDropDownInnerNodeSubNodesXML = "";
 		animationsDropDownInnerNodeSubNodesXML =
 			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			previewAnimationsBaseDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
@@ -1500,7 +1500,7 @@ void ModelEditorScreenController::setPreview() {
 				"\" " +
 				" />\n";
 		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1528,11 +1528,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode1->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay1DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1541,11 +1541,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode2->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay2DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1554,11 +1554,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode3->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay3DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1572,7 +1572,7 @@ void ModelEditorScreenController::setPreview() {
 		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
 		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
 			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			previewAnimationsAttachment1BoneDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
@@ -1586,7 +1586,7 @@ void ModelEditorScreenController::setPreview() {
 				"\" " +
 				" />\n";
 		}
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {

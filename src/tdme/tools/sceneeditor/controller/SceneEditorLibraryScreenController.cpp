@@ -101,7 +101,7 @@ void SceneEditorLibraryScreenController::setModelPath(const string& modelPath)
 void SceneEditorLibraryScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/sceneeditor/gui", "screen_sceneeditor_prototypelibrary.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_sceneeditor_prototypelibrary.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		sceneLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_library_listbox"));
@@ -136,7 +136,7 @@ void SceneEditorLibraryScreenController::setPrototypeLibrary()
 	string sceneLibraryListBoxSubNodesXML;
 	sceneLibraryListBoxSubNodesXML =
 		sceneLibraryListBoxSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		sceneLibraryListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
@@ -152,7 +152,7 @@ void SceneEditorLibraryScreenController::setPrototypeLibrary()
 			(i == 0 ? "selected=\"true\" " : "") +
 			"/>\n";
 	}
-	sceneLibraryListBoxSubNodesXML = sceneLibraryListBoxSubNodesXML + "</scrollarea-vertical>\n";
+	sceneLibraryListBoxSubNodesXML = sceneLibraryListBoxSubNodesXML + "</scrollarea>\n";
 	try {
 		sceneLibraryListBoxInnerNode->replaceSubNodes(sceneLibraryListBoxSubNodesXML, false);
 	} catch (Exception& exception) {

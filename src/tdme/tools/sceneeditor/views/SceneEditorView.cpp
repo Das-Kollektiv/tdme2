@@ -1061,7 +1061,7 @@ Model* SceneEditorView::createSceneEditorGroundPlateModel()
 			0.75f
 		)
 	);
-	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
 	auto groundNode = new Node(groundPlate, nullptr, "ground", "ground");

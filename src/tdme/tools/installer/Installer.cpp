@@ -149,7 +149,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_welcome",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_welcome.xml",
 				parameters
 			)
@@ -157,7 +157,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_license",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_license.xml",
 				parameters
 			)
@@ -166,7 +166,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_components",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_components.xml",
 				parameters
 			)
@@ -189,7 +189,7 @@ void Installer::initializeScreens() {
 				string("		<space width=\"10\" />\n") +
 				string("		<checkbox id=\"checkbox_component" + to_string(componentIdx) + "\" name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"" + (componentRequired == true || componentInstalled == true?"true":"false") + "\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<text width=\"*\" font=\"resources/gui-system/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
+				string("		<text width=\"*\" font=\"resources/engine/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
 				string("	</layout>\n") +
 				string("</element>\n");
 		}
@@ -200,7 +200,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_folder",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_folder.xml",
 				parameters
 			)
@@ -208,7 +208,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_installing",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_installing.xml",
 				parameters
 			)
@@ -216,7 +216,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_finished",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_finished.xml",
 				parameters
 			)
@@ -224,7 +224,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_welcome2",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_welcome2.xml",
 				parameters
 			)
@@ -232,7 +232,7 @@ void Installer::initializeScreens() {
 		engine->getGUI()->addScreen(
 			"installer_uninstalling",
 			GUIParser::parse(
-				"resources/screens/installer",
+				"resources/installer",
 				"installer_uninstalling.xml",
 				parameters
 			)
@@ -690,8 +690,8 @@ void Installer::performScreenAction() {
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
 														auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.png";
-														if (archiveFileSystem->fileExists("resources/icons/" + iconFileName) == false &&
-															FileSystem::getInstance()->fileExists(executablePathName + "/resources/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
+														if (archiveFileSystem->fileExists("resources/platforms/icons/" + iconFileName) == false &&
+															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installer->homeFolder + "/" + ".local/share/applications",
 															startMenuName + ".desktop",
@@ -701,7 +701,7 @@ void Installer::performScreenAction() {
 															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
 															"Terminal=false\n" +
 															"Type=Application\n" +
-															"Icon=" + installFolder + "/resources/icons/" + iconFileName + "\n"
+															"Icon=" + installFolder + "/resources/platforms/icons/" + iconFileName + "\n"
 														);
 														log.push_back(generatedFileName + ".sh");
 														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + startMenuName + ".desktop");
@@ -729,20 +729,20 @@ void Installer::performScreenAction() {
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
 														auto iconFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
-														if (archiveFileSystem->fileExists("resources/win32/" + iconFileName) == false &&
-															FileSystem::getInstance()->fileExists(executablePathName + "/resources/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
+														if (archiveFileSystem->fileExists("resources/platfotms/win32/" + iconFileName) == false &&
+															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
 														Console::println(
 															StringTools::replace(StringTools::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 															"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
 															"\"" + StringTools::replace(linkFile, "/", "\\") + "\" " +
-															"\"resources\\win32\\" + iconFileName + "\" "
+															"\"resources\\platforms\\win32\\" + iconFileName + "\" "
 														);
 														Console::println(
 															Application::execute(
 																StringTools::replace(StringTools::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 																"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
 																"\"" + StringTools::replace(linkFile, "/", "\\") + "\" " +
-																"\"resources\\win32\\" + iconFileName + "\" "
+																"\"resources\\platforms\\win32\\" + iconFileName + "\" "
 															)
 														);
 														log.push_back(linkFile);
