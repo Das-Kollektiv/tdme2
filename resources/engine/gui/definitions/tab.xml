@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" >
+<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-initialize="{$id}.condition+={$closeable}" >
 	
 	<!-- normal -->
 	<layout 
@@ -33,7 +33,7 @@
 			vertical-align="center"
 		/>
 		<space width="20"/>
-		<button template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
+		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
 	<!-- mouse over / focussed -->
@@ -70,7 +70,7 @@
 			vertical-align="center"
 		/>
 		<space width="20"/>
-		<button id="{$id}_close_mouseover" width="18" height="18" image="resources/engine/images/cross.png" />
+		<button show-on="true" id="{$id}_close_mouseover" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
 	<!-- selected -->
@@ -106,7 +106,7 @@
 			vertical-align="center"
 		/>
 		<space width="20"/>
-		<button id="{$id}_close_selected" width="18" height="18" image="resources/engine/images/cross.png" />
+		<button show-on="true" id="{$id}_close_selected" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
 	<!-- disabled -->
@@ -142,7 +142,7 @@
 			vertical-align="center"
 		/>
 		<space width="20"/>
-		<button id="{$id}_close_disabled" width="18" height="18" image="resources/engine/images/cross.png" />
+		<button show-on="true" id="{$id}_close_disabled" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 
 </element>
