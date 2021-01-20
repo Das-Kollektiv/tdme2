@@ -33,7 +33,7 @@
 			vertical-align="center"
 		/>
 		<space width="20"/>
-		<button id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
+		<button template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
 	<!-- mouse over / focussed -->

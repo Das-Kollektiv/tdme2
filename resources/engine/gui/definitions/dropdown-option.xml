@@ -12,7 +12,7 @@
 		padding-top="2"
 		padding-bottom="2"		
 
-		hide-on="mouseover,selected"
+		hide-on="mouseover,selected,hidden"
 	/>
 	
 	<!-- mouse over / focussed -->
@@ -30,5 +30,6 @@
 		background-color="{$color.focus}"
 
 		show-on="mouseover,selected"
+		hide-on="hidden"
 	/>
 </element>
