@@ -96,10 +96,8 @@ void GUIDropDownController::unselect()
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
-			required_dynamic_cast<GUIDropDownOptionController*>(childController)->unselect();
-		}
+		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
+		if (childController != nullptr) childController->unselect();
 	}
 }
 
@@ -120,10 +118,8 @@ void GUIDropDownController::determineDropDownOptionControllers()
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
-			dropDownOptionControllers.push_back(required_dynamic_cast<GUIDropDownOptionController*>(childController));
-		}
+		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
+		if (childController != nullptr) dropDownOptionControllers.push_back(childController);
 	}
 }
 
