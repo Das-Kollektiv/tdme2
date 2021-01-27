@@ -56,7 +56,7 @@ private:
 	GUIElementNode* brushFileLoad { nullptr };
 	GUIElementNode* brushFileClear { nullptr };
 	GUIElementNode* btnBrushApply { nullptr };
-	vector<Vector3> terrainVerticesVector;
+	vector<float> terrainHeightVector;
 
 	bool haveCurrentBrushFlattenHeight { false };
 	float currentBrushFlattenHeight { 0.0f };

@@ -167,8 +167,8 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
 		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
 		auto prototype = view->getPrototype();
-		terrainVerticesVector.clear();
-		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
+		terrainHeightVector.clear();
+		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainHeightVector);
 		prototype->setModel(terrainModel);
 		view->setPrototype(prototype);
 	} catch (Exception& exception) {
@@ -225,7 +225,7 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	if (terrainModel == nullptr) return;
 	Terrain::applyBrushToTerrainModel(
 		terrainModel,
-		terrainVerticesVector,
+		terrainHeightVector,
 		brushCenterPosition,
 		currentBrushTexture,
 		currentBrushScale,
@@ -243,7 +243,7 @@ bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(const Vec
 	if (terrainModel == nullptr) return false;
 	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelFlattenHeight(
 		terrainModel,
-		terrainVerticesVector,
+		terrainHeightVector,
 		brushCenterPosition,
 		currentBrushFlattenHeight
 	);
