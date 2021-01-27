@@ -82,7 +82,18 @@ Prototype* SharedTerrainEditorView::getPrototype()
 void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
+	for (auto terrainModel: terrainModels) delete terrainModel;
+	terrainBoundingBox = BoundingBox();
+	terrainModels.clear();
 	this->prototype = prototype;
+	initModelRequested = true;
+}
+
+void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels) {
+	engine->reset();
+	for (auto terrainModel: this->terrainModels) delete terrainModel;
+	this->terrainBoundingBox = terrainBoundingBox;
+	this->terrainModels = terrainModels;
 	initModelRequested = true;
 }
 
@@ -92,15 +103,19 @@ void SharedTerrainEditorView::initModel()
 		return;
 
 	//
-	if (prototype->getModel() != nullptr) {
-		engine->removeEntity("terrain");
-		auto terrainObject3D = new Object3D("terrain", prototype->getModel());
-		terrainObject3D->setShader("terrain");
-		terrainObject3D->setContributesShadows(true);
-		terrainObject3D->setReceivesShadows(true);
-		engine->addEntity(terrainObject3D);
-		Vector3 sceneCenter = prototype->getModel()->getBoundingBox()->getCenter();
-		sceneCenter.set(Vector3(sceneCenter.getX(), prototype->getModel()->getBoundingBox()->getMax().getY() + 3.0f, sceneCenter.getZ()));
+	if (terrainModels.empty() == false) {
+		auto idx = 0;
+		for (auto terrainModel: terrainModels) {
+			auto terrainObject3D = new Object3D("terrain." + to_string(idx), terrainModel);
+			terrainObject3D->setShader("terrain");
+			terrainObject3D->setContributesShadows(true);
+			terrainObject3D->setReceivesShadows(true);
+			engine->addEntity(terrainObject3D);
+			idx++;
+		}
+
+		Vector3 sceneCenter = terrainBoundingBox.getCenter();
+		sceneCenter.set(Vector3(sceneCenter.getX(), terrainBoundingBox.getMax().getY() + 3.0f, sceneCenter.getZ()));
 		cameraInputHandler->setSceneCenter(sceneCenter);
 		Tools::oseThumbnail(prototype);
 		auto modelBoundingVolume = engine->getEntity("model_bv");
@@ -146,8 +161,8 @@ void SharedTerrainEditorView::display()
 	}
 
 	// actually do the brushing
-	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushFlattenHeight(brushCenterPosition) == true) {
-		terrainEditorScreenController->applyBrush(brushCenterPosition, engine->getTiming()->getDeltaTime());
+	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushFlattenHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
+		terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 	}
 
 	// viewport

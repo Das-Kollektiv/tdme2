@@ -2,6 +2,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
@@ -11,6 +13,8 @@
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
@@ -38,6 +42,9 @@ private:
 	CameraInputHandler* cameraInputHandler { nullptr };
 	bool brushingEnabled { false };
 	Vector3 brushCenterPosition;
+
+	BoundingBox terrainBoundingBox;
+	vector<Model*> terrainModels;
 
 	/**
 	 * Init entity
@@ -71,6 +78,13 @@ public:
 	 * @param prototype prototype
 	 */
 	void setPrototype(Prototype* entity);
+
+	/**
+	 * Set terrain models
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 */
+	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
 
 	/**
 	 * Init GUI elements

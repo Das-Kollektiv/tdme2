@@ -1,7 +1,10 @@
 #include <string>
+#include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -24,9 +27,12 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -168,9 +174,10 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
 		auto prototype = view->getPrototype();
 		terrainHeightVector.clear();
-		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainHeightVector);
-		prototype->setModel(terrainModel);
-		view->setPrototype(prototype);
+		BoundingBox terrainBoundingBox;
+		vector<Model*> terrainModels;
+		Terrain::createTerrainModels(width, depth, 0.0f, terrainHeightVector, terrainBoundingBox, terrainModels);
+		view->setTerrain(terrainBoundingBox, terrainModels);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -219,12 +226,14 @@ void TerrainEditorScreenController::onApplyBrush() {
 	}
 }
 
-void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime) {
+void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
-	auto terrainModel = prototype->getModel();
+	if (terrainModels.empty() == true) return;
+	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return;
 	Terrain::applyBrushToTerrainModel(
-		terrainModel,
+		terrainBoundingBox,
+		terrainModels,
 		terrainHeightVector,
 		brushCenterPosition,
 		currentBrushTexture,
@@ -235,14 +244,15 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	);
 }
 
-bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition) {
+bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
 	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN) return true;
 	if (haveCurrentBrushFlattenHeight == true) return true;
-	auto prototype = view->getPrototype();
-	auto terrainModel = prototype->getModel();
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return false;
 	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelFlattenHeight(
-		terrainModel,
+		terrainBoundingBox,
+		terrainModels,
 		terrainHeightVector,
 		brushCenterPosition,
 		currentBrushFlattenHeight

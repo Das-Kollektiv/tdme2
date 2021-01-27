@@ -41,7 +41,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ModelTools;
 
-Model* Terrain::createTerrainModel(float width, float depth, float y, vector<float>& terrainHeightVector)
+void Terrain::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels)
 {
 	auto modelId = "terrain" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
 	auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
@@ -107,8 +107,8 @@ Model* Terrain::createTerrainModel(float width, float depth, float y, vector<flo
 	terrainNode->setFacesEntities(nodeFacesEntities);
 	terrainModel->getNodes()[terrainNode->getId()] = terrainNode;
 	terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode;
-	auto boundingBox = terrainModel->getBoundingBox();
-	return terrainModel;
+	terrainBoundingBox = terrainModel->getBoundingBox();
+	terrainModels.push_back(terrainModel);
 }
 
 inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z) {
@@ -214,7 +214,8 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& te
 }
 
 void Terrain::applyBrushToTerrainModel(
-	Model* terrainModel,
+	const BoundingBox& terrainBoundingBox,
+	vector<Model*> terrainModels,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
 	Texture* brushTexture,
@@ -226,8 +227,9 @@ void Terrain::applyBrushToTerrainModel(
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
 	// check if we have a model
-	if (terrainModel == nullptr) return;
+	if (terrainModels.empty() == true) return;
 	// get terrain node
+	auto terrainModel = terrainModels[0];
 	auto terrainNode = terrainModel->getNodeById("terrain");
 	if (terrainNode == nullptr) return;
 
@@ -379,14 +381,16 @@ void Terrain::applyBrushToTerrainModel(
 }
 
 bool Terrain::getTerrainModelFlattenHeight(
-	Model* terrainModel,
+	const BoundingBox& terrainBoundingBox,
+	vector<Model*> terrainModels,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
 	float& flattenHeight
 ) {
 	// check if we have a model
-	if (terrainModel == nullptr) return false;
+	if (terrainModels.empty() == true) return false;
 	// get terrain node
+	auto terrainModel = terrainModels[0];
 	auto terrainNode = terrainModel->getNodeById("terrain");
 	if (terrainNode == nullptr) return false;
 

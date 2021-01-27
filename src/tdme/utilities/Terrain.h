@@ -6,12 +6,14 @@
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
 /**
@@ -68,13 +70,15 @@ public:
 	 * @param depth depth
 	 * @param y float y
 	 * @param terrainHeightVector terrain height vector
-	 * @return ground model
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 */
-	static Model* createTerrainModel(float width, float depth, float y, vector<float>& terrainHeightVector);
+	static void createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels);
 
 	/**
 	 * Apply brush to terrain model
-	 * @param terrainModel terrain model
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
 	 * @param brushTexture brush texture
@@ -85,7 +89,8 @@ public:
 	 *
 	 */
 	static void applyBrushToTerrainModel(
-		Model* terrainModel,
+		const BoundingBox& terrainBoundingBox,
+		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		Texture* brushTexture,
@@ -97,13 +102,15 @@ public:
 
 	/**
 	 * Get terrain model flatten height
-	 * @param terrainModel terrain model
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param terrainHeightVector terrain height vector
 	 * @param flattenHeight flatten height
 	 *
 	 */
 	static bool getTerrainModelFlattenHeight(
-		Model* terrainModel,
+		const BoundingBox& terrainBoundingBox,
+		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		float& flattenHeight

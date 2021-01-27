@@ -130,17 +130,21 @@ public:
 
 	/**
 	 * Apply current brush at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
 	 * @param deltaTime delta time between last frame and this frame
 	 */
-	void applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime);
+	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Determine current brush flatten height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
 	 * @return success
 	 */
-	bool determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition);
+	bool determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
 
 	/**
 	 * Unset current brush flatten height
