@@ -273,7 +273,7 @@ void Terrain::applyBrushToTerrainModel(
 	vector<vector<Vector3>> partitionTerrainNormals;
 	partitionTerrainVertices.resize(terrainModels.size());
 	partitionTerrainNormals.resize(terrainModels.size());
-	auto partitionsX = static_cast<int>(Math::floor(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
+	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()) / STEP_SIZE);
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()) / STEP_SIZE);
 	auto textureData = brushTexture->getTextureData();
