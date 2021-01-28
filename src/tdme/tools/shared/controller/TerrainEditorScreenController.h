@@ -26,6 +26,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
+using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedTerrainEditorView;
@@ -50,13 +51,16 @@ private:
 	GUIElementNode* terrainDimensionWidth { nullptr };
 	GUIElementNode* terrainDimensionDepth { nullptr };
 	GUIElementNode* btnTerrainDimensionApply { nullptr };
+	GUIElementNode* btnTerrainDimensionLoad { nullptr };
+	GUIElementNode* btnTerrainDimensionSave { nullptr };
 	GUIElementNode* brushScale { nullptr };
 	GUIElementNode* brushStrength { nullptr };
 	GUIElementNode* brushFile { nullptr };
 	GUIElementNode* brushFileLoad { nullptr };
 	GUIElementNode* brushFileClear { nullptr };
 	GUIElementNode* btnBrushApply { nullptr };
-	vector<float> terrainHeightVector;
+
+	FileDialogPath* terrainPath { nullptr };
 
 	bool haveCurrentBrushFlattenHeight { false };
 	float currentBrushFlattenHeight { 0.0f };
@@ -117,6 +121,11 @@ public:
 	 * @param height height
 	 */
 	void setTerrainDimension(float width, float height);
+
+	/**
+	 * On terrain save
+	 */
+	void onTerrainSave();
 
 	/**
 	 * On apply terrain dimension

@@ -109,4 +109,11 @@ public:
 	 */
 	virtual void onInitAdditionalScreens();
 
+	/**
+	 * Save file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
 };

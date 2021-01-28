@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -29,6 +30,7 @@
 
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
@@ -264,3 +266,8 @@ void SharedTerrainEditorView::onSetPrototypeData() {
 
 void SharedTerrainEditorView::onInitAdditionalScreens() {
 }
+
+void SharedTerrainEditorView::saveFile(const string& pathName, const string& fileName) {
+	PrototypeWriter::write(pathName, fileName, prototype);
+}
+
