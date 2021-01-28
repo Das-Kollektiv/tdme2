@@ -29,18 +29,24 @@ public:
 private:
 	/**
 	 * @param terrainHeightVector terrain height vector
-	 * @param verticesPerZ vertices per x
+	 * @param verticesPerX vertices per x
+	 * @param verticesPerZ vertices per z
 	 * @param x x
 	 * @param z z
 	 * @return terrain vertex
 	 */
 	static inline bool getTerrainVertex(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, Vector3& vertex) {
-		if (x < 0 || x >= verticesPerX) return false;
-		if (z < 0 || z>= verticesPerZ) return false;
 		vertex.set(
-			x * STEP_SIZE,
+			static_cast<float>(x) * STEP_SIZE,
+			0.0f,
+			static_cast<float>(z) * STEP_SIZE
+		);
+		if (x < 0 || x >= verticesPerX) return false;
+		if (z < 0 || z >= verticesPerZ) return false;
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
 			terrainHeightVector[z * verticesPerX + x],
-			z * STEP_SIZE
+			static_cast<float>(z) * STEP_SIZE
 		);
 		return true;
 	}
