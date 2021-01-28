@@ -32,7 +32,8 @@ public:
 	/**
 	 * Destructor
 	 */
-	~PrototypeTerrain();
+	~PrototypeTerrain() {
+	}
 
 	/**
 	 * @return width
