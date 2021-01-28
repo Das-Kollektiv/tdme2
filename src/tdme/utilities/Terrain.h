@@ -23,7 +23,7 @@ using tdme::math::Vector3;
 class tdme::utilities::Terrain
 {
 public:
-	static constexpr float STEP_SIZE { 0.5f };
+	static constexpr float STEP_SIZE { 1.0f };
 	static constexpr float PARTITION_SIZE { 64.0f };
 
 private:
