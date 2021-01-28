@@ -191,11 +191,10 @@ void SharedTerrainEditorView::updateGUIElements()
 		auto preset = prototype->getProperty("preset");
 		terrainEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		terrainEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-		if (prototype->getModel() != nullptr) {
-			auto boundingBox = prototype->getModel()->getBoundingBox();
+		if (terrainModels.empty() == false) {
 			terrainEditorScreenController->setTerrainDimension(
-				boundingBox->getMax().getX() - boundingBox->getMin().getX(),
-				boundingBox->getMax().getZ() - boundingBox->getMin().getZ()
+				terrainBoundingBox.getDimensions().getX(),
+				terrainBoundingBox.getDimensions().getZ()
 			);
 		} else {
 			terrainEditorScreenController->setTerrainDimension(64.0f, 64.0f);
