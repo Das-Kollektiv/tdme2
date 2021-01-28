@@ -306,8 +306,8 @@ void Terrain::applyBrushToTerrainModel(
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
 			auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
-			auto terrainHeightVectorX = static_cast<int>(Math::floor((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE));
-			auto terrainHeightVectorZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE));
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
 				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
 			auto vertexIdx = terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX;
@@ -369,8 +369,8 @@ void Terrain::applyBrushToTerrainModel(
 				auto terrainModel = partitionIdx < terrainModels.size()?terrainModels[partitionIdx]:nullptr;
 				auto terrainNode = terrainModel != nullptr?terrainModel->getNodeById("terrain"):nullptr;
 
-				auto terrainModelX = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE)):-1;
-				auto terrainModelZ = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE)):-1;
+				auto terrainModelX = terrainNode != nullptr?static_cast<int>((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE):-1;
+				auto terrainModelZ = terrainNode != nullptr?static_cast<int>((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE):-1;
 				auto terrainModelVerticesPerZ = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getZ() / STEP_SIZE)):-1;
 				auto terrainModelVerticesPerX = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getX() / STEP_SIZE)):-1;
 
@@ -397,8 +397,8 @@ void Terrain::applyBrushToTerrainModel(
 				auto terrainModel = partitionIdx < terrainModels.size()?terrainModels[partitionIdx]:nullptr;
 				auto terrainNode = terrainModel != nullptr?terrainModel->getNodeById("terrain"):nullptr;
 
-				auto terrainModelX = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE)):-1;
-				auto terrainModelZ = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE)):-1;
+				auto terrainModelX = terrainNode != nullptr?static_cast<int>((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE):-1;
+				auto terrainModelZ = terrainNode != nullptr?static_cast<int>((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE):-1;
 				auto terrainModelVerticesPerZ = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getZ() / STEP_SIZE)):-1;
 				auto terrainModelVerticesPerX = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getX() / STEP_SIZE)):-1;
 
@@ -425,8 +425,8 @@ void Terrain::applyBrushToTerrainModel(
 				auto terrainModel = partitionIdx < terrainModels.size()?terrainModels[partitionIdx]:nullptr;
 				auto terrainNode = terrainModel != nullptr?terrainModel->getNodeById("terrain"):nullptr;
 
-				auto terrainModelX = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE)):-1;
-				auto terrainModelZ = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE)):-1;
+				auto terrainModelX = terrainNode != nullptr?static_cast<int>((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE):-1;
+				auto terrainModelZ = terrainNode != nullptr?static_cast<int>((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE):-1;
 				auto terrainModelVerticesPerZ = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getZ() / STEP_SIZE)):-1;
 				auto terrainModelVerticesPerX = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getX() / STEP_SIZE)):-1;
 
@@ -453,8 +453,8 @@ void Terrain::applyBrushToTerrainModel(
 				auto terrainModel = partitionIdx < terrainModels.size()?terrainModels[partitionIdx]:nullptr;
 				auto terrainNode = terrainModel != nullptr?terrainModel->getNodeById("terrain"):nullptr;
 
-				auto terrainModelX = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE)):-1;
-				auto terrainModelZ = terrainNode != nullptr?static_cast<int>(Math::floor((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE)):-1;
+				auto terrainModelX = terrainNode != nullptr?static_cast<int>((_brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE):-1;
+				auto terrainModelZ = terrainNode != nullptr?static_cast<int>((_brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE):-1;
 				auto terrainModelVerticesPerZ = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getZ() / STEP_SIZE)):-1;
 				auto terrainModelVerticesPerX = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getX() / STEP_SIZE)):-1;
 
@@ -507,10 +507,10 @@ void Terrain::applyBrushToTerrainModel(
 			auto terrainModel = partitionIdx < terrainModels.size()?terrainModels[partitionIdx]:nullptr;
 			auto terrainNode = terrainModel != nullptr?terrainModel->getNodeById("terrain"):nullptr;
 
-			auto terrainHeightVectorX = static_cast<int>(Math::floor((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE));
-			auto terrainHeightVectorZ = static_cast<int>(Math::floor((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE));
-			auto terrainModelX = terrainNode != nullptr?static_cast<int>(Math::floor((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE)):-1;
-			auto terrainModelZ = terrainNode != nullptr?static_cast<int>(Math::floor((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE)):-1;
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+			auto terrainModelX = terrainNode != nullptr?static_cast<int>((brushPosition.getX() - terrainModel->getBoundingBox()->getMin().getX()) / STEP_SIZE):-1;
+			auto terrainModelZ = terrainNode != nullptr?static_cast<int>((brushPosition.getZ() - terrainModel->getBoundingBox()->getMin().getZ()) / STEP_SIZE):-1;
 			auto terrainModelVerticesPerZ = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getZ() / STEP_SIZE)):-1;
 			auto terrainModelVerticesPerX = terrainNode != nullptr?static_cast<int>(Math::ceil(terrainModel->getBoundingBox()->getDimensions().getX() / STEP_SIZE)):-1;
 
@@ -600,8 +600,8 @@ bool Terrain::getTerrainModelFlattenHeight(
 	// get height at brush position
 	auto verticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()) / STEP_SIZE);
 	auto verticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()) / STEP_SIZE);
-	auto terrainModelX = static_cast<int>(Math::floor((brushCenterPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE));
-	auto terrainModelZ = static_cast<int>(Math::floor((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE));
+	auto terrainModelX = static_cast<int>((brushCenterPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+	auto terrainModelZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 	if (terrainModelX < 0 || terrainModelX >= verticesPerX ||
 		terrainModelZ < 0 || terrainModelZ >= verticesPerZ) return false;
 	flattenHeight = terrainHeightVector[terrainModelZ * verticesPerZ + terrainModelX];
