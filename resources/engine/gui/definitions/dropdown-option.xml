@@ -32,4 +32,9 @@
 		show-on="mouseover,selected"
 		hide-on="hidden"
 	/>
+	
+	<!-- <!-- additional elements --> -->
+	<!-- <layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" > -->
+		<!-- {__InnerXML__} -->
+	<!-- </layout> -->
 </element>

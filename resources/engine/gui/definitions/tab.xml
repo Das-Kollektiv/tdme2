@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-initialize="{$id}.condition+={$closeable}" >
+<element id="{$id}" width="auto" height="25" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-initialize="{$id}.condition+={$closeable}" vertical-align="center" >
 	
 	<!-- normal -->
 	<layout 
@@ -14,8 +14,8 @@
 		border-left="1" 
 		border-right="1" 
 		border-color="{$color.element_background}"
-		border-top="2"
-		border-color-top="{$type-color}"
+		border-top="1"
+		border-color-top="{$color.element_background}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
 		

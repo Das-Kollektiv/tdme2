@@ -1,6 +1,6 @@
 screen_main
 popup_progressbar
-popup_import
+popup_filedialog
 popup_infodialog
 
 template_files_thumbnail
@@ -8,6 +8,26 @@ template_files_text
 
 template_outliner_object
 
+templates_viewport_scene
+templates_viewport_model
+templates_viewport_particle
+templates_viewport_emtpy
+templates_viewport_trigger
+templates_viewport_terrain/foliage
+templates_viewport_gui
+templates_viewport_texture
+templates_viewport_codeeditor
+templates_viewport_sound
+
+template_details_terrain_dimensions
+template_details_terrain_brush
+template_details_environmentmapping_
+
+template_details_particle_emitter
+template_details_particle_type
+
+template_details_properties
+template_details_description
 template_details_transform
 template_details_mesh
 template_details_material
@@ -16,7 +36,25 @@ template_details_boundingvolume
 template_details_rendering
 template_details_physics
 template_details_animations
-template_details_particle
+(template_details_particle)
+
+- statistics gets into viewport
+- description in outliner?
+- displaytab gets into viewport
+- dont need pivot tab
+- what do we do with anim preview tab?
+
+- grid tab gets into viewport
+- snapping tab gets into viewport
+- scene dimensions in viewport?
+- sky tab to component?
+
+- lights are components of scenes
+- light tab in details?
+- environemnt mappings are components of scene
+- sky dome are components of scene
+
+- outliner also used for components
 
 definition_button
 definition_dropdown
@@ -46,6 +84,25 @@ resources
 	screens
 	fonts
 	images
+shader
+scr
+
+- open/new projekt in header menu opens filedialog popup
+- automatically finds ressouce/shader/scr folders OR specifices a new projekt folder
+
+- seachbar for folders
+- seachbar/filter for content
+- add button for content
+- import button for content
+- save all button for content
+
+- texture viewer
+- modelviewer
+- particle editor
+- scene editor (trigger, empty)
+- terrain editor /foliage editor
+- double click/context menu to open content, will be displayed/opened in viewport
+- default viewport, if nothing is opened
 
 
 prototype 	= prt
@@ -58,6 +115,10 @@ mesh   	 	= tme
 scene  	 	= tsc
 particle 	= tps
 
+light
+sky dome
+environment mapping
+
 
 icons
 
@@ -65,14 +126,15 @@ folder
 add folder
 search
 edit
-object
+prototype
 texture
 script
 sound
 screen
 mesh
-map
+scene
 particle
+
 add
 delete
 save
@@ -80,9 +142,10 @@ quit
 options
 link
 filter
+
 visible
 not visible
 checkbox
-list view
-grid view
+radiobutton
+locked
  
