@@ -10,7 +10,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -37,7 +37,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
-using tdme::engine::PartitionNone;
+using tdme::engine::PartitionOctTree;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -225,7 +225,7 @@ void SharedTerrainEditorView::initialize()
 void SharedTerrainEditorView::activate()
 {
 	engine->reset();
-	engine->setPartition(new PartitionNone());
+	engine->setPartition(new PartitionOctTree());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(terrainEditorScreenController->getScreenNode()->getId());

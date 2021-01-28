@@ -24,6 +24,7 @@ class tdme::utilities::Terrain
 {
 public:
 	static constexpr float STEP_SIZE { 0.5f };
+	static constexpr float PARTITION_SIZE { 64.0f };
 
 private:
 	/**
@@ -89,7 +90,7 @@ public:
 	 *
 	 */
 	static void applyBrushToTerrainModel(
-		const BoundingBox& terrainBoundingBox,
+		BoundingBox& terrainBoundingBox, // TODO: constness
 		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
@@ -109,7 +110,7 @@ public:
 	 *
 	 */
 	static bool getTerrainModelFlattenHeight(
-		const BoundingBox& terrainBoundingBox,
+		BoundingBox& terrainBoundingBox,  // TODO: constness
 		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
