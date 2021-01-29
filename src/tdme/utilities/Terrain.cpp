@@ -56,19 +56,15 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 	partitionTerrainVertices.resize(partitionCount);
 	partitionTerrainNormals.resize(partitionCount);
 	partitionTerrainFaces.resize(partitionCount);
-	auto maxX = Float::MIN_VALUE;
-	auto maxZ = Float::MIN_VALUE;
 	if (terrainHeightVector.empty() == true) {
 		for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 			for (float x = 0.0f; x < width; x+= STEP_SIZE) {
 				terrainHeightVector.push_back(y);
-				maxX = Math::max(maxX, x);
 			}
-			maxZ = Math::max(maxZ, z);
 		}
 	}
-	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(maxX / STEP_SIZE));
-	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(maxZ / STEP_SIZE));
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
 

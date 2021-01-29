@@ -123,9 +123,19 @@ public:
 	void setTerrainDimension(float width, float height);
 
 	/**
+	 * On terrain load
+	 */
+	void onTerrainLoad();
+
+	/**
 	 * On terrain save
 	 */
 	void onTerrainSave();
+
+	/**
+	 * On load terrain
+	 */
+	void onLoadTerrain();
 
 	/**
 	 * On apply terrain dimension

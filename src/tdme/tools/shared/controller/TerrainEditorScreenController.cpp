@@ -170,6 +170,9 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		if (node->getId().compare(btnTerrainDimensionApply->getId()) == 0) {
 			onApplyTerrainDimension();
 		} else
+		if (node->getId().compare(btnTerrainDimensionLoad->getId()) == 0) {
+			onTerrainLoad();
+		} else
 		if (node->getId().compare(btnTerrainDimensionSave->getId()) == 0) {
 			onTerrainSave();
 		} else
@@ -182,6 +185,26 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 void TerrainEditorScreenController::setTerrainDimension(float width, float height) {
 	terrainDimensionWidth->getController()->setValue(MutableString(width));
 	terrainDimensionDepth->getController()->setValue(MutableString(height));
+}
+
+void TerrainEditorScreenController::onLoadTerrain() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	try {
+		auto width = prototype->getTerrain()->getWidth();
+		auto depth = prototype->getTerrain()->getDepth();
+		BoundingBox terrainBoundingBox;
+		vector<Model*> terrainModels;
+		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
+		view->setTerrain(terrainBoundingBox, terrainModels);
+		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
+		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
+		btnTerrainDimensionSave->getController()->setDisabled(false);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void TerrainEditorScreenController::onApplyTerrainDimension() {
@@ -205,6 +228,41 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void TerrainEditorScreenController::onTerrainLoad()
+{
+	class OnTerrainLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnTerrainLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions;
+	extensions.push_back("tte");
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		terrainPath->getPath(),
+		"Load from: ",
+		extensions,
+		fileName,
+		true,
+		new OnTerrainLoadAction(this)
+	);
 }
 
 void TerrainEditorScreenController::onTerrainSave()

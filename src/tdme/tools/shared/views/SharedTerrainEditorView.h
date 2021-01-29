@@ -110,6 +110,13 @@ public:
 	virtual void onInitAdditionalScreens();
 
 	/**
+	 * Load file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void loadFile(const string& pathName, const string& fileName);
+
+	/**
 	 * Save file
 	 * @param pathName path name
 	 * @param fileName file name

@@ -7,6 +7,7 @@
     - setting up terrain properties
         - key, value map for what ever reason
     - create terrain from 1m x 1m up to 4000m x 4000m
+    - load and save terrains
     - use a brush to alter terrain with predefined or user generated textures
       - operations are add, subtract, flatten, delete, smooth
       - load a predefined or user generated texture as brush, whereas the rgb color space is used as strength base
