@@ -230,6 +230,9 @@ void EngineTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
+	engine->addPostProcessingProgram("vignette");
+	engine->setShaderParameterValue("vignette", "intensity", Engine::ShaderParameterValue(0.1f));
+	engine->setShaderParameterValue("vignette", "borderColor", Engine::ShaderParameterValue(Vector3(1.0f, 0.0f, 0.0f)));
 	if (osEngine == nullptr) {
 		osEngine = Engine::createOffScreenInstance(512, 512, false);
 		auto osLight0 = osEngine->getLightAt(0);

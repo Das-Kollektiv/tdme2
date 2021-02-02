@@ -107,12 +107,13 @@ void LightingShaderWaterImplementation::initialize()
 	for (auto i = 0; i < 4; i++) angle[i] = -Math::PI / 3.0f + Math::random() * Math::PI * 2.0f / 3.0f;
 
 	// register shader
-	Engine::registerShader(
-		Engine::ShaderType::OBJECT3D,
-		getId(),
-		{{"speed", "float;0.0;10.0"}},
-		{{"speed", "1.0"}}
-	);
+	if (initialized == true) {
+		Engine::registerShader(
+			Engine::ShaderType::SHADERTYPE_OBJECT3D,
+			getId(),
+			{{ "speed", Engine::ShaderParameterValue(1.0f) }}
+		);
+	}
 }
 
 void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context) {

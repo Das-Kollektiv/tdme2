@@ -46,4 +46,10 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
+
+	// register shader
+	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "lightscattering");
+}
+
+void PostProcessingShaderLightScatteringImplementation::setShaderParameters(void* context, Engine* engine) {
 }

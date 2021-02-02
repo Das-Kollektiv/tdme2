@@ -47,4 +47,22 @@ void PostProcessingShaderDesaturationImplementation::initialize()
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
+
+	//
+	if (initialized == false) return;
+
+	// uniforms
+	uniformIntensity = renderer->getProgramUniformLocation(programId, "intensity");
+
+	// register shader
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
+		"desaturation",
+		{{ "intensity", Engine::ShaderParameterValue(0.0f) }}
+	);
 }
+
+void PostProcessingShaderDesaturationImplementation::setShaderParameters(void* context, Engine* engine) {
+	if (uniformIntensity != -1) renderer->setProgramUniformFloat(context, uniformIntensity, engine->getShaderParameterValue("desaturation", "intensity").getFloatValue());
+}
+

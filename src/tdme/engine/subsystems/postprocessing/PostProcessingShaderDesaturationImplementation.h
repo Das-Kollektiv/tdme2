@@ -6,6 +6,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 
 /**
@@ -15,6 +16,9 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderDesaturationImplementation: public PostProcessingShaderBaseImplementation
 {
+private:
+	int32_t uniformIntensity { -1 };
+
 public:
 	/**
 	 * Returns if shader is supported on given renderer
@@ -31,5 +35,6 @@ public:
 
 	// overridden methods
 	virtual void initialize() override;
+	virtual void setShaderParameters(void* context, Engine* engine) override;
 
 };

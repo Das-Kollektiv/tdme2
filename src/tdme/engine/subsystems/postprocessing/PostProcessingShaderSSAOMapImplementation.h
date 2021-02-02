@@ -10,6 +10,7 @@
 
 using std::array;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 
 /**
@@ -36,6 +37,7 @@ public:
 	// overridden methods
 	virtual void initialize() override;
 	virtual void useProgram(void* context) override;
+	virtual void setShaderParameters(void* context, Engine* engine) override;
 
 private:
 	array<int32_t, 16> uniformSphere;

@@ -451,7 +451,7 @@ void SharedModelEditorView::initialize()
 	}
 	loadSettings();
 	modelEditorScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
-	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::OBJECT3D));
+	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D));
 	prototypePhysicsView->initialize();
 	updateGUIElements();
 }

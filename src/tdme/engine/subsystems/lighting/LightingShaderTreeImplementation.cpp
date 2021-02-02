@@ -78,10 +78,9 @@ void LightingShaderTreeImplementation::initialize()
 	// register shader
 	if (initialized == true) {
 		Engine::registerShader(
-			Engine::ShaderType::OBJECT3D,
+			Engine::ShaderType::SHADERTYPE_OBJECT3D,
 			getId(),
-			{{"speed", "float;0.0;10.0"}},
-			{{"speed", "1.0"}}
+			{{ "speed", Engine::ShaderParameterValue(1.0f) }}
 		);
 	}
 }
