@@ -20,7 +20,6 @@
 #include <string>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Camera.h>
 #if defined(VULKAN)
 	#include <tdme/engine/EngineVKRenderer.h>
 #else
@@ -61,6 +60,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -78,6 +78,7 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
@@ -153,6 +154,7 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
@@ -580,8 +582,8 @@ void Engine::initialize()
 
 	#if defined(VULKAN)
 		renderer = new EngineVKRenderer(this);
-		Console::println(string("TDME::Using Vulkan"));
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(string("TDME2::Using Vulkan"));
+		// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -590,8 +592,8 @@ void Engine::initialize()
 		#if defined(__APPLE__)
 		{
 			renderer = new EngineGL3Renderer(this);
-			Console::println(string("TDME::Using GL3+/CORE"));
-			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			Console::println(string("TDME2::Using GL3+/CORE"));
+			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -604,10 +606,10 @@ void Engine::initialize()
 			glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
 			glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
 			if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-				Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				Console::println(string("TDME2::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL3Renderer(this);
 			} else {
-				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				Console::println(string("TDME2::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL2Renderer(this);
 			}
 			shadowMappingEnabled = true;
@@ -618,8 +620,8 @@ void Engine::initialize()
 		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && defined(GLES2)
 		{
 			renderer = new EngineGLES2Renderer(this);
-			Console::println(string("TDME::Using GLES2"));
-			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			Console::println(string("TDME2::Using GLES2"));
+			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -646,7 +648,7 @@ void Engine::initialize()
 	} else {
 		threadCount = 1;
 	}
-	Console::println(string("TDME::Thread count: ") + to_string(threadCount));
+	Console::println(string("TDME2::Thread count: ") + to_string(threadCount));
 
 	// initialize object buffers
 	ObjectBuffer::initialize();
@@ -717,18 +719,18 @@ void Engine::initialize()
 
 	// check if VBOs are available
 	if (renderer->isBufferObjectsAvailable()) {
-		Console::println(string("TDME::VBOs are available."));
+		Console::println(string("TDME2::VBOs are available."));
 	} else {
-		Console::println(string("TDME::VBOs are not available! Engine will not work!"));
+		Console::println(string("TDME2::VBOs are not available! Engine will not work!"));
 		initialized = false;
 	}
 
 	// check FBO support
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println(string("TDME::Basic FBOs are not available!"));
+		Console::println(string("TDME2::Basic FBOs are not available!"));
 		shadowMappingEnabled = false;
 	} else {
-		Console::println(string("TDME::Basic FBOs are available."));
+		Console::println(string("TDME2::Basic FBOs are available."));
 	}
 
 	// TODO: make this configurable
@@ -737,23 +739,23 @@ void Engine::initialize()
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
-		Console::println(string("TDME::Using shadow mapping"));
+		Console::println(string("TDME2::Using shadow mapping"));
 		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
-		Console::println(string("TDME::Not using shadow mapping"));
+		Console::println(string("TDME2::Not using shadow mapping"));
 	}
 
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
-		Console::println(string("TDME::Using skinning compute shader"));
+		Console::println(string("TDME2::Using skinning compute shader"));
 		skinningShader = new SkinningShader(renderer);
 		skinningShader->initialize();
 	} else {
-		Console::println(string("TDME::Not using skinning compute shader"));
+		Console::println(string("TDME2::Not using skinning compute shader"));
 	}
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
@@ -795,82 +797,10 @@ void Engine::initialize()
 	}
 
 	//
-	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
+	Console::println(string("TDME2::initialized & ready: ") + to_string(initialized));
 
 	// show registered shaders
-	for (auto& shaderId: getRegisteredShader(SHADERTYPE_OBJECT3D)) {
-		Console::println(string("TDME::registered object3d shader: ") + shaderId);
-		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
-		if (defaultShaderParameters.size() > 0) {
-			Console::print("\t");
-			for (auto it: defaultShaderParameters) {
-				auto& parameterName = it.first;
-				Console::print(parameterName);
-				switch(it.second.getType()) {
-					case SHADERPARAMETERTYPE_NONE:
-						Console::print("=none; ");
-						break;
-					case SHADERPARAMETERTYPE_FLOAT:
-						Console::print("=float(");
-						Console::print(to_string(getShaderParameterValue(shaderId, parameterName).getFloatValue()));
-						Console::print("); ");
-						break;
-					case SHADERPARAMETERTYPE_VECTOR3:
-						{
-							Console::print("=float(");
-							auto shaderParameterValueArray = getShaderParameterValue(shaderId, parameterName).getVector3Value().getArray();
-							for (auto i = 0; i < shaderParameterValueArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterValueArray[i]));
-							}
-							Console::print("); ");
-						}
-						break;
-					default:
-						Console::print("=unknown; ");
-						break;
-				}
-				Console::println();
-			}
-		}
-	}
-	for (auto& shaderId: getRegisteredShader(SHADERTYPE_POSTPROCESSING)) {
-		Console::println(string("TDME::registered postprocessing shader: ") + shaderId);
-		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
-		if (defaultShaderParameters.size() > 0) {
-			Console::print("\t");
-			for (auto it: defaultShaderParameters) {
-				auto& parameterName = it.first;
-				Console::print(parameterName);
-				switch(it.second.getType()) {
-					case SHADERPARAMETERTYPE_NONE:
-						Console::print("=none; ");
-						break;
-					case SHADERPARAMETERTYPE_FLOAT:
-						Console::print("=float(");
-						Console::print(to_string(getShaderParameterValue(shaderId, parameterName).getFloatValue()));
-						Console::print("); ");
-						break;
-					case SHADERPARAMETERTYPE_VECTOR3:
-						{
-							Console::print("=float(");
-							auto shaderParameterValueArray = getShaderParameterValue(shaderId, parameterName).getVector3Value().getArray();
-							for (auto i = 0; i < shaderParameterValueArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterValueArray[i]));
-							}
-							Console::print("); ");
-						}
-						break;
-					default:
-						Console::print("=unknown; ");
-						break;
-
-				}
-				Console::println();
-			}
-		}
-	}
+	dumpShaders();
 }
 
 void Engine::reshape(int32_t width, int32_t height)
@@ -2059,7 +1989,7 @@ const vector<string> Engine::getRegisteredShader(ShaderType type) {
 	return result;
 }
 
-void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameterValue>& parameterDefaults) {
+void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults) {
 	if (shaders.find(shaderId) != shaders.end()) {
 		Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
 		return;
@@ -2071,11 +2001,11 @@ void Engine::registerShader(ShaderType type, const string& shaderId, const map<s
 	};
 }
 
-const map<string, Engine::ShaderParameterValue> Engine::getShaderParameterDefaults(const string& shaderId) {
+const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
 	auto shaderIt = shaders.find(shaderId);
 	if (shaderIt == shaders.end()) {
 		Console::println("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
-		return map<string, Engine::ShaderParameterValue>();
+		return map<string, ShaderParameter>();
 	}
 	return shaderIt->second.parameterDefaults;
 }
@@ -2302,3 +2232,48 @@ bool Engine::renderLightSources(int width, int height) {
 	return lightSourceVisible;
 }
 
+void Engine::dumpShaders() {
+	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
+	for (auto& shaderId: getRegisteredShader(SHADERTYPE_OBJECT3D)) {
+		string shaderTypeString = "unknowm";
+		switch (shaderType) {
+			case SHADERTYPE_OBJECT3D: shaderTypeString = "object3d"; break;
+			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
+			default: break;
+		}
+		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
+		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		if (defaultShaderParameters.size() > 0) {
+			Console::print("\t");
+			for (auto it: defaultShaderParameters) {
+				auto& parameterName = it.first;
+				Console::print(parameterName);
+				switch(it.second.getType()) {
+					case ShaderParameter::TYPE_NONE:
+						Console::print("=none; ");
+						break;
+					case ShaderParameter::TYPE_FLOAT:
+						Console::print("=float(");
+						Console::print(to_string(getShaderParameter(shaderId, parameterName).getFloatValue()));
+						Console::print("); ");
+						break;
+					case ShaderParameter::TYPE_VECTOR3:
+						{
+							Console::print("=float(");
+							auto ShaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							for (auto i = 0; i < ShaderParameterArray.size(); i++) {
+								if (i != 0) Console::print(",");
+								Console::print(to_string(ShaderParameterArray[i]));
+							}
+							Console::print("); ");
+						}
+						break;
+					default:
+						Console::print("=unknown; ");
+						break;
+				}
+				Console::println();
+			}
+		}
+	}
+}

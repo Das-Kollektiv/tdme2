@@ -7,6 +7,7 @@
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -20,6 +21,7 @@ using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
@@ -111,7 +113,7 @@ void LightingShaderWaterImplementation::initialize()
 		Engine::registerShader(
 			Engine::ShaderType::SHADERTYPE_OBJECT3D,
 			getId(),
-			{{ "speed", Engine::ShaderParameterValue(1.0f) }}
+			{{ "speed", ShaderParameter(1.0f) }}
 		);
 	}
 }

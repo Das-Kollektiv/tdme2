@@ -9,6 +9,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -46,6 +47,7 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
+using tdme::engine::ShaderParameter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Node;
@@ -148,64 +150,8 @@ class tdme::engine::Engine final
 	friend class tdme::gui::renderer::GUIFont;
 
 public:
-	enum ShaderParameterType { SHADERPARAMETERTYPE_NONE, SHADERPARAMETERTYPE_FLOAT, SHADERPARAMETERTYPE_VECTOR3 };
-
-	/**
-	 * Shader parameter value model class
-	 */
-	class ShaderParameterValue {
-	public:
-	private:
-		ShaderParameterType type { SHADERPARAMETERTYPE_NONE };
-		float floatValue { 0.0f };
-		Vector3 vector3Value;
-
-	public:
-		/**
-		 * Public default constructor
-		 */
-		ShaderParameterValue(): type(SHADERPARAMETERTYPE_NONE) {
-		}
-
-		/**
-		 * Public constructor for float value
-		 * @param floatValue float value
-		 */
-		ShaderParameterValue(float floatValue): type(SHADERPARAMETERTYPE_FLOAT), floatValue(floatValue) {
-		}
-
-		/**
-		 * Public constructor for Vector3 value
-		 * @param vector3Value Vector3 Value
-		 */
-		ShaderParameterValue(const Vector3& vector3Value): type(SHADERPARAMETERTYPE_VECTOR3), vector3Value(vector3Value) {
-		}
-
-		/**
-		 * @return type
-		 */
-		inline ShaderParameterType getType() const {
-			return type;
-		}
-
-		/**
-		 * @return float value
-		 */
-		inline float getFloatValue() const {
-			return floatValue;
-		}
-
-		/**
-		 * @return vector3 value
-		 */
-		inline const Vector3& getVector3Value() const {
-			return vector3Value;
-		}
-	};
-
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
-	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING };
-
+	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
 
@@ -249,7 +195,7 @@ private:
 	struct Shader {
 		ShaderType type;
 		string id;
-		map<string, ShaderParameterValue> parameterDefaults;
+		map<string, ShaderParameter> parameterDefaults;
 	};
 
 	static map<string, Shader> shaders;
@@ -310,7 +256,7 @@ private:
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
 
-	map<string, map<string, ShaderParameterValue>> shaderParameters;
+	map<string, map<string, ShaderParameter>> shaderParameters;
 
 	class EngineThread: public Thread {
 		friend class Engine;
@@ -689,71 +635,71 @@ public:
 	 * @param parameterTypes parameter types
 	 * @param parameterDefault parameter defaults
 	 */
-	static void registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameterValue>& parameterDefaults = {});
+	static void registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults = {});
 
 	/**
 	 * Returns parameter defaults of shader with given id
 	 * @param shaderId shader id
 	 * @return shader parameter defaults
 	 */
-	static const map<string, ShaderParameterValue> getShaderParameterDefaults(const string& shaderId);
+	static const map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
 
 	/**
 	 * Returns shader parameter default value for given shader id and parameter name
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter value
+	 * @return shader parameter
 	 */
-	inline const ShaderParameterValue getDefaultShaderParameterValue(const string& shaderId, const string& parameterName) {
+	inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
 		auto shaderIt = shaders.find(shaderId);
 		if (shaderIt == shaders.end()) {
-			Console::println("Engine::getDefaultShaderParameterValue(): no shader registered with id: " + shaderId);
-			return ShaderParameterValue();
+			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
+			return ShaderParameter();
 		}
 		auto& shader = shaderIt->second;
 		auto shaderParameterIt = shader.parameterDefaults.find(parameterName);
 		if (shaderParameterIt == shader.parameterDefaults.end()) {
-			Console::println("Engine::getDefaultShaderParameterValue(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
-			return ShaderParameterValue();
+			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			return ShaderParameter();
 		}
-		auto& shaderParameterValue = shaderParameterIt->second;
-		return shaderParameterValue;
+		auto& ShaderParameter = shaderParameterIt->second;
+		return ShaderParameter;
 	}
 
 	/**
-	 * Returns shader parameter value for given shader id and parameter name, if the value does not exist, the default will be returned
+	 * Returns shader parameter for given shader id and parameter name, if the value does not exist, the default will be returned
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
-	 * @return shader parameter value
+	 * @return shader parameter
 	 */
-	inline const ShaderParameterValue getShaderParameterValue(const string& shaderId, const string& parameterName) {
+	inline const ShaderParameter getShaderParameter(const string& shaderId, const string& parameterName) {
 		auto shaderParameterIt = shaderParameters.find(shaderId);
 		if (shaderParameterIt == shaderParameters.end()) {
-			return getDefaultShaderParameterValue(shaderId, parameterName);
+			return getDefaultShaderParameter(shaderId, parameterName);
 		}
 		auto& shaderParameterMap = shaderParameterIt->second;
 		auto shaderParameterParameterIt = shaderParameterMap.find(parameterName);
 		if (shaderParameterParameterIt == shaderParameterMap.end()) {
-			return getDefaultShaderParameterValue(shaderId, parameterName);
+			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		auto& shaderParameterValue = shaderParameterParameterIt->second;
-		return shaderParameterValue;
+		auto& ShaderParameter = shaderParameterParameterIt->second;
+		return ShaderParameter;
 	}
 
 	/**
-	 * Set shader parameter value for given shader id and parameter name
+	 * Set shader parameter for given shader id and parameter name
 	 * @param shaderId shader id
 	 * @param parameterName parameter name
 	 * @param paraemterValue parameter value
 	 */
-	inline void setShaderParameterValue(const string& shaderId, const string& parameterName, const ShaderParameterValue& parameterValue) {
-		auto currentShaderParameterValue = getShaderParameterValue(shaderId, parameterName);
-		if (currentShaderParameterValue.getType() == SHADERPARAMETERTYPE_NONE) {
-			Console::println("Engine::setShaderParameterValue(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+	inline void setShaderParameter(const string& shaderId, const string& parameterName, const ShaderParameter& parameterValue) {
+		auto currentShaderParameter = getShaderParameter(shaderId, parameterName);
+		if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
+			Console::println("Engine::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return;
 		}
-		if (currentShaderParameterValue.getType() != parameterValue.getType()) {
-			Console::println("Engine::setShaderParameterValue(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		if (currentShaderParameter.getType() != parameterValue.getType()) {
+			Console::println("Engine::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 		}
 		shaderParameters[shaderId][parameterName] = parameterValue;
 	}
@@ -765,7 +711,7 @@ public:
 	 * @param vector3Value Vector3 value
 	 */
 	inline void setShaderParameterVector3(const string& shaderId, const string& parameterName, const Vector3& vector3Value) {
-		shaderParameters[shaderId][parameterName] = ShaderParameterValue(vector3Value);
+		shaderParameters[shaderId][parameterName] = ShaderParameter(vector3Value);
 	}
 
 	/**
@@ -1086,6 +1032,11 @@ public:
 	inline Renderer::Renderer_Statistics getRendererStatistics() {
 		return renderer->getStatistics();
 	}
+
+	/**
+	 * Print registered shaders and it default parameters to console
+	 */
+	void dumpShaders();
 
 private:
 	/**

@@ -4,6 +4,7 @@
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/ShaderParameter.h>
 
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -15,6 +16,7 @@ using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -80,7 +82,7 @@ void LightingShaderFoliageImplementation::initialize()
 		Engine::registerShader(
 			Engine::ShaderType::SHADERTYPE_OBJECT3D,
 			getId(),
-			{{ "speed", Engine::ShaderParameterValue(1.0f) }}
+			{{ "speed", ShaderParameter(1.0f) }}
 		);
 	}
 }

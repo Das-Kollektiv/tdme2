@@ -34,6 +34,7 @@ namespace engine {
 	class PointsParticleSystem;
 	class Rotation;
 	class SceneConnector;
+	class ShaderParameter;
 	class Timing;
 	class Transformations;
 	struct Version;

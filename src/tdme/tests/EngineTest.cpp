@@ -31,6 +31,7 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -74,6 +75,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::math::Matrix2D3x3;
@@ -231,8 +233,8 @@ void EngineTest::initialize()
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
 	engine->addPostProcessingProgram("vignette");
-	engine->setShaderParameterValue("vignette", "intensity", Engine::ShaderParameterValue(0.1f));
-	engine->setShaderParameterValue("vignette", "borderColor", Engine::ShaderParameterValue(Vector3(1.0f, 0.0f, 0.0f)));
+	engine->setShaderParameter("vignette", "intensity", ShaderParameter(0.1f));
+	engine->setShaderParameter("vignette", "borderColor", ShaderParameter(Vector3(1.0f, 0.0f, 0.0f)));
 	if (osEngine == nullptr) {
 		osEngine = Engine::createOffScreenInstance(512, 512, false);
 		auto osLight0 = osEngine->getLightAt(0);
