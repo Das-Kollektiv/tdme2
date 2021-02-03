@@ -2215,7 +2215,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 bool Engine::renderLightSources(int width, int height) {
 	auto lightSourceVisible = false;
 	for (auto& light: lights) {
-		if (light.isRenderLightSource() == false) continue;
+		if (light.isEnabled() == false || light.isRenderLightSource() == false) continue;
 		auto lightSourceSize = light.getLightSourceSize();
 		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
 		Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
@@ -2272,8 +2272,8 @@ void Engine::dumpShaders() {
 						Console::print("=unknown; ");
 						break;
 				}
-				Console::println();
 			}
+			Console::println();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -16,6 +16,11 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation: public PostProcessingShaderBaseImplementation
 {
+private:
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightIntensity;
+
 public:
 	/**
 	 * Returns if shader is supported on given renderer
