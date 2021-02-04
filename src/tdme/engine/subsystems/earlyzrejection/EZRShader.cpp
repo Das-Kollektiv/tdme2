@@ -92,6 +92,12 @@ void EZRShader::bindTexture(void* context, int32_t textureId)
 	ezrShaderContext.implementation->bindTexture(renderer, context, textureId);
 }
 
+void EZRShader::updateShaderParameters(void* context) {
+	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+	if (ezrShaderContext.implementation == nullptr) return;
+	ezrShaderContext.implementation->updateShaderParameters(renderer, context);
+}
+
 void EZRShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 
@@ -108,7 +114,4 @@ void EZRShader::setShader(void* context, const string& id) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
 		ezrShaderContext.implementation->useProgram(engine, context);
 	}
-}
-
-void EZRShader::updateShaderParameters(void* context) {
 }

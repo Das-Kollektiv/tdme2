@@ -87,3 +87,5 @@ void LightingShaderTreeImplementation::initialize()
 	}
 }
 
+void LightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

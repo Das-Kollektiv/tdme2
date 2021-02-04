@@ -133,16 +133,16 @@ public:
 	void setShader(void* context, const string& id);
 
 	/**
-	 * Update shader parameters
-	 * @param context
-	 */
-	void updateShaderParameters(void* context);
-
-	/**
 	 * Update light
 	 * @param lightId light id
 	 */
 	void updateLight(void* context, int32_t lightId);
+
+	/**
+	 * Update shader parameters
+	 * @param context
+	 */
+	void updateShaderParameters(void* context);
 
 	/**
 	 * Bind texture

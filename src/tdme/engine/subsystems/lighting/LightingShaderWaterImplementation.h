@@ -38,6 +38,7 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 protected:
 	int32_t uniformWaterHeight { -1 };

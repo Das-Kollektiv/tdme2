@@ -261,6 +261,9 @@ void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, v
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
+void LightingShaderBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}
+
 void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {

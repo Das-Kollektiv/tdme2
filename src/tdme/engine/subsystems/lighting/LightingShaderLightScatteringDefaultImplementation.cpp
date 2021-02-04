@@ -59,3 +59,5 @@ void LightingShaderLightScatteringDefaultImplementation::initialize()
 	LightingShaderBaseImplementation::initialize();
 }
 
+void LightingShaderLightScatteringDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

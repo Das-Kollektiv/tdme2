@@ -78,6 +78,7 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void updateMaterial(Renderer* renderer, void* context) override;
 	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override = 0;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 	virtual void setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;

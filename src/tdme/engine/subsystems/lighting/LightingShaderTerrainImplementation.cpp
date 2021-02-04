@@ -144,3 +144,6 @@ void LightingShaderTerrainImplementation::updateMatrices(Renderer* renderer, voi
 	LightingShaderBaseImplementation::updateMatrices(renderer, context);
 	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 }
+
+void LightingShaderTerrainImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

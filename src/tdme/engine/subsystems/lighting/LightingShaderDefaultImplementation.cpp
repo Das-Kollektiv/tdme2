@@ -64,3 +64,5 @@ void LightingShaderDefaultImplementation::initialize()
 	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
 
+void LightingShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

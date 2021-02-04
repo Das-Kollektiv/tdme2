@@ -70,3 +70,6 @@ void ShadowMapRenderShaderTreeImplementation::initialize()
 
 	ShadowMapRenderShaderBaseImplementation::initialize();
 }
+
+void ShadowMapRenderShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

@@ -75,3 +75,5 @@ void LightingShaderLightScatteringFoliageImplementation::initialize()
 	LightingShaderBaseImplementation::initialize();
 }
 
+void LightingShaderLightScatteringFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

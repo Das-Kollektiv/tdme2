@@ -87,3 +87,5 @@ void LightingShaderFoliageImplementation::initialize()
 	}
 }
 
+void LightingShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

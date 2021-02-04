@@ -138,3 +138,6 @@ void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, void*
 	LightingShaderBaseImplementation::updateMatrices(renderer, context);
 	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 }
+
+void LightingShaderWaterImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

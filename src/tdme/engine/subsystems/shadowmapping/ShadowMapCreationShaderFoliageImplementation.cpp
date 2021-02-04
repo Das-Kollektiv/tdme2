@@ -70,3 +70,5 @@ void ShadowMapCreationShaderFoliageImplementation::initialize()
 	ShadowMapCreationShaderBaseImplementation::initialize();
 }
 
+void ShadowMapCreationShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

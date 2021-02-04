@@ -55,3 +55,6 @@ void ShadowMapRenderShaderDefaultImplementation::initialize()
 
 	ShadowMapRenderShaderBaseImplementation::initialize();
 }
+
+void ShadowMapRenderShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}
