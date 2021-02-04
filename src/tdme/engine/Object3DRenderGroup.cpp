@@ -337,7 +337,9 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject3D->setReceivesShadows(receivesShadows);
 		combinedObject3D->setEngine(engine);
 		combinedObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
+		combinedObject3D->shaderParameters.setShader(combinedObject3D->getShader());
 		combinedObject3D->shaderParameters = shaderParameters;
+		combinedObject3D->distanceShaderParameters.setShader(combinedObject3D->getShader());
 		combinedObject3D->distanceShaderParameters = distanceShaderParameters;
 		combinedObject3D->update();
 		combinedEntity = combinedObject3D;
@@ -362,7 +364,9 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedLODObject3D->setReceivesShadows(receivesShadows);
 		combinedLODObject3D->setEngine(engine);
 		combinedLODObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
+		combinedLODObject3D->shaderParameters.setShader(combinedLODObject3D->getShader());
 		combinedLODObject3D->shaderParameters = shaderParameters;
+		combinedLODObject3D->distanceShaderParameters.setShader(combinedLODObject3D->getShader());
 		combinedLODObject3D->distanceShaderParameters = distanceShaderParameters;
 		combinedLODObject3D->update();
 		combinedEntity = combinedLODObject3D;

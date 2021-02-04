@@ -17,6 +17,9 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::lighting::LightingShaderTreeImplementation: public LightingShaderBaseImplementation
 {
+private:
+	int32_t uniformSpeed { -1 };
+
 public:
 	/**
 	 * Public constructor

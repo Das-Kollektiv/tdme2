@@ -8,6 +8,7 @@
 
 using std::map;
 using std::string;
+using std::to_string;
 
 using tdme::engine::ShaderParameter;
 
@@ -19,9 +20,11 @@ using tdme::engine::ShaderParameter;
 class tdme::engine::EntityShaderParameters
 {
 private:
-	map<string, ShaderParameter> shaderParameters;
-	string shaderParametersHash;
+	map<string, ShaderParameter> parameters;
 	string shaderId;
+
+	mutable string hash;
+	mutable bool changed { false };
 
 	/**
 	 * Compute shader parameters hash
@@ -46,8 +49,9 @@ public:
 	 * @param shaderId shader id
 	 */
 	void setShader(const string& shaderId) {
-		shaderParameters.clear();
-		shaderParametersHash.clear();
+		parameters.clear();
+		hash = shaderId + ";";
+		changed = false;
 		this->shaderId = shaderId;
 	}
 
@@ -57,7 +61,7 @@ public:
 	 * @param parameterName parameter name
 	 * @return shader parameter
 	 */
-	const ShaderParameter getShaderParameter(const string& parameterName);
+	const ShaderParameter getShaderParameter(const string& parameterName) const;
 
 	/**
 	 * Set shader parameter for given parameter name
@@ -70,7 +74,36 @@ public:
 	/**
 	 * @return shader parameters hash
 	 */
-	const string& getShaderParametersHash() {
-		return shaderParametersHash;
+	const string& getShaderParametersHash() const {
+		if (changed == true) {
+			// TODO: md5 or something
+			hash = shaderId + ";";
+			for (auto& it: parameters) {
+				hash+= it.first;
+				hash+= "=";
+				auto& parameterValue = it.second;
+				switch(parameterValue.getType()) {
+					case ShaderParameter::TYPE_NONE:
+						break;
+					case ShaderParameter::TYPE_FLOAT:
+						hash+= to_string(static_cast<int>(parameterValue.getFloatValue() * 100.0f));
+						break;
+					case ShaderParameter::TYPE_VECTOR3:
+						{
+							auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) hash+= ",";
+								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
+							}
+						}
+						break;
+					default:
+						break;
+				}
+				hash+= ";";
+			}
+			changed = false;
+		}
+		return hash;
 	}
 };

@@ -3,8 +3,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-
-#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -12,11 +11,11 @@
 using std::string;
 using std::to_string;
 
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::ShaderParameter;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::Engine;
-using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -77,15 +76,21 @@ void LightingShaderTreeImplementation::initialize()
 	//
 	LightingShaderBaseImplementation::initialize();
 
+	//
+	if (initialized == false) return;
+
+	// uniforms
+	uniformSpeed = renderer->getProgramUniformLocation(renderLightingProgramId, "speed");
+
 	// register shader
-	if (initialized == true) {
-		Engine::registerShader(
-			Engine::ShaderType::SHADERTYPE_OBJECT3D,
-			getId(),
-			{{ "speed", ShaderParameter(1.0f) }}
-		);
-	}
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		getId(),
+		{{ "speed", ShaderParameter(1.0f) }}
+	);
 }
 
 void LightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+	auto& shaderParameters = renderer->getShaderParameters(context);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
 }

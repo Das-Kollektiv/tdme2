@@ -12,39 +12,10 @@ using std::string;
 
 using tdme::engine::Engine;
 
-void EntityShaderParameters::computeHash() {
-	// TODO: md5 or something
-	shaderParametersHash.clear();
-	shaderParametersHash+= shaderId + ";";
-	for (auto& it: shaderParameters) {
-		shaderParametersHash+= it.first;
-		shaderParametersHash+= "=";
-		auto& parameterValue = it.second;
-		switch(parameterValue.getType()) {
-			case ShaderParameter::TYPE_NONE:
-				break;
-			case ShaderParameter::TYPE_FLOAT:
-				shaderParametersHash+= to_string(static_cast<int>(parameterValue.getFloatValue() * 100.0f));
-				break;
-			case ShaderParameter::TYPE_VECTOR3:
-				{
-					auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
-					for (auto i = 0; i < shaderParameterArray.size(); i++) {
-						if (i != 0) shaderParametersHash+= ",";
-						shaderParametersHash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
-					}
-				}
-				break;
-			default:
-				break;
-		}
-		shaderParametersHash+= ";";
-	}
-}
 
-const ShaderParameter EntityShaderParameters::getShaderParameter(const string& parameterName) {
-	auto shaderParameterIt = shaderParameters.find(parameterName);
-	if (shaderParameterIt == shaderParameters.end()) {
+const ShaderParameter EntityShaderParameters::getShaderParameter(const string& parameterName) const {
+	auto shaderParameterIt = parameters.find(parameterName);
+	if (shaderParameterIt == parameters.end()) {
 		return Engine::getDefaultShaderParameter(shaderId, parameterName);
 	}
 	auto& shaderParameter = shaderParameterIt->second;
@@ -60,8 +31,6 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 	if (currentShaderParameter.getType() != parameterValue.getType()) {
 		Console::println("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 	}
-	shaderParameters[parameterName] = parameterValue;
-
-	// compute new hash
-	computeHash();
+	parameters[parameterName] = parameterValue;
+	changed = true;
 }

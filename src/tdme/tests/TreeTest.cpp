@@ -187,6 +187,7 @@ void TreeTest::initialize()
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setShader("tree");
+		entity->setShaderParameter("speed", ShaderParameter(0.5f));
 		entity->update();
 		engine->addEntity(entity);
 	}

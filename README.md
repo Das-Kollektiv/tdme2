@@ -222,7 +222,7 @@
     - documentation
 
 - What is WIP or planned
-    - Shader parameters
+    - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Terrain Editor
     - Reflections via environment mapping(GL2, GLES2, Vulkan support is still missing)

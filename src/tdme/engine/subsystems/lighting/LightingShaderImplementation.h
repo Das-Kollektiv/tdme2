@@ -98,7 +98,7 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	 * @param renderer renderer
 	 * @param context
 	 */
-	virtual void updateShaderParameters(Renderer* renderer, void* context);
+	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
 
 	/**
 	 * Bind texture
