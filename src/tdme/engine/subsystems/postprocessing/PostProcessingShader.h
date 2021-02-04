@@ -11,9 +11,9 @@
 using std::map;
 using std::string;
 
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::subsystems::renderer::Renderer;
 
 /**
  * Post processing shader

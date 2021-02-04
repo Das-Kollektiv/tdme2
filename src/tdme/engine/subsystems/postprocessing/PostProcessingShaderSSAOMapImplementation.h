@@ -10,8 +10,8 @@
 
 using std::array;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Post processing shader SSAO map generation implementation

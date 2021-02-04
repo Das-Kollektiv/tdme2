@@ -11,11 +11,11 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::EntityShaderParameters;
-using tdme::engine::ShaderParameter;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 

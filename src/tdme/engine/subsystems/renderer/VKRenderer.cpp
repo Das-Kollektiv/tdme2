@@ -35,7 +35,6 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -44,6 +43,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
@@ -105,12 +105,12 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
-using tdme::engine::EntityShaderParameters;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Timing;
 using tdme::math::Matrix4x4;

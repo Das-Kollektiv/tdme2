@@ -1,7 +1,7 @@
 #include <string>
 
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>

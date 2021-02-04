@@ -5,9 +5,9 @@
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::subsystems::renderer::Renderer;
 
 /**
  * Post processing shader program implementation interface

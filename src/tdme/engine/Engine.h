@@ -9,7 +9,6 @@
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -31,6 +30,7 @@
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -47,7 +47,6 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::ShaderParameter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Node;
@@ -88,6 +87,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;

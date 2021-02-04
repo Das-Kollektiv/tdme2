@@ -6,8 +6,8 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Post processing shader SSAO rendering implementation

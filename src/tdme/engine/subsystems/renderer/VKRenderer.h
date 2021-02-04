@@ -16,11 +16,11 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -35,10 +35,10 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::EntityShaderParameters;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
