@@ -35,6 +35,7 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -104,6 +105,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -6403,17 +6405,12 @@ void VKRenderer::setShader(void* context, const string& id) {
 	contextTyped.shader = id;
 }
 
-const string& VKRenderer::getShaderParametersHash(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.shaderParametersHash;
-}
-
-const map<string, string>& VKRenderer::getShaderParameters(void* context) {
+const EntityShaderParameters& VKRenderer::getShaderParameters(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.shaderParameters;
 }
 
-void VKRenderer::setShaderParameters(void* context, const map<string, string>& parameters) {
+void VKRenderer::setShaderParameters(void* context, const EntityShaderParameters& parameters) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	contextTyped.shaderParameters = parameters;
 }

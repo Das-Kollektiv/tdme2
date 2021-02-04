@@ -4,13 +4,11 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
 
 using std::map;
 using std::string;
 
-using tdme::engine::Engine;
 using tdme::engine::ShaderParameter;
 
 /**
@@ -28,35 +26,7 @@ private:
 	/**
 	 * Compute shader parameters hash
 	 */
-	void computeHash() {
-		// TODO: md5 or something
-		shaderParametersHash.clear();
-		shaderParametersHash+= shaderId + ";";
-		for (auto& it: shaderParameters) {
-			shaderParametersHash+= it.first;
-			shaderParametersHash+= "=";
-			auto& parameterValue = it.second;
-			switch(parameterValue.getType()) {
-				case ShaderParameter::TYPE_NONE:
-					break;
-				case ShaderParameter::TYPE_FLOAT:
-					shaderParametersHash+= to_string(static_cast<int>(parameterValue.getFloatValue() * 100.0f));
-					break;
-				case ShaderParameter::TYPE_VECTOR3:
-					{
-						auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
-						for (auto i = 0; i < shaderParameterArray.size(); i++) {
-							if (i != 0) shaderParametersHash+= ",";
-							shaderParametersHash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
-						}
-					}
-					break;
-				default:
-					break;
-			}
-			shaderParametersHash+= ";";
-		}
-	}
+	void computeHash();
 
 public:
 	/**
@@ -87,14 +57,7 @@ public:
 	 * @param parameterName parameter name
 	 * @return shader parameter
 	 */
-	inline const ShaderParameter getShaderParameter(const string& parameterName) {
-		auto shaderParameterIt = shaderParameters.find(parameterName);
-		if (shaderParameterIt == shaderParameters.end()) {
-			return Engine::getDefaultShaderParameter(shaderId, parameterName);
-		}
-		auto& shaderParameter = shaderParameterIt->second;
-		return shaderParameter;
-	}
+	const ShaderParameter getShaderParameter(const string& parameterName);
 
 	/**
 	 * Set shader parameter for given parameter name
@@ -102,20 +65,7 @@ public:
 	 * @param parameterName parameter name
 	 * @param paraemterValue parameter value
 	 */
-	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
-		auto currentShaderParameter = getShaderParameter(parameterName);
-		if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
-			Console::println("EntityShaderParameters::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
-			return;
-		}
-		if (currentShaderParameter.getType() != parameterValue.getType()) {
-			Console::println("EntityShaderParameters::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
-		}
-		shaderParameters[parameterName] = parameterValue;
-
-		// compute new hash
-		computeHash();
-	}
+	void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue);
 
 	/**
 	 * @return shader parameters hash
