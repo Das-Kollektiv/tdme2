@@ -2234,7 +2234,7 @@ bool Engine::renderLightSources(int width, int height) {
 
 void Engine::dumpShaders() {
 	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
-	for (auto& shaderId: getRegisteredShader(SHADERTYPE_OBJECT3D)) {
+	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
 		string shaderTypeString = "unknowm";
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT3D: shaderTypeString = "object3d"; break;

@@ -46,9 +46,6 @@ void PostProcessingShaderDefaultImplementation::initialize()
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
-
-	// register shader
-	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "default");
 }
 
 void PostProcessingShaderDefaultImplementation::setShaderParameters(void* context, Engine* engine) {
