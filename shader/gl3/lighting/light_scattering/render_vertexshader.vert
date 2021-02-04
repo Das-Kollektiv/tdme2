@@ -14,6 +14,7 @@ layout (location = 12) in vec3 inOrigin;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 uniform float time;
+uniform float speed;
 
 {$DEFINITIONS}
 

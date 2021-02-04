@@ -15,6 +15,7 @@ uniform mat4 cameraMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 textureMatrix;
 uniform float time;
+uniform float speed;
 
 {$DEFINITIONS}
 

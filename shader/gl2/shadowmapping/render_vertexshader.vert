@@ -17,6 +17,7 @@ uniform mat3 textureMatrix;
 uniform vec3 lightDirection;
 
 uniform float time;
+uniform float speed;
 
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;

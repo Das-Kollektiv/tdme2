@@ -87,22 +87,23 @@ uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
 uniform float time;
+uniform float speed;
 
 #if defined(HAVE_WATER_SHADER)
 	// uniforms
 	uniform float waterHeight;
-	uniform int numWaves;
-	uniform float amplitude[4];
-	uniform float wavelength[4];
-	uniform float speed[4];
-	uniform vec2 direction[4];
+	uniform int waterWaves;
+	uniform float waterAmplitude[4];
+	uniform float waterWavelength[4];
+	uniform float waterSpeed[4];
+	uniform vec2 waterDirection[4];
 	varying vec3 vsPosition;
 	varying vec3 vsNormal;
 #elif defined(HAVE_TERRAIN_SHADER)
-	varying vec3 vertex;
-	varying vec3 normal;
-	varying float height;
-	varying float slope;
+	varying vec3 terrainVertex;
+	varying vec3 terrainNormal;
+	varying float terrainHeight;
+	varying float terrainSlope;
 #endif
 
 // will be passed to fragment shader
@@ -178,11 +179,12 @@ void main(void) {
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 heightVector4 = _modelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
-		vertex = heightVector3;
-		height = heightVector3.y;
+		terrainVertex = heightVector3;
+		terrainHeight = heightVector3.y;
 		vec3 worldNormal = normalize(vec3(_modelMatrix * vec4(inNormal, 0.0)));
-		slope = abs(180.0 / 3.14 * acos(clamp(dot(worldNormal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
-		normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+		terrainSlope = abs(180.0 / 3.14 * acos(clamp(dot(worldNormal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+		terrainNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+		vec3 normal = terrainNormal;
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices
 		vec4 worldPosition4 = _modelMatrix * vec4(inVertex, 1.0);

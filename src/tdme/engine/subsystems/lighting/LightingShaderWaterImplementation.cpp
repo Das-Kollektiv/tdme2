@@ -82,23 +82,23 @@ void LightingShaderWaterImplementation::initialize()
 	if (uniformWaterHeight == -1) return;
 	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
 	if (uniformTime == -1) return;
-	uniformNumWaves = renderer->getProgramUniformLocation(renderLightingProgramId, "numWaves");
-	if (uniformNumWaves == -1) return;
+	uniformWaterWaves = renderer->getProgramUniformLocation(renderLightingProgramId, "waterWaves");
+	if (uniformWaterWaves == -1) return;
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformAmplitude[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "amplitude[" + to_string(i) + "]");
-		if (uniformAmplitude[i] == -1) return;
+		uniformWaterAmplitude[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterAmplitude[" + to_string(i) + "]");
+		if (uniformWaterAmplitude[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWavelength[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "wavelength[" + to_string(i) + "]");
-		if (uniformWavelength[i] == -1) return;
+		uniformWaterWaveLength[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterWavelength[" + to_string(i) + "]");
+		if (uniformWaterWaveLength[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformSpeed[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "speed[" + to_string(i) + "]");
-		if (uniformSpeed[i] == -1) return;
+		uniformWaterSpeed[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterSpeed[" + to_string(i) + "]");
+		if (uniformWaterSpeed[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "direction[" + to_string(i) + "]");
-		if (uniformDirection[i] == -1) return;
+		uniformWaterDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterDirection[" + to_string(i) + "]");
+		if (uniformWaterDirection[i] == -1) return;
 	}
 	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
 
@@ -124,12 +124,12 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 	//
 	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.25f);
 	renderer->setProgramUniformFloat(context, uniformTime, time / 10.0f);
-	renderer->setProgramUniformInteger(context, uniformNumWaves, 4);
+	renderer->setProgramUniformInteger(context, uniformWaterWaves, 4);
 	for (auto i = 0; i < 4; i++) {
-		renderer->setProgramUniformFloat(context, uniformAmplitude[i], 0.5f / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformWavelength[i], 8 * Math::PI / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformSpeed[i], 1.0f + 1.0f * i);
-		renderer->setProgramUniformFloatVec2(context, uniformDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
+		renderer->setProgramUniformFloat(context, uniformWaterAmplitude[i], 0.5f / (i + 1));
+		renderer->setProgramUniformFloat(context, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
+		renderer->setProgramUniformFloat(context, uniformWaterSpeed[i], 1.0f + 1.0f * i);
+		renderer->setProgramUniformFloatVec2(context, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;
 }

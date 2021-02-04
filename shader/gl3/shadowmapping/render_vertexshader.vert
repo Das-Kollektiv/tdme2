@@ -21,6 +21,7 @@ uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 uniform mat3 textureMatrix;
 uniform float time;
+uniform float speed;
 
 {$DEFINITIONS}
 
