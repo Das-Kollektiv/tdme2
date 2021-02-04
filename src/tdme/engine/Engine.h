@@ -650,7 +650,7 @@ public:
 	 * @param parameterName parameter name
 	 * @return shader parameter
 	 */
-	inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
+	static inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
 		auto shaderIt = shaders.find(shaderId);
 		if (shaderIt == shaders.end()) {
 			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
@@ -662,8 +662,8 @@ public:
 			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return ShaderParameter();
 		}
-		auto& ShaderParameter = shaderParameterIt->second;
-		return ShaderParameter;
+		auto& shaderParameter = shaderParameterIt->second;
+		return shaderParameter;
 	}
 
 	/**
@@ -682,8 +682,8 @@ public:
 		if (shaderParameterParameterIt == shaderParameterMap.end()) {
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		auto& ShaderParameter = shaderParameterParameterIt->second;
-		return ShaderParameter;
+		auto& shaderParameter = shaderParameterParameterIt->second;
+		return shaderParameter;
 	}
 
 	/**
@@ -702,16 +702,6 @@ public:
 			Console::println("Engine::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 		}
 		shaderParameters[shaderId][parameterName] = parameterValue;
-	}
-
-	/**
-	 * Set shader parameter Vector3 value
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @param vector3Value Vector3 value
-	 */
-	inline void setShaderParameterVector3(const string& shaderId, const string& parameterName, const Vector3& vector3Value) {
-		shaderParameters[shaderId][parameterName] = ShaderParameter(vector3Value);
 	}
 
 	/**

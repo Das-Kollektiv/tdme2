@@ -12,6 +12,7 @@ namespace engine {
 	class EngineVKRenderer;
 	class Entity;
 	class EntityHierarchy;
+	class EntityShaderParameters;
 	struct EntityPickingFilter;
 	class EnvironmentMapping;
 	class FrameBuffer;

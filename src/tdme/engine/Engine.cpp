@@ -2260,10 +2260,10 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR3:
 						{
 							Console::print("=float(");
-							auto ShaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
-							for (auto i = 0; i < ShaderParameterArray.size(); i++) {
+							auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
-								Console::print(to_string(ShaderParameterArray[i]));
+								Console::print(to_string(shaderParameterArray[i]));
 							}
 							Console::print("); ");
 						}
