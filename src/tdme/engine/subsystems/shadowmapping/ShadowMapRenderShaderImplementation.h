@@ -80,7 +80,8 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 
 	/**
 	 * Update shader parameters
-	 * @param context
+	 * @param renderer renderer
+	 * @param context context
 	 */
 	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
 
