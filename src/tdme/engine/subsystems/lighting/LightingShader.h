@@ -106,6 +106,12 @@ public:
 	void setShader(void* context, const string& id);
 
 	/**
+	 * Update shader parameters
+	 * @param context
+	 */
+	void updateShaderParameters(void* context);
+
+	/**
 	 * Bind texture
 	 * @param context context
 	 * @param textureId texture id

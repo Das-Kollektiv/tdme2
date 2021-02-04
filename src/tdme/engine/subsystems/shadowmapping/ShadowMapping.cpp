@@ -351,3 +351,7 @@ void ShadowMapping::setShader(void* context, const string& id) {
 		}
 	}
 }
+
+void ShadowMapping::updateShaderParameters(void* context) {
+}
+

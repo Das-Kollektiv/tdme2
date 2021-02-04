@@ -109,3 +109,6 @@ void EZRShader::setShader(void* context, const string& id) {
 		ezrShaderContext.implementation->useProgram(engine, context);
 	}
 }
+
+void EZRShader::updateShaderParameters(void* context) {
+}
