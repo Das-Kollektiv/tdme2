@@ -113,7 +113,7 @@ Model* Tools::defaultOBB = nullptr;
 
 string Tools::formatFloat(float value)
 {
-	string floatString = to_string(value);
+	string floatString = to_string(value).substr(0, floatString.length() - 3);
 	return floatString.substr(0, floatString.length() - 3);
 }
 

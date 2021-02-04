@@ -72,6 +72,14 @@ public:
 	void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue);
 
 	/**
+	 * Set shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
+	 */
+	void setShaderParameter(const string& parameterName, const string& parameterValueString);
+
+	/**
 	 * @return shader parameters hash
 	 */
 	const string& getShaderParametersHash() const {

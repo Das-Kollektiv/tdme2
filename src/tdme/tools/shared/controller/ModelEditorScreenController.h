@@ -1,9 +1,11 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -17,9 +19,11 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::ShaderParameter;
 using tdme::engine::model::Material;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -27,6 +31,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
@@ -72,6 +77,7 @@ private:
 	GUIElementNode* renderingDistanceShader { nullptr };
 	GUIElementNode* renderingDistanceShaderDistance { nullptr };
 	GUIElementNode* renderingApply { nullptr };
+	GUIParentNode* shaderParametersContent { nullptr };
 	GUIElementNode* lodLevel { nullptr };
 	GUIElementNode* lodLevelApply { nullptr };
 	GUIElementNode* lodType { nullptr };
@@ -265,6 +271,18 @@ public:
 	 * Unset rendering
 	 */
 	void unsetRendering();
+
+	/**
+	 * Set shader parameters
+	 * @param shaderParameters shader parameters
+	 * @param distanceShaderParameters distance shader parameters
+	 */
+	void setShaderParameters(const map<string, ShaderParameter>& shaderParameters, const map<string, ShaderParameter>& distanceShaderParameters);
+
+	/**
+	 * Unset shader parameters
+	 */
+	void unsetShaderParameters();
 
 	/**
 	 * Set lod level

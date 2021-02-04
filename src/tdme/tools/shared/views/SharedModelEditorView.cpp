@@ -406,6 +406,7 @@ void SharedModelEditorView::updateGUIElements()
 		prototypePhysicsView->unsetTerrainMesh();
 		prototypePhysicsView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
+		modelEditorScreenController->unsetShaderParameters();
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();

@@ -20,6 +20,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
@@ -64,6 +65,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
@@ -185,6 +187,7 @@ void ModelEditorScreenController::initialize()
 		renderingDistanceShader = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader"));
 		renderingDistanceShaderDistance = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_distance_shader_distance"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
+		shaderParametersContent = dynamic_cast< GUIParentNode* >(screenNode->getNodeById("shaderparameters_content"));
 		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
 		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
 		lodType = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_type"));
@@ -380,6 +383,9 @@ void ModelEditorScreenController::setRendering(Prototype* entity)
 	renderingDistanceShaderDistance->getController()->setDisabled(false);
 	renderingDistanceShaderDistance->getController()->setValue(MutableString(entity->getDistanceShaderDistance(), 4));
 	renderingApply->getController()->setDisabled(false);
+
+	// shader parameters
+	setShaderParameters(Engine::getShaderParameterDefaults(view->getPrototype()->getShader()), Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader())); // TODO: use actual shader parameters
 }
 
 void ModelEditorScreenController::unsetRendering()
@@ -397,6 +403,77 @@ void ModelEditorScreenController::unsetRendering()
 	renderingDistanceShaderDistance->getController()->setDisabled(true);
 	renderingDistanceShaderDistance->getController()->setValue(MutableString(10000.0f, 4));
 	renderingApply->getController()->setDisabled(true);
+}
+
+void ModelEditorScreenController::setShaderParameters(const map<string, ShaderParameter>& shaderParameters, const map<string, ShaderParameter>& distanceShaderParameters) {
+	unsetShaderParameters();
+
+	string shadersParametersContentSubNodesXML = "";
+	if (shaderParameters.empty() == false) {
+		shadersParametersContentSubNodesXML+= string("<space height=\"20\" />");
+		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"Shader\" width=\"auto\" height=\"auto\"/>\n");
+		shadersParametersContentSubNodesXML+= string("<space height=\"10\" />");
+		for (auto& parameterIt: shaderParameters) {
+			auto& parameterName = parameterIt.first;
+			auto parameterValue = parameterIt.second.toString();
+			shadersParametersContentSubNodesXML+=
+				string("<layout alignment=\"horizontal\" width=\"auto\" height=\"auto\">\n") +
+				string("	<layout width=\"auto\" height=\"auto\" alignment=\"horizontal\" vertical-align=\"center\">\n") +
+				string("		<text font=\"{$font.default}\" text=\"" + GUIParser::escapeQuotes(parameterName) + "\" width=\"145\" height=\"auto\"/>\n") +
+				string("		<space width=\"5\" />\n") +
+				string("		<input id=\"shaderparameters_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_" + GUIParser::escapeQuotes("parameterName") + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"true\" />\n") +
+				string("	</layout>\n") +
+				string("</layout>\n");
+		}
+	}
+
+	if (distanceShaderParameters.empty() == false) {
+		shadersParametersContentSubNodesXML+= string("<space height=\"20\" />");
+		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"Distance Shader\" width=\"auto\" height=\"auto\"/>\n");
+		shadersParametersContentSubNodesXML+= string("<space height=\"10\" />");
+		for (auto& parameterIt: distanceShaderParameters) {
+			auto& parameterName = parameterIt.first;
+			auto parameterValue = parameterIt.second.toString();
+			shadersParametersContentSubNodesXML+=
+				string("<layout alignment=\"horizontal\" width=\"auto\" height=\"auto\">\n") +
+				string("	<layout width=\"auto\" height=\"auto\" alignment=\"horizontal\" vertical-align=\"center\">\n") +
+				string("		<text font=\"{$font.default}\" text=\"" + GUIParser::escapeQuotes(parameterName) + "\" width=\"145\" height=\"auto\"/>\n") +
+				string("		<space width=\"5\" />\n") +
+				string("		<input id=\"shaderparameters_distance_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_distance_" + GUIParser::escapeQuotes("parameterName") + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"true\" />\n") +
+				string("	</layout>\n") +
+				string("</layout>\n");
+		}
+	}
+
+	if (shaderParameters.empty() == false || distanceShaderParameters.empty() == false) {
+		shadersParametersContentSubNodesXML+=
+			string("<space height=\"20\" />\n") +
+			string("<layout width=\"100%\" height=\"auto\" alignment=\"none\" horizontal-align=\"center\">\n") +
+			string("	<button id=\"button_shaderparameters_apply\" name=\"button_shaderparameters_apply\" text=\"Apply\" width=\"auto\" height=\"auto\" />\n") +
+			string("</layout>\n") +
+			string("<space height=\"20\" />\n");
+	}
+
+	if (shadersParametersContentSubNodesXML.empty() == true) {
+		shadersParametersContentSubNodesXML+=
+			string("<space height=\"20\" />\n") +
+			string("<text font=\"{$font.default}\" text=\"No shader parameters available\" width=\"auto\" height=\"auto\"/>\n") +
+			string("<space height=\"20\" />\n");
+	}
+
+	try {
+		shaderParametersContent->replaceSubNodes(
+			shadersParametersContentSubNodesXML,
+			false
+		);
+	} catch (Exception& exception) {
+		Console::print(string("ModelEditorScreenController::setRenderingShaders(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void ModelEditorScreenController::unsetShaderParameters() {
+	shaderParametersContent->clearSubNodes();
 }
 
 PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
@@ -1875,6 +1952,9 @@ void ModelEditorScreenController::onRenderingApply()
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 	view->updateRendering();
+
+	// shader parameters
+	setShaderParameters(Engine::getShaderParameterDefaults(view->getPrototype()->getShader()), Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader())); // TODO: use actual shader parameters
 }
 
 void ModelEditorScreenController::onMaterialPBREnabledValueChanged() {
