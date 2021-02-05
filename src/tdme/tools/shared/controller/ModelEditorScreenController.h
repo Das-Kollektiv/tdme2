@@ -182,17 +182,17 @@ public:
 	SharedModelEditorView* getView();
 
 	/**
-	 * @return entity display sub screen controller
+	 * @return prototype display sub screen controller
 	 */
 	PrototypeDisplaySubScreenController* getPrototypeDisplaySubScreenController();
 
 	/**
-	 * @return entity bounding volume sub screen controller
+	 * @return prototype bounding volume sub screen controller
 	 */
 	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 	/**
-	 * @return entity sounds sub screen controller
+	 * @return prototype sounds sub screen controller
 	 */
 	PrototypeSoundsSubScreenController* getPrototypeSoundsSubScreenController();
 
@@ -234,10 +234,10 @@ public:
 	/**
 	 * Set up prototype properties
 	 * @param presetId preset id
-	 * @param entity entity properties
+	 * @param prototype prototype properties
 	 * @param selectedName selected name
 	 */
-	void setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, Prototype* prototype, const string& selectedName);
 
 	/**
 	 * Unset prototype properties
@@ -263,9 +263,9 @@ public:
 
 	/**
 	 * Set renering options
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setRendering(Prototype* entity);
+	void setRendering(Prototype* prototype);
 
 	/**
 	 * Unset rendering
@@ -286,10 +286,10 @@ public:
 
 	/**
 	 * Set lod level
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param level lod level
 	 */
-	void setLODLevel(Prototype* entity, int level);
+	void setLODLevel(Prototype* prototype, int level);
 
 	/**
 	 * Unset LOD level
@@ -318,9 +318,9 @@ public:
 
 	/**
 	 * Set materials
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void setMaterials(Prototype* entity);
+	void setMaterials(Prototype* prototype);
 
 	/**
 	 * Unset materials
@@ -387,7 +387,7 @@ public:
 	/**
 	 * Set animations
 	 */
-	void setAnimations(Prototype* entity);
+	void setAnimations(Prototype* prototype);
 
 	/**
 	 * On animation drop down value changed

@@ -91,7 +91,7 @@ using tdme::utilities::StringTools;
 
 ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view)
 {
-	class OnSetEntityDataAction: public virtual Action
+	class OnSetprototypeDataAction: public virtual Action
 	{
 	public:
 		void performAction() override {
@@ -104,7 +104,7 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 		 * @param modelEditorScreenController model editor screen controller
 		 * @param finalView final view
 		 */
-		OnSetEntityDataAction(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView)
+		OnSetprototypeDataAction(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView)
 			: modelEditorScreenController(modelEditorScreenController)
 			, finalView(finalView) {
 		}
@@ -119,7 +119,7 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->audioPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetprototypeDataAction(this, finalView));
 	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), modelPath, true);
 	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUps(), audioPath);
 	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->prototypePhysicsSubScreenController->getView());
@@ -299,7 +299,7 @@ void ModelEditorScreenController::unsetPrototypeData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName)
+void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* prototype, const string& selectedName)
 {
 	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
@@ -368,20 +368,20 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 }
 
-void ModelEditorScreenController::setRendering(Prototype* entity)
+void ModelEditorScreenController::setRendering(Prototype* prototype)
 {
 	renderingContributesShadows->getController()->setDisabled(false);
-	renderingContributesShadows->getController()->setValue(MutableString(entity->isContributesShadows() == true?"1":""));
+	renderingContributesShadows->getController()->setValue(MutableString(prototype->isContributesShadows() == true?"1":""));
 	renderingReceivesShadows->getController()->setDisabled(false);
-	renderingReceivesShadows->getController()->setValue(MutableString(entity->isReceivesShadows() == true?"1":""));
+	renderingReceivesShadows->getController()->setValue(MutableString(prototype->isReceivesShadows() == true?"1":""));
 	renderingRenderGroups->getController()->setDisabled(false);
-	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
+	renderingRenderGroups->getController()->setValue(MutableString(prototype->isRenderGroups() == true?"1":""));
 	renderingShader->getController()->setDisabled(false);
-	renderingShader->getController()->setValue(MutableString(entity->getShader()));
+	renderingShader->getController()->setValue(MutableString(prototype->getShader()));
 	renderingDistanceShader->getController()->setDisabled(false);
-	renderingDistanceShader->getController()->setValue(MutableString(entity->getDistanceShader()));
+	renderingDistanceShader->getController()->setValue(MutableString(prototype->getDistanceShader()));
 	renderingDistanceShaderDistance->getController()->setDisabled(false);
-	renderingDistanceShaderDistance->getController()->setValue(MutableString(entity->getDistanceShaderDistance(), 4));
+	renderingDistanceShaderDistance->getController()->setValue(MutableString(prototype->getDistanceShaderDistance(), 4));
 	renderingApply->getController()->setDisabled(false);
 
 	// shader parameters
@@ -477,35 +477,35 @@ void ModelEditorScreenController::unsetShaderParameters() {
 }
 
 PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
-	auto entity = view->getPrototype();
+	auto prototype = view->getPrototype();
 	switch(level) {
 		case 2:
 			{
-				auto entityLodLevel = entity->getLODLevel2();
-				if (entityLodLevel == nullptr) {
-					entityLodLevel = new PrototypeLODLevel(
+				auto prototypeLodLevel = prototype->getLODLevel2();
+				if (prototypeLodLevel == nullptr) {
+					prototypeLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						0.0f
 					);
-					entity->setLODLevel2(entityLodLevel);
+					prototype->setLODLevel2(prototypeLodLevel);
 				}
-				return entityLodLevel;
+				return prototypeLodLevel;
 			}
 		case 3:
 			{
-				auto entityLodLevel = entity->getLODLevel3();
-				if (entityLodLevel == nullptr) {
-					entityLodLevel = new PrototypeLODLevel(
+				auto prototypeLodLevel = prototype->getLODLevel3();
+				if (prototypeLodLevel == nullptr) {
+					prototypeLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						0.0f
 					);
-					entity->setLODLevel3(entityLodLevel);
+					prototype->setLODLevel3(prototypeLodLevel);
 				}
-				return entityLodLevel;
+				return prototypeLodLevel;
 			}
 		default:
 			{
@@ -514,15 +514,15 @@ PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	}
 }
 
-void ModelEditorScreenController::setLODLevel(Prototype* entity, int level) {
-	auto entityLodLevel = getLODLevel(level);
-	if (entityLodLevel == nullptr) {
+void ModelEditorScreenController::setLODLevel(Prototype* prototype, int level) {
+	auto prototypeLodLevel = getLODLevel(level);
+	if (prototypeLodLevel == nullptr) {
 		lodLevel->getController()->setValue(MutableString(to_string(level)));
 		lodLevel->getController()->setDisabled(false);
 		lodLevelApply->getController()->setDisabled(false);
 		lodType->getController()->setValue(MutableString("1"));
 		lodType->getController()->setDisabled(true);
-		lodModelFile->getController()->setValue(MutableString(entity->getModelFileName()));
+		lodModelFile->getController()->setValue(MutableString(prototype->getModelFileName()));
 		lodModelFile->getController()->setDisabled(true);
 		lodModelFileLoad->getController()->setDisabled(true);
 		lodModelFileClear->getController()->setDisabled(true);
@@ -537,17 +537,17 @@ void ModelEditorScreenController::setLODLevel(Prototype* entity, int level) {
 		lodLevel->getController()->setValue(MutableString(to_string(level)));
 		lodLevel->getController()->setDisabled(false);
 		lodLevelApply->getController()->setDisabled(false);
-		lodType->getController()->setValue(MutableString(to_string(entityLodLevel->getType())));
+		lodType->getController()->setValue(MutableString(to_string(prototypeLodLevel->getType())));
 		lodType->getController()->setDisabled(false);
-		lodModelFile->getController()->setValue(MutableString(entityLodLevel->getFileName()));
+		lodModelFile->getController()->setValue(MutableString(prototypeLodLevel->getFileName()));
 		lodModelFile->getController()->setDisabled(false);
 		lodModelFileLoad->getController()->setDisabled(false);
 		lodModelFileClear->getController()->setDisabled(false);
-		lodMinDistance->getController()->setValue(MutableString(entityLodLevel->getMinDistance()));
+		lodMinDistance->getController()->setValue(MutableString(prototypeLodLevel->getMinDistance()));
 		lodMinDistance->getController()->setDisabled(false);
-		lodColorMul->getController()->setValue(MutableString(Tools::formatColor4(entityLodLevel->getColorMul())));
+		lodColorMul->getController()->setValue(MutableString(Tools::formatColor4(prototypeLodLevel->getColorMul())));
 		lodColorMul->getController()->setDisabled(false);
-		lodColorAdd->getController()->setValue(MutableString(Tools::formatColor4(entityLodLevel->getColorAdd())));
+		lodColorAdd->getController()->setValue(MutableString(Tools::formatColor4(prototypeLodLevel->getColorAdd())));
 		lodColorAdd->getController()->setDisabled(false);
 		buttonLodApply->getController()->setDisabled(false);
 	}
@@ -574,9 +574,9 @@ void ModelEditorScreenController::unsetLODLevel() {
 }
 
 void ModelEditorScreenController::onLODLevelApply() {
-	auto entity = view->getPrototype();
+	auto prototype = view->getPrototype();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	setLODLevel(entity, lodLevelInt);
+	setLODLevel(prototype, lodLevelInt);
 }
 
 void ModelEditorScreenController::onLODLevelLoadModel() {
@@ -609,14 +609,14 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 	};
 
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	auto entityLodLevel = getLODLevel(lodLevelInt);
-	if (entityLodLevel == nullptr) return;
+	auto prototypeLodLevel = getLODLevel(lodLevelInt);
+	if (prototypeLodLevel == nullptr) return;
 	auto extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		entityLodLevel->getFileName() != ""?Tools::getPathName(entityLodLevel->getFileName()):modelPath->getPath(),
+		prototypeLodLevel->getFileName() != ""?Tools::getPathName(prototypeLodLevel->getFileName()):modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		Tools::getFileName(entityLodLevel->getFileName()),
+		Tools::getFileName(prototypeLodLevel->getFileName()),
 		true,
 		new OnLODModelLoad(this)
 	);
@@ -629,22 +629,22 @@ void ModelEditorScreenController::onLODLevelClearModel() {
 void ModelEditorScreenController::onLODLevelApplySettings() {
 	view->resetPrototype();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	PrototypeLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
+	PrototypeLODLevel* prototypeLodLevel = getLODLevel(lodLevelInt);
 	try {
-		entityLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
-		entityLodLevel->setFileName(
-			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
+		prototypeLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
+		prototypeLodLevel->setFileName(
+			prototypeLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
 				lodModelFile->getController()->getValue().getString():
 				""
 			);
-		entityLodLevel->setMinDistance(Tools::convertToFloat(lodMinDistance->getController()->getValue().getString()));
-		entityLodLevel->setColorMul(Tools::convertToColor4(lodColorMul->getController()->getValue().getString()));
-		entityLodLevel->setColorAdd(Tools::convertToColor4(lodColorAdd->getController()->getValue().getString()));
-		entityLodLevel->setModel(
-			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
+		prototypeLodLevel->setMinDistance(Tools::convertToFloat(lodMinDistance->getController()->getValue().getString()));
+		prototypeLodLevel->setColorMul(Tools::convertToColor4(lodColorMul->getController()->getValue().getString()));
+		prototypeLodLevel->setColorAdd(Tools::convertToColor4(lodColorAdd->getController()->getValue().getString()));
+		prototypeLodLevel->setModel(
+			prototypeLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
 				ModelReader::read(
-					Tools::getPathName(entityLodLevel->getFileName()),
-					Tools::getFileName(entityLodLevel->getFileName())
+					Tools::getPathName(prototypeLodLevel->getFileName()),
+					Tools::getFileName(prototypeLodLevel->getFileName())
 				):
 				nullptr
 		);
@@ -653,8 +653,8 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 	}
 }
 
-void ModelEditorScreenController::setMaterials(Prototype* entity) {
-	Model* model = view->getLodLevel() == 1?entity->getModel():getLODLevel(view->getLodLevel())->getModel();
+void ModelEditorScreenController::setMaterials(Prototype* prototype) {
+	Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetMaterials();
 		return;
@@ -1327,7 +1327,7 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 	guiElementNode->getController()->setValue(MutableString(""));
 }
 
-void ModelEditorScreenController::setAnimations(Prototype* entity) {
+void ModelEditorScreenController::setAnimations(Prototype* prototype) {
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetAnimations();
