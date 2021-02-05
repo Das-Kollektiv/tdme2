@@ -38,7 +38,7 @@ void ShadowMapRenderShaderFoliageImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// load shadow mapping shaders
-	renderVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_vertexshader.vert",
@@ -58,30 +58,37 @@ void ShadowMapRenderShaderFoliageImplementation::initialize()
 			"create_foliage_transform_matrix.inc.glsl"
 		)
 	);
-	if (renderVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
-	renderFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_fragmentshader.frag"
 	);
-	if (renderFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
-	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	ShadowMapRenderShaderBaseImplementation::initialize();
 
 	//
 	if (initialized == false) return;
 
+	//
+	if (initialized == false) return;
+
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(renderProgramId, "speed");
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
+	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
 }
 
 void ShadowMapRenderShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 	auto& shaderParameters = renderer->getShaderParameters(context);
 	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
 }

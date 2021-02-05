@@ -38,7 +38,7 @@ void ShadowMapRenderShaderTreeImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// load shadow mapping shaders
-	renderVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_vertexshader.vert",
@@ -58,19 +58,19 @@ void ShadowMapRenderShaderTreeImplementation::initialize()
 			"create_tree_transform_matrix.inc.glsl"
 		)
 	);
-	if (renderVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
-	renderFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_fragmentshader.frag"
 	);
-	if (renderFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
-	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	ShadowMapRenderShaderBaseImplementation::initialize();
 
@@ -78,7 +78,7 @@ void ShadowMapRenderShaderTreeImplementation::initialize()
 	if (initialized == false) return;
 
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(renderProgramId, "speed");
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
 }
 
 void ShadowMapRenderShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {

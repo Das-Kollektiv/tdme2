@@ -12,12 +12,19 @@ uniform vec3 modelTranslation;
 uniform mat3 textureMatrix;
 
 uniform float time;
-uniform float speed;
 
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;
 
 {$DEFINITIONS}
+
+#if defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
+#endif
 
 {$FUNCTIONS}
 

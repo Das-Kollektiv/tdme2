@@ -14,9 +14,17 @@ layout (location = 12) in vec3 inOrigin;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 uniform float time;
-uniform float speed;
 
 {$DEFINITIONS}
+
+#if defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+	uniform float xxx;
+#elif defined(HAVE_TREE)
+	uniform float speed;
+#endif
 
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;

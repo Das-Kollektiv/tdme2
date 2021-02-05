@@ -332,6 +332,7 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+		shaderParameters.setShader(id);
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
 		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
@@ -357,6 +358,7 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
+		distanceShaderParameters.setShader(id);
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
 		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {

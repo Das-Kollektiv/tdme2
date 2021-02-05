@@ -67,9 +67,9 @@ void LightingShaderWaterImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -78,29 +78,29 @@ void LightingShaderWaterImplementation::initialize()
 	initialized = false;
 
 	//
-	uniformWaterHeight = renderer->getProgramUniformLocation(renderLightingProgramId, "waterHeight");
+	uniformWaterHeight = renderer->getProgramUniformLocation(programId, "waterHeight");
 	if (uniformWaterHeight == -1) return;
-	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
+	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
-	uniformWaterWaves = renderer->getProgramUniformLocation(renderLightingProgramId, "waterWaves");
+	uniformWaterWaves = renderer->getProgramUniformLocation(programId, "waterWaves");
 	if (uniformWaterWaves == -1) return;
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterAmplitude[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterAmplitude[" + to_string(i) + "]");
+		uniformWaterAmplitude[i] = renderer->getProgramUniformLocation(programId, "waterAmplitude[" + to_string(i) + "]");
 		if (uniformWaterAmplitude[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterWaveLength[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterWavelength[" + to_string(i) + "]");
+		uniformWaterWaveLength[i] = renderer->getProgramUniformLocation(programId, "waterWavelength[" + to_string(i) + "]");
 		if (uniformWaterWaveLength[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterSpeed[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterSpeed[" + to_string(i) + "]");
+		uniformWaterSpeed[i] = renderer->getProgramUniformLocation(programId, "waterSpeed[" + to_string(i) + "]");
 		if (uniformWaterSpeed[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWaterDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "waterDirection[" + to_string(i) + "]");
+		uniformWaterDirection[i] = renderer->getProgramUniformLocation(programId, "waterDirection[" + to_string(i) + "]");
 		if (uniformWaterDirection[i] == -1) return;
 	}
-	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
+	uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
 
 	//
 	initialized = true;

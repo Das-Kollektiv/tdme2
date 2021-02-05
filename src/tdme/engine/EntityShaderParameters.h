@@ -49,6 +49,7 @@ public:
 	 * @param shaderId shader id
 	 */
 	void setShader(const string& shaderId) {
+		if (this->shaderId == shaderId) return;
 		parameters.clear();
 		hash = shaderId + ";";
 		changed = false;

@@ -24,10 +24,10 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplemen
 {
 protected:
 	Renderer* renderer { nullptr };
-	int32_t renderVertexShaderId { -1 };
+	int32_t vertexShaderId { -1 };
 	int32_t renderGeometryShaderId { -1 };
-	int32_t renderFragmentShaderId { -1 };
-	int32_t renderProgramId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
 	int32_t renderUniformShadowMapLookUps { -1 };
 	int32_t renderUniformTextureUnit { -1 };
 	int32_t renderUniformTexturePixelWidth { -1 };

@@ -70,22 +70,28 @@ void LightingShaderFoliageImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
 
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(renderLightingProgramId, "speed");
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
+	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
 
 	// register shader
 	if (initialized == true) {
 		Engine::registerShader(
 			Engine::ShaderType::SHADERTYPE_OBJECT3D,
 			getId(),
-			{{ "speed", ShaderParameter(1.0f) }}
+			{
+				{ "speed", ShaderParameter(1.0f) },
+				{ "amplitudeDefault", ShaderParameter(0.0f) },
+				{ "amplitudeMax", ShaderParameter(20.0f) }
+			}
 		);
 	}
 }
@@ -93,4 +99,6 @@ void LightingShaderFoliageImplementation::initialize()
 void LightingShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 	auto& shaderParameters = renderer->getShaderParameters(context);
 	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
 }

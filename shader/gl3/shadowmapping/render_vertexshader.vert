@@ -21,9 +21,16 @@ uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 uniform mat3 textureMatrix;
 uniform float time;
-uniform float speed;
 
 {$DEFINITIONS}
+
+#if defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
+#endif
 
 // will be passed to fragment shader
 out vec2 vsFragTextureUV;

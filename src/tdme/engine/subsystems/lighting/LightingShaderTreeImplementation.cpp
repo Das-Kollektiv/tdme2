@@ -69,9 +69,9 @@ void LightingShaderTreeImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -80,7 +80,7 @@ void LightingShaderTreeImplementation::initialize()
 	if (initialized == false) return;
 
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(renderLightingProgramId, "speed");
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
 
 	// register shader
 	Engine::registerShader(

@@ -28,7 +28,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lighting::LightingShaderBaseImplementation: public LightingShaderImplementation
 {
 protected:
-	int32_t renderLightingProgramId { -1 };
+	int32_t programId { -1 };
 	int32_t renderLightingFragmentShaderId { -1 };
 	int32_t renderLightingVertexShaderId { -1 };
 	int32_t uniformTextureAtlasSize { -1 };

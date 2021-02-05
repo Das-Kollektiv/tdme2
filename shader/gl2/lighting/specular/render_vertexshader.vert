@@ -87,7 +87,6 @@ uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
 uniform float time;
-uniform float speed;
 
 #if defined(HAVE_WATER_SHADER)
 	// uniforms
@@ -104,7 +103,14 @@ uniform float speed;
 	varying vec3 terrainNormal;
 	varying float terrainHeight;
 	varying float terrainSlope;
+#elif defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
 #endif
+
 
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;

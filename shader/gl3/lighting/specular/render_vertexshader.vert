@@ -21,7 +21,6 @@ layout (location = 12) in vec3 inOrigin;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 uniform float time;
-uniform float speed;
 
 {$DEFINITIONS}
 
@@ -51,6 +50,12 @@ out vec3 vsEyeDirection;
 	uniform float waterWavelength[4];
 	uniform float waterSpeed[4];
 	uniform vec2 waterDirection[4];
+#elif defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
 #endif
 
 #if defined(HAVE_DEPTH_FOG)

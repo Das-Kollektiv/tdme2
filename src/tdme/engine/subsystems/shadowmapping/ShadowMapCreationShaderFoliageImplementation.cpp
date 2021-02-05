@@ -78,9 +78,13 @@ void ShadowMapCreationShaderFoliageImplementation::initialize()
 
 	// uniforms
 	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
+	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
 }
 
 void ShadowMapCreationShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 	auto& shaderParameters = renderer->getShaderParameters(context);
 	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
 }

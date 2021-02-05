@@ -22,6 +22,8 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderFoliageImple
 {
 private:
 	int32_t uniformSpeed { -1 };
+	int32_t uniformAmplitudeDefault	{ -1 };
+	int32_t uniformAmplitudeMax { -1 };
 
 public:
 	/**
