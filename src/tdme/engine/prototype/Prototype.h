@@ -395,6 +395,7 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+		shaderParameters.setShader(id);
 	}
 
 	/**
@@ -411,6 +412,7 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
+		distanceShaderParameters.setShader(id);
 	}
 
 	/**

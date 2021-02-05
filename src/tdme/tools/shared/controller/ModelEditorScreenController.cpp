@@ -299,8 +299,10 @@ void ModelEditorScreenController::unsetPrototypeData()
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* prototype, const string& selectedName)
+void ModelEditorScreenController::setPrototypeProperties(const string& presetId, const string& selectedName)
 {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
 	prototypeBaseSubScreenController->setPrototypeProperties(prototype, presetId, selectedName);
 }
 
@@ -368,8 +370,10 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 }
 
-void ModelEditorScreenController::setRendering(Prototype* prototype)
+void ModelEditorScreenController::setRendering()
 {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
 	renderingContributesShadows->getController()->setDisabled(false);
 	renderingContributesShadows->getController()->setValue(MutableString(prototype->isContributesShadows() == true?"1":""));
 	renderingReceivesShadows->getController()->setDisabled(false);
@@ -385,7 +389,7 @@ void ModelEditorScreenController::setRendering(Prototype* prototype)
 	renderingApply->getController()->setDisabled(false);
 
 	// shader parameters
-	setShaderParameters(Engine::getShaderParameterDefaults(view->getPrototype()->getShader()), Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader())); // TODO: use actual shader parameters
+	setShaderParameters();
 }
 
 void ModelEditorScreenController::unsetRendering()
@@ -405,23 +409,28 @@ void ModelEditorScreenController::unsetRendering()
 	renderingApply->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setShaderParameters(const map<string, ShaderParameter>& shaderParameters, const map<string, ShaderParameter>& distanceShaderParameters) {
+void ModelEditorScreenController::setShaderParameters() {
 	unsetShaderParameters();
 
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	auto shaderParameters = Engine::getShaderParameterDefaults(view->getPrototype()->getShader());
+	auto distanceShaderParameters = Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader());
 	string shadersParametersContentSubNodesXML = "";
 	if (shaderParameters.empty() == false) {
 		shadersParametersContentSubNodesXML+= string("<space height=\"20\" />");
-		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"Shader\" width=\"auto\" height=\"auto\"/>\n");
+		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"'" + prototype->getShader() + "' - Shader\" width=\"auto\" height=\"auto\"/>\n");
 		shadersParametersContentSubNodesXML+= string("<space height=\"10\" />");
 		for (auto& parameterIt: shaderParameters) {
 			auto& parameterName = parameterIt.first;
-			auto parameterValue = parameterIt.second.toString();
+			auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName).toString();
 			shadersParametersContentSubNodesXML+=
 				string("<layout alignment=\"horizontal\" width=\"auto\" height=\"auto\">\n") +
 				string("	<layout width=\"auto\" height=\"auto\" alignment=\"horizontal\" vertical-align=\"center\">\n") +
-				string("		<text font=\"{$font.default}\" text=\"" + GUIParser::escapeQuotes(parameterName) + "\" width=\"145\" height=\"auto\"/>\n") +
+				string("		<text font=\"{$font.default}\" text=\"'" + GUIParser::escapeQuotes(parameterName) + "'\" width=\"145\" height=\"auto\"/>\n") +
 				string("		<space width=\"5\" />\n") +
-				string("		<input id=\"shaderparameters_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_" + GUIParser::escapeQuotes("parameterName") + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"true\" />\n") +
+				string("		<input id=\"shaderparameters_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_" + GUIParser::escapeQuotes(parameterName) + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"false\" />\n") +
 				string("	</layout>\n") +
 				string("</layout>\n");
 		}
@@ -429,17 +438,17 @@ void ModelEditorScreenController::setShaderParameters(const map<string, ShaderPa
 
 	if (distanceShaderParameters.empty() == false) {
 		shadersParametersContentSubNodesXML+= string("<space height=\"20\" />");
-		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"Distance Shader\" width=\"auto\" height=\"auto\"/>\n");
+		shadersParametersContentSubNodesXML+= string("<text font=\"{$font.default}\" text=\"'" + prototype->getDistanceShader() + "' - Distance Shader\" width=\"auto\" height=\"auto\"/>\n");
 		shadersParametersContentSubNodesXML+= string("<space height=\"10\" />");
 		for (auto& parameterIt: distanceShaderParameters) {
 			auto& parameterName = parameterIt.first;
-			auto parameterValue = parameterIt.second.toString();
+			auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName).toString();
 			shadersParametersContentSubNodesXML+=
 				string("<layout alignment=\"horizontal\" width=\"auto\" height=\"auto\">\n") +
 				string("	<layout width=\"auto\" height=\"auto\" alignment=\"horizontal\" vertical-align=\"center\">\n") +
-				string("		<text font=\"{$font.default}\" text=\"" + GUIParser::escapeQuotes(parameterName) + "\" width=\"145\" height=\"auto\"/>\n") +
+				string("		<text font=\"{$font.default}\" text=\"'" + GUIParser::escapeQuotes(parameterName) + "'\" width=\"145\" height=\"auto\"/>\n") +
 				string("		<space width=\"5\" />\n") +
-				string("		<input id=\"shaderparameters_distance_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_distance_" + GUIParser::escapeQuotes("parameterName") + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"true\" />\n") +
+				string("		<input id=\"shaderparameters_distance_" + GUIParser::escapeQuotes(parameterName) + "\" name=\"shaderparameters_distance_" + GUIParser::escapeQuotes(parameterName) + "\" width=\"450\" height=\"auto\" text=\"" + GUIParser::escapeQuotes(parameterValue) + "\" disabled=\"false\" />\n") +
 				string("	</layout>\n") +
 				string("</layout>\n");
 		}
@@ -478,6 +487,7 @@ void ModelEditorScreenController::unsetShaderParameters() {
 
 PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return nullptr;
 	switch(level) {
 		case 2:
 			{
@@ -514,7 +524,10 @@ PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	}
 }
 
-void ModelEditorScreenController::setLODLevel(Prototype* prototype, int level) {
+void ModelEditorScreenController::setLODLevel(int level) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
 	auto prototypeLodLevel = getLODLevel(level);
 	if (prototypeLodLevel == nullptr) {
 		lodLevel->getController()->setValue(MutableString(to_string(level)));
@@ -576,7 +589,7 @@ void ModelEditorScreenController::unsetLODLevel() {
 void ModelEditorScreenController::onLODLevelApply() {
 	auto prototype = view->getPrototype();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	setLODLevel(prototype, lodLevelInt);
+	setLODLevel(lodLevelInt);
 }
 
 void ModelEditorScreenController::onLODLevelLoadModel() {
@@ -653,7 +666,10 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 	}
 }
 
-void ModelEditorScreenController::setMaterials(Prototype* prototype) {
+void ModelEditorScreenController::setMaterials() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
 	Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetMaterials();
@@ -1327,7 +1343,10 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 	guiElementNode->getController()->setValue(MutableString(""));
 }
 
-void ModelEditorScreenController::setAnimations(Prototype* prototype) {
+void ModelEditorScreenController::setAnimations() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetAnimations();
@@ -1468,7 +1487,7 @@ void ModelEditorScreenController::onAnimationDropDownDelete() {
 	it = model->getAnimationSetups().erase(it);
 	delete animationSetup;
 
-	setAnimations(view->getPrototype());
+	setAnimations();
 	animationsDropDown->getController()->setValue(MutableString(it->second->getId()));
 	onAnimationDropDownApply();
 }
@@ -1508,7 +1527,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setOverlayFromNodeId(animationsAnimationOverlayFromNodeIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		animationSetup->setSpeed(Float::parseFloat(animationsAnimationSpeed->getController()->getValue().getString()));
-		setAnimations(view->getPrototype());
+		setAnimations();
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
 		setPreview();
@@ -1954,7 +1973,43 @@ void ModelEditorScreenController::onRenderingApply()
 	view->updateRendering();
 
 	// shader parameters
-	setShaderParameters(Engine::getShaderParameterDefaults(view->getPrototype()->getShader()), Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader())); // TODO: use actual shader parameters
+	setShaderParameters();
+}
+
+void ModelEditorScreenController::onShaderParametersApply() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	auto shaderParametersDefault = Engine::getShaderParameterDefaults(view->getPrototype()->getShader());
+	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(view->getPrototype()->getDistanceShader());
+	auto shaderParameters = prototype->getShaderParameters();
+	auto distanceShaderParameters = prototype->getDistanceShaderParameters();
+	if (shaderParametersDefault.empty() == false) {
+		for (auto& parameterIt: shaderParametersDefault) {
+			auto& parameterName = parameterIt.first;
+			auto parameterValueElement = dynamic_cast<GUIElementNode*>(shaderParametersContent->getScreenNode()->getNodeById("shaderparameters_" + GUIParser::unescapeQuotes(parameterName)));
+			if (parameterValueElement == nullptr) continue;
+			auto parameterValue = parameterValueElement->getController()->getValue().getString();
+			shaderParameters.setShaderParameter(parameterName, parameterValue);
+		}
+	}
+
+	if (distanceShaderParametersDefault.empty() == false) {
+		for (auto& parameterIt: distanceShaderParametersDefault) {
+			auto& parameterName = parameterIt.first;
+			auto parameterValueElement = dynamic_cast<GUIElementNode*>(shaderParametersContent->getScreenNode()->getNodeById("shaderparameters_distance_" + GUIParser::unescapeQuotes(parameterName)));
+			if (parameterValueElement == nullptr) continue;
+			auto parameterValue = parameterValueElement->getController()->getValue().getString();
+			distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
+		}
+	}
+
+	//
+	prototype->setShaderParameters(shaderParameters);
+	prototype->setDistanceShaderParameters(distanceShaderParameters);
+
+	//
+	view->updateShaderParemeters();
 }
 
 void ModelEditorScreenController::onMaterialPBREnabledValueChanged() {
@@ -2041,6 +2096,9 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_rendering_apply") == 0) {
 			onRenderingApply();
+		} else
+		if (node->getId().compare("button_shaderparameters_apply") == 0) {
+			onShaderParametersApply();
 		} else
 		if (node->getId().compare("lod_level_apply") == 0) {
 			onLODLevelApply();

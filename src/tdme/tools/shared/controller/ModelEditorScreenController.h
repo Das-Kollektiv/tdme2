@@ -234,10 +234,9 @@ public:
 	/**
 	 * Set up prototype properties
 	 * @param presetId preset id
-	 * @param prototype prototype properties
 	 * @param selectedName selected name
 	 */
-	void setPrototypeProperties(const string& presetId, Prototype* prototype, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, const string& selectedName);
 
 	/**
 	 * Unset prototype properties
@@ -263,9 +262,8 @@ public:
 
 	/**
 	 * Set renering options
-	 * @param prototype prototype
 	 */
-	void setRendering(Prototype* prototype);
+	void setRendering();
 
 	/**
 	 * Unset rendering
@@ -274,10 +272,8 @@ public:
 
 	/**
 	 * Set shader parameters
-	 * @param shaderParameters shader parameters
-	 * @param distanceShaderParameters distance shader parameters
 	 */
-	void setShaderParameters(const map<string, ShaderParameter>& shaderParameters, const map<string, ShaderParameter>& distanceShaderParameters);
+	void setShaderParameters();
 
 	/**
 	 * Unset shader parameters
@@ -286,10 +282,9 @@ public:
 
 	/**
 	 * Set lod level
-	 * @param prototype prototype
 	 * @param level lod level
 	 */
-	void setLODLevel(Prototype* prototype, int level);
+	void setLODLevel(int level);
 
 	/**
 	 * Unset LOD level
@@ -318,9 +313,8 @@ public:
 
 	/**
 	 * Set materials
-	 * @param prototype prototype
 	 */
-	void setMaterials(Prototype* prototype);
+	void setMaterials();
 
 	/**
 	 * Unset materials
@@ -387,7 +381,7 @@ public:
 	/**
 	 * Set animations
 	 */
-	void setAnimations(Prototype* prototype);
+	void setAnimations();
 
 	/**
 	 * On animation drop down value changed
@@ -491,6 +485,11 @@ public:
 	 * On rendering apply
 	 */
 	void onRenderingApply();
+
+	/**
+	 * On shader parameters apply
+	 */
+	void onShaderParametersApply();
 
 	/**
 	 * On tools compute normals
