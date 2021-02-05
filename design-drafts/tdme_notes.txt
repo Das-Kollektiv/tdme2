@@ -21,7 +21,7 @@ templates_viewport_sound
 
 template_details_terrain_dimensions
 template_details_terrain_brush
-template_details_environmentmapping_
+template_details_environmentmapping
 
 template_details_particle_emitter
 template_details_particle_type
