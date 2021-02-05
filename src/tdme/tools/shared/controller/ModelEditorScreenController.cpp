@@ -91,7 +91,7 @@ using tdme::utilities::StringTools;
 
 ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view)
 {
-	class OnSetprototypeDataAction: public virtual Action
+	class OnSetPrototypeDataAction: public virtual Action
 	{
 	public:
 		void performAction() override {
@@ -104,7 +104,7 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 		 * @param modelEditorScreenController model editor screen controller
 		 * @param finalView final view
 		 */
-		OnSetprototypeDataAction(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView)
+		OnSetPrototypeDataAction(ModelEditorScreenController* modelEditorScreenController, SharedModelEditorView* finalView)
 			: modelEditorScreenController(modelEditorScreenController)
 			, finalView(finalView) {
 		}
@@ -119,7 +119,7 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->audioPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetprototypeDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
 	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), modelPath, true);
 	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUps(), audioPath);
 	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->prototypePhysicsSubScreenController->getView());
@@ -301,7 +301,7 @@ void ModelEditorScreenController::unsetPrototypeData()
 
 void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* prototype, const string& selectedName)
 {
-	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
+	prototypeBaseSubScreenController->setPrototypeProperties(prototype, presetId, selectedName);
 }
 
 void ModelEditorScreenController::unsetPrototypeProperties()
