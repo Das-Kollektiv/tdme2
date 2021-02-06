@@ -8,16 +8,16 @@ template_files_text
 
 template_outliner_object
 
-templates_viewport_scene
-templates_viewport_model
-templates_viewport_particle
-templates_viewport_emtpy
-templates_viewport_trigger
-templates_viewport_terrain/foliage
-templates_viewport_gui
-templates_viewport_texture
-templates_viewport_codeeditor
-templates_viewport_sound
+template_viewport_scene
+template_viewport_model
+template_viewport_particle
+template_viewport_emtpy
+template_viewport_trigger
+template_viewport_terrain/foliage
+template_viewport_gui
+template_viewport_texture
+template_viewport_codeeditor
+template_viewport_sound
 
 template_details_terrain_dimensions
 template_details_terrain_brush
@@ -46,13 +46,16 @@ template_details_animations
 
 - grid tab gets into viewport
 - snapping tab gets into viewport
-- scene dimensions in viewport?
-- sky tab to component?
+- scene dimensions in viewport
+- sky tab to component
 
 - lights are components of scenes
-- light tab in details?
 - environemnt mappings are components of scene
 - sky dome are components of scene
+- terrain is a component of the scene
+- postprocessing volumes are components of the scene
+
+- map properties are displayed in details when selection the parent scene node in th outliner
 
 - outliner also used for components
 

@@ -28,7 +28,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -47,8 +47,8 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="1"
-     inkscape:cx="115.74679"
-     inkscape:cy="-48.616252"
+     inkscape:cx="-18.914336"
+     inkscape:cy="-437.5"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -4674,7 +4674,7 @@
        id="g17481"
        style="display:inline;opacity:1;fill:#ffffff;enable-background:new"
        transform="translate(-659.69865,-42.206018)"
-       inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\mtrx.png"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\weblink.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:label="weblink">
@@ -4736,7 +4736,7 @@
        id="g7089-6"
        style="display:inline;opacity:1;fill:#ffffff;stroke:#ffffff;stroke-width:1.33333;stroke-miterlimit:4;stroke-dasharray:none;enable-background:new"
        transform="matrix(-0.75,0,0,0.75,250.15393,-340.35332)"
-       inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\mtrx.png"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\add.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:label="add">
@@ -4837,13 +4837,19 @@
        d="m 128.84627,-93.398803 a 0.50005,0.50005 0 0 0 -0.34375,0.15039 l -4,4 a 0.50005,0.50005 0 0 0 0,0.707032 l 4,4 a 0.50005,0.50005 0 1 0 0.70704,-0.707032 l -3.14649,-3.146484 h 7.29297 c 2.21506,0 4,1.784939 4,4 0,2.215061 -1.78494,4 -4,4 h -1.5 a 0.50005,0.50005 0 1 0 0,1 h 1.5 c 2.7555,0 5,-2.244499 5,-5 0,-2.755501 -2.2445,-5 -5,-5 h -7.29297 l 3.14649,-3.146484 a 0.50005,0.50005 0 0 0 -0.36329,-0.857422 z"
        id="path13225"
        inkscape:connector-curvature="0"
-       inkscape:label="undo" />
+       inkscape:label="undo"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\undo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
        d="m 154.85018,-93.400756 a 0.50005,0.50005 0 0 0 -0.34766,0.859375 l 3.14649,3.146484 h -7.29297 c -2.7555,0 -5,2.244499 -5,5 0,2.755501 2.2445,5 5,5 h 1.5 a 0.50005,0.50005 0 1 0 0,-1 h -1.5 c -2.21506,0 -4,-1.784939 -4,-4 0,-2.215061 1.78494,-4 4,-4 h 7.29297 l -3.14649,3.146484 a 0.50005,0.50005 0 1 0 0.70704,0.707032 l 4,-4 a 0.50005,0.50005 0 0 0 0,-0.707032 l -4,-4 a 0.50005,0.50005 0 0 0 -0.35938,-0.152343 z"
        id="path13229"
        inkscape:connector-curvature="0"
-       inkscape:label="redo" />
+       inkscape:label="redo"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\redo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <g
        id="g5249"
        inkscape:label="reload">
@@ -4923,7 +4929,7 @@
        transform="translate(-330.76923,-627.6923)"
        id="g12940-5"
        style="display:inline;opacity:1;fill:#ffffff;stroke:#ffffff;enable-background:new"
-       inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\mtrx.png"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\quit.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:label="quit">
@@ -4938,10 +4944,10 @@
        style="display:inline;opacity:1;fill:#ffffff;enable-background:new"
        id="g10027-7"
        transform="translate(244.89744,-778.71795)"
-       inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\mtrx.png"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\new_data.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       inkscape:label="create_data">
+       inkscape:label="new_data">
       <path
          sodipodi:nodetypes="sssssccccccccccccc"
          inkscape:connector-curvature="0"
@@ -4976,7 +4982,10 @@
        style="display:inline;fill:#ffffff;enable-background:new"
        id="g13226"
        transform="translate(-344.50027,-500.34547)"
-       inkscape:label="options">
+       inkscape:label="options"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\options.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <path
          style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;enable-background:accumulate"
          d="m 285,536 -0.15625,1.90625 c -0.6231,0.14227 -1.07677,0.25145 -1.59375,0.59375 l -1.75,-1.5 -1.5,1.5 1.5,1.75 c -0.34229,0.51699 -0.45148,0.97065 -0.59375,1.59375 L 279,542 v 1 1 l 1.90625,0.15625 c 0.14227,0.6231 0.25145,1.07677 0.59375,1.59375 l -1.5,1.75 1.5,1.5 1.75,-1.5 c 0.51699,0.34229 0.97065,0.45148 1.59375,0.59375 L 285,550 h 1 1 l 0.15625,-1.90625 c 0.6231,-0.14227 1.07677,-0.25145 1.59375,-0.59375 l 1.75,1.5 1.5,-1.5 -1.5,-1.75 c 0.34229,-0.51699 0.45148,-0.97065 0.59375,-1.59375 L 293,544 v -1 -1 l -1.90625,-0.15625 C 290.95148,541.22065 290.8423,540.76698 290.5,540.25 l 1.5,-1.75 -1.5,-1.5 -1.75,1.5 c -0.51699,-0.34229 -0.97065,-0.45148 -1.59375,-0.59375 L 287,536 h -1 z m 1,5 c 1.11641,0 2,0.88359 2,2 0,1.11641 -0.88359,2 -2,2 -1.11641,0 -2,-0.88359 -2,-2 0,-1.11641 0.88359,-2 2,-2 z"
@@ -4988,7 +4997,10 @@
        id="g6507"
        style="fill:#ffffff"
        transform="translate(245.82775,-162.79532)"
-       inkscape:label="create_folder">
+       inkscape:label="new_folder"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\new_folder.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          inkscape:export-ydpi="96"
          inkscape:export-xdpi="96"
@@ -5012,7 +5024,7 @@
     </g>
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.6;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
-       d="m 19.087993,-332.08592 c -0.90026,0 -1.65,0.74974 -1.65,1.65 v 12.7 c 0,0.90026 0.74974,1.65 1.65,1.65 h 12.7 c 0.90026,0 1.65,-0.74974 1.65,-1.65 v -12.7 c 0,-0.90026 -0.74974,-1.65 -1.65,-1.65 z m 0,1.6 h 12.7 c 0.0416,0 0.0499,0.008 0.0499,0.0499 v 12.7 c 0,0.0416 -0.008,0.0499 -0.0499,0.0499 h -12.7 c -0.0416,0 -0.0499,-0.008 -0.0499,-0.0499 v -12.7 c 0,-0.0416 0.008,-0.0499 0.0499,-0.0499 z"
+       d="m 20.087993,-368.08592 c -0.90026,0 -1.65,0.74974 -1.65,1.65 v 12.7 c 0,0.90026 0.74974,1.65 1.65,1.65 h 12.7 c 0.90026,0 1.65,-0.74974 1.65,-1.65 v -12.7 c 0,-0.90026 -0.74974,-1.65 -1.65,-1.65 z m 0,1.6 h 12.7 c 0.0416,0 0.0499,0.008 0.0499,0.0499 v 12.7 c 0,0.0416 -0.008,0.0499 -0.0499,0.0499 h -12.7 c -0.0416,0 -0.0499,-0.008 -0.0499,-0.0499 v -12.7 c 0,-0.0416 0.008,-0.0499 0.0499,-0.0499 z"
        id="rect13790"
        inkscape:connector-curvature="0"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_unchecked.png"
@@ -5022,7 +5034,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path13905"
-       d="m 48.596873,-332.21845 c -0.90026,0 -1.65,0.74975 -1.65,1.65 v 12.7 c 0,0.90026 0.74974,1.65 1.65,1.65 h 12.7 c 0.90025,0 1.65,-0.74974 1.65,-1.65 v -12.7 c 0,-0.90025 -0.74975,-1.65 -1.65,-1.65 z m 11.11875,3.18437 a 1.60016,1.60016 0 0 1 1.1625,2.74688 l -6.4,6.4 a 1.60016,1.60016 0 0 1 -2.2625,0 l -3.2,-3.2 a 1.60016,1.60016 0 1 1 2.2625,-2.2625 l 2.06875,2.06876 5.26875,-5.26876 a 1.60016,1.60016 0 0 1 1.1,-0.48438 z"
+       d="m 49.596873,-368.21845 c -0.90026,0 -1.65,0.74975 -1.65,1.65 v 12.7 c 0,0.90026 0.74974,1.65 1.65,1.65 h 12.7 c 0.90025,0 1.65,-0.74974 1.65,-1.65 v -12.7 c 0,-0.90025 -0.74975,-1.65 -1.65,-1.65 z m 11.11875,3.18437 a 1.60016,1.60016 0 0 1 1.1625,2.74688 l -6.4,6.4 a 1.60016,1.60016 0 0 1 -2.2625,0 l -3.2,-3.2 a 1.60016,1.60016 0 1 1 2.2625,-2.2625 l 2.06875,2.06876 5.26875,-5.26876 a 1.60016,1.60016 0 0 1 1.1,-0.48438 z"
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_checked.png"
        inkscape:export-xdpi="96"
@@ -5030,7 +5042,7 @@
        inkscape:label="checkbox_checked" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.6;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
-       d="m 25.27386,-286.00723 c -4.4088,0 -8,3.5912 -8,8 0,4.4088 3.5912,8 8,8 4.40882,0 8,-3.5912 8,-8 0,-4.4088 -3.59118,-8 -8,-8 z m 0,1.6 c 3.5441,0 6.4,2.85591 6.4,6.4 0,3.5441 -2.8559,6.4 -6.4,6.4 -3.54408,0 -6.4,-2.8559 -6.4,-6.4 0,-3.54409 2.85592,-6.4 6.4,-6.4 z"
+       d="m 26.27386,-322.00723 c -4.4088,0 -8,3.5912 -8,8 0,4.4088 3.5912,8 8,8 4.40882,0 8,-3.5912 8,-8 0,-4.4088 -3.59118,-8 -8,-8 z m 0,1.6 c 3.5441,0 6.4,2.85591 6.4,6.4 0,3.5441 -2.8559,6.4 -6.4,6.4 -3.54408,0 -6.4,-2.8559 -6.4,-6.4 0,-3.54409 2.85592,-6.4 6.4,-6.4 z"
        id="path13966"
        inkscape:connector-curvature="0"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\radiobutton_unselected.png"
@@ -5039,10 +5051,13 @@
        inkscape:label="radiobutton_unselected" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.5;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-       d="m 274.53434,-226.19828 a 0.50005006,0.50005006 0 0 0 -0.5,0.5 v 15 a 0.50005006,0.50005006 0 0 0 0.5,0.5 h 15 a 0.50005006,0.50005006 0 0 0 0.5,-0.5 v -15 a 0.50005006,0.50005006 0 0 0 -0.5,-0.5 z m 0.5,1 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m -10,5 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m -10,5 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z"
+       d="m 45.53434,-249.19828 a 0.50005006,0.50005006 0 0 0 -0.5,0.5 v 15 a 0.50005006,0.50005006 0 0 0 0.5,0.5 h 15 a 0.50005006,0.50005006 0 0 0 0.5,-0.5 v -15 a 0.50005006,0.50005006 0 0 0 -0.5,-0.5 z m 0.5,1 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m -10,5 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m -10,5 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z m 5,0 h 4 v 4 h -4 z"
        id="rect15343"
        inkscape:connector-curvature="0"
-       inkscape:label="grid" />
+       inkscape:label="grid"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\grid.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <g
        style="display:inline;fill:#ffffff;enable-background:new"
        inkscape:export-ydpi="96"
@@ -5094,11 +5109,14 @@
        inkscape:label="attention" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
-       d="m 225.64421,-226.99559 c -1.59478,-0.0195 -3.16997,0.53887 -4.2539,1.6914 l -0.74024,0.73828 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 0.5,-0.5 c 0.5849,-0.58491 1.58165,-0.89809 2.3457,-0.69336 0.80156,0.21477 1.42585,0.83907 1.64062,1.64062 0.20473,0.76404 -0.10844,1.76078 -0.69336,2.3457 l -0.5,0.5 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 0.75,-0.75 c 2.22378,-2.22379 2.21818,-6.29752 -0.0977,-8.61329 -1.15793,-1.15796 -2.77045,-1.75392 -4.36524,-1.77343 z m -6.14848,3.7832 c -0.12989,0.002 -0.25387,0.0546 -0.34571,0.14648 l -1.25,1.25 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 1.25,-1.25 c 0.19519,-0.19527 0.19519,-0.51177 0,-0.70704 l -2,-2 c -0.0957,-0.0957 -0.226,-0.14854 -0.36128,-0.14648 z m 6.00019,6 c -0.12989,0.002 -0.25387,0.0546 -0.34571,0.14648 l -1.25,1.25 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 1.25,-1.25 c 0.19519,-0.19527 0.19519,-0.51177 0,-0.70704 l -2,-2 c -0.0957,-0.0957 -0.22612,-0.14859 -0.36147,-0.14648 z"
+       d="m 54.64421,-272.99559 c -1.59478,-0.0195 -3.16997,0.53887 -4.2539,1.6914 l -0.74024,0.73828 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 0.5,-0.5 c 0.5849,-0.58491 1.58165,-0.89809 2.3457,-0.69336 0.80156,0.21477 1.42585,0.83907 1.64062,1.64062 0.20473,0.76404 -0.10844,1.76078 -0.69336,2.3457 l -0.5,0.5 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 0.75,-0.75 c 2.22378,-2.22379 2.21818,-6.29752 -0.0977,-8.61329 -1.15793,-1.15796 -2.77045,-1.75392 -4.36524,-1.77343 z m -6.14848,3.7832 c -0.12989,0.002 -0.25387,0.0546 -0.34571,0.14648 l -1.25,1.25 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 1.25,-1.25 c 0.19519,-0.19527 0.19519,-0.51177 0,-0.70704 l -2,-2 c -0.0957,-0.0957 -0.226,-0.14854 -0.36128,-0.14648 z m 6.00019,6 c -0.12989,0.002 -0.25387,0.0546 -0.34571,0.14648 l -1.25,1.25 c -0.19519,0.19527 -0.19519,0.51177 0,0.70704 l 2,2 c 0.19527,0.19519 0.51177,0.19519 0.70704,0 l 1.25,-1.25 c 0.19519,-0.19527 0.19519,-0.51177 0,-0.70704 l -2,-2 c -0.0957,-0.0957 -0.22612,-0.14859 -0.36147,-0.14648 z"
        id="path21201-1"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccscccccccccccccccccccccccccccccc"
-       inkscape:label="checkbox_snapon" />
+       inkscape:label="checkbox_snapon"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\checkbox_snappingon.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <g
        inkscape:export-ydpi="96"
        inkscape:export-xdpi="96"
@@ -5194,7 +5212,10 @@
        id="g17548-0"
        transform="matrix(-1,0,0,1,304.35336,-188.79758)"
        style="fill:#ffffff"
-       inkscape:label="import">
+       inkscape:label="import"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\import.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <path
          style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
          d="M 222.49219,95.005859 A 0.50005,0.50005 0 0 0 222,95.511719 v 8.792971 l -3.14648,-3.14649 a 0.50005,0.50005 0 1 0 -0.70704,0.70703 l 3.95704,3.95704 a 0.50005,0.50005 0 0 0 0.79296,0.002 0.50005,0.50005 0 0 0 0.004,-0.006 l 3.95313,-3.95313 a 0.50005,0.50005 0 1 0 -0.70704,-0.70703 L 223,104.30469 v -8.792971 a 0.50005,0.50005 0 0 0 -0.50781,-0.50586 z"
@@ -5242,7 +5263,7 @@
     <path
        id="path20615"
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.6;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
-       d="m 20.135847,-261.2043 c -2.20236,0 -4,1.79764 -4,4 v 0.57143 h 1.14286 v -0.57143 c 0,-1.58472 1.27242,-2.85714 2.85714,-2.85714 1.58472,0 2.85715,1.27242 2.85715,2.85714 v 1.71429 h -0.57143 a 0.57148569,0.57148569 0 0 0 -0.57143,0.57143 v 5.71428 a 0.57148569,0.57148569 0 0 0 0.57143,0.57143 h 9.14285 a 0.57148569,0.57148569 0 0 0 0.57143,-0.57143 v -5.71428 a 0.57148569,0.57148569 0 0 0 -0.57143,-0.57143 h -7.42857 v -1.71429 c 0,-2.20236 -1.79763,-4 -4,-4 z m 2.85715,6.85715 h 7.99999 v 4.57142 h -7.99999 z m 3.42857,1.14284 h 1.14285 v 2.28573 h -1.14285 z"
+       d="m 21.135847,-297.2043 c -2.20236,0 -4,1.79764 -4,4 v 0.57143 h 1.14286 v -0.57143 c 0,-1.58472 1.27242,-2.85714 2.85714,-2.85714 1.58472,0 2.85715,1.27242 2.85715,2.85714 v 1.71429 h -0.57143 a 0.57148569,0.57148569 0 0 0 -0.57143,0.57143 v 5.71428 a 0.57148569,0.57148569 0 0 0 0.57143,0.57143 h 9.14285 a 0.57148569,0.57148569 0 0 0 0.57143,-0.57143 v -5.71428 a 0.57148569,0.57148569 0 0 0 -0.57143,-0.57143 h -7.42857 v -1.71429 c 0,-2.20236 -1.79763,-4 -4,-4 z m 2.85715,6.85715 h 7.99999 v 4.57142 h -7.99999 z m 3.42857,1.14284 h 1.14285 v 2.28573 h -1.14285 z"
        inkscape:connector-curvature="0"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_unlocked.png"
        inkscape:export-xdpi="96"
@@ -5251,7 +5272,7 @@
     <g
        id="g20632"
        style="display:inline;fill:#ffffff;stroke-width:0.875061;enable-background:new"
-       transform="matrix(1.1427778,0,0,1.1427778,425.30235,128.36623)"
+       transform="matrix(1.1427778,0,0,1.1427778,426.30235,92.36623)"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_locked.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
@@ -5274,13 +5295,16 @@
     <path
        inkscape:connector-curvature="0"
        id="path20072-2"
-       d="m 204.67156,-226.9702 c -1.58517,-0.0121 -3.15973,0.54254 -4.27148,1.65429 l -3.5,3.5 a 0.50005,0.50005 0 0 0 0,0.70704 l 2,2 a 0.50005,0.50005 0 0 0 0.70703,0 l 3.25,-3.25 c 0.58491,-0.58491 1.58165,-0.89809 2.3457,-0.69336 0.80156,0.21477 1.42585,0.83907 1.64062,1.64062 0.20473,0.76404 -0.10843,1.76078 -0.69335,2.3457 l -3.25,3.25 a 0.50005,0.50005 0 0 0 0,0.70704 l 2,2 a 0.50005,0.50005 0 0 0 0.70703,0 l 3.4746,-3.47657 a 0.50005,0.50005 0 0 0 0.0254,-0.0234 0.50005,0.50005 0 0 0 0.12109,-0.18946 c 2.06467,-2.25524 2.04105,-6.1641 -0.21875,-8.42383 -1.15788,-1.15791 -2.75272,-1.73596 -4.33789,-1.74804 z m -0.008,1.0332 c 1.34087,0.01 2.69431,0.47748 3.63867,1.42188 1.8888,1.88873 1.87387,5.423 0.0977,7.19921 l -3.14654,3.14649 -1.29297,-1.29297 2.89649,-2.89648 c 0.84012,-0.84012 1.27,-2.1299 0.95312,-3.3125 -0.30683,-1.14511 -1.20255,-2.04084 -2.34765,-2.34766 -1.18259,-0.31687 -2.47237,0.11299 -3.3125,0.95312 l -2.89649,2.89649 -1.29297,-1.29297 3.14649,-3.14648 c 0.88824,-0.88825 2.21577,-1.33772 3.55664,-1.32813 z"
+       d="m 33.67156,-272.9702 c -1.58517,-0.0121 -3.15973,0.54254 -4.27148,1.65429 l -3.5,3.5 a 0.50005,0.50005 0 0 0 0,0.70704 l 2,2 a 0.50005,0.50005 0 0 0 0.70703,0 l 3.25,-3.25 c 0.58491,-0.58491 1.58165,-0.89809 2.3457,-0.69336 0.80156,0.21477 1.42585,0.83907 1.64062,1.64062 0.20473,0.76404 -0.10843,1.76078 -0.69335,2.3457 l -3.25,3.25 a 0.50005,0.50005 0 0 0 0,0.70704 l 2,2 a 0.50005,0.50005 0 0 0 0.70703,0 l 3.4746,-3.47657 a 0.50005,0.50005 0 0 0 0.0254,-0.0234 0.50005,0.50005 0 0 0 0.12109,-0.18946 c 2.06467,-2.25524 2.04105,-6.1641 -0.21875,-8.42383 -1.15788,-1.15791 -2.75272,-1.73596 -4.33789,-1.74804 z m -0.008,1.0332 c 1.34087,0.01 2.69431,0.47748 3.63867,1.42188 1.8888,1.88873 1.87387,5.423 0.0977,7.19921 l -3.14654,3.14649 -1.29297,-1.29297 2.89649,-2.89648 c 0.84012,-0.84012 1.27,-2.1299 0.95312,-3.3125 -0.30683,-1.14511 -1.20255,-2.04084 -2.34765,-2.34766 -1.18259,-0.31687 -2.47237,0.11299 -3.3125,0.95312 l -2.89649,2.89649 -1.29297,-1.29297 3.14649,-3.14648 c 0.88824,-0.88825 2.21577,-1.33772 3.55664,-1.32813 z"
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.6;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
-       inkscape:label="checkbox_snapoff" />
+       inkscape:label="checkbox_snapoff"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\checkbox_snappingoff.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <path
        inkscape:connector-curvature="0"
        id="path19886"
-       d="m 17.147416,-302.24114 a 0.61718931,0.61718931 0 0 0 -0.40981,1.0414 c 1.63403,1.77507 3.80447,5.13228 7.83222,5.13228 4.02775,0 6.2006,-3.35721 7.83463,-5.13228 a 0.61759027,0.61759027 0 1 0 -0.90882,-0.83649 c -1.77185,1.92477 -3.58683,4.73452 -6.92581,4.73452 -3.33897,0 -5.15396,-2.80975 -6.9258,-4.73452 a 0.61718931,0.61718931 0 0 0 -0.49661,-0.20491 z"
+       d="m 18.147416,-338.24114 a 0.61718931,0.61718931 0 0 0 -0.40981,1.0414 c 1.63403,1.77507 3.80447,5.13228 7.83222,5.13228 4.02775,0 6.2006,-3.35721 7.83463,-5.13228 a 0.61759027,0.61759027 0 1 0 -0.90882,-0.83649 c -1.77185,1.92477 -3.58683,4.73452 -6.92581,4.73452 -3.33897,0 -5.15396,-2.80975 -6.9258,-4.73452 a 0.61718931,0.61718931 0 0 0 -0.49661,-0.20491 z"
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.6;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_invisible.png"
        inkscape:export-xdpi="96"
@@ -5290,7 +5314,7 @@
        inkscape:export-ydpi="96"
        inkscape:export-xdpi="96"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\checkbox_visible.png"
-       transform="matrix(-1.231601,0,0,1.231601,613.36322,-814.83621)"
+       transform="matrix(-1.231601,0,0,1.231601,614.36322,-850.83621)"
        id="g19901"
        style="display:inline;fill:#ffffff;stroke-width:0.811951;enable-background:new"
        inkscape:label="checkbox_visible">
@@ -5307,12 +5331,18 @@
        d="m 185.70852,-88.049425 h -1 v -2 l 0.8535,-0.8535 c 0.091,0.09 0.1465,0.2154 0.1465,0.3535 z m -1,-2 0.8535,-0.8535 c -0.09,-0.091 -0.2154,-0.1465 -0.3535,-0.1465 h -9 c -0.1326,0 -0.2598,0.053 -0.3535,0.1465 l -4,4.0078 c -0.094,0.094 -0.1465,0.2209 -0.1465,0.3535 v 8.9922 c 0,0.2761 0.2239,0.5 0.5,0.5 h 13 c 0.2761,0 0.5,-0.2239 0.5,-0.5 v -2.5 c -1e-4,-1.0628 -0.406,-2.084 -1.1367,-2.8438 l -0.01,-0.01 -2.1463,-2.1462 h 2.793 c 0.6761,0.01 0.6761,-1.0096 0,-1 h -3.9395 c -0.3255,-0.042 -0.6029,0.235 -0.5605,0.5605 v 3.9395 c -0.01,0.6761 1.0096,0.6761 1,0 v -2.793 l 2.1426,2.1426 c 0.5484,0.5702 0.8573,1.3426 0.8574,2.1504 v 2 h -12 v -8.2852 l 3.707,-3.7148 z"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccscccccccssssscccccccccccccccccc"
-       inkscape:label="save" />
+       inkscape:label="save"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\save.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <g
        style="display:inline;fill:#ffffff;enable-background:new"
        id="g19348"
        transform="translate(-527.89744,-1771.2308)"
-       inkscape:label="delete">
+       inkscape:label="delete"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\delete.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          style="fill:#ffffff;stroke:#ffffff"
          id="g19344">
@@ -5373,7 +5403,10 @@
        style="display:inline;fill:#ffffff;enable-background:new"
        id="g25815"
        transform="translate(-169.39133,-612.48353)"
-       inkscape:label="select">
+       inkscape:label="select"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\select.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <path
          id="path5833"
          style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:6.3;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
@@ -5427,7 +5460,8 @@
        inkscape:label="arrow_up" />
     <g
        id="g5258"
-       inkscape:label="radiobutton_selected">
+       inkscape:label="radiobutton_selected"
+       transform="translate(1,-36)">
       <path
          style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:new"
          d="m 54.24284,-282.63944 c -2.53915,0 -4.60745,2.06828 -4.60745,4.60745 0,2.53916 2.0683,4.60745 4.60745,4.60745 2.53917,0 4.60744,-2.06829 4.60744,-4.60745 0,-2.53917 -2.06827,-4.60745 -4.60744,-4.60745 z"
@@ -5652,7 +5686,10 @@
     <g
        id="g5426"
        inkscape:label="translate"
-       transform="translate(-71.809998,-59.485358)">
+       transform="translate(-71.809998,-59.485358)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\translate.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          id="g5328"
          transform="translate(-1.023437)">
@@ -5744,7 +5781,10 @@
     <g
        id="rotate"
        inkscape:label="rotate"
-       transform="translate(-44.86333,-59.151912)">
+       transform="translate(-44.86333,-59.151912)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\rotate.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <path
          inkscape:connector-curvature="0"
          id="path9205-9-8-2-3-0"
@@ -5783,7 +5823,10 @@
     <g
        id="scale"
        inkscape:label="scale"
-       transform="translate(-14.063969,-59.139349)">
+       transform="translate(-14.063969,-59.139349)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\scale.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <rect
          style="opacity:1;fill:none;fill-opacity:0.6;stroke:#ffffff;stroke-width:0.999995;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect5588"
@@ -5828,7 +5871,10 @@
     <g
        id="gizmo"
        inkscape:label="gizmo"
-       transform="translate(15.379572,-60.634406)">
+       transform="translate(15.379572,-60.634406)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\gizmo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <rect
          style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.999998;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
          id="rect5588-9-7"
@@ -5887,5 +5933,14 @@
          style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.999995;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="M 10.15625,3.7890625 C 7.0597925,4.6224989 4.6231304,7.0580963 3.7890625,10.154297 l 1.296875,-0.9062501 c 0.030918,-0.021707 0.066872,-0.03256 0.099609,-0.050781 0.8037844,-1.7803453 2.2347616,-3.210827 4.015625,-4.0136718 0.017262,-0.031569 0.025701,-0.065358 0.046875,-0.095703 z m 4.689453,0 0.90625,1.296875 v 0.00195 c 0.02063,0.029495 0.02936,0.064572 0.04687,0.095703 1.782192,0.8034436 3.214135,2.2353867 4.017578,4.0175781 0.0316,0.017257 0.06537,0.025704 0.0957,0.046875 h 0.002 L 21.210938,10.15625 C 20.377501,7.0597926 17.941904,4.6231304 14.845703,3.7890625 Z M 3.7890625,14.84375 c 0.8334364,3.096458 3.2690339,5.53312 6.3652345,6.367188 L 9.2480469,19.914062 c -0.021707,-0.03092 -0.03256,-0.06687 -0.050781,-0.09961 -1.7790175,-0.803185 -3.2085337,-2.232701 -4.0117187,-4.011719 -0.033111,-0.01797 -0.067842,-0.02851 -0.099609,-0.05078 z m 17.4218755,0 -1.298829,0.908203 c -0.02949,0.02063 -0.06457,0.02936 -0.0957,0.04687 -0.803443,1.782192 -2.235386,3.214135 -4.017578,4.017578 -0.01726,0.03157 -0.0257,0.06536 -0.04687,0.0957 v 0.002 l -0.908203,1.296876 c 3.097065,-0.833601 5.533587,-3.270123 6.367188,-6.367188 z" />
     </g>
+    <path
+       id="rect15343-1"
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:0.6;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.5;stroke-opacity:1;marker:none;paint-order:fill markers stroke;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       inkscape:label="nogrid"
+       d="m 18,-248 c -0.27613,3e-5 -0.49997,0.22387 -0.5,0.5 v 15 c 3e-5,0.27613 0.22387,0.49997 0.5,0.5 h 15 c 0.27613,-3e-5 0.49997,-0.22387 0.5,-0.5 v -15 c -3e-5,-0.27613 -0.22387,-0.49997 -0.5,-0.5 z m 0.5,1 c 4.66667,0 9.33333,0 14,0 0,4.66667 0,9.33333 0,14 -4.66667,0 -9.33333,0 -14,0 0,-4.66667 0,-9.33333 0,-14 z"
+       sodipodi:nodetypes="cccccccccccccc"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\nogrid.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
   </g>
 </svg>

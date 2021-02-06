@@ -1,16 +1,17 @@
 <screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
-	
-		<layout padding="5" alignment="horizontal" width="100%" height="40">
+		<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="40">
+			<space width="5"/>
+			<image src="resources/engine/images/tdme.png"/>
 			<space width="5"/>
 			<menu-header>
 				<menu-header-item text="File">
-					<menu-item text="New Project" id="menu_file_new" />
-					<menu-item text="Open Project" id="menu_file_open" />
+					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="ctrl + n"/>
+					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="ctrl + o"/>
 					<menu-separator />
-					<menu-item text="Save all" id="menu_file_saveall" />
+					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut="ctrl + s"/>
 					<menu-separator />
-					<menu-item text="Quit" id="menu_file_quit" />
+					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="strl + q" />
 				</menu-header-item>
 				<menu-header-item text="Edit">
 					<menu-item text="Undo" id="menu_edit_undo" />
@@ -46,20 +47,20 @@
 					
 						<layout padding="5" alignment="vertical" width="100%" height="100%">
 						
-							<input border="1" width="100%" height="auto" text="resources/textures" />
+							<input width="100%" height="auto" hint="Search" />
 							
-							<space height="10"/>
+							<space height="5"/>
 							
 							<selectbox id="selectbox_projectlibrary" boder="0">
 								<scrollarea width="100%" height="200" focusable="true">
 								
-									<selectbox-parent-option text="resources" value="1">
-										<selectbox-option text="textures" value="1.1" />
-										<selectbox-option text="models" value="1.2" />
-										<selectbox-option text="scenes" value="1.3" />
-										<selectbox-option text="particles" value="1.4" />
-										<selectbox-parent-option text="gui" value="1.5">
-											<selectbox-option text="definitions" value="1.5.1" />
+									<selectbox-parent-option image="resources/engine/images/folder.png" text="resources" value="1">
+										<selectbox-option image="resources/engine/images/folder.png" text="textures" value="1.1" selected="true" />
+										<selectbox-option image="resources/engine/images/folder.png" text="models" value="1.2" />
+										<selectbox-option image="resources/engine/images/folder.png" text="scenes" value="1.3" />
+										<selectbox-option image="resources/engine/images/folder.png" text="particles" value="1.4" />
+										<selectbox-parent-option image="resources/engine/images/folder.png" text="gui" value="1.5">
+											<selectbox-option image="resources/engine/images/folder.png" text="definitions" value="1.5.1" />
 										</selectbox-parent-option>
 									</selectbox-parent-option>
 					
@@ -68,11 +69,18 @@
 							
 							<space height="20"/>
 							
-							<input border="1" width="100%" height="auto" text="Search" />
 							
-							<space height="10"/>
+							<layout alignment="horizontal" width="100%" height="auto">
+								<input width="*" height="auto" hint="Search" />
+								<space width="5"/>
+								<button id="button_add" width="25" height="25" image="resources/engine/images/add.png" />
+								<space width="5"/>
+								<button id="button_import" width="25" height="25" image="resources/engine/images/import.png" />
+							</layout>
 							
-							<scrollarea background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+							<space height="5"/>
+							
+							<scrollarea border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
 								<layout padding="10" alignment="vertical" horizontal-align="center">
 									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
@@ -144,22 +152,14 @@
 			<!-- viewport -------------------------------------------------------->
 			<tabs alignment="vertical" width="*" height="100%">
 				<tabs-header>
-					<tab id="tab_viewport_1" text="Viewport" />
-					<tab id="tab_viewport_2" text="Model" />
+					<tab id="tab_viewport_1" text="newscene.tl" closeable="true" />
+					<tab id="tab_viewport_2" text="model.tm" closeable="true" />
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="tab_viewport_1">
-						<layout padding="5" width="100%" height="100%" alignment="vertical" vertical-align="center" horizontal-align="center">
-					
-							<layout alignment="horizontal" width="100%" height="24">
-							</layout>
-						
-							<element border="1" id="viewport" width="100%" height="*" background-color="{$color.element_midground}" focusable="true">
-							</element>
-							
-						</layout>
+						<template src="resources/engine/gui/template_viewport_scene.xml"/>
 					</tab-content>
-					<tab-content tab-id="tab_viewport_2" vertical-align="center">
+					<tab-content tab-id="tab_viewport_2">
 					</tab-content>						
 				</tabs-content>
 			</tabs>
@@ -181,11 +181,11 @@
 						<tab-content tab-id="tab_outliner" vertical-align="center">
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 	
-								<input border="1" width="100%" height="auto" text="Filter" />
+								<input width="100%" height="auto" hint="Filter" />
 								
-								<space height="10"/>
+								<space height="5"/>
 							
-								<scrollarea border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+								<scrollarea border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 								
 								</scrollarea>
 								
