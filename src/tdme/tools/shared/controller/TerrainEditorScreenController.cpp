@@ -15,8 +15,8 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
-#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
+#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
