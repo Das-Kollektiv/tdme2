@@ -1,17 +1,17 @@
 <screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
-		<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="40">
+		<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="30">
 			<space width="5"/>
 			<image src="resources/engine/images/tdme.png"/>
 			<space width="5"/>
 			<menu-header>
 				<menu-header-item text="File">
-					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="ctrl + n"/>
-					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="ctrl + o"/>
+					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="Ctrl + N"/>
+					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="Ctrl + O"/>
 					<menu-separator />
-					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut="ctrl + s"/>
+					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut="Ctrl + S"/>
 					<menu-separator />
-					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="strl + q" />
+					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="Ctrl + Q" />
 				</menu-header-item>
 				<menu-header-item text="Edit">
 					<menu-item text="Undo" id="menu_edit_undo" />
@@ -38,7 +38,7 @@
 			<space width="5"/>
 		
 			<!-- project library -------------------------------------------------->
-			<tabs alignment="vertical" width="256" height="100%">
+			<tabs alignment="vertical" width="215" height="100%">
 				<tabs-header>
 					<tab id="tab_projectlibrary" text="Files" />
 				</tabs-header>
@@ -82,58 +82,49 @@
 							
 							<scrollarea border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 								
-								<layout padding="10" alignment="vertical" horizontal-align="center">
-									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
-									<space height="5"/>
-									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								<layout alignment="horizontal" >
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
 								</layout>
 							
 							</scrollarea>
@@ -157,9 +148,10 @@
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="tab_viewport_1">
-						<template src="resources/engine/gui/template_viewport_scene.xml"/>
+						<template id="scene_1" src="resources/engine/gui/template_viewport_scene.xml"/>
 					</tab-content>
 					<tab-content tab-id="tab_viewport_2">
+						<template id="scene_2" src="resources/engine/gui/template_viewport_scene.xml"/>
 					</tab-content>						
 				</tabs-content>
 			</tabs>
@@ -204,7 +196,10 @@
 						<tab id="tab_details" text="Details" />
 					</tabs-header>
 					<tabs-content>
-						<tab-content tab-id="tab_details" vertical-align="center">
+						<tab-content tab-id="tab_details" horizontal-align="center" vertical-align="top">
+							<template id="properties" src="resources/engine/gui/template_details.xml">
+								<space height="50"/>
+							</template>
 						</tab-content>	
 					</tabs-content>
 				</tabs>

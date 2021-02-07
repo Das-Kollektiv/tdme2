@@ -3,16 +3,13 @@ popup_progressbar
 popup_filedialog
 popup_infodialog
 
-template_files_thumbnail
+button_template_thumbnail
 template_files_text
 
 template_outliner_object
 
 template_viewport_scene
-template_viewport_model
-template_viewport_particle
-template_viewport_emtpy
-template_viewport_trigger
+
 template_viewport_terrain/foliage
 template_viewport_gui
 template_viewport_texture

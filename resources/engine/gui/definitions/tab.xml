@@ -32,7 +32,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -69,7 +69,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_mouseover" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -105,7 +105,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_selected" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -141,7 +141,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_disabled" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 
