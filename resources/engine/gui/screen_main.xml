@@ -38,7 +38,7 @@
 			<space width="5"/>
 		
 			<!-- project library -------------------------------------------------->
-			<tabs alignment="vertical" width="215" height="100%">
+			<tabs alignment="vertical" width="220" height="100%">
 				<tabs-header>
 					<tab id="tab_projectlibrary" text="Files" />
 				</tabs-header>
@@ -197,9 +197,14 @@
 					</tabs-header>
 					<tabs-content>
 						<tab-content tab-id="tab_details" horizontal-align="center" vertical-align="top">
-							<template id="properties" src="resources/engine/gui/template_details.xml">
-								<space height="50"/>
-							</template>
+							<layout padding="5" alignment="vertical" width="100%" height="100%">
+								<input width="100%" height="auto" hint="Filter" />
+								<space height="5"/>
+								<template id="properties" src="resources/engine/gui/template_details_properties.xml"/>
+								<template id="physics" src="resources/engine/gui/template_details_physics.xml"/>
+								<template id="rendering" src="resources/engine/gui/template_details_rendering.xml"/>
+								<template id="lod" src="resources/engine/gui/template_details_lod.xml"/>
+							</layout>
 						</tab-content>	
 					</tabs-content>
 				</tabs>

@@ -1,0 +1,47 @@
+<element id="{$id}" width="100%" height="auto">
+	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<button width="100%" height="25" text="Physics" on-mouse-click="{$id}.condition!=open"/>
+		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
+							
+			<dropdown id="physics_bodytype_dropdown" name="physics_bodytype_dropdown" width="100%" text="None">
+				<dropdown-option text="None" value="none" />
+				<dropdown-option text="Collision body" value="collisionbody" />
+				<dropdown-option text="Dynamic rigid body" value="dynamicrigidbody" />
+				<dropdown-option text="Static rigid body" value="staticrigidbody" />
+			</dropdown>
+			
+			<space height="5" />
+
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Mass" width="140" height="auto"/>
+				<space width="5" />
+				<input id="physics_body_mass" name="physics_body_mass" width="*" text="Name" disabled="true" />
+			</layout>
+
+			<space height="5" />
+
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Bounciness" width="140" height="auto"/>
+				<space width="5" />
+				<input id="physics_body_bounciness" name="physics_body_bounciness" width="*" height="auto" text="Name" disabled="true" />
+			</layout>
+
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Friction" width="140" height="auto"/>
+				<space width="5" />
+				<input id="physics_body_friction" name="physics_body_friction" width="*" height="auto" text="Name" disabled="true" />
+			</layout>
+
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Inertia tensor" width="140" height="auto"/>
+				<space width="5" />
+				<input id="physics_body_inertiatensor" name="physics_body_inertiatensor" width="*" height="auto" text="Name" disabled="true" />
+			</layout>
+					
+		</layout>		
+	</layout>
+</element>

@@ -16,13 +16,13 @@
 			</selectbox>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Name" width="40" height="auto"/>
+				<text font="{$font.default}" text="Name" width="50" height="auto"/>
 				<space width="5" />
 				<input id="entity_property_name" name="entity_property_name" width="*" height="auto" text="Name" />
 			</layout>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Value" width="40" height="auto"/>
+				<text font="{$font.default}" text="Value" width="50" height="auto"/>
 				<space width="5" />
 				<input id="entity_property_value" name="entity_property_value" width="*" height="auto" text="Value" />
 			</layout>	

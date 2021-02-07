@@ -33,6 +33,7 @@ template_details_boundingvolume
 template_details_rendering
 template_details_physics
 template_details_animations
+template_details_shaderparameters
 (template_details_particle)
 
 - statistics gets into viewport
