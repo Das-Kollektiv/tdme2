@@ -1105,6 +1105,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					parentElementId,
 					node,
 					guiElementIt->second->getTemplate(guiParentNode->getScreenNode()->getApplicationRootPath(),
+					"engine",
 					AVOID_NULLPTR_STRING(node->Attribute("template"))),
 					guiElementIt->second->getAttributes(guiParentNode->screenNode),
 					guiElementIt->second
