@@ -167,10 +167,10 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	}
 
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
-	auto applicationSubPath = Tools::getApplicationSubPathName(pathName);
+	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
 	guiScreenNode = new GUIScreenNode(
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
-		applicationSubPath,
+		applicationSubPathName,
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),
 		GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x")))),
