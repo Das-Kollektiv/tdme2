@@ -30,7 +30,7 @@ const string& GUIScrollArea::getName()
 	return NAME;
 }
 
-const string GUIScrollArea::getTemplate(const string& applicationPathName, const string& subFolderName, const string& fileName)
+const string GUIScrollArea::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
 	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/engine/gui/definitions", fileName.empty() == true?"scrollarea.xml":fileName);
 }

@@ -30,9 +30,9 @@ const string& GUITabContent::getName()
 	return NAME;
 }
 
-const string GUITabContent::getTemplate(const string& applicationPathName, const string& subFolderName, const string& fileName)
+const string GUITabContent::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + subFolderName + "/gui/definitions", fileName.empty() == true?"tab-content.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"tab-content.xml":fileName);
 }
 
 unordered_map<string, string> GUITabContent::getAttributes(GUIScreenNode* screenNode)

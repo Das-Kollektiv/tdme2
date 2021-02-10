@@ -29,9 +29,9 @@ const string& GUIProgressBar::getName()
 	return NAME;
 }
 
-const string GUIProgressBar::getTemplate(const string& applicationPathName, const string& subFolderName, const string& fileName)
+const string GUIProgressBar::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + subFolderName + "/gui/definitions", fileName.empty() == true?"progressbar.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"progressbar.xml":fileName);
 }
 
 unordered_map<string, string> GUIProgressBar::getAttributes(GUIScreenNode* screenNode)

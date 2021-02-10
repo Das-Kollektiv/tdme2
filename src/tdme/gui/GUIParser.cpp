@@ -166,9 +166,11 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		throw GUIParserException("XML root node must be <screen>");
 	}
 
-	auto applicationRootPath = Tools::getApplicationRootPath(pathName);
+	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
+	auto applicationSubPath = Tools::getApplicationSubPathName(pathName);
 	guiScreenNode = new GUIScreenNode(
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
+		applicationSubPath,
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),
 		GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x")))),
@@ -1083,7 +1085,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					parentElementId,
 					node,
 					FileSystem::getInstance()->getContentAsString(
-						guiParentNode->getScreenNode()->getApplicationRootPath() + "/" +
+						guiParentNode->getScreenNode()->getApplicationRootPathName() + "/" +
 						FileSystem::getInstance()->getPathName(src),
 						FileSystem::getInstance()->getFileName(src)
 					),
@@ -1104,9 +1106,11 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					guiParentNode,
 					parentElementId,
 					node,
-					guiElementIt->second->getTemplate(guiParentNode->getScreenNode()->getApplicationRootPath(),
-					"engine",
-					AVOID_NULLPTR_STRING(node->Attribute("template"))),
+					guiElementIt->second->getTemplate(
+						guiParentNode->getScreenNode()->getApplicationRootPathName(),
+						guiParentNode->getScreenNode()->getApplicationSubPathName(),
+						AVOID_NULLPTR_STRING(node->Attribute("template"))
+					),
 					guiElementIt->second->getAttributes(guiParentNode->screenNode),
 					guiElementIt->second
 				);
