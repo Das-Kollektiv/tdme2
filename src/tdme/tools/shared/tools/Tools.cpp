@@ -500,14 +500,20 @@ const string Tools::getApplicationSubPathName(const string& fileName)
 		applicationSubPathNameIdx = fileName.rfind("/resources/");
 		if (applicationSubPathNameIdx != -1) {
 			applicationSubPathNameIdx+= string("/resources/").size();
-			return StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			if (applicationSubPathName == "engine") return applicationSubPathName; else
+			if (applicationSubPathName == "project") return applicationSubPathName; else
+				return "engine";
 		}
 	}
 	if (applicationSubPathNameIdx == -1) {
 		applicationSubPathNameIdx = fileName.rfind("resources/");
 		if (applicationSubPathNameIdx != -1) {
 			applicationSubPathNameIdx+= string("resources/").size();
-			return StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			if (applicationSubPathName == "engine") return applicationSubPathName; else
+			if (applicationSubPathName == "project") return applicationSubPathName; else
+				return "engine";
 		}
 	}
 	return "";
