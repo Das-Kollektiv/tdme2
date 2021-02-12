@@ -167,6 +167,10 @@ void SharedTerrainEditorView::display()
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 		terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+			brushingEnabled = false;
+			terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+		}
 	}
 
 	// viewport

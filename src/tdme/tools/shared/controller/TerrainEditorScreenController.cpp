@@ -336,6 +336,9 @@ void TerrainEditorScreenController::onApplyBrush() {
 		} else
 		if (brushOperationName == "smooth") {
 			currentBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+		} else
+		if (brushOperationName == "water") {
+			currentBrushOperation = Terrain::BRUSHOPERATION_WATER;
 		}
 
 		// scale, strength
@@ -352,6 +355,10 @@ void TerrainEditorScreenController::onApplyBrush() {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+Terrain::BrushOperation TerrainEditorScreenController::getBrushOperation() {
+	return currentBrushOperation;
 }
 
 void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
@@ -376,7 +383,7 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return false;
-	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN) return true;
+	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN && currentBrushOperation != Terrain::BRUSHOPERATION_WATER) return true;
 	if (haveCurrentBrushHeight == true) return true;
 	if (terrainModels.empty() == true) return false;
 	auto terrainModel = terrainModels[0];

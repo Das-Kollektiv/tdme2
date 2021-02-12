@@ -148,6 +148,11 @@ public:
 	void onApplyBrush();
 
 	/**
+	 * @return current brush operation
+	 */
+	Terrain::BrushOperation getBrushOperation();
+
+	/**
 	 * Apply current brush at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models
