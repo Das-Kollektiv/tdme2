@@ -1,0 +1,112 @@
+<element id="{$id}" width="100%" height="auto">
+	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<button width="100%" height="25" text="Light" on-mouse-click="{$id}.condition!=open"/>
+		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+	
+			<layout width="auto" height="auto" alignment="horizontal">
+				<dropdown id="presets_light" name="presets_light" width="530" height="auto" text="Test">
+					<dropdown-option text="Test 1" value="1" />
+				</dropdown>
+			</layout>
+			
+			<space height="20" />
+			
+
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Ambient" width="90" height="auto"/>
+					<space width="5" />
+					<space width="*" />
+					<input id="light_ambient" name="light_ambient" width="130" height="auto" text="Ambient" />
+				</layout>
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Diffuse" width="90" height="auto"/>
+					<space width="5" />
+					<space width="*" />
+					<input id="light_diffuse" name="light_diffuse" width="130" height="auto" text="Diffuse" />
+				</layout>
+
+			<space height="5" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Specular" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_specular" name="light_specular" width="150" height="auto" text="Specular" />
+					<space width="320" />
+				</layout>
+
+			<space height="20" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="C. attenuation" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_constant_attenuation" name="light_constant_attenuation" width="150" height="auto" text="C. Attenuation" />
+					<space width="20" />
+					<text font="{$font.default}" text="L. attenuation" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_linear_attenuation" name="light_linear_attenuation" width="150" height="auto" text="L. Attenuation" />
+				</layout>
+
+			<space height="5" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Q. attenuation" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_quadratic_attenuation" name="light_quadratic_attenuation" width="150" height="auto" text="Q. Attenuation" />
+					<space width="320" />
+				</layout>
+
+			<space height="20" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Spot from" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_position" name="light_position" width="150" height="auto" text="Spot from" />
+					<space width="20" />
+					<text font="{$font.default}" text="Spot to" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_spot_to" name="light_spot_to" width="150" height="auto" text="Spot to" />
+				</layout>
+
+			<space height="5" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Spot direction" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_spot_direction" name="light_spot_direction" width="150" height="auto" text="Spot direction" />
+					<space width="20" />
+					<button id="button_light_spotdirection_compute" name="button_light_spotdirection_compute" text="Compute spot direction" width="300" />
+				</layout>
+
+			<space height="20" />
+			
+
+				<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Spot cutoff" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_spot_cutoff" name="light_spot_cutoff" width="150" height="auto" text="Spot from" />
+					<space width="20" />
+					<text font="{$font.default}" text="Spot exponent" width="145" height="auto"/>
+					<space width="5" />
+					<input id="light_spot_exponent" name="light_spot_exponent" width="150" height="auto" text="Spot to" />
+				</layout>
+
+			<space height="20" />
+			
+
+				<layout width="300" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" text="Enabled" width="145" height="auto"/>
+					<space width="5" />
+					<checkbox id="light_enabled" name="light_enabled" width="auto" height="auto" value="1" />
+					<space width="*" />
+				</layout>
+
+								
+		</layout>		
+	</layout>
+</element>

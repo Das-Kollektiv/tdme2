@@ -200,6 +200,8 @@
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 								<input width="100%" height="auto" hint="Filter" />
 								<space height="5"/>
+								<template id="reflection" src="resources/engine/gui/template_details_reflection.xml"/>
+								<template id="transformation" src="resources/engine/gui/template_details_transformation.xml"/>
 								<template id="sky" src="resources/engine/gui/template_details_sky.xml"/>
 								<template id="sound" src="resources/engine/gui/template_details_sound.xml"/>
 								<template id="animation" src="resources/engine/gui/template_details_animation.xml"/>

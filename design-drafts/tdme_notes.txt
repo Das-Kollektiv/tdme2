@@ -75,6 +75,7 @@ template_details_shaderparameters
 - default viewport, if nothing is opened
 
 - tools (compute normals, optimize model) into context menu
+- color, center, remove to context menu
 
 definition_button
 definition_dropdown

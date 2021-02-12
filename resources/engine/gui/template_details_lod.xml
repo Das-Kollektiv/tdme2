@@ -7,11 +7,11 @@
 				<text font="{$font.default}" text="Mesh" width="70" height="auto"/>
 				<space width="5" />
 				<space width="*" />
-				<input id="lod_model_file" name="lod_model_file" width="120" height="auto" text="./model.tm" />
+				<input id="lod_model" width="120" height="auto" text="./model.tm" />
 				<space width="5" />
-				<button id="lod_model_file_load" name="lod_model_file_load" image="resources/engine/images/folder.png" width="25" height="25" />
+				<button id="button_lod_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
 				<space width="5" />
-				<button id="lod_model_file_clear" name="lod_model_file_clear" image="resources/engine/images/delete.png" width="25" height="25" />
+				<button id="button_lod_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
 			</layout>
 			
 			<space height="5" />
