@@ -4,9 +4,10 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 							
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Shader" width="120" height="auto" />
+				<text font="{$font.default}" text="Shader" width="90" height="auto" />
 				<space width="5" />
-				<dropdown id="rendering_shader" name="rendering_shader" width="*" height="auto" text="Default">
+				<space width="*" />
+				<dropdown id="rendering_shader" name="rendering_shader" width="100" height="auto" text="Default">
 					<dropdown-option text="Default" value="default" />
 					<dropdown-option text="Foliage" value="foliage" />
 					<dropdown-option text="Terrain" value="terrain" />
@@ -15,30 +16,63 @@
 					<dropdown-option text="PBR Default" value="pbr-default" />
 				</dropdown>
 			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Dist. shader" width="120" height="auto" />
-				<space width="5" />
-				<dropdown id="rendering_distance_shader" name="rendering_distance_shader" width="*" height="auto" text="Default">
-					<dropdown-option text="Default" value="default" />
-					<dropdown-option text="Foliage" value="foliage" />
-					<dropdown-option text="Tree" value="tree" />
-					<dropdown-option text="Terrain" value="terrain" />
-					<dropdown-option text="Water" value="water" />
-					<dropdown-option text="PBR Default" value="pbr-default" />
-				</dropdown>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Min. distance" width="120" height="auto" />
-				<space width="5" />
-				<input id="rendering_distance_shader_distance" name="rendering_distance_shader_distance" width="*" height="auto" text="10000" />
-			</layout>
-			<space height="20" />
+			
+			<element id="rendering_shader_details" width="100%" height="auto">
 
-			<checkbox id="rendering_contributes_shadows" name="rendering_contributes_shadows" text="Contributes shadows" value="1" />
-			<checkbox id="rendering_receives_shadows" name="rendering_receives_shadows" text="Receives shadows" value="1" />
-			<checkbox id="rendering_render_groups" name="rendering_render_groups" text="Use render groups" value="1" />
+			</element>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Dist. shader" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<dropdown id="rendering_distance_shader" name="rendering_distance_shader" width="100" height="auto" text="Default">
+					<dropdown-option text="Default" value="default" />
+					<dropdown-option text="Foliage" value="foliage" />
+					<dropdown-option text="Tree" value="tree" />
+					<dropdown-option text="Terrain" value="terrain" />
+					<dropdown-option text="Water" value="water" />
+					<dropdown-option text="PBR Default" value="pbr-default" />
+				</dropdown>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Min. distance" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<input id="rendering_distance_shader_distance" name="rendering_distance_shader_distance" width="70" height="auto" text="1000.00" />
+			</layout>
+			
+			<element id="rendering_distance_shader_details" width="100%" height="auto">
+
+			</element>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Contributes shadows" width="90" height="auto"/>
+				<space width="5" />
+				<space width="*" />
+				<checkbox id="rendering_contributes_shadows" value="1" />
+			</layout>
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Receives shadows" width="90" height="auto"/>
+				<space width="5" />
+				<space width="*" />
+				<checkbox id="rendering_receives_shadows" value="1" />
+			</layout>
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Use render groups" width="90" height="auto"/>
+				<space width="5" />
+				<space width="*" />
+				<checkbox id="rendering_render_groups" value="1" />
+			</layout>
 					
 		</layout>		
 	</layout>

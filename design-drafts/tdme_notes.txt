@@ -1,14 +1,14 @@
-screen_main
-popup_progressbar
-popup_filedialog
-popup_infodialog
+screen_main				x
+popup_progressbar			x
+popup_filedialog			x
+popup_infodialog			x
 
-button_template_thumbnail
+button_template_thumbnail		x
 template_files_text
 
 template_outliner_object
 
-template_viewport_scene
+template_viewport_scene			x
 
 template_viewport_terrain/foliage
 template_viewport_gui
@@ -23,39 +23,56 @@ template_details_environmentmapping
 template_details_particle_emitter
 template_details_particle_type
 
-template_details_properties
-template_details_description
+template_details_properties		x
 template_details_transform
 template_details_mesh
 template_details_material
 template_details_sound
 template_details_boundingvolume
-template_details_rendering
-template_details_physics
+template_details_rendering		x
+template_details_physics		x
 template_details_animations
 template_details_shaderparameters
 (template_details_particle)
 
-- statistics gets into viewport
+- statistics gets into viewport		x
 - description in outliner?
-- displaytab gets into viewport
+- displaytab gets into viewport		x
 - dont need pivot tab
 - what do we do with anim preview tab?
 
-- grid tab gets into viewport
-- snapping tab gets into viewport
-- scene dimensions in viewport
-- sky tab to component
+- grid tab gets into viewport		x
+- snapping tab gets into viewport	x
+- scene dimensions in viewport		x
 
+- sky tab to component
 - lights are components of scenes
 - environemnt mappings are components of scene
 - sky dome are components of scene
 - terrain is a component of the scene
 - postprocessing volumes are components of the scene
+- sounds are components?
 
-- map properties are displayed in details when selection the parent scene node in th outliner
+- map properties are displayed in details when selecting the parent scene node in th outliner
 
 - outliner also used for components
+
+- open/new projekt in header menu opens filedialog popup
+- automatically finds ressouce/shader/scr folders OR specifices a new projekt folder
+
+- seachbar for folders
+- seachbar/filter for content
+- add button for content
+- import button for content
+- save all button for content
+
+- texture viewer
+- modelviewer
+- particle editor
+- scene editor (trigger, empty)
+- terrain editor /foliage editor
+- double click/context menu to open content, will be displayed/opened in viewport
+- default viewport, if nothing is opened
 
 definition_button
 definition_dropdown
@@ -87,24 +104,6 @@ resources
 	images
 shader
 scr
-
-- open/new projekt in header menu opens filedialog popup
-- automatically finds ressouce/shader/scr folders OR specifices a new projekt folder
-
-- seachbar for folders
-- seachbar/filter for content
-- add button for content
-- import button for content
-- save all button for content
-
-- texture viewer
-- modelviewer
-- particle editor
-- scene editor (trigger, empty)
-- terrain editor /foliage editor
-- double click/context menu to open content, will be displayed/opened in viewport
-- default viewport, if nothing is opened
-
 
 prototype 	= prt
 texture  	= png
