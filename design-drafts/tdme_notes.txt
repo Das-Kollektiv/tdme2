@@ -74,6 +74,8 @@ template_details_shaderparameters
 - double click/context menu to open content, will be displayed/opened in viewport
 - default viewport, if nothing is opened
 
+- tools (compute normals, optimize model) into context menu
+
 definition_button
 definition_dropdown
 definition_scrollarea

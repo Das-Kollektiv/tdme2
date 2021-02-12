@@ -101,7 +101,10 @@
 				
 				<layout show-on="imported" id="boundingvolume_imported" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<input id="boundingvolume_imported_file" width="*" height="auto" text="./model.tm"/>										
+						<text font="{$font.default}" text="Mesh" width="70" height="auto"/>
+						<space width="5" />
+						<space width="*" />
+						<input id="boundingvolume_imported_file" width="120" height="auto" text="./model.tm"/>										
 						<space width="5" />
 						<button id="button_boundingvolume_imported_open" image="resources/engine/images/folder.png" width="25" height="25"/>
 						<space width="5" />

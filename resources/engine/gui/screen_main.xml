@@ -161,7 +161,7 @@
 			<space width="5"/>
 			
 			
-			<layout alignment="vertical" width="256" height="100%">
+			<layout alignment="vertical" width="300" height="100%">
 
 
 				<!-- outliner --------------------------------------------------->
@@ -200,7 +200,12 @@
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 								<input width="100%" height="auto" hint="Filter" />
 								<space height="5"/>
-								<template id="material" src="resources/engine/gui/template_details_material.xml"/>
+								<template id="sky" src="resources/engine/gui/template_details_sky.xml"/>
+								<template id="sound" src="resources/engine/gui/template_details_sound.xml"/>
+								<template id="animation" src="resources/engine/gui/template_details_animation.xml"/>
+								<template id="preview" src="resources/engine/gui/template_details_animationpreview.xml"/>
+								<template id="specular_material" src="resources/engine/gui/template_details_specularmaterial.xml"/>
+								<template id="pbr_material" src="resources/engine/gui/template_details_pbrmaterial.xml"/>
 								<template id="properties" src="resources/engine/gui/template_details_properties.xml"/>
 								<template id="physics" src="resources/engine/gui/template_details_physics.xml"/>
 								<template id="rendering" src="resources/engine/gui/template_details_rendering.xml"/>

@@ -1,0 +1,34 @@
+<element id="{$id}" width="100%" height="auto">
+	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<button width="100%" height="25" text="Sky" on-mouse-click="{$id}.condition!=open"/>
+		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Model" width="70" height="auto" horizontal-align="left" />
+				<space width="5" />
+				<space width="*" />
+				<input id="sky_model" width="120" height="auto" text="./model.tm" />
+				<space width="5" />
+				<button id="button_sky_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
+				<space width="5" />
+				<button id="button_sky_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+			</layout>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Scale" width="90" height="auto" horizontal-align="left" />
+				<space width="5" />
+				<space width="*" />
+				<input id="sky_model_scale_x" width="40" height="auto" text="0.0" />
+				<space width="5" />
+				<input id="sky_model_scale_y"  width="40" height="auto" text="0.0" />
+				<space width="5" />
+				<input id="sky_model_scale_z"  width="40" height="auto" text="0.0" />
+			</layout>
+								
+		</layout>		
+	</layout>
+</element>

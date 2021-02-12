@@ -1,0 +1,58 @@
+<element id="{$id}" width="100%" height="auto">
+	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<button width="100%" height="25" text="Animation" on-mouse-click="{$id}.condition!=open"/>
+		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+								
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Start frame" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<input id="animation_startframe" width="40" height="auto" text="100" />
+			</layout>
+			
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="End frame" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<input id="animations_animation_endframe" width="40" height="auto" text="100" />
+			</layout>
+			
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Speed" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<input id="animations_animation_speed" name="animations_animation_speed" width="60" height="auto" text="10.00" />
+			</layout>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Loop" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<checkbox id="animations_animation_loop" value="1" />
+			</layout>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" text="Overlay" width="90" height="auto" />
+				<space width="5" />
+				<space width="*" />
+				<dropdown id="dropdown_animation_overlaybone" width="130" height="auto" text="bone01">
+					<scrollarea width="100%" height="70">
+					</scrollarea>
+				</dropdown>
+			</layout>
+					
+		</layout>		
+	</layout>
+</element>
