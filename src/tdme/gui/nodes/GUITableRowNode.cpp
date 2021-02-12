@@ -13,6 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -31,6 +32,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITableNode;
 using tdme::gui::GUI;
 using tdme::utilities::StringTools;
 
@@ -109,6 +111,8 @@ void GUITableRowNode::layoutSubNodes()
 		screenNode->forceInvalidateLayout(this);
 		return;
 	}
+	GUITableNode* guiTableNode = required_dynamic_cast<GUITableNode*>(parentNode);
+	auto tableCellMaxHeight = guiTableNode->getTableCellMaxHeight(0);
 	{
 		auto starCount = 0;
 		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
@@ -127,27 +131,27 @@ void GUITableRowNode::layoutSubNodes()
 				finalNodesWidth += guiSubNode->computedConstraints.width;
 			}
 		}
+
 		auto horizontalStarPixelRest = 0.0f;
 		for (auto i = 0; i < subNodes.size(); i++) {
 			auto guiSubNode = subNodes[i];
 			if (guiSubNode->conditionsMet == false) continue;
-			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-				auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
-				auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
-				horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
-				if (static_cast<int>(horizontalStarPixelRest) > 0) {
-					nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
-					horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
-				}
-				guiSubNode->requestedConstraints.width = nodeStarWidthInt;
-				guiSubNode->computedConstraints.width = nodeStarWidthInt;
-				if (guiSubNode->computedConstraints.width < 0) {
-					guiSubNode->computedConstraints.width = 0;
-				}
+
+			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL) {
+				auto tableCellMaxWidth = guiTableNode->getTableCellMaxWidth(i);
+				guiSubNode->requestedConstraints.widthType = GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL;
+				guiSubNode->requestedConstraints.width = tableCellMaxWidth;
+				guiSubNode->computedConstraints.width = tableCellMaxWidth;
 				finalNodesWidth += guiSubNode->computedConstraints.width;
-				if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
-					required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
-				}
+			}
+
+			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL) {
+				guiSubNode->requestedConstraints.height = tableCellMaxHeight;
+				guiSubNode->computedConstraints.height = tableCellMaxHeight;
+			}
+
+			if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+				required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
 			}
 		}
 
@@ -215,3 +219,21 @@ void GUITableRowNode::setLeft(int left)
 	}
 }
 
+
+GUINode_RequestedConstraints GUITableRowNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor)
+{
+	GUINode_RequestedConstraints constraints;
+	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.left = getRequestedConstraintsValue(StringTools::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringTools::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.top = getRequestedConstraintsValue(StringTools::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringTools::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), -1);
+	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), -1);
+	if (constraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.left*= factor;
+	if (constraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.top*= factor;
+	if (constraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.width*= factor;
+	if (constraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.height*= factor;
+	return constraints;
+}

@@ -265,6 +265,9 @@ int GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstra
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STAR)) {
 		return value;
+	} else
+	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL)) {
+		return value;
 	}
 	return -1;
 }

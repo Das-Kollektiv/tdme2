@@ -3,6 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::nodes::GUIColor;
@@ -16,6 +17,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITableNode;
 
 /**
  * GUI layout node
@@ -44,7 +46,6 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
-	 * @param alignment alignment
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUITableRowNode(
@@ -78,5 +79,16 @@ public:
 	// overridden methods
 	int getContentWidth() override;
 	int getContentHeight() override;
+
+	/**
+	 * Create requested constraints
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 * @param factor factor
+	 * @return requested constraints
+	 */
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
 };

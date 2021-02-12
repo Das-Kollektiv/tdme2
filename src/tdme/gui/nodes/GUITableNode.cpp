@@ -214,3 +214,10 @@ void GUITableNode::setLeft(int left)
 	}
 }
 
+int GUITableNode::getTableCellMaxWidth(int x) {
+	return 200;
+}
+
+int GUITableNode::getTableCellMaxHeight(int y) {
+	return 30;
+}

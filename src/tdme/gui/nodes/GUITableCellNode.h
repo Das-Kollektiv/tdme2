@@ -8,6 +8,7 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 
 using std::set;
 using std::string;
@@ -83,5 +84,17 @@ protected:
 
 	// overridden methods
 	const string getNodeType() override;
+
+public:
+	/**
+	 * Create requested constraints
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 * @param factor factor
+	 * @return requested constraints
+	 */
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
 };

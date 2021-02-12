@@ -903,7 +903,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
 						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
 					GUINode::createScale9Grid(
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
@@ -958,14 +958,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
-					GUIParentNode::createRequestedConstraints(
+					GUITableCellNode::createRequestedConstraints(
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
 						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
 					GUINode::createScale9Grid(
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
@@ -1021,14 +1021,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
-					GUIParentNode::createRequestedConstraints(
+					GUITableRowNode::createRequestedConstraints(
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
 						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
 					GUINode::createScale9Grid(
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),

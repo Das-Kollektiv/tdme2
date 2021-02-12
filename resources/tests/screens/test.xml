@@ -321,38 +321,38 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 						<space height="*" />
 					</layout>
 				</tab-content>
-				<tab-content tab-id="tab11" vertical-align="top">
-					<table width="auto" height="auto">
+				<tab-content tab-id="tab11" vertical-align="center">
+					<table width="auto" height="auto" background-color="white">
 						<table-row>
-							<table-cell>
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="aaa" color="#000000" />
+							<table-cell border="1" border-color="red">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="aaa" color="#000000"/>
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="green">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="b" color="#000000" />
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="blue">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="cc" color="#000000" />
 							</table-cell>
 						</table-row>
 						<table-row>
-							<table-cell>
+							<table-cell border="1" border-color="red">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="a" color="#000000" />
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="green">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="bb" color="#000000" />
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="blue">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="ccc" color="#000000" />
 							</table-cell>
 						</table-row>
 						<table-row>
-							<table-cell>
+							<table-cell border="1" border-color="red">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="ab" color="#000000" />
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="green">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="bbb" color="#000000" />
 							</table-cell>
-							<table-cell>
+							<table-cell border="1" border-color="blue">
 								<text font="resources/engine/fonts/Roboto_20.fnt" text="c" color="#000000" />
 							</table-cell>
 						</table-row>

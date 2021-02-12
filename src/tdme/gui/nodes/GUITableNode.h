@@ -23,6 +23,7 @@ using tdme::gui::nodes::GUIScreenNode;
 class tdme::gui::nodes::GUITableNode: public GUIParentNode
 {
 	friend class tdme::gui::GUIParser;
+	friend class GUITableRowNode;
 
 protected:
 	/**
@@ -73,6 +74,16 @@ protected:
 	void layoutSubNodes() override;
 	void setTop(int top) override;
 	void setLeft(int left) override;
+
+	/**
+	 * @return table cell max width @ x position
+	 */
+	int getTableCellMaxWidth(int x);
+
+	/**
+	 * @return table cell max height @ y position
+	 */
+	int getTableCellMaxHeight(int y);
 
 public:
 	// overridden methods
