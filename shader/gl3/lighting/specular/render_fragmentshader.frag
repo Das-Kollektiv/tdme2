@@ -378,7 +378,7 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		vec4 envColor = vec4(0.0f, 0.0f, 1.0, 1.0);
+		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
 			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.1, 1.0, 0.1)));
 			envColor = texture(environmentMappingTextureUnit, -reflectionVector);
