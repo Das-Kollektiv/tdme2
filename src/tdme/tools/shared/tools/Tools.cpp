@@ -503,6 +503,7 @@ const string Tools::getApplicationSubPathName(const string& fileName)
 			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
 			if (applicationSubPathName == "engine") return applicationSubPathName; else
 			if (applicationSubPathName == "project") return applicationSubPathName; else
+			if (applicationSubPathName == "installer") return applicationSubPathName; else
 				return "engine";
 		}
 	}
@@ -513,6 +514,7 @@ const string Tools::getApplicationSubPathName(const string& fileName)
 			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
 			if (applicationSubPathName == "engine") return applicationSubPathName; else
 			if (applicationSubPathName == "project") return applicationSubPathName; else
+			if (applicationSubPathName == "installer") return applicationSubPathName; else
 				return "engine";
 		}
 	}
