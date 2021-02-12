@@ -62,8 +62,8 @@ private:
 
 	FileDialogPath* terrainPath { nullptr };
 
-	bool haveCurrentBrushFlattenHeight { false };
-	float currentBrushFlattenHeight { 0.0f };
+	bool haveCurrentBrushHeight { false };
+	float currentBrushHeight { 0.0f };
 	float currentBrushScale { 1.0f };
 	float currentBrushStrength { 1.0f };
 	Texture* currentBrushTexture { nullptr };
@@ -163,7 +163,7 @@ public:
 	 * @param brushCenterPosition brush center position
 	 * @return success
 	 */
-	bool determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
+	bool determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
 
 	/**
 	 * Unset current brush flatten height

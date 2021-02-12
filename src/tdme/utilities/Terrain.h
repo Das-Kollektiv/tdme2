@@ -109,18 +109,19 @@ public:
 	);
 
 	/**
-	 * Get terrain models flatten height
+	 * Get terrain models height for e.g. flatten
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models vector
 	 * @param terrainHeightVector terrain height vector
-	 * @param flattenHeight flatten height
+	 * @param brushHeight brush height
 	 *
 	 */
-	static bool getTerrainModelsFlattenHeight(
+	static bool getTerrainModelsHeight(
 		BoundingBox& terrainBoundingBox,  // TODO: constness
 		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
-		float& flattenHeight
+		float& brushHeight
 	);
+
 };

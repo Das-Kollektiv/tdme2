@@ -286,7 +286,7 @@ void Terrain::applyBrushToTerrainModels(
 	float brushScale,
 	float brushStrength,
 	BrushOperation brushOperation,
-	float flattenHeight
+	float brushHeight
 ) {
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
@@ -345,7 +345,7 @@ void Terrain::applyBrushToTerrainModels(
 					terrainVertexHeight-= appliedStrength;
 					break;
 				case BRUSHOPERATION_FLATTEN:
-					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + flattenHeight * Math::clamp(appliedStrength, 0.0f, 1.0f);
+					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + brushHeight * Math::clamp(appliedStrength, 0.0f, 1.0f);
 					break;
 				case BRUSHOPERATION_DELETE:
 					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + 0.0f * Math::clamp(appliedStrength, 0.0f, 1.0f);
@@ -600,12 +600,12 @@ void Terrain::applyBrushToTerrainModels(
 	}
 }
 
-bool Terrain::getTerrainModelsFlattenHeight(
+bool Terrain::getTerrainModelsHeight(
 	BoundingBox& terrainBoundingBox,
 	vector<Model*> terrainModels,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
-	float& flattenHeight
+	float& brushHeight
 ) {
 	// check if we have a model
 	if (terrainModels.empty() == true) return false;
@@ -617,7 +617,7 @@ bool Terrain::getTerrainModelsFlattenHeight(
 	auto terrainHeightVectorZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 	if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terreinHeightVectorVerticesPerZ ||
 			terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) return false;
-	flattenHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];
+	brushHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];
 
 	//
 	return true;
