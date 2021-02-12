@@ -47,6 +47,10 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUISpaceNode.h>
+#include <tdme/gui/nodes/GUITableNode.h>
+#include <tdme/gui/nodes/GUITableCellNode.h>
+#include <tdme/gui/nodes/GUITableRowNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 #include <tdme/gui/GUIParserException.h>
@@ -110,6 +114,9 @@ using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
+using tdme::gui::nodes::GUITableNode;
+using tdme::gui::nodes::GUITableCellNode;
+using tdme::gui::nodes::GUITableRowNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::gui::GUIParser;
@@ -877,6 +884,193 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+			} else
+			if (nodeTagName == "table") {
+				auto guiTableNode = new GUITableNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
+					GUINode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+				);
+				guiParentNode->addSubNode(guiTableNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiTableNode);
+					if (guiElementController != nullptr) {
+						guiTableNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+				parseGUINode(guiTableNode, parentElementId, node, nullptr);
+			} else
+			if (nodeTagName == "table-cell") {
+				auto guiTableCellNode = new GUITableCellNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
+					GUINode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					GUILayoutNode::createAlignment(string(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
+				);
+				guiParentNode->addSubNode(guiTableCellNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiTableCellNode);
+					if (guiElementController != nullptr) {
+						guiTableCellNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+				parseGUINode(guiTableCellNode, parentElementId, node, nullptr);
+			} else
+			if (nodeTagName == "table-row") {
+				auto guiTableRowNode = new GUITableRowNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
+					GUINode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+				);
+				guiParentNode->addSubNode(guiTableRowNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiTableRowNode);
+					if (guiElementController != nullptr) {
+						guiTableRowNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+				parseGUINode(guiTableRowNode, parentElementId, node, nullptr);
 			} else
 			if (nodeTagName == "input-internal") {
 				auto guiInputInternalNode = new GUIInputInternalNode(
