@@ -223,7 +223,7 @@ void GUITableNode::setLeft(int left)
 int GUITableNode::getTableCellMaxWidth(int x) {
 	auto maxWidth = -1;
 	for (auto guiTableRowNode: subNodes) {
-		auto guiTableCellNode = required_dynamic_cast<GUITableCellNode*>((required_dynamic_cast<GUITableRowNode*>(guiTableRowNode))->subNodes[x]);
+		auto guiTableCellNode = required_dynamic_cast<GUITableCellNode*>((required_dynamic_cast<GUITableRowNode*>(guiTableRowNode))->subNodes.at(x));
 		if (guiTableCellNode->conditionsMet == false) continue;
 		auto& requestedConstaints = guiTableCellNode->getRequestsConstraints();
 		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
@@ -241,7 +241,7 @@ int GUITableNode::getTableCellMaxWidth(int x) {
 
 int GUITableNode::getTableCellMaxHeight(int y) {
 	auto maxHeight = -1;
-	for (auto guiTableCellNode: required_dynamic_cast<GUITableRowNode*>(subNodes[y])->subNodes) {
+	for (auto guiTableCellNode: required_dynamic_cast<GUITableRowNode*>(subNodes.at(y))->subNodes) {
 		if (guiTableCellNode->conditionsMet == false) continue;
 		auto& requestedConstaints = guiTableCellNode->getRequestsConstraints();
 		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {

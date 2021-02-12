@@ -148,6 +148,7 @@
             - panel
             - scrollbars
             - space
+            - table
             - text + multiline text
         - supports custom templates and compound elements defined by templates and its controllers
             - compound elements
