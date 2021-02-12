@@ -112,7 +112,14 @@ void GUITableRowNode::layoutSubNodes()
 		return;
 	}
 	GUITableNode* guiTableNode = required_dynamic_cast<GUITableNode*>(parentNode);
-	auto tableCellMaxHeight = guiTableNode->getTableCellMaxHeight(0);
+	if (tableRowNodeIdx == -1) {
+		tableRowNodeIdx = 0;
+		for (auto guiTableNowChild: guiTableNode->subNodes) {
+			if (this == guiTableNowChild) break;
+			tableRowNodeIdx++;
+		}
+	}
+	auto tableCellMaxHeight = guiTableNode->getTableCellMaxHeight(tableRowNodeIdx);
 	{
 		auto starCount = 0;
 		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;

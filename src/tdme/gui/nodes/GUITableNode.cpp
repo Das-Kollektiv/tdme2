@@ -13,7 +13,10 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITableCellNode.h>
+#include <tdme/gui/nodes/GUITableRowNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUITableNode;
@@ -31,7 +34,10 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITableCellNode;
+using tdme::gui::nodes::GUITableRowNode;
 using tdme::gui::GUI;
+using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 GUITableNode::GUITableNode(
@@ -215,9 +221,38 @@ void GUITableNode::setLeft(int left)
 }
 
 int GUITableNode::getTableCellMaxWidth(int x) {
-	return 200;
+	auto maxWidth = -1;
+	for (auto guiTableRowNode: subNodes) {
+		auto guiTableCellNode = required_dynamic_cast<GUITableCellNode*>((required_dynamic_cast<GUITableRowNode*>(guiTableRowNode))->subNodes[x]);
+		if (guiTableCellNode->conditionsMet == false) continue;
+		auto& requestedConstaints = guiTableCellNode->getRequestsConstraints();
+		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+			maxWidth = Math::max(maxWidth, computedConstraints.width);
+		} else
+		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+			maxWidth = Math::max(maxWidth, guiTableCellNode->getAutoWidth());
+		} else {
+			// TODO: percent, star
+			maxWidth = Math::max(maxWidth, guiTableCellNode->getContentWidth());
+		}
+	}
+	return maxWidth;
 }
 
 int GUITableNode::getTableCellMaxHeight(int y) {
-	return 30;
+	auto maxHeight = -1;
+	for (auto guiTableCellNode: required_dynamic_cast<GUITableRowNode*>(subNodes[y])->subNodes) {
+		if (guiTableCellNode->conditionsMet == false) continue;
+		auto& requestedConstaints = guiTableCellNode->getRequestsConstraints();
+		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+			maxHeight = Math::max(maxHeight, computedConstraints.height);
+		} else
+		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+			maxHeight = Math::max(maxHeight, guiTableCellNode->getAutoHeight());
+		} else {
+			// TODO: percent, star
+			maxHeight = Math::max(maxHeight, guiTableCellNode->getContentHeight());
+		}
+	}
+	return maxHeight;
 }

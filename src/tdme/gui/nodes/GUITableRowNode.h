@@ -25,6 +25,8 @@ using tdme::gui::nodes::GUITableNode;
 class tdme::gui::nodes::GUITableRowNode: public GUIParentNode
 {
 	friend class tdme::gui::GUIParser;
+private:
+	int tableRowNodeIdx { -1 };
 
 protected:
 	/**
