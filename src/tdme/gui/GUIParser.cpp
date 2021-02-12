@@ -51,7 +51,6 @@
 #include <tdme/gui/nodes/GUITableCellNode.h>
 #include <tdme/gui/nodes/GUITableRowNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystem.h>

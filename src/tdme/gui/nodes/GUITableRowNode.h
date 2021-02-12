@@ -67,9 +67,7 @@ protected:
 		const GUINodeConditions& hideOn
 	);
 
-	/**
-	 * @return node type
-	 */
+	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
 	void layoutSubNodes() override;
@@ -77,6 +75,7 @@ protected:
 	void setLeft(int left) override;
 
 public:
+	// overridden methods
 	int getContentWidth() override;
 	int getContentHeight() override;
 
