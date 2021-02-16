@@ -55,6 +55,21 @@ private:
 	}
 
 	/**
+	 * Get the terrain vertex for given x and z position
+	 * @param x x
+	 * @param z z
+	 * @param waterHeight water height
+	 * @param vertex vertex
+	 */
+	static inline void getWaterVertex(int x, int z, float waterHeight, Vector3& vertex) {
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
+			waterHeight,
+			static_cast<float>(z) * STEP_SIZE
+		);
+	}
+
+	/**
 	 * Compute terrain vertex normal for given x and z position
 	 * @param terrainHeightVector terrain height vector
 	 * @param verticesPerX vertices per x
@@ -164,6 +179,25 @@ public:
 		float brushStrength,
 		BrushOperation brushOperation,
 		float flattenHeight = 0.0f
+	);
+
+	/**
+	 * Create partitioned water models using a auto fill like algorithm at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param waterHeight waterHeight
+	 * @param waterModelIdx water model index
+	 * @param waterModels water models
+	 *
+	 */
+	static bool createWaterModels(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		const vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		float waterHeight,
+		int waterModelIdx,
+		vector<Model*>& waterModels
 	);
 
 	/**

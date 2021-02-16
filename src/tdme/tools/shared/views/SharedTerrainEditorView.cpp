@@ -166,10 +166,24 @@ void SharedTerrainEditorView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+			static int terrainModelIdx = 0;
+			vector<Model*> waterModels;
+			terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, terrainModelIdx, waterModels);
 			brushingEnabled = false;
 			terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+
+			//
+			for (auto waterModel: waterModels) {
+				auto waterObject3D = new Object3D("water." + to_string(terrainModelIdx), waterModel); // TODO: make this persistent
+				waterObject3D->setShader("water");
+				waterObject3D->setContributesShadows(false);
+				waterObject3D->setReceivesShadows(false);
+				engine->addEntity(waterObject3D);
+				terrainModelIdx++;
+			}
+		} else {
+			terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
 	}
 

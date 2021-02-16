@@ -361,7 +361,7 @@ Terrain::BrushOperation TerrainEditorScreenController::getBrushOperation() {
 	return currentBrushOperation;
 }
 
-void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
+void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
@@ -377,6 +377,19 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 		currentBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
 		currentBrushOperation,
 		currentBrushHeight
+	);
+}
+
+bool TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
+	return Terrain::createWaterModels(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentBrushHeight,
+		waterModelIdx,
+		waterModels
 	);
 }
 

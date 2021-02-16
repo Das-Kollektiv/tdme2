@@ -308,61 +308,7 @@ void Terrain::applyBrushToTerrainModels(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// water
-	if (brushOperation == BRUSHOPERATION_WATER) {
-		auto brushPosition = brushCenterPosition;
-		auto terrainHeightVectorXCenter = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
-		auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
-		map<int, set<int>> waterPositionSet;
-
-		Console::println("WATER: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(brushHeight));
-
-		//
-		determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorXCenter, terrainHeightVectorZCenter, brushHeight, waterPositionSet[terrainHeightVectorZCenter]);
-
-		//
-		{
-			auto zLast = 0;
-			auto zMin = -1;
-			while (true == true) {
-				auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
-				auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMin;
-				for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
-					if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight) == true) {
-						determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight, waterPositionSet[terrainHeightVectorZ]);
-					}
-				}
-				if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
-				zLast = zMin;
-				zMin--;
-			}
-		}
-
-		//
-		{
-			auto zLast = 0;
-			auto zMax = 1;
-			while (true == true) {
-				auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
-				auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMax;
-				for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
-					if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight) == true) {
-						determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight, waterPositionSet[terrainHeightVectorZ]);
-					}
-				}
-				if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
-				zLast = zMax;
-				zMax++;
-			}
-		}
-
-		//
-		for (auto& mIt: waterPositionSet) {
-			Console::print(to_string(mIt.first) + ": ");
-			for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
-			Console::println();
-		}
-		return;
-	}
+	if (brushOperation == BRUSHOPERATION_WATER) return;
 
 	// other operations
 	auto textureData = brushTexture->getTextureData();
@@ -662,6 +608,194 @@ void Terrain::applyBrushToTerrainModels(
 			partitionIdx++;
 		}
 	}
+}
+
+bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, int waterModelIdx, vector<Model*>& waterModels) {
+	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
+
+	auto brushPosition = brushCenterPosition;
+	auto terrainHeightVectorXCenter = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+	auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+	map<int, set<int>> waterPositionSet;
+
+	Console::println("WATER: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
+
+	//
+	determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorXCenter, terrainHeightVectorZCenter, waterHeight, waterPositionSet[terrainHeightVectorZCenter]);
+
+	//
+	{
+		auto zLast = 0;
+		auto zMin = -1;
+		while (true == true) {
+			auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
+			auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMin;
+			for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
+				if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight) == true) {
+					determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight, waterPositionSet[terrainHeightVectorZ]);
+				}
+			}
+			if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
+			zLast = zMin;
+			zMin--;
+		}
+	}
+
+	//
+	{
+		auto zLast = 0;
+		auto zMax = 1;
+		while (true == true) {
+			auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
+			auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMax;
+			for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
+				if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight) == true) {
+					determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight, waterPositionSet[terrainHeightVectorZ]);
+				}
+			}
+			if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
+			zLast = zMax;
+			zMax++;
+		}
+	}
+
+	//
+	for (auto& mIt: waterPositionSet) {
+		Console::print(to_string(mIt.first) + ": ");
+		for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
+		Console::println();
+	}
+
+	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
+	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
+	vector<vector<Vector3>> partitionTerrainVertices;
+	vector<vector<Vector3>> partitionTerrainNormals;
+	vector<vector<array<int, 6>>> partitionWaterFaces;
+	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
+	auto partitionCount = partitionsX * partitionsZ;
+	partitionTerrainVertices.resize(partitionCount);
+	partitionTerrainNormals.resize(partitionCount);
+	partitionWaterFaces.resize(partitionCount);
+	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
+		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
+			auto _z = static_cast<int>(z / STEP_SIZE);
+			auto _x = static_cast<int>(x / STEP_SIZE);
+
+			auto waterPositionSetIt = waterPositionSet.find(_z);
+			if (waterPositionSetIt == waterPositionSet.end()) continue;
+			auto waterXPositionSetIt = waterPositionSetIt->second.find(_x);
+			if (waterXPositionSetIt == waterPositionSetIt->second.end()) continue;
+
+			auto partitionX = static_cast<int>(x / PARTITION_SIZE);
+			auto partitionZ = static_cast<int>(z / PARTITION_SIZE);
+			auto partitionIdx = partitionZ * partitionsX + partitionX;
+
+			auto& terrainVertices = partitionTerrainVertices[partitionIdx];
+			auto& terrainNormals = partitionTerrainNormals[partitionIdx];
+			auto& terrainFaces = partitionWaterFaces[partitionIdx];
+
+			int normalIdx = terrainNormals.size();
+			int vertexIdx = terrainVertices.size();
+
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+
+			Vector3 topVertex;
+			Vector3 topLeftVertex;
+			Vector3 leftVertex;
+			Vector3 vertex;
+
+			getWaterVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, waterHeight, topVertex);
+			getWaterVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, waterHeight, topLeftVertex);
+			getWaterVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, waterHeight, leftVertex);
+			getWaterVertex(terrainHeightVectorX, terrainHeightVectorZ, waterHeight, vertex);
+
+			terrainVertices.push_back(topVertex);
+			terrainVertices.push_back(topLeftVertex);
+			terrainVertices.push_back(leftVertex);
+			terrainVertices.push_back(vertex);
+
+			auto normal = Vector3(0.0f, 1.0f, 0.0f);
+			auto topNormal = Vector3(0.0f, 1.0f, 0.0f);
+			auto topLeftNormal = Vector3(0.0f, 1.0f, 0.0f);
+			auto leftNormal = Vector3(0.0f, 1.0f, 0.0f);
+
+			terrainNormals.push_back(topNormal);
+			terrainNormals.push_back(topLeftNormal);
+			terrainNormals.push_back(leftNormal);
+			terrainNormals.push_back(normal);
+
+			terrainFaces.push_back(
+				{
+					vertexIdx + 0,
+					vertexIdx + 1,
+					vertexIdx + 2,
+					normalIdx + 0,
+					normalIdx + 1,
+					normalIdx + 2
+				}
+			);
+			terrainFaces.push_back(
+				{
+					vertexIdx + 2,
+					vertexIdx + 3,
+					vertexIdx + 0,
+					normalIdx + 2,
+					normalIdx + 3,
+					normalIdx + 0
+				}
+			);
+		}
+	}
+	auto partitionIdx = 0;
+	for (auto& waterFaces: partitionWaterFaces) {
+		auto modelId = "water" + to_string(waterModelIdx) + "." + to_string(partitionIdx);
+		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+		auto waterMaterial = new Material("water");
+		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+		// TODO: Fix me! The textures seem to be much too dark
+		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.2f, 0.2f, 1.0f, 0.0f));
+		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.4f, 0.4f, 0.5f, 1.0f));
+		waterMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 0.0f));
+		waterModel->getMaterials()[waterMaterial->getId()] = waterMaterial;
+		auto waterNode = new Node(waterModel, nullptr, "water", "water");
+		FacesEntity nodeFacesEntityWater(waterNode, "water.facesentity");
+		nodeFacesEntityWater.setMaterial(waterMaterial);
+		vector<FacesEntity> nodeFacesEntities;
+		vector<Face> nodeFaces;
+		for (auto faceIndices: partitionWaterFaces[partitionIdx]) {
+			nodeFaces.push_back(
+				Face(
+					waterNode,
+					faceIndices[0],
+					faceIndices[1],
+					faceIndices[2],
+					faceIndices[3],
+					faceIndices[4],
+					faceIndices[5]
+				)
+			);
+		};
+		nodeFacesEntityWater.setFaces(nodeFaces);
+		nodeFacesEntities.push_back(nodeFacesEntityWater);
+		waterNode->setVertices(partitionTerrainVertices[partitionIdx]);
+		waterNode->setNormals(partitionTerrainNormals[partitionIdx]);
+		waterNode->setFacesEntities(nodeFacesEntities);
+		waterModel->getNodes()[waterNode->getId()] = waterNode;
+		waterModel->getSubNodes()[waterNode->getId()] = waterNode;
+		if (partitionIdx == 0) {
+			terrainBoundingBox = *waterModel->getBoundingBox();
+		} else {
+			terrainBoundingBox.extend(waterModel->getBoundingBox());
+		}
+		waterModels.push_back(waterModel);
+		partitionIdx++;
+	}
+
+	//
+	return true;
 }
 
 bool Terrain::getTerrainModelsHeight(

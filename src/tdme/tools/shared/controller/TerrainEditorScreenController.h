@@ -159,7 +159,16 @@ public:
 	 * @param brushCenterPosition brush center position
 	 * @param deltaTime delta time between last frame and this frame
 	 */
-	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
+	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
+
+	/**
+	 * Create water model using a auto fill like algorithm
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param brushCenterPosition brush center position
+	 * @param waterModelIdx water model index
+	 * @param waterModels water models
+	 */
+	bool createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels);
 
 	/**
 	 * Determine current brush flatten height
