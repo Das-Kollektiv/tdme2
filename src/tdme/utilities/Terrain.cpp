@@ -683,10 +683,25 @@ bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<fl
 			auto _z = static_cast<int>(z / STEP_SIZE);
 			auto _x = static_cast<int>(x / STEP_SIZE);
 
-			auto waterPositionSetIt = waterPositionSet.find(_z);
-			if (waterPositionSetIt == waterPositionSet.end()) continue;
-			auto waterXPositionSetIt = waterPositionSetIt->second.find(_x);
-			if (waterXPositionSetIt == waterPositionSetIt->second.end()) continue;
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+
+			Vector3 topVertex;
+			Vector3 topLeftVertex;
+			Vector3 leftVertex;
+			Vector3 vertex;
+
+			auto hasTopLeft = hasWaterPosition(waterPositionSet, terrainHeightVectorX - 1, terrainHeightVectorZ - 1);
+			auto hasTop = hasWaterPosition(waterPositionSet, terrainHeightVectorX, terrainHeightVectorZ - 1);
+			auto hasLeft = hasWaterPosition(waterPositionSet, terrainHeightVectorX - 1, terrainHeightVectorZ);
+			auto hasOrigin = hasWaterPosition(waterPositionSet, terrainHeightVectorX, terrainHeightVectorZ);
+
+			auto haveVertexCount = 0;
+			if (hasTop == true) haveVertexCount++;
+			if (hasTopLeft == true) haveVertexCount++;
+			if (hasLeft == true) haveVertexCount++;
+			if (hasOrigin == true) haveVertexCount++;
+			if (haveVertexCount < 3) continue;
 
 			auto partitionX = static_cast<int>(x / PARTITION_SIZE);
 			auto partitionZ = static_cast<int>(z / PARTITION_SIZE);
@@ -699,54 +714,62 @@ bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<fl
 			int normalIdx = terrainNormals.size();
 			int vertexIdx = terrainVertices.size();
 
-			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
-
-			Vector3 topVertex;
-			Vector3 topLeftVertex;
-			Vector3 leftVertex;
-			Vector3 vertex;
-
 			getWaterVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, waterHeight, topVertex);
 			getWaterVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, waterHeight, topLeftVertex);
 			getWaterVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, waterHeight, leftVertex);
 			getWaterVertex(terrainHeightVectorX, terrainHeightVectorZ, waterHeight, vertex);
 
-			terrainVertices.push_back(topVertex);
-			terrainVertices.push_back(topLeftVertex);
-			terrainVertices.push_back(leftVertex);
-			terrainVertices.push_back(vertex);
+			if (hasTop == true) terrainVertices.push_back(topVertex);
+			if (hasTopLeft == true) terrainVertices.push_back(topLeftVertex);
+			if (hasLeft == true) terrainVertices.push_back(leftVertex);
+			if (hasOrigin == true) terrainVertices.push_back(vertex);
 
 			auto normal = Vector3(0.0f, 1.0f, 0.0f);
 			auto topNormal = Vector3(0.0f, 1.0f, 0.0f);
 			auto topLeftNormal = Vector3(0.0f, 1.0f, 0.0f);
 			auto leftNormal = Vector3(0.0f, 1.0f, 0.0f);
 
-			terrainNormals.push_back(topNormal);
-			terrainNormals.push_back(topLeftNormal);
-			terrainNormals.push_back(leftNormal);
-			terrainNormals.push_back(normal);
+			if (hasTop == true) terrainNormals.push_back(topNormal);
+			if (hasTopLeft == true) terrainNormals.push_back(topLeftNormal);
+			if (hasLeft == true) terrainNormals.push_back(leftNormal);
+			if (hasOrigin == true) terrainNormals.push_back(normal);
 
-			terrainFaces.push_back(
-				{
-					vertexIdx + 0,
-					vertexIdx + 1,
-					vertexIdx + 2,
-					normalIdx + 0,
-					normalIdx + 1,
-					normalIdx + 2
-				}
-			);
-			terrainFaces.push_back(
-				{
-					vertexIdx + 2,
-					vertexIdx + 3,
-					vertexIdx + 0,
-					normalIdx + 2,
-					normalIdx + 3,
-					normalIdx + 0
-				}
-			);
+			if (hasTopLeft == false ||
+				hasTop == false ||
+				hasLeft == false ||
+				hasOrigin == false) {
+				terrainFaces.push_back(
+					{
+						vertexIdx + 0,
+						vertexIdx + 1,
+						vertexIdx + 2,
+						normalIdx + 0,
+						normalIdx + 1,
+						normalIdx + 2
+					}
+				);
+			} else {
+				terrainFaces.push_back(
+					{
+						vertexIdx + 0,
+						vertexIdx + 1,
+						vertexIdx + 2,
+						normalIdx + 0,
+						normalIdx + 1,
+						normalIdx + 2
+					}
+				);
+				terrainFaces.push_back(
+					{
+						vertexIdx + 2,
+						vertexIdx + 3,
+						vertexIdx + 0,
+						normalIdx + 2,
+						normalIdx + 3,
+						normalIdx + 0
+					}
+				);
+			}
 		}
 	}
 	auto partitionIdx = 0;
@@ -790,6 +813,7 @@ bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<fl
 		} else {
 			terrainBoundingBox.extend(waterModel->getBoundingBox());
 		}
+		ModelTools::prepareForIndexedRendering(waterModel);
 		waterModels.push_back(waterModel);
 		partitionIdx++;
 	}

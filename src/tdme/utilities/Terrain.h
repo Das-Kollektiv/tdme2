@@ -2,6 +2,7 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <map>
 #include <set>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
+using std::map;
 using std::set;
 using std::vector;
 
@@ -67,6 +69,20 @@ private:
 			waterHeight,
 			static_cast<float>(z) * STEP_SIZE
 		);
+	}
+
+	/**
+	 * @returns if water includes given position
+	 * @param waterPositionSet water position set
+	 * @param x x
+	 * @param z z
+	 */
+	static inline bool hasWaterPosition(const map<int, set<int>>& waterPositionSet, int x, int z) {
+		auto waterPositionSetIt = waterPositionSet.find(z);
+		if (waterPositionSetIt == waterPositionSet.end()) return false;
+		auto waterXPositionSetIt = waterPositionSetIt->second.find(x);
+		if (waterXPositionSetIt == waterPositionSetIt->second.end()) return false;
+		return true;
 	}
 
 	/**
@@ -132,6 +148,11 @@ private:
 			if (terrainVertexHeight >= waterHeight) break;
 			waterXPositionSet.insert(terrainHeightVectorX);
 			xMax++;
+		}
+		if (waterXPositionSet.size() > 2) {
+			waterXPositionSet.insert(x + xMin - 1);
+			waterXPositionSet.insert(x + xMax + 1);
+			waterXPositionSet.insert(x + xMax + 2);
 		}
 	}
 
