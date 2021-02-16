@@ -150,7 +150,10 @@ private:
 			xMax++;
 		}
 		if (waterXPositionSet.size() > 2) {
+			waterXPositionSet.insert(x + xMin - 0);
 			waterXPositionSet.insert(x + xMin - 1);
+			waterXPositionSet.insert(x + xMin - 2);
+			waterXPositionSet.insert(x + xMax + 0);
 			waterXPositionSet.insert(x + xMax + 1);
 			waterXPositionSet.insert(x + xMax + 2);
 		}

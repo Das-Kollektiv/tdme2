@@ -659,6 +659,9 @@ bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<fl
 			zLast = zMax;
 			zMax++;
 		}
+
+		//
+		waterPositionSet[terrainHeightVectorZCenter + zMax] = waterPositionSet[terrainHeightVectorZCenter + zMax - 1];
 	}
 
 	//
