@@ -101,6 +101,15 @@ void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector
 	initModelRequested = true;
 }
 
+void SharedTerrainEditorView::setWater(vector<Model*> waterModels) {
+	for (auto waterModel: this->waterModels) {
+		engine->removeEntity(waterModel->getId());
+		delete waterModel;
+	}
+	this->waterModels = waterModels;
+	initModelRequested = true;
+}
+
 void SharedTerrainEditorView::initModel()
 {
 	if (prototype == nullptr)
@@ -125,6 +134,17 @@ void SharedTerrainEditorView::initModel()
 		auto modelBoundingVolume = engine->getEntity("model_bv");
 		if (modelBoundingVolume != nullptr) {
 			modelBoundingVolume->setEnabled(false);
+		}
+	}
+
+	//
+	if (waterModels.empty() == false) {
+		for (auto waterModel: waterModels) {
+			auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
+			waterObject3D->setShader("water");
+			waterObject3D->setContributesShadows(false);
+			waterObject3D->setReceivesShadows(false);
+			engine->addEntity(waterObject3D);
 		}
 	}
 

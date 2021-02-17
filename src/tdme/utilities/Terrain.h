@@ -206,19 +206,33 @@ public:
 	);
 
 	/**
-	 * Create partitioned water models using a auto fill like algorithm at given brush center position
+	 * Compute water positions map using a auto fill like algorithm at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
+	 * @param waterHeight waterHeight
+	 * @param waterPositionMap water position map
+	 */
+	static bool computeWaterPositionMap(
+		BoundingBox& terrainBoundingBox,
+		const vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		float waterHeight,
+		map<int, set<int>>& waterPositionMap
+	);
+
+	/**
+	 * Create partitioned water models using a auto fill like algorithm at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param waterPositionMap water position map
 	 * @param waterHeight waterHeight
 	 * @param waterModelIdx water model index
 	 * @param waterModels water models
 	 *
 	 */
-	static bool createWaterModels(
-		BoundingBox& terrainBoundingBox, // TODO: constness
-		const vector<float>& terrainHeightVector,
-		const Vector3& brushCenterPosition,
+	static void createWaterModels(
+		BoundingBox& terrainBoundingBox,
+		const map<int, set<int>>& waterPositionMap,
 		float waterHeight,
 		int waterModelIdx,
 		vector<Model*>& waterModels

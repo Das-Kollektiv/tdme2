@@ -168,7 +168,7 @@ public:
 	 * @param waterModelIdx water model index
 	 * @param waterModels water models
 	 */
-	bool createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels);
+	void createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels);
 
 	/**
 	 * Determine current brush flatten height

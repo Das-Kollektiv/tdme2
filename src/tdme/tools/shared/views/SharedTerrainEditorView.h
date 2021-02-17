@@ -45,6 +45,7 @@ private:
 
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
+	vector<Model*> waterModels;
 
 	/**
 	 * Init entity
@@ -85,6 +86,12 @@ public:
 	 * @param terrainModels terrain models
 	 */
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
+
+	/**
+	 * Set water models
+	 * @param waterModels terrain models
+	 */
+	void setWater(vector<Model*> waterModels);
 
 	/**
 	 * Init GUI elements
