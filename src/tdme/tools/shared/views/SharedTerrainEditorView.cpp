@@ -141,8 +141,28 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-				brushingEnabled = true;
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
+						static int terrainModelIdx = 0;
+						vector<Model*> waterModels;
+						terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, terrainModelIdx++, waterModels);
+						brushingEnabled = false;
+						terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+
+						//
+						for (auto waterModel: waterModels) {
+							auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
+							waterObject3D->setShader("water");
+							waterObject3D->setContributesShadows(false);
+							waterObject3D->setReceivesShadows(false);
+							engine->addEntity(waterObject3D);
+						}
+					}
+				} else {
+					brushingEnabled = true;
+				}
+
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
@@ -166,22 +186,7 @@ void SharedTerrainEditorView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
-			static int terrainModelIdx = 0;
-			vector<Model*> waterModels;
-			terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, terrainModelIdx++, waterModels);
-			brushingEnabled = false;
-			terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
-
-			//
-			for (auto waterModel: waterModels) {
-				auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
-				waterObject3D->setShader("water");
-				waterObject3D->setContributesShadows(false);
-				waterObject3D->setReceivesShadows(false);
-				engine->addEntity(waterObject3D);
-			}
-		} else {
+		if (terrainEditorScreenController->getBrushOperation() != Terrain::BRUSHOPERATION_WATER) {
 			terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
 	}

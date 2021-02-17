@@ -292,7 +292,6 @@ void Terrain::applyBrushToTerrainModels(
 	BrushOperation brushOperation,
 	float brushHeight
 ) {
-	Console::println("Terrain::applyBrushToTerrainModels(): ");
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
 	// check if we have a model
@@ -611,6 +610,8 @@ void Terrain::applyBrushToTerrainModels(
 }
 
 bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, int waterModelIdx, vector<Model*>& waterModels) {
+	Console::println("Terrain::createWaterModels: ");
+
 	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
@@ -811,11 +812,6 @@ bool Terrain::createWaterModels(BoundingBox& terrainBoundingBox, const vector<fl
 		waterNode->setFacesEntities(nodeFacesEntities);
 		waterModel->getNodes()[waterNode->getId()] = waterNode;
 		waterModel->getSubNodes()[waterNode->getId()] = waterNode;
-		if (partitionIdx == 0) {
-			terrainBoundingBox = *waterModel->getBoundingBox();
-		} else {
-			terrainBoundingBox.extend(waterModel->getBoundingBox());
-		}
 		ModelTools::prepareForIndexedRendering(waterModel);
 		waterModels.push_back(waterModel);
 		partitionIdx++;
