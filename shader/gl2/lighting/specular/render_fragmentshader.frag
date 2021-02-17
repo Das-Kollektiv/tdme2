@@ -158,7 +158,7 @@ void main (void) {
 	#elif defined(HAVE_WATER_SHADER)
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
-			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), vec3(0.0, 1.0, 0.0) * normalize(vsNormal * vec3(0.1, 1.0, 0.1)));
+			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(vsNormal * vec3(0.01, 1.0, 0.01)));
 			envColor = textureCube(environmentMappingTextureUnit, -reflectionVector);
 		}
 		gl_FragColor = vsFragColor * 0.4;

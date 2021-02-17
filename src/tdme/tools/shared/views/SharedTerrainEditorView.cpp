@@ -120,6 +120,7 @@ void SharedTerrainEditorView::initModel()
 		auto idx = 0;
 		for (auto terrainModel: terrainModels) {
 			auto terrainObject3D = new Object3D("terrain." + to_string(idx), terrainModel);
+			terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
 			terrainObject3D->setShader("terrain");
 			terrainObject3D->setContributesShadows(true);
 			terrainObject3D->setReceivesShadows(true);
@@ -141,6 +142,7 @@ void SharedTerrainEditorView::initModel()
 	if (waterModels.empty() == false) {
 		for (auto waterModel: waterModels) {
 			auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
+			waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 			waterObject3D->setShader("water");
 			waterObject3D->setContributesShadows(false);
 			waterObject3D->setReceivesShadows(false);

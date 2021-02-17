@@ -225,10 +225,6 @@ void EntityRenderer::reset()
 
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
-	// clear transparent render faces data
-	transparentRenderFacesPool->reset();
-	releaseTransparentFacesGroups();
-
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		renderFunction(1, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
@@ -247,7 +243,9 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
 		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
 	}
+}
 
+void EntityRenderer::renderTransparentFaces() {
 	// use default context
 	auto context = renderer->getDefaultContext();
 	// render transparent render faces if any exist
@@ -308,6 +306,10 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 		//renderer->enableDepthBufferWriting(); // TODO: a.drewke, verify that this works ok in all cases?
 		// done!
 	}
+
+	// clear transparent render faces data
+	transparentRenderFacesPool->reset();
+	releaseTransparentFacesGroups();
 }
 
 void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
