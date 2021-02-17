@@ -36,7 +36,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -111,6 +111,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -170,8 +171,6 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
@@ -1010,7 +1009,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITY_ENVIRONMENTMAPPING:
 			{
-				auto eme = static_cast<EnvironmentMappingEntity*>(entity);
+				auto eme = static_cast<EnvironmentMapping*>(entity);
 				decomposedEntities.environmentMappingEntities.push_back(eme);
 			}
 			break;
