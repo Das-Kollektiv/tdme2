@@ -618,7 +618,6 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			Value jWaterPositionMap;
 			jWaterPositionMap.SetObject();
 			jWaterPositionMap.AddMember("h", Value(terrain->getWaterPositionMapHeight(i)), jAllocator);
-			Console::println("sss: " + to_string(terrain->getWaterPositionMapHeight(i)));
 			Value jWaterPositionMapWater;
 			jWaterPositionMapWater.SetObject();
 			for (auto& waterPositionMapIt: waterPositionMap) {

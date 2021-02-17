@@ -261,7 +261,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			auto waterPositionMapIdx = terrain->allocateWaterPositionMapIdx();
 			auto& jWaterPositionMap = jWaterPositionMapsArray[i];
 			auto& jWaterPositionMapData = jWaterPositionMap["w"];
-			Console::println("llll: " + to_string(jWaterPositionMap["h"].GetFloat()));
 			terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
 			for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
 				auto z = Integer::parseInt(jWaterPositionMapDataIt->name.GetString());

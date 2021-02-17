@@ -83,8 +83,8 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 			int normalIdx = terrainNormals.size();
 			int vertexIdx = terrainVertices.size();
 
-			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
 
 			Vector3 topVertex;
 			Vector3 topLeftVertex;
@@ -678,16 +678,8 @@ void Terrain::createWaterModels(
 	int waterModelIdx,
 	vector<Model*>& waterModels
 ) {
-	//
-	for (auto& mIt: waterPositionMap) {
-		Console::print(to_string(mIt.first) + ": ");
-		for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
-		Console::println();
-	}
-
 	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
 	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
-	Console::println("Terrain::createWaterModels(): " + to_string(width) + " x " + to_string(depth));
 	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
 	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
 	auto partitionCount = partitionsX * partitionsZ;
@@ -702,8 +694,8 @@ void Terrain::createWaterModels(
 			auto _z = static_cast<int>(z / STEP_SIZE);
 			auto _x = static_cast<int>(x / STEP_SIZE);
 
-			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
 
 			Vector3 topVertex;
 			Vector3 topLeftVertex;
