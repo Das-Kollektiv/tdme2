@@ -397,19 +397,19 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
-	auto waterPositionMapsIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
-	prototype->getTerrain()->setWaterPositionMapHeight(waterPositionMapsIdx, currentBrushHeight);
+	auto waterPositionMapIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
+	prototype->getTerrain()->setWaterPositionMapHeight(waterPositionMapIdx, currentBrushHeight);
 	if (Terrain::computeWaterPositionMap(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
-		prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapsIdx),
-		prototype->getTerrain()->getWaterPositionMap(waterPositionMapsIdx)) == true) {
+		prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+		prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx)) == true) {
 		//
 		Terrain::createWaterModels(
 			terrainBoundingBox,
-			prototype->getTerrain()->getWaterPositionMap(waterPositionMapsIdx),
-			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapsIdx),
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
 			waterModelIdx,
 			waterModels
 		);

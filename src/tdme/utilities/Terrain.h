@@ -222,7 +222,7 @@ public:
 	);
 
 	/**
-	 * Create partitioned water models using a auto fill like algorithm at given brush center position
+	 * Create partitioned water models using given water position map
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param waterPositionMap water position map
 	 * @param waterHeight waterHeight

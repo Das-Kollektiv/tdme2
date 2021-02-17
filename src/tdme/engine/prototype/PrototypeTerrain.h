@@ -99,19 +99,18 @@ public:
 	}
 
 	/**
-	 * Get water position map height at given index
-	 * @param idx index
-	 * @return water position map height at given index
+	 * Get water position map height at given water position map index
+	 * @param idx water position map index
+	 * @return water position map height at given water position map index
 	 */
 	inline float getWaterPositionMapHeight(int idx) {
 		return waterPositionMapsHeight[idx];
 	}
 
 	/**
-	 * Get water position map height at given index
-	 * @param idx index
-	 * @param waterHeight water height
-	 * @return water position map height at given index
+	 * Set water position map height at given water position map index
+	 * @param idx water position map index
+	 * @param waterHeight waterHeight water height
 	 */
 	inline void setWaterPositionMapHeight(int idx, float waterHeight) {
 		waterPositionMapsHeight[idx] = waterHeight;
@@ -127,8 +126,8 @@ public:
 	}
 
 	/**
-	 * Remove water position map at given index
-	 * @param idx index
+	 * Remove water position map at given water position map index
+	 * @param idx water position map index
 	 */
 	inline void removeWaterPositionMap(int idx) {
 		waterPositionMapsHeight.erase(idx);

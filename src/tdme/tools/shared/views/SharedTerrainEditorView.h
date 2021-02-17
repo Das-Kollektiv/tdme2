@@ -89,7 +89,7 @@ public:
 
 	/**
 	 * Set water models
-	 * @param waterModels terrain models
+	 * @param waterModels water models
 	 */
 	void setWater(vector<Model*> waterModels);
 
