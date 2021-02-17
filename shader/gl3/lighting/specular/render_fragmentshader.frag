@@ -392,7 +392,7 @@ void main(void) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +
 				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
-				1.0
+				0.5
 			);
 		}
 	#else

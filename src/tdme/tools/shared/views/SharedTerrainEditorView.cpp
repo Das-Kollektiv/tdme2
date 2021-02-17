@@ -175,6 +175,7 @@ void SharedTerrainEditorView::handleInputEvents()
 						//
 						for (auto waterModel: waterModels) {
 							auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
+							waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 							waterObject3D->setShader("water");
 							waterObject3D->setContributesShadows(false);
 							waterObject3D->setReceivesShadows(false);
