@@ -1,5 +1,6 @@
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
 
+#include <map>
 #include <string>
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -32,6 +33,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::map;
 using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -107,12 +109,24 @@ void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector
 	initModelRequested = true;
 }
 
-void SharedTerrainEditorView::setWater(vector<Model*> waterModels) {
-	for (auto waterModel: this->waterModels) {
+void SharedTerrainEditorView::unsetWater() {
+	for (auto& it: waters) {
+		for (auto waterModel: it.second.waterModels) {
+			engine->removeEntity(waterModel->getId());
+			delete waterModel;
+		}
+	}
+	this->waters.clear();
+}
+
+void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition) {
+	auto& water = waters[waterIdx];
+	for (auto waterModel: water.waterModels) {
 		engine->removeEntity(waterModel->getId());
 		delete waterModel;
 	}
-	this->waterModels = waterModels;
+	water.waterModels = waterModels;
+	water.waterReflectionEnvironmentMappingPosition = waterReflectionEnvironmentMappingPosition;
 	initModelRequested = true;
 }
 
@@ -145,15 +159,19 @@ void SharedTerrainEditorView::initModel()
 	}
 
 	//
-	if (waterModels.empty() == false) {
-		for (auto waterModel: waterModels) {
-			auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
-			waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
-			waterObject3D->setShader("water");
-			waterObject3D->setContributesShadows(false);
-			waterObject3D->setReceivesShadows(false);
-			waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
-			engine->addEntity(waterObject3D);
+	if (waters.empty() == false) {
+		for (auto& it: waters) {
+			auto& water = it.second;
+			for (auto waterModel: water.waterModels) {
+				auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
+				waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
+				waterObject3D->setShader("water");
+				waterObject3D->setContributesShadows(false);
+				waterObject3D->setReceivesShadows(false);
+				waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
+				waterObject3D->setReflectionEnvironmentMappingPosition(water.waterReflectionEnvironmentMappingPosition);
+				engine->addEntity(waterObject3D);
+			}
 		}
 	}
 
@@ -249,12 +267,11 @@ void SharedTerrainEditorView::handleInputEvents()
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 				if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-						static int terrainModelIdx = 0;
 						vector<Model*> waterModels;
-						terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, terrainModelIdx++, waterModels);
+						Vector3 waterReflectionEnvironmentMappingPosition;
+						terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, waterModels, waterReflectionEnvironmentMappingPosition);
 						brushingEnabled = false;
 						terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
-
 						//
 						for (auto waterModel: waterModels) {
 							auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
@@ -263,6 +280,7 @@ void SharedTerrainEditorView::handleInputEvents()
 							waterObject3D->setContributesShadows(false);
 							waterObject3D->setReceivesShadows(false);
 							waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
+							waterObject3D->setReflectionEnvironmentMappingPosition(waterReflectionEnvironmentMappingPosition);
 							engine->addEntity(waterObject3D);
 						}
 					}

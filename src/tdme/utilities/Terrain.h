@@ -222,6 +222,18 @@ public:
 	);
 
 	/**
+	 * Compute water reflection environment mapping position
+	 * @param waterPositionMap water position map
+	 * @param waterHeight water height
+	 * @return water reflection environment mapping position
+	 *
+	 */
+	static Vector3 computeWaterReflectionEnvironmentMappingPosition(
+		const map<int, set<int>>& waterPositionMap,
+		float waterHeight
+	);
+
+	/**
 	 * Create partitioned water models using given water position map
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param waterPositionMap water position map

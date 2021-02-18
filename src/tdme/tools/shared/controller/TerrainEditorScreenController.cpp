@@ -1,3 +1,6 @@
+#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
+
+#include <map>
 #include <string>
 #include <vector>
 
@@ -18,7 +21,6 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
@@ -28,6 +30,7 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::map;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -198,10 +201,11 @@ void TerrainEditorScreenController::onLoadTerrain() {
 		BoundingBox terrainBoundingBox;
 		vector<Model*> terrainModels;
 		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
+		view->unsetWater();
 		view->setTerrain(terrainBoundingBox, terrainModels);
-		vector<Model*> waterModels;
 		auto waterPositionMapsIndices = prototype->getTerrain()->getWaterPositionMapsIndices();
 		for (auto waterPositionMapIdx: waterPositionMapsIndices) {
+			vector<Model*> waterModels;
 			Terrain::createWaterModels(
 				terrainBoundingBox,
 				prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
@@ -209,8 +213,15 @@ void TerrainEditorScreenController::onLoadTerrain() {
 				waterPositionMapIdx,
 				waterModels
 			);
+			view->addWater(
+				waterPositionMapIdx,
+				waterModels,
+				Terrain::computeWaterReflectionEnvironmentMappingPosition(
+					prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+					prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
+				)
+			);
 		}
-		view->setWater(waterModels);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
@@ -235,7 +246,7 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		vector<Model*> terrainModels;
 		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
 		view->setTerrain(terrainBoundingBox, terrainModels);
-		view->setWater({});
+		view->unsetWater();
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
@@ -394,7 +405,7 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 	);
 }
 
-void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels) {
+void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	auto waterPositionMapIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
@@ -410,8 +421,12 @@ void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundi
 			terrainBoundingBox,
 			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
 			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
-			waterModelIdx,
+			waterPositionMapIdx,
 			waterModels
+		);
+		waterReflectionEnvironmentMappingPosition = Terrain::computeWaterReflectionEnvironmentMappingPosition(
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
 		);
 	}
 }

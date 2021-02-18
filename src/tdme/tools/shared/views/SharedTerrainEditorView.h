@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
+
+using std::map;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -52,7 +56,12 @@ private:
 
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
-	vector<Model*> waterModels;
+
+	struct Water {
+		Vector3 waterReflectionEnvironmentMappingPosition;
+		vector<Model*> waterModels;
+	};
+	map<int, Water> waters;
 
 	/**
 	 * Init entity
@@ -105,10 +114,17 @@ public:
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
 
 	/**
-	 * Set water models
-	 * @param waterModels water models
+	 * Unset water models
 	 */
-	void setWater(vector<Model*> waterModels);
+	void unsetWater();
+
+	/**
+	 * Set water models
+	 * @param waterIdx water index
+	 * @param waterModels water models
+	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
+	 */
+	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
 
 	/**
 	 * Init GUI elements

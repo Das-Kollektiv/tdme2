@@ -21,6 +21,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
@@ -47,6 +48,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 
 void Terrain::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels)
@@ -134,7 +136,8 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		}
 	}
 	auto partitionIdx = 0;
-	for (auto& terrainFaces: partitionTerrainFaces) {
+	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
+		if (partitionTerrainFaces[partitionIdx].empty() == true) continue;
 		auto modelId = "terrain" + to_string(partitionIdx);
 		auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto terrainMaterial = new Material("terrain");
@@ -175,7 +178,6 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 			terrainBoundingBox.extend(terrainModel->getBoundingBox());
 		}
 		terrainModels.push_back(terrainModel);
-		partitionIdx++;
 	}
 }
 
@@ -671,6 +673,29 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 	return haveWaterPositionSet;
 }
 
+Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const map<int, set<int>>& waterPositionMap, float waterHeight) {
+	// determine reflection environment mapping position
+	auto zMin = Integer::MAX_VALUE;
+	auto zMax = Integer::MIN_VALUE;
+	auto xMin = Integer::MAX_VALUE;
+	auto xMax = Integer::MIN_VALUE;
+	for (auto& mIt: waterPositionMap) {
+		auto z = mIt.first;
+		if (z < zMin) zMin = z;
+		if (z > zMax) zMax = z;
+		for (auto x: mIt.second) {
+			if (x < xMin) xMin = x;
+			if (x > xMax) xMax = x;
+		}
+	}
+
+	return Vector3(
+		(static_cast<float>(xMin + xMax) / 2.0f) * STEP_SIZE,
+		waterHeight + 2.0f,
+		(static_cast<float>(zMin + zMax) / 2.0f) * STEP_SIZE
+	);
+}
+
 void Terrain::createWaterModels(
 	BoundingBox& terrainBoundingBox,
 	const map<int, set<int>>& waterPositionMap,
@@ -678,6 +703,13 @@ void Terrain::createWaterModels(
 	int waterModelIdx,
 	vector<Model*>& waterModels
 ) {
+	//
+	for (auto& mIt: waterPositionMap) {
+		Console::print(to_string(mIt.first) + ": ");
+		for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
+		Console::println();
+	}
+
 	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
 	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
 	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
@@ -691,9 +723,6 @@ void Terrain::createWaterModels(
 	partitionWaterFaces.resize(partitionCount);
 	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
-			auto _z = static_cast<int>(z / STEP_SIZE);
-			auto _x = static_cast<int>(x / STEP_SIZE);
-
 			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
 
@@ -783,9 +812,10 @@ void Terrain::createWaterModels(
 			}
 		}
 	}
-	auto partitionIdx = 0;
-	for (auto& waterFaces: partitionWaterFaces) {
+	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
+		if (partitionWaterFaces[partitionIdx].empty() == true) continue;
 		auto modelId = "water" + to_string(waterModelIdx) + "." + to_string(partitionIdx);
+		Console::println(modelId);
 		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto waterMaterial = new Material("water");
 		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
@@ -822,7 +852,6 @@ void Terrain::createWaterModels(
 		waterModel->getSubNodes()[waterNode->getId()] = waterNode;
 		ModelTools::prepareForIndexedRendering(waterModel);
 		waterModels.push_back(waterModel);
-		partitionIdx++;
 	}
 }
 

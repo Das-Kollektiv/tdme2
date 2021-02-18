@@ -165,10 +165,10 @@ public:
 	 * Create water model using a auto fill like algorithm
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param brushCenterPosition brush center position
-	 * @param waterModelIdx water model index
 	 * @param waterModels water models
+	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
 	 */
-	void createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int waterModelIdx, vector<Model*>& waterModels);
+	void createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition);
 
 	/**
 	 * Determine current brush flatten height
