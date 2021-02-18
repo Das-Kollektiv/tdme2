@@ -790,9 +790,10 @@ void Terrain::createWaterModels(
 		auto waterMaterial = new Material("water");
 		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 		// TODO: Fix me! The textures seem to be much too dark
-		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.2f, 0.2f, 1.0f, 0.0f));
-		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.4f, 0.4f, 0.5f, 1.0f));
-		waterMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 0.0f));
+		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.022f, 0.13f, 0.56f, 1.0f));
+		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.026f, 0.15f, 0.64f, 1.0f));
+		waterMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+		waterMaterial->getSpecularMaterialProperties()->setShininess(100.0f);
 		waterModel->getMaterials()[waterMaterial->getId()] = waterMaterial;
 		auto waterNode = new Node(waterModel, nullptr, "water", "water");
 		FacesEntity nodeFacesEntityWater(waterNode, "water.facesentity");

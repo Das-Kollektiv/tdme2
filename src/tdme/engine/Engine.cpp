@@ -1160,7 +1160,7 @@ void Engine::display()
 	resetLists(visibleDecomposedEntities);
 	computeTransformations(camera->getFrustum(), visibleDecomposedEntities, true, true);
 
-	// create environment maps
+	// render environment maps
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
 
 	// camera

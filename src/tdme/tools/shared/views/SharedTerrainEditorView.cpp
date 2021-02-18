@@ -5,6 +5,8 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
@@ -13,6 +15,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionOctTree.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -34,12 +37,15 @@ using std::string;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::model::Model;
+using tdme::engine::model::Material;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::Timing;
@@ -146,12 +152,89 @@ void SharedTerrainEditorView::initModel()
 			waterObject3D->setShader("water");
 			waterObject3D->setContributesShadows(false);
 			waterObject3D->setReceivesShadows(false);
+			waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 			engine->addEntity(waterObject3D);
 		}
 	}
 
 	//
+	initSky();
+
+	//
 	updateGUIElements();
+}
+
+void SharedTerrainEditorView::initSky() {
+	// sky sphere
+	auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
+	skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skySphere->setShader("sky");
+	skySphere->setFrustumCulling(false);
+	skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skySphere->setScale(Vector3(300.0f/200.0f, 300.0f/200.0f, 300.0f/200.0f));
+	skySphere->update();
+	skySphere->setContributesShadows(false);
+	skySphere->setReceivesShadows(false);
+	skySphere->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skySphere);
+
+	// sky dome
+	auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
+	skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skyDome->setShader("sky");
+	skyDome->setFrustumCulling(false);
+	skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyDome->setScale(Vector3(295.0f/190.0f, 295.0f/190.0f, 295.0f/190.0f));
+	skyDome->getModel()->getMaterials().begin()->second->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+	skyDome->update();
+	skyDome->setContributesShadows(false);
+	skyDome->setReceivesShadows(false);
+	skyDome->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.7f));
+	skyDome->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skyDome);
+
+	// sky panorama
+	auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
+	skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skyPanorama->setShader("sky");
+	skyPanorama->setFrustumCulling(false);
+	skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyPanorama->setScale(Vector3(280.0f/190.0f, 280.0f/180.0f, 280.0f/180.0f));
+	skyPanorama->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+	skyPanorama->update();
+	skyPanorama->setContributesShadows(false);
+	skyPanorama->setReceivesShadows(false);
+	skyPanorama->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skyPanorama);
+
+	auto environmentMapping = new EnvironmentMapping("sky_environment_mapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), BoundingBox(Vector3(-30.0f, 0.0f, -30.0f), Vector3(30.0f, 60.0f, -30.0f)));
+	environmentMapping->setFrustumCulling(false);
+	environmentMapping->setRenderPassMask(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	environmentMapping->setTimeRenderUpdateFrequency(33LL);
+	environmentMapping->update();
+	engine->addEntity(environmentMapping);
+}
+
+void SharedTerrainEditorView::updateSky() {
+	auto skySphere = engine->getEntity("sky_sphere");
+	skySphere->setTranslation(engine->getCamera()->getLookFrom());
+	skySphere->update();
+
+	auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
+	skyDome->setTranslation(engine->getCamera()->getLookFrom());
+	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+	skyDome->update();
+
+	auto skyPanorama = engine->getEntity("sky_panorama");
+	skyPanorama->setTranslation(engine->getCamera()->getLookFrom());
+	skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
+	skyPanorama->update();
+
+	auto environmentMapping = engine->getEntity("sky_environment_mapping");
+	environmentMapping->setTranslation(engine->getCamera()->getLookFrom());
+	environmentMapping->update();
+
+	skyDomeTranslation+= 1.0f / 60.0;
 }
 
 void SharedTerrainEditorView::handleInputEvents()
@@ -179,6 +262,7 @@ void SharedTerrainEditorView::handleInputEvents()
 							waterObject3D->setShader("water");
 							waterObject3D->setContributesShadows(false);
 							waterObject3D->setReceivesShadows(false);
+							waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 							engine->addEntity(waterObject3D);
 						}
 					}
@@ -227,6 +311,9 @@ void SharedTerrainEditorView::display()
 	viewPortWidth = (int)((float)viewPortWidth * xScale);
 	viewPortHeight = (int)((float)viewPortHeight * yScale);
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+
+	//
+	updateSky();
 }
 
 void SharedTerrainEditorView::updateGUIElements()
@@ -259,6 +346,14 @@ void SharedTerrainEditorView::initialize()
 		terrainEditorScreenController->initialize();
 		engine->getGUI()->addScreen(terrainEditorScreenController->getScreenNode()->getId(), terrainEditorScreenController->getScreenNode());
 		terrainEditorScreenController->getScreenNode()->setInputEventHandler(this);
+
+		//
+		// load sky
+		skySpherePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+		skyDomePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+		skyPanoramaPrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+		spherePrototype = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
+
 	} catch (Exception& exception) {
 		Console::print(string("SharedTerrainEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -293,6 +388,9 @@ void SharedTerrainEditorView::activate()
 		light0->setSpotCutOff(180.0f);
 		light0->setEnabled(true);
 	}
+
+	//
+	initSky();
 }
 
 void SharedTerrainEditorView::deactivate()

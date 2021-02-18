@@ -119,6 +119,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
@@ -133,7 +134,6 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::Pool;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 
 constexpr int32_t EntityRenderer::BATCHRENDERER_MAX;
 constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
@@ -584,16 +584,16 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				}
 				// reflection source; TODO: improve me!
 				if (object->getReflectionEnvironmentMappingId().empty() == false) {
-					EnvironmentMappingEntity* environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-					if (environmentMappingEntity == nullptr) {
+					auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+					if (environmentMapping == nullptr) {
 						auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-						if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+						if (environmentMappingEntityHierarchy != nullptr) environmentMapping = dynamic_cast<EnvironmentMapping*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
 					}
-					if (environmentMappingEntity != nullptr) {
-						auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
+					if (environmentMapping != nullptr) {
+						auto environmentMappingCubeMapTextureId = environmentMapping->getCubeMapTextureId();
 						if (boundEnvironmentMappingCubeMapTextureId != environmentMappingCubeMapTextureId) {
 							Vector3 translation;
-							environmentMappingEntity->getTransformationsMatrix().getTranslation(translation);
+							environmentMapping->getTransformationsMatrix().getTranslation(translation);
 							renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
 							renderer->bindCubeMapTexture(context, environmentMappingCubeMapTextureId);
 							renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
@@ -913,10 +913,10 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// reflection source; TODO: improve me!
 					if (object->getReflectionEnvironmentMappingId().empty() == false) {
-						EnvironmentMappingEntity* environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+						EnvironmentMapping* environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
 						if (environmentMappingEntity == nullptr) {
 							auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-							if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+							if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
 						}
 						if (environmentMappingEntity != nullptr) {
 							auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();

@@ -384,15 +384,15 @@ void main(void) {
 			envColor = texture(environmentMappingTextureUnit, -reflectionVector);
 		}
 		outColor = fragColor * 0.4;
-		outColor+= envColor * 0.6;
+		outColor+= envColor;
 		outColor+= vsEffectColorAdd;
 		outColor = clamp(outColor, 0.0, 1.0);
-		outColor.a = 0.5;
+		outColor.a = 0.6;
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +
 				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
-				0.5
+				0.6
 			);
 		}
 	#else

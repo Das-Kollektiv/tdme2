@@ -43,6 +43,13 @@ private:
 	bool brushingEnabled { false };
 	Vector3 brushCenterPosition;
 
+	float skyDomeTranslation { 0.0f };
+
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
+	Prototype* spherePrototype { nullptr };
+
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
 	vector<Model*> waterModels;
@@ -51,6 +58,16 @@ private:
 	 * Init entity
 	 */
 	void initModel();
+
+	/**
+	 * Init sky
+	 */
+	void initSky();
+
+	/**
+	 * Update sky
+	 */
+	void updateSky();
 
 public:
 	/**
