@@ -43,6 +43,7 @@ private:
 	TerrainEditorScreenController* terrainEditorScreenController { nullptr };
 	Prototype* prototype { nullptr };
 	bool initModelRequested { false };
+	bool initCameraRequested { true };
 	CameraInputHandler* cameraInputHandler { nullptr };
 	bool brushingEnabled { false };
 	Vector3 brushCenterPosition;
@@ -114,12 +115,18 @@ public:
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
 
 	/**
-	 * Unset water models
+	 * Unset all water
 	 */
 	void unsetWater();
 
 	/**
-	 * Set water models
+	 * Remove water
+	 * @param waterIdx water index
+	 */
+	void removeWater(int waterIdx);
+
+	/**
+	 * Add water
 	 * @param waterIdx water index
 	 * @param waterModels water models
 	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position

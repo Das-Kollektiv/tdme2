@@ -405,7 +405,7 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 	);
 }
 
-void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
+void TerrainEditorScreenController::createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	auto waterPositionMapIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
@@ -429,6 +429,13 @@ void TerrainEditorScreenController::createWaterModels(BoundingBox& terrainBoundi
 			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
 		);
 	}
+}
+
+void TerrainEditorScreenController::deleteWater(int waterPositionMapIdx) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	prototype->getTerrain()->removeWaterPositionMap(waterPositionMapIdx);
+	view->removeWater(waterPositionMapIdx);
 }
 
 bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {

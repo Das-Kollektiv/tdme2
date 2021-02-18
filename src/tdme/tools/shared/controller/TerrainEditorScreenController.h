@@ -162,13 +162,19 @@ public:
 	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
-	 * Create water model using a auto fill like algorithm
+	 * Create water using a auto fill like algorithm
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param brushCenterPosition brush center position
 	 * @param waterModels water models
 	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
 	 */
-	void createWaterModels(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition);
+	void createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Delete water models
+	 * @param waterPositionMapIdx water position map index
+	 */
+	void deleteWater(int waterPositionMapIdx);
 
 	/**
 	 * Determine current brush flatten height

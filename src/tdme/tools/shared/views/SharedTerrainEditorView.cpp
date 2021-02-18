@@ -32,6 +32,8 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::string;
@@ -65,6 +67,8 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedTerrainEditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTools;
 
 SharedTerrainEditorView::SharedTerrainEditorView(PopUps* popUps)
 {
@@ -97,8 +101,20 @@ void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 	for (auto terrainModel: terrainModels) delete terrainModel;
 	terrainBoundingBox = BoundingBox();
 	terrainModels.clear();
+	unsetWater();
 	this->prototype = prototype;
 	initModelRequested = true;
+}
+
+void SharedTerrainEditorView::removeWater(int waterIdx) {
+	auto& water = waters[waterIdx];
+	for (auto waterModel: water.waterModels) {
+		engine->removeEntity(waterModel->getId());
+		delete waterModel;
+	}
+	waters.erase(waterIdx);
+	initModelRequested = true;
+	initCameraRequested = false;
 }
 
 void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels) {
@@ -170,6 +186,7 @@ void SharedTerrainEditorView::initModel()
 				waterObject3D->setReceivesShadows(false);
 				waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 				waterObject3D->setReflectionEnvironmentMappingPosition(water.waterReflectionEnvironmentMappingPosition);
+				waterObject3D->setPickable(true);
 				engine->addEntity(waterObject3D);
 			}
 		}
@@ -262,6 +279,16 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
+			if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
+				if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
+					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
+						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
+						terrainEditorScreenController->deleteWater(waterPositionMapIdx);
+						event.setProcessed(true);
+					}
+				}
+			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
@@ -269,7 +296,7 @@ void SharedTerrainEditorView::handleInputEvents()
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
 						Vector3 waterReflectionEnvironmentMappingPosition;
-						terrainEditorScreenController->createWaterModels(terrainBoundingBox, brushCenterPosition, waterModels, waterReflectionEnvironmentMappingPosition);
+						terrainEditorScreenController->createWater(terrainBoundingBox, brushCenterPosition, waterModels, waterReflectionEnvironmentMappingPosition);
 						brushingEnabled = false;
 						terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 						//
@@ -281,6 +308,7 @@ void SharedTerrainEditorView::handleInputEvents()
 							waterObject3D->setReceivesShadows(false);
 							waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 							waterObject3D->setReflectionEnvironmentMappingPosition(waterReflectionEnvironmentMappingPosition);
+							waterObject3D->setPickable(true);
 							engine->addEntity(waterObject3D);
 						}
 					}
@@ -305,8 +333,9 @@ void SharedTerrainEditorView::display()
 	// commands
 	if (initModelRequested == true) {
 		initModel();
-		cameraInputHandler->reset();
+		if (initCameraRequested == true) cameraInputHandler->reset();
 		initModelRequested = false;
+		initCameraRequested = true;
 	}
 
 	// actually do the brushing

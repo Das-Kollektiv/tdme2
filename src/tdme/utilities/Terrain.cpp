@@ -814,8 +814,7 @@ void Terrain::createWaterModels(
 	}
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionWaterFaces[partitionIdx].empty() == true) continue;
-		auto modelId = "water" + to_string(waterModelIdx) + "." + to_string(partitionIdx);
-		Console::println(modelId);
+		auto modelId = "water." + to_string(waterModelIdx) + "." + to_string(partitionIdx);
 		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto waterMaterial = new Material("water");
 		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
