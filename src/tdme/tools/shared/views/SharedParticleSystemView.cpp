@@ -356,8 +356,6 @@ void SharedParticleSystemView::display()
 	// rendering
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 }
 
 void SharedParticleSystemView::updateGUIElements()
