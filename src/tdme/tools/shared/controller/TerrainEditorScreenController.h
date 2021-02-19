@@ -53,12 +53,12 @@ private:
 	GUIElementNode* btnTerrainDimensionApply { nullptr };
 	GUIElementNode* btnTerrainDimensionLoad { nullptr };
 	GUIElementNode* btnTerrainDimensionSave { nullptr };
-	GUIElementNode* brushScale { nullptr };
-	GUIElementNode* brushStrength { nullptr };
-	GUIElementNode* brushFile { nullptr };
-	GUIElementNode* brushFileLoad { nullptr };
-	GUIElementNode* brushFileClear { nullptr };
-	GUIElementNode* btnBrushApply { nullptr };
+	GUIElementNode* terrainBrushScale { nullptr };
+	GUIElementNode* terrainBrushStrength { nullptr };
+	GUIElementNode* terrainBrushFile { nullptr };
+	GUIElementNode* terrainBrushFileLoad { nullptr };
+	GUIElementNode* terrainBrushFileClear { nullptr };
+	GUIElementNode* btnTerrainBrushApply { nullptr };
 
 	FileDialogPath* terrainPath { nullptr };
 

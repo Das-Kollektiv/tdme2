@@ -109,12 +109,12 @@ void TerrainEditorScreenController::initialize()
 		btnTerrainDimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_apply"));
 		btnTerrainDimensionLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_load"));
 		btnTerrainDimensionSave = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_save"));
-		brushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_scale"));
-		brushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_strength"));
-		brushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file"));
-		brushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_load"));
-		brushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_clear"));
-		btnBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_brush_apply"));
+		terrainBrushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_scale"));
+		terrainBrushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_strength"));
+		terrainBrushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file"));
+		terrainBrushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_load"));
+		terrainBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_clear"));
+		btnTerrainBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_brush_apply"));
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -179,7 +179,7 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		if (node->getId().compare(btnTerrainDimensionSave->getId()) == 0) {
 			onTerrainSave();
 		} else
-		if (node->getId().compare(btnBrushApply->getId()) == 0) {
+		if (node->getId().compare(btnTerrainBrushApply->getId()) == 0) {
 			onApplyBrush();
 		}
 	}
@@ -346,7 +346,7 @@ void TerrainEditorScreenController::onApplyBrush() {
 		// operation
 		map<string, MutableString> values;
 		screenNode->getValues(values);
-		auto brushOperationName = values["brush_operation"].getString();
+		auto brushOperationName = values["terrain_brush_operation"].getString();
 		currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		if (brushOperationName == "add") {
 			currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
@@ -368,14 +368,14 @@ void TerrainEditorScreenController::onApplyBrush() {
 		}
 
 		// scale, strength
-		currentBrushScale = Float::parseFloat(brushScale->getController()->getValue().getString());
-		currentBrushStrength = Float::parseFloat(brushStrength->getController()->getValue().getString());
+		currentBrushScale = Float::parseFloat(terrainBrushScale->getController()->getValue().getString());
+		currentBrushStrength = Float::parseFloat(terrainBrushStrength->getController()->getValue().getString());
 
 		if (currentBrushScale < 0.1f || currentBrushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
 		if (currentBrushStrength <= 0.0f || currentBrushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
 
 		// texture
-		auto brushTextureFileName = brushFile->getController()->getValue().getString();
+		auto brushTextureFileName = terrainBrushFile->getController()->getValue().getString();
 		currentBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
