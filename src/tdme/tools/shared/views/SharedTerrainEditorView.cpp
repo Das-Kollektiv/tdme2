@@ -284,7 +284,7 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
+			if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
 				if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
 					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
@@ -297,7 +297,7 @@ void SharedTerrainEditorView::handleInputEvents()
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
-				if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
 						Vector3 waterReflectionEnvironmentMappingPosition;
@@ -345,8 +345,8 @@ void SharedTerrainEditorView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		if (terrainEditorScreenController->getBrushOperation() != Terrain::BRUSHOPERATION_WATER) {
-			terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_WATER) {
+			terrainEditorScreenController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
 	}
 

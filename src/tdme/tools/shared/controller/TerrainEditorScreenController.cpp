@@ -115,13 +115,28 @@ void TerrainEditorScreenController::initialize()
 		terrainBrushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_load"));
 		terrainBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_clear"));
 		btnTerrainBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_brush_apply"));
+
+		foliageBrushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_scale"));
+		foliageBrushDensity = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_density"));
+		foliageBrushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file"));
+		foliageBrushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file_load"));
+		foliageBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file_clear"));
+		btnFoliageBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_foliage_brush_apply"));
+
+		for (auto i = 0; i < 5; i++) {
+			foliageBrushModelFileRatio[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_ratio"));
+			foliageBrushModelFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1)));
+			foliageBrushModelFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_load"));
+			foliageBrushModelFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_save"));
+		}
+
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
 	btnTerrainDimensionSave->getController()->setDisabled(true);
-	onApplyBrush();
+	onApplyTerrainBrush();
 }
 
 void TerrainEditorScreenController::dispose()
@@ -180,7 +195,7 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 			onTerrainSave();
 		} else
 		if (node->getId().compare(btnTerrainBrushApply->getId()) == 0) {
-			onApplyBrush();
+			onApplyTerrainBrush();
 		}
 	}
 }
@@ -337,7 +352,7 @@ void TerrainEditorScreenController::onTerrainSave()
 	);
 }
 
-void TerrainEditorScreenController::onApplyBrush() {
+void TerrainEditorScreenController::onApplyTerrainBrush() {
 	try {
 		// texture
 		if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
@@ -383,11 +398,11 @@ void TerrainEditorScreenController::onApplyBrush() {
 	}
 }
 
-Terrain::BrushOperation TerrainEditorScreenController::getBrushOperation() {
+Terrain::BrushOperation TerrainEditorScreenController::getTerrainBrushOperation() {
 	return currentBrushOperation;
 }
 
-void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
+void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::array;
 using std::string;
 using std::vector;
 
@@ -59,6 +61,19 @@ private:
 	GUIElementNode* terrainBrushFileLoad { nullptr };
 	GUIElementNode* terrainBrushFileClear { nullptr };
 	GUIElementNode* btnTerrainBrushApply { nullptr };
+
+	GUIElementNode* foliageBrushScale { nullptr };
+	GUIElementNode* foliageBrushDensity { nullptr };
+	GUIElementNode* foliageBrushFile { nullptr };
+	GUIElementNode* foliageBrushFileLoad { nullptr };
+	GUIElementNode* foliageBrushFileClear { nullptr };
+
+	array<GUIElementNode*, 5> foliageBrushModelFileRatio;
+	array<GUIElementNode*, 5> foliageBrushModelFile;
+	array<GUIElementNode*, 5> foliageBrushModelFileLoad;
+	array<GUIElementNode*, 5> foliageBrushModelFileClear;
+
+	GUIElementNode* btnFoliageBrushApply { nullptr };
 
 	FileDialogPath* terrainPath { nullptr };
 
@@ -145,12 +160,12 @@ public:
 	/**
 	 * On apply brush
 	 */
-	void onApplyBrush();
+	void onApplyTerrainBrush();
 
 	/**
 	 * @return current brush operation
 	 */
-	Terrain::BrushOperation getBrushOperation();
+	Terrain::BrushOperation getTerrainBrushOperation();
 
 	/**
 	 * Apply current brush at given brush center position
@@ -159,7 +174,7 @@ public:
 	 * @param brushCenterPosition brush center position
 	 * @param deltaTime delta time between last frame and this frame
 	 */
-	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
+	void applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Create water using a auto fill like algorithm
