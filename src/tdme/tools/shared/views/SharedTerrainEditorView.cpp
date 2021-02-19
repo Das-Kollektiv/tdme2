@@ -144,6 +144,11 @@ void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels,
 	water.waterModels = waterModels;
 	water.waterReflectionEnvironmentMappingPosition = waterReflectionEnvironmentMappingPosition;
 	initModelRequested = true;
+	initCameraRequested = false;
+}
+
+void SharedTerrainEditorView::resetCamera() {
+	initCameraRequested = true;
 }
 
 void SharedTerrainEditorView::initModel()

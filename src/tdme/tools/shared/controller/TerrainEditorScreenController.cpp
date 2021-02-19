@@ -225,6 +225,7 @@ void TerrainEditorScreenController::onLoadTerrain() {
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
+		view->resetCamera();
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -427,6 +428,11 @@ void TerrainEditorScreenController::createWater(BoundingBox& terrainBoundingBox,
 		waterReflectionEnvironmentMappingPosition = Terrain::computeWaterReflectionEnvironmentMappingPosition(
 			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
 			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
+		);
+		view->addWater(
+			waterPositionMapIdx,
+			waterModels,
+			waterReflectionEnvironmentMappingPosition
 		);
 	}
 }

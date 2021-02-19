@@ -134,6 +134,11 @@ public:
 	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
 
 	/**
+	 * Reset camera
+	 */
+	void resetCamera();
+
+	/**
 	 * Init GUI elements
 	 */
 	void updateGUIElements();
