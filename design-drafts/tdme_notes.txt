@@ -13,8 +13,9 @@ template_viewport_scene			x
 template_viewport_terrain/foliage
 template_viewport_gui
 template_viewport_texture
-template_viewport_codeeditor
-template_viewport_sound
+
+(template_viewport_codeeditor)
+(template_viewport_sound)
 
 template_details_terrain_dimensions
 template_details_terrain_brush
@@ -76,6 +77,9 @@ template_details_shaderparameters
 
 - tools (compute normals, optimize model) into context menu
 - color, center, remove to context menu
+
+- water placeable in scene of terrain editor and visible in outliner
+- foliage brushes in outliner of terrain? or as prototype?
 
 definition_button
 definition_dropdown

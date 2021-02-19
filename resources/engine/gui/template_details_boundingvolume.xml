@@ -4,7 +4,7 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 		
 
-			<dropdown id="boundingvolume_type" name="boundingvolume_type" width="100%" height="auto" text="Select Type">
+			<dropdown id="boundingvolume_type" width="100%" height="auto" text="Select Type">
 
 					<dropdown-option text="Sphere" value="1" on-mouse-click="boundingvolume_type_details.condition=sphere" />
 					<dropdown-option text="Capsule" value="2" on-mouse-click="boundingvolume_type_details.condition=capsule" />
