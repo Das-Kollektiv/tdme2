@@ -124,10 +124,10 @@ void TerrainEditorScreenController::initialize()
 		btnFoliageBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_foliage_brush_apply"));
 
 		for (auto i = 0; i < 5; i++) {
-			foliageBrushModelFileRatio[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_ratio"));
-			foliageBrushModelFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1)));
-			foliageBrushModelFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_load"));
-			foliageBrushModelFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_model_" + to_string(i + 1) + "_save"));
+			foliageBrushPrototypeFileRatio[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_ratio"));
+			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
+			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
+			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_save"));
 		}
 
 	} catch (Exception& exception) {

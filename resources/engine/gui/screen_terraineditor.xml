@@ -216,73 +216,73 @@
 								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Model 1" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 1" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="foliage_brush_model_1" name="foliage_brush_model_1" width="*" height="auto" text="" />
+									<input id="foliage_brush_prototype_1" name="foliage_brush_prototype_1" width="*" height="auto" text="" />
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_model_1_ratio" name="foliage_brush_model_1_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_1_ratio" name="foliage_brush_prototype_1_ratio" width="40" height="auto" text="1" />
 									<space width="10" />
-									<button id="foliage_brush_model_1_load" name="foliage_brush_model_1_load" text="Load" width="60" height="auto" />
+									<button id="foliage_brush_prototype_1_load" name="foliage_brush_prototype_1_load" text="Load" width="60" height="auto" />
 									<space width="10" />
-									<button id="foliage_brush_model_1_clear" name="foliage_brush_model_1_clear" text="Clear" width="60" height="auto" />
+									<button id="foliage_brush_prototype_1_clear" name="foliage_brush_prototype_1_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="10" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Model 2" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 2" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="foliage_brush_model_2" name="foliage_brush_model_2" width="*" height="auto" text="" />
+									<input id="foliage_brush_prototype_2" name="foliage_brush_prototype_2" width="*" height="auto" text="" />
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_model_2_ratio" name="foliage_brush_model_2_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_2_ratio" name="foliage_brush_prototype_2_ratio" width="40" height="auto" text="1" />
 									<space width="10" />
-									<button id="foliage_brush_model_2_load" name="foliage_brush_model_2_load" text="Load" width="60" height="auto" />
+									<button id="foliage_brush_prototype_2_load" name="foliage_brush_prototype_2_load" text="Load" width="60" height="auto" />
 									<space width="10" />
-									<button id="foliage_brush_model_2_clear" name="foliage_brush_model_2_clear" text="Clear" width="60" height="auto" />
+									<button id="foliage_brush_prototype_2_clear" name="foliage_brush_prototype_2_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="10" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Model 3" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 3" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="foliage_brush_model_3" name="foliage_brush_model_3" width="*" heigt="auto" text="" />
+									<input id="foliage_brush_prototype_3" name="foliage_brush_prototype_3" width="*" heigt="auto" text="" />
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_model_3_ratio" name="foliage_brush_model_3_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_3_ratio" name="foliage_brush_prototype_3_ratio" width="40" height="auto" text="1" />
 									<space width="10" />
-									<button id="foliage_brush_model_3_load" name="foliage_brush_model_3_load" text="Load" width="60" height="auto" />
+									<button id="foliage_brush_prototype_3_load" name="foliage_brush_prototype_3_load" text="Load" width="60" height="auto" />
 									<space width="10" />
-									<button id="foliage_brush_model_3_clear" name="foliage_brush_model_3_clear" text="Clear" width="60" height="auto" />
+									<button id="foliage_brush_prototype_3_clear" name="foliage_brush_prototype_3_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="10" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Model 4" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 4" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="foliage_brush_model_4" name="foliage_brush_model_4" width="*" heigt="auto" text="" />
+									<input id="foliage_brush_prototype_4" name="foliage_brush_prototype_4" width="*" heigt="auto" text="" />
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_model_4_ratio" name="foliage_brush_model_4_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_4_ratio" name="foliage_brush_prototype_4_ratio" width="40" height="auto" text="1" />
 									<space width="10" />
-									<button id="foliage_brush_model_4_load" name="foliage_brush_model_4_load" text="Load" width="60" height="auto" />
+									<button id="foliage_brush_prototype_4_load" name="foliage_brush_prototype_4_load" text="Load" width="60" height="auto" />
 									<space width="10" />
-									<button id="foliage_brush_model_4_clear" name="foliage_brush_model_4_clear" text="Clear" width="60" height="auto" />
+									<button id="foliage_brush_prototype_4_clear" name="foliage_brush_prototype_4_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="10" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Model 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
-									<input id="foliage_brush_model_5" name="foliage_brush_model_5" width="*" heigt="auto" text="" />
+									<input id="foliage_brush_prototype_5" name="foliage_brush_prototype_5" width="*" heigt="auto" text="" />
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_model_5_ratio" name="foliage_brush_model_5_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_5_ratio" name="foliage_brush_prototype_5_ratio" width="40" height="auto" text="1" />
 									<space width="10" />
-									<button id="foliage_brush_model_5_load" name="foliage_brush_model_5_load" text="Load" width="60" height="auto" />
+									<button id="foliage_brush_prototype_5_load" name="foliage_brush_prototype_5_load" text="Load" width="60" height="auto" />
 									<space width="10" />
-									<button id="foliage_brush_model_5_clear" name="foliage_brush_model_5_clear" text="Clear" width="60" height="auto" />
+									<button id="foliage_brush_prototype_5_clear" name="foliage_brush_prototype_5_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="20" />
 								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">

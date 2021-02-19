@@ -68,10 +68,10 @@ private:
 	GUIElementNode* foliageBrushFileLoad { nullptr };
 	GUIElementNode* foliageBrushFileClear { nullptr };
 
-	array<GUIElementNode*, 5> foliageBrushModelFileRatio;
-	array<GUIElementNode*, 5> foliageBrushModelFile;
-	array<GUIElementNode*, 5> foliageBrushModelFileLoad;
-	array<GUIElementNode*, 5> foliageBrushModelFileClear;
+	array<GUIElementNode*, 5> foliageBrushPrototypeFileRatio;
+	array<GUIElementNode*, 5> foliageBrushPrototypeFile;
+	array<GUIElementNode*, 5> foliageBrushPrototypeFileLoad;
+	array<GUIElementNode*, 5> foliageBrushPrototypeFileClear;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
