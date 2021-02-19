@@ -609,7 +609,30 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 		Value jTerrainValues;
 		jTerrainValues.SetArray();
 		for (auto& v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
-		jTerrain.AddMember("v", jTerrainValues, jAllocator);
+		jTerrain.AddMember("t", jTerrainValues, jAllocator);
+		Value jWaterPositionMaps;
+		jWaterPositionMaps.SetArray();
+		auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
+		for (auto i: waterPositionMapsIndices) {
+			const auto& waterPositionMap = terrain->getWaterPositionMap(i);
+			Value jWaterPositionMap;
+			jWaterPositionMap.SetObject();
+			jWaterPositionMap.AddMember("h", Value(terrain->getWaterPositionMapHeight(i)), jAllocator);
+			Value jWaterPositionMapWater;
+			jWaterPositionMapWater.SetObject();
+			for (auto& waterPositionMapIt: waterPositionMap) {
+				auto z = waterPositionMapIt.first;
+				Value jWaterPositionMapWaterXArray;
+				jWaterPositionMapWaterXArray.SetArray();
+				for (auto x: waterPositionMapIt.second) {
+					jWaterPositionMapWaterXArray.PushBack(Value(x), jAllocator);
+				}
+				jWaterPositionMapWater.AddMember(Value(to_string(z).c_str(), jAllocator), jWaterPositionMapWaterXArray, jAllocator);
+			}
+			jWaterPositionMap.AddMember("w", jWaterPositionMapWater, jAllocator);
+			jWaterPositionMaps.PushBack(jWaterPositionMap, jAllocator);
+		}
+		jTerrain.AddMember("W", jWaterPositionMaps, jAllocator);
 		jEntityRoot.AddMember("t", jTerrain, jAllocator);
 	}
 }

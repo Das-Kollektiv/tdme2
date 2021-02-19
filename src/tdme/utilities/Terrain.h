@@ -2,6 +2,7 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <map>
 #include <set>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
+using std::map;
 using std::set;
 using std::vector;
 
@@ -51,6 +53,35 @@ private:
 			terrainHeightVector[z * verticesPerX + x],
 			static_cast<float>(z) * STEP_SIZE
 		);
+		return true;
+	}
+
+	/**
+	 * Get the terrain vertex for given x and z position
+	 * @param x x
+	 * @param z z
+	 * @param waterHeight water height
+	 * @param vertex vertex
+	 */
+	static inline void getWaterVertex(int x, int z, float waterHeight, Vector3& vertex) {
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
+			waterHeight,
+			static_cast<float>(z) * STEP_SIZE
+		);
+	}
+
+	/**
+	 * @returns if water includes given position
+	 * @param waterPositionSet water position set
+	 * @param x x
+	 * @param z z
+	 */
+	static inline bool hasWaterPosition(const map<int, set<int>>& waterPositionSet, int x, int z) {
+		auto waterPositionSetIt = waterPositionSet.find(z);
+		if (waterPositionSetIt == waterPositionSet.end()) return false;
+		auto waterXPositionSetIt = waterPositionSetIt->second.find(x);
+		if (waterXPositionSetIt == waterPositionSetIt->second.end()) return false;
 		return true;
 	}
 
@@ -118,6 +149,14 @@ private:
 			waterXPositionSet.insert(terrainHeightVectorX);
 			xMax++;
 		}
+		if (waterXPositionSet.size() > 2) {
+			waterXPositionSet.insert(x + xMin - 0);
+			waterXPositionSet.insert(x + xMin - 1);
+			waterXPositionSet.insert(x + xMin - 2);
+			waterXPositionSet.insert(x + xMax + 0);
+			waterXPositionSet.insert(x + xMax + 1);
+			waterXPositionSet.insert(x + xMax + 2);
+		}
 	}
 
 public:
@@ -164,6 +203,51 @@ public:
 		float brushStrength,
 		BrushOperation brushOperation,
 		float flattenHeight = 0.0f
+	);
+
+	/**
+	 * Compute water positions map using a auto fill like algorithm at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param waterHeight waterHeight
+	 * @param waterPositionMap water position map
+	 */
+	static bool computeWaterPositionMap(
+		BoundingBox& terrainBoundingBox,
+		const vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		float waterHeight,
+		map<int, set<int>>& waterPositionMap
+	);
+
+	/**
+	 * Compute water reflection environment mapping position
+	 * @param waterPositionMap water position map
+	 * @param waterHeight water height
+	 * @return water reflection environment mapping position
+	 *
+	 */
+	static Vector3 computeWaterReflectionEnvironmentMappingPosition(
+		const map<int, set<int>>& waterPositionMap,
+		float waterHeight
+	);
+
+	/**
+	 * Create partitioned water models using given water position map
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param waterPositionMap water position map
+	 * @param waterHeight waterHeight
+	 * @param waterModelIdx water model index
+	 * @param waterModels water models
+	 *
+	 */
+	static void createWaterModels(
+		BoundingBox& terrainBoundingBox,
+		const map<int, set<int>>& waterPositionMap,
+		float waterHeight,
+		int waterModelIdx,
+		vector<Model*>& waterModels
 	);
 
 	/**

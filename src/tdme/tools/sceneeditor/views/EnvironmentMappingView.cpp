@@ -117,8 +117,6 @@ void EnvironmentMappingView::display()
 
 	// rendering
 	prototypePhysicsView->display(prototype);
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 }
 
 void EnvironmentMappingView::updateGUIElements()

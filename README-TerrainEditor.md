@@ -14,6 +14,8 @@
       - set up the texture scale
       - set up the strength which will be multiplied with strength base derived from texture rgb color space
       - TODO: water brush that works similar to flatten
+    - create water meshes with a auto fill like algorithm at grabbed brush terrain height
+      - this is WIP
     - use foliage brushes
       - this is WIP
 

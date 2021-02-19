@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +12,8 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
+
+using std::map;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -39,17 +43,41 @@ private:
 	TerrainEditorScreenController* terrainEditorScreenController { nullptr };
 	Prototype* prototype { nullptr };
 	bool initModelRequested { false };
+	bool initCameraRequested { true };
 	CameraInputHandler* cameraInputHandler { nullptr };
 	bool brushingEnabled { false };
 	Vector3 brushCenterPosition;
 
+	float skyDomeTranslation { 0.0f };
+
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
+	Prototype* spherePrototype { nullptr };
+
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
+
+	struct Water {
+		Vector3 waterReflectionEnvironmentMappingPosition;
+		vector<Model*> waterModels;
+	};
+	map<int, Water> waters;
 
 	/**
 	 * Init entity
 	 */
 	void initModel();
+
+	/**
+	 * Init sky
+	 */
+	void initSky();
+
+	/**
+	 * Update sky
+	 */
+	void updateSky();
 
 public:
 	/**
@@ -85,6 +113,30 @@ public:
 	 * @param terrainModels terrain models
 	 */
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
+
+	/**
+	 * Unset all water
+	 */
+	void unsetWater();
+
+	/**
+	 * Remove water
+	 * @param waterIdx water index
+	 */
+	void removeWater(int waterIdx);
+
+	/**
+	 * Add water
+	 * @param waterIdx water index
+	 * @param waterModels water models
+	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
+	 */
+	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Reset camera
+	 */
+	void resetCamera();
 
 	/**
 	 * Init GUI elements
