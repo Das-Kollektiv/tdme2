@@ -171,7 +171,7 @@ public:
 	}
 
 	/**
-	 * Returns first found entity by given entity type
+	 * Returns first found entity with given entity type
 	 * @param entityType entity type
 	 * @return entity
 	 */
@@ -185,7 +185,7 @@ public:
 	}
 
 	/**
-	 * Return entities by given entity type
+	 * Return entities with given entity type
 	 * @param entityType entity type
 	 * @return entities by type
 	 */
