@@ -91,6 +91,7 @@ private:
 	Texture* currentFoliageBrushTexture { nullptr };
 	float currentFoliageBrushScale { 1.0f };
 	float currentFoliageBrushDensity { 1.0f };
+	array<int, 5> currentFoliageBrushIds { -1, -1, -1, -1, -1 };
 	array<float, 5> currentFoliageBrushRatio { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };

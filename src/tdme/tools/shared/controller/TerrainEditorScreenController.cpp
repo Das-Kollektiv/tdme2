@@ -532,7 +532,7 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 		currentFoliageBrushTexture,
 		currentFoliageBrushScale,
 		currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
-		{ 1, 2, 3, 4, 5 },
+		currentFoliageBrushIds,
 		currentFoliageBrushRatio,
 		currentFoliageBrushOperation,
 		foliage
@@ -726,9 +726,11 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		currentFoliageBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		// prototypes
+		auto idx = 0;
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
 			auto prototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (prototypeFileName.empty() == false) currentFoliageBrushPrototypes[i] = PrototypeReader::read(Tools::getPathName(prototypeFileName), Tools::getFileName(prototypeFileName));
+			currentFoliageBrushIds[i] = prototypeFileName.empty() == true?-1:idx++;
 			currentFoliageBrushRatio[i] = Float::parseFloat(foliageBrushPrototypeFileRatio[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
