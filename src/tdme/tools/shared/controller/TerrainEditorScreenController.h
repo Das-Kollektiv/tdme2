@@ -76,6 +76,8 @@ private:
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
 	FileDialogPath* terrainPath { nullptr };
+	FileDialogPath* brushTexturePath { nullptr };
+	FileDialogPath* prototypePath { nullptr };
 
 	bool haveCurrentBrushHeight { false };
 	float currentBrushHeight { 0.0f };
@@ -156,6 +158,16 @@ public:
 	 * On apply terrain dimension
 	 */
 	void onApplyTerrainDimension();
+
+	/**
+	 * On terrain brush load
+	 */
+	void onTerrainBrushFileLoad();
+
+	/**
+	 * On terrain brush clear
+	 */
+	void onTerrainBrushFileClear();
 
 	/**
 	 * On apply brush

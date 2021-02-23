@@ -199,7 +199,7 @@
 									</layout>
 									<space width="10" />
 									<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/engine/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Density" width="140" height="auto" horizontal-align="left" />
 										<space width="5" />
 										<input id="foliage_brush_density" name="foliage_brush_density" width="*" height="auto" text="1.0" />
 									</layout>

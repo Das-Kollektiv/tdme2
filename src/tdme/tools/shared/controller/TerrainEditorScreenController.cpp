@@ -89,6 +89,8 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 	auto const finalView = view;
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->terrainPath = new FileDialogPath(".");
+	this->brushTexturePath = new FileDialogPath(".");
+	this->prototypePath = new FileDialogPath(".");
 }
 
 GUIScreenNode* TerrainEditorScreenController::getScreenNode()
@@ -144,6 +146,8 @@ void TerrainEditorScreenController::dispose()
 	if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
 	delete prototypeBaseSubScreenController;
 	delete terrainPath;
+	delete brushTexturePath;
+	delete prototypePath;
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -193,6 +197,12 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(btnTerrainDimensionSave->getId()) == 0) {
 			onTerrainSave();
+		} else
+		if (node->getId().compare(terrainBrushFileLoad->getId()) == 0) {
+			onTerrainBrushFileLoad();
+		} else
+		if (node->getId().compare(terrainBrushFileClear->getId()) == 0) {
+			onTerrainBrushFileClear();
 		} else
 		if (node->getId().compare(btnTerrainBrushApply->getId()) == 0) {
 			onApplyTerrainBrush();
@@ -350,6 +360,48 @@ void TerrainEditorScreenController::onTerrainSave()
 		false,
 		new OnTerrainSave(this)
 	);
+}
+
+void TerrainEditorScreenController::onTerrainBrushFileLoad() {
+	class OnTerrainBrushFileLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->terrainBrushFile->getController()->setValue(
+				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->brushTexturePath->setPath(
+				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnTerrainBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions = TextureReader::getTextureExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		terrainBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath->getPath():Tools::getPathName(terrainBrushFile->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(terrainBrushFile->getController()->getValue().getString()),
+		true,
+		new OnTerrainBrushFileLoadAction(this)
+	);
+}
+
+void TerrainEditorScreenController::onTerrainBrushFileClear() {
+	terrainBrushFile->getController()->setValue(MutableString());
 }
 
 void TerrainEditorScreenController::onApplyTerrainBrush() {

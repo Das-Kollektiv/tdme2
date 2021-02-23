@@ -21,6 +21,7 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param path path
 	 */
 	FileDialogPath(const string& path);
 
