@@ -612,7 +612,7 @@ void TerrainEditorScreenController::onFoliageBrushFileClear() {
 }
 
 void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
-	class OnFoliageBrushFileLoadAction: public virtual Action
+	class OnFoliageBrushPrototypeLoadAction: public virtual Action
 	{
 	public:
 		void performAction() override {
@@ -632,7 +632,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 		 * @param terrainEditorScreenController terrain editor screen controller
 		 * @param idx index
 		 */
-		OnFoliageBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController, int idx): terrainEditorScreenController(terrainEditorScreenController), idx(idx) {
+		OnFoliageBrushPrototypeLoadAction(TerrainEditorScreenController* terrainEditorScreenController, int idx): terrainEditorScreenController(terrainEditorScreenController), idx(idx) {
 		}
 
 	private:
@@ -647,7 +647,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 		extensions,
 		Tools::getFileName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
 		true,
-		new OnFoliageBrushFileLoadAction(this, idx)
+		new OnFoliageBrushPrototypeLoadAction(this, idx)
 	);
 }
 
