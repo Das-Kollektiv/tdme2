@@ -277,8 +277,9 @@ public:
 	 * @param brushDensity brush density
 	 * @param brushPrototypeIds brush prototype ids
 	 * @param brushPrototypeRatio brush prototype ratio
-	 * @param flattenHeight flatten height
-	 *
+	 * @param brushOperation brush operation
+	 * @param foliage foliage
+	 * @param newFoliage new foliage
 	 */
 	static void applyFoliageBrush(
 		BoundingBox& terrainBoundingBox, // TODO: constness
@@ -290,6 +291,7 @@ public:
 		array<int, 5> brushPrototypeIds,
 		array<float, 5> brushPrototypeRatio,
 		BrushOperation brushOperation,
-		vector<map<int, vector<Vector3>>>& foliage
+		vector<map<int, vector<Vector3>>>& foliage,
+		vector<map<int, vector<Vector3>>>& newFoliage
 	);
 };

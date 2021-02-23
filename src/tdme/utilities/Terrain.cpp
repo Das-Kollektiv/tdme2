@@ -887,7 +887,8 @@ void Terrain::applyFoliageBrush(
 	array<int, 5> brushPrototypeIds,
 	array<float, 5> brushPrototypeRatio,
 	BrushOperation brushOperation,
-	vector<map<int, vector<Vector3>>>& foliage
+	vector<map<int, vector<Vector3>>>& foliage,
+	vector<map<int, vector<Vector3>>>& newFoliage
 ) {
 	//
 	Console::println(string(__FUNCTION__));

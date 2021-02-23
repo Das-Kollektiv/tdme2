@@ -525,6 +525,7 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 
 	//
 	vector<map<int, vector<Vector3>>> foliage;
+	vector<map<int, vector<Vector3>>> newFoliage;
 	Terrain::applyFoliageBrush(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
@@ -535,7 +536,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 		currentFoliageBrushIds,
 		currentFoliageBrushRatio,
 		currentFoliageBrushOperation,
-		foliage
+		foliage,
+		newFoliage
 	);
 }
 
