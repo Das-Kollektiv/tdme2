@@ -228,6 +228,18 @@ public:
 	void onFoliageBrushFileClear();
 
 	/**
+	 * On foliage brush prototype load
+	 * @param idx index
+	 */
+	void onFoliageBrushPrototypeLoad(int idx);
+
+	/**
+	 * On foliage brush prototype clear
+	 * @param idx index
+	 */
+	void onFoliageBrushPrototypeClear(int idx);
+
+	/**
 	 * Get viewport rectangle
 	 * @param left left
 	 * @param top top

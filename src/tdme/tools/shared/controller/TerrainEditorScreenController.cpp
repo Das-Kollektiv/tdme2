@@ -129,7 +129,7 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeFileRatio[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_ratio"));
 			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
 			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
-			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_save"));
+			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_clear"));
 		}
 
 	} catch (Exception& exception) {
@@ -212,6 +212,36 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(foliageBrushFileClear->getId()) == 0) {
 			onFoliageBrushFileClear();
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[0]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(0);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[0]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(0);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[1]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(1);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[1]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(1);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[2]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(2);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[2]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(2);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[3]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(3);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[3]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(3);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[4]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(4);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[4]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(4);
 		}
 	}
 }
@@ -540,7 +570,7 @@ void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
 }
 
 void TerrainEditorScreenController::onFoliageBrushFileLoad() {
-	class OnTerrainBrushFileLoadAction: public virtual Action
+	class OnFoliageBrushFileLoadAction: public virtual Action
 	{
 	public:
 		void performAction() override {
@@ -559,7 +589,7 @@ void TerrainEditorScreenController::onFoliageBrushFileLoad() {
 		 * Public constructor
 		 * @param terrainEditorScreenController terrain editor screen controller
 		 */
-		OnTerrainBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		OnFoliageBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
 		}
 
 	private:
@@ -573,12 +603,56 @@ void TerrainEditorScreenController::onFoliageBrushFileLoad() {
 		extensions,
 		Tools::getFileName(foliageBrushFile->getController()->getValue().getString()),
 		true,
-		new OnTerrainBrushFileLoadAction(this)
+		new OnFoliageBrushFileLoadAction(this)
 	);
 }
 
 void TerrainEditorScreenController::onFoliageBrushFileClear() {
 	foliageBrushFile->getController()->setValue(MutableString());
+}
+
+void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
+	class OnFoliageBrushFileLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->foliageBrushPrototypeFile[idx]->getController()->setValue(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->prototypePath->setPath(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 * @param idx index
+		 */
+		OnFoliageBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController, int idx): terrainEditorScreenController(terrainEditorScreenController), idx(idx) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+		int idx;
+	};
+
+	vector<string> extensions = { "tmm" };
+	view->getPopUps()->getFileDialogScreenController()->show(
+		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath->getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
+		true,
+		new OnFoliageBrushFileLoadAction(this, idx)
+	);
+}
+
+void TerrainEditorScreenController::onFoliageBrushPrototypeClear(int idx) {
+	foliageBrushPrototypeFile[idx]->getController()->setValue(MutableString());
 }
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
