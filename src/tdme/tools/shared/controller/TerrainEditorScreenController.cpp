@@ -206,6 +206,12 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(btnTerrainBrushApply->getId()) == 0) {
 			onApplyTerrainBrush();
+		} else
+		if (node->getId().compare(foliageBrushFileLoad->getId()) == 0) {
+			onFoliageBrushFileLoad();
+		} else
+		if (node->getId().compare(foliageBrushFileClear->getId()) == 0) {
+			onFoliageBrushFileClear();
 		}
 	}
 }
@@ -533,6 +539,47 @@ void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
 	haveCurrentBrushHeight = false;
 }
 
+void TerrainEditorScreenController::onFoliageBrushFileLoad() {
+	class OnTerrainBrushFileLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->foliageBrushFile->getController()->setValue(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->brushTexturePath->setPath(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnTerrainBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		foliageBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath->getPath():Tools::getPathName(foliageBrushFile->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(foliageBrushFile->getController()->getValue().getString()),
+		true,
+		new OnTerrainBrushFileLoadAction(this)
+	);
+}
+
+void TerrainEditorScreenController::onFoliageBrushFileClear() {
+	foliageBrushFile->getController()->setValue(MutableString());
+}
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPort->getComputedConstraints();

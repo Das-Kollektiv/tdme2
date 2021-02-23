@@ -218,6 +218,16 @@ public:
 	void unsetCurrentBrushFlattenHeight();
 
 	/**
+	 * On foliage brush load
+	 */
+	void onFoliageBrushFileLoad();
+
+	/**
+	 * On foliage brush clear
+	 */
+	void onFoliageBrushFileClear();
+
+	/**
 	 * Get viewport rectangle
 	 * @param left left
 	 * @param top top
