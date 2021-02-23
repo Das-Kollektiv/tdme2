@@ -85,7 +85,7 @@ SharedTerrainEditorView::~SharedTerrainEditorView() {
 	delete cameraInputHandler;
 }
 
-PopUps* SharedTerrainEditorView::getPopUpsViews()
+PopUps* SharedTerrainEditorView::getPopUps()
 {
 	return popUps;
 }

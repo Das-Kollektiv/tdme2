@@ -68,7 +68,7 @@ TriggerView::~TriggerView() {
 	delete prototypePhysicsView;
 }
 
-PopUps* TriggerView::getPopUpsViews()
+PopUps* TriggerView::getPopUps()
 {
 	return popUps;
 }

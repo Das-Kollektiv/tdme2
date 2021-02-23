@@ -131,7 +131,7 @@ SharedParticleSystemView::~SharedParticleSystemView() {
 	delete cameraRotationInputHandler;
 }
 
-PopUps* SharedParticleSystemView::getPopUpsViews()
+PopUps* SharedParticleSystemView::getPopUps()
 {
 	return popUps;
 }

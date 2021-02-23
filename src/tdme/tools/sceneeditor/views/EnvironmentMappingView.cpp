@@ -72,7 +72,7 @@ EnvironmentMappingView::~EnvironmentMappingView() {
 	delete prototypePhysicsView;
 }
 
-PopUps* EnvironmentMappingView::getPopUpsViews()
+PopUps* EnvironmentMappingView::getPopUps()
 {
 	return popUps;
 }

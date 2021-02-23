@@ -87,7 +87,7 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
 	this->terrainPath = new FileDialogPath(".");
 	this->brushTexturePath = new FileDialogPath(".");
 	this->prototypePath = new FileDialogPath(".");
@@ -177,7 +177,7 @@ void TerrainEditorScreenController::unsetPrototypeProperties()
 
 void TerrainEditorScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void TerrainEditorScreenController::onValueChanged(GUIElementNode* node)
@@ -287,9 +287,9 @@ void TerrainEditorScreenController::onTerrainLoad()
 	{
 	public:
 		void performAction() override {
-			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -306,7 +306,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	vector<string> extensions;
 	extensions.push_back("tte");
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		terrainPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -324,13 +324,13 @@ void TerrainEditorScreenController::onTerrainSave()
 		void performAction() override {
 			try {
 				terrainEditorScreenController->view->saveFile(
-					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);
 				terrainEditorScreenController->terrainPath->setPath(
-						terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+						terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 				);
-				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
 				terrainEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -352,7 +352,7 @@ void TerrainEditorScreenController::onTerrainSave()
 		"tte"
 	};
 	fileName = Tools::getFileName(fileName);
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		terrainPath->getPath(),
 		"Save to: ",
 		extensions,
@@ -368,14 +368,14 @@ void TerrainEditorScreenController::onTerrainBrushFileLoad() {
 	public:
 		void performAction() override {
 			terrainEditorScreenController->terrainBrushFile->getController()->setValue(
-				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			terrainEditorScreenController->brushTexturePath->setPath(
-				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -390,7 +390,7 @@ void TerrainEditorScreenController::onTerrainBrushFileLoad() {
 	};
 
 	vector<string> extensions = TextureReader::getTextureExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		terrainBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath->getPath():Tools::getPathName(terrainBrushFile->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
