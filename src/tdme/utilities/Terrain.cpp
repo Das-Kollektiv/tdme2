@@ -876,3 +876,19 @@ bool Terrain::getTerrainModelsHeight(
 	//
 	return true;
 }
+
+void Terrain::applyFoliageBrush(
+	BoundingBox& terrainBoundingBox, // TODO: constness
+	vector<float>& terrainHeightVector,
+	const Vector3& brushCenterPosition,
+	Texture* brushTexture,
+	float brushScale,
+	float brushDensity,
+	array<int, 5> brushPrototypeIds,
+	array<float, 5> brushPrototypeRatio,
+	BrushOperation brushOperation,
+	vector<map<int, vector<Vector3>>>& foliage
+) {
+	//
+	Console::println(string(__FUNCTION__));
+}

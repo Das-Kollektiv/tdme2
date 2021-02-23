@@ -86,13 +86,14 @@ private:
 	float currentTerrainBrushScale { 1.0f };
 	float currentTerrainBrushStrength { 1.0f };
 	Texture* currentTerrainBrushTexture { nullptr };
-	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_ADD };
+	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_NONE };
 
 	Texture* currentFoliageBrushTexture { nullptr };
 	float currentFoliageBrushScale { 1.0f };
 	float currentFoliageBrushDensity { 1.0f };
+	array<float, 5> currentFoliageBrushRatio { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
-	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_ADD };
+	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 
 public:
 	/**
@@ -183,18 +184,31 @@ public:
 	void onApplyTerrainBrush();
 
 	/**
-	 * @return current brush operation
+	 * @return current terrain brush operation
 	 */
 	Terrain::BrushOperation getTerrainBrushOperation();
 
 	/**
-	 * Apply current brush at given brush center position
+	 * @return current foliage brush operation
+	 */
+	Terrain::BrushOperation getFoliageBrushOperation();
+
+	/**
+	 * Apply current brush to terrain at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
 	 * @param deltaTime delta time between last frame and this frame
 	 */
 	void applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
+
+	/**
+	 * Apply current brush to foliage at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param brushCenterPosition brush center position
+	 * @param deltaTime delta time between last frame and this frame
+	 */
+	void applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Create water using a auto fill like algorithm

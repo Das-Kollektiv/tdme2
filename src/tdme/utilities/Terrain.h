@@ -161,6 +161,7 @@ private:
 
 public:
 	enum BrushOperation {
+		BRUSHOPERATION_NONE,
 		BRUSHOPERATION_ADD,
 		BRUSHOPERATION_SUBTRACT,
 		BRUSHOPERATION_FLATTEN,
@@ -266,4 +267,29 @@ public:
 		float& brushHeight
 	);
 
+	/**
+	 * Apply foliage brush
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushScale brush scale
+	 * @param brushDensity brush density
+	 * @param brushPrototypeIds brush prototype ids
+	 * @param brushPrototypeRatio brush prototype ratio
+	 * @param flattenHeight flatten height
+	 *
+	 */
+	static void applyFoliageBrush(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushScale,
+		float brushDensity,
+		array<int, 5> brushPrototypeIds,
+		array<float, 5> brushPrototypeRatio,
+		BrushOperation brushOperation,
+		vector<map<int, vector<Vector3>>>& foliage
+	);
 };

@@ -447,6 +447,9 @@ void TerrainEditorScreenController::onTerrainBrushFileClear() {
 
 void TerrainEditorScreenController::onApplyTerrainBrush() {
 	try {
+		//
+		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
+
 		// texture
 		if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 		currentTerrainBrushTexture = nullptr;
@@ -455,7 +458,7 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		map<string, MutableString> values;
 		screenNode->getValues(values);
 		auto brushOperationName = values["terrain_brush_operation"].getString();
-		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		if (brushOperationName == "add") {
 			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		} else
@@ -495,12 +498,14 @@ Terrain::BrushOperation TerrainEditorScreenController::getTerrainBrushOperation(
 	return currentTerrainBrushOperation;
 }
 
+Terrain::BrushOperation TerrainEditorScreenController::getFoliageBrushOperation() {
+	return currentFoliageBrushOperation;
+}
+
 void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
-	auto terrainModel = terrainModels[0];
-	if (terrainModel == nullptr) return;
 	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
@@ -511,6 +516,26 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 		currentTerrainBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
 		currentTerrainBrushOperation,
 		currentTerrainBrushHeight
+	);
+}
+
+void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	vector<map<int, vector<Vector3>>> foliage;
+	Terrain::applyFoliageBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentFoliageBrushTexture,
+		currentFoliageBrushScale,
+		currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+		{ 1, 2, 3, 4, 5 },
+		currentFoliageBrushRatio,
+		currentFoliageBrushOperation,
+		foliage
 	);
 }
 
@@ -658,6 +683,9 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 
 void TerrainEditorScreenController::onApplyFoliageBrush() {
 	try {
+		//
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
+
 		// texture
 		if (currentFoliageBrushTexture != nullptr) currentFoliageBrushTexture->releaseReference();
 		currentFoliageBrushTexture = nullptr;
@@ -672,18 +700,18 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		map<string, MutableString> values;
 		screenNode->getValues(values);
 		auto brushOperationName = values["foliage_brush_operation"].getString();
-		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
+		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		if (brushOperationName == "add") {
-			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		} else
 		if (brushOperationName == "subtract") {
-			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
 		} else
 		if (brushOperationName == "flatten") {
-			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
 		} else
 		if (brushOperationName == "delete") {
-			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_DELETE;
 		}
 
 		// scale, strength
@@ -701,6 +729,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
 			auto prototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (prototypeFileName.empty() == false) currentFoliageBrushPrototypes[i] = PrototypeReader::read(Tools::getPathName(prototypeFileName), Tools::getFileName(prototypeFileName));
+			currentFoliageBrushRatio[i] = Float::parseFloat(foliageBrushPrototypeFileRatio[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());

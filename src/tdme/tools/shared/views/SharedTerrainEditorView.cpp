@@ -345,9 +345,13 @@ void SharedTerrainEditorView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_WATER) {
+		if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
 			terrainEditorScreenController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		} else
+		if (terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
+			terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
+
 	}
 
 	// viewport
