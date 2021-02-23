@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -21,6 +22,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -79,12 +81,18 @@ private:
 	FileDialogPath* brushTexturePath { nullptr };
 	FileDialogPath* prototypePath { nullptr };
 
-	bool haveCurrentBrushHeight { false };
-	float currentBrushHeight { 0.0f };
-	float currentBrushScale { 1.0f };
-	float currentBrushStrength { 1.0f };
-	Texture* currentBrushTexture { nullptr };
-	Terrain::BrushOperation currentBrushOperation { Terrain::BRUSHOPERATION_ADD };
+	bool haveCurrentTerrainBrushHeight { false };
+	float currentTerrainBrushHeight { 0.0f };
+	float currentTerrainBrushScale { 1.0f };
+	float currentTerrainBrushStrength { 1.0f };
+	Texture* currentTerrainBrushTexture { nullptr };
+	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_ADD };
+
+	Texture* currentFoliageBrushTexture { nullptr };
+	float currentFoliageBrushScale { 1.0f };
+	float currentFoliageBrushDensity { 1.0f };
+	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
+	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_ADD };
 
 public:
 	/**
@@ -170,7 +178,7 @@ public:
 	void onTerrainBrushFileClear();
 
 	/**
-	 * On apply brush
+	 * On apply terrain brush
 	 */
 	void onApplyTerrainBrush();
 
@@ -238,6 +246,11 @@ public:
 	 * @param idx index
 	 */
 	void onFoliageBrushPrototypeClear(int idx);
+
+	/**
+	 * On apply foliage brush
+	 */
+	void onApplyFoliageBrush();
 
 	/**
 	 * Get viewport rectangle
