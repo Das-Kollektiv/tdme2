@@ -44,6 +44,9 @@ public:
 	 * Destructor
 	 */
 	~PrototypeTerrain() {
+		for (auto& foliagePrototypeFoliageMapIt: foliagePrototypeFoliageMap) {
+			delete foliagePrototypeFoliageMapIt.first;
+		}
 	}
 
 	/**
