@@ -84,9 +84,8 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 
 	this->view = view;
 	auto const finalView = view;
-	this->modelPath = new FileDialogPath(".");
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
-	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), modelPath, false, 1, PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), &modelPath, false, 1, PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
 }
 
 PrototypePhysicsSubScreenController* EnvironmentMappingScreenController::getPrototypePhysicsSubScreenController()

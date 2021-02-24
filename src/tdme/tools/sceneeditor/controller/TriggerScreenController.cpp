@@ -77,9 +77,8 @@ TriggerScreenController::TriggerScreenController(TriggerView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->modelPath = new FileDialogPath(".");
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
-	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), modelPath, false);
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), &modelPath, false);
 }
 
 PrototypePhysicsSubScreenController* TriggerScreenController::getPrototypePhysicsSubScreenController()

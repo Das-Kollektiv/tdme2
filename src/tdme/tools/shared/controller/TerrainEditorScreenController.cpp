@@ -90,9 +90,6 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 	this->view = view;
 	auto const finalView = view;
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
-	this->terrainPath = new FileDialogPath(".");
-	this->brushTexturePath = new FileDialogPath(".");
-	this->prototypePath = new FileDialogPath(".");
 }
 
 GUIScreenNode* TerrainEditorScreenController::getScreenNode()
@@ -147,9 +144,6 @@ void TerrainEditorScreenController::dispose()
 {
 	if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 	delete prototypeBaseSubScreenController;
-	delete terrainPath;
-	delete brushTexturePath;
-	delete prototypePath;
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -333,7 +327,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	public:
 		void performAction() override {
 			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			terrainEditorScreenController->terrainPath.setPath(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -352,7 +346,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	extensions.push_back("tte");
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	view->getPopUps()->getFileDialogScreenController()->show(
-		terrainPath->getPath(),
+		terrainPath.getPath(),
 		"Load from: ",
 		extensions,
 		fileName,
@@ -372,7 +366,7 @@ void TerrainEditorScreenController::onTerrainSave()
 					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
 					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);
-				terrainEditorScreenController->terrainPath->setPath(
+				terrainEditorScreenController->terrainPath.setPath(
 						terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 				);
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -398,7 +392,7 @@ void TerrainEditorScreenController::onTerrainSave()
 	};
 	fileName = Tools::getFileName(fileName);
 	view->getPopUps()->getFileDialogScreenController()->show(
-		terrainPath->getPath(),
+		terrainPath.getPath(),
 		"Save to: ",
 		extensions,
 		fileName,
@@ -417,7 +411,7 @@ void TerrainEditorScreenController::onTerrainBrushFileLoad() {
 				"/" +
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			terrainEditorScreenController->brushTexturePath->setPath(
+			terrainEditorScreenController->brushTexturePath.setPath(
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
 			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -436,7 +430,7 @@ void TerrainEditorScreenController::onTerrainBrushFileLoad() {
 
 	vector<string> extensions = TextureReader::getTextureExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		terrainBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath->getPath():Tools::getPathName(terrainBrushFile->getController()->getValue().getString()),
+		terrainBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath.getPath():Tools::getPathName(terrainBrushFile->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(terrainBrushFile->getController()->getValue().getString()),
@@ -618,7 +612,7 @@ void TerrainEditorScreenController::onFoliageBrushFileLoad() {
 				"/" +
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			terrainEditorScreenController->brushTexturePath->setPath(
+			terrainEditorScreenController->brushTexturePath.setPath(
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
 			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -637,7 +631,7 @@ void TerrainEditorScreenController::onFoliageBrushFileLoad() {
 
 	vector<string> extensions = TextureReader::getTextureExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		foliageBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath->getPath():Tools::getPathName(foliageBrushFile->getController()->getValue().getString()),
+		foliageBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath.getPath():Tools::getPathName(foliageBrushFile->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(foliageBrushFile->getController()->getValue().getString()),
@@ -660,7 +654,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 				"/" +
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			terrainEditorScreenController->prototypePath->setPath(
+			terrainEditorScreenController->prototypePath.setPath(
 				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
 			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -681,7 +675,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 
 	vector<string> extensions = { "tmm" };
 	view->getPopUps()->getFileDialogScreenController()->show(
-		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath->getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
+		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath.getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),

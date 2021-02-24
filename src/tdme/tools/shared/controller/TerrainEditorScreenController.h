@@ -14,6 +14,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/Terrain.h>
@@ -79,9 +80,9 @@ private:
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
-	FileDialogPath* terrainPath { nullptr };
-	FileDialogPath* brushTexturePath { nullptr };
-	FileDialogPath* prototypePath { nullptr };
+	FileDialogPath terrainPath;
+	FileDialogPath brushTexturePath;
+	FileDialogPath prototypePath;
 
 	bool haveCurrentTerrainBrushHeight { false };
 	float currentTerrainBrushHeight { 0.0f };
