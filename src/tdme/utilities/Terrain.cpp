@@ -611,7 +611,7 @@ void Terrain::applyBrushToTerrainModels(
 	}
 }
 
-bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, map<int, set<int>>& waterPositionMap) {
+bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, unordered_map<int, unordered_set<int>>& waterPositionMap) {
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
@@ -673,7 +673,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 	return haveWaterPositionSet;
 }
 
-Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const map<int, set<int>>& waterPositionMap, float waterHeight) {
+Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const unordered_map<int, unordered_set<int>>& waterPositionMap, float waterHeight) {
 	// determine reflection environment mapping position
 	auto zMin = Integer::MAX_VALUE;
 	auto zMax = Integer::MIN_VALUE;
@@ -698,7 +698,7 @@ Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const map<int,
 
 void Terrain::createWaterModels(
 	BoundingBox& terrainBoundingBox,
-	const map<int, set<int>>& waterPositionMap,
+	const unordered_map<int, unordered_set<int>>& waterPositionMap,
 	float waterHeight,
 	int waterModelIdx,
 	vector<Model*>& waterModels
@@ -877,8 +877,25 @@ bool Terrain::getTerrainModelsHeight(
 	return true;
 }
 
+void Terrain::createFoliageMaps(
+	BoundingBox& terrainBoundingBox,
+	vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+) {
+	//
+	Console::println(string(__FUNCTION__));
+
+	//
+	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
+	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
+	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
+	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
+	auto partitionCount = partitionsX * partitionsZ;
+	foliageMaps.resize(partitionCount);
+	for (auto& foliageMap: foliageMaps) foliageMap.clear();
+}
+
 void Terrain::applyFoliageBrush(
-	BoundingBox& terrainBoundingBox, // TODO: constness
+	BoundingBox& terrainBoundingBox,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
 	Texture* brushTexture,
@@ -887,8 +904,8 @@ void Terrain::applyFoliageBrush(
 	array<int, 5> brushPrototypeIds,
 	array<float, 5> brushPrototypeRatio,
 	BrushOperation brushOperation,
-	vector<map<int, vector<Vector3>>>& foliage,
-	vector<map<int, vector<Vector3>>>& newFoliage
+	vector<unordered_map<int, vector<Vector3>>>& foliageMaps,
+	vector<unordered_map<int, vector<Vector3>>>& newFoliageMaps
 ) {
 	//
 	Console::println(string(__FUNCTION__));

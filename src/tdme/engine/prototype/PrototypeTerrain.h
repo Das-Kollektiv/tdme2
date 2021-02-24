@@ -1,14 +1,14 @@
 #pragma once
 
-#include <map>
-#include <set>
+#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
-using std::map;
-using std::set;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
@@ -25,8 +25,12 @@ private:
 	float depth { -1 };
 	vector<float> terrainHeightVector;
 	int waterPositionMapIdx { 0 };
-	map<int, float> waterPositionMapsHeight;
-	map<int, map<int, set<int>>> waterPositionMaps;
+	unordered_map<int, float> waterPositionMapsHeight;
+	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMaps;
+	int foliagePrototypeMapIdx { 0 };
+	unordered_map<Prototype*, int> foliagePrototypeFoliageMap;
+	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
+	vector<unordered_map<int, vector<Vector3>>> foliageMaps;
 
 public:
 
@@ -121,7 +125,7 @@ public:
 	 * @param idx index
 	 * @return water position map
 	 */
-	inline map<int, set<int>>& getWaterPositionMap(int idx) {
+	inline unordered_map<int, unordered_set<int>>& getWaterPositionMap(int idx) {
 		return waterPositionMaps[idx];
 	}
 
@@ -132,6 +136,41 @@ public:
 	inline void removeWaterPositionMap(int idx) {
 		waterPositionMapsHeight.erase(idx);
 		waterPositionMaps.erase(idx);
+	}
+
+	/**
+	 * Get or allocate a foliage prototype index
+	 * @param prototype prototype
+	 * @return prototype index
+	 */
+	inline int getFoliagePrototypeIndex(Prototype* prototype) {
+		auto foliagePrototypeIt = foliagePrototypeFoliageMap.find(prototype);
+		if (foliagePrototypeIt == foliagePrototypeFoliageMap.end()) {
+			foliagePrototypeFoliageMap[prototype] = foliagePrototypeMapIdx;
+			foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
+			return foliagePrototypeMapIdx++;
+		}
+		return foliagePrototypeIt->second;
+	}
+
+	/**
+	 * Get foliage prototype by given index
+	 * @param idx index
+	 * @return prototype or nullptr
+	 */
+	inline Prototype* getFoliagePrototype(int idx) {
+		auto foliageFoliagePrototypeIt = foliageFoliagePrototypeMap.find(idx);
+		if (foliageFoliagePrototypeIt == foliageFoliagePrototypeMap.end()) {
+			return nullptr;
+		}
+		return foliageFoliagePrototypeIt->second;
+	}
+
+	/**
+	 * @return foliage maps
+	 */
+	inline vector<unordered_map<int, vector<Vector3>>>& getFoliageMaps() {
+		return foliageMaps;
 	}
 
 };

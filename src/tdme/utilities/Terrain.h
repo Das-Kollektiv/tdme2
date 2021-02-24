@@ -2,8 +2,8 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
-#include <map>
-#include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -11,8 +11,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
-using std::set;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -77,7 +77,7 @@ private:
 	 * @param x x
 	 * @param z z
 	 */
-	static inline bool hasWaterPosition(const map<int, set<int>>& waterPositionSet, int x, int z) {
+	static inline bool hasWaterPosition(const unordered_map<int, unordered_set<int>>& waterPositionSet, int x, int z) {
 		auto waterPositionSetIt = waterPositionSet.find(z);
 		if (waterPositionSetIt == waterPositionSet.end()) return false;
 		auto waterXPositionSetIt = waterPositionSetIt->second.find(x);
@@ -126,7 +126,7 @@ private:
 	 * @param waterXPositionSet water x position set
 	 * @return if water can be generated at given position
 	 */
-	static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, set<int>& waterXPositionSet) {
+	static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, unordered_set<int>& waterXPositionSet) {
 		auto xMin = -1;
 		auto xMax = +1;
 		while(true == true) {
@@ -219,7 +219,7 @@ public:
 		const vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		float waterHeight,
-		map<int, set<int>>& waterPositionMap
+		unordered_map<int, unordered_set<int>>& waterPositionMap
 	);
 
 	/**
@@ -230,7 +230,7 @@ public:
 	 *
 	 */
 	static Vector3 computeWaterReflectionEnvironmentMappingPosition(
-		const map<int, set<int>>& waterPositionMap,
+		const unordered_map<int, unordered_set<int>>& waterPositionMap,
 		float waterHeight
 	);
 
@@ -245,7 +245,7 @@ public:
 	 */
 	static void createWaterModels(
 		BoundingBox& terrainBoundingBox,
-		const map<int, set<int>>& waterPositionMap,
+		const unordered_map<int, unordered_set<int>>& waterPositionMap,
 		float waterHeight,
 		int waterModelIdx,
 		vector<Model*>& waterModels
@@ -268,6 +268,16 @@ public:
 	);
 
 	/**
+	 * Create foliage maps
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param foliageMaps foliage maps
+	 */
+	static void createFoliageMaps(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+	);
+
+	/**
 	 * Apply foliage brush
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
@@ -278,8 +288,8 @@ public:
 	 * @param brushPrototypeIds brush prototype ids
 	 * @param brushPrototypeRatio brush prototype ratio
 	 * @param brushOperation brush operation
-	 * @param foliage foliage
-	 * @param newFoliage new foliage
+	 * @param foliageMaps foliage maps
+	 * @param newFoliageMaps new foliage maps
 	 */
 	static void applyFoliageBrush(
 		BoundingBox& terrainBoundingBox, // TODO: constness
@@ -291,7 +301,7 @@ public:
 		array<int, 5> brushPrototypeIds,
 		array<float, 5> brushPrototypeRatio,
 		BrushOperation brushOperation,
-		vector<map<int, vector<Vector3>>>& foliage,
-		vector<map<int, vector<Vector3>>>& newFoliage
+		vector<unordered_map<int, vector<Vector3>>>& foliageMaps,
+		vector<unordered_map<int, vector<Vector3>>>& newFoliageMaps
 	);
 };
