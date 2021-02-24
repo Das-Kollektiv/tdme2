@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -19,6 +20,7 @@
 
 using std::array;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -95,6 +97,7 @@ private:
 	array<float, 5> currentFoliageBrushRatio { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
+	vector<unordered_map<int, vector<Vector3>>> newFoliageMaps;
 
 public:
 	/**

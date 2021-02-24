@@ -278,6 +278,14 @@ public:
 	);
 
 	/**
+	 * Empty foliage maps
+	 * @param foliageMaps foliage maps
+	 */
+	static void emptyFoliageMaps(
+		vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+	);
+
+	/**
 	 * Apply foliage brush
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector

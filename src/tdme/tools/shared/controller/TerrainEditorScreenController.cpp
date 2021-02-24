@@ -289,6 +289,7 @@ void TerrainEditorScreenController::onLoadTerrain() {
 			);
 		}
 		Terrain::createFoliageMaps(terrainBoundingBox, prototype->getTerrain()->getFoliageMaps());
+		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
@@ -316,6 +317,7 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		view->setTerrain(terrainBoundingBox, terrainModels);
 		view->unsetWater();
 		Terrain::createFoliageMaps(terrainBoundingBox, prototype->getTerrain()->getFoliageMaps());
+		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
@@ -526,8 +528,6 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 	if (prototype == nullptr) return;
 
 	//
-	vector<unordered_map<int, vector<Vector3>>> foliage;
-	vector<unordered_map<int, vector<Vector3>>> newFoliage;
 	Terrain::applyFoliageBrush(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
@@ -538,9 +538,14 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 		currentFoliageBrushIds,
 		currentFoliageBrushRatio,
 		currentFoliageBrushOperation,
-		foliage,
-		newFoliage
+		prototype->getTerrain()->getFoliageMaps(),
+		newFoliageMaps
 	);
+
+	// TODO: add new foliage maps to engine
+
+	//
+	Terrain::emptyFoliageMaps(newFoliageMaps);
 }
 
 void TerrainEditorScreenController::createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
