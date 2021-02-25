@@ -18,6 +18,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
@@ -46,6 +47,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::Transformations;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
@@ -1032,8 +1034,46 @@ void Terrain::applyFoliageBrush(
 							Transformations transformations;
 							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())).setY(0.0f));
+
+							auto haveContact = false;
+							Vector3 contact;
+							for (int _z = -1; _z < 2; _z++)
+							for (int _x = -1; _x < 2; _x++) {
+								Vector3 topVertex;
+								Vector3 topLeftVertex;
+								Vector3 leftVertex;
+								Vector3 vertex;
+
+								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ - 1, topVertex);
+								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ - 1, topLeftVertex);
+								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
+								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
+
+								if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+									haveContact = true;
+									break;
+								} else
+								if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+									haveContact = true;
+									break;
+								}
+							}
+
+							//
+							if (haveContact == false) {
+								Console::println(
+									"Terrain::applyFoliageBrush(): no contact@" +
+									to_string(transformations.getTranslation().getX()) + ", " +
+									to_string(transformations.getTranslation().getZ())
+								);
+								contact = transformations.getTranslation();
+							}
+
+							//
+							transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
 							transformations.update();
 
+							//
 							foliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
 							newFoliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
 						}
