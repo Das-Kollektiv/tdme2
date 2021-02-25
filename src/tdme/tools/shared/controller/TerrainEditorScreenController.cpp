@@ -536,7 +536,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 		newFoliageMaps
 	);
 
-	// TODO: add new foliage maps to engine
+	//
+	view->addFoliage(newFoliageMaps);
 
 	//
 	Terrain::emptyFoliageMaps(newFoliageMaps);
@@ -685,6 +686,10 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 }
 
 void TerrainEditorScreenController::onApplyFoliageBrush() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
 	try {
 		//
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -693,10 +698,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		if (currentFoliageBrushTexture != nullptr) currentFoliageBrushTexture->releaseReference();
 		currentFoliageBrushTexture = nullptr;
 
-		// prototypes
-		for (auto prototype: currentFoliageBrushPrototypes) {
-			delete prototype;
-		}
+		//
 		currentFoliageBrushPrototypes.fill(nullptr);
 
 		// operation
@@ -729,11 +731,10 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		currentFoliageBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		// prototypes
-		auto idx = 0;
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
 			auto prototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (prototypeFileName.empty() == false) currentFoliageBrushPrototypes[i] = PrototypeReader::read(Tools::getPathName(prototypeFileName), Tools::getFileName(prototypeFileName));
-			currentFoliageBrushIds[i] = prototypeFileName.empty() == true?-1:idx++;
+			currentFoliageBrushIds[i] = prototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
 			currentFoliageBrushRatio[i] = Float::parseFloat(foliageBrushPrototypeFileRatio[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {

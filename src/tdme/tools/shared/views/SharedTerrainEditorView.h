@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/tools/shared/views/View.h>
 
 using std::map;
+using std::unordered_map;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -132,6 +134,12 @@ public:
 	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
 	 */
 	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Add foliage
+	 * @param newFoliageMaps new foliage maps
+	 */
+	void addFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
 
 	/**
 	 * Reset camera

@@ -6,12 +6,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
+
+using tdme::engine::Transformations;
 
 /**
  * Prototype terrain definition
@@ -30,7 +33,7 @@ private:
 	int foliagePrototypeMapIdx { 0 };
 	unordered_map<Prototype*, int> foliagePrototypeFoliageMap;
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
-	vector<unordered_map<int, vector<Vector3>>> foliageMaps;
+	vector<unordered_map<int, vector<Transformations>>> foliageMaps;
 
 public:
 
@@ -172,7 +175,7 @@ public:
 	/**
 	 * @return foliage maps
 	 */
-	inline vector<unordered_map<int, vector<Vector3>>>& getFoliageMaps() {
+	inline vector<unordered_map<int, vector<Transformations>>>& getFoliageMaps() {
 		return foliageMaps;
 	}
 

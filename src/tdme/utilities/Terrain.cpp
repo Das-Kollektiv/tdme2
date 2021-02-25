@@ -18,6 +18,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -45,6 +46,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Transformations;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -879,11 +881,8 @@ bool Terrain::getTerrainModelsHeight(
 
 void Terrain::createFoliageMaps(
 	BoundingBox& terrainBoundingBox,
-	vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
-	//
-	Console::println(string(__FUNCTION__));
-
 	//
 	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
 	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
@@ -895,11 +894,8 @@ void Terrain::createFoliageMaps(
 }
 
 void Terrain::emptyFoliageMaps(
-	vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
-	//
-	Console::println(string(__FUNCTION__));
-
 	//
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
 }
@@ -914,12 +910,9 @@ void Terrain::applyFoliageBrush(
 	array<int, 5> brushPrototypeIds,
 	array<float, 5> brushPrototypeRatio,
 	BrushOperation brushOperation,
-	vector<unordered_map<int, vector<Vector3>>>& foliageMaps,
-	vector<unordered_map<int, vector<Vector3>>>& newFoliageMaps
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
 ) {
-	//
-	Console::println(string(__FUNCTION__));
-
 	//
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
@@ -985,9 +978,14 @@ void Terrain::applyFoliageBrush(
 			auto partitionIdx = partitionZ * partitionsX + partitionX;
 
 			//
+			Transformations transformations;
+			transformations.setTranslation(brushPosition);
+			transformations.update();
+
+			//
 			if (brushPrototypeIds[0] != -1) {
-				foliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(brushPosition);
-				newFoliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(brushPosition);
+				foliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(transformations);
+				newFoliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(transformations);
 			}
 
 			//

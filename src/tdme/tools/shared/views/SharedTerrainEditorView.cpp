@@ -11,12 +11,15 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionOctTree.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EnvironmentMapping.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -46,12 +49,15 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionOctTree;
+using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -147,14 +153,43 @@ void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels,
 	initCameraRequested = false;
 }
 
+void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps) {
+	if (prototype == nullptr) return;
+
+	auto partitionIdx = 0;
+	for (auto& foliageMapPartition: newFoliageMaps) {
+		for (auto foliageMapPartitionIt: foliageMapPartition) {
+			auto prototypeIdx = foliageMapPartitionIt.first;
+			auto transformationsVector = foliageMapPartitionIt.second;
+			if (transformationsVector.empty() == false) {
+				auto foliageParititionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
+				if (foliageParititionEntityHierarchy == nullptr) {
+					foliageParititionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
+					foliageParititionEntityHierarchy->setContributesShadows(true);
+					foliageParititionEntityHierarchy->setReceivesShadows(true);
+					engine->addEntity(foliageParititionEntityHierarchy);
+				}
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				auto foliageIdx = 0;
+				for (auto& transformations: transformationsVector) {
+					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliageParititionEntityHierarchy->getId() + "." + to_string(foliageIdx), transformations);
+					foliageParititionEntityHierarchy->addEntity(foliageEntity);
+					foliageIdx++;
+				}
+				foliageParititionEntityHierarchy->update();
+			}
+		}
+		partitionIdx++;
+	}
+}
+
 void SharedTerrainEditorView::resetCamera() {
 	initCameraRequested = true;
 }
 
 void SharedTerrainEditorView::initModel()
 {
-	if (prototype == nullptr)
-		return;
+	if (prototype == nullptr) return;
 
 	//
 	if (terrainModels.empty() == false) {

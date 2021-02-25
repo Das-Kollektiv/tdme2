@@ -7,6 +7,7 @@
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -26,6 +27,7 @@ using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::Transformations;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -98,7 +100,7 @@ private:
 	array<float, 5> currentFoliageBrushRatio { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
-	vector<unordered_map<int, vector<Vector3>>> newFoliageMaps;
+	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 
 public:
 	/**

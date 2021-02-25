@@ -9,6 +9,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 
 using std::unordered_map;
@@ -18,6 +19,7 @@ using std::vector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
 /**
@@ -274,7 +276,7 @@ public:
 	 */
 	static void createFoliageMaps(
 		BoundingBox& terrainBoundingBox, // TODO: constness
-		vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 	);
 
 	/**
@@ -282,7 +284,7 @@ public:
 	 * @param foliageMaps foliage maps
 	 */
 	static void emptyFoliageMaps(
-		vector<unordered_map<int, vector<Vector3>>>& foliageMaps
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 	);
 
 	/**
@@ -309,7 +311,7 @@ public:
 		array<int, 5> brushPrototypeIds,
 		array<float, 5> brushPrototypeRatio,
 		BrushOperation brushOperation,
-		vector<unordered_map<int, vector<Vector3>>>& foliageMaps,
-		vector<unordered_map<int, vector<Vector3>>>& newFoliageMaps
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
 	);
 };
