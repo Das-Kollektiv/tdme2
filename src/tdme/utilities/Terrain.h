@@ -300,6 +300,7 @@ public:
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param newFoliageMaps new foliage maps
+	 * @param prototypeScale prototype scale
 	 */
 	static void applyFoliageBrush(
 		BoundingBox& terrainBoundingBox, // TODO: constness
@@ -309,9 +310,10 @@ public:
 		float brushScale,
 		float brushDensity,
 		array<int, 5> brushPrototypeIds,
-		array<float, 5> brushPrototypeRatio,
+		array<float, 5> brushPrototypeCount,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
+		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
+		float prototypeScale = 1.0f
 	);
 };

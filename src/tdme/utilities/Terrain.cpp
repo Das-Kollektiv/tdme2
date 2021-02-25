@@ -908,10 +908,11 @@ void Terrain::applyFoliageBrush(
 	float brushScale,
 	float brushDensity,
 	array<int, 5> brushPrototypeIds,
-	array<float, 5> brushPrototypeRatio,
+	array<float, 5> brushPrototypeCount,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
+	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
+	float prototypeScale
 ) {
 	//
 	// check if we have a texture
@@ -979,6 +980,7 @@ void Terrain::applyFoliageBrush(
 
 			//
 			Transformations transformations;
+			transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 			transformations.setTranslation(brushPosition);
 			transformations.update();
 

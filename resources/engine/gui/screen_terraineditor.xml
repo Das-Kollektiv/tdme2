@@ -220,9 +220,9 @@
 									<space width="5" />
 									<input id="foliage_brush_prototype_1" name="foliage_brush_prototype_1" width="*" height="auto" text="" />
 									<space width="5" />
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_prototype_1_ratio" name="foliage_brush_prototype_1_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_1_count" name="foliage_brush_prototype_1_count" width="40" height="auto" text="1" />
 									<space width="10" />
 									<button id="foliage_brush_prototype_1_load" name="foliage_brush_prototype_1_load" text="Load" width="60" height="auto" />
 									<space width="10" />
@@ -234,9 +234,9 @@
 									<space width="5" />
 									<input id="foliage_brush_prototype_2" name="foliage_brush_prototype_2" width="*" height="auto" text="" />
 									<space width="5" />
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_prototype_2_ratio" name="foliage_brush_prototype_2_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_2_count" name="foliage_brush_prototype_2_count" width="40" height="auto" text="1" />
 									<space width="10" />
 									<button id="foliage_brush_prototype_2_load" name="foliage_brush_prototype_2_load" text="Load" width="60" height="auto" />
 									<space width="10" />
@@ -248,9 +248,9 @@
 									<space width="5" />
 									<input id="foliage_brush_prototype_3" name="foliage_brush_prototype_3" width="*" heigt="auto" text="" />
 									<space width="5" />
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_prototype_3_ratio" name="foliage_brush_prototype_3_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_3_count" name="foliage_brush_prototype_3_count" width="40" height="auto" text="1" />
 									<space width="10" />
 									<button id="foliage_brush_prototype_3_load" name="foliage_brush_prototype_3_load" text="Load" width="60" height="auto" />
 									<space width="10" />
@@ -262,9 +262,9 @@
 									<space width="5" />
 									<input id="foliage_brush_prototype_4" name="foliage_brush_prototype_4" width="*" heigt="auto" text="" />
 									<space width="5" />
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_prototype_4_ratio" name="foliage_brush_prototype_4_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_4_count" name="foliage_brush_prototype_4_count" width="40" height="auto" text="1" />
 									<space width="10" />
 									<button id="foliage_brush_prototype_4_load" name="foliage_brush_prototype_4_load" text="Load" width="60" height="auto" />
 									<space width="10" />
@@ -276,9 +276,9 @@
 									<space width="5" />
 									<input id="foliage_brush_prototype_5" name="foliage_brush_prototype_5" width="*" heigt="auto" text="" />
 									<space width="5" />
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Ratio" width="50" height="auto" horizontal-align="center" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
 									<space width="5" />
-									<input id="foliage_brush_prototype_5_ratio" name="foliage_brush_prototype_5_ratio" width="40" height="auto" text="1" />
+									<input id="foliage_brush_prototype_5_count" name="foliage_brush_prototype_5_count" width="40" height="auto" text="1" />
 									<space width="10" />
 									<button id="foliage_brush_prototype_5_load" name="foliage_brush_prototype_5_load" text="Load" width="60" height="auto" />
 									<space width="10" />

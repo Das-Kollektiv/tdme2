@@ -125,7 +125,7 @@ void TerrainEditorScreenController::initialize()
 		btnFoliageBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_foliage_brush_apply"));
 
 		for (auto i = 0; i < 5; i++) {
-			foliageBrushPrototypeFileRatio[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_ratio"));
+			foliageBrushPrototypeFileCount[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_count"));
 			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
 			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
 			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_clear"));
@@ -530,10 +530,11 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 		currentFoliageBrushScale,
 		currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
 		currentFoliageBrushIds,
-		currentFoliageBrushRatio,
+		currentFoliageBrushCount,
 		currentFoliageBrushOperation,
 		prototype->getTerrain()->getFoliageMaps(),
-		newFoliageMaps
+		newFoliageMaps,
+		10.0f // TODO: put me into UI
 	);
 
 	//
@@ -735,7 +736,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			auto prototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (prototypeFileName.empty() == false) currentFoliageBrushPrototypes[i] = PrototypeReader::read(Tools::getPathName(prototypeFileName), Tools::getFileName(prototypeFileName));
 			currentFoliageBrushIds[i] = prototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
-			currentFoliageBrushRatio[i] = Float::parseFloat(foliageBrushPrototypeFileRatio[i]->getController()->getValue().getString());
+			currentFoliageBrushCount[i] = Float::parseFloat(foliageBrushPrototypeFileCount[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
