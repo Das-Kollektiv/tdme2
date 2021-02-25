@@ -1031,7 +1031,7 @@ void Terrain::applyFoliageBrush(
 							//
 							Transformations transformations;
 							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
-							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())));
+							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())).setY(0.0f));
 							transformations.update();
 
 							foliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
