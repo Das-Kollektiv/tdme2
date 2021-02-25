@@ -931,7 +931,62 @@ void Terrain::applyFoliageBrush(
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
 	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
-	for (auto z = 0.0f; z < textureHeight * brushScale; z+= STEP_SIZE) {
+
+	//
+	vector<unordered_map<int, float>> brushMapCountMap;
+	auto brushMapCountMapWidth = static_cast<int>(textureWidth * brushScale);
+	auto brushMapCountMapDepth = static_cast<int>(textureHeight * brushScale);
+	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
+		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
+			auto textureX = static_cast<int>(x / brushScale);
+			auto textureY = static_cast<int>(z / brushScale);
+			auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
+			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
+			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
+			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
+			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushDensity;
+			unordered_map<int, float> squareMeterCountMap;
+			for (auto i = 0; i < brushPrototypeIds.size(); i++) {
+				auto prototypeId = brushPrototypeIds[i];
+				if (prototypeId == -1) continue;
+				auto foliageCount = brushPrototypeCount[i];
+				squareMeterCountMap[prototypeId] = foliageCount * appliedDensity;
+			}
+			brushMapCountMap.push_back(squareMeterCountMap);
+		}
+	}
+
+	//
+	for (auto prototypeId: brushPrototypeIds) {
+		if (prototypeId == -1) continue;
+		float totalCount = 0.0f;
+		for (auto i = 0; i < brushMapCountMap.size(); i++) {
+			auto& squareMeterCountMap = brushMapCountMap[i];
+			auto count = squareMeterCountMap[prototypeId];
+			auto countFloor = Math::floor(count);
+			totalCount+= count - countFloor;
+			squareMeterCountMap[prototypeId] = countFloor;
+			auto totalCountFloor = Math::floor(totalCount);
+			if (totalCount >= 1.0f) squareMeterCountMap[prototypeId]+= totalCountFloor;
+			totalCount-= totalCountFloor;
+		}
+	}
+
+	//
+	Console::println(__FUNCTION__);
+	for (auto z = 0; z < brushMapCountMapWidth; z++) {
+		for (auto x = 0; x < brushMapCountMapWidth; x++) {
+			auto& squareMeterCountMap = brushMapCountMap[z * brushMapCountMapWidth + x];
+			for (auto& squareMeterCountMapIt: squareMeterCountMap) {
+				Console::print(to_string(squareMeterCountMapIt.first) + "->" + Tools::formatFloat(squareMeterCountMapIt.second) + " ");
+			}
+			Console::print("|");
+		}
+		Console::println();
+	}
+
+	//
+	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
 		auto brushPosition =
 			brushCenterPosition.
 			clone().
@@ -949,20 +1004,40 @@ void Terrain::applyFoliageBrush(
 					z
 				)
 			);
-		for (auto x = 0.0f; x < textureWidth * brushScale; x+= STEP_SIZE) {
-			auto textureX = static_cast<int>(x / brushScale);
-			auto textureY = static_cast<int>(z / brushScale);
-			auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
-			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
-			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
-			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
-			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushDensity;
+		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
+			auto brushMapCountMapX = static_cast<int>(x);
+			auto brushMapCountMapZ = static_cast<int>(z);
+			auto squareMeterCountMap = brushMapCountMap[brushMapCountMapZ * brushMapCountMapWidth + brushMapCountMapX];
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
 				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+
+			//
+			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
+			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
+			auto partitionIdx = partitionZ * partitionsX + partitionX;
+
+			//
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
+					for (auto& squareMeterCountMapIt: squareMeterCountMap) {
+						auto prototypeIdx = squareMeterCountMapIt.first;
+						if (prototypeIdx == -1) continue;
+						auto prototypeCount = squareMeterCountMapIt.second;
+
+						//
+						for (auto i = 0; i < static_cast<int>(prototypeCount); i++) {
+							//
+							Transformations transformations;
+							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
+							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())));
+							transformations.update();
+
+							foliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
+							newFoliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
+						}
+					}
 					break;
 				case BRUSHOPERATION_SUBTRACT:
 					break;
@@ -972,23 +1047,6 @@ void Terrain::applyFoliageBrush(
 					break;
 			}
 			// terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX];
-
-			//
-			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
-			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
-			auto partitionIdx = partitionZ * partitionsX + partitionX;
-
-			//
-			Transformations transformations;
-			transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
-			transformations.setTranslation(brushPosition);
-			transformations.update();
-
-			//
-			if (brushPrototypeIds[0] != -1) {
-				foliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(transformations);
-				newFoliageMaps[partitionIdx][brushPrototypeIds[0]].push_back(transformations);
-			}
 
 			//
 			brushPosition.add(

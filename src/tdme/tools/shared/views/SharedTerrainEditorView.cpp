@@ -156,6 +156,10 @@ void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels,
 void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps) {
 	if (prototype == nullptr) return;
 
+	//
+	auto foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
 	auto partitionIdx = 0;
 	for (auto& foliageMapPartition: newFoliageMaps) {
 		for (auto foliageMapPartitionIt: foliageMapPartition) {
@@ -170,7 +174,7 @@ void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transf
 					engine->addEntity(foliageParititionEntityHierarchy);
 				}
 				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-				auto foliageIdx = 0;
+				auto foliageIdx = foliageMaps[partitionIdx][prototypeIdx].size();
 				for (auto& transformations: transformationsVector) {
 					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliageParititionEntityHierarchy->getId() + "." + to_string(foliageIdx), transformations);
 					foliageParititionEntityHierarchy->addEntity(foliageEntity);
