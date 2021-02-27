@@ -278,13 +278,36 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			}
 		}
 		{
+			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 			auto& jFoliage = jTerrain["f"];
 			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
 				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
-				auto prototypeFile = jFoliagePrototype["f"].GetString();
 				auto jFoliagePrototypePartitions = jFoliagePrototype["t"].GetArray();
+
+
+				//
+				Prototype* foliagePrototype = nullptr;
+				try {
+					auto foliagePrototypeFileName = getResourcePathName(pathName, jFoliagePrototype["f"].GetString());
+					foliagePrototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(foliagePrototypeFileName),
+						FileSystem::getInstance()->getFileName(foliagePrototypeFileName)
+					);
+				} catch (Exception& exception) {
+					Console::println(string("PrototypeReader::read(): An error occurred: ") + exception.what());
+					continue;
+				}
+
+				//
+				auto foliagePrototypeIndex = prototype->getTerrain()->getFoliagePrototypeIndex(foliagePrototype);
+
+				//
+				if (foliageMaps.size() < jFoliagePrototypePartitions.Size()) foliageMaps.resize(jFoliagePrototypePartitions.Size());
+
+				//
 				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {
 					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
+					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
 					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
 						Value& jFoliagePrototypeTransformations = jFoliagePrototypePartitionTransformations[jFoliagePrototypePartitionTransformationsIdx];
 						Transformations foliagePrototypeTransformations;
@@ -306,6 +329,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 							)
 						);
 						foliagePrototypeTransformations.update();
+						foliagePrototypePartitionTransformations.push_back(foliagePrototypeTransformations);
 					}
 				}
 			}
