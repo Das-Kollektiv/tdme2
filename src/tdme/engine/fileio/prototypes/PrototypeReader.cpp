@@ -252,24 +252,31 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	if (prototype->getType() == Prototype_Type::TERRAIN) {
 		auto terrain = prototype->getTerrain();
 		Value& jTerrain = jEntityRoot["t"];
-		terrain->setWidth(jTerrain["w"].GetFloat());
-		terrain->setDepth(jTerrain["d"].GetFloat());
-		Value jTerrainValues = jTerrain["t"].GetArray(); // TODO: how to avoid this copy???
-		for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
-		auto jWaterPositionMapsArray = jTerrain["W"].GetArray();
-		for (auto i = 0; i < jWaterPositionMapsArray.Size(); i++) {
-			auto waterPositionMapIdx = terrain->allocateWaterPositionMapIdx();
-			auto& jWaterPositionMap = jWaterPositionMapsArray[i];
-			auto& jWaterPositionMapData = jWaterPositionMap["w"];
-			terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
-			for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
-				auto z = Integer::parseInt(jWaterPositionMapDataIt->name.GetString());
-				auto xArray = jWaterPositionMapDataIt->value.GetArray();
-				for (auto j = 0; j < xArray.Size(); j++) {
-					auto x = xArray[j].GetFloat();
-					terrain->getWaterPositionMap(waterPositionMapIdx)[z].insert(x);
+		{
+			terrain->setWidth(jTerrain["w"].GetFloat());
+			terrain->setDepth(jTerrain["d"].GetFloat());
+			Value jTerrainValues = jTerrain["t"].GetArray(); // TODO: how to avoid this copy???
+			for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
+		}
+		{
+			auto jWaterPositionMapsArray = jTerrain["W"].GetArray();
+			for (auto i = 0; i < jWaterPositionMapsArray.Size(); i++) {
+				auto waterPositionMapIdx = terrain->allocateWaterPositionMapIdx();
+				auto& jWaterPositionMap = jWaterPositionMapsArray[i];
+				auto& jWaterPositionMapData = jWaterPositionMap["w"];
+				terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
+				for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
+					auto z = Integer::parseInt(jWaterPositionMapDataIt->name.GetString());
+					auto xArray = jWaterPositionMapDataIt->value.GetArray();
+					for (auto j = 0; j < xArray.Size(); j++) {
+						auto x = xArray[j].GetFloat();
+						terrain->getWaterPositionMap(waterPositionMapIdx)[z].insert(x);
+					}
 				}
 			}
+		}
+		{
+
 		}
 	}
 
