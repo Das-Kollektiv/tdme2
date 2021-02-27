@@ -1020,7 +1020,13 @@ void Terrain::applyFoliageBrush(
 						for (auto i = 0; i < static_cast<int>(prototypeCount); i++) {
 							//
 							Transformations transformations;
-							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())).setY(0.0f));
+							transformations.setTranslation(
+								Vector3(
+									Math::floor(brushPosition.getX()) + Math::random(),
+									0.0f,
+									Math::floor(brushPosition.getZ()) + Math::random()
+								)
+							);
 							transformations.addRotation(Rotation::Z_AXIS, 0.0f);
 							transformations.addRotation(Rotation::Y_AXIS, 0.0f);
 							transformations.addRotation(Rotation::X_AXIS, 0.0f);
