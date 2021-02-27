@@ -172,7 +172,7 @@ void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transf
 			foliagePartitionEntityHierarchy->setReceivesShadows(true);
 			engine->addEntity(foliagePartitionEntityHierarchy);
 		}
-		for (auto foliageMapPartitionIt: foliageMapPartition) {
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			auto prototypeIdx = foliageMapPartitionIt.first;
 			auto& transformationsVector = foliageMapPartitionIt.second;
 			if (transformationsVector.empty() == false) {
@@ -208,7 +208,7 @@ void SharedTerrainEditorView::recreateFoliage(const unordered_set<int>& partitio
 		} else {
 			foliagePartitionEntityHierarchy->reset();
 		}
-		for (auto foliageMapPartitionIt: foliageMapPartition) {
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			auto prototypeIdx = foliageMapPartitionIt.first;
 			auto& transformationsVector = foliageMapPartitionIt.second;
 			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
