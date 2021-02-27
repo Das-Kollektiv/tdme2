@@ -19,6 +19,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
+using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
@@ -1032,8 +1034,11 @@ void Terrain::applyFoliageBrush(
 						for (auto i = 0; i < static_cast<int>(prototypeCount); i++) {
 							//
 							Transformations transformations;
-							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 							transformations.setTranslation(brushPosition.clone().add(Vector3(1.0f * Math::random(), 0.0f, 1.0f * Math::random())).setY(0.0f));
+							transformations.addRotation(Rotation::Z_AXIS, 0.0f);
+							transformations.addRotation(Rotation::Y_AXIS, 0.0f);
+							transformations.addRotation(Rotation::X_AXIS, 0.0f);
+							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
 							auto haveContact = false;
 							Vector3 contact;

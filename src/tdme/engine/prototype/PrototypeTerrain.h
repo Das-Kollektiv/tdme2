@@ -160,6 +160,18 @@ public:
 	}
 
 	/**
+	 * Get foliage prototype indices
+	 * @return foliage prototype indices
+	 */
+	inline vector<int> getFoliagePrototypeIndices() {
+		vector<int> foliagePrototypeIndices;
+		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
+			foliagePrototypeIndices.push_back(foliageFoliagePrototypeMapIt.first);
+		}
+		return foliagePrototypeIndices;
+	}
+
+	/**
 	 * Get foliage prototype by given index
 	 * @param idx index
 	 * @return prototype or nullptr
