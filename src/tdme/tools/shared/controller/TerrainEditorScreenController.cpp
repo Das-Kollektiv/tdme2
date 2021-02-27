@@ -733,9 +733,14 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 
 		// prototypes
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
-			auto prototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
-			if (prototypeFileName.empty() == false) currentFoliageBrushPrototypes[i] = PrototypeReader::read(Tools::getPathName(prototypeFileName), Tools::getFileName(prototypeFileName));
-			currentFoliageBrushIds[i] = prototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
+			auto foliagePrototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
+			if (foliagePrototypeFileName.empty() == false) {
+				currentFoliageBrushPrototypes[i] = PrototypeReader::read(
+					PrototypeReader::getResourcePathName(Tools::getPathName(foliagePrototypeFileName), foliagePrototypeFileName),
+					Tools::getFileName(foliagePrototypeFileName)
+				);
+			}
+			currentFoliageBrushIds[i] = foliagePrototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
 			currentFoliageBrushCount[i] = Float::parseFloat(foliageBrushPrototypeFileCount[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
