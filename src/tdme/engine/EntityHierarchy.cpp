@@ -50,6 +50,14 @@ Entity* EntityHierarchy::getEntity(const string& id) {
 	return entityHierarchyLevel->entity;
 }
 
+void EntityHierarchy::reset() {
+	auto entitiesCopy = entities;
+	for (auto entity: entitiesCopy) {
+		removeEntity(entity->getId());
+	}
+	entities.clear();
+}
+
 void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	removeEntity(entity->getId());
 

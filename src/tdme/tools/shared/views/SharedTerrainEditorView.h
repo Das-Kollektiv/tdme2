@@ -2,6 +2,8 @@
 
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -16,6 +18,8 @@
 
 using std::map;
 using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -65,6 +69,8 @@ private:
 		vector<Model*> waterModels;
 	};
 	map<int, Water> waters;
+
+	vector<int> partitionFoliageIdx;
 
 	/**
 	 * Init entity
@@ -140,6 +146,12 @@ public:
 	 * @param newFoliageMaps new foliage maps
 	 */
 	void addFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+
+	/**
+	 * Recreate foliage at given partition indices
+	 * @param partitionIdxSet partition indices set
+	 */
+	void recreateFoliage(const unordered_set<int>& partitionIdxSet);
 
 	/**
 	 * Reset camera

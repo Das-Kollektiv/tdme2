@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_set>
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
@@ -40,6 +41,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_set;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
@@ -128,6 +130,7 @@ void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector
 	for (auto terrainModel: this->terrainModels) delete terrainModel;
 	this->terrainBoundingBox = terrainBoundingBox;
 	this->terrainModels = terrainModels;
+	this->partitionFoliageIdx.resize(terrainModels.size());
 	initModelRequested = true;
 }
 
@@ -162,19 +165,19 @@ void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transf
 	//
 	auto partitionIdx = 0;
 	for (auto& foliageMapPartition: newFoliageMaps) {
+		auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
+		if (foliagePartitionEntityHierarchy == nullptr) {
+			foliagePartitionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
+			foliagePartitionEntityHierarchy->setContributesShadows(true);
+			foliagePartitionEntityHierarchy->setReceivesShadows(true);
+			engine->addEntity(foliagePartitionEntityHierarchy);
+		}
 		for (auto foliageMapPartitionIt: foliageMapPartition) {
 			auto prototypeIdx = foliageMapPartitionIt.first;
 			auto& transformationsVector = foliageMapPartitionIt.second;
 			if (transformationsVector.empty() == false) {
-				auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
-				if (foliagePartitionEntityHierarchy == nullptr) {
-					foliagePartitionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
-					foliagePartitionEntityHierarchy->setContributesShadows(true);
-					foliagePartitionEntityHierarchy->setReceivesShadows(true);
-					engine->addEntity(foliagePartitionEntityHierarchy);
-				}
 				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-				auto foliageIdx = foliageMaps[partitionIdx][prototypeIdx].size();
+				auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 				for (auto& transformations: transformationsVector) {
 					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
 					foliagePartitionEntityHierarchy->addEntity(foliageEntity);
@@ -184,6 +187,39 @@ void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transf
 			}
 		}
 		partitionIdx++;
+	}
+}
+
+void SharedTerrainEditorView::recreateFoliage(const unordered_set<int>& partitionIdxSet) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	for (auto partitionIdx: partitionIdxSet) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
+		if (foliagePartitionEntityHierarchy == nullptr) {
+			foliagePartitionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
+			foliagePartitionEntityHierarchy->setContributesShadows(true);
+			foliagePartitionEntityHierarchy->setReceivesShadows(true);
+			engine->addEntity(foliagePartitionEntityHierarchy);
+		} else {
+			foliagePartitionEntityHierarchy->reset();
+		}
+		for (auto foliageMapPartitionIt: foliageMapPartition) {
+			auto prototypeIdx = foliageMapPartitionIt.first;
+			auto& transformationsVector = foliageMapPartitionIt.second;
+			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+			for (auto& transformations: transformationsVector) {
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+				foliageIdx++;
+			}
+			foliagePartitionEntityHierarchy->update();
+		}
 	}
 }
 

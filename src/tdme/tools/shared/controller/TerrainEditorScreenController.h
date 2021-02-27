@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -23,6 +24,7 @@
 using std::array;
 using std::string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -101,6 +103,7 @@ private:
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
+	unordered_set<int> recreateFoliagePartitions;
 
 public:
 	/**

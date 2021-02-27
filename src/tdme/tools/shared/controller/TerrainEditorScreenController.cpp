@@ -522,25 +522,45 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 	if (prototype == nullptr) return;
 
 	//
-	Terrain::applyFoliageBrush(
-		terrainBoundingBox,
-		prototype->getTerrain()->getHeightVector(),
-		brushCenterPosition,
-		currentFoliageBrushTexture,
-		currentFoliageBrushScale,
-		currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
-		currentFoliageBrushIds,
-		currentFoliageBrushCount,
-		currentFoliageBrushOperation,
-		prototype->getTerrain()->getFoliageMaps(),
-		newFoliageMaps,
-		10.0f // TODO: put me into UI
-	);
+	switch(currentFoliageBrushOperation) {
+		case Terrain::BRUSHOPERATION_ADD:
+			//
+			Terrain::applyFoliageBrush(
+				terrainBoundingBox,
+				prototype->getTerrain()->getHeightVector(),
+				brushCenterPosition,
+				currentFoliageBrushTexture,
+				currentFoliageBrushScale,
+				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushIds,
+				currentFoliageBrushCount,
+				currentFoliageBrushOperation,
+				prototype->getTerrain()->getFoliageMaps(),
+				newFoliageMaps,
+				10.0f // TODO: put me into UI
+			);
+			break;
+		case Terrain::BRUSHOPERATION_DELETE:
+			//
+			Terrain::applyFoliageDeleteBrush(
+				terrainBoundingBox,
+				brushCenterPosition,
+				currentFoliageBrushTexture,
+				currentFoliageBrushScale,
+				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushOperation,
+				prototype->getTerrain()->getFoliageMaps(),
+				recreateFoliagePartitions
+			);
+			break;
+	}
 
 	//
 	view->addFoliage(newFoliageMaps);
+	view->recreateFoliage(recreateFoliagePartitions);
 
 	//
+	recreateFoliagePartitions.clear();
 	Terrain::emptyFoliageMaps(newFoliageMaps);
 }
 

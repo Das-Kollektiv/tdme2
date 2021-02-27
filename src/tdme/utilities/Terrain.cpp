@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -32,6 +33,7 @@ using std::map;
 using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::utilities::Terrain;
@@ -927,9 +929,6 @@ void Terrain::applyFoliageBrush(
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
-	// water
-	if (brushOperation == BRUSHOPERATION_WATER) return;
-
 	// other operations
 	auto textureData = brushTexture->getTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
@@ -974,19 +973,6 @@ void Terrain::applyFoliageBrush(
 			if (totalCount >= 1.0f) squareMeterCountMap[prototypeId]+= totalCountFloor;
 			totalCount-= totalCountFloor;
 		}
-	}
-
-	//
-	Console::println(__FUNCTION__);
-	for (auto z = 0; z < brushMapCountMapWidth; z++) {
-		for (auto x = 0; x < brushMapCountMapWidth; x++) {
-			auto& squareMeterCountMap = brushMapCountMap[z * brushMapCountMapWidth + x];
-			for (auto& squareMeterCountMapIt: squareMeterCountMap) {
-				Console::print(to_string(squareMeterCountMapIt.first) + "->" + Tools::formatFloat(squareMeterCountMapIt.second) + " ");
-			}
-			Console::print("|");
-		}
-		Console::println();
 	}
 
 	//
@@ -1084,14 +1070,116 @@ void Terrain::applyFoliageBrush(
 						}
 					}
 					break;
-				case BRUSHOPERATION_SUBTRACT:
-					break;
-				case BRUSHOPERATION_FLATTEN:
-					break;
+			}
+
+			//
+			brushPosition.add(
+				Vector3(
+					STEP_SIZE,
+					0.0f,
+					0.0f
+				)
+			);
+		}
+	}
+}
+
+void Terrain::applyFoliageDeleteBrush(
+	BoundingBox& terrainBoundingBox, // TODO: constness
+	const Vector3& brushCenterPosition,
+	Texture* brushTexture,
+	float brushScale,
+	float brushDensity,
+	BrushOperation brushOperation,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	unordered_set<int>& recreateFoliagePartitions
+) {
+	// check if we have a texture
+	if (brushTexture == nullptr) return;
+
+	// apply brush
+	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
+
+	// other operations
+	auto textureData = brushTexture->getTextureData();
+	auto textureWidth = brushTexture->getTextureWidth();
+	auto textureHeight = brushTexture->getTextureHeight();
+	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
+
+	//
+	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
+		auto brushPosition =
+			brushCenterPosition.
+			clone().
+			sub(
+				Vector3(
+					(static_cast<float>(textureWidth) * brushScale) / 2.0f,
+					0.0f,
+					((static_cast<float>(textureHeight) * brushScale) / 2.0f)
+				)
+			).
+			add(
+				Vector3(
+					0.0f,
+					0.0f,
+					z
+				)
+			);
+		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
+			auto textureX = static_cast<int>(x / brushScale);
+			auto textureY = static_cast<int>(z / brushScale);
+			auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
+			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
+			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
+			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
+			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushDensity;
+
+			//
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+
+			//
+			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
+			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
+			auto partitionIdx = partitionZ * partitionsX + partitionX;
+
+			//
+			switch(brushOperation) {
 				case BRUSHOPERATION_DELETE:
+					{
+						Vector3 topVertex;
+						Vector3 topLeftVertex;
+						Vector3 leftVertex;
+						Vector3 vertex;
+
+						getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, topVertex);
+						getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, topLeftVertex);
+						getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
+						getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
+
+						for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
+							auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
+							for (auto i = 0; i < foliageMapPartitionPrototypeTransformations.size(); i++) {
+								auto& translation = foliageMapPartitionPrototypeTransformations[i].getTranslation();
+								if (appliedDensity > 0.0f &&
+									translation.getX() >= leftVertex.getX() &&
+									translation.getX() <= vertex.getX() &&
+									translation.getZ() >= topVertex.getZ() &&
+									translation.getZ() <= vertex.getZ()) {
+									//
+									foliageMapPartitionPrototypeTransformations.erase(foliageMapPartitionPrototypeTransformations.begin() + i);
+									recreateFoliagePartitions.insert(partitionIdx);
+									i--;
+								}
+							}
+						}
+					}
 					break;
 			}
-			// terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX];
 
 			//
 			brushPosition.add(

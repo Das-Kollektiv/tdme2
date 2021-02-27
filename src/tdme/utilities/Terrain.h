@@ -34,6 +34,19 @@ public:
 
 private:
 	/**
+	 * Get the terrain vertex for given x and z position without providing y component
+	 * @param x x
+	 * @param z z
+	 * @return terrain vertex
+	 */
+	static inline void getTerrainVertex(int x, int z, Vector3& vertex) {
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
+			0.0f,
+			static_cast<float>(z) * STEP_SIZE
+		);
+	}
+	/**
 	 * Get the terrain vertex for given x and z position
 	 * @param terrainHeightVector terrain height vector
 	 * @param verticesPerX vertices per x
@@ -315,5 +328,27 @@ public:
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
 		float prototypeScale = 1.0f
+	);
+
+	/**
+	 * Apply foliage delete brush
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushScale brush scale
+	 * @param brushDensity brush density
+	 * @param brushOperation brush operation
+	 * @param foliageMaps foliage maps
+	 * @param recreateFoliagePartitions recreate foliage partitions
+	 */
+	static void applyFoliageDeleteBrush(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushScale,
+		float brushDensity,
+		BrushOperation brushOperation,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		unordered_set<int>& recreateFoliagePartitions
 	);
 };
