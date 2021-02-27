@@ -302,11 +302,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 				auto foliagePrototypeIndex = prototype->getTerrain()->getFoliagePrototypeIndex(foliagePrototype);
 
 				//
-				if (foliageMaps.size() < jFoliagePrototypePartitions.Size()) foliageMaps.resize(jFoliagePrototypePartitions.Size());
-
-				//
 				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {
 					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
+					if (foliagePrototypePartitionIdx >= foliageMaps.size()) foliageMaps.push_back(unordered_map<int, vector<Transformations>>());
 					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
 					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
 						Value& jFoliagePrototypeTransformations = jFoliagePrototypePartitionTransformations[jFoliagePrototypePartitionTransformationsIdx];

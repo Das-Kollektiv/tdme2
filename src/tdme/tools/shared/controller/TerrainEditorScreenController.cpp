@@ -281,8 +281,8 @@ void TerrainEditorScreenController::onLoadTerrain() {
 					prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
 				)
 			);
-			view->addFoliage(prototype->getTerrain()->getFoliageMaps());
 		}
+		view->addFoliage(prototype->getTerrain()->getFoliageMaps());
 		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());

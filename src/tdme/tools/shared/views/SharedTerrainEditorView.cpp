@@ -157,30 +157,30 @@ void SharedTerrainEditorView::addFoliage(vector<unordered_map<int, vector<Transf
 	if (prototype == nullptr) return;
 
 	//
-	auto foliageMaps = prototype->getTerrain()->getFoliageMaps();
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
 	auto partitionIdx = 0;
 	for (auto& foliageMapPartition: newFoliageMaps) {
 		for (auto foliageMapPartitionIt: foliageMapPartition) {
 			auto prototypeIdx = foliageMapPartitionIt.first;
-			auto transformationsVector = foliageMapPartitionIt.second;
+			auto& transformationsVector = foliageMapPartitionIt.second;
 			if (transformationsVector.empty() == false) {
-				auto foliageParititionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
-				if (foliageParititionEntityHierarchy == nullptr) {
-					foliageParititionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
-					foliageParititionEntityHierarchy->setContributesShadows(true);
-					foliageParititionEntityHierarchy->setReceivesShadows(true);
-					engine->addEntity(foliageParititionEntityHierarchy);
+				auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage." + to_string(partitionIdx)));
+				if (foliagePartitionEntityHierarchy == nullptr) {
+					foliagePartitionEntityHierarchy = new EntityHierarchy("foliage." + to_string(partitionIdx));
+					foliagePartitionEntityHierarchy->setContributesShadows(true);
+					foliagePartitionEntityHierarchy->setReceivesShadows(true);
+					engine->addEntity(foliagePartitionEntityHierarchy);
 				}
 				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 				auto foliageIdx = foliageMaps[partitionIdx][prototypeIdx].size();
 				for (auto& transformations: transformationsVector) {
-					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliageParititionEntityHierarchy->getId() + "." + to_string(foliageIdx), transformations);
-					foliageParititionEntityHierarchy->addEntity(foliageEntity);
+					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+					foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 					foliageIdx++;
 				}
-				foliageParititionEntityHierarchy->update();
+				foliagePartitionEntityHierarchy->update();
 			}
 		}
 		partitionIdx++;
