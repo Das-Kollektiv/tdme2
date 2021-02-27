@@ -288,9 +288,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 				//
 				Prototype* foliagePrototype = nullptr;
 				try {
-					auto foliagePrototypeFileName = getResourcePathName(pathName, jFoliagePrototype["f"].GetString());
+					auto foliagePrototypeFileName = jFoliagePrototype["f"].GetString();
 					foliagePrototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(foliagePrototypeFileName),
+						getResourcePathName(pathName, foliagePrototypeFileName),
 						FileSystem::getInstance()->getFileName(foliagePrototypeFileName)
 					);
 				} catch (Exception& exception) {
