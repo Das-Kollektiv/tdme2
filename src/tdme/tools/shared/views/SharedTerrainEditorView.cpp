@@ -167,36 +167,42 @@ void SharedTerrainEditorView::addTemporaryFoliage(vector<unordered_map<int, vect
 	//
 	auto partitionIdx = 0;
 	for (auto& foliageMapPartition: newFoliageMaps) {
-		if (foliageMapPartition.empty() == true) {
-			partitionIdx++;
-			continue;
-		}
-		auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx));
-		if (foliagePartitionObject3DRenderGroup != nullptr) {
-			engine->removeEntity(foliagePartitionObject3DRenderGroup->getId());
-			recreateTemporaryFoliage({partitionIdx});
-		}
-		auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
-		if (foliagePartitionEntityHierarchy == nullptr) {
-			foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
-			foliagePartitionEntityHierarchy->setContributesShadows(true);
-			foliagePartitionEntityHierarchy->setReceivesShadows(true);
-			engine->addEntity(foliagePartitionEntityHierarchy);
-		}
+		auto partitionPrototypeInstanceCount = 0;
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
-			auto prototypeIdx = foliageMapPartitionIt.first;
-			auto& transformationsVector = foliageMapPartitionIt.second;
-			if (transformationsVector.empty() == false) {
-				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-				auto& foliageIdx = partitionFoliageIdx[partitionIdx];
-				for (auto& transformations: transformationsVector) {
-					auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
-					foliagePartitionEntityHierarchy->addEntity(foliageEntity);
-					foliageIdx++;
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			//
+			temporaryPartitionIdxs.insert(partitionIdx);
+
+			//
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx));
+			if (foliagePartitionObject3DRenderGroup != nullptr) {
+				engine->removeEntity(foliagePartitionObject3DRenderGroup->getId());
+				recreateTemporaryFoliage({partitionIdx});
+			}
+			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			if (foliagePartitionEntityHierarchy == nullptr) {
+				foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
+				foliagePartitionEntityHierarchy->setContributesShadows(true);
+				foliagePartitionEntityHierarchy->setReceivesShadows(true);
+				engine->addEntity(foliagePartitionEntityHierarchy);
+			}
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+					for (auto& transformations: transformationsVector) {
+						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+						foliageIdx++;
+					}
 				}
 			}
+			foliagePartitionEntityHierarchy->update();
 		}
-		foliagePartitionEntityHierarchy->update();
 		partitionIdx++;
 	}
 }
@@ -213,22 +219,28 @@ void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
 	//
 	auto& foliageMapPartition = foliageMaps[partitionIdx];
 	engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
-	auto foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
-	foliagePartitionEntityHierarchy->setContributesShadows(true);
-	foliagePartitionEntityHierarchy->setReceivesShadows(true);
-	engine->addEntity(foliagePartitionEntityHierarchy);
+	auto partitionPrototypeInstanceCount = 0;
 	for (auto& foliageMapPartitionIt: foliageMapPartition) {
-		auto prototypeIdx = foliageMapPartitionIt.first;
-		auto& transformationsVector = foliageMapPartitionIt.second;
-		auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-		auto& foliageIdx = partitionFoliageIdx[partitionIdx];
-		for (auto& transformations: transformationsVector) {
-			auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
-			foliagePartitionEntityHierarchy->addEntity(foliageEntity);
-			foliageIdx++;
-		}
+		partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 	}
-	foliagePartitionEntityHierarchy->update();
+	if (partitionPrototypeInstanceCount > 0) {
+		auto foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
+		foliagePartitionEntityHierarchy->setContributesShadows(true);
+		foliagePartitionEntityHierarchy->setReceivesShadows(true);
+		engine->addEntity(foliagePartitionEntityHierarchy);
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			auto prototypeIdx = foliageMapPartitionIt.first;
+			auto& transformationsVector = foliageMapPartitionIt.second;
+			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+			for (auto& transformations: transformationsVector) {
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+				foliageIdx++;
+			}
+		}
+		foliagePartitionEntityHierarchy->update();
+	}
 }
 
 void SharedTerrainEditorView::addFoliage() {
@@ -242,27 +254,33 @@ void SharedTerrainEditorView::addFoliage() {
 	for (auto& foliageMapPartition: foliageMaps) {
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
 		engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx));
-		auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
-			"foliage.object3drendergroup." + to_string(partitionIdx),
-			1,
-			25.0f,
-			50.0f,
-			4,
-			16,
-			false
-		);
-		foliagePartitionObject3DRenderGroup->setContributesShadows(true);
-		foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
-		engine->addEntity(foliagePartitionObject3DRenderGroup);
+		auto partitionPrototypeInstanceCount = 0;
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
-			auto prototypeIdx = foliageMapPartitionIt.first;
-			auto& transformationsVector = foliageMapPartitionIt.second;
-			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-			for (auto& transformations: transformationsVector) {
-				foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
-			}
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 		}
-		foliagePartitionObject3DRenderGroup->updateRenderGroup();
+		if (partitionPrototypeInstanceCount > 0) {
+			auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+				"foliage.object3drendergroup." + to_string(partitionIdx),
+				1,
+				25.0f,
+				50.0f,
+				4,
+				16,
+				false
+			);
+			foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+			foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+			engine->addEntity(foliagePartitionObject3DRenderGroup);
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				for (auto& transformations: transformationsVector) {
+					foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+				}
+			}
+			foliagePartitionObject3DRenderGroup->updateRenderGroup();
+		}
 		partitionIdx++;
 	}
 }
@@ -278,29 +296,35 @@ void SharedTerrainEditorView::recreateFoliage() {
 		auto& foliageMapPartition = foliageMaps[partitionIdx];
 		engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx));
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
-		auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
-			"foliage.object3drendergroup." + to_string(partitionIdx),
-			1,
-			25.0f,
-			50.0f,
-			4,
-			16,
-			false
-		);
-		foliagePartitionObject3DRenderGroup->setContributesShadows(true);
-		foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+		auto partitionPrototypeInstanceCount = 0;
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
-			auto prototypeIdx = foliageMapPartitionIt.first;
-			auto& transformationsVector = foliageMapPartitionIt.second;
-			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
-			for (auto& transformations: transformationsVector) {
-				foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
-				foliageIdx++;
-			}
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 		}
-		foliagePartitionObject3DRenderGroup->updateRenderGroup();
-		engine->addEntity(foliagePartitionObject3DRenderGroup);
+		if (partitionPrototypeInstanceCount > 0) {
+			auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+				"foliage.object3drendergroup." + to_string(partitionIdx),
+				1,
+				25.0f,
+				50.0f,
+				4,
+				16,
+				false
+			);
+			foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+			foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+				for (auto& transformations: transformationsVector) {
+					foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					foliageIdx++;
+				}
+			}
+			foliagePartitionObject3DRenderGroup->updateRenderGroup();
+			engine->addEntity(foliagePartitionObject3DRenderGroup);
+		}
 	}
 
 	//
@@ -623,12 +647,14 @@ void SharedTerrainEditorView::onInitAdditionalScreens() {
 }
 
 void SharedTerrainEditorView::loadFile(const string& pathName, const string& fileName) {
-	prototype = PrototypeReader::read(pathName, fileName);
+	// TODO: a.drewke; delete prototype, also check other tools
+	auto prototype = PrototypeReader::read(pathName, fileName);
 	setPrototype(prototype);
+	partitionFoliageIdx.clear();
+	temporaryPartitionIdxs.clear();
 	terrainEditorScreenController->onLoadTerrain();
 }
 
 void SharedTerrainEditorView::saveFile(const string& pathName, const string& fileName) {
 	PrototypeWriter::write(pathName, fileName, prototype);
 }
-

@@ -386,6 +386,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 	//
 	updateBoundingBox();
+	update();
 }
 
 void Object3DRenderGroup::addObject(Model* model, const Transformations& transformations) {
