@@ -22,6 +22,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/math/Math.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -53,6 +54,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
+using tdme::math::Math;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -936,7 +938,7 @@ void Terrain::applyFoliageBrush(
 	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
 
 	//
-	vector<unordered_map<int, float>> brushMapCountMap;
+	vector<unordered_map<int, float>> brushMapCountMapTemplate;
 	auto brushMapCountMapWidth = static_cast<int>(textureWidth * brushScale);
 	auto brushMapCountMapDepth = static_cast<int>(textureHeight * brushScale);
 	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
@@ -948,18 +950,19 @@ void Terrain::applyFoliageBrush(
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
 			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushDensity;
-			unordered_map<int, float> squareMeterCountMap;
+			unordered_map<int, float> brushMapCountMapEntity;
 			for (auto i = 0; i < brushPrototypeIds.size(); i++) {
 				auto prototypeId = brushPrototypeIds[i];
 				if (prototypeId == -1) continue;
 				auto foliageCount = brushPrototypeCount[i];
-				squareMeterCountMap[prototypeId] = foliageCount * appliedDensity;
+				brushMapCountMapEntity[prototypeId] = foliageCount * appliedDensity;
 			}
-			brushMapCountMap.push_back(squareMeterCountMap);
+			brushMapCountMapTemplate.push_back(brushMapCountMapEntity);
 		}
 	}
 
 	//
+	auto brushMapCountMap = brushMapCountMapTemplate;
 	for (auto prototypeId: brushPrototypeIds) {
 		if (prototypeId == -1) continue;
 		float totalCount = 0.0f;
@@ -972,6 +975,26 @@ void Terrain::applyFoliageBrush(
 			auto totalCountFloor = Math::floor(totalCount);
 			if (totalCount >= 1.0f) squareMeterCountMap[prototypeId]+= totalCountFloor;
 			totalCount-= totalCountFloor;
+		}
+	}
+
+	// randomize
+	unordered_map<int, unordered_map<int, vector<int>>> brushMapIdxPerDensityPerPrototype;
+	for (auto prototypeId: brushPrototypeIds) {
+		for (auto i = 0; i < brushMapCountMapTemplate.size(); i++) {
+			auto brushMapPrototypeCount = brushMapCountMapTemplate[i][prototypeId];
+			brushMapIdxPerDensityPerPrototype[prototypeId][static_cast<int>(brushMapPrototypeCount * 1000.0f)].push_back(i);
+		}
+	}
+	for (auto prototypeId: brushPrototypeIds) {
+		for (auto i = 0; i < brushMapCountMap.size(); i++) {
+			auto brushMapPrototypeCountMapEntityITemplate = brushMapCountMapTemplate[i][prototypeId];
+			auto brushMapPrototypeCountMapEntityI = brushMapCountMap[i][prototypeId];
+			auto& brushMapIdxPerDensityPerPrototypeVector = brushMapIdxPerDensityPerPrototype[prototypeId][static_cast<int>(brushMapPrototypeCountMapEntityITemplate * 1000.0f)];
+			auto j = brushMapIdxPerDensityPerPrototypeVector[static_cast<int>(brushMapIdxPerDensityPerPrototypeVector.size() - 1) * Math::random()];
+			auto brushMapPrototypeCountMapEntityJ = brushMapCountMap[j][prototypeId];
+			brushMapCountMap[j][prototypeId] = brushMapPrototypeCountMapEntityI;
+			brushMapCountMap[i][prototypeId] = brushMapPrototypeCountMapEntityJ;
 		}
 	}
 
