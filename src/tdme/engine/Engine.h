@@ -852,8 +852,9 @@ public:
 	/**
 	 * Removes an entity
 	 * @param id id
+	 * @return if entity was found and removed
 	 */
-	void removeEntity(const string& id);
+	bool removeEntity(const string& id);
 
 	/**
 	 * Removes all entities and caches

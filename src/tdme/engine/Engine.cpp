@@ -422,11 +422,11 @@ void Engine::registerEntity(Entity* entity) {
 	}
 }
 
-void Engine::removeEntity(const string& id)
+bool Engine::removeEntity(const string& id)
 {
 	// get entity and remove if we have any
 	auto entityByIdIt = entitiesById.find(id);
-	if (entityByIdIt == entitiesById.end()) return;
+	if (entityByIdIt == entitiesById.end()) return false;
 
 	//
 	auto entity = entityByIdIt->second;
@@ -553,6 +553,9 @@ void Engine::removeEntity(const string& id)
 		),
 		visibleDecomposedEntities.environmentMappingEntities.end()
 	);
+
+	//
+	return true;
 }
 
 void Engine::reset()
