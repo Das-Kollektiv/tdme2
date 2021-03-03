@@ -145,11 +145,6 @@ public:
 	Entity* getEntity(const string& id);
 
 	/**
-	 * Reset
-	 */
-	void reset();
-
-	/**
 	 * Adds a entity to the hierarchy
 	 * @param entity entity to add
 	 * @param parentId parent entity id to add entity to

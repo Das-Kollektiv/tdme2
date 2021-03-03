@@ -282,7 +282,7 @@ void TerrainEditorScreenController::onLoadTerrain() {
 				)
 			);
 		}
-		view->addFoliage(prototype->getTerrain()->getFoliageMaps());
+		view->addFoliage();
 		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
@@ -556,8 +556,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 	}
 
 	//
-	view->addFoliage(newFoliageMaps);
-	view->recreateFoliage(recreateFoliagePartitions);
+	view->addTemporaryFoliage(newFoliageMaps);
+	view->recreateTemporaryFoliage(recreateFoliagePartitions);
 
 	//
 	recreateFoliagePartitions.clear();
