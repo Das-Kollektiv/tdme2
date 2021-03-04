@@ -129,6 +129,14 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
 			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
 			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_clear"));
+			foliageBrushPrototypeScaleMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_scale_min"));
+			foliageBrushPrototypeScaleMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_scale_max"));
+			foliageBrushPrototypeRangeXMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_xmin"));
+			foliageBrushPrototypeRangeXMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_xmax"));
+			foliageBrushPrototypeRangeYMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymin"));
+			foliageBrushPrototypeRangeYMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymax"));
+			foliageBrushPrototypeRangeZMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmin"));
+			foliageBrushPrototypeRangeZMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmax"));
 		}
 
 	} catch (Exception& exception) {
@@ -138,6 +146,16 @@ void TerrainEditorScreenController::initialize()
 	prototypeBaseSubScreenController->initialize(screenNode);
 	btnTerrainDimensionSave->getController()->setDisabled(true);
 	onApplyTerrainBrush();
+	for (auto i = 0; i < 5; i++) {
+		foliageBrushPrototypeScaleMin[i]->getController()->setValue(MutableString(1.0f));
+		foliageBrushPrototypeScaleMax[i]->getController()->setValue(MutableString(1.0f));
+		foliageBrushPrototypeRangeXMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeXMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeYMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(0.0f));
+	}
 }
 
 void TerrainEditorScreenController::dispose()

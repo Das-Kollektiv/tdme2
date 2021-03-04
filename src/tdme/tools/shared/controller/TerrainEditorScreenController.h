@@ -81,6 +81,14 @@ private:
 	array<GUIElementNode*, 5> foliageBrushPrototypeFile;
 	array<GUIElementNode*, 5> foliageBrushPrototypeFileLoad;
 	array<GUIElementNode*, 5> foliageBrushPrototypeFileClear;
+	array<GUIElementNode*, 5> foliageBrushPrototypeScaleMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeScaleMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeXMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeXMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeYMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeYMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMax;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
