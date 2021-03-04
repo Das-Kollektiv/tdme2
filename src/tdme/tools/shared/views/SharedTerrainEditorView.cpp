@@ -552,19 +552,10 @@ void SharedTerrainEditorView::handleInputEvents()
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
-					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
-					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
-						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
-						terrainEditorScreenController->deleteWater(waterPositionMapIdx);
-					}
-					event.setProcessed(true);
-				} else {
-					recreateFoliage();
-					brushingEnabled = false;
-					terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
-					event.setProcessed(true);
-				}
+				recreateFoliage();
+				brushingEnabled = false;
+				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
@@ -588,6 +579,15 @@ void SharedTerrainEditorView::handleInputEvents()
 							waterObject3D->setPickable(true);
 							engine->addEntity(waterObject3D);
 						}
+					}
+				} else
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
+					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
+					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
+						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
+						terrainEditorScreenController->deleteWater(waterPositionMapIdx);
+					} else {
+						brushingEnabled = true;
 					}
 				} else {
 					brushingEnabled = true;

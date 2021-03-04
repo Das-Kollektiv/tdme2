@@ -630,7 +630,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 	auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 
 	//
-	waterPositionMap.clear();
+	waterPositionMap[terrainHeightVectorZCenter].insert(terrainHeightVectorXCenter);
 
 	//
 	Console::println("Terrain::determineWaterPositionSet: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
@@ -645,7 +645,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 		while (true == true) {
 			auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
 			auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMin;
-			for (auto& zLastWaterXPosition: waterPositionMap[terrainHeightVectorZLast]) {
+			for (auto zLastWaterXPosition: waterPositionMap[terrainHeightVectorZLast]) {
 				if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight) == true) {
 					determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight, waterPositionMap[terrainHeightVectorZ]);
 				}
@@ -663,7 +663,7 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 		while (true == true) {
 			auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
 			auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMax;
-			for (auto& zLastWaterXPosition: waterPositionMap[terrainHeightVectorZLast]) {
+			for (auto zLastWaterXPosition: waterPositionMap[terrainHeightVectorZLast]) {
 				if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight) == true) {
 					determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, waterHeight, waterPositionMap[terrainHeightVectorZ]);
 				}
@@ -672,9 +672,49 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 			zLast = zMax;
 			zMax++;
 		}
+	}
 
-		//
-		waterPositionMap[terrainHeightVectorZCenter + zMax] = waterPositionMap[terrainHeightVectorZCenter + zMax - 1];
+	{
+		auto waterPositionMapCopy = waterPositionMap;
+		auto zMin = waterPositionMap.begin()->first;
+		auto zMax = waterPositionMap.begin()->first;
+		do {
+			waterPositionMapCopy = waterPositionMap;
+			for (auto& waterPositionMapIt: waterPositionMap) {
+				auto z = waterPositionMapIt.first;
+				for (auto x: waterPositionMapIt.second) {
+					if (hasWaterPosition(waterPositionMap, x, z - 1) == false &&
+						determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, x, z - 1, waterHeight) == true) {
+						computeWaterPositionMap(
+							terrainBoundingBox,
+							terrainHeightVector,
+							Vector3(
+								terrainBoundingBox.getMin().getX() + x * STEP_SIZE,
+								waterHeight,
+								terrainBoundingBox.getMin().getZ() + ((z - 1) * STEP_SIZE)
+							),
+							waterHeight,
+							waterPositionMap
+						);
+					} else
+					if (hasWaterPosition(waterPositionMap, x, z + 1) == false &&
+						determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, x, z + 1, waterHeight) == true) {
+						computeWaterPositionMap(
+							terrainBoundingBox,
+							terrainHeightVector,
+							Vector3(
+								terrainBoundingBox.getMin().getX() + x * STEP_SIZE,
+								waterHeight,
+								terrainBoundingBox.getMin().getZ() + ((z + 1) * STEP_SIZE)
+							),
+							waterHeight,
+							waterPositionMap
+						);
+					}
+				}
+			}
+		} while (waterPositionMapCopy != waterPositionMap);
+		waterPositionMap[zMax] = waterPositionMap[zMax - 1];
 	}
 
 	//
