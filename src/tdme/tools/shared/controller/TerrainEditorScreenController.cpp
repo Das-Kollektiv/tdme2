@@ -515,6 +515,21 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 		currentTerrainBrushOperation,
 		currentTerrainBrushHeight
 	);
+
+	//
+	Terrain::updateFoliageTerrainBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->updateTemporaryFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
 }
 
 void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {

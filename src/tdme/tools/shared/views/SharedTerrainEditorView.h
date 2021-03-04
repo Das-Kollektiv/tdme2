@@ -146,7 +146,12 @@ public:
 	 * Add temporary foliage
 	 * @param newFoliageMaps new foliage maps
 	 */
-	void addTemporaryFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+
+	/**
+	 * Update temporary foliage
+	 */
+	void updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet);
 
 	/**
 	 * Recreate temporary foliage at given partition indices

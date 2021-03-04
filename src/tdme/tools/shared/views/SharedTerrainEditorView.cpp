@@ -158,7 +158,7 @@ void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels,
 	initCameraRequested = false;
 }
 
-void SharedTerrainEditorView::addTemporaryFoliage(vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps) {
+void SharedTerrainEditorView::addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps) {
 	if (prototype == nullptr) return;
 
 	//
@@ -200,6 +200,47 @@ void SharedTerrainEditorView::addTemporaryFoliage(vector<unordered_map<int, vect
 						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 						foliageIdx++;
 					}
+				}
+			}
+			foliagePartitionEntityHierarchy->update();
+		}
+		partitionIdx++;
+	}
+}
+
+void SharedTerrainEditorView::updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto partitionIdx = 0;
+	for (auto partitionIdx: partitionIdxSet) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			//
+			temporaryPartitionIdxs.insert(partitionIdx);
+
+			//
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx) + ".0");
+			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			if (foliagePartitionObject3DRenderGroup != nullptr || foliagePartitionEntityHierarchy == nullptr) {
+				auto shaderParameterIdx = 0;
+				while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+				recreateTemporaryFoliage(partitionIdx);
+			}
+			if (foliagePartitionEntityHierarchy == nullptr) foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			auto foliageIdx = 0;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				for (auto i = 0; i < transformationsVector.size(); i++) {
+					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->fromTransformations(transformationsVector[i]);
+					foliageIdx++;
 				}
 			}
 			foliagePartitionEntityHierarchy->update();

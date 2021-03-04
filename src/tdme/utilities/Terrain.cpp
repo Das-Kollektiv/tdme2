@@ -922,7 +922,6 @@ void Terrain::applyFoliageBrush(
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
 	float prototypeScale
 ) {
-	//
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
 
@@ -967,13 +966,13 @@ void Terrain::applyFoliageBrush(
 		if (prototypeId == -1) continue;
 		float totalCount = 0.0f;
 		for (auto i = 0; i < brushMapCountMap.size(); i++) {
-			auto& squareMeterCountMap = brushMapCountMap[i];
-			auto count = squareMeterCountMap[prototypeId];
+			auto& brushMapCountMapEntity = brushMapCountMap[i];
+			auto count = brushMapCountMapEntity[prototypeId];
 			auto countFloor = Math::floor(count);
 			totalCount+= count - countFloor;
-			squareMeterCountMap[prototypeId] = countFloor;
+			brushMapCountMapEntity[prototypeId] = countFloor;
 			auto totalCountFloor = Math::floor(totalCount);
-			if (totalCount >= 1.0f) squareMeterCountMap[prototypeId]+= totalCountFloor;
+			if (totalCount >= 1.0f) brushMapCountMapEntity[prototypeId]+= totalCountFloor;
 			totalCount-= totalCountFloor;
 		}
 	}
@@ -1020,7 +1019,7 @@ void Terrain::applyFoliageBrush(
 		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
 			auto brushMapCountMapX = static_cast<int>(x);
 			auto brushMapCountMapZ = static_cast<int>(z);
-			auto squareMeterCountMap = brushMapCountMap[brushMapCountMapZ * brushMapCountMapWidth + brushMapCountMapX];
+			auto brushMapCountMapEntity = brushMapCountMap[brushMapCountMapZ * brushMapCountMapWidth + brushMapCountMapX];
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
@@ -1034,10 +1033,10 @@ void Terrain::applyFoliageBrush(
 			//
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
-					for (auto& squareMeterCountMapIt: squareMeterCountMap) {
-						auto prototypeIdx = squareMeterCountMapIt.first;
+					for (auto& brushMapCountMapEntityIt: brushMapCountMapEntity) {
+						auto prototypeIdx = brushMapCountMapEntityIt.first;
 						if (prototypeIdx == -1) continue;
-						auto prototypeCount = squareMeterCountMapIt.second;
+						auto prototypeCount = brushMapCountMapEntityIt.second;
 
 						//
 						for (auto i = 0; i < static_cast<int>(prototypeCount); i++) {
@@ -1208,6 +1207,153 @@ void Terrain::applyFoliageDeleteBrush(
 						}
 					}
 					break;
+			}
+
+			//
+			brushPosition.add(
+				Vector3(
+					STEP_SIZE,
+					0.0f,
+					0.0f
+				)
+			);
+		}
+	}
+}
+
+void Terrain::updateFoliageTerrainBrush(
+	BoundingBox& terrainBoundingBox, // TODO: constness
+	vector<float>& terrainHeightVector,
+	const Vector3& brushCenterPosition,
+	Texture* brushTexture,
+	float brushScale,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	unordered_set<int>& updateFoliagePartitions
+) {
+	// check if we have a texture
+	if (brushTexture == nullptr) return;
+
+	// apply brush
+	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
+
+	// other operations
+	auto textureData = brushTexture->getTextureData();
+	auto textureWidth = brushTexture->getTextureWidth();
+	auto textureHeight = brushTexture->getTextureHeight();
+	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
+
+	//
+	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
+		auto brushPosition =
+			brushCenterPosition.
+			clone().
+			sub(
+				Vector3(
+					(static_cast<float>(textureWidth) * brushScale) / 2.0f,
+					0.0f,
+					((static_cast<float>(textureHeight) * brushScale) / 2.0f)
+				)
+			).
+			add(
+				Vector3(
+					0.0f,
+					0.0f,
+					z
+				)
+			);
+		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
+			auto brushMapCountMapX = static_cast<int>(x);
+			auto brushMapCountMapZ = static_cast<int>(z);
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+
+			//
+			auto textureX = static_cast<int>(x / brushScale);
+			auto textureY = static_cast<int>(z / brushScale);
+			auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
+			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
+			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
+			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
+			auto brushTextureDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f);
+
+			//
+			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
+			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
+			auto partitionIdx = partitionZ * partitionsX + partitionX;
+
+			//
+			updateFoliagePartitions.insert(partitionIdx);
+
+			//
+			Vector3 topVertex;
+			Vector3 topLeftVertex;
+			Vector3 leftVertex;
+			Vector3 vertex;
+
+			//
+			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, topVertex);
+			getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, topLeftVertex);
+			getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
+			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
+
+			//
+			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				if (prototypeIdx == -1) continue;
+				auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
+
+				//
+				for (auto& transformations: foliageMapPartitionPrototypeTransformations) {
+					auto& translation = transformations.getTranslation();
+					if (brushTextureDensity > 0.0f &&
+						translation.getX() >= leftVertex.getX() &&
+						translation.getX() <= vertex.getX() &&
+						translation.getZ() >= topVertex.getZ() &&
+						translation.getZ() <= vertex.getZ()) {
+						//
+						auto haveContact = false;
+						Vector3 contact;
+						for (int _z = -1; _z < 2; _z++)
+						for (int _x = -1; _x < 2; _x++) {
+							Vector3 topVertex;
+							Vector3 topLeftVertex;
+							Vector3 leftVertex;
+							Vector3 vertex;
+
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ - 1, topVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ - 1, topLeftVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
+
+							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								haveContact = true;
+								break;
+							} else
+							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								haveContact = true;
+								break;
+							}
+						}
+
+						//
+						if (haveContact == false) {
+							Console::println(
+								"Terrain::applyFoliageBrush(): no contact@" +
+								to_string(transformations.getTranslation().getX()) + ", " +
+								to_string(transformations.getTranslation().getZ())
+							);
+							contact = transformations.getTranslation();
+						}
+
+						//
+						transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
+						transformations.update();
+					}
+				}
 			}
 
 			//
