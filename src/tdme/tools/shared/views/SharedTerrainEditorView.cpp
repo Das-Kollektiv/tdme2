@@ -176,10 +176,11 @@ void SharedTerrainEditorView::addTemporaryFoliage(vector<unordered_map<int, vect
 			temporaryPartitionIdxs.insert(partitionIdx);
 
 			//
-			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx));
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx) + ".0");
 			if (foliagePartitionObject3DRenderGroup != nullptr) {
-				engine->removeEntity(foliagePartitionObject3DRenderGroup->getId());
-				recreateTemporaryFoliage({partitionIdx});
+				auto shaderParameterIdx = 0;
+				while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+				recreateTemporaryFoliage(partitionIdx);
 			}
 			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
 			if (foliagePartitionEntityHierarchy == nullptr) {
@@ -219,6 +220,8 @@ void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
 	//
 	auto& foliageMapPartition = foliageMaps[partitionIdx];
 	engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+	auto shaderParameterIdx = 0;
+	while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
 	auto partitionPrototypeInstanceCount = 0;
 	for (auto& foliageMapPartitionIt: foliageMapPartition) {
 		partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
@@ -230,8 +233,8 @@ void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
 		engine->addEntity(foliagePartitionEntityHierarchy);
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			auto prototypeIdx = foliageMapPartitionIt.first;
-			auto& transformationsVector = foliageMapPartitionIt.second;
 			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+			auto& transformationsVector = foliageMapPartitionIt.second;
 			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 			for (auto& transformations: transformationsVector) {
 				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
@@ -253,33 +256,54 @@ void SharedTerrainEditorView::addFoliage() {
 	auto partitionIdx = 0;
 	for (auto& foliageMapPartition: foliageMaps) {
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
-		engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx));
+		auto shaderParameterIdx = 0;
+		while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
 		auto partitionPrototypeInstanceCount = 0;
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 		}
 		if (partitionPrototypeInstanceCount > 0) {
-			auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
-				"foliage.object3drendergroup." + to_string(partitionIdx),
-				1,
-				25.0f,
-				50.0f,
-				4,
-				16,
-				false
-			);
-			foliagePartitionObject3DRenderGroup->setContributesShadows(true);
-			foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
-			engine->addEntity(foliagePartitionObject3DRenderGroup);
+			unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
 				auto prototypeIdx = foliageMapPartitionIt.first;
 				auto& transformationsVector = foliageMapPartitionIt.second;
-				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-				for (auto& transformations: transformationsVector) {
-					foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+					auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(foliagePrototype->getShaderParameters().getShaderParametersHash());
+					if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+						foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+					}
+					if (foliagePartitionObject3DRenderGroup == nullptr) {
+						foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+							"foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(object3DRenderGroupByShaderParameters.size()),
+							1,
+							25.0f,
+							50.0f,
+							4,
+							16,
+							false
+						);
+						foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+						foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+						foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+						for (auto& parameterIt: shaderParametersDefault) {
+							auto& parameterName = parameterIt.first;
+							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+							foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						}
+						engine->addEntity(foliagePartitionObject3DRenderGroup);
+						object3DRenderGroupByShaderParameters[foliagePrototype->getShaderParameters().getShaderParametersHash()] = foliagePartitionObject3DRenderGroup;
+					}
+					for (auto& transformations: transformationsVector) {
+						foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					}
 				}
 			}
-			foliagePartitionObject3DRenderGroup->updateRenderGroup();
+			for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+				object3DRenderGroupByShaderParametersIt.second->updateRenderGroup();
+			}
 		}
 		partitionIdx++;
 	}
@@ -294,36 +318,55 @@ void SharedTerrainEditorView::recreateFoliage() {
 	//
 	for (auto partitionIdx: temporaryPartitionIdxs) {
 		auto& foliageMapPartition = foliageMaps[partitionIdx];
-		engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx));
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+		auto shaderParameterIdx = 0;
+		while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
 		auto partitionPrototypeInstanceCount = 0;
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 		}
 		if (partitionPrototypeInstanceCount > 0) {
-			auto foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
-				"foliage.object3drendergroup." + to_string(partitionIdx),
-				1,
-				25.0f,
-				50.0f,
-				4,
-				16,
-				false
-			);
-			foliagePartitionObject3DRenderGroup->setContributesShadows(true);
-			foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+			unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
 				auto prototypeIdx = foliageMapPartitionIt.first;
 				auto& transformationsVector = foliageMapPartitionIt.second;
-				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-				auto& foliageIdx = partitionFoliageIdx[partitionIdx];
-				for (auto& transformations: transformationsVector) {
-					foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
-					foliageIdx++;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+					auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(foliagePrototype->getShaderParameters().getShaderParametersHash());
+					if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+						foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+					}
+					if (foliagePartitionObject3DRenderGroup == nullptr) {
+						foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+							"foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(object3DRenderGroupByShaderParameters.size()),
+							1,
+							25.0f,
+							50.0f,
+							4,
+							16,
+							false
+						);
+						foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+						foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+						foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+						for (auto& parameterIt: shaderParametersDefault) {
+							auto& parameterName = parameterIt.first;
+							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+							foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						}
+						engine->addEntity(foliagePartitionObject3DRenderGroup);
+						object3DRenderGroupByShaderParameters[foliagePrototype->getShaderParameters().getShaderParametersHash()] = foliagePartitionObject3DRenderGroup;
+					}
+					for (auto& transformations: transformationsVector) {
+						foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					}
 				}
 			}
-			foliagePartitionObject3DRenderGroup->updateRenderGroup();
-			engine->addEntity(foliagePartitionObject3DRenderGroup);
+			for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+				object3DRenderGroupByShaderParametersIt.second->updateRenderGroup();
+			}
 		}
 	}
 
