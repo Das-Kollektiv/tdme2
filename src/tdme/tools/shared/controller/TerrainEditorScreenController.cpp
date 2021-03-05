@@ -567,10 +567,11 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
 				currentFoliageBrushIds,
 				currentFoliageBrushCount,
+				currentFoliageBrushPrototypeScale,
+				currentFoliageBrushPrototypeRotations,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
-				newFoliageMaps,
-				10.0f // TODO: put me into UI
+				newFoliageMaps
 			);
 			break;
 		case Terrain::BRUSHOPERATION_DELETE:
@@ -795,6 +796,14 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			}
 			currentFoliageBrushIds[i] = foliagePrototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
 			currentFoliageBrushCount[i] = Float::parseFloat(foliageBrushPrototypeFileCount[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeScale[i][0] = Float::parseFloat(foliageBrushPrototypeScaleMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeScale[i][1] = Float::parseFloat(foliageBrushPrototypeScaleMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][0] = Float::parseFloat(foliageBrushPrototypeRangeXMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][1] = Float::parseFloat(foliageBrushPrototypeRangeXMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][2] = Float::parseFloat(foliageBrushPrototypeRangeYMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][3] = Float::parseFloat(foliageBrushPrototypeRangeYMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][4] = Float::parseFloat(foliageBrushPrototypeRangeZMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][5] = Float::parseFloat(foliageBrushPrototypeRangeZMax[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());

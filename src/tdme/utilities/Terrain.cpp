@@ -957,10 +957,11 @@ void Terrain::applyFoliageBrush(
 	float brushDensity,
 	array<int, 5> brushPrototypeIds,
 	array<float, 5> brushPrototypeCount,
+	array<array<float, 2>, 5> brushPrototypeScale,
+	array<array<float, 6>, 5> brushPrototypeRotation,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
-	float prototypeScale
+	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
 ) {
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
@@ -1074,12 +1075,20 @@ void Terrain::applyFoliageBrush(
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
 					for (auto& brushMapCountMapEntityIt: brushMapCountMapEntity) {
-						auto prototypeIdx = brushMapCountMapEntityIt.first;
-						if (prototypeIdx == -1) continue;
+						auto prototypeId = brushMapCountMapEntityIt.first;
+						if (prototypeId == -1) continue;
 						auto prototypeCount = brushMapCountMapEntityIt.second;
+
+						auto prototypeIdx = -1;
+						for (auto i = 0; i < brushPrototypeIds.size(); i++) {
+							if (brushPrototypeIds[i] == prototypeId) prototypeIdx = i;
+						}
+						if (prototypeIdx == -1) continue;
 
 						//
 						for (auto i = 0; i < static_cast<int>(prototypeCount); i++) {
+							auto prototypeScale = brushPrototypeScale[prototypeIdx][0] + ((brushPrototypeScale[prototypeIdx][1] - brushPrototypeScale[prototypeIdx][0]) * Math::random());
+
 							//
 							Transformations transformations;
 							transformations.setTranslation(
@@ -1089,9 +1098,9 @@ void Terrain::applyFoliageBrush(
 									Math::floor(brushPosition.getZ()) + Math::random()
 								)
 							);
-							transformations.addRotation(Rotation::Z_AXIS, 0.0f);
-							transformations.addRotation(Rotation::Y_AXIS, 0.0f);
-							transformations.addRotation(Rotation::X_AXIS, 0.0f);
+							transformations.addRotation(Rotation::Z_AXIS, brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random()));
+							transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
+							transformations.addRotation(Rotation::X_AXIS, brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random()));
 							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
 							auto haveContact = false;
@@ -1133,8 +1142,8 @@ void Terrain::applyFoliageBrush(
 							transformations.update();
 
 							//
-							foliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
-							newFoliageMaps[partitionIdx][prototypeIdx].push_back(transformations);
+							foliageMaps[partitionIdx][prototypeId].push_back(transformations);
+							newFoliageMaps[partitionIdx][prototypeId].push_back(transformations);
 						}
 					}
 					break;
@@ -1342,8 +1351,8 @@ void Terrain::updateFoliageTerrainBrush(
 
 			//
 			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-				auto prototypeIdx = foliageMapPartitionIt.first;
-				if (prototypeIdx == -1) continue;
+				auto prototypeId = foliageMapPartitionIt.first;
+				if (prototypeId == -1) continue;
 				auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
 
 				//

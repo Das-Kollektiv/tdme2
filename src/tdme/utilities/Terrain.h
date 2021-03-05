@@ -344,10 +344,11 @@ public:
 		float brushDensity,
 		array<int, 5> brushPrototypeIds,
 		array<float, 5> brushPrototypeCount,
+		array<array<float, 2>, 5> brushPrototypeScale,
+		array<array<float, 6>, 5> brushPrototypeRotation,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps,
-		float prototypeScale = 1.0f
+		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
 	);
 
 	/**

@@ -108,6 +108,20 @@ private:
 	float currentFoliageBrushDensity { 1.0f };
 	array<int, 5> currentFoliageBrushIds { -1, -1, -1, -1, -1 };
 	array<float, 5> currentFoliageBrushCount { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	array<array<float, 2>, 5> currentFoliageBrushPrototypeScale {{
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f }
+	}};
+	array<array<float, 6>, 5> currentFoliageBrushPrototypeRotations {{
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
+	}};
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
