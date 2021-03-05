@@ -3,7 +3,7 @@
 	<layout width="auto" height="auto" padding="10" hide-on="mouseover,click" alignment="vertical" horizontal-align="center" vertical-align="center">
 		<element>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="red"/>
+			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -19,7 +19,7 @@
 	<layout width="auto" height="auto" padding="10" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
 		<element>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="red"/>
+			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -35,7 +35,7 @@
 	<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
 		<element>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="red"/>
+			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
