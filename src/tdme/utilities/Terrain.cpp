@@ -959,6 +959,8 @@ void Terrain::applyFoliageBrush(
 	array<float, 5> brushPrototypeCount,
 	array<array<float, 2>, 5> brushPrototypeScale,
 	array<array<float, 6>, 5> brushPrototypeRotation,
+	array<float, 5> brushPrototypeSlopeMax,
+	array<float, 5> brushPrototypeHeightMax,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
@@ -1090,21 +1092,16 @@ void Terrain::applyFoliageBrush(
 							auto prototypeScale = brushPrototypeScale[prototypeIdx][0] + ((brushPrototypeScale[prototypeIdx][1] - brushPrototypeScale[prototypeIdx][0]) * Math::random());
 
 							//
-							Transformations transformations;
-							transformations.setTranslation(
-								Vector3(
-									Math::floor(brushPosition.getX()) + Math::random(),
-									0.0f,
-									Math::floor(brushPosition.getZ()) + Math::random()
-								)
+							Vector3 translation(
+								Math::floor(brushPosition.getX()) + Math::random(),
+								0.0f,
+								Math::floor(brushPosition.getZ()) + Math::random()
 							);
-							transformations.addRotation(Rotation::Z_AXIS, brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random()));
-							transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
-							transformations.addRotation(Rotation::X_AXIS, brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random()));
-							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
 							auto haveContact = false;
 							Vector3 contact;
+							Vector3 normal;
+							float height;
 							for (int _z = -1; _z < 2; _z++)
 							for (int _x = -1; _x < 2; _x++) {
 								Vector3 topVertex;
@@ -1117,28 +1114,47 @@ void Terrain::applyFoliageBrush(
 								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
 								getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
 
-								if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, translation.clone().setY(-10000.0f), translation.clone().setY(+10000.0f), contact) == true) {
 									haveContact = true;
+									ModelTools::computeNormal({topVertex, topLeftVertex, leftVertex}, normal);
+									height = (topVertex.getY() + topLeftVertex.getY() + leftVertex.getY()) / 3.0f;
 									break;
 								} else
-								if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, translation.clone().setY(-10000.0f), translation.clone().setY(+10000.0f), contact) == true) {
 									haveContact = true;
+									ModelTools::computeNormal({leftVertex, vertex, topVertex}, normal);
+									height = (leftVertex.getY() + vertex.getY() + topVertex.getY()) / 3.0f;
 									break;
 								}
 							}
+
+							// check height
+							if (height > brushPrototypeHeightMax[prototypeIdx]) continue;
 
 							//
 							if (haveContact == false) {
 								Console::println(
 									"Terrain::applyFoliageBrush(): no contact@" +
-									to_string(transformations.getTranslation().getX()) + ", " +
-									to_string(transformations.getTranslation().getZ())
+									to_string(translation.getX()) + ", " +
+									to_string(translation.getZ())
 								);
-								contact = transformations.getTranslation();
+								contact = translation;
+								continue;
 							}
 
+							// slope
+							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+							if (slope > brushPrototypeSlopeMax[prototypeIdx]) continue;
+
 							//
-							transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
+							Transformations transformations;
+							transformations.setTranslation(translation);
+							transformations.addRotation(Rotation::Z_AXIS, brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random()));
+							transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
+							transformations.addRotation(Rotation::X_AXIS, brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random()));
+							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
+
+							transformations.setTranslation(translation.clone().setY(contact.getY()));
 							transformations.update();
 
 							//

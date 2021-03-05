@@ -569,6 +569,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				currentFoliageBrushCount,
 				currentFoliageBrushPrototypeScale,
 				currentFoliageBrushPrototypeRotations,
+				currentFoliageBrushPrototypeSlopeMax,
+				currentFoliageBrushPrototypeHeightMax,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
 				newFoliageMaps

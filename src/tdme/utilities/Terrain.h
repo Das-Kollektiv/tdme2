@@ -346,6 +346,8 @@ public:
 		array<float, 5> brushPrototypeCount,
 		array<array<float, 2>, 5> brushPrototypeScale,
 		array<array<float, 6>, 5> brushPrototypeRotation,
+		array<float, 5> brushPrototypeSlopeMax,
+		array<float, 5> brushPrototypeHeightMax,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
