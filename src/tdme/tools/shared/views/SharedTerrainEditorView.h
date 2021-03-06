@@ -1,6 +1,9 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -14,6 +17,9 @@
 #include <tdme/tools/shared/views/View.h>
 
 using std::map;
+using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -64,6 +70,9 @@ private:
 	};
 	map<int, Water> waters;
 
+	vector<int> partitionFoliageIdx;
+	unordered_set<int> temporaryPartitionIdxs;
+
 	/**
 	 * Init entity
 	 */
@@ -92,9 +101,9 @@ public:
 	~SharedTerrainEditorView();
 
 	/**
-	 * @return pop up views
+	 * @return pop ups
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * @return prototype
@@ -132,6 +141,41 @@ public:
 	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
 	 */
 	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Add temporary foliage
+	 * @param newFoliageMaps new foliage maps
+	 */
+	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+
+	/**
+	 * Update temporary foliage
+	 */
+	void updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet);
+
+	/**
+	 * Recreate temporary foliage at given partition indices
+	 * @param partitionIdxSet partition indices set
+	 */
+	inline void recreateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+		for (auto partitionIdx: partitionIdxSet) recreateTemporaryFoliage(partitionIdx);
+	}
+
+	/**
+	 * Recreate temporary foliage at given partition index
+	 * @param partitionIdx partition index
+	 */
+	void recreateTemporaryFoliage(int partitionIdx);
+
+	/**
+	 * Add foliage using render groups at given partition indices
+	 */
+	void addFoliage();
+
+	/**
+	 * Recreate foliage using render groups at given partition indices that has been transformed to temporary foliage
+	 */
+	void recreateFoliage();
 
 	/**
 	 * Reset camera

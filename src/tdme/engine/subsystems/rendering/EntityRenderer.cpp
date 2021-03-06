@@ -584,12 +584,19 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					renderer->onUpdateTextureMatrix(context);
 				}
 				EnvironmentMapping* environmentMappingEntity = nullptr;
-				// reflection source; TODO: improve me!
+				// reflection source
 				if (object->getReflectionEnvironmentMappingId().empty() == false) {
-					environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-					if (environmentMappingEntity == nullptr) {
-						auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-						if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+					EnvironmentMapping* environmentMappingEntity = nullptr;
+					auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
+					if (environmentMappingEntityCandidate != nullptr) {
+						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {
+							environmentMappingEntity = static_cast<EnvironmentMapping*>(environmentMappingEntityCandidate);
+						} else
+						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
+							auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
+							if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
+
+						}
 					}
 					if (environmentMappingEntity != nullptr) {
 						Vector3 environmentMappingTranslation;
@@ -922,12 +929,19 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 					}
 
-					// reflection source; TODO: improve me!
+					// reflection source
 					if (object->getReflectionEnvironmentMappingId().empty() == false) {
-						EnvironmentMapping* environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-						if (environmentMappingEntity == nullptr) {
-							auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
-							if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMapping*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+						EnvironmentMapping* environmentMappingEntity = nullptr;
+						auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
+						if (environmentMappingEntityCandidate != nullptr) {
+							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {
+								environmentMappingEntity = static_cast<EnvironmentMapping*>(environmentMappingEntityCandidate);
+							} else
+							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
+								auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
+								if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
+
+							}
 						}
 						if (environmentMappingEntity != nullptr) {
 							Vector3 environmentMappingTranslation;

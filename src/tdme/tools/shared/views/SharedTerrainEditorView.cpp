@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_set>
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
@@ -11,12 +12,16 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/PartitionOctTree.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EnvironmentMapping.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -37,6 +42,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_set;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
@@ -46,12 +52,16 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::PartitionOctTree;
+using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -85,7 +95,7 @@ SharedTerrainEditorView::~SharedTerrainEditorView() {
 	delete cameraInputHandler;
 }
 
-PopUps* SharedTerrainEditorView::getPopUpsViews()
+PopUps* SharedTerrainEditorView::getPopUps()
 {
 	return popUps;
 }
@@ -122,6 +132,7 @@ void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector
 	for (auto terrainModel: this->terrainModels) delete terrainModel;
 	this->terrainBoundingBox = terrainBoundingBox;
 	this->terrainModels = terrainModels;
+	this->partitionFoliageIdx.resize(terrainModels.size());
 	initModelRequested = true;
 }
 
@@ -147,14 +158,270 @@ void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels,
 	initCameraRequested = false;
 }
 
+void SharedTerrainEditorView::addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto partitionIdx = 0;
+	for (auto& foliageMapPartition: newFoliageMaps) {
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			//
+			temporaryPartitionIdxs.insert(partitionIdx);
+
+			//
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx) + ".0");
+			if (foliagePartitionObject3DRenderGroup != nullptr) {
+				auto shaderParameterIdx = 0;
+				while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+				recreateTemporaryFoliage(partitionIdx);
+			}
+			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			if (foliagePartitionEntityHierarchy == nullptr) {
+				foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
+				foliagePartitionEntityHierarchy->setContributesShadows(true);
+				foliagePartitionEntityHierarchy->setReceivesShadows(true);
+				engine->addEntity(foliagePartitionEntityHierarchy);
+			}
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+					for (auto& transformations: transformationsVector) {
+						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+						foliageIdx++;
+					}
+				}
+			}
+			foliagePartitionEntityHierarchy->update();
+		}
+		partitionIdx++;
+	}
+}
+
+void SharedTerrainEditorView::updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto partitionIdx = 0;
+	for (auto partitionIdx: partitionIdxSet) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			//
+			temporaryPartitionIdxs.insert(partitionIdx);
+
+			//
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx) + ".0");
+			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			if (foliagePartitionObject3DRenderGroup != nullptr || foliagePartitionEntityHierarchy == nullptr) {
+				auto shaderParameterIdx = 0;
+				while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+				recreateTemporaryFoliage(partitionIdx);
+			}
+			if (foliagePartitionEntityHierarchy == nullptr) foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			auto foliageIdx = 0;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				for (auto i = 0; i < transformationsVector.size(); i++) {
+					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->fromTransformations(transformationsVector[i]);
+					foliageIdx++;
+				}
+			}
+			foliagePartitionEntityHierarchy->update();
+		}
+		partitionIdx++;
+	}
+}
+
+void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
+	if (prototype == nullptr) return;
+
+	//
+	temporaryPartitionIdxs.insert(partitionIdx);
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto& foliageMapPartition = foliageMaps[partitionIdx];
+	engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+	auto shaderParameterIdx = 0;
+	while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+	auto partitionPrototypeInstanceCount = 0;
+	for (auto& foliageMapPartitionIt: foliageMapPartition) {
+		partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+	}
+	if (partitionPrototypeInstanceCount > 0) {
+		auto foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
+		foliagePartitionEntityHierarchy->setContributesShadows(true);
+		foliagePartitionEntityHierarchy->setReceivesShadows(true);
+		engine->addEntity(foliagePartitionEntityHierarchy);
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			auto prototypeIdx = foliageMapPartitionIt.first;
+			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+			auto& transformationsVector = foliageMapPartitionIt.second;
+			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+			for (auto& transformations: transformationsVector) {
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+				foliageIdx++;
+			}
+		}
+		foliagePartitionEntityHierarchy->update();
+	}
+}
+
+void SharedTerrainEditorView::addFoliage() {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto partitionIdx = 0;
+	for (auto& foliageMapPartition: foliageMaps) {
+		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+		auto shaderParameterIdx = 0;
+		while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+					auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(foliagePrototype->getShaderParameters().getShaderParametersHash());
+					if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+						foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+					}
+					if (foliagePartitionObject3DRenderGroup == nullptr) {
+						foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+							"foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(object3DRenderGroupByShaderParameters.size()),
+							1,
+							25.0f,
+							50.0f,
+							4,
+							16,
+							false
+						);
+						foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+						foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+						foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+						for (auto& parameterIt: shaderParametersDefault) {
+							auto& parameterName = parameterIt.first;
+							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+							foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						}
+						engine->addEntity(foliagePartitionObject3DRenderGroup);
+						object3DRenderGroupByShaderParameters[foliagePrototype->getShaderParameters().getShaderParametersHash()] = foliagePartitionObject3DRenderGroup;
+					}
+					for (auto& transformations: transformationsVector) {
+						foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					}
+				}
+			}
+			for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+				object3DRenderGroupByShaderParametersIt.second->updateRenderGroup();
+			}
+		}
+		partitionIdx++;
+	}
+}
+
+void SharedTerrainEditorView::recreateFoliage() {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	for (auto partitionIdx: temporaryPartitionIdxs) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+		auto shaderParameterIdx = 0;
+		while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+					auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(foliagePrototype->getShaderParameters().getShaderParametersHash());
+					if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+						foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+					}
+					if (foliagePartitionObject3DRenderGroup == nullptr) {
+						foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+							"foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(object3DRenderGroupByShaderParameters.size()),
+							1,
+							25.0f,
+							50.0f,
+							4,
+							16,
+							false
+						);
+						foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+						foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+						foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+						for (auto& parameterIt: shaderParametersDefault) {
+							auto& parameterName = parameterIt.first;
+							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+							foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						}
+						engine->addEntity(foliagePartitionObject3DRenderGroup);
+						object3DRenderGroupByShaderParameters[foliagePrototype->getShaderParameters().getShaderParametersHash()] = foliagePartitionObject3DRenderGroup;
+					}
+					for (auto& transformations: transformationsVector) {
+						foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					}
+				}
+			}
+			for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+				object3DRenderGroupByShaderParametersIt.second->updateRenderGroup();
+			}
+		}
+	}
+
+	//
+	temporaryPartitionIdxs.clear();
+}
+
 void SharedTerrainEditorView::resetCamera() {
 	initCameraRequested = true;
 }
 
 void SharedTerrainEditorView::initModel()
 {
-	if (prototype == nullptr)
-		return;
+	if (prototype == nullptr) return;
 
 	//
 	if (terrainModels.empty() == false) {
@@ -284,20 +551,16 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
-				if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
-					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
-						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
-						terrainEditorScreenController->deleteWater(waterPositionMapIdx);
-						event.setProcessed(true);
-					}
-				}
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				recreateFoliage();
+				brushingEnabled = false;
+				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
-				if (terrainEditorScreenController->getBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
 						Vector3 waterReflectionEnvironmentMappingPosition;
@@ -317,15 +580,18 @@ void SharedTerrainEditorView::handleInputEvents()
 							engine->addEntity(waterObject3D);
 						}
 					}
+				} else
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
+					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
+					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
+						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
+						terrainEditorScreenController->deleteWater(waterPositionMapIdx);
+					} else {
+						brushingEnabled = true;
+					}
 				} else {
 					brushingEnabled = true;
 				}
-
-				event.setProcessed(true);
-			} else
-			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				brushingEnabled = false;
-				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 				event.setProcessed(true);
 			}
 		}
@@ -345,9 +611,13 @@ void SharedTerrainEditorView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		if (terrainEditorScreenController->getBrushOperation() != Terrain::BRUSHOPERATION_WATER) {
-			terrainEditorScreenController->applyBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
+			terrainEditorScreenController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		} else
+		if (terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
+			terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
+
 	}
 
 	// viewport
@@ -401,10 +671,10 @@ void SharedTerrainEditorView::initialize()
 
 		//
 		// load sky
-		skySpherePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
-		skyDomePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
-		skyPanoramaPrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
-		spherePrototype = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
+		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
+		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
+		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
+		spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmm");
 
 	} catch (Exception& exception) {
 		Console::print(string("SharedTerrainEditorView::initialize(): An error occurred: "));
@@ -461,12 +731,14 @@ void SharedTerrainEditorView::onInitAdditionalScreens() {
 }
 
 void SharedTerrainEditorView::loadFile(const string& pathName, const string& fileName) {
-	prototype = PrototypeReader::read(pathName, fileName);
+	// TODO: a.drewke; delete prototype, also check other tools
+	auto prototype = PrototypeReader::read(pathName, fileName);
 	setPrototype(prototype);
+	partitionFoliageIdx.clear();
+	temporaryPartitionIdxs.clear();
 	terrainEditorScreenController->onLoadTerrain();
 }
 
 void SharedTerrainEditorView::saveFile(const string& pathName, const string& fileName) {
 	PrototypeWriter::write(pathName, fileName, prototype);
 }
-

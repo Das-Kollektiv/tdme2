@@ -64,7 +64,7 @@ EmptyView::~EmptyView() {
 	delete cameraRotationInputHandler;
 }
 
-PopUps* EmptyView::getPopUpsViews()
+PopUps* EmptyView::getPopUps()
 {
 	return popUps;
 }
