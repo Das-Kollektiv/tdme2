@@ -137,6 +137,10 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeRangeYMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymax"));
 			foliageBrushPrototypeRangeZMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmin"));
 			foliageBrushPrototypeRangeZMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmax"));
+			foliageBrushPrototypeSlopeMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_slope_min"));
+			foliageBrushPrototypeSlopeMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_slope_max"));
+			foliageBrushPrototypeHeightMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_height_min"));
+			foliageBrushPrototypeHeightMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_height_max"));
 		}
 
 	} catch (Exception& exception) {
@@ -155,6 +159,10 @@ void TerrainEditorScreenController::initialize()
 		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(0.0f));
 		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(0.0f));
 		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeSlopeMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeSlopeMax[i]->getController()->setValue(MutableString(90.0f));
+		foliageBrushPrototypeHeightMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeHeightMax[i]->getController()->setValue(MutableString(100.0f));
 	}
 }
 
@@ -569,8 +577,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				currentFoliageBrushCount,
 				currentFoliageBrushPrototypeScale,
 				currentFoliageBrushPrototypeRotations,
-				currentFoliageBrushPrototypeSlopeMax,
-				currentFoliageBrushPrototypeHeightMax,
+				currentFoliageBrushPrototypeSlope,
+				currentFoliageBrushPrototypeHeight,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
 				newFoliageMaps
@@ -806,6 +814,10 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			currentFoliageBrushPrototypeRotations[i][3] = Float::parseFloat(foliageBrushPrototypeRangeYMax[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeRotations[i][4] = Float::parseFloat(foliageBrushPrototypeRangeZMin[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeRotations[i][5] = Float::parseFloat(foliageBrushPrototypeRangeZMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeSlope[i][0] = Float::parseFloat(foliageBrushPrototypeSlopeMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeSlope[i][1] = Float::parseFloat(foliageBrushPrototypeSlopeMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeHeight[i][0] = Float::parseFloat(foliageBrushPrototypeHeightMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeHeight[i][1] = Float::parseFloat(foliageBrushPrototypeHeightMax[i]->getController()->getValue().getString());
 		}
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());

@@ -959,8 +959,8 @@ void Terrain::applyFoliageBrush(
 	array<float, 5> brushPrototypeCount,
 	array<array<float, 2>, 5> brushPrototypeScale,
 	array<array<float, 6>, 5> brushPrototypeRotation,
-	array<float, 5> brushPrototypeSlopeMax,
-	array<float, 5> brushPrototypeHeightMax,
+	array<array<float, 2>, 5> brushPrototypeSlope,
+	array<array<float, 2>, 5> brushPrototypeHeight,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
@@ -1129,7 +1129,7 @@ void Terrain::applyFoliageBrush(
 							}
 
 							// check height
-							if (height > brushPrototypeHeightMax[prototypeIdx]) continue;
+							if (height < brushPrototypeHeight[prototypeIdx][0] || height > brushPrototypeHeight[prototypeIdx][1]) continue;
 
 							//
 							if (haveContact == false) {
@@ -1144,7 +1144,7 @@ void Terrain::applyFoliageBrush(
 
 							// slope
 							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0, 1.0, 0.0)), -1.0, 1.0)));
-							if (slope > brushPrototypeSlopeMax[prototypeIdx]) continue;
+							if (slope < brushPrototypeSlope[prototypeIdx][0] || slope > brushPrototypeSlope[prototypeIdx][1]) continue;
 
 							//
 							Transformations transformations;

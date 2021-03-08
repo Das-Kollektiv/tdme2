@@ -89,6 +89,10 @@ private:
 	array<GUIElementNode*, 5> foliageBrushPrototypeRangeYMax;
 	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMin;
 	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeSlopeMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeSlopeMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMin;
+	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMax;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
@@ -122,8 +126,20 @@ private:
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	}};
-	array<float, 5> currentFoliageBrushPrototypeSlopeMax { 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };
-	array<float, 5> currentFoliageBrushPrototypeHeightMax { 100.0f, 100.0f, 100.0f, 100.0f, 100.0f };
+	array<array<float, 2>, 5> currentFoliageBrushPrototypeSlope {{
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f }
+	}};
+	array<array<float, 2>, 5> currentFoliageBrushPrototypeHeight {{
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f }
+	}};
 	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;

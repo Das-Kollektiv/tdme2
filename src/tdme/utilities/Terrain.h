@@ -329,7 +329,11 @@ public:
 	 * @param brushScale brush scale
 	 * @param brushDensity brush density
 	 * @param brushPrototypeIds brush prototype ids
-	 * @param brushPrototypeRatio brush prototype ratio
+	 * @param brushPrototypeCount brush prototype count
+	 * @param brushPrototypeScale brush prototype scale min, max
+	 * @param brushPrototypeRotation brush prototype rotation min, max per axis
+	 * @param brushPrototypeSlope brush prototype slope min, max
+	 * @param brushPrototypeHeight brush prototype height min, max
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param newFoliageMaps new foliage maps
@@ -346,8 +350,8 @@ public:
 		array<float, 5> brushPrototypeCount,
 		array<array<float, 2>, 5> brushPrototypeScale,
 		array<array<float, 6>, 5> brushPrototypeRotation,
-		array<float, 5> brushPrototypeSlopeMax,
-		array<float, 5> brushPrototypeHeightMax,
+		array<array<float, 2>, 5> brushPrototypeSlope,
+		array<array<float, 2>, 5> brushPrototypeHeight,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
