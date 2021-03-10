@@ -599,7 +599,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					}
 					if (environmentMappingEntity != nullptr) {
 						Vector3 environmentMappingTranslation;
-						environmentMappingEntity->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+						object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
 						auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 						Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 						if (environmentMappingCubeMapTextureId != boundEnvironmentMappingCubeMapTextureId || environmentMappingCubeMapPosition.equals(boundEnvironmentMappingCubeMapPosition) == false) {
@@ -944,7 +944,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 						if (environmentMappingEntity != nullptr) {
 							Vector3 environmentMappingTranslation;
-							environmentMappingEntity->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+							object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
 							auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 							Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 							if (boundEnvironmentMappingCubeMapTextureId == -1) {
