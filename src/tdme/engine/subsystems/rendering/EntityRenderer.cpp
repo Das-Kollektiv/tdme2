@@ -586,7 +586,6 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				EnvironmentMapping* environmentMappingEntity = nullptr;
 				// reflection source
 				if (object->getReflectionEnvironmentMappingId().empty() == false) {
-					EnvironmentMapping* environmentMappingEntity = nullptr;
 					auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
 					if (environmentMappingEntityCandidate != nullptr) {
 						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {

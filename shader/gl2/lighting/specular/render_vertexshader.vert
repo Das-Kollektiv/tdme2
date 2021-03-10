@@ -52,6 +52,7 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 	float shininess;
+	float reflection;
 };
 
 struct Light {
@@ -108,7 +109,6 @@ uniform float time;
 #elif defined(HAVE_TREE)
 	uniform float speed;
 #endif
-
 
 // will be passed to fragment shader
 varying vec3 vsPosition;

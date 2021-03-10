@@ -8,6 +8,7 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 	float shininess;
+	float reflection;
 };
 
 uniform vec4 effectColorAdd;
@@ -189,5 +190,5 @@ void main (void) {
 			vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), vsNormal);
 			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * material.reflection, 0.0, 1.0);
 		}
-	endif
+	#endif
 }
