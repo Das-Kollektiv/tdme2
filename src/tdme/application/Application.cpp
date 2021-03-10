@@ -585,7 +585,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				#endif
 				auto i = 0;
 				for (auto& glVersion: glVersions) {
-					glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 0?GLFW_TRUE:GLFW_FALSE);
+					glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
 					glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
 					glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
 					glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
