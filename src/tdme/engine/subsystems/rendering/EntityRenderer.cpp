@@ -1056,6 +1056,7 @@ void EntityRenderer::setupMaterial(void* context, Object3DNode* object3DNode, in
 				rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
 				rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
 				rendererMaterial.shininess = specularMaterialProperties->getShininess();
+				rendererMaterial.reflection = specularMaterialProperties->getReflection();
 				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 				rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 				renderer->onUpdateMaterial(context);

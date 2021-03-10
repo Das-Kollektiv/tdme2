@@ -52,6 +52,7 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 	float shininess;
+	float reflection;
 };
 
 struct Light {
@@ -90,7 +91,7 @@ uniform vec3 environmentMappingPosition;
 	float materialShininess;
 #endif
 
-// passed from geometry shader
+// passed from vertex shader
 in vec2 vsFragTextureUV;
 in vec3 vsNormal;
 in vec3 vsPosition;
@@ -289,6 +290,14 @@ void main(void) {
 
 		// compute lights
 		computeLights(normal, vsPosition);
+
+		// reflection
+		#if !defined(HAVE_WATER_SHADER)
+			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+				vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), normal);
+				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
+			}
+		#endif
 	#endif
 
 	// take effect colors into account

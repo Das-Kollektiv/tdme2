@@ -2,6 +2,14 @@
 
 precision mediump float;
 
+struct Material {
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 emission;
+	float shininess;
+};
+
 uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
@@ -13,6 +21,10 @@ uniform samplerCube environmentMappingTextureUnit;
 uniform int environmentMappingTextureAvailable;
 uniform vec3 environmentMappingPosition;
 
+uniform Material material;
+
+varying vec3 vsPosition;
+varying vec3 vsNormal;
 varying vec2 vsFragTextureUV;
 varying vec4 vsFragColor;
 
@@ -70,9 +82,6 @@ varying vec4 vsFragColor;
 		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 		return result;
 	}
-#elif defined(HAVE_WATER_SHADER)
-	varying vec3 vsPosition;
-	varying vec3 vsNormal;
 #endif
 
 void main (void) {
@@ -173,4 +182,12 @@ void main (void) {
 			gl_FragColor = clamp(effectColorAdd + vsFragColor, 0.0, 1.0);
 		}
 	#endif
+
+	// reflection
+	#if !defined(HAVE_WATER_SHADER)
+		if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+			vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), vsNormal);
+			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * material.reflection, 0.0, 1.0);
+		}
+	endif
 }
