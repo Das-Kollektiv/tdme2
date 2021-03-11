@@ -932,10 +932,19 @@ void Terrain::createFoliageMaps(
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
 	//
-	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
-	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
-	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
-	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
+	auto width = terrainBoundingBox.getDimensions().getX();
+	auto depth = terrainBoundingBox.getDimensions().getZ();
+	createFoliageMaps(width, depth, foliageMaps);
+}
+
+void Terrain::createFoliageMaps(
+	float terrainWidth,
+	float terrainDepth,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+) {
+	//
+	auto partitionsX = static_cast<int>(Math::ceil(terrainWidth / PARTITION_SIZE));
+	auto partitionsZ = static_cast<int>(Math::ceil(terrainDepth / PARTITION_SIZE));
 	auto partitionCount = partitionsX * partitionsZ;
 	foliageMaps.resize(partitionCount);
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
@@ -961,6 +970,7 @@ void Terrain::applyFoliageBrush(
 	array<array<float, 6>, 5> brushPrototypeRotation,
 	array<array<float, 2>, 5> brushPrototypeSlope,
 	array<array<float, 2>, 5> brushPrototypeHeight,
+	array<bool, 5> brushPrototypeNormalAlign,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps

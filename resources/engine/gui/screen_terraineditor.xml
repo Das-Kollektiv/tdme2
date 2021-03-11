@@ -300,6 +300,14 @@
 									<input id="foliage_brush_prototype_1_height_max" name="foliage_brush_prototype_1_height_max" width="50" height="auto" text="H" />
 									<space width="*" />
 								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_1_normalalign" name="foliage_brush_prototype_1_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 2" width="140" height="auto" horizontal-align="left" />
@@ -396,6 +404,14 @@
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
 									<space width="10" />
 									<input id="foliage_brush_prototype_2_height_max" name="foliage_brush_prototype_2_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_2_normalalign" name="foliage_brush_prototype_2_normalalign" width="50" height="auto" value="1" />
 									<space width="*" />
 								</layout>
 								<space height="20" />
@@ -496,6 +512,14 @@
 									<input id="foliage_brush_prototype_3_height_max" name="foliage_brush_prototype_3_height_max" width="50" height="auto" text="H" />
 									<space width="*" />
 								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_3_normalalign" name="foliage_brush_prototype_3_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 4" width="140" height="auto" horizontal-align="left" />
@@ -594,6 +618,14 @@
 									<input id="foliage_brush_prototype_4_height_max" name="foliage_brush_prototype_4_height_max" width="50" height="auto" text="H" />
 									<space width="*" />
 								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_4_normalalign" name="foliage_brush_prototype_4_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
@@ -690,6 +722,14 @@
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
 									<space width="10" />
 									<input id="foliage_brush_prototype_5_height_max" name="foliage_brush_prototype_5_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_5_normalalign" name="foliage_brush_prototype_5_normalalign" width="50" height="auto" value="1" />
 									<space width="*" />
 								</layout>
 								<space height="20" />

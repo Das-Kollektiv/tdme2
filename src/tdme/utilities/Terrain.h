@@ -313,6 +313,18 @@ public:
 	);
 
 	/**
+	 * Create foliage maps
+	 * @param terrainWidth terrain width
+	 * @param terrainDepth terrain depth
+	 * @param foliageMaps foliage maps
+	 */
+	static void createFoliageMaps(
+		float terrainWidth,
+		float terrainDepth,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	);
+
+	/**
 	 * Empty foliage maps
 	 * @param foliageMaps foliage maps
 	 */
@@ -334,6 +346,7 @@ public:
 	 * @param brushPrototypeRotation brush prototype rotation min, max per axis
 	 * @param brushPrototypeSlope brush prototype slope min, max
 	 * @param brushPrototypeHeight brush prototype height min, max
+	 * @param brushPrototypeNormalAlign brush prototype normal align
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param newFoliageMaps new foliage maps
@@ -352,6 +365,7 @@ public:
 		array<array<float, 6>, 5> brushPrototypeRotation,
 		array<array<float, 2>, 5> brushPrototypeSlope,
 		array<array<float, 2>, 5> brushPrototypeHeight,
+		array<bool, 5> brushPrototypeNormalAlign,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps

@@ -93,6 +93,7 @@ private:
 	array<GUIElementNode*, 5> foliageBrushPrototypeSlopeMax;
 	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMin;
 	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMax;
+	array<GUIElementNode*, 5> foliageBrushPrototypeNormalAlign;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
@@ -140,7 +141,7 @@ private:
 		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f }
 	}};
-	array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
+	array<bool, 5> currentFoliageBrushPrototypeNormalAlign { false, false, false, false, false };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 	unordered_set<int> recreateFoliagePartitions;
