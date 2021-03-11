@@ -169,7 +169,7 @@
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<radiobutton id="foliage_brush_operation_add" name="foliage_brush_operation" value="add" width="20" height="auto" selected="true" />
 										<space width="5" />
-										<text font="resources/engine/fonts/Roboto_20.fnt" text="Add" width="70" height="auto"/>
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Place" width="70" height="auto"/>
 									</layout>
 									<space width="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
