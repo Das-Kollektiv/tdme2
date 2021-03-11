@@ -845,7 +845,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			currentFoliageBrushPrototypeSlope[i][1] = Float::parseFloat(foliageBrushPrototypeSlopeMax[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeHeight[i][0] = Float::parseFloat(foliageBrushPrototypeHeightMin[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeHeight[i][1] = Float::parseFloat(foliageBrushPrototypeHeightMax[i]->getController()->getValue().getString());
-			currentFoliageBrushPrototypeNormalAlign[i] = foliageBrushPrototypeHeightMax[i]->getController()->getValue().getString() == "1";
+			currentFoliageBrushPrototypeNormalAlign[i] = foliageBrushPrototypeNormalAlign[i]->getController()->getValue().getString() == "1";
 		}
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());

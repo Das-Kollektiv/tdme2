@@ -989,101 +989,6 @@ void Terrain::applyFoliageBrush(
 	auto textureHeight = brushTexture->getTextureHeight();
 	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
 
-	// determine current count
-	/*
-	unordered_map<int, int> brushMapCountExisting;
-	float squareMeters = 0.0f;
-	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
-		auto brushPosition =
-			brushCenterPosition.
-			clone().
-			sub(
-				Vector3(
-					(static_cast<float>(textureWidth) * brushScale) / 2.0f,
-					0.0f,
-					((static_cast<float>(textureHeight) * brushScale) / 2.0f)
-				)
-			).
-			add(
-				Vector3(
-					0.0f,
-					0.0f,
-					z
-				)
-			);
-		for (auto x = 0.0f; x < textureWidth * brushScale; x+= 1.0f) {
-			auto textureX = static_cast<int>(x / brushScale);
-			auto textureY = static_cast<int>(z / brushScale);
-			auto red = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 0);
-			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
-			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
-			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
-			auto textureDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f);
-
-			//
-			squareMeters+= textureDensity;
-
-			//
-			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
-			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
-			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
-				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
-
-			//
-			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
-			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
-			auto partitionIdx = partitionZ * partitionsX + partitionX;
-
-			unordered_map<int, float> brushMapCountExistingEntity;
-
-			//
-			{
-				Vector3 topVertex;
-				Vector3 topLeftVertex;
-				Vector3 leftVertex;
-				Vector3 vertex;
-
-				getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, topVertex);
-				getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, topLeftVertex);
-				getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
-				getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
-
-				for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-					auto prototypeId = foliageMapPartitionIt.first;
-					auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
-					for (auto i = 0; i < foliageMapPartitionPrototypeTransformations.size(); i++) {
-						auto& translation = foliageMapPartitionPrototypeTransformations[i].getTranslation();
-						if (translation.getX() >= leftVertex.getX() &&
-							translation.getX() <= vertex.getX() &&
-							translation.getZ() >= topVertex.getZ() &&
-							translation.getZ() <= vertex.getZ()) {
-							//
-							brushMapCountExistingEntity[prototypeId]++;
-						}
-					}
-				}
-			}
-
-			//
-			brushPosition.add(
-				Vector3(
-					STEP_SIZE,
-					0.0f,
-					0.0f
-				)
-			);
-		}
-	}
-
-	//
-	Console::println("sm count: " + to_string(squareMeters));
-	auto i = 0;
-	for (auto& it: brushMapCountExisting) {
-		Console::print(to_string(it.first) + " --> " + to_string(it.second) + " ~ " + "; ");
-	}
-	Console::println();
-	*/
-
 	//
 	vector<unordered_map<int, float>> brushMapCountMapTemplate;
 	auto brushMapCountMapWidth = static_cast<int>(textureWidth * brushScale);
@@ -1254,9 +1159,26 @@ void Terrain::applyFoliageBrush(
 							//
 							Transformations transformations;
 							transformations.setTranslation(translation);
-							transformations.addRotation(Rotation::Z_AXIS, brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random()));
-							transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
-							transformations.addRotation(Rotation::X_AXIS, brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random()));
+							auto zAxisRotation = brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random());
+							auto yAxisRotation = brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random());
+							auto xAxisRotation = brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random());
+							if (brushPrototypeNormalAlign[prototypeIdx] == true) {
+								Vector3 euler;
+								xAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
+								zAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+								Transformations _transformations;
+								_transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
+								_transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
+								_transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
+								_transformations.update();
+								_transformations.getTransformationsMatrix().computeEulerAngles(euler);
+								zAxisRotation = euler.getZ();
+								yAxisRotation = euler.getY();
+								xAxisRotation = euler.getX();
+							}
+							transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
+							transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
+							transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
 							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
 							transformations.setTranslation(translation.clone().setY(contact.getY()));
