@@ -52,6 +52,7 @@ private:
 	bool initCameraRequested { true };
 	CameraInputHandler* cameraInputHandler { nullptr };
 	bool brushingEnabled { false };
+	bool brushMoved { false };
 	Vector3 brushCenterPosition;
 
 	float skyDomeTranslation { 0.0f };

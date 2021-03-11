@@ -1353,7 +1353,7 @@ void Terrain::applyFoliageDeleteBrush(
 							auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
 							for (auto i = 0; i < foliageMapPartitionPrototypeTransformations.size(); i++) {
 								auto& translation = foliageMapPartitionPrototypeTransformations[i].getTranslation();
-								if (appliedDensity > 0.1f &&
+								if (appliedDensity > 0.0f &&
 									translation.getX() >= leftVertex.getX() &&
 									translation.getX() <= vertex.getX() &&
 									translation.getZ() >= topVertex.getZ() &&

@@ -546,6 +546,7 @@ void SharedTerrainEditorView::updateSky() {
 
 void SharedTerrainEditorView::handleInputEvents()
 {
+	brushMoved = false;
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
@@ -557,8 +558,12 @@ void SharedTerrainEditorView::handleInputEvents()
 				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 				event.setProcessed(true);
 			} else
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+				brushMoved = true;
+			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				brushMoved = true;
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
@@ -615,7 +620,9 @@ void SharedTerrainEditorView::display()
 			terrainEditorScreenController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		} else
 		if (terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
-			terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
+			if (brushMoved == true) {
+				terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
+			}
 		}
 
 	}
