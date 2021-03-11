@@ -298,8 +298,8 @@
     - the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
 
 - Other credits
-    - Mathias Lenz
     - Dominik Hepp
+    - Mathias Lenz
     - Kolja Gumpert
     - Mathias Wenzel
     - Sergiu Crăiţoiu
