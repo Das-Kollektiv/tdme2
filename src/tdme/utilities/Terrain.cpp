@@ -1169,7 +1169,7 @@ void Terrain::applyFoliageBrush(
 								Transformations _transformations;
 								_transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
 								_transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
-								_transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
+								_transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
 								_transformations.update();
 								_transformations.getTransformationsMatrix().computeEulerAngles(euler);
 								zAxisRotation = euler.getZ();
