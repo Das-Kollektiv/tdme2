@@ -8,9 +8,6 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
@@ -23,9 +20,6 @@ using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Console;
 
 bool LightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
 	return true;

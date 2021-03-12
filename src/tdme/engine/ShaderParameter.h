@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -8,6 +9,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
+using std::array;
 using std::string;
 using std::to_string;
 
@@ -51,21 +53,21 @@ public:
 
 	/**
 	 * Public constructor for Vector2 value
-	 * @param vector2Value Vector2 Value
+	 * @param vector2Value Vector2 value
 	 */
 	ShaderParameter(const Vector2& vector2Value): type(TYPE_VECTOR2), floatValues( { vector2Value[0], vector2Value[1], 0.0f, 0.0f} ) {
 	}
 
 	/**
 	 * Public constructor for Vector3 value
-	 * @param vector3Value Vector3 Value
+	 * @param vector3Value Vector3 value
 	 */
 	ShaderParameter(const Vector3& vector3Value): type(TYPE_VECTOR3), floatValues( { vector3Value[0], vector3Value[1], vector3Value[2], 0.0f} ) {
 	}
 
 	/**
 	 * Public constructor for Vector4 value
-	 * @param vector4Value Vector4 Value
+	 * @param vector4Value Vector4 value
 	 */
 	ShaderParameter(const Vector4& vector4Value): type(TYPE_VECTOR4), floatValues( { vector4Value[0], vector4Value[1], vector4Value[2], vector4Value[3]} ) {
 	}
@@ -92,21 +94,21 @@ public:
 	}
 
 	/**
-	 * @return vector2 value
+	 * @return Vector2 value
 	 */
 	inline const Vector2 getVector2Value() const {
 		return Vector2(floatValues[0], floatValues[1]);
 	}
 
 	/**
-	 * @return vector3 value
+	 * @return Vector3 value
 	 */
 	inline const Vector3 getVector3Value() const {
 		return Vector3(floatValues[0], floatValues[1], floatValues[2]);
 	}
 
 	/**
-	 * @return vector4 value
+	 * @return Vector4 value
 	 */
 	inline const Vector4 getVector4Value() const {
 		return Vector4(floatValues[0], floatValues[1], floatValues[2], floatValues[3]);
