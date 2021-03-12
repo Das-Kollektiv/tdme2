@@ -14,6 +14,7 @@
       - set up the texture scale
       - set up the strength which will be multiplied with strength base derived from texture rgb color space
       - foliage gets updated after terrain height change
+      - the terrain brush is displayed on top of terrain
     - create water meshes with a auto fill like algorithm at grabbed brush terrain height
     - use a brush to add or remove foliage with predefined or user generated textures
       - operations are place, delete
@@ -28,6 +29,7 @@
         - slope min, max
         - height min, max
         - normal align
+      - the foliage brush is displayed on top of terrain
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)
