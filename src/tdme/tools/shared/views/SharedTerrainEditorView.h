@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -23,6 +24,7 @@ using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
@@ -54,6 +56,7 @@ private:
 	bool brushingEnabled { false };
 	bool brushMoved { false };
 	Vector3 brushCenterPosition;
+	Texture* brushTexture { nullptr };
 
 	float skyDomeTranslation { 0.0f };
 
@@ -116,6 +119,18 @@ public:
 	 * @param prototype prototype
 	 */
 	void setPrototype(Prototype* entity);
+
+	/**
+	 * Set terrain brush
+	 * @param texture brush texture
+	 * @param scale scale
+	 */
+	void setTerrainBrush(Texture* texture, float scale);
+
+	/**
+	 * Unset terrain brush
+	 */
+	void unsetTerrainBrush();
 
 	/**
 	 * Set terrain models

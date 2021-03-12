@@ -478,6 +478,8 @@ void TerrainEditorScreenController::onTerrainBrushFileClear() {
 }
 
 void TerrainEditorScreenController::onApplyTerrainBrush() {
+	view->unsetTerrainBrush();
+
 	try {
 		//
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -520,6 +522,9 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		// texture
 		auto brushTextureFileName = terrainBrushFile->getController()->getValue().getString();
 		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+
+		//
+		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -784,6 +789,9 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 	if (prototype == nullptr) return;
 
 	//
+	view->unsetTerrainBrush();
+
+	//
 	try {
 		//
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -847,6 +855,9 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			currentFoliageBrushPrototypeHeight[i][1] = Float::parseFloat(foliageBrushPrototypeHeightMax[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeNormalAlign[i] = foliageBrushPrototypeNormalAlign[i]->getController()->getValue().getString() == "1";
 		}
+
+		//
+		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
