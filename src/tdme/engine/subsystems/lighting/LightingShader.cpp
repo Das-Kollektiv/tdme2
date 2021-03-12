@@ -63,8 +63,9 @@ bool LightingShader::isInitialized()
 	for (auto shaderIt: shader) {
 		if (shaderIt.second->isInitialized() == false) {
 			Console::println("LightingShader::isInitialized(): " + shaderIt.first + ": not initialized!");
+		} else {
+			shaderIt.second->registerShader();
 		}
-		shaderIt.second->registerShader();
 		initialized&= shaderIt.second->isInitialized();
 	}
 	return initialized;
