@@ -65,6 +65,8 @@ private:
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
 	static constexpr int DESC_MAX { 4096 };
 
+	static constexpr int CUBEMAPTEXTUREINDEX_MIN { 1 };
+
 	struct delete_buffer_type {
 		VkBuffer buffer;
 		VmaAllocation allocation;
@@ -149,7 +151,7 @@ private:
 	};
 
 	struct texture_type {
-		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_FRAMEBUFFER_COLORBUFFER, TYPE_FRAMEBUFFER_DEPTHBUFFER };
+		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_COLORBUFFER, TYPE_DEPTHBUFFER, TYPE_CUBEMAP };
 		volatile bool uploaded { false };
 		type type { TYPE_NONE };
 		int32_t id { 0 };
@@ -165,6 +167,10 @@ private:
 		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
+		//
+		texture_type* cubemap_texture { nullptr };
+		texture_type* cubemap_colorbuffer { nullptr };
+		texture_type* cubemap_depthbuffer { nullptr };
 	};
 
 	struct framebuffer_object_type {
@@ -384,7 +390,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -480,8 +486,8 @@ private:
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
 	const string createPipelineId(program_type* program, int contextIdx);
-	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
-	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
+	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
+	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
@@ -552,8 +558,8 @@ public:
 	void setColorMask(bool red, bool green, bool blue, bool alpha) override;
 	void clear(int32_t mask) override;
 	int32_t createTexture() override;
-	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
-	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
+	int32_t createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
+	int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
 	void uploadTexture(void* context, Texture* texture) override;
 	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
 	int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) override;
