@@ -297,7 +297,8 @@ void main(void) {
 		computeLights(normal, vsPosition);
 
 		// reflection
-		#if !defined(HAVE_WATER_SHADER)
+		#if defined(HAVE_WATER_SHADER)
+		#else
 			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
 				vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), normal);
 				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;

@@ -2204,7 +2204,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (multiLineComment == true) {
 				if (StringTools::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
-			// TODO: a.drewke, #elif
 			if (StringTools::startsWith(line, "#if defined(") == true) {
 				auto definition = StringTools::trim(StringTools::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
