@@ -59,7 +59,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { false };
+	static constexpr bool VERBOSE { true };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
@@ -167,8 +167,9 @@ private:
 		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
-		//
-		texture_type* cubemap_texture { nullptr };
+		// this texture points to a cube map color buffer/depth buffer texture
+		texture_type* cubemap_buffer_texture { nullptr };
+		// the cube map itself has a attached color buffer and depth buffer
 		texture_type* cubemap_colorbuffer { nullptr };
 		texture_type* cubemap_depthbuffer { nullptr };
 	};
@@ -177,6 +178,8 @@ private:
 		int32_t id { 0 };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
+		int32_t cubeMapTextureId { 0 };
+		int32_t cubeMapTextureIndex { 0 };
 		VkFramebuffer frame_buffer { VK_NULL_HANDLE };
 		VkRenderPass render_pass { VK_NULL_HANDLE };
 	};

@@ -446,7 +446,7 @@ inline void VKRenderer::finishSetupCommandBuffers() {
 inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel, uint32_t levelCount) {
 	auto& context = contexts[contextIdx];
 
-	auto _textureObject = textureObject->cubemap_texture != nullptr?textureObject->cubemap_texture:textureObject;
+	auto _textureObject = textureObject->cubemap_buffer_texture != nullptr?textureObject->cubemap_buffer_texture:textureObject;
 
 	// check if we need a change at all
 	if (_textureObject->access_types == nextAccessTypes && _textureObject->svsLayout == nextLayout) return;
@@ -3978,6 +3978,9 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 		auto& shaderUniform = *shaderUniformPtr;
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 			shaderUniform.texture_unit = *((int32_t*)data);
+		} else
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+			shaderUniform.texture_unit = *((int32_t*)data);
 		} else {
 			if (contextTyped.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
 				Console::println(
@@ -4320,12 +4323,13 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	depthBufferTexture.height = height;
 
 	//
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	depthBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer:nullptr;
+
+	//
 	VkResult err;
 
 	//
-	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureIndex)->second;
-	depthBufferTexture.cubemap_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer:nullptr;
-
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
 		delete_mutex.lock();
@@ -4440,15 +4444,15 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *textures.find(textureId)->second;
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
 
 	//
-	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureIndex)->second;
-	colorBufferTexture.cubemap_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer:nullptr;
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	colorBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer:nullptr;
 
 	//
 	VkResult err;
@@ -4578,6 +4582,7 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	//	TODO: only create on demand
 	{
 		texture.cubemap_colorbuffer = new texture_type();
+		texture.cubemap_colorbuffer->id = -1;
 		texture.cubemap_colorbuffer->format = VK_FORMAT_R8G8B8A8_UNORM;
 		texture.cubemap_colorbuffer->width = width;
 		texture.cubemap_colorbuffer->height = height;
@@ -4637,7 +4642,7 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 				.layerCount = 6
 			}
 		};
-		err = vkCreateImageView(device, &view, nullptr, &texture.cubemap_colorbuffer->view);
+		err = vkCreateImageView(device, &view, nullptr, &texture.view);
 		assert(!err);
 	}
 
@@ -4645,6 +4650,7 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	//	TODO: only create on demand
 	{
 		texture.cubemap_depthbuffer = new texture_type();
+		texture.cubemap_depthbuffer->id = -1;
 		texture.cubemap_depthbuffer->format = VK_FORMAT_D32_SFLOAT;
 		texture.cubemap_depthbuffer->width = width;
 		texture.cubemap_depthbuffer->height = height;
@@ -4682,6 +4688,8 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.cubemap_depthbuffer->image, &texture.cubemap_depthbuffer->allocation, &allocation_info);
 		assert(!err);
 
+		/*
+		// TODO: we do not need this view AFAIK
 		// create image view
 		VkImageViewCreateInfo view = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
@@ -4699,8 +4707,9 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 				.layerCount = 6
 			},
 		};
-		err = vkCreateImageView(device, &view, nullptr, &texture.cubemap_depthbuffer->view);
+		err = vkCreateImageView(device, &view, nullptr, &texture.view);
 		assert(!err);
+		*/
 	}
 
 	//
@@ -5213,11 +5222,14 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 		}
 	}
 
-	auto frameBufferPtr = new framebuffer_object_type;
+	auto frameBufferPtr = new framebuffer_object_type();
 	auto& frameBuffer = *frameBufferPtr;
 	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
 	frameBuffer.depth_texture_id = depthBufferTextureGlId;
 	frameBuffer.color_texture_id = colorBufferTextureGlId;
+	frameBuffer.cubeMapTextureId = cubeMapTextureId;
+	frameBuffer.cubeMapTextureIndex = cubeMapTextureIndex;
+
 	if (reuseIndex != -1) {
 		framebuffers[reuseIndex] = frameBufferPtr;
 	} else {
