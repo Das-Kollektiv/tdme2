@@ -4692,7 +4692,6 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 		texture.cubemap_depthbuffer->height = height;
 		texture.cubemap_depthbuffer->type = texture_type::TYPE_DEPTHBUFFER;
 		texture.cubemap_depthbuffer->aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		texture.cubemap_depthbuffer->vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		const VkImageCreateInfo image_create_info = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
