@@ -594,7 +594,6 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
 							auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
 							if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
-
 						}
 					}
 					if (environmentMappingEntity != nullptr) {
@@ -1008,6 +1007,13 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				// clear list of objects we did not render
 				object3DRenderContext.objectsToRender = object3DRenderContext.objectsNotRendered;
 				object3DRenderContext.objectsNotRendered.clear();
+
+				// TODO: improve me!
+				if (boundEnvironmentMappingCubeMapTextureId != -1) {
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+					renderer->bindCubeMapTexture(context, renderer->ID_NONE);
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+				}
 			} while (object3DRenderContext.objectsToRender.size() > 0);
 
 			// keep track of rendered faces

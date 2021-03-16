@@ -59,7 +59,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { true };
+	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
@@ -169,6 +169,7 @@ private:
 		VkImageView view { VK_NULL_HANDLE };
 		// this texture points to a cube map color buffer/depth buffer texture
 		texture_type* cubemap_buffer_texture { nullptr };
+		int32_t cubemap_texture_index { 0 };
 		// the cube map itself has a attached color buffer and depth buffer
 		texture_type* cubemap_colorbuffer { nullptr };
 		texture_type* cubemap_depthbuffer { nullptr };
@@ -178,8 +179,8 @@ private:
 		int32_t id { 0 };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
-		int32_t cubeMapTextureId { 0 };
-		int32_t cubeMapTextureIndex { 0 };
+		int32_t cubemap_texture_id { 0 };
+		int32_t cubemap_texture_index { 0 };
 		VkFramebuffer frame_buffer { VK_NULL_HANDLE };
 		VkRenderPass render_pass { VK_NULL_HANDLE };
 	};
@@ -194,9 +195,9 @@ private:
 	struct context_type {
 		int32_t idx { 0 };
 
-		vector<pipeline_type*> pipelineVector;
-		vector<buffer_object_type*> bufferVector;
-		vector<texture_type*> textureVector;
+		vector<pipeline_type*> pipeline_vector;
+		vector<buffer_object_type*> buffer_vector;
+		vector<texture_type*> texture_vector;
 
 		VkCommandPool cmd_setup_pool;
 		VkCommandBuffer setup_cmd_inuse;
