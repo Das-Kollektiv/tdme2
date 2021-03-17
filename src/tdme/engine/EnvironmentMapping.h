@@ -281,16 +281,6 @@ public:
 	}
 
 	/**
-	 * Get frame buffer of given index
-	 * @param idx index
-	 * @return frame buffer of given index
-	 */
-	inline FrameBuffer* getFrameBuffer(int idx) {
-		if (environmentMappingRenderer == nullptr) return nullptr;
-		return environmentMappingRenderer->getFrameBuffer(idx);
-	}
-
-	/**
 	 * @return cube map texture id
 	 */
 	inline int32_t getCubeMapTextureId() {
