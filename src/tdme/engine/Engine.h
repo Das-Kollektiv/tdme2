@@ -269,13 +269,14 @@ private:
 		Engine* engine;
 
 		struct {
-			bool computeTransformations;
+			bool computeTransformations { false };
+			DecomposedEntities* decomposedEntities { nullptr };
 		} transformations;
 
 		struct {
 			EntityRenderer_InstancedRenderFunctionParameters parameters;
 			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
-			TransparentRenderFacesPool* transparentRenderFacesPool;
+			TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 		} rendering;
 
 		volatile State state { STATE_WAITING };

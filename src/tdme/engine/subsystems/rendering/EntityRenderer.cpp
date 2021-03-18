@@ -586,7 +586,6 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				EnvironmentMapping* environmentMappingEntity = nullptr;
 				// reflection source
 				if (object->getReflectionEnvironmentMappingId().empty() == false) {
-					EnvironmentMapping* environmentMappingEntity = nullptr;
 					auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
 					if (environmentMappingEntityCandidate != nullptr) {
 						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {
@@ -595,12 +594,11 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
 							auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
 							if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
-
 						}
 					}
 					if (environmentMappingEntity != nullptr) {
 						Vector3 environmentMappingTranslation;
-						environmentMappingEntity->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+						object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
 						auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 						Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 						if (environmentMappingCubeMapTextureId != boundEnvironmentMappingCubeMapTextureId || environmentMappingCubeMapPosition.equals(boundEnvironmentMappingCubeMapPosition) == false) {
@@ -945,7 +943,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 						if (environmentMappingEntity != nullptr) {
 							Vector3 environmentMappingTranslation;
-							environmentMappingEntity->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+							object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
 							auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 							Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 							if (boundEnvironmentMappingCubeMapTextureId == -1) {
@@ -1009,6 +1007,13 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				// clear list of objects we did not render
 				object3DRenderContext.objectsToRender = object3DRenderContext.objectsNotRendered;
 				object3DRenderContext.objectsNotRendered.clear();
+
+				// TODO: improve me!
+				if (boundEnvironmentMappingCubeMapTextureId != -1) {
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+					renderer->bindCubeMapTexture(context, renderer->ID_NONE);
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+				}
 			} while (object3DRenderContext.objectsToRender.size() > 0);
 
 			// keep track of rendered faces
@@ -1056,6 +1061,7 @@ void EntityRenderer::setupMaterial(void* context, Object3DNode* object3DNode, in
 				rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
 				rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
 				rendererMaterial.shininess = specularMaterialProperties->getShininess();
+				rendererMaterial.reflection = specularMaterialProperties->getReflection();
 				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 				rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 				renderer->onUpdateMaterial(context);

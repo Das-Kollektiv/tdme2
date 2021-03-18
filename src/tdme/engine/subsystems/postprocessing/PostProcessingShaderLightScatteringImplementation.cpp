@@ -64,8 +64,7 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	//
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
-		"light_scattering",
-		{{ "intensity", ShaderParameter(0.0f) }}
+		"light_scattering"
 	);
 }
 
