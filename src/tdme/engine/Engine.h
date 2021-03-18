@@ -270,6 +270,7 @@ private:
 
 		struct {
 			bool computeTransformations;
+			DecomposedEntities decomposedEntities;
 		} transformations;
 
 		struct {
