@@ -1266,12 +1266,12 @@ void VKRenderer::initialize()
 	// supported format will be returned.
 	// We for now only support VK_FORMAT_R8G8B8A8_UNORM
 	if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
-		format = VK_FORMAT_R8G8B8A8_UNORM;
+		format = VK_FORMAT_B8G8R8A8_UNORM;
 		color_space = surfFormats[0].colorSpace;
 	} else {
 		for (auto i = 0; i < formatCount; i++) {
-			if (surfFormats[i].format == VK_FORMAT_R8G8B8A8_UNORM) {
-				format = VK_FORMAT_R8G8B8A8_UNORM;
+			if (surfFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) {
+				format = VK_FORMAT_B8G8R8A8_UNORM;
 				color_space = surfFormats[i].colorSpace;
 				break;
 			}
@@ -4476,7 +4476,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *textures.find(textureId)->second;
-	colorBufferTexture.format = VK_FORMAT_R8G8B8A8_UNORM;
+	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
 	colorBufferTexture.cubemap_texture_index = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
@@ -4772,6 +4772,7 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
 	texture.type = texture_type::TYPE_CUBEMAP;
+	texture.format = format;
 	texture.width = width;
 	texture.height = height;
 	texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -4783,10 +4784,10 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	{
 		texture.cubemap_colorbuffer = new texture_type();
 		texture.cubemap_colorbuffer->id = -1;
-		texture.cubemap_colorbuffer->format = VK_FORMAT_R8G8B8A8_UNORM;
+		texture.cubemap_colorbuffer->type = texture_type::TYPE_COLORBUFFER;
+		texture.cubemap_colorbuffer->format = format;
 		texture.cubemap_colorbuffer->width = width;
 		texture.cubemap_colorbuffer->height = height;
-		texture.cubemap_colorbuffer->type = texture_type::TYPE_COLORBUFFER;
 		texture.cubemap_colorbuffer->aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
 		texture.cubemap_colorbuffer->vkLayout = VK_IMAGE_LAYOUT_GENERAL;
 		const VkImageCreateInfo image_create_info = {
