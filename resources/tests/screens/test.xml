@@ -45,8 +45,6 @@
 							<checkbox name="checkbox4" value="1" disabled="true" selected="false" text="Can't check me!"/>
 							<checkbox name="checkbox2" value="1" selected="true" text="No! Check me!"/>
 							<checkbox name="checkbox3" value="1" selected="true" text="Rather check me!" />
-							<checkbox template="checkbox_template_visible.xml" name="checkbox5" value="1" selected="true" text="Visibility" />
-							<checkbox template="checkbox_template_locked.xml" name="checkbox6" value="1" selected="true" text="Lock Mode" />
 								
 						</layout>
 						
