@@ -87,7 +87,7 @@ void GUIInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	}
 }
 
-void GUIInputController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIInputController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 
