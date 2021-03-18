@@ -224,7 +224,7 @@ void Engine::EngineThread::run() {
 				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(transformations.decomposedEntities, threadCount, idx, transformations.computeTransformations);
+				engine->computeTransformationsFunction(*transformations.decomposedEntities, threadCount, idx, transformations.computeTransformations);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
@@ -1122,11 +1122,15 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) {
 			engineThread->transformations.computeTransformations = computeTransformations;
-			engineThread->transformations.decomposedEntities = decomposedEntities;
+			engineThread->transformations.decomposedEntities = &decomposedEntities;
 		}
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
 		computeTransformationsFunction(decomposedEntities, threadCount, 0, computeTransformations);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
+		for (auto engineThread: engineThreads) {
+			engineThread->transformations.computeTransformations = false;
+			engineThread->transformations.decomposedEntities = nullptr;
+		}
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
 	if (skinningShaderEnabled == true) {
