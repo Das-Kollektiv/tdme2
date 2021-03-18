@@ -4134,10 +4134,10 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 {
 	//
 	memset(&viewport, 0, sizeof(viewport));
-	viewport.width = (float)width;
-	viewport.height = (float)height;
-	viewport.x = (float)x;
-	viewport.y = (float)y;
+	viewport.width = static_cast<float>(width);
+	viewport.height = static_cast<float>(height);
+	viewport.x = static_cast<float>(x);
+	viewport.y = static_cast<float>(y);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
@@ -6869,6 +6869,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 void VKRenderer::initGuiMode()
 {
+	enableBlending();
 	disableCulling(&contexts[0]);
 	disableDepthBufferTest();
 	disableDepthBufferWriting();
@@ -6879,6 +6880,7 @@ void VKRenderer::doneGuiMode()
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
 	enableCulling(&contexts[0]);
+	disableBlending();
 }
 
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {

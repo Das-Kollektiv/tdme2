@@ -148,7 +148,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 	auto partitionIdx = 0;
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionTerrainFaces[partitionIdx].empty() == true) continue;
-		auto modelId = "terrain" + to_string(partitionIdx);
+		auto modelId = "terrain." + to_string(partitionIdx);
 		auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto terrainMaterial = new Material("terrain");
 		terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
