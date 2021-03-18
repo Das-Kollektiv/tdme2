@@ -563,7 +563,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
@@ -4969,7 +4969,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textureType.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
@@ -5218,7 +5218,7 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 	auto& cubemap_texture_type = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
