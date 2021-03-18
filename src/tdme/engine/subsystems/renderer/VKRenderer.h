@@ -422,7 +422,8 @@ private:
 
 	int32_t bound_frame_buffer { 0 };
 
-	bool blending_enabled { true };
+	enum BlendingMode {BLENDING_NONE, BLENDING_NORMAL, BLENDING_ADDITIVE };
+	BlendingMode blending_mode { BLENDING_NONE };
 	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT};
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
