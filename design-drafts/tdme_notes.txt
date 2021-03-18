@@ -81,6 +81,9 @@ template_details_shaderparameters
 - water placeable in scene of terrain editor and visible in outliner
 - foliage brushes in outliner of terrain? or as prototype?
 
+- property presets saved in seperate xmls
+
+
 definition_button
 definition_dropdown
 definition_scrollarea

@@ -15,14 +15,18 @@
 			<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<checkbox id="{$id}_checkbox_grid" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
 				<checkbox id="{$id}_checkbox_bvs" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
-				<checkbox id="{$id}_checkbox_snapping" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" />
-				<text font="{$font.default}" text="X" color="{$color.font_normal}" />
-				<space width="5"/>
-				<input width="40" id="{$id}_snapping_x" text="1.0" />
-				<space width="10"/>
-				<text font="{$font.default}" text="Y" color="{$color.font_normal}" />
-				<space width="5"/>
-				<input width="40" id="{$id}_snapping_y" text="1.0" />
+				<checkbox id="{$id}_checkbox_snapping" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
+				<element id="snapping_details">
+					<layout show-on="snapping_on" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+						<text font="{$font.default}" text="X" color="{$color.font_normal}" />
+						<space width="5"/>
+						<input width="80" id="{$id}_snapping_x" text="10.00" options="type=float,min=0.0,step=0.25" image="resources/engine/images/inputslider.png" />
+						<space width="10"/>
+						<text font="{$font.default}" text="Y" color="{$color.font_normal}" />
+						<space width="5"/>
+						<input width="80" id="{$id}_snapping_y" text="10.00" options="type=float,min=0.0,step=0.25" image="resources/engine/images/inputslider.png" />
+					</layout>
+				</element>
 			</layout>
 		</layout>
 		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">

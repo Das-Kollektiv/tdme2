@@ -3,11 +3,11 @@
 		<button width="100%" height="25" text="Light" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 	
-			<dropdown id="presets_light" width="100%" height="auto" text="Select Type">
+			<dropdown id="light_type" width="100%" height="auto" text="Select Type">
 				<dropdown-option text="Point Light" value="1" on-mouse-click="light_type_details.condition=point"/>
 				<dropdown-option text="Spot Light" value="2" on-mouse-click="light_type_details.condition=spot" />
 				<dropdown-option text="Directional Light" value="3" on-mouse-click="light_type_details.condition=directional" />
-				<dropdown-option text="Ambient Light" value="3" on-mouse-click="light_type_details.condition=ambient"/>
+				<dropdown-option text="Ambient Light" value="4" on-mouse-click="light_type_details.condition=ambient"/>
 			</dropdown>
 					
 			<element id="light_type_details" width="100%" height="auto">  
@@ -20,21 +20,30 @@
 							<text font="{$font.default}" text="Ambient" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_point_ambient" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_point_ambient" width="70" height="auto" text="#000000" /> -->
+							<image id="light_point_ambient" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_point_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Diffuse" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_point_diffuse" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_point_diffuse" width="70" height="auto" text="#000000" /> -->
+							<image id="light_point_diffuse" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_point_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Specular" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_point_specular" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_point_specular" width="70" height="auto" text="#000000" /> -->
+							<image id="light_point_specular" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_point_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<menu-separator />
@@ -89,21 +98,30 @@
 							<text font="{$font.default}" text="Ambient" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_spot_ambient" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_spot_ambient" width="70" height="auto" text="#000000" /> -->
+							<image id="light_spot_ambient" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_spot_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Diffuse" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_spot_diffuse" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_spot_diffuse" width="70" height="auto" text="#000000" /> -->
+							<image id="light_spot_diffuse" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_spot_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Specular" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_spot_specular" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_spot_specular" width="70" height="auto" text="#000000" /> -->
+							<image id="light_spot_specular" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_spot_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<menu-separator />
@@ -187,21 +205,30 @@
 							<text font="{$font.default}" text="Ambient" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_directional_ambient" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_directional_ambient" width="70" height="auto" text="#000000" /> -->
+							<image id="light_directional_ambient" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_directional_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Diffuse" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_directional_diffuse" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_directional_diffuse" width="70" height="auto" text="#000000" /> -->
+							<image id="light_directional_diffuse" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_directional_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Specular" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_directional_specular" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_directional_specular" width="70" height="auto" text="#000000" /> -->
+							<image id="light_directional_specular" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_directional_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<menu-separator />
@@ -249,21 +276,30 @@
 							<text font="{$font.default}" text="Ambient" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_ambient_ambient" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_ambient_ambient" width="70" height="auto" text="#000000" /> -->
+							<image id="light_ambient_ambient" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_ambient_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Diffuse" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_ambient_diffuse" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_ambient_diffuse" width="70" height="auto" text="#000000" /> -->
+							<image id="light_ambient_diffuse" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_ambient_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" text="Specular" width="90" height="auto"/>
 							<space width="5" />
 							<space width="*" />
-							<input id="light_ambient_specular" width="70" height="auto" text="#000000" />
+							<!-- <input id="light_ambient_specular" width="70" height="auto" text="#000000" /> -->
+							<image id="light_ambient_specular" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_light_ambient_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 						<space height="5" />
 						<menu-separator />

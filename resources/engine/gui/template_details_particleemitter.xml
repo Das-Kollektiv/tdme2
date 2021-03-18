@@ -33,14 +33,20 @@
 						<text font="{$font.default}" text="Color start" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_point_colorstart" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_point_colorstart" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_point_colorstart" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_point_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Color end" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_point_colorend" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_point_colorend" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_point_colorend" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_point_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<menu-separator />
@@ -134,14 +140,20 @@
 						<text font="{$font.default}" text="Color start" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_box_colorstart" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_box_colorstart" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_box_colorstart" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_box_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Color end" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_box_colorend" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_box_colorend" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_box_colorend" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_box_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<menu-separator />
@@ -235,14 +247,20 @@
 						<text font="{$font.default}" text="Color start" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_circle_colorstart" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_circle_colorstart" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_circle_colorstart" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_circle_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Color end" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_circle_colorend" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_circle_colorend" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_circle_colorend" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_circle_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<menu-separator />
@@ -336,14 +354,20 @@
 						<text font="{$font.default}" text="Color start" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_radial_colorstart" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_radial_colorstart" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_radial_colorstart" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_radial_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Color end" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_radial_colorend" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_radial_colorend" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_radial_colorend" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_radial_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<menu-separator />
@@ -426,14 +450,20 @@
 						<text font="{$font.default}" text="Color start" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_sphere_colorstart" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_sphere_colorstart" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_sphere_colorstart" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_sphere_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Color end" width="90" height="auto"/>
 						<space width="5" />
 						<space width="*" />
-						<input id="particleemitter_sphere_colorend" width="70" height="auto" text="#000000" />
+						<!-- <input id="particleemitter_sphere_colorend" width="70" height="auto" text="#000000" /> -->
+						<image id="particleemitter_sphere_colorend" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+						<space width="5" />						
+						<button id="button_particleemitter_sphere_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
 					</layout>
 					<space height="5" />
 					<menu-separator />

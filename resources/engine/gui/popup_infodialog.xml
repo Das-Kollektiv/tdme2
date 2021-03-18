@@ -10,7 +10,7 @@
 					
 						<layout padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 					
-							<scrollarea width="100%" height="100" padding="5" border="1">
+							<scrollarea width="100%" height="100" padding="5" border="1" background-color="{$color.element_midground}">
 								<multiline-text id="infodialog_message" font="{$font.default}" color="{$color.font_normal}" width="auto" height="auto">
 									An message should be displayed here!
 								</multiline-text>

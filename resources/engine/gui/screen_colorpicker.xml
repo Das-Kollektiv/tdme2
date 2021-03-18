@@ -14,28 +14,28 @@
 					<text font="{$font.default}" text="Red" width="45" height="auto" />
 					<space width="5" />
 					<space width="*" />
-					<input id="colorpicker_red" width="50" height="auto" text="255" />
+					<input id="colorpicker_red" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 				</layout>
 				<space height="5" />
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" text="Green" width="45" height="auto" />
 					<space width="5" />
 					<space width="*" />
-					<input id="colorpicker_green" width="50" height="auto" text="255" />
+					<input id="colorpicker_green" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 				</layout>
 				<space height="5" />
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" text="Blue" width="45" height="auto" />
 					<space width="5" />
 					<space width="*" />
-					<input id="colorpicker_blue" width="50" height="auto" text="255" />
+					<input id="colorpicker_blue" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 				</layout>
 				<space height="10" />
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" text="Alpha" width="45" height="auto" />
 					<space width="5" />
 					<space width="*" />
-					<input id="colorpicker_alpha" width="50" height="auto" text="100" />
+					<input id="colorpicker_alpha" width="60" height="auto" text="100" options="type=int,min=0,max=100,step=1" image="resources/engine/images/inputslider.png"  />
 				</layout>
 			</layout>
 			<space width="10" />
@@ -48,7 +48,7 @@
 			<text font="{$font.default}" text="Hex" width="90" height="auto" />
 			<space width="5" />
 			<space width="*" />
-			<input id="colorpicker_hex" width="85" height="auto" text="#00000000" />
+			<input id="colorpicker_hex" width="95" height="auto" text="#00000000" />
 		</layout>		
 	</layout>	
 </screen>

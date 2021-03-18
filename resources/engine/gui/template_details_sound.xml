@@ -29,7 +29,7 @@
 				<text font="{$font.default}" text="Animation" width="70" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_sound_animation" width="180" height="auto" text="Test">		
+				<dropdown id="sound_animation" width="180" height="auto" text="Test">		
 				</dropdown>
 			</layout>
 			

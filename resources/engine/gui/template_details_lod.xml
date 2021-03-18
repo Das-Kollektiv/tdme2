@@ -26,21 +26,29 @@
 			</layout>
 			
 			<space height="5" />
+			<menu-separator />
+			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="LOD color add" width="90" height="auto"/>
+				<text font="{$font.default}" text="Color add" width="90" height="auto"/>
 				<space width="5" />
 				<space width="*" />
-				<input id="lod_color_add" name="lod_color_add" width="70" height="auto" text="#000000" />
+				<!-- <input id="lod_color_add" width="70" height="auto" text="#000000" /> -->
+				<image id="lod_color_add" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+				<space width="5" />						
+				<button id="button_lod_color_add" width="25" height="25" image="resources/engine/images/edit.png"/>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="LOD color mul" width="90" height="auto"/>
+				<text font="{$font.default}" text="Color mul" width="90" height="auto"/>
 				<space width="5" />
 				<space width="*" />
-				<input id="lod_color_mul" name="lod_color_mul" width="70" height="auto" text="#000000" />
+				<!-- <input id="lod_color_mul" width="70" height="auto" text="#000000" /> -->
+				<image id="lod_color_mul" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+				<space width="5" />						
+				<button id="button_lod_color_mul" width="25" height="25" image="resources/engine/images/edit.png"/>
 			</layout>
 					
 		</layout>		

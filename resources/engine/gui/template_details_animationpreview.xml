@@ -7,7 +7,7 @@
 				<text font="{$font.default}" text="Base Animation" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_animationpreview_base" width="130" height="auto" text="tdme.none">
+				<dropdown id="animationpreview_base" width="130" height="auto" text="tdme.none">
 					<scrollarea width="100%" height="100">
 					</scrollarea>
 				</dropdown>
@@ -19,7 +19,7 @@
 				<text font="{$font.default}" text="Overlay #1" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_animationpreview_overlay1" width="130" height="auto" text="tdme.none">
+				<dropdown id="animationpreview_overlay1" width="130" height="auto" text="tdme.none">
 					<scrollarea width="100%" height="100">
 					</scrollarea>
 				</dropdown>
@@ -31,7 +31,7 @@
 				<text font="{$font.default}" text="Overlay #2" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_animationpreview_overlay2" width="130" height="auto" text="tdme.none">
+				<dropdown id="animationpreview_overlay2" width="130" height="auto" text="tdme.none">
 					<scrollarea width="100%" height="100">
 					</scrollarea>
 				</dropdown>
@@ -43,7 +43,7 @@
 				<text font="{$font.default}" text="Overlay #3" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_animationpreview_overlay3" width="130" height="auto" text="tdme.none">
+				<dropdown id="animationpreview_overlay3" width="130" height="auto" text="tdme.none">
 					<scrollarea width="100%" height="100">
 					</scrollarea>
 				</dropdown>
@@ -57,7 +57,7 @@
 				<text font="{$font.default}" text="Bone" width="70" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_animationpreview_attachment1_bone" width="180" height="auto" text="tdme.none">
+				<dropdown id="animationpreview_attachment1_bone" width="180" height="auto" text="tdme.none">
 					<scrollarea width="100%" height="100">
 						<dropdown-option text="<No bone>" value="" selected="true" />
 					</scrollarea>
@@ -72,9 +72,9 @@
 				<space width="*" />
 				<input id="animationpreview_attachment1_model" width="120" height="auto" text="./model.tm" />
 				<space width="5" />
-				<button id="animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
+				<button id="button_animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
 				<space width="5" />
-				<button id="animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+				<button id="button_animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
 			</layout>
 								
 		</layout>		

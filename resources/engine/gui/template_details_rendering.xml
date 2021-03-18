@@ -7,7 +7,7 @@
 				<text font="{$font.default}" text="Shader" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="rendering_shader" name="rendering_shader" width="100" height="auto" text="Default">
+				<dropdown id="rendering_shader" width="100" height="auto" text="Default">
 					<dropdown-option text="Default" value="default" />
 					<dropdown-option text="Foliage" value="foliage" />
 					<dropdown-option text="Terrain" value="terrain" />
@@ -42,10 +42,10 @@
 				<text font="{$font.default}" text="Min. distance" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<input id="rendering_distance_shader_distance" name="rendering_distance_shader_distance" width="70" height="auto" text="1000.00" />
+				<input id="rendering_distanceshader_distance" name="rendering_distance_shader_distance" width="70" height="auto" text="1000.00" />
 			</layout>
 			
-			<element id="rendering_distance_shader_details" width="100%" height="auto">
+			<element id="rendering_distanceshader_details" width="100%" height="auto">
 
 			</element>
 			

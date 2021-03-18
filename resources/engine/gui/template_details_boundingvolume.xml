@@ -19,46 +19,108 @@
 			<element id="boundingvolume_type_details" width="100%" height="auto">  
 				<layout show-on="sphere" id="boundingvolume_sphere" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Location" width="90" height="auto" horizontal-align="left" />
-						<space width="5" />
-						<space width="*" />
-						<input id="boundingvolume_sphere_x" width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_sphere_y"  width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_sphere_z"  width="40" height="auto" text="0.0" />
+						<text font="{$font.default}" text="Location" width="*" height="auto" horizontal-align="left" />
+						<layout width="5" height="25" background-color="{$color.xaxis}" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="boundingvolume_sphere_x" width="100%" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Radius" width="90" height="auto" horizontal-align="left" />
-						<space width="5" />
-						<space width="*" />
-						<input id="boundingvolume_sphere_radius" name="boundingvolume_sphere_radius" width="130" height="auto" text="0.0" />
+						<text font="{$font.default}" text="" width="*" height="auto" horizontal-align="left" />
+						<layout width="5" height="25" background-color="{$color.yaxis}" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="boundingvolume_sphere_y"  width="100%" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="" width="*" height="auto" horizontal-align="left" />
+						<layout width="5" height="25" background-color="{$color.zaxis}" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="boundingvolume_sphere_z"  width="100%" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="Radius" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="boundingvolume_sphere_radius" name="boundingvolume_sphere_radius" width="50%" height="auto" text="0.0" options="type=float,min=0.0,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
 					</layout>
 				</layout>
 				
 				<layout show-on="capsule" id="boundingvolume_capsule" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+					<!-- <layout width="100%" height="auto" alignment="horizontal" vertical-align="center"> -->
+						<!-- <text font="{$font.default}" text="Point A" width="90" height="auto" horizontal-align="left" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <space width="*" /> -->
+						<!-- <input id="boundingvolume_capsule_a_x" width="40" height="auto" text="0.0" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <input id="boundingvolume_capsule_a_y"  width="40" height="auto" text="0.0" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <input id="boundingvolume_capsule_a_z"  width="40" height="auto" text="0.0" /> -->
+					<!-- </layout> -->
+					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Point A" width="90" height="auto" horizontal-align="left" />
-						<space width="5" />
-						<space width="*" />
-						<input id="boundingvolume_capsule_a_x" width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_capsule_a_y"  width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_capsule_a_z"  width="40" height="auto" text="0.0" />
+						<space width="20" />
+						<layout width="5" height="25" background-color="{$color.xaxis}" />
+						<input id="boundingvolume_capsule_a_x" width="*" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
 					</layout>
 					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="" width="90" height="auto" horizontal-align="left" />
+						<space width="5" />
+						<space width="*" />
+						<layout width="5" height="25" background-color="{$color.yaxis}" />
+						<input id="boundingvolume_capsule_a_y"  width="100" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="" width="90" height="auto" horizontal-align="left" />
+						<space width="5" />
+						<space width="*" />
+						<layout width="5" height="25" background-color="{$color.zaxis}" />
+						<input id="boundingvolume_capsule_a_z"  width="100" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+					
+					<space height="10" />
+					<!-- <layout width="100%" height="auto" alignment="horizontal" vertical-align="center"> -->
+						<!-- <text font="{$font.default}" text="Point B" width="90" height="auto" horizontal-align="left" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <space width="*" /> -->
+						<!-- <input id="boundingvolume_capsule_b_x" width="40" height="auto" text="0.0" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <input id="boundingvolume_capsule_b_y"  width="40" height="auto" text="0.0" /> -->
+						<!-- <space width="5" /> -->
+						<!-- <input id="boundingvolume_capsule_b_z"  width="40" height="auto" text="0.0" /> -->
+					<!-- </layout> -->
+					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Point B" width="90" height="auto" horizontal-align="left" />
 						<space width="5" />
 						<space width="*" />
-						<input id="boundingvolume_capsule_b_x" width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_capsule_b_y"  width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="boundingvolume_capsule_b_z"  width="40" height="auto" text="0.0" />
+						<layout width="5" height="25" background-color="{$color.xaxis}" />
+						<input id="boundingvolume_capsule_b_x" width="100" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
 					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="" width="90" height="auto" horizontal-align="left" />
+						<space width="5" />
+						<space width="*" />
+						<layout width="5" height="25" background-color="{$color.yaxis}" />
+						<input id="boundingvolume_capsule_b_y"  width="100" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" text="" width="90" height="auto" horizontal-align="left" />
+						<space width="5" />
+						<space width="*" />
+						<layout width="5" height="25" background-color="{$color.zaxis}" />
+						<input id="boundingvolume_capsule_b_z"  width="100" height="auto" text="0.0" options="type=float,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+					
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" text="Radius" width="90" height="auto" horizontal-align="left" />

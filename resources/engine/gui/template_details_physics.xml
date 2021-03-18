@@ -3,7 +3,7 @@
 		<button width="100%" height="25" text="Physics" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 							
-			<dropdown id="physics_bodytype_dropdown" name="physics_bodytype_dropdown" width="100%" text="None">
+			<dropdown id="physics_bodytype" width="100%" text="None">
 				<dropdown-option text="None" value="none" on-mouse-click="physics_bodytype_details.condition=" />
 				<dropdown-option text="Collision body" value="collisionbody" on-mouse-click="physics_bodytype_details.condition=" />
 				<dropdown-option text="Static rigid body" value="staticrigidbody" on-mouse-click="physics_bodytype_details.condition=static" />

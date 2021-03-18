@@ -44,7 +44,7 @@
 				<text font="{$font.default}" text="Frequency" width="90" height="auto" />
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_rendersettings_frequency" width="130" height="auto" text="Select Frequ.">
+				<dropdown id="rendersettings_frequency" width="130" height="auto" text="Select Frequ.">
 					<dropdown-option text="One time only" value="1" on-mouse-click="rendersettings_frequency_details.condition="/>
 					<dropdown-option text="Every frame" value="2" on-mouse-click="rendersettings_frequency_details.condition="/>
 					<dropdown-option text="Custom" value="3" on-mouse-click="rendersettings_frequency_details.condition=custom"/>

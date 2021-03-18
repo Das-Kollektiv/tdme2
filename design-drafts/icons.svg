@@ -9,8 +9,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="25"
-   height="25"
+   width="32"
+   height="32"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
@@ -18,7 +18,7 @@
    sodipodi:docname="icons.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    style="display:inline;enable-background:new"
-   inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\ICONS - no backdrop.png"
+   inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\textures\terrain_brush_soft.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
   <metadata
@@ -47,9 +47,9 @@
      id="namedview4162"
      showgrid="false"
      inkscape:pagecheckerboard="true"
-     inkscape:zoom="8"
-     inkscape:cx="541.55818"
-     inkscape:cy="-170.82566"
+     inkscape:zoom="1"
+     inkscape:cx="-219.20236"
+     inkscape:cy="-169.62387"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -4787,6 +4787,113 @@
        x2="-370"
        y2="-388.5"
        gradientUnits="userSpaceOnUse" />
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter2230">
+      <feGaussianBlur
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur2222" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite2224" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite2226" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite2228" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Feather"
+       id="filter2314">
+      <feGaussianBlur
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur2306" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite2308" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite2310" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite2312" />
+    </filter>
+    <meshgradient
+       inkscape:collect="always"
+       id="meshgradient2344"
+       gradientUnits="userSpaceOnUse"
+       x="751.18378"
+       y="-198.34673">
+      <meshrow
+         id="meshrow3018">
+        <meshpatch
+           id="meshpatch3020">
+          <stop
+             path="c 3.55556,0  3.11111,0  6.6667,0"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3022" />
+          <stop
+             path="c 0,10.6667  0,21.3333  0,32"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop3024" />
+          <stop
+             path="c -3.55556,0  -3.11111,0  -6.6667,0"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3026" />
+          <stop
+             path="c 0,-10.6667  0,-21.3333  0,-32"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3028" />
+        </meshpatch>
+        <meshpatch
+           id="meshpatch3030">
+          <stop
+             path="c 3.55556,0  15.1111,0  18.6667,0"
+             id="stop3032" />
+          <stop
+             path="c 0,10.6667  0,21.3333  0,32"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop3034" />
+          <stop
+             path="c -3.55556,0  -15.1111,0  -18.6667,0"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3036" />
+        </meshpatch>
+        <meshpatch
+           id="meshpatch3038">
+          <stop
+             path="c 3.55556,0  3.11111,0  6.6667,0"
+             id="stop3040" />
+          <stop
+             path="c 0,10.6667  0,21.3333  0,32"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3042" />
+          <stop
+             path="c -3.55556,0  -3.11111,0  -6.6667,0"
+             style="stop-color:#ffffff;stop-opacity:0"
+             id="stop3044" />
+        </meshpatch>
+      </meshrow>
+    </meshgradient>
   </defs>
   <g
      id="layer8"
@@ -5199,7 +5306,7 @@
        style="display:inline;fill:#ffffff;enable-background:new"
        inkscape:export-ydpi="96"
        inkscape:export-xdpi="96"
-       inkscape:export-filename="C:\Users\Andrzej Ambroż\Desktop\mtrx.png"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\edit.png"
        transform="translate(-191.36949,-599.57814)"
        id="g21409"
        inkscape:label="edit">
@@ -5517,7 +5624,7 @@
        inkscape:export-ydpi="96" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-       d="m 589.54769,-17.721762 c -1.1e-4,-1.15057 -0.93281,-2.08323 -2.08334,-2.08333 h -55.833 c -1.15053,10e-5 -2.08323,0.93276 -2.08334,2.08333 V 3.1114177 c 1.1e-4,1.15054 0.93281,2.08319 2.08334,2.08334 h 55.833 c 1.15053,-1.5e-4 2.08323,-0.9328 2.08334,-2.08334 z"
+       d="m 593.61355,-61.208829 c -1.1e-4,-1.15057 -0.93281,-2.08323 -2.08334,-2.08333 h -55.833 c -1.15053,10e-5 -2.08323,0.93276 -2.08334,2.08333 v 20.83318 c 1.1e-4,1.15054 0.93281,2.08319 2.08334,2.08334 h 55.833 c 1.15053,-1.5e-4 2.08323,-0.9328 2.08334,-2.08334 z"
        id="path26515-7-6-4-9"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccc"
@@ -5527,7 +5634,7 @@
        inkscape:label="button" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-       d="m 522.83746,-15.601532 c -3e-5,-0.31558 -0.25585,-0.57139 -0.57142,-0.57142 h -14.85683 c -0.31557,3e-5 -0.57138,0.25584 -0.57142,0.57142 v 5.7141597 c 4e-5,0.31557 0.25585,0.57138 0.57142,0.57142 h 14.85683 c 0.31557,-4e-5 0.57139,-0.25585 0.57142,-0.57142 z"
+       d="m 524.95878,-51.487201 c -3e-5,-0.31558 -0.25585,-0.57139 -0.57142,-0.57142 h -14.85683 c -0.31557,3e-5 -0.57138,0.25584 -0.57142,0.57142 v 5.714159 c 4e-5,0.31557 0.25585,0.57138 0.57142,0.57142 h 14.85683 c 0.31557,-4e-5 0.57139,-0.25585 0.57142,-0.57142 z"
        id="path26515-7-6-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccc"
@@ -5537,7 +5644,7 @@
        inkscape:label="slider_vertical" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-       d="m 491.86614,-23.101472 c -0.31558,4e-5 -0.57139,0.25586 -0.57143,0.57143 v 14.8571497 c 4e-5,0.31557 0.25585,0.57139 0.57143,0.57142 h 5.71429 c 0.31558,-3e-5 0.5714,-0.25585 0.57143,-0.57142 V -22.530042 c -3e-5,-0.31557 -0.25585,-0.57139 -0.57143,-0.57143 z"
+       d="m 493.98746,-58.987141 c -0.31558,4e-5 -0.57139,0.25586 -0.57143,0.57143 v 14.857149 c 4e-5,0.31557 0.25585,0.57139 0.57143,0.57142 h 5.71429 c 0.31558,-3e-5 0.5714,-0.25585 0.57143,-0.57142 v -14.857149 c -3e-5,-0.31557 -0.25585,-0.57139 -0.57143,-0.57143 z"
        id="path26515-7-6"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccc"
@@ -5627,93 +5734,6 @@
          inkscape:export-xdpi="96"
          inkscape:export-ydpi="96"
          inkscape:label="radiobutton_selected" />
-    </g>
-    <g
-       id="g5057"
-       style="display:inline;fill:#ffffff;fill-opacity:0.902655;stroke:none;stroke-opacity:1"
-       transform="translate(-1351.8431,673.02062)"
-       inkscape:label="tdme_font_white"
-       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\tdme_fontlogo_white.png"
-       inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96">
-      <g
-         id="g5069"
-         transform="matrix(0.21787122,0,0,0.21787122,2076.5879,-834.26424)"
-         style="fill:#ffffff;fill-opacity:0.902655;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
-        <path
-           d="m -3071.9263,-1328.9907 h 122.0221 c 9.9076,0 17.927,-12.3265 17.927,-27.5336 v -327.1233 c -0.2234,-12.2701 15.3912,-12.5249 15.5683,-1.4743 v 329.7422 c 0.1308,10.0714 4.6836,26.0267 16.0182,26.3071 h 126.0895 c 11.5089,-0.01 16.999,-17.3244 16.7351,-29.9051 1.0022,-147.9658 -0.7084,-295.6576 -0.7084,-442.695 0,-14.5539 -7.1797,-26.3241 -16.0225,-26.3241 -50.6715,-0.3649 -110.4389,0.076 -161.0042,0.4361 v -0.9377 c 0,-15.1948 -8.0157,-27.5213 -17.9276,-27.5213 h -118.6932 c -9.8954,0 -17.9276,12.3265 -17.9276,27.5213 v 2.3291 c -46.698,0.5747 -93.3834,1.0641 -140.0795,0.484 -8.5753,0 -15.4241,12.9626 -15.4241,27.3086 v 9.3901 c -38.2114,-0.6122 -83.1221,-0.8909 -121.5664,-0.8909 -8.5843,0 -15.5469,10.7437 -15.5469,23.9738 v 381.1748 c 0,13.2259 6.9626,23.9568 15.5469,23.9568 h 89.7443 c 8.5758,0 15.5257,-10.7267 15.5257,-23.9568 v -243.1195 c 0,-12.2196 16.2964,-13.6578 16.2964,-2.0801 v 260.2434 c 0,14.3502 6.9632,25.9976 15.5384,25.9976 h 109.4016 c 8.5539,0 15.5341,-11.6474 15.5341,-25.9976 v -300.6923 c 0,-14.4859 15.038,-13.5658 15.038,-1.61 v 315.4648 c 0,15.2076 4.0911,25.6418 17.9148,27.5336 z"
-           id="path4-0-6"
-           style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
-           sodipodi:nodetypes="csscccccccccssssccsccsssssccssssccccc"
-           inkscape:connector-curvature="0" />
-        <path
-           d="m -2705.0716,-1729.4694 h -37.0976 v 404.7929 c -0.058,7.7533 -1.343,10.3493 -12.695,10.3493 h -310.6425 c -10.3066,0.3619 -20.6785,7.8844 -20.8975,17.4181 v 85.0649 c 0,9.6151 9.3561,17.4266 20.9018,17.4266 h 354.9574 c 9.8299,0.073 20.9439,-9.367 20.9207,-17.4418 0.06,-164.26 0.5535,-329.284 0.5729,-487.435 0,-16.6628 -7.1605,-30.186 -16.0161,-30.186 z"
-           id="path6-6-4"
-           style="display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
-           sodipodi:nodetypes="scccccsscccss"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g66"
-         transform="matrix(0.560567,0,0,0.560567,988.51922,-1297.0074)"
-         style="display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:1.7839;stroke-opacity:1">
-        <path
-           d="m 1835.621,319.576 h -192.617 v -31.633 c 0,-10.537 2.2,-20.375 6.613,-29.505 4.412,-9.123 10.181,-17.674 17.316,-25.649 7.135,-7.966 15.173,-15.62 24.129,-22.947 8.949,-7.327 18.09,-14.463 27.433,-21.408 5.704,-4.11 11.671,-8.678 17.896,-13.694 6.227,-5.013 11.932,-9.96 17.127,-14.846 5.182,-4.882 9.533,-9.578 13.033,-14.081 3.504,-4.495 5.252,-8.544 5.252,-12.149 0,-4.628 -0.719,-9.064 -2.136,-13.306 -1.429,-4.246 -3.511,-8.103 -6.234,-11.571 -2.721,-3.473 -6.093,-6.233 -10.113,-8.295 -4.026,-2.056 -8.762,-3.085 -14.203,-3.085 -5.446,0 -10.183,1.029 -14.2,3.085 -4.029,2.062 -7.398,4.822 -10.119,8.295 -2.726,3.468 -4.734,7.325 -6.029,11.571 -1.304,4.241 -1.946,8.677 -1.946,13.306 h -63.817 c 0,-13.884 2.469,-26.893 7.393,-39.018 4.926,-12.124 11.733,-22.657 20.428,-31.58 8.688,-8.922 18.873,-15.977 30.547,-21.151 11.675,-5.174 24.252,-7.764 37.745,-7.764 13.486,0 26.13,2.581 37.939,7.726 11.805,5.151 22.05,12.173 30.744,21.057 8.689,8.889 15.495,19.39 20.423,31.494 4.926,12.11 7.398,25.113 7.398,39.023 0,11.337 -2.401,21.896 -7.2,31.687 -4.803,9.783 -10.959,18.933 -18.483,27.431 -7.524,8.5 -15.953,16.549 -25.296,24.149 -9.333,7.6 -18.55,14.877 -27.622,21.831 -3.641,2.832 -7.397,5.729 -11.284,8.696 -3.894,2.96 -7.782,5.988 -11.676,9.075 h 101.562 v 63.256 z"
-           id="path64"
-           style="fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:2.43116;stroke-opacity:1"
-           inkscape:connector-curvature="0" />
-      </g>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;line-height:1.25;font-family:'Ingleby Regular';-inkscape-font-specification:'Ingleby Regular, ';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
-         x="1499.7915"
-         y="-1117.5914"
-         id="text5061"><tspan
-           sodipodi:role="line"
-           id="tspan5059"
-           x="1499.7915"
-           y="-1117.5914"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:133.333px;font-family:'Enter Sansman';-inkscape-font-specification:'Enter Sansman Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">TDME</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
-         x="1526.2628"
-         y="-1094.4717"
-         id="text5000"><tspan
-           sodipodi:role="line"
-           id="tspan4998"
-           x="1526.2628"
-           y="-1094.4717">Three</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1;enable-background:new"
-         x="1592.7803"
-         y="-1094.47"
-         id="text5000-0"><tspan
-           sodipodi:role="line"
-           id="tspan4998-6"
-           x="1592.7803"
-           y="-1094.47">Dee</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
-         x="1640.1106"
-         y="-1093.3458"
-         id="text5022"><tspan
-           sodipodi:role="line"
-           id="tspan5020"
-           x="1640.1106"
-           y="-1093.3458">Mini</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
-         x="1693.2314"
-         y="-1094.4349"
-         id="text5026"><tspan
-           id="tspan5024"
-           x="1693.2314"
-           y="-1094.4349"
-           sodipodi:role="line">Engine</tspan></text>
     </g>
     <g
        id="g5057-8"
@@ -6352,7 +6372,7 @@
     </g>
     <g
        id="foliage_add"
-       transform="matrix(0,-2.0876369,-2.0876369,0,38.066085,57.677894)"
+       transform="matrix(0,-2.0876369,-2.0876369,0,-136.04156,-108.19931)"
        style="display:inline;stroke-width:0.47901;enable-background:new"
        inkscape:label="foliage_add"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\foliage_add.png"
@@ -6373,7 +6393,7 @@
     </g>
     <g
        id="foliage_substract"
-       transform="matrix(0,-2.0876369,-2.0876369,0,-82.849174,57.677894)"
+       transform="matrix(0,-2.0876369,-2.0876369,0,-212.95682,-109.19931)"
        style="display:inline;stroke-width:0.47901;enable-background:new"
        inkscape:label="foliage_substract"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\foliage_substract.png"
@@ -6394,7 +6414,7 @@
     </g>
     <g
        id="foliage_average"
-       transform="matrix(0,-2.0876369,-2.0876369,0,-42.183945,57.677894)"
+       transform="matrix(0,-2.0876369,-2.0876369,0,-172.29159,-109.19931)"
        style="display:inline;stroke-width:0.47901;enable-background:new"
        inkscape:label="foliage_average"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\foliage_average.png"
@@ -6484,13 +6504,210 @@
     <circle
        style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.49999;stroke-linejoin:round;stroke-dashoffset:6.3;stroke-opacity:1"
        id="picker"
-       cx="509.91235"
-       cy="-1.2374369"
+       cx="513.80145"
+       cy="-36.946331"
        r="3.5"
        inkscape:label="picker"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\picker.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#585858;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:6.3;stroke-opacity:1"
+       id="rect15365"
+       width="898.00006"
+       height="220"
+       x="-98.000031"
+       y="-1088"
+       rx="2.4075067"
+       ry="1.7254902"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\github\tdme2-logo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <g
+       id="g5057"
+       style="display:inline;fill:#ffffff;fill-opacity:0.902655;stroke:none;stroke-opacity:1"
+       transform="translate(-1327.5776,205.6531)"
+       inkscape:label="tdme_font_white"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\github\tdme2-logo.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <g
+         id="g5069"
+         transform="matrix(0.21787122,0,0,0.21787122,2076.5879,-834.26424)"
+         style="fill:#ffffff;fill-opacity:0.902655;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+        <path
+           d="m -3071.9263,-1328.9907 h 122.0221 c 9.9076,0 17.927,-12.3265 17.927,-27.5336 v -327.1233 c -0.2234,-12.2701 15.3912,-12.5249 15.5683,-1.4743 v 329.7422 c 0.1308,10.0714 4.6836,26.0267 16.0182,26.3071 h 126.0895 c 11.5089,-0.01 16.999,-17.3244 16.7351,-29.9051 1.0022,-147.9658 -0.7084,-295.6576 -0.7084,-442.695 0,-14.5539 -7.1797,-26.3241 -16.0225,-26.3241 -50.6715,-0.3649 -110.4389,0.076 -161.0042,0.4361 v -0.9377 c 0,-15.1948 -8.0157,-27.5213 -17.9276,-27.5213 h -118.6932 c -9.8954,0 -17.9276,12.3265 -17.9276,27.5213 v 2.3291 c -46.698,0.5747 -93.3834,1.0641 -140.0795,0.484 -8.5753,0 -15.4241,12.9626 -15.4241,27.3086 v 9.3901 c -38.2114,-0.6122 -83.1221,-0.8909 -121.5664,-0.8909 -8.5843,0 -15.5469,10.7437 -15.5469,23.9738 v 381.1748 c 0,13.2259 6.9626,23.9568 15.5469,23.9568 h 89.7443 c 8.5758,0 15.5257,-10.7267 15.5257,-23.9568 v -243.1195 c 0,-12.2196 16.2964,-13.6578 16.2964,-2.0801 v 260.2434 c 0,14.3502 6.9632,25.9976 15.5384,25.9976 h 109.4016 c 8.5539,0 15.5341,-11.6474 15.5341,-25.9976 v -300.6923 c 0,-14.4859 15.038,-13.5658 15.038,-1.61 v 315.4648 c 0,15.2076 4.0911,25.6418 17.9148,27.5336 z"
+           id="path4-0-6"
+           style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+           sodipodi:nodetypes="csscccccccccssssccsccsssssccssssccccc"
+           inkscape:connector-curvature="0" />
+        <path
+           d="m -2705.0716,-1729.4694 h -37.0976 v 404.7929 c -0.058,7.7533 -1.343,10.3493 -12.695,10.3493 h -310.6425 c -10.3066,0.3619 -20.6785,7.8844 -20.8975,17.4181 v 85.0649 c 0,9.6151 9.3561,17.4266 20.9018,17.4266 h 354.9574 c 9.8299,0.073 20.9439,-9.367 20.9207,-17.4418 0.06,-164.26 0.5535,-329.284 0.5729,-487.435 0,-16.6628 -7.1605,-30.186 -16.0161,-30.186 z"
+           id="path6-6-4"
+           style="display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:4.58987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+           sodipodi:nodetypes="scccccsscccss"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="g66"
+         transform="matrix(0.560567,0,0,0.560567,988.51922,-1297.0074)"
+         style="display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:1.7839;stroke-opacity:1">
+        <path
+           d="m 1835.621,319.576 h -192.617 v -31.633 c 0,-10.537 2.2,-20.375 6.613,-29.505 4.412,-9.123 10.181,-17.674 17.316,-25.649 7.135,-7.966 15.173,-15.62 24.129,-22.947 8.949,-7.327 18.09,-14.463 27.433,-21.408 5.704,-4.11 11.671,-8.678 17.896,-13.694 6.227,-5.013 11.932,-9.96 17.127,-14.846 5.182,-4.882 9.533,-9.578 13.033,-14.081 3.504,-4.495 5.252,-8.544 5.252,-12.149 0,-4.628 -0.719,-9.064 -2.136,-13.306 -1.429,-4.246 -3.511,-8.103 -6.234,-11.571 -2.721,-3.473 -6.093,-6.233 -10.113,-8.295 -4.026,-2.056 -8.762,-3.085 -14.203,-3.085 -5.446,0 -10.183,1.029 -14.2,3.085 -4.029,2.062 -7.398,4.822 -10.119,8.295 -2.726,3.468 -4.734,7.325 -6.029,11.571 -1.304,4.241 -1.946,8.677 -1.946,13.306 h -63.817 c 0,-13.884 2.469,-26.893 7.393,-39.018 4.926,-12.124 11.733,-22.657 20.428,-31.58 8.688,-8.922 18.873,-15.977 30.547,-21.151 11.675,-5.174 24.252,-7.764 37.745,-7.764 13.486,0 26.13,2.581 37.939,7.726 11.805,5.151 22.05,12.173 30.744,21.057 8.689,8.889 15.495,19.39 20.423,31.494 4.926,12.11 7.398,25.113 7.398,39.023 0,11.337 -2.401,21.896 -7.2,31.687 -4.803,9.783 -10.959,18.933 -18.483,27.431 -7.524,8.5 -15.953,16.549 -25.296,24.149 -9.333,7.6 -18.55,14.877 -27.622,21.831 -3.641,2.832 -7.397,5.729 -11.284,8.696 -3.894,2.96 -7.782,5.988 -11.676,9.075 h 101.562 v 63.256 z"
+           id="path64"
+           style="fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-width:2.43116;stroke-opacity:1"
+           inkscape:connector-curvature="0" />
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;line-height:1.25;font-family:'Ingleby Regular';-inkscape-font-specification:'Ingleby Regular, ';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1"
+         x="1499.7915"
+         y="-1117.5914"
+         id="text5061"><tspan
+           sodipodi:role="line"
+           id="tspan5059"
+           x="1499.7915"
+           y="-1117.5914"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:133.333px;font-family:'Enter Sansman';-inkscape-font-specification:'Enter Sansman Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">TDME</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
+         x="1526.2628"
+         y="-1094.4717"
+         id="text5000"><tspan
+           sodipodi:role="line"
+           id="tspan4998"
+           x="1526.2628"
+           y="-1094.4717">Three</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1;enable-background:new"
+         x="1592.7803"
+         y="-1094.47"
+         id="text5000-0"><tspan
+           sodipodi:role="line"
+           id="tspan4998-6"
+           x="1592.7803"
+           y="-1094.47">Dee</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
+         x="1640.1106"
+         y="-1093.3458"
+         id="text5022"><tspan
+           sodipodi:role="line"
+           id="tspan5020"
+           x="1640.1106"
+           y="-1093.3458">Mini</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.7;stroke:none;stroke-opacity:1"
+         x="1693.2314"
+         y="-1094.4349"
+         id="text5026"><tspan
+           id="tspan5024"
+           x="1693.2314"
+           y="-1094.4349"
+           sodipodi:role="line">Engine</tspan></text>
+    </g>
+    <g
+       id="brush"
+       inkscape:label="brush"
+       transform="translate(-697,150)"
+       style="display:none">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linejoin:round;stroke-dashoffset:6.3"
+         id="rect2186"
+         width="32"
+         height="32"
+         x="697"
+         y="-150" />
+      <circle
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.49999;stroke-linejoin:round;stroke-dashoffset:6.3;stroke-opacity:1;filter:url(#filter2230);enable-background:new"
+         id="picker-6"
+         cx="713"
+         cy="-134"
+         r="16"
+         inkscape:label="picker"
+         inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\picker.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+    </g>
+    <g
+       id="g2246"
+       inkscape:label="brush"
+       transform="translate(-527.29437,174.74874)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\textures\terrain_brusht.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linejoin:round;stroke-dashoffset:6.3"
+         id="rect2242"
+         width="32"
+         height="32"
+         x="697"
+         y="-150" />
+      <circle
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.49999;stroke-linejoin:round;stroke-dashoffset:6.3;stroke-opacity:1;enable-background:new"
+         id="circle2244"
+         cx="713"
+         cy="-134"
+         r="16"
+         inkscape:label="picker"
+         inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\picker.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+    </g>
+    <g
+       id="ramp"
+       inkscape:label="ramp"
+       transform="translate(-751.18377,198.34672)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\textures\terrain_ramp.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       style="display:inline;enable-background:new">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linejoin:round;stroke-dashoffset:6.3"
+         id="rect2242-7"
+         width="32"
+         height="32"
+         x="751.18378"
+         y="-198.34673" />
+      <rect
+         style="fill:url(#meshgradient2344);fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linejoin:round;stroke-dashoffset:6.3"
+         id="rect2316"
+         width="32"
+         height="32"
+         x="751.18378"
+         y="-198.34673" />
+    </g>
+    <g
+       id="inputslider"
+       inkscape:label="inputslider"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\inputslider.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <path
+         inkscape:connector-curvature="0"
+         id="path9227-6"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         d="m 222.96012,-224.9998 c 0.27843,0 0.50584,0.2216 0.50587,0.5 v 7 c 5.9e-4,0.4051 -0.45545,0.6427 -0.78712,0.4102 l -5,-3.5 c -0.28541,-0.199 -0.28541,-0.6214 0,-0.8204 l 5,-3.5 c 0.0826,-0.058 0.1806,-0.089 0.28125,-0.09 z"
+         sodipodi:nodetypes="ccccccccc"
+         inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\arrow_left.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96"
+         inkscape:label="arrow_left" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path9227-3"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         d="m 226.84012,-216.99833 c -0.27843,0 -0.50584,-0.2216 -0.50587,-0.5 v -7 c -5.9e-4,-0.4051 0.45545,-0.6427 0.78712,-0.4102 l 5,3.5 c 0.28541,0.199 0.28541,0.6214 0,0.8204 l -5,3.5 c -0.0826,0.058 -0.1806,0.089 -0.28125,0.09 z"
+         sodipodi:nodetypes="ccccccccc"
+         inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui-2.0\resources\engine\images\arrow_left.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96"
+         inkscape:label="arrow_left" />
+    </g>
   </g>
   <script
      id="mesh_polyfill"

@@ -25,7 +25,7 @@
 				<text font="{$font.default}" text="Mirror Mode" width="90" height="auto"/>
 				<space width="5" />
 				<space width="*" />
-				<dropdown id="dropdown_terrain_mirrormode" width="130" height="auto" text="Select Mode">
+				<dropdown id="terrain_mirrormode" width="130" height="auto" text="Select Mode">
 					<dropdown-option text="Normal" selected="true" value="1" on-mouse-click="terrain_mirrormode_details.condition="/>
 					<dropdown-option text="X Mirror" value="2" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
 					<dropdown-option text="Z Mirror" value="3" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
