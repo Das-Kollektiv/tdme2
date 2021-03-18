@@ -162,7 +162,15 @@ private:
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageAspectFlags aspect_mask { 0 };
-		array<ThsvsAccessType, 2> access_types { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		array<array<ThsvsAccessType, 2>, 6> access_types
+			{{
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE }
+			}};
 		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VmaAllocation allocation { VK_NULL_HANDLE };
@@ -313,8 +321,8 @@ private:
 
 		string shader;
 		EntityShaderParameters shaderParameters;
-		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
-		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		array<float, 4> effect_color_mul { 1.0f, 1.0f, 1.0f, 1.0f };
+		array<float, 4> effect_color_add { 0.0f, 0.0f, 0.0f, 0.0f };
 		Renderer_PBRMaterial pbrMaterial;
 		Renderer_SpecularMaterial specularMaterial;
 		array<Renderer_Light, 8> lights;
@@ -388,13 +396,15 @@ private:
 	buffer_object_type* empty_vertex_buffer { nullptr };
 	int empty_vertex_buffer_id { 0 };
 	int depth_buffer_default { 0 };
-	int white_texture_default_id { 0 };
-	texture_type* white_texture_default { nullptr };
+	int white_texture_sampler2d_default_id { 0 };
+	texture_type* white_texture_sampler2d_default { nullptr };
+	int white_texture_samplercube_default_id { 0 };
+	texture_type* white_texture_samplercube_default { nullptr };
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -435,7 +445,8 @@ private:
 
 	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel = 0, uint32_t levelCount = 1);
+	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1);
+	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
 	uint32_t getMipLevels(Texture* texture);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	VkBuffer getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId, uint32_t& size);
@@ -498,6 +509,8 @@ private:
 	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void recreateContextFences(int contextIdx);
+	void uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
+
 protected:
 	/**
 	 * Protected constructor
