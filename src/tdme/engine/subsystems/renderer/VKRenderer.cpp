@@ -2243,7 +2243,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			definitions + "\n\n"
+			"#define __VULKAN__\n\n" + definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
 		functions + "\n\n"

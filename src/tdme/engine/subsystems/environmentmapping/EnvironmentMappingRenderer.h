@@ -42,24 +42,24 @@ private:
 			{{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }}
 		}};
 		array<Vector3, 6> forwardVectors {{
-			{{ -1.0f, 0.0f, 0.0f }}, // left
 			{{ 1.0f, 0.0f, 0.0f }}, // right
-			{{ 0.0f, -1.0f, 0.0f }}, // top
-			{{ 0.0f, 1.0f, 0.0f }}, // bottom
+			{{ -1.0f, 0.0f, 0.0f }}, // left
+			{{ 0.0f, 1.0f, 0.0f }}, // top
+			{{ 0.0f, -1.0f, 0.0f }}, // bottom
 			{{ 0.0f, 0.0f, -1.0f }}, // front
 			{{ 0.0f, 0.0f, 1.0f }} // back
 		}};
 		array<Vector3, 6> sideVectors {{
-			{{ 0.0f, 0.0f, -1.0f }}, // left
 			{{ 0.0f, 0.0f, 1.0f }}, // right
-			{{ -1.0f, 0.0f, 0.0f }}, // top
-			{{ 1.0f, 0.0f, 0.0f }}, // bottom
+			{{ 0.0f, 0.0f, -1.0f }}, // left
+			{{ 1.0f, 0.0f, 0.0f }}, // top
+			{{ -1.0f, 0.0f, 0.0f }}, // bottom
 			{{ 1.0f, 0.0f, 0.0f }}, // front
 			{{ -1.0f, 0.0f, 0.0f }} // back
 		}};
 		array<Vector3, 6> upVectors {{
-			{{ 0.0f, 1.0f, 0.0f }}, // left
 			{{ 0.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, 1.0f, 0.0f }}, // left
 			{{ 0.0f, 0.0f, -1.0f }}, // top
 			{{ 0.0f, 0.0f, 1.0f }}, // bottom
 			{{ 0.0f, 1.0f, 0.0f }}, // front
