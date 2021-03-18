@@ -50,6 +50,7 @@ private:
 	float min { 0.0f };
 	float max { 0.0f };
 	float step { 0.0f };
+	int decimals { 3 };
 
 	/**
 	 * Private constructor

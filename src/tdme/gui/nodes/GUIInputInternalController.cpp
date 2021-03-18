@@ -80,10 +80,14 @@ void GUIInputInternalController::initialize()
 	auto minAsString = inputNode->getOptionValue("min");
 	auto maxAsString = inputNode->getOptionValue("max");
 	auto stepAsString = inputNode->getOptionValue("step");
+	auto decimalsAsString = inputNode->getOptionValue("decimals");
 
 	min = Float::parseFloat(minAsString);
 	max = Float::parseFloat(maxAsString);
 	step = Float::parseFloat(stepAsString);
+
+	if (decimalsAsString.empty() == false)
+		decimals = Integer::parseInt(decimalsAsString);
 
 	haveMin = minAsString.empty() == false;
 	haveMax = maxAsString.empty() == false;
@@ -155,7 +159,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 					if (haveMax == true) {
 						if (value > max) value = max;
 					}
-					textInputNode->getText().set(value, 3);
+					textInputNode->getText().set(value, decimals);
 				}
 				break;
 			case TYPE_INT:
