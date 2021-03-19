@@ -160,7 +160,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_OBJECT3D;
+		return ENTITYTYPE_OBJECT3D;
 	}
 
 	void setEngine(Engine* engine) override;

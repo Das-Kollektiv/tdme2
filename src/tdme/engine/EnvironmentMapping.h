@@ -88,7 +88,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_ENVIRONMENTMAPPING;
+		return ENTITYTYPE_ENVIRONMENTMAPPING;
 	}
 
 	void setEngine(Engine* engine) override;
