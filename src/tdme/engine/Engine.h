@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <map>
 #include <string>
@@ -42,6 +43,7 @@
 
 using std::array;
 using std::map;
+using std::remove;
 using std::string;
 using std::to_string;
 using std::unordered_map;
