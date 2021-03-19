@@ -187,6 +187,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		} else {
 			terrainBoundingBox.extend(terrainModel->getBoundingBox());
 		}
+		ModelTools::createDefaultAnimation(terrainModel, 1);
 		terrainModels.push_back(terrainModel);
 	}
 }
@@ -900,6 +901,7 @@ void Terrain::createWaterModels(
 		waterModel->getNodes()[waterNode->getId()] = waterNode;
 		waterModel->getSubNodes()[waterNode->getId()] = waterNode;
 		ModelTools::prepareForIndexedRendering(waterModel);
+		ModelTools::createDefaultAnimation(waterModel, 1);
 		waterModels.push_back(waterModel);
 	}
 }

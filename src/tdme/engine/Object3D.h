@@ -122,6 +122,7 @@ private:
 	 * @param context context
 	 */
 	inline void preRender(void* context) {
+		if (model->hasBoundingBoxUpdate() == true) updateBoundingBox();
 		for (auto object3DNode: object3dNodes) {
 			if (object3DNode->renderer->needsPreRender() == true) {
 				object3DNode->renderer->preRender(context);
