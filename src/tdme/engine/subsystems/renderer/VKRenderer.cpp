@@ -4152,6 +4152,9 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
+
+	//
+	endDrawCommandsAllContexts();
 }
 
 void VKRenderer::updateViewPort()

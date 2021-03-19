@@ -51,6 +51,13 @@ Entity* EntityHierarchy::getEntity(const string& id) {
 }
 
 void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
+	auto _entity = getEntity(entity->getId());
+	if (_entity == entity) {
+		Console::println("EntityHierarchy::addEntity(): " + entity->getId() + ": entity already added!");
+		return;
+	}
+
+	//
 	removeEntity(entity->getId());
 
 	// base properties
