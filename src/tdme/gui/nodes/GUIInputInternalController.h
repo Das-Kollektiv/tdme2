@@ -34,11 +34,12 @@ private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	static constexpr int64_t DRAGGING_CALMDOWN { 50LL };
 	GUIElementNode* inputNode { nullptr };
-	int64_t cursorModeStarted;
-	CursorMode cursorMode;
-	int index;
-	int offset;
-	bool isDragging;
+	int64_t cursorModeStarted { -1LL };
+	CursorMode cursorMode { CURSORMODE_SHOW };
+	int index { 0 };
+	int offset { 0 };
+	bool draggingInit { false };
+	bool draggingActive { false };
 	array<int, 2> dragPosition;
 	MutableString value;
 
@@ -51,6 +52,8 @@ private:
 	float max { 0.0f };
 	float step { 0.0f };
 	int decimals { 3 };
+
+	bool showCursor { false };
 
 	/**
 	 * Private constructor
@@ -88,6 +91,11 @@ public:
 	 * Reset cursor index and offset
 	 */
 	void reset();
+
+	/**
+	 * @return show cursor
+	 */
+	bool isShowCursor();
 
 	// overridden methods
 	bool isDisabled() override;

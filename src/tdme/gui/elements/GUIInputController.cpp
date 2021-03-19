@@ -98,10 +98,14 @@ void GUIInputController::tick()
 
 void GUIInputController::onFocusGained()
 {
+	inputNode = required_dynamic_cast<GUIInputInternalNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text-input"));
+	inputNode->getController()->onFocusGained();
 }
 
 void GUIInputController::onFocusLost()
 {
+	inputNode = required_dynamic_cast<GUIInputInternalNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text-input"));
+	inputNode->getController()->onFocusLost();
 }
 
 bool GUIInputController::hasValue()

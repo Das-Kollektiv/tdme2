@@ -55,7 +55,8 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->cursorMode = CURSORMODE_SHOW;
 	this->index = 0;
 	this->offset = 0;
-	this->isDragging = false;
+	this->draggingActive = false;
+	this->draggingInit = false;
 	this->dragPosition = {{ 0, 0 }};
 }
 
@@ -139,47 +140,78 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	}
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		isDragging = false;
+		if (draggingActive == false) {
+			if (node->isEventBelongingToNode(event) == true &&
+				event->getButton() == MOUSE_BUTTON_LEFT) {
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				index = textInputNode->getFont()->getTextIndexByX(
+					textInputNode->getText(),
+					offset,
+					0,
+					event->getX() -
+						(
+							textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft +
+							textInputNode->border.left+ textInputNode->padding.left
+						)
+				);
+				resetCursorMode();
+				event->setProcessed(true);
+				showCursor = true;
+			}
+		}
+		draggingInit = false;
+		draggingActive = false;
+		dragPosition[0] = 0;
+		dragPosition[1] = 0;
 		event->setProcessed(true);
 	} else
-	if (isDragging == true) {
-		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-		switch (type) {
-			case TYPE_STRING:
-				break;
-			case TYPE_FLOAT:
-				{
-					auto value = Float::parseFloat(textInputNode->getText().getString());
-					if (haveStep == true) {
-						value+= static_cast<float>(event->getXUnscaled() - dragPosition[0]) * step;
-					}
-					if (haveMin == true) {
-						if (value < min) value = min;
-					}
-					if (haveMax == true) {
-						if (value > max) value = max;
-					}
-					textInputNode->getText().set(value, decimals);
-				}
-				break;
-			case TYPE_INT:
-				{
-					auto value = Integer::parseInt(textInputNode->getText().getString());
-					if (haveStep == true) {
-						value+= (event->getXUnscaled() - dragPosition[0]) * static_cast<int>(step);
-					}
-					if (haveMin == true) {
-						if (value < static_cast<int>(min)) value = static_cast<int>(min);
-					}
-					if (haveMax == true) {
-						if (value > static_cast<int>(max)) value = static_cast<int>(max);
-					}
-					textInputNode->getText().set(value);
-				}
-				break;
+	if (draggingInit == true || draggingActive == true) {
+		if (draggingInit == true) {
+			if (dragPosition[0] != event->getXUnscaled() ||
+				dragPosition[1] != event->getYUnscaled()) {
+				draggingInit = false;
+				draggingActive = true;
+			}
 		}
-		dragPosition[0] = event->getXUnscaled();
-		dragPosition[1] = event->getYUnscaled();
+		if (draggingActive == true) {
+			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+			switch (type) {
+				case TYPE_STRING:
+					break;
+				case TYPE_FLOAT:
+					{
+						auto value = Float::parseFloat(textInputNode->getText().getString());
+						if (haveStep == true) {
+							value+= static_cast<float>(event->getXUnscaled() - dragPosition[0]) * step;
+						}
+						if (haveMin == true) {
+							if (value < min) value = min;
+						}
+						if (haveMax == true) {
+							if (value > max) value = max;
+						}
+						textInputNode->getText().set(value, decimals);
+					}
+					break;
+				case TYPE_INT:
+					{
+						auto value = Integer::parseInt(textInputNode->getText().getString());
+						if (haveStep == true) {
+							value+= (event->getXUnscaled() - dragPosition[0]) * static_cast<int>(step);
+						}
+						if (haveMin == true) {
+							if (value < static_cast<int>(min)) value = static_cast<int>(min);
+						}
+						if (haveMax == true) {
+							if (value > static_cast<int>(max)) value = static_cast<int>(max);
+						}
+						textInputNode->getText().set(value);
+					}
+					break;
+			}
+			dragPosition[0] = event->getXUnscaled();
+			dragPosition[1] = event->getYUnscaled();
+		}
 		event->setProcessed(true);
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
@@ -198,11 +230,12 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		);
 		resetCursorMode();
 		event->setProcessed(true);
-		isDragging = true;
+		draggingInit = true;
+		draggingActive = false;
 		dragPosition[0] = event->getXUnscaled();
 		dragPosition[1] = event->getYUnscaled();
+		showCursor = false;
 	}
-
 }
 
 void GUIInputInternalController::checkOffset()
@@ -228,6 +261,9 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (disabled == true) {
 		return;
 	}
+
+	//
+	showCursor = true;
 
 	//
 	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -351,6 +387,37 @@ void GUIInputInternalController::onFocusGained()
 
 void GUIInputInternalController::onFocusLost()
 {
+	switch (type) {
+		case TYPE_STRING:
+			break;
+		case TYPE_FLOAT:
+			{
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				auto value = Float::parseFloat(textInputNode->getText().getString());
+				if (haveMin == true) {
+					if (value < min) value = min;
+				}
+				if (haveMax == true) {
+					if (value > max) value = max;
+				}
+				textInputNode->getText().set(value, decimals);
+			}
+			break;
+		case TYPE_INT:
+			{
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				auto value = Integer::parseInt(textInputNode->getText().getString());
+				if (haveMin == true) {
+					if (value < static_cast<int>(min)) value = static_cast<int>(min);
+				}
+				if (haveMax == true) {
+					if (value > static_cast<int>(max)) value = static_cast<int>(max);
+				}
+				textInputNode->getText().set(value);
+			}
+			break;
+	}
+	showCursor = false;
 }
 
 bool GUIInputInternalController::hasValue()
@@ -371,7 +438,10 @@ void GUIInputInternalController::reset()
 {
 	index = 0;
 	offset = 0;
-	isDragging = false;
+	draggingActive = false;
 	resetCursorMode();
 }
 
+bool GUIInputInternalController::isShowCursor() {
+	return showCursor;
+}
