@@ -298,7 +298,7 @@ Entity* SceneConnector::createEmpty(const string& id, const Transformations& tra
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances) {
+Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -317,6 +317,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
 				lodLevel3 != nullptr?lodLevel3->getModel():nullptr
 			);
+			entity->setParentEntity(parentEntity);
 			auto lodObject = dynamic_cast<LODObject3D*>(entity);
 			lodObject->setEffectColorAddLOD2(lodLevel2->getColorAdd());
 			lodObject->setEffectColorMulLOD2(lodLevel2->getColorMul());
@@ -347,6 +348,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				prototype->getModel(),
 				instances
 			);
+			entity->setParentEntity(parentEntity);
 			auto object = dynamic_cast<Object3D*>(entity);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
@@ -378,10 +380,13 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				id + (i == 0?"":"." + to_string(i)),
 				true
 			);
-			if (particleSystem != nullptr) particleSystems.push_back(dynamic_cast<ParticleSystemEntity*>(particleSystem));
+			if (particleSystem != nullptr) {
+				particleSystems.push_back(dynamic_cast<ParticleSystemEntity*>(particleSystem));
+			}
 		}
 		if (particleSystems.size() == 1) {
 			entity = dynamic_cast<Entity*>(particleSystems[0]);
+			entity->setParentEntity(parentEntity);
 		} else
 		if (particleSystems.size() > 1) {
 			entity = new ParticleSystemGroup(
@@ -391,6 +396,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				true,
 				particleSystems
 			);
+			entity->setParentEntity(parentEntity);
 		}
 	} else
 	// trigger/environment mapping
@@ -421,6 +427,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			delete entityBoundingVolumesHierarchy;
 		} else {
 			entity = entityBoundingVolumesHierarchy;
+			entity->setParentEntity(parentEntity);
 		}
 	}
 
@@ -438,14 +445,14 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation) {
+Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
 	Transformations transformations;
 	transformations.fromTransformations(sceneEntity->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations);
+	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
 }
 
 void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

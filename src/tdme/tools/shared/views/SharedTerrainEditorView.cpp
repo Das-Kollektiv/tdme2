@@ -218,7 +218,7 @@ void SharedTerrainEditorView::addTemporaryFoliage(const vector<unordered_map<int
 					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 					auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 					for (auto& transformations: transformationsVector) {
-						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations, 1, foliagePartitionEntityHierarchy);
 						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 						foliageIdx++;
 					}
@@ -300,7 +300,7 @@ void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
 			auto& transformationsVector = foliageMapPartitionIt.second;
 			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 			for (auto& transformations: transformationsVector) {
-				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations, 1, foliagePartitionEntityHierarchy);
 				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 				foliageIdx++;
 			}

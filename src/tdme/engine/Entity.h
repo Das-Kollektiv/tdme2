@@ -17,6 +17,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::SceneConnector;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -31,6 +32,7 @@ class tdme::engine::Entity
 	friend class Engine;
 	friend class EntityHierarchy;
 	friend class ParticleSystemGroup;
+	friend class SceneConnector;
 
 private:
 	/**
