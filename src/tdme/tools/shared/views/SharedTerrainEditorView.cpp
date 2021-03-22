@@ -598,7 +598,7 @@ void SharedTerrainEditorView::handleInputEvents()
 						terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 						//
 						for (auto waterModel: waterModels) {
-							auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
+							auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
 							waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 							waterObject3D->setShader("water");
 							waterObject3D->setContributesShadows(false);

@@ -104,6 +104,9 @@ void EntityHierarchy::removeEntity(const string& id) {
 	entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
 	entityHierarchyLevel->parent->children.erase(id);
 
+	//
+	if (engine != nullptr) engine->removeEntityFromLists(entity);
+
 	// dispose
 	entity->dispose();
 	delete entity;
@@ -134,7 +137,7 @@ void EntityHierarchy::updateHierarchy(const Transformations& parentTransformatio
 		entity->applyParentTransformations(parentTransformations);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
-		updateHierarchy(childIt.second.entity->getTransformations(), childIt.second, depth++, firstEntity);
+		updateHierarchy(childIt.second.entity->getTransformations(), childIt.second, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes
