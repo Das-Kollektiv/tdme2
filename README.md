@@ -5,7 +5,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDME2?
-    - ThreeDeeMiniEngine2 is a lightweight multiplatform 3D engine including tools
+    - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
       - Read about the [philosophy](./README-Philosophy.md) if interested
     - TDME2 is open source
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
