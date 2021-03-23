@@ -447,37 +447,148 @@ bool Engine::removeEntity(const string& id)
 	removeEntityFromLists(entity);
 
 	// dispose entity
+	entity->dispose();
 	entity->setEngine(nullptr);
 	entity->setRenderer(nullptr);
-	entity->dispose();
 	delete entity;
 
 	//
 	return true;
 }
 
+inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedEntities, Entity* entity) {
+	// delete from lists
+	decomposedEntities.objects.erase(
+		remove(
+			decomposedEntities.objects.begin(),
+			decomposedEntities.objects.end(),
+			entity
+		),
+		decomposedEntities.objects.end()
+	);
+	decomposedEntities.objectsPostPostProcessing.erase(
+		remove(
+			decomposedEntities.objectsPostPostProcessing.begin(),
+			decomposedEntities.objectsPostPostProcessing.end(),
+			entity
+		),
+		decomposedEntities.objectsPostPostProcessing.end()
+	);
+	decomposedEntities.objectsNoDepthTest.erase(
+		remove(
+			decomposedEntities.objectsNoDepthTest.begin(),
+			decomposedEntities.objectsNoDepthTest.end(),
+			entity
+		),
+		decomposedEntities.objectsNoDepthTest.end()
+	);
+	decomposedEntities.lodObjects.erase(
+		remove(
+			decomposedEntities.lodObjects.begin(),
+			decomposedEntities.lodObjects.end(),
+			entity
+		),
+		decomposedEntities.lodObjects.end()
+	);
+	decomposedEntities.opses.erase(
+		remove(
+			decomposedEntities.opses.begin(),
+			decomposedEntities.opses.end(),
+			entity
+		),
+		decomposedEntities.opses.end()
+	);
+	decomposedEntities.ppses.erase(
+		remove(
+			decomposedEntities.ppses.begin(),
+			decomposedEntities.ppses.end(),
+			entity
+		),
+		decomposedEntities.ppses.end()
+	);
+	decomposedEntities.psgs.erase(
+		remove(
+			decomposedEntities.psgs.begin(),
+			decomposedEntities.psgs.end(),
+			entity
+		),
+		decomposedEntities.psgs.end()
+	);
+	decomposedEntities.linesObjects.erase(
+		remove(
+			decomposedEntities.linesObjects.begin(),
+			decomposedEntities.linesObjects.end(),
+			entity
+		),
+		decomposedEntities.linesObjects.end()
+	);
+	decomposedEntities.objectRenderGroups.erase(
+		remove(
+			decomposedEntities.objectRenderGroups.begin(),
+			decomposedEntities.objectRenderGroups.end(),
+			entity
+		),
+		decomposedEntities.objectRenderGroups.end()
+	);
+	decomposedEntities.entityHierarchies.erase(
+		remove(
+			decomposedEntities.entityHierarchies.begin(),
+			decomposedEntities.entityHierarchies.end(),
+			entity
+		),
+		decomposedEntities.entityHierarchies.end()
+	);
+	decomposedEntities.ezrObjects.erase(
+		remove(
+			decomposedEntities.ezrObjects.begin(),
+			decomposedEntities.ezrObjects.end(),
+			entity
+		),
+		decomposedEntities.ezrObjects.end()
+	);
+	decomposedEntities.noFrustumCullingEntities.erase(
+		remove(
+			decomposedEntities.noFrustumCullingEntities.begin(),
+			decomposedEntities.noFrustumCullingEntities.end(),
+			entity
+		),
+		decomposedEntities.noFrustumCullingEntities.end()
+	);
+	decomposedEntities.environmentMappingEntities.erase(
+		remove(
+			decomposedEntities.environmentMappingEntities.begin(),
+			decomposedEntities.environmentMappingEntities.end(),
+			entity
+		),
+		decomposedEntities.environmentMappingEntities.end()
+	);
+}
+
 void Engine::removeEntityFromLists(Entity* entity)
 {
+	if (entity == nullptr) return;
 	//
 	removeFromDecomposedEntities(visibleDecomposedEntities, entity);
-	// TODO: implement others here too
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3DRENDERGROUP) {
 		removeEntityFromLists(static_cast<Object3DRenderGroup*>(entity)->getEntity());
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) {
-		for (auto subEntity: static_cast<ObjectParticleSystem*>(entity)->getObjects()) {
+		auto ops = static_cast<ObjectParticleSystem*>(entity);
+		for (auto subEntity: ops->getObjects()) {
 			removeEntityFromLists(subEntity);
 		}
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
-		for (auto subEntity: static_cast<EntityHierarchy*>(entity)->getEntities()) {
+		auto eh = static_cast<EntityHierarchy*>(entity);
+		for (auto subEntity: eh->getEntities()) {
 			removeEntityFromLists(subEntity);
 		}
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
-		removeEntityFromLists(static_cast<LODObject3D*>(entity)->getLOD1Object());
-		removeEntityFromLists(static_cast<LODObject3D*>(entity)->getLOD2Object());
-		removeEntityFromLists(static_cast<LODObject3D*>(entity)->getLOD3Object());
+		auto lob3d = static_cast<LODObject3D*>(entity);
+		removeEntityFromLists(lob3d->getLOD1Object());
+		removeEntityFromLists(lob3d->getLOD2Object());
+		removeEntityFromLists(lob3d->getLOD3Object());
 	}
 }
 
