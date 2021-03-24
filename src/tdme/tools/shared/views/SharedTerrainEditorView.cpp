@@ -785,13 +785,16 @@ Prototype* SharedTerrainEditorView::loadTerrainPrototype(const string& pathName,
 	return PrototypeReader::read(pathName, fileName);
 }
 
-
 void SharedTerrainEditorView::loadTerrain(const string& pathName, const string& fileName) {
 	unsetTerrainBrush();
-	auto oldEntity = prototype;
-	auto prototype = loadTerrainPrototype(pathName, fileName);
-	setPrototype(prototype);
-	onLoadTerrain(oldEntity, prototype);
+	try {
+		auto oldEntity = prototype;
+		auto prototype = loadTerrainPrototype(pathName, fileName);
+		setPrototype(prototype);
+		onLoadTerrain(oldEntity, prototype);
+	} catch (Exception& exception) {
+		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
+	}
 }
 
 void SharedTerrainEditorView::saveTerrain(const string& pathName, const string& fileName) {
