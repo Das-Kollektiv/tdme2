@@ -118,6 +118,15 @@ void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 	terrainModels.clear();
 	unsetWater();
 	this->prototype = prototype;
+
+	//
+	partitionFoliageIdx.clear();
+	temporaryPartitionIdxs.clear();
+
+	//
+	if (terrainEditorScreenController != nullptr) terrainEditorScreenController->onLoadTerrain();
+
+	//
 	initModelRequested = true;
 }
 
@@ -747,6 +756,9 @@ void SharedTerrainEditorView::activate()
 
 	//
 	initSky();
+
+	//
+	terrainEditorScreenController->onLoadTerrain();
 }
 
 void SharedTerrainEditorView::deactivate()
@@ -761,19 +773,27 @@ void SharedTerrainEditorView::dispose()
 void SharedTerrainEditorView::onSetPrototypeData() {
 }
 
+void SharedTerrainEditorView::onLoadTerrain(Prototype* oldEntity, Prototype* entity)
+{
+	delete oldEntity;
+}
+
 void SharedTerrainEditorView::onInitAdditionalScreens() {
 }
 
-void SharedTerrainEditorView::loadFile(const string& pathName, const string& fileName) {
-	// TODO: a.drewke; delete prototype, also check other tools
-	auto prototype = PrototypeReader::read(pathName, fileName);
-	setPrototype(prototype);
-	unsetTerrainBrush();
-	partitionFoliageIdx.clear();
-	temporaryPartitionIdxs.clear();
-	terrainEditorScreenController->onLoadTerrain();
+Prototype* SharedTerrainEditorView::loadTerrainPrototype(const string& pathName, const string& fileName) {
+	return PrototypeReader::read(pathName, fileName);
 }
 
-void SharedTerrainEditorView::saveFile(const string& pathName, const string& fileName) {
+
+void SharedTerrainEditorView::loadTerrain(const string& pathName, const string& fileName) {
+	unsetTerrainBrush();
+	auto oldEntity = prototype;
+	auto prototype = loadTerrainPrototype(pathName, fileName);
+	setPrototype(prototype);
+	onLoadTerrain(oldEntity, prototype);
+}
+
+void SharedTerrainEditorView::saveTerrain(const string& pathName, const string& fileName) {
 	PrototypeWriter::write(pathName, fileName, prototype);
 }

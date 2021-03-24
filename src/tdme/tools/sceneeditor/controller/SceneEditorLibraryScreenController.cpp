@@ -169,10 +169,10 @@ void SceneEditorLibraryScreenController::setPrototypeLibrary()
 void SceneEditorLibraryScreenController::onPrototypeSelectionChanged()
 {
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
+	if (dynamic_cast<SceneEditorView*>(view) != nullptr) {
 		auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 		if (prototype != nullptr) {
-			(dynamic_cast< SceneEditorView* >(view))->selectPrototypeFromLibrary(prototype->getId());
+			(dynamic_cast<SceneEditorView*>(view))->selectPrototypeFromLibrary(prototype->getId());
 		}
 	}
 }
@@ -237,8 +237,8 @@ void SceneEditorLibraryScreenController::onPlacePrototype()
 	auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->getPrototype(Tools::convertToIntSilent(sceneLibraryListBox->getController()->getValue().getString()));
 	if (prototype == nullptr) return;
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
-		(dynamic_cast< SceneEditorView* >(view))->setPlaceEntityMode();
+	if (dynamic_cast<SceneEditorView*>(view) != nullptr) {
+		(dynamic_cast<SceneEditorView*>(view))->setPlaceEntityMode();
 	}
 }
 
@@ -248,8 +248,8 @@ void SceneEditorLibraryScreenController::onDeletePrototype()
 	if (prototype == nullptr) return;
 	TDMESceneEditor::getInstance()->getScene()->removeEntitiesByPrototypeId(prototype->getId());
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
-		(dynamic_cast< SceneEditorView* >(view))->loadScene();
+	if (dynamic_cast<SceneEditorView*>(view) != nullptr) {
+		(dynamic_cast<SceneEditorView*>(view))->loadScene();
 	} else {
 		TDMESceneEditor::getInstance()->switchToSceneEditor();
 	}
@@ -348,8 +348,8 @@ void SceneEditorLibraryScreenController::onPartitionPrototype()
 
 	// (re-)load scene editor view
 	auto view = TDMESceneEditor::getInstance()->getView();
-	if (dynamic_cast< SceneEditorView* >(view) != nullptr) {
-		(dynamic_cast< SceneEditorView* >(view))->loadScene();
+	if (dynamic_cast<SceneEditorView*>(view) != nullptr) {
+		(dynamic_cast<SceneEditorView*>(view))->loadScene();
 	} else {
 		TDMESceneEditor::getInstance()->switchToSceneEditor();
 	}
