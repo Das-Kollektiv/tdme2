@@ -20,6 +20,7 @@
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
+#include <tdme/engine/primitives/HeightMap.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
@@ -97,6 +98,7 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
+using tdme::engine::primitives::HeightMap;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::TerrainMesh;
@@ -463,6 +465,9 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 
 void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	// TODO: progress callbacks for terrain
+
 	// terrain
 	auto sceneLibrary = scene.getLibrary();
 	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
@@ -622,7 +627,6 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	}
 
 	// scene entities
-	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
@@ -871,6 +875,47 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
+	// terrain
+	auto sceneLibrary = scene.getLibrary();
+	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
+		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		//
+		auto terrain = prototype->getTerrain();
+		auto width = terrain->getWidth();
+		auto depth = terrain->getDepth();
+		auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
+		auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
+		auto minHeight = terrain->getHeightVector()[0];
+		auto maxHeight = terrain->getHeightVector()[0];
+		for (auto heightValue: terrain->getHeightVector()) {
+			if (heightValue < minHeight) minHeight = heightValue;
+			if (heightValue > maxHeight) maxHeight = heightValue;
+		}
+		Transformations transformations;
+		transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
+		transformations.update();
+		auto rigidBody = world->addStaticRigidBody(
+			"tdme.terrain",
+			true,
+			RIGIDBODY_TYPEID_STATIC,
+			transformations,
+			0.5f,
+			{
+				new HeightMap(
+					terrainHeightVectorVerticesPerX,
+					terreinHeightVectorVerticesPerZ,
+					minHeight,
+					maxHeight,
+					terrain->getHeightVector().data()
+				)
+			}
+		);
+		rigidBody->setEnabled(enable);
+		// one terrain only, so break here
+		break;
+	}
+
 	//
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -949,6 +994,11 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 
 void SceneConnector::disableScene(World* world, Scene& scene)
 {
+	// terrain
+	auto rigidBody = world->getBody("tdme.terrain");
+	if (rigidBody != nullptr) rigidBody->setEnabled(false);
+
+	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
@@ -1014,7 +1064,13 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 
 void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
-	//
+	// terrain
+	auto rigidBody = world->getBody("tdme.terrain");
+	if (rigidBody != nullptr) {
+		rigidBody->setEnabled(true);
+		// TODO: translate
+	}
+
 	// scene entities
 	Transformations transformations;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
