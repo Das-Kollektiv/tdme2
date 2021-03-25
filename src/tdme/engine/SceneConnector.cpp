@@ -7,7 +7,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <unordered_set>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
@@ -84,7 +83,6 @@ using std::map;
 using std::string;
 using std::to_string;
 using std::vector;
-using std::unordered_set;
 
 using tdme::engine::SceneConnector;
 
