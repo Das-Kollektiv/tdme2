@@ -538,6 +538,7 @@ void SceneEditorView::handleInputEvents()
 					}
 					updateGUITransformationsElements();
 				} else {
+					if (selectedEntity != nullptr && scene.getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
 						for (auto selectedEntityId: selectedEntityIds) {
@@ -1005,6 +1006,11 @@ void SceneEditorView::loadScene()
 	unselectLightPresets();
 	updateGrid();
 	updateSky();
+	// center scene
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	engine->getCamera()->setLookAt(scene.getCenter());
+	cameraInputHandler->reset();
+	gridCenter.set(engine->getCamera()->getLookAt());
 }
 
 void SceneEditorView::updateGrid()
@@ -1513,10 +1519,6 @@ void SceneEditorView::loadScene(const string& path, const string& file)
 		sceneEditorScreenController->unsetEntityProperties();
 		sceneEditorScreenController->unsetEntityTransformations();
 		loadScene();
-		cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
-		engine->getCamera()->setLookAt(scene.getCenter());
-		cameraInputHandler->reset();
-		gridCenter.set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
 	} catch (Exception& exception) {
