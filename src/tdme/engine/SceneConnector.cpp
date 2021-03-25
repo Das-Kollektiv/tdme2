@@ -875,7 +875,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
-	// terrain
+	// terrain + foliage
 	auto sceneLibrary = scene.getLibrary();
 	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
 		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
@@ -886,32 +886,62 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 		auto depth = terrain->getDepth();
 		auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
 		auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
+		// terrain
 		auto minHeight = terrain->getHeightVector()[0];
 		auto maxHeight = terrain->getHeightVector()[0];
 		for (auto heightValue: terrain->getHeightVector()) {
 			if (heightValue < minHeight) minHeight = heightValue;
 			if (heightValue > maxHeight) maxHeight = heightValue;
 		}
-		Transformations transformations;
-		transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
-		transformations.update();
-		auto rigidBody = world->addStaticRigidBody(
-			"tdme.terrain",
-			true,
-			RIGIDBODY_TYPEID_STATIC,
-			transformations,
-			0.5f,
-			{
-				new HeightMap(
-					terrainHeightVectorVerticesPerX,
-					terreinHeightVectorVerticesPerZ,
-					minHeight,
-					maxHeight,
-					terrain->getHeightVector().data()
-				)
+		{
+			Transformations transformations;
+			transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
+			transformations.update();
+			auto rigidBody = world->addStaticRigidBody(
+				"tdme.terrain",
+				true,
+				RIGIDBODY_TYPEID_STATIC,
+				transformations,
+				0.5f,
+				{
+					new HeightMap(
+						terrainHeightVectorVerticesPerX,
+						terreinHeightVectorVerticesPerZ,
+						minHeight,
+						maxHeight,
+						terrain->getHeightVector().data()
+					)
+				}
+			);
+			rigidBody->setEnabled(enable);
+		}
+		// foliage
+		{
+			//
+			auto& foliageMaps = terrain->getFoliageMaps();
+
+			//
+			auto objectIdx = 0;
+			for (auto& foliageMapPartition: foliageMaps) {
+				for (auto& foliageMapPartitionIt: foliageMapPartition) {
+					auto prototypeIdx = foliageMapPartitionIt.first;
+					auto& transformationsVector = foliageMapPartitionIt.second;
+					if (transformationsVector.empty() == true) continue;
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					for (auto& foliageTransformations: transformationsVector) {
+						auto rigidBody = createBody(world, foliagePrototype, "tdme.foliage." + to_string(objectIdx++), foliageTransformations);
+						if (rigidBody == nullptr) continue;
+						if (translation.equals(Vector3()) == false) {
+							auto transformations = foliageTransformations;
+							transformations.setTranslation(transformations.getTranslation().clone().add(translation));
+							transformations.update();
+							rigidBody->fromTransformations(transformations);
+						}
+						rigidBody->setEnabled(enable);
+					}
+				}
 			}
-		);
-		rigidBody->setEnabled(enable);
+		}
 		// one terrain only, so break here
 		break;
 	}
@@ -998,6 +1028,15 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 	auto rigidBody = world->getBody("tdme.terrain");
 	if (rigidBody != nullptr) rigidBody->setEnabled(false);
 
+	// foliage
+	{
+		auto idx = 0;
+		Body* rigidBody = nullptr;
+		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
+			rigidBody->setEnabled(false);
+		}
+	}
+
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -1069,6 +1108,15 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 	if (rigidBody != nullptr) {
 		rigidBody->setEnabled(true);
 		// TODO: translate
+	}
+
+	// foliage
+	{
+		auto idx = 0;
+		Body* rigidBody = nullptr;
+		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
+			rigidBody->setEnabled(true);
+		}
 	}
 
 	// scene entities
