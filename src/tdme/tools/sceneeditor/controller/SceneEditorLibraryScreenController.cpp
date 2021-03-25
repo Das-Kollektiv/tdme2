@@ -34,6 +34,7 @@
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -73,6 +74,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
@@ -488,6 +490,12 @@ void SceneEditorLibraryScreenController::onValueChanged(GUIElementNode* node)
 		} else
 		if (node->getController()->getValue().getString() == "create_terrain") {
 			try {
+				auto sceneLibrary = TDMESceneEditor::getInstance()->getSceneLibrary();
+				for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+					if (sceneLibrary->getPrototypeAt(i)->getType() == Prototype_Type::TERRAIN) {
+						throw ExceptionBase("A terrain for this scene already exists.");
+					}
+				}
 				auto prototype = TDMESceneEditor::getInstance()->getSceneLibrary()->addTerrain(SceneLibrary::ID_ALLOCATE, "New terrain", "");
 				setPrototypeLibrary();
 				sceneLibraryListBox->getController()->setValue(MutableString(prototype->getId()));
