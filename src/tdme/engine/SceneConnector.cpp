@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
@@ -83,6 +84,7 @@ using std::map;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::unordered_set;
 
 using tdme::engine::SceneConnector;
 
@@ -531,6 +533,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			auto& foliageMaps = terrain->getFoliageMaps();
 
 			//
+			auto objectIdx = 0;
 			auto idx = 0;
 			auto partitionIdx = 0;
 			for (auto& foliageMapPartition: foliageMaps) {
@@ -546,16 +549,14 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 						if (transformationsVector.empty() == true) continue;
 						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 						if (foliagePrototype->isRenderGroups() == false) {
-							auto objectIdx = 0;
 							for (auto& transformations: transformationsVector) {
-								Entity* entity = createEntity(foliagePrototype, "foliage." + to_string(prototypeIdx) + "." + to_string(objectIdx), transformations);
+								Entity* entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(objectIdx++), transformations);
 								if (entity == nullptr) continue;
 								entity->setTranslation(entity->getTranslation().clone().add(translation));
 								entity->setPickable(pickable);
 								entity->setEnabled(enable);
 								entity->update();
 								engine->addEntity(entity);
-								objectIdx++;
 							}
 						} else {
 							Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
@@ -901,6 +902,43 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 
 void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
+	// terrain + foliage + water + render groups
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(false);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(false);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(false);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(false);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.o3rg." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(false);
+		}
+	}
+	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
@@ -913,7 +951,6 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 
 void SceneConnector::disableScene(World* world, Scene& scene)
 {
-	Transformations transformations;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
@@ -924,7 +961,43 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 
 void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
 {
-	// TODO: a.drewke, Object3DRenderGroups
+	// terrain + foliage + water + render groups
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(true);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(true);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(true);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(true);
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.o3rg." + to_string(idx++))) != nullptr) {
+			entity->setEnabled(true);
+		}
+	}
+	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
@@ -943,6 +1016,8 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 
 void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
+	//
+	// scene entities
 	Transformations transformations;
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -954,6 +1029,31 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 		rigidBody->fromTransformations(transformations);
 		rigidBody->setEnabled(true);
 	}
+}
+
+void SceneConnector::resetEngine(Engine* engine, Scene& scene) {
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
+			Model* model = nullptr;
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object3D*>(entity)->getModel();
+			engine->removeEntity(entity->getId());
+			if (model != nullptr) delete model;
+		}
+	}
+	{
+		auto idx = 0;
+		Entity* entity = nullptr;
+		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
+			Model* model = nullptr;
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object3D*>(entity)->getModel();
+			engine->removeEntity(entity->getId());
+			if (model != nullptr) delete model;
+		}
+	}
+	//
+	engine->reset();
 }
 
 void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize) {

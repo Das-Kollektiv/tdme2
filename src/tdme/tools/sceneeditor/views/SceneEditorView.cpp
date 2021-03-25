@@ -919,6 +919,7 @@ void SceneEditorView::activate()
 
 void SceneEditorView::deactivate()
 {
+	SceneConnector::resetEngine(engine, scene);
 	camLookAt.set(engine->getCamera()->getLookAt());
 }
 
@@ -942,7 +943,7 @@ void SceneEditorView::storeSettings()
 
 void SceneEditorView::dispose()
 {
-	Engine::getInstance()->reset();
+	SceneConnector::resetEngine(engine, scene);
 	storeSettings();
 }
 
@@ -995,9 +996,9 @@ void SceneEditorView::resetEntity(Entity* entity) {
 
 void SceneEditorView::loadScene()
 {
+	SceneConnector::resetEngine(engine, scene); // TODO: check me!
 	removeGizmo();
 	removeGrid();
-	engine->reset();
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	SceneConnector::setLights(engine, scene, Vector3());
@@ -1481,7 +1482,7 @@ bool SceneEditorView::entityPropertyAdd()
 
 void SceneEditorView::loadScene(const string& path, const string& file)
 {
-	engine->reset();
+	SceneConnector::resetEngine(engine, scene);
 	selectedPrototype = nullptr;
 	try {
 		bool haveModelFile = false;

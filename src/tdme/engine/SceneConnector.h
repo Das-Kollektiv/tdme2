@@ -331,6 +331,13 @@ public:
 	static void enableScene(World* world, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
+	 * Reset engine regarding given scene
+	 * @param engine engine
+	 * @param scene scene
+	 */
+	static void resetEngine(Engine* engine, Scene& scene);
+
+	/**
 	 * Add scene entity sounds into given audio instance associated with given id
 	 * @param audio audio instance to load sounds into
 	 * @param prototype scene entity
