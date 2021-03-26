@@ -46,14 +46,14 @@ public:
 
 	/**
 	 * Public constructor for boolean value
-	 * @param v boolean value
+	 * @param boolean value boolean value
 	 */
 	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue) {
 	}
 
 	/**
 	 * Public constructor for int value
-	 * @param intValue int value
+	 * @param integerValue int value
 	 */
 	ShaderParameter(int integerValue): type(TYPE_INTEGER), integerValue(integerValue) {
 	}
