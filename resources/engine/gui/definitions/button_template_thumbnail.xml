@@ -8,7 +8,7 @@
 				<image src="{$icon}" />
 			</layout>
 		</element>
-		<space height="5"/>
+		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
@@ -24,7 +24,7 @@
 				<image src="{$icon}" />
 			</layout>
 		</element>
-		<space height="5"/>
+		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
@@ -40,7 +40,7 @@
 				<image src="{$icon}" />
 			</layout>
 		</element>
-		<space height="5"/>
+		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}

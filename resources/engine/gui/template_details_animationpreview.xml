@@ -4,49 +4,49 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 								
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Base Animation" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="animationpreview_base" width="130" height="auto" text="tdme.none">
-					<scrollarea width="100%" height="100">
-					</scrollarea>
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Base Animation" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="animationpreview_base" width="100%" height="auto" text="tdme.none">
+						<scrollarea width="100%" height="100">
+						</scrollarea>
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Overlay #1" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="animationpreview_overlay1" width="130" height="auto" text="tdme.none">
-					<scrollarea width="100%" height="100">
-					</scrollarea>
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #1" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="animationpreview_overlay1" width="100%" height="auto" text="tdme.none">
+						<scrollarea width="100%" height="100">
+						</scrollarea>
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Overlay #2" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="animationpreview_overlay2" width="130" height="auto" text="tdme.none">
-					<scrollarea width="100%" height="100">
-					</scrollarea>
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #2" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="animationpreview_overlay2" width="100%" height="auto" text="tdme.none">
+						<scrollarea width="100%" height="100">
+						</scrollarea>
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Overlay #3" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="animationpreview_overlay3" width="130" height="auto" text="tdme.none">
-					<scrollarea width="100%" height="100">
-					</scrollarea>
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #3" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="animationpreview_overlay3" width="100%" height="auto" text="tdme.none">
+						<scrollarea width="100%" height="100">
+						</scrollarea>
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
@@ -54,27 +54,36 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Bone" width="70" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="animationpreview_attachment1_bone" width="180" height="auto" text="tdme.none">
-					<scrollarea width="100%" height="100">
-						<dropdown-option text="<No bone>" value="" selected="true" />
-					</scrollarea>
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Bone" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="animationpreview_attachment1_bone" width="100%" height="auto" text="tdme.none">
+						<scrollarea width="100%" height="100">
+							<dropdown-option text="<No bone>" value="" selected="true" />
+						</scrollarea>
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
+			<menu-separator />
+			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Attachment" width="70" height="auto" horizontal-align="left" />
-				<space width="5" />
-				<space width="*" />
-				<input id="animationpreview_attachment1_model" width="120" height="auto" text="./model.tm" />
-				<space width="5" />
-				<button id="button_animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
-				<space width="5" />
-				<button id="button_animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Attachment" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+					</element>
+					<space width="5" />
+					<layout width="auto" height="auto" alignment="vertical">
+						<button id="button_animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
+						<space height="5" />
+						<button id="button_animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<space height="5" />
+						<button id="button_animationpreview_attachment1_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+					</layout>
+				</layout>
 			</layout>
 								
 		</layout>		
