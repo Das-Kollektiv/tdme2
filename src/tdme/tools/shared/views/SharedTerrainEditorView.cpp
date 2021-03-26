@@ -137,6 +137,13 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 	//
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * scale, static_cast<int>(texture->getTextureHeight()) * scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
+	engine->setShaderParameter(
+		"terraineditor",
+		"brushEnabled",
+		(terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
+		terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
+	);
+	rampMode = -1;
 }
 
 void SharedTerrainEditorView::unsetTerrainBrush() {
@@ -144,6 +151,7 @@ void SharedTerrainEditorView::unsetTerrainBrush() {
 		engine->getTextureManager()->removeTexture(brushTexture->getId());
 		brushTexture->releaseReference();
 		brushTexture = nullptr;
+		engine->setShaderParameter("terraineditor", "brushEnabled", false);
 	}
 }
 
@@ -586,18 +594,50 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			brushMoved = true;
 			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+			if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
+				rampVertices[1] = brushCenterPosition;
+				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
+				brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
+				if (brushEnabled == true) {
+					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
+					auto brushScale = 32.0f / rampVertices[1].clone().sub(rampVertices[0]).computeLength();
+					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
+					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
+				}
+			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				recreateFoliage();
-				brushingEnabled = false;
-				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode++;
+					rampVertices[rampMode] = brushCenterPosition;
+					if (rampMode == 0) {
+						// no op
+					} else
+					if (rampMode == 1) {
+						// place ramp
+						rampMode = -1;
+						engine->setShaderParameter("terraineditor", "brushEnabled", false);
+						engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+						engine->setShaderParameter("terraineditor", "brushScale", 1.0f);
+					}
+				} else {
+					recreateFoliage();
+					brushingEnabled = false;
+					terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				}
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				brushMoved = true;
-				engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) {
+					engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				}
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					// no op
+				} else
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;

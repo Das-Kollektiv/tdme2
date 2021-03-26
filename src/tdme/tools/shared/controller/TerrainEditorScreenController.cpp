@@ -510,7 +510,11 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		} else
 		if (brushOperationName == "water") {
 			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_WATER;
+		} else
+		if (brushOperationName == "ramp") {
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_RAMP;
 		}
+
 
 		// scale, strength
 		currentTerrainBrushScale = Float::parseFloat(terrainBrushScale->getController()->getValue().getString());
@@ -520,7 +524,7 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		if (currentTerrainBrushStrength <= 0.0f || currentTerrainBrushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
 
 		// texture
-		auto brushTextureFileName = terrainBrushFile->getController()->getValue().getString();
+		auto brushTextureFileName = currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?"./resources/engine/textures/terrain_ramp.png":terrainBrushFile->getController()->getValue().getString();
 		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		//
@@ -683,7 +687,11 @@ void TerrainEditorScreenController::deleteWater(int waterPositionMapIdx) {
 bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return false;
-	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_FLATTEN && currentTerrainBrushOperation != Terrain::BRUSHOPERATION_WATER) return true;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_FLATTEN &&
+		currentTerrainBrushOperation != Terrain::BRUSHOPERATION_WATER &&
+		currentTerrainBrushOperation != Terrain::BRUSHOPERATION_RAMP) {
+		return true;
+	}
 	if (haveCurrentTerrainBrushHeight == true) return true;
 	if (terrainModels.empty() == true) return false;
 	auto terrainModel = terrainModels[0];

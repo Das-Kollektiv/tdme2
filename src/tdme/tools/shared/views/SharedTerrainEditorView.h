@@ -77,6 +77,10 @@ private:
 	vector<int> partitionFoliageIdx;
 	unordered_set<int> temporaryPartitionIdxs;
 
+	int rampMode { -1 };
+	array<Vector3,2> rampVertices;
+	array<float,2> rampHeight;
+
 	/**
 	 * Init entity
 	 */
