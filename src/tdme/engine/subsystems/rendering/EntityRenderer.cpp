@@ -588,11 +588,11 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				if (object->getReflectionEnvironmentMappingId().empty() == false) {
 					auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
 					if (environmentMappingEntityCandidate != nullptr) {
-						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {
+						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITYTYPE_ENVIRONMENTMAPPING) {
 							environmentMappingEntity = static_cast<EnvironmentMapping*>(environmentMappingEntityCandidate);
 						} else
-						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
-							auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
+						if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+							auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITYTYPE_ENVIRONMENTMAPPING);
 							if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
 						}
 					}
@@ -932,11 +932,11 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						EnvironmentMapping* environmentMappingEntity = nullptr;
 						auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
 						if (environmentMappingEntityCandidate != nullptr) {
-							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENVIRONMENTMAPPING) {
+							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITYTYPE_ENVIRONMENTMAPPING) {
 								environmentMappingEntity = static_cast<EnvironmentMapping*>(environmentMappingEntityCandidate);
 							} else
-							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITY_ENTITYHIERARCHY) {
-								auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITY_ENVIRONMENTMAPPING);
+							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+								auto entityHierarchyEnvironmentMappingEntity = static_cast<EntityHierarchy*>(environmentMappingEntityCandidate)->getEntityByType(Entity::ENTITYTYPE_ENVIRONMENTMAPPING);
 								if (entityHierarchyEnvironmentMappingEntity != nullptr) environmentMappingEntity = static_cast<EnvironmentMapping*>(entityHierarchyEnvironmentMappingEntity);
 
 							}

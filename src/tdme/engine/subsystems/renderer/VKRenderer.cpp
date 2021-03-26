@@ -563,7 +563,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
@@ -2600,12 +2600,12 @@ inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPip
 inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
 	memset(&att_state, 0, sizeof(att_state));
 	att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	att_state.blendEnable = blending_enabled = true?VK_TRUE:VK_FALSE;
-	att_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-	att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	att_state.blendEnable = blending_mode != BLENDING_NONE?VK_TRUE:VK_FALSE;
+	att_state.srcColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	att_state.dstColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
 	att_state.colorBlendOp = VK_BLEND_OP_ADD;
-	att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-	att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	att_state.srcAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
+	att_state.dstAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
 	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 
@@ -2631,7 +2631,7 @@ inline const string VKRenderer::createPipelineId(program_type* program, int cont
 		sizeof(program->id) +
 		sizeof(contexts[contextIdx].front_face_index) +
 		sizeof(cull_mode) +
-		sizeof(blending_enabled) +
+		sizeof(blending_mode) +
 		sizeof(depth_buffer_testing) +
 		sizeof(depth_buffer_writing) +
 		sizeof(depth_function) +
@@ -2640,7 +2640,7 @@ inline const string VKRenderer::createPipelineId(program_type* program, int cont
 	result.append((char*)&program->id, sizeof(program->id));
 	result.append((char*)&contexts[contextIdx].front_face_index, sizeof(contexts[contextIdx].front_face_index));
 	result.append((char*)&cull_mode, sizeof(cull_mode));
-	result.append((char*)&blending_enabled, sizeof(blending_enabled));
+	result.append((char*)&blending_mode, sizeof(blending_mode));
 	result.append((char*)&depth_buffer_testing, sizeof(depth_buffer_testing));
 	result.append((char*)&depth_buffer_writing, sizeof(depth_buffer_writing));
 	result.append((char*)&depth_function, sizeof(depth_function));
@@ -4134,10 +4134,10 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 {
 	//
 	memset(&viewport, 0, sizeof(viewport));
-	viewport.width = (float)width;
-	viewport.height = (float)height;
-	viewport.x = (float)x;
-	viewport.y = (float)y;
+	viewport.width = static_cast<float>(width);
+	viewport.height = static_cast<float>(height);
+	viewport.x = static_cast<float>(x);
+	viewport.y = static_cast<float>(y);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
@@ -4152,6 +4152,9 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
+
+	//
+	endDrawCommandsAllContexts();
 }
 
 void VKRenderer::updateViewPort()
@@ -4204,21 +4207,24 @@ void VKRenderer::setCullFace(int32_t cullFace)
 
 void VKRenderer::enableBlending()
 {
-	if (blending_enabled == true) return;
+	if (blending_mode == BLENDING_NORMAL) return;
 	endDrawCommandsAllContexts();
-	blending_enabled = true;
+	blending_mode = BLENDING_NORMAL;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
 void VKRenderer::enableAdditionBlending() {
-	// TODO: a.drewke
+	if (blending_mode == BLENDING_ADDITIVE) return;
+	endDrawCommandsAllContexts();
+	blending_mode = BLENDING_ADDITIVE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
 void VKRenderer::disableBlending()
 {
-	if (blending_enabled == false) return;
+	if (blending_mode == BLENDING_NONE) return;
 	endDrawCommandsAllContexts();
-	blending_enabled = false;
+	blending_mode = BLENDING_NONE;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
@@ -4969,7 +4975,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textureType.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
@@ -5218,7 +5224,7 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 	auto& cubemap_texture_type = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
@@ -6866,6 +6872,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 void VKRenderer::initGuiMode()
 {
+	enableBlending();
 	disableCulling(&contexts[0]);
 	disableDepthBufferTest();
 	disableDepthBufferWriting();
@@ -6876,6 +6883,7 @@ void VKRenderer::doneGuiMode()
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
 	enableCulling(&contexts[0]);
+	disableBlending();
 }
 
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {

@@ -118,6 +118,15 @@ void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 	terrainModels.clear();
 	unsetWater();
 	this->prototype = prototype;
+
+	//
+	partitionFoliageIdx.clear();
+	temporaryPartitionIdxs.clear();
+
+	//
+	if (terrainEditorScreenController != nullptr) terrainEditorScreenController->onLoadTerrain();
+
+	//
 	initModelRequested = true;
 }
 
@@ -128,6 +137,13 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 	//
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * scale, static_cast<int>(texture->getTextureHeight()) * scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
+	engine->setShaderParameter(
+		"terraineditor",
+		"brushEnabled",
+		(terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
+		terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
+	);
+	rampMode = -1;
 }
 
 void SharedTerrainEditorView::unsetTerrainBrush() {
@@ -135,6 +151,7 @@ void SharedTerrainEditorView::unsetTerrainBrush() {
 		engine->getTextureManager()->removeTexture(brushTexture->getId());
 		brushTexture->releaseReference();
 		brushTexture = nullptr;
+		engine->setShaderParameter("terraineditor", "brushEnabled", false);
 	}
 }
 
@@ -218,7 +235,7 @@ void SharedTerrainEditorView::addTemporaryFoliage(const vector<unordered_map<int
 					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 					auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 					for (auto& transformations: transformationsVector) {
-						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations, 1, foliagePartitionEntityHierarchy);
 						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 						foliageIdx++;
 					}
@@ -300,7 +317,7 @@ void SharedTerrainEditorView::recreateTemporaryFoliage(int partitionIdx) {
 			auto& transformationsVector = foliageMapPartitionIt.second;
 			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
 			for (auto& transformations: transformationsVector) {
-				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations);
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations, 1, foliagePartitionEntityHierarchy);
 				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
 				foliageIdx++;
 			}
@@ -454,6 +471,7 @@ void SharedTerrainEditorView::initModel()
 			terrainObject3D->setShader("terraineditor");
 			terrainObject3D->setContributesShadows(true);
 			terrainObject3D->setReceivesShadows(true);
+			terrainObject3D->setPickable(true);
 			engine->addEntity(terrainObject3D);
 			idx++;
 		}
@@ -575,19 +593,51 @@ void SharedTerrainEditorView::handleInputEvents()
 
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			brushMoved = true;
-			engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+			if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
+				rampVertices[1] = brushCenterPosition;
+				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
+				brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
+				if (brushEnabled == true) {
+					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
+					auto brushScale = 32.0f / rampVertices[1].clone().sub(rampVertices[0]).computeLength();
+					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
+					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
+				}
+			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				recreateFoliage();
-				brushingEnabled = false;
-				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode++;
+					rampVertices[rampMode] = brushCenterPosition;
+					if (rampMode == 0) {
+						// no op
+					} else
+					if (rampMode == 1) {
+						// place ramp
+						rampMode = -1;
+						engine->setShaderParameter("terraineditor", "brushEnabled", false);
+						engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+						engine->setShaderParameter("terraineditor", "brushScale", 1.0f);
+					}
+				} else {
+					recreateFoliage();
+					brushingEnabled = false;
+					terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				}
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				brushMoved = true;
-				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) {
+					engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				}
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					// no op
+				} else
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
@@ -597,7 +647,7 @@ void SharedTerrainEditorView::handleInputEvents()
 						terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 						//
 						for (auto waterModel: waterModels) {
-							auto waterObject3D = new Object3D(waterModel->getId(), waterModel); // TODO: make this persistent
+							auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
 							waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 							waterObject3D->setShader("water");
 							waterObject3D->setContributesShadows(false);
@@ -746,6 +796,9 @@ void SharedTerrainEditorView::activate()
 
 	//
 	initSky();
+
+	//
+	terrainEditorScreenController->onLoadTerrain();
 }
 
 void SharedTerrainEditorView::deactivate()
@@ -760,19 +813,30 @@ void SharedTerrainEditorView::dispose()
 void SharedTerrainEditorView::onSetPrototypeData() {
 }
 
+void SharedTerrainEditorView::onLoadTerrain(Prototype* oldEntity, Prototype* entity)
+{
+	delete oldEntity;
+}
+
 void SharedTerrainEditorView::onInitAdditionalScreens() {
 }
 
-void SharedTerrainEditorView::loadFile(const string& pathName, const string& fileName) {
-	// TODO: a.drewke; delete prototype, also check other tools
-	auto prototype = PrototypeReader::read(pathName, fileName);
-	setPrototype(prototype);
-	unsetTerrainBrush();
-	partitionFoliageIdx.clear();
-	temporaryPartitionIdxs.clear();
-	terrainEditorScreenController->onLoadTerrain();
+Prototype* SharedTerrainEditorView::loadTerrainPrototype(const string& pathName, const string& fileName) {
+	return PrototypeReader::read(pathName, fileName);
 }
 
-void SharedTerrainEditorView::saveFile(const string& pathName, const string& fileName) {
+void SharedTerrainEditorView::loadTerrain(const string& pathName, const string& fileName) {
+	unsetTerrainBrush();
+	try {
+		auto oldEntity = prototype;
+		auto prototype = loadTerrainPrototype(pathName, fileName);
+		setPrototype(prototype);
+		onLoadTerrain(oldEntity, prototype);
+	} catch (Exception& exception) {
+		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
+	}
+}
+
+void SharedTerrainEditorView::saveTerrain(const string& pathName, const string& fileName) {
 	PrototypeWriter::write(pathName, fileName, prototype);
 }
