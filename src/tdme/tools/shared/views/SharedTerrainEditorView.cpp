@@ -135,7 +135,8 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 	if (texture != nullptr) texture->acquireReference();
 	brushTexture = texture;
 	//
-	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * scale, static_cast<int>(texture->getTextureHeight()) * scale));
+	auto _scale = terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
 	engine->setShaderParameter(
 		"terraineditor",
@@ -623,7 +624,7 @@ void SharedTerrainEditorView::handleInputEvents()
 								terrainModels,
 								brushCenterPosition,
 								engine->getShaderParameter("terraineditor", "brushRotation").getFloatValue(),
-								engine->getShaderParameter("terraineditor", "brushScale").getFloatValue(),
+								1.0f / engine->getShaderParameter("terraineditor", "brushScale").getFloatValue(),
 								Math::min(rampHeight[0], rampHeight[1]),
 								Math::max(rampHeight[0], rampHeight[1])
 							);

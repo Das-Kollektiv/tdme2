@@ -416,7 +416,7 @@ void Terrain::applyBrushToTerrainModels(
 					}
 					break;
 			}
-			terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX] = terrainVertexHeight;
+			terrainHeightVector[vertexIdx] = terrainVertexHeight;
 
 			// original
 			{
@@ -679,7 +679,7 @@ void Terrain::applyRampBrushToTerrainModels(
 	brushTextureMatrix.identity();
 	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
 	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(brushScale));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(1.0f / brushScale));
 	for (auto z = -textureHeight * brushScale * 2.0f; z < textureHeight * brushScale * 2.0f; z+= STEP_SIZE) {
 		auto brushPosition =
 			brushCenterPosition.
@@ -733,7 +733,6 @@ void Terrain::applyRampBrushToTerrainModels(
 				);
 				continue;
 			}
-			auto vertexIdx = terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX;
 			auto terrainVertexHeight = height;
 			terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX] = terrainVertexHeight;
 
@@ -1201,7 +1200,6 @@ void Terrain::createWaterModels(
 		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto waterMaterial = new Material("water");
 		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
-		// TODO: Fix me! The textures seem to be much too dark
 		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.022f, 0.13f, 0.56f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.026f, 0.15f, 0.64f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
