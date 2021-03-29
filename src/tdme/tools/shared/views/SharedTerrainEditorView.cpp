@@ -391,14 +391,14 @@ void SharedTerrainEditorView::addFoliage() {
 	}
 }
 
-void SharedTerrainEditorView::recreateFoliage() {
+void SharedTerrainEditorView::recreateFoliage(const unordered_set<int>& partitionIdxSet) {
 	if (prototype == nullptr) return;
 
 	//
 	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
-	for (auto partitionIdx: temporaryPartitionIdxs) {
+	for (auto partitionIdx: partitionIdxSet) {
 		auto& foliageMapPartition = foliageMaps[partitionIdx];
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
 		auto shaderParameterIdx = 0;
@@ -451,9 +451,6 @@ void SharedTerrainEditorView::recreateFoliage() {
 			}
 		}
 	}
-
-	//
-	temporaryPartitionIdxs.clear();
 }
 
 void SharedTerrainEditorView::resetCamera() {
@@ -656,7 +653,8 @@ void SharedTerrainEditorView::handleInputEvents()
 						}
 					}
 				} else {
-					recreateFoliage();
+					recreateFoliage(temporaryPartitionIdxs);
+					temporaryPartitionIdxs.clear();
 					brushingEnabled = false;
 					terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
 				}

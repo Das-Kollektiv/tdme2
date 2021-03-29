@@ -650,15 +650,6 @@ void Terrain::applyRampBrushToTerrainModels(
 	float heightMin,
 	float heightMax
 ) {
-	Console::println(
-		string("Terrain::applyRampBrushToTerrainModels(): ") +
-		"r = " + to_string(brushRotation) + ", " +
-		"sx = " + to_string(brushScale.getX()) + ", " +
-		"sy = " + to_string(brushScale.getY()) + ", " +
-		"min = " + to_string(heightMin) + ", " +
-		"max = " + to_string(heightMax)
-	);
-
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
 	// check if we have a model
@@ -1804,3 +1795,175 @@ void Terrain::updateFoliageTerrainBrush(
 		}
 	}
 }
+
+void Terrain::updateFoliageTerrainRampBrush(
+	BoundingBox& terrainBoundingBox, // TODO: constness
+	vector<float>& terrainHeightVector,
+	const Vector3& brushCenterPosition,
+	Texture* brushTexture,
+	float brushRotation,
+	const Vector2& brushScale,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	unordered_set<int>& updateFoliagePartitions
+) {
+	// check if we have a texture
+	if (brushTexture == nullptr) return;
+
+	// apply brush
+	vector<vector<Vector3>> partitionTerrainVertices;
+	vector<vector<Vector3>> partitionTerrainNormals;
+	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
+
+	// texture
+	auto textureData = brushTexture->getTextureData();
+	auto textureWidth = brushTexture->getTextureWidth();
+	auto textureHeight = brushTexture->getTextureHeight();
+	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
+
+	// brush texture matrix
+	Matrix2D3x3 brushTextureMatrix;
+	brushTextureMatrix.identity();
+	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
+	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
+
+	//
+	for (auto z = -textureHeight * brushScaleMax * 2.0f; z < textureHeight * brushScaleMax * 2.0f; z+= STEP_SIZE) {
+		auto brushPosition =
+			brushCenterPosition.
+			clone().
+			sub(
+				Vector3(
+					static_cast<float>(textureWidth) * brushScaleMax * 2.0f,
+					0.0f,
+					0.0f
+				)
+			).
+			add(
+				Vector3(
+					0.0f,
+					0.0f,
+					z
+				)
+			);
+		for (auto x = -textureWidth * brushScaleMax * 2.0f; x < textureWidth * brushScaleMax * 2.0f; x+= STEP_SIZE) {
+			auto texturePositionUntransformed = Vector2(x, z);
+			Vector2 texturePosition;
+			brushTextureMatrix.multiply(texturePositionUntransformed, texturePosition);
+			auto textureX = static_cast<int>(texturePosition.getX());
+			auto textureY = static_cast<int>(texturePosition.getY());
+			if (textureX < 0 || textureX >= textureWidth ||
+				textureY < 0 || textureY >= textureHeight) {
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+				continue;
+			}
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+				continue;
+			}
+
+			//
+			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
+			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
+			auto partitionIdx = partitionZ * partitionsX + partitionX;
+
+			//
+			updateFoliagePartitions.insert(partitionIdx);
+
+			//
+			Vector3 topVertex;
+			Vector3 topLeftVertex;
+			Vector3 leftVertex;
+			Vector3 vertex;
+
+			//
+			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ - 1, topVertex);
+			getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ - 1, topLeftVertex);
+			getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
+			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
+
+			//
+			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
+				auto prototypeId = foliageMapPartitionIt.first;
+				if (prototypeId == -1) continue;
+				auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
+
+				//
+				for (auto& transformations: foliageMapPartitionPrototypeTransformations) {
+					auto& translation = transformations.getTranslation();
+					if (translation.getX() >= leftVertex.getX() &&
+						translation.getX() <= vertex.getX() &&
+						translation.getZ() >= topVertex.getZ() &&
+						translation.getZ() <= vertex.getZ()) {
+						//
+						auto haveContact = false;
+						Vector3 contact;
+						for (int _z = -1; _z < 2; _z++)
+						for (int _x = -1; _x < 2; _x++) {
+							Vector3 topVertex;
+							Vector3 topLeftVertex;
+							Vector3 leftVertex;
+							Vector3 vertex;
+
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ - 1, topVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ - 1, topLeftVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
+							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
+
+							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								haveContact = true;
+								break;
+							} else
+							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+								haveContact = true;
+								break;
+							}
+						}
+
+						//
+						if (haveContact == false) {
+							Console::println(
+								"Terrain::applyFoliageBrush(): no contact@" +
+								to_string(transformations.getTranslation().getX()) + ", " +
+								to_string(transformations.getTranslation().getZ())
+							);
+							contact = transformations.getTranslation();
+						}
+
+						//
+						transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
+						transformations.update();
+					}
+				}
+			}
+
+			//
+			brushPosition.add(
+				Vector3(
+					STEP_SIZE,
+					0.0f,
+					0.0f
+				)
+			);
+		}
+	}
+}
+

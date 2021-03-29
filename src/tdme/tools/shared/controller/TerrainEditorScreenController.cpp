@@ -597,7 +597,21 @@ void TerrainEditorScreenController::applyRampTerrainBrush(BoundingBox& terrainBo
 		maxHeight
 	);
 
-	// TODO: and update foliage
+	// and update foliage
+	Terrain::updateFoliageTerrainRampBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushTexture,
+		rotation,
+		scale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->recreateFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
 }
 
 void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {

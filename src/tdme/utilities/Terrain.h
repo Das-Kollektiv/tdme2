@@ -270,6 +270,28 @@ public:
 	);
 
 	/**
+	 * Update foliage after using terrain ramp brush
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushRotation brush rotation
+	 * @param brushScale brush scale
+	 * @param foliageMaps foliage maps
+	 * @param updateFoliagePartitions update foliage partitions
+	 */
+	static void updateFoliageTerrainRampBrush(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushRotation,
+		const Vector2& brushScale,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		unordered_set<int>& updateFoliagePartitions
+	);
+
+	/**
 	 * Compute water positions map using a auto fill like algorithm at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
