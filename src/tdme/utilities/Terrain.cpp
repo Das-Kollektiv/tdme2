@@ -24,6 +24,8 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Vector2.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -57,6 +59,8 @@ using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
+using tdme::math::Vector2;
+using tdme::math::Vector2;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -642,14 +646,15 @@ void Terrain::applyRampBrushToTerrainModels(
 	const Vector3& brushCenterPosition,
 	Texture* brushTexture,
 	float brushRotation,
-	float brushScale,
+	const Vector2& brushScale,
 	float heightMin,
 	float heightMax
 ) {
 	Console::println(
 		string("Terrain::applyRampBrushToTerrainModels(): ") +
 		"r = " + to_string(brushRotation) + ", " +
-		"s = " + to_string(brushScale) + ", " +
+		"sx = " + to_string(brushScale.getX()) + ", " +
+		"sy = " + to_string(brushScale.getY()) + ", " +
 		"min = " + to_string(heightMin) + ", " +
 		"max = " + to_string(heightMax)
 	);
@@ -674,19 +679,22 @@ void Terrain::applyRampBrushToTerrainModels(
 	auto textureHeight = brushTexture->getTextureHeight();
 	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
 
-	// matrix
+	// brush texture matrix
 	Matrix2D3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
 	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
 	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(1.0f / brushScale));
-	for (auto z = -textureHeight * brushScale * 2.0f; z < textureHeight * brushScale * 2.0f; z+= STEP_SIZE) {
+	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
+
+	//
+	for (auto z = -textureHeight * brushScaleMax * 2.0f; z < textureHeight * brushScaleMax * 2.0f; z+= STEP_SIZE) {
 		auto brushPosition =
 			brushCenterPosition.
 			clone().
 			sub(
 				Vector3(
-					static_cast<float>(textureWidth) * brushScale * 2.0f,
+					static_cast<float>(textureWidth) * brushScaleMax * 2.0f,
 					0.0f,
 					0.0f
 				)
@@ -698,7 +706,7 @@ void Terrain::applyRampBrushToTerrainModels(
 					z
 				)
 			);
-		for (auto x = -textureWidth * brushScale * 2.0f; x < textureWidth * brushScale * 2.0f; x+= STEP_SIZE) {
+		for (auto x = -textureWidth * brushScaleMax * 2.0f; x < textureWidth * brushScaleMax * 2.0f; x+= STEP_SIZE) {
 			auto texturePositionUntransformed = Vector2(x, z);
 			Vector2 texturePosition;
 			brushTextureMatrix.multiply(texturePositionUntransformed, texturePosition);
@@ -719,7 +727,7 @@ void Terrain::applyRampBrushToTerrainModels(
 			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
-			auto height = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * (heightMax - heightMin) + heightMin;
+			auto height = ((static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * (heightMax - heightMin)) + heightMin;
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
@@ -733,8 +741,13 @@ void Terrain::applyRampBrushToTerrainModels(
 				);
 				continue;
 			}
-			auto terrainVertexHeight = height;
-			terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX] = terrainVertexHeight;
+			auto terrainVertexHeight = 0.0f;
+			{
+				auto vertexIdx = terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX;
+				terrainVertexHeight = terrainHeightVector[vertexIdx];
+				terrainVertexHeight = height > terrainVertexHeight?height:terrainVertexHeight;
+				terrainHeightVector[vertexIdx] = terrainVertexHeight;
+			}
 
 			// original
 			{
@@ -860,13 +873,13 @@ void Terrain::applyRampBrushToTerrainModels(
 	}
 
 	// normals
-	for (auto z = -textureHeight * brushScale * 2.0f; z < textureHeight * brushScale * 2.0f; z+= STEP_SIZE) {
+	for (auto z = -textureHeight * brushScaleMax * 2.0f; z < textureHeight * brushScaleMax * 2.0f; z+= STEP_SIZE) {
 		auto brushPosition =
 			brushCenterPosition.
 			clone().
 			sub(
 				Vector3(
-					static_cast<float>(textureWidth) * brushScale * 2.0f,
+					static_cast<float>(textureWidth) * brushScaleMax * 2.0f,
 					0.0f,
 					0.0f
 				)
@@ -878,7 +891,7 @@ void Terrain::applyRampBrushToTerrainModels(
 					z
 				)
 			);
-		for (auto x = -textureWidth * brushScale * 2.0f; x < textureWidth * brushScale * 2.0f; x+= STEP_SIZE) {
+		for (auto x = -textureWidth * brushScaleMax * 2.0f; x < textureWidth * brushScaleMax * 2.0f; x+= STEP_SIZE) {
 			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
 			auto partitionZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / PARTITION_SIZE);
 			auto partitionIdx = partitionZ * partitionsX + partitionX;

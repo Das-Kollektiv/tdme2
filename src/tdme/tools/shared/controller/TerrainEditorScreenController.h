@@ -14,6 +14,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -36,6 +37,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
@@ -263,7 +265,7 @@ public:
 	 * @param minHeight min height
 	 * @param maxHeigth max heigth
 	 */
-	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, float scale, float minHeight, float maxHeight);
+	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight);
 
 	/**
 	 * Apply current brush to foliage at given brush center position

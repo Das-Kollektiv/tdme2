@@ -135,6 +135,7 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 	if (texture != nullptr) texture->acquireReference();
 	brushTexture = texture;
 	//
+	rampScaleX = scale;
 	auto _scale = terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
@@ -602,7 +603,11 @@ void SharedTerrainEditorView::handleInputEvents()
 				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
 				if (brushEnabled == true) {
 					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
-					auto brushScale = 32.0f / rampVertices[1].clone().sub(rampVertices[0]).computeLength();
+					auto brushScale =
+						Vector2(
+							(rampScaleX * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
+							1.0f / (engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getY() / rampVertices[1].clone().sub(rampVertices[0]).computeLength())
+						);
 					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
 					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
 				}
@@ -611,7 +616,8 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
-					if (terrainEditorScreenController->determineRampHeight(terrainBoundingBox, terrainModels, brushCenterPosition, rampHeight[rampMode + 1]) == true) {
+					if (engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition) != nullptr &&
+						terrainEditorScreenController->determineRampHeight(terrainBoundingBox, terrainModels, brushCenterPosition, rampHeight[rampMode + 1]) == true) {
 						rampMode++;
 						rampVertices[rampMode] = brushCenterPosition;
 						if (rampMode == 0) {
@@ -619,12 +625,13 @@ void SharedTerrainEditorView::handleInputEvents()
 						} else
 						if (rampMode == 1) {
 							// place ramp
+							brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
 							terrainEditorScreenController->applyRampTerrainBrush(
 								terrainBoundingBox,
 								terrainModels,
 								brushCenterPosition,
 								engine->getShaderParameter("terraineditor", "brushRotation").getFloatValue(),
-								1.0f / engine->getShaderParameter("terraineditor", "brushScale").getFloatValue(),
+								engine->getShaderParameter("terraineditor", "brushScale").getVector2Value(),
 								Math::min(rampHeight[0], rampHeight[1]),
 								Math::max(rampHeight[0], rampHeight[1])
 							);
@@ -632,7 +639,7 @@ void SharedTerrainEditorView::handleInputEvents()
 							rampMode = -1;
 							engine->setShaderParameter("terraineditor", "brushEnabled", false);
 							engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
-							engine->setShaderParameter("terraineditor", "brushScale", 1.0f);
+							engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
 						}
 					}
 				} else {

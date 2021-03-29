@@ -10,6 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
 using std::unordered_map;
@@ -20,6 +21,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Transformations;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 /**
@@ -242,7 +244,7 @@ public:
 		const Vector3& brushCenterPosition,
 		Texture* brushTexture,
 		float brushRotation,
-		float brushScale,
+		const Vector2& brushScale,
 		float flattenHeightMin,
 		float flattenHeightMax
 	);

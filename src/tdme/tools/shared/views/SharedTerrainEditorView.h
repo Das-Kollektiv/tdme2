@@ -80,6 +80,7 @@ private:
 	int rampMode { -1 };
 	array<Vector3,2> rampVertices;
 	array<float,2> rampHeight;
+	float rampScaleX { 1.0f };
 
 	/**
 	 * Init entity
