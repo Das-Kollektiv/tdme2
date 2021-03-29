@@ -222,73 +222,67 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& te
 	Vector3 triangleNormal;
 	int normalCount = 0;
 	if (haveTopVertex == true && haveTopLeftVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				topVertex,
 				topLeftVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
 	}
 	if (haveTopLeftVertex == true && haveLeftVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				topLeftVertex,
 				leftVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
 	}
 	if (haveLeftVertex == true && haveBottomVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				leftVertex,
 				bottomVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
 	}
 	if (haveBottomVertex == true && haveBottomRightVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				bottomVertex,
 				bottomRightVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
 	}
 	if (haveBottomRightVertex == true && haveRightVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				bottomRightVertex,
 				rightVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
 	}
 	if (haveRightVertex == true && haveTopVertex == true) {
-		ModelTools::computeNormal(
+		triangleNormal = ModelTools::computeNormal(
 			{
 				rightVertex,
 				topVertex,
 				vertex
-			},
-			triangleNormal
+			}
 		);
 		vertexNormal.add(triangleNormal);
 		normalCount++;
@@ -699,8 +693,7 @@ void Terrain::applyRampBrushToTerrainModels(
 			);
 		for (auto x = -textureWidth * brushScaleMax * 2.0f; x < textureWidth * brushScaleMax * 2.0f; x+= STEP_SIZE) {
 			auto texturePositionUntransformed = Vector2(x, z);
-			Vector2 texturePosition;
-			brushTextureMatrix.multiply(texturePositionUntransformed, texturePosition);
+			auto texturePosition = brushTextureMatrix.multiply(texturePositionUntransformed);
 			auto textureX = static_cast<int>(texturePosition.getX());
 			auto textureY = static_cast<int>(texturePosition.getY());
 			if (textureX < 0 || textureX >= textureWidth ||
@@ -1462,13 +1455,13 @@ void Terrain::applyFoliageBrush(
 
 								if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, translation.clone().setY(-10000.0f), translation.clone().setY(+10000.0f), contact) == true) {
 									haveContact = true;
-									ModelTools::computeNormal({topVertex, topLeftVertex, leftVertex}, normal);
+									normal = ModelTools::computeNormal({topVertex, topLeftVertex, leftVertex});
 									height = (topVertex.getY() + topLeftVertex.getY() + leftVertex.getY()) / 3.0f;
 									break;
 								} else
 								if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, translation.clone().setY(-10000.0f), translation.clone().setY(+10000.0f), contact) == true) {
 									haveContact = true;
-									ModelTools::computeNormal({leftVertex, vertex, topVertex}, normal);
+									normal = ModelTools::computeNormal({leftVertex, vertex, topVertex});
 									height = (leftVertex.getY() + vertex.getY() + topVertex.getY()) / 3.0f;
 									break;
 								}
@@ -1499,7 +1492,6 @@ void Terrain::applyFoliageBrush(
 							auto yAxisRotation = brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random());
 							auto xAxisRotation = brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random());
 							if (brushPrototypeNormalAlign[prototypeIdx] == true) {
-								Vector3 euler;
 								xAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
 								zAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
 								Transformations _transformations;
@@ -1507,7 +1499,7 @@ void Terrain::applyFoliageBrush(
 								_transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
 								_transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
 								_transformations.update();
-								_transformations.getTransformationsMatrix().computeEulerAngles(euler);
+								auto euler = _transformations.getTransformationsMatrix().computeEulerAngles();
 								zAxisRotation = euler.getZ();
 								yAxisRotation = euler.getY();
 								xAxisRotation = euler.getX();
@@ -1851,8 +1843,7 @@ void Terrain::updateFoliageTerrainRampBrush(
 			);
 		for (auto x = -textureWidth * brushScaleMax * 2.0f; x < textureWidth * brushScaleMax * 2.0f; x+= STEP_SIZE) {
 			auto texturePositionUntransformed = Vector2(x, z);
-			Vector2 texturePosition;
-			brushTextureMatrix.multiply(texturePositionUntransformed, texturePosition);
+			auto texturePosition = brushTextureMatrix.multiply(texturePositionUntransformed);
 			auto textureX = static_cast<int>(texturePosition.getX());
 			auto textureY = static_cast<int>(texturePosition.getY());
 			if (textureX < 0 || textureX >= textureWidth ||
