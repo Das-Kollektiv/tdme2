@@ -598,11 +598,13 @@ void SharedTerrainEditorView::handleInputEvents()
 			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 			if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
 				rampVertices[1] = brushCenterPosition;
+				//
 				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
 				brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
 				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
 				if (brushEnabled == true) {
 					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
+					if (Math::abs(rampVertices[0].getY() - rampVertices[1].getY()) > Math::EPSILON && rampVertices[0].getY() < rampVertices[1].getY()) brushRotation = brushRotation + 180.0f;
 					auto brushScale =
 						Vector2(
 							(rampScaleX * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
@@ -611,6 +613,17 @@ void SharedTerrainEditorView::handleInputEvents()
 					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
 					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
 				}
+			}
+		} else
+		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+				event.setProcessed(true);
 			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
@@ -692,6 +705,23 @@ void SharedTerrainEditorView::handleInputEvents()
 				}
 				event.setProcessed(true);
 			}
+		}
+	}
+	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		if (event.isProcessed() == true) continue;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
+			if (isKeyDown == true) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+			}
+			event.setProcessed(true);
 		}
 	}
 	cameraInputHandler->handleInputEvents();
