@@ -548,7 +548,7 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
 
-	// delete first
+	// apply brush first
 	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
@@ -561,7 +561,7 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 		currentTerrainBrushHeight
 	);
 
-	// and update
+	// and update foliage
 	Terrain::updateFoliageTerrainBrush(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
@@ -575,6 +575,27 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 	//
 	view->updateTemporaryFoliage(recreateFoliagePartitions);
 	recreateFoliagePartitions.clear();
+}
+
+void TerrainEditorScreenController::applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, float scale, float minHeight, float maxHeight) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	if (terrainModels.empty() == true) return;
+
+	// apply brush first
+	Terrain::applyRampBrushToTerrainModels(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushTexture,
+		rotation,
+		scale,
+		minHeight,
+		maxHeight
+	);
+
+	// TODO: and update foliage
 }
 
 void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {
@@ -704,6 +725,24 @@ bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& ter
 		currentTerrainBrushHeight
 	);
 	return haveCurrentTerrainBrushHeight;
+}
+
+bool TerrainEditorScreenController::determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_RAMP) {
+		return false;
+	}
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
+	if (terrainModel == nullptr) return false;
+	return Terrain::getTerrainModelsHeight(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		height
+	);
 }
 
 void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {

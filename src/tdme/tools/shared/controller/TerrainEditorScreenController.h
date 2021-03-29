@@ -254,6 +254,18 @@ public:
 	void applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
+	 * Apply current brush to terrain at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param rotation rotation
+	 * @param scale scale
+	 * @param minHeight min height
+	 * @param maxHeigth max heigth
+	 */
+	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, float scale, float minHeight, float maxHeight);
+
+	/**
 	 * Apply current brush to foliage at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param brushCenterPosition brush center position
@@ -284,6 +296,16 @@ public:
 	 * @return success
 	 */
 	bool determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
+
+	/**
+	 * Determine ramp height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param height height
+	 * @return success
+	 */
+	bool determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height);
 
 	/**
 	 * Unset current brush flatten height

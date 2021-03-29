@@ -223,6 +223,31 @@ public:
 	);
 
 	/**
+	 * Apply ramp brush to given terrain models
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models vector
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushRotation brush rotation
+	 * @param brushScale brush scale
+	 * @param flattenHeightMin minimum flatten height
+	 * @param flattenHeightMax maximum flatten height
+	 *
+	 */
+	static void applyRampBrushToTerrainModels(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<Model*>& terrainModels,
+		vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushRotation,
+		float brushScale,
+		float flattenHeightMin,
+		float flattenHeightMax
+	);
+
+	/**
 	 * Update foliage after using terrain brush
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
