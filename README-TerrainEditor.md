@@ -30,6 +30,7 @@
         - height min, max
         - normal align
       - the foliage brush is displayed on top of terrain
+    - use the ramp tool to connect higher terrain with lower terrain
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)
