@@ -450,13 +450,15 @@ public:
 	 * @param terrainHeightVector terrain height vector
 	 * @param waterPositionMapsHeight water position maps heights
 	 * @param waterPositionMaps water position maps
+	 * @param foliageMaps foliage maps
 	 */
 	static void mirrorXAxis(
 		float width,
 		float depth,
 		vector<float>& terrainHeightVector,
 		unordered_map<int, float>& waterPositionMapsHeight,
-		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps
+		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 	);
 
 };

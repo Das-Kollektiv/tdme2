@@ -1964,9 +1964,9 @@ void Terrain::mirrorXAxis(
 	float depth,
 	vector<float>& terrainHeightVector,
 	unordered_map<int, float>& waterPositionMapsHeight,
-	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps
+	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
-	Console::println("Terrain::mirrorXAxis()");
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 
@@ -2004,4 +2004,41 @@ void Terrain::mirrorXAxis(
 	}
 	waterPositionMapsHeight = waterPositionMapsHeightMirrored;
 	waterPositionMaps = waterPositionMapsMirrored;
+
+	// foliage
+	auto partitionsX = static_cast<int>(Math::ceil(width * 2.0f / PARTITION_SIZE));
+	vector<unordered_map<int, vector<Transformations>>> foliageMapsMirrored;
+	createFoliageMaps(width * 2.0f, depth, foliageMapsMirrored);
+	for (auto& foliageMapPartition: foliageMaps) {
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			auto foliagePrototypeId = foliageMapPartitionIt.first;
+			for (auto& transformations: foliageMapPartitionIt.second) {
+				{
+					//
+					auto partitionX = static_cast<int>((transformations.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformations.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionIdx = partitionZ * partitionsX + partitionX;
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformations);
+				}
+				{
+					auto transformationsMirrored = transformations;
+					transformationsMirrored.setTranslation(
+						Vector3(
+							width * 2.0f - transformationsMirrored.getTranslation().getX(),
+							transformationsMirrored.getTranslation().getY(),
+							transformationsMirrored.getTranslation().getZ()
+						)
+					);
+					transformationsMirrored.update();
+					//
+					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformationsMirrored.getTranslation().getZ()) / PARTITION_SIZE);
+					if (partitionX >= partitionsX) partitionX = partitionsX - 1; // special case if translation = 0.0, y, z
+					auto partitionIdx = partitionZ * partitionsX + partitionX;
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformationsMirrored);
+				}
+			}
+		}
+	}
+	foliageMaps = foliageMapsMirrored;
 }

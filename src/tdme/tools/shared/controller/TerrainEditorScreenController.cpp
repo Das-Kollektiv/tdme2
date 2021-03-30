@@ -960,7 +960,8 @@ void TerrainEditorScreenController::onApplyMirror() {
 			terrain->getDepth(),
 			terrain->getHeightVector(),
 			terrain->getWaterPositionMapsHeight(),
-			terrain->getWaterPositionMaps()
+			terrain->getWaterPositionMaps(),
+			terrain->getFoliageMaps()
 		);
 		terrain->setWidth(terrain->getWidth() * 2.0f);
 		{
@@ -970,7 +971,6 @@ void TerrainEditorScreenController::onApplyMirror() {
 			}
 			while (terrain->allocateWaterPositionMapIdx() != maxIdx);
 		}
-		Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), terrain->getFoliageMaps());
 	}
 
 	//
