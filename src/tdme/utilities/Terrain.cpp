@@ -1962,11 +1962,15 @@ void Terrain::updateFoliageTerrainRampBrush(
 void Terrain::mirrorXAxis(
 	float width,
 	float depth,
-	vector<float>& terrainHeightVector
+	vector<float>& terrainHeightVector,
+	unordered_map<int, float>& waterPositionMapsHeight,
+	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps
 ) {
 	Console::println("Terrain::mirrorXAxis()");
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
+
+	// terrain
 	vector<float> terrainHeightVectorMirrored;
 	terrainHeightVectorMirrored.resize(terrainHeightVectorVerticesPerX * 2 * terreinHeightVectorVerticesPerZ);
 	for (auto z = 0; z < terreinHeightVectorVerticesPerZ; z++) {
@@ -1976,4 +1980,28 @@ void Terrain::mirrorXAxis(
 		}
 	}
 	terrainHeightVector = terrainHeightVectorMirrored;
+
+	// water
+	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMapsMirrored;
+	unordered_map<int, float> waterPositionMapsHeightMirrored;
+	auto idxMax = 0;
+	for (auto& waterPositionMapsIt: waterPositionMaps) {
+		auto idx = waterPositionMapsIt.first;
+		if (idx > idxMax) idxMax = idx;
+	}
+	idxMax++;
+	for (auto& waterPositionMapsIt: waterPositionMaps) {
+		auto idx = waterPositionMapsIt.first;
+		waterPositionMapsHeightMirrored[idx] = waterPositionMapsHeight[idx];
+		waterPositionMapsHeightMirrored[idxMax + idx] = waterPositionMapsHeight[idx];
+		for (auto& zIt: waterPositionMapsIt.second) {
+			auto z = zIt.first;
+			for (auto& x: zIt.second) {
+				waterPositionMapsMirrored[idx][z].insert(x);
+				waterPositionMapsMirrored[idxMax + idx][z].insert(terrainHeightVectorVerticesPerX * 2 - x);
+			}
+		}
+	}
+	waterPositionMapsHeight = waterPositionMapsHeightMirrored;
+	waterPositionMaps = waterPositionMapsMirrored;
 }

@@ -958,13 +958,19 @@ void TerrainEditorScreenController::onApplyMirror() {
 		Terrain::mirrorXAxis(
 			terrain->getWidth(),
 			terrain->getDepth(),
-			terrain->getHeightVector()
+			terrain->getHeightVector(),
+			terrain->getWaterPositionMapsHeight(),
+			terrain->getWaterPositionMaps()
 		);
 		terrain->setWidth(terrain->getWidth() * 2.0f);
-		Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), terrain->getFoliageMaps());
-		for (auto waterPositionMapIdx: terrain->getWaterPositionMapsIndices()) {
-			terrain->removeWaterPositionMap(waterPositionMapIdx);
+		{
+			auto maxIdx = 0;
+			for (auto idx: terrain->getWaterPositionMapsIndices()) {
+				if (idx > maxIdx) maxIdx = idx;
+			}
+			while (terrain->allocateWaterPositionMapIdx() != maxIdx);
 		}
+		Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), terrain->getFoliageMaps());
 	}
 
 	//

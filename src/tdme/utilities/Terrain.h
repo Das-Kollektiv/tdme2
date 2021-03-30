@@ -448,11 +448,15 @@ public:
 	 * @param width width
 	 * @param depth depth
 	 * @param terrainHeightVector terrain height vector
+	 * @param waterPositionMapsHeight water position maps heights
+	 * @param waterPositionMaps water position maps
 	 */
 	static void mirrorXAxis(
 		float width,
 		float depth,
-		vector<float>& terrainHeightVector
+		vector<float>& terrainHeightVector,
+		unordered_map<int, float>& waterPositionMapsHeight,
+		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps
 	);
 
 };

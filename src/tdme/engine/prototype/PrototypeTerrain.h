@@ -90,6 +90,20 @@ public:
 	}
 
 	/**
+	 * @return water position maps height
+	 */
+	inline unordered_map<int, float>& getWaterPositionMapsHeight() {
+		return waterPositionMapsHeight;
+	}
+
+	/**
+	 * @return water position maps
+	 */
+	inline unordered_map<int, unordered_map<int, unordered_set<int>>>& getWaterPositionMaps() {
+		return waterPositionMaps;
+	}
+
+	/**
 	 * Get water position maps indices
 	 * @return water position maps indices
 	 */
