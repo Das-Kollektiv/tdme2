@@ -1976,7 +1976,7 @@ void Terrain::mirrorXAxis(
 	for (auto z = 0; z < terreinHeightVectorVerticesPerZ; z++) {
 		for (auto x = 0; x < terrainHeightVectorVerticesPerX; x++) {
 			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX * 2 + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
-			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX * 2 + (terrainHeightVectorVerticesPerX * 2 - x)] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX * 2 + (terrainHeightVectorVerticesPerX * 2 - x - 1)] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
 		}
 	}
 	terrainHeightVector = terrainHeightVectorMirrored;
@@ -1998,7 +1998,7 @@ void Terrain::mirrorXAxis(
 			auto z = zIt.first;
 			for (auto& x: zIt.second) {
 				waterPositionMapsMirrored[idx][z].insert(x);
-				waterPositionMapsMirrored[idxMax + idx][z].insert(terrainHeightVectorVerticesPerX * 2 - x);
+				waterPositionMapsMirrored[idxMax + idx][z].insert(terrainHeightVectorVerticesPerX * 2 - x - 1);
 			}
 		}
 	}
