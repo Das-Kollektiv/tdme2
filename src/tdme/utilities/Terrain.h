@@ -442,4 +442,17 @@ public:
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& recreateFoliagePartitions
 	);
+
+	/**
+	 * Mirror terrain around X axis
+	 * @param width width
+	 * @param depth depth
+	 * @param terrainHeightVector terrain height vector
+	 */
+	static void mirrorXAxis(
+		float width,
+		float depth,
+		vector<float>& terrainHeightVector
+	);
+
 };

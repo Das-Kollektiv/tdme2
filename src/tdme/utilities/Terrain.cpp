@@ -1958,3 +1958,22 @@ void Terrain::updateFoliageTerrainRampBrush(
 	}
 }
 
+
+void Terrain::mirrorXAxis(
+	float width,
+	float depth,
+	vector<float>& terrainHeightVector
+) {
+	Console::println("Terrain::mirrorXAxis()");
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
+	vector<float> terrainHeightVectorMirrored;
+	terrainHeightVectorMirrored.resize(terrainHeightVectorVerticesPerX * 2 * terreinHeightVectorVerticesPerZ);
+	for (auto z = 0; z < terreinHeightVectorVerticesPerZ; z++) {
+		for (auto x = 0; x < terrainHeightVectorVerticesPerX; x++) {
+			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX * 2 + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX * 2 + (terrainHeightVectorVerticesPerX * 2 - x)] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+		}
+	}
+	terrainHeightVector = terrainHeightVectorMirrored;
+}

@@ -950,6 +950,24 @@ void TerrainEditorScreenController::onApplyMirror() {
 		"flip: " + to_string(mirrorFlipChecked)
 	);
 
+	//
+	auto terrain = prototype->getTerrain();
+
+	// mirror X axis
+	if (mirrorXAxisChecked == true) {
+		Terrain::mirrorXAxis(
+			terrain->getWidth(),
+			terrain->getDepth(),
+			terrain->getHeightVector()
+		);
+		terrain->setWidth(terrain->getWidth() * 2.0f);
+		Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), terrain->getFoliageMaps());
+		for (auto waterPositionMapIdx: terrain->getWaterPositionMapsIndices()) {
+			terrain->removeWaterPositionMap(waterPositionMapIdx);
+		}
+	}
+
+	//
 	onLoadTerrain();
 }
 
