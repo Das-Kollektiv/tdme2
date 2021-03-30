@@ -146,6 +146,11 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeNormalAlign[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_normalalign"));
 		}
 
+		mirrorXAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_xaxis"));
+		mirrorYAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_yaxis"));
+		mirrorFlip = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_flip"));
+		btnMirrorApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_mirror_apply"));
+
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -271,6 +276,9 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(btnFoliageBrushApply->getId()) == 0) {
 			onApplyFoliageBrush();
+		} else
+		if (node->getId().compare(btnMirrorApply->getId()) == 0) {
+			onApplyMirror();
 		}
 	}
 }
@@ -925,6 +933,24 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void TerrainEditorScreenController::onApplyMirror() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	auto mirrorXAxisChecked = mirrorXAxis->getController()->getValue().equals("1");
+	auto mirrorYAxisChecked = mirrorYAxis->getController()->getValue().equals("1");
+	auto mirrorFlipChecked = mirrorFlip->getController()->getValue().equals("1");
+
+	Console::println(
+		string("TerrainEditorScreenController::onApplyMirror(): ") +
+		"X: " + to_string(mirrorXAxisChecked) + ", " +
+		"Y: " + to_string(mirrorYAxisChecked) + ", " +
+		"flip: " + to_string(mirrorFlipChecked)
+	);
+
+	onLoadTerrain();
 }
 
 void TerrainEditorScreenController::onFoliageBrushPrototypeClear(int idx) {

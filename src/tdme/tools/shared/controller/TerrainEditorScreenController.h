@@ -99,6 +99,11 @@ private:
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
+	GUIElementNode* mirrorXAxis { nullptr };
+	GUIElementNode* mirrorYAxis { nullptr };
+	GUIElementNode* mirrorFlip { nullptr };
+	GUIElementNode* btnMirrorApply { nullptr };
+
 	FileDialogPath terrainPath;
 	FileDialogPath brushTexturePath;
 	FileDialogPath prototypePath;
@@ -340,6 +345,11 @@ public:
 	 * On apply foliage brush
 	 */
 	void onApplyFoliageBrush();
+
+	/**
+	 * On apply mirror
+	 */
+	void onApplyMirror();
 
 	/**
 	 * Get viewport rectangle
