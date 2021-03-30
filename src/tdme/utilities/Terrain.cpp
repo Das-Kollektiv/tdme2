@@ -2029,6 +2029,7 @@ void Terrain::mirrorXAxis(
 							transformationsMirrored.getTranslation().getZ()
 						)
 					);
+					transformationsMirrored.setRotationAngle(0, -transformationsMirrored.getRotationAngle(0));
 					transformationsMirrored.update();
 					//
 					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
