@@ -2,35 +2,46 @@
 	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 		<button width="100%" height="25" text="Sound" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
-
+			
+			<space height="5" />
+			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="File" width="70" height="auto"/>
-				<space width="5" />
-				<space width="*" />
-				<input id="sound_file" width="120" height="auto" text="./sound.obb" />
-				<space width="5" />
-				<button id="button_sound_open" image="resources/engine/images/folder.png" width="25" height="25" />
-				<space width="5" />
-				<button id="button_sound_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Sound" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+					</element>
+					<space width="5" />
+					<layout width="auto" height="auto" alignment="vertical">
+						<button id="sound_open" image="resources/engine/images/folder.png" width="25" height="25" />
+						<space height="5" />
+						<button id="sound_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<space height="5" />
+						<button id="sound_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+					</layout>
+				</layout>						
+			</layout>	
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="Key" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<input id="sound_key" width="100%" height="auto" text="key" />
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Key" width="70" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<input id="sound_key" width="180" height="auto" text="key" />
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Animation" width="70" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="sound_animation" width="180" height="auto" text="Test">		
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<dropdown id="sound_animation" width="100%" height="auto" text="Test">		
+					</dropdown>
+				</layout>
 			</layout>
 			
 			<space height="5" />
@@ -38,28 +49,28 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Gain" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<input id="sound_gain" width="55" height="auto" text="10.00" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Gain" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<input id="sound_gain" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
 			</layout>
 
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Pitch" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<input id="sound_pitch" width="55" height="auto" text="10.00" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Pitch" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<input id="sound_pitch" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Offset ms" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<input id="sound_offset" width="55" height="auto" text="100" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Offset" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<input id="sound_offset" width="75%" height="auto" text="100" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+				</layout>
 			</layout>
 			
 			<space height="5" />
@@ -67,19 +78,19 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Looped" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<checkbox id="checkbox_sound_looping" value="1" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Looped" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<checkbox id="sound_looping" width="25" height="25" value="1" />
+				</layout>
 			</layout>
 			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">			
-				<text font="{$font.default}" text="Ambient" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<checkbox id="checkbox_sound_ambient" value="1" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<checkbox id="sound_ambient" width="25" height="25" value="1" />
+				</layout>
 			</layout>
 								
 		</layout>		

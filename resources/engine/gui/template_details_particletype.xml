@@ -14,181 +14,212 @@
 				<layout show-on="object" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
 					<space height="5" /> 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Model" width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_object_model"  width="120" height="auto" text="./model.tm" />
-						<space width="5" />
-						<button id="button_particletype_object_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_particletype_object_remove" image="resources/engine/images/delete.png" width="25" height="25"/>	
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Model" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="particletype_object_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_object_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_object_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Scale" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_object_scale_x" width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="particletype_object_scale_y"  width="40" height="auto" text="0.0" />
-						<space width="5" />
-						<input id="particletype_object_scale_z"  width="40" height="auto" text="0.0" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_object_scale" width="100%" height="auto" text="10.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />	
+						</layout>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Max count" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_object_maxcount" width="130" height="auto" text="1000" />
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Max count" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_object_maxcount" width="100%" height="auto" text="1000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+						</layout>
+					</layout>					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Auto emit" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<checkbox id="particletype_object_autoemit" width="25" height="25" value="1" />
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Auto Emit" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<checkbox id="particletype_object_autoemit" width="25" height="25" value="1" on-mouse-click="foliagebrush_details_panel.condition!=normalalign" />
+						</layout>
+					</layout>	
 				</layout>
 				
 				<layout show-on="point" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
+					<space height="5" />	
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="particletype_point_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_point_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_point_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>
+					<space height="10" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Transparency" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="particletype_point_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_point_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_point_transparency_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>					
+					<space height="5" />
+					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Texture" width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_texture" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_particletype_point_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_particletype_point_texture_remove" image="resources/engine/images/delete.png" width="25" height="25"/>	
+						<text font="{$font.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_point_size" width="100%" height="auto" text="10.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />	
+						</layout>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Transp." width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_transparency" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_particletype_point_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_particletype_point_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25"/>	
+						<text font="{$font.default}" color="{$color.font_normal}" text="Max count" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_point_maxcount" width="100%" height="auto" text="1000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+						</layout>
 					</layout>
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Max points" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_maxpoints" width="50" height="auto" text="1000" />
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Point size" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_pointsize" width="50" height="auto" text="100" />
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Horiz. sprites" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_horizontal_sprites"  width="30" height="auto" text="10" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Sprites" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_point_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
 					<space height="5" /> 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Vert. sprites" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_vertical_sprites" width="30" height="auto" text="10" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Sprites" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_point_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="FPS" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_point_fps" width="50%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
 					</layout>
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="FPS" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_point_fps" width="50" height="auto" text="100" />
-					</layout>
-					<space height="5" />
-					<menu-separator />
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Auto emit" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<checkbox id="particletype_point_auto_emit" width="25" height="25" value="1" />
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Auto Emit" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<checkbox id="particletype_point_autoemit" width="25" height="25" value="1" />
+						</layout>
+					</layout>						
 				</layout>
 				
 				<layout show-on="fog" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
+					<space height="5" />	
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="particletype_fog_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_fog_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_fog_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>
+					<space height="10" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Transparency" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="particletype_fog_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_fog_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="particletype_fog_transparency_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>					
+					<space height="5" />
+					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Texture" width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_texture" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_particletype_fog_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_particletype_fog_texture_remove" image="resources/engine/images/delete.png" width="25" height="25"/>	
+						<text font="{$font.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_fog_size" width="100%" height="auto" text="10.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />	
+						</layout>
 					</layout>
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Transp." width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_transparency" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_particletype_fog_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_particletype_fog_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25"/>	
+						<text font="{$font.default}" color="{$color.font_normal}" text="Max count" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_fog_maxcount" width="100%" height="auto" text="1000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+						</layout>
 					</layout>
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Max points" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_maxpoints" width="50" height="auto" text="1000" />
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Point size" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_pointsize" width="50" height="auto" text="100" />
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Horiz. sprites" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_horizontal_sprites"  width="30" height="auto" text="10" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Sprites" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_fog_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
 					<space height="5" /> 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Vert. sprites" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_vertical_sprites" width="30" height="auto" text="10" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Sprites" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_fog_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
-					<space height="5" />
-					<menu-separator />
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="FPS" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="particletype_fog_fps" width="50" height="auto" text="100" />
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="FPS" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+							<input id="particletype_fog_fps" width="50%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+						</layout>
+					</layout>		
 				</layout>
 			</element>
 				

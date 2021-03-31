@@ -15,41 +15,42 @@
 					
 					<layout show-on="dynamic" width="100%" height="auto" alignment="vertical" vertical-align="center">
 						<space height="5" />
-						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" text="Mass" width="90" height="auto"/>
-							<space width="5" />
-							<space width="*" />
-							<input id="physics_body_mass" name="physics_body_mass" width="70" height="auto" text="1000.00" />
+							<text font="{$font.default}" color="{$color.font_normal}" text="Mass" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="physics_dynamic_mass" width="100%" height="auto" text="1000.00" unit="kg" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							</layout>
 						</layout>
-
 						<space height="5" />
-
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" text="Bounciness" width="90" height="auto"/>
-							<space width="5" />
-							<space width="*" />
-							<input id="physics_body_bounciness" name="physics_body_bounciness" width="70" height="auto" text="1000.00" />
+							<text font="{$font.default}" color="{$color.font_normal}" text="Bounciness" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="physics_dynamic_bounciness" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							</layout>
 						</layout>
-
 						<space height="5" />
-						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" text="Inertia tensor" width="90" height="auto"/>
-							<space width="5" />
-							<space width="*" />
-							<input id="physics_body_inertiatensor" name="physics_body_inertiatensor" width="70" height="auto" text="1000.00" />
+							<text font="{$font.default}" color="{$color.font_normal}" text="Inertia tensor" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="physics_dynamic_inertiatensor" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							</layout>
 						</layout>
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" color="{$color.font_normal}" text="Friction" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="physics_dynamic_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>						
 					</layout>
 
-					<layout show-on="dynamic,static" width="100%" height="auto" alignment="vertical" vertical-align="center">
+					<layout show-on="static" width="100%" height="auto" alignment="vertical" vertical-align="center">
 						<space height="5" />
-						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" text="Friction" width="90" height="auto"/>
-							<space width="5" />
-							<space width="*" />
-							<input id="physics_body_friction" name="physics_body_friction" width="70" height="auto" text="1000.00" />
+							<text font="{$font.default}" color="{$color.font_normal}" text="Friction" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="physics_static_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							</layout>
 						</layout>
 					</layout>
 

@@ -60,10 +60,10 @@
 							</selectbox>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Count" width="90" height="auto" />
-								<space width="5" />
-								<space width="*" />
-								<input id="foliagebrush_object_count" width="70" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"  />
+								<text font="{$font.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="foliagebrush_object_count" width="100%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"  />
+								</layout>
 							</layout>
 						</layout>
 						<space width="5" />

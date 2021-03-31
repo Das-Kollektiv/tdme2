@@ -2,48 +2,56 @@
 	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 		<button width="100%" height="25" text="Terrain" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
-	
+			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Size" width="90" height="auto"/>
-				<space width="5" />
-				<space width="*" />
-				<input id="terrain_size_x" width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="terrain_size_z"  width="40" height="auto" text="0.0" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.xaxis}" />
+					<input id="terrain_size_x" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
 			</layout>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Grid Density" width="90" height="auto"/>
-				<space width="5" />
-				<space width="*" />
-				<input id="terrain_density" width="70" height="auto" text="100" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.zaxis}" />
+					<input id="terrain_size_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
 			</layout>
 			<space height="5" />
 			<menu-separator />
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Mirror Mode" width="90" height="auto"/>
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="terrain_mirrormode" width="130" height="auto" text="Select Mode">
-					<dropdown-option text="Normal" selected="true" value="1" on-mouse-click="terrain_mirrormode_details.condition="/>
-					<dropdown-option text="X Mirror" value="2" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
-					<dropdown-option text="Z Mirror" value="3" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
-					<dropdown-option text="XZ Mirror" value="4" on-mouse-click="terrain_mirrormode_details.condition=" />
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Grid Density" width="*" height="auto"/>
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<input id="terrain_density" width="100%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+				</layout>
+			</layout>
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="Mirror Mode" width="*" height="auto"/>
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="terrain_mirrormode" width="100%" height="auto" text="Select Mode">
+						<dropdown-option text="Normal" selected="true" value="1" on-mouse-click="terrain_mirrormode_details.condition="/>
+						<dropdown-option text="X Mirror" value="2" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
+						<dropdown-option text="Z Mirror" value="3" on-mouse-click="terrain_mirrormode_details.condition=oneaxis"/>
+						<dropdown-option text="XZ Mirror" value="4" on-mouse-click="terrain_mirrormode_details.condition=" />
+					</dropdown>
+				</layout>
 			</layout>
 			<element id="terrain_mirrormode_details" width="100%" height="auto">
 				<layout show-on="oneaxis" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Flipped" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<checkbox id="terrain_mirrormode_flipped" width="25" height="25" value="1" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Flipped" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<checkbox id="terrain_mirrormode_flipped" width="25" height="25" value="1" />
+						</layout>
 					</layout>
 				</layout>
-			</element>
-							
+			</element>				
 		</layout>		
 	</layout>
 </element>

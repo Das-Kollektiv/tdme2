@@ -2,12 +2,12 @@
 	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 		<button width="100%" height="25" text="PBR Material" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
-								
+			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Enable PBR" width="90" height="auto"/>
-				<space width="5" />
-				<space width="*" />
-				<checkbox id="checkbox_pbrmaterial" value="1" on-change="pbrmaterial_details.condition!=pbr" />
+				<text font="{$font.default}" color="{$color.font_normal}" text="Enable PBR" width="*" height="auto"/>
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<checkbox id="pbrmaterial_enabled" width="25" height="25" value="1" on-change="pbrmaterial_details.condition!=pbr" />
+				</layout>
 			</layout>
 			
 			<element id="pbrmaterial_details" width="100%" height="auto"> 
@@ -17,92 +17,108 @@
 					<space height="5" />
 					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Base" width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_basecolor_texture" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_pbrmaterial_basecolor_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_pbrmaterial_basecolor_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="pbrmaterial_basecolor_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_basecolor_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_basecolor_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
 					</layout>
-					
-					<space height="5" />
-						
+					<space height="10" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Met./Roug." width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_metallic_roughness_texture" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_pbrmaterial_metallic_roughness_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_pbrmaterial_metallic_roughness_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Met./Roug." width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="pbrmaterial_metallic_roughness_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_metallic_roughness_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_metallic_roughness_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
 					</layout>
-					
-					<space height="5" />
-						
+					<space height="10" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Normal" width="70" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_normal_texture" width="120" height="auto" text="./texture.png" />
-						<space width="5" />
-						<button id="button_pbrmaterial_normal_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space width="5" />
-						<button id="button_pbrmaterial_normal_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Normal" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="pbrmaterial_normal_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_normal_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="pbrmaterial_normal_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>					
 					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Base color" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<!-- <input id="pbrmaterial_basecolor_factor" width="70" height="auto" text="#000000" /> -->
-						<image id="pbrmaterial_basecolor_factor" width="100" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-						<space width="5" />						
-						<button id="button_pbrmaterial_basecolor_factor" width="25" height="25" image="resources/engine/images/edit.png"/>
-					</layout>
+						<text font="{$font.default}" color="{$color.font_normal}" text="Base Color" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<image id="pbrmaterial_basecolor" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+							<space width="5" />						
+							<button id="button_pbrmaterial_basecolor" width="25" height="25" image="resources/engine/images/edit.png"/>
+						</layout>
+					</layout>					
 					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Metallic factor" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_metallic_factor" width="70" height="auto" text="1000.00" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Metallic factor" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="pbrmaterial_metallic_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+						</layout>
 					</layout>
 
 					<space height="5" />
 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Roughness factor" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_roughness_factor" width="70" height="auto" text="1000.00" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Roughness factor" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="pbrmaterial_roughness_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
 
 					<space height="5" />
 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Normal scale" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_normal_scale" width="70" height="auto" text="1000.00" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Normal scale" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="pbrmaterial_normal_scale" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
 
 					<space height="5" />
 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Exposure" width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<input id="pbrmaterial_exposure" width="70" height="auto" text="1000.00" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Exposure" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="pbrmaterial_exposure" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+						</layout>
 					</layout>
 
 					<space height="5" />
@@ -110,10 +126,10 @@
 					<space height="5" />
 					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" text="Masked transp." width="90" height="auto"/>
-						<space width="5" />
-						<space width="*" />
-						<checkbox id="checkbox_pbrmaterial_maskedtransparency" width="auto" height="auto" value="1" />	
+						<text font="{$font.default}" color="{$color.font_normal}" text="Masked Transparency" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<checkbox id="pbrmaterial_maskedtransparency" width="25" height="25" value="1" />
+						</layout>
 					</layout>
 				</layout>
 			</element>

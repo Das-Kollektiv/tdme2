@@ -4,12 +4,12 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 	
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Environment Map" width="90" height="auto" />
-				<space width="5" />
-				<space width="*" />
-				<dropdown id="reflection_environmentmap" width="130" height="auto" text="<None>">
-					<dropdown-option text="<None>" value="1" />
-				</dropdown>
+				<text font="{$font.default}" color="{$color.font_normal}" text="Environment Map" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<dropdown id="reflection_environmentmap" width="100%" height="auto" text="<None>">
+						<dropdown-option text="<None>" value="1" />
+					</dropdown>
+				</layout>
 			</layout>
 								
 		</layout>		

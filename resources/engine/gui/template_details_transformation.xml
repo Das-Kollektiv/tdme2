@@ -3,43 +3,88 @@
 		<button width="100%" height="25" text="Transformation" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Translation" width="90" height="auto" horizontal-align="left" />
-				<space width="5" />
-				<space width="*" />
-				<input id="transformation_translation_x" width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_translation_y"  width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_translation_z"  width="40" height="auto" text="0.0" />	
-			</layout>
-			
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Scale" width="90" height="auto" horizontal-align="left" />
-				<space width="5" />
-				<space width="*" />
-				<input id="transformation_scale_x" width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_scale_y"  width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_scale_z"  width="40" height="auto" text="0.0" />	
+				<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.xaxis}" />
+					<input id="transformation_translation_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.yaxis}" />
+					<input id="transformation_translation_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.zaxis}" />
+					<input id="transformation_translation_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
 			</layout>
 			
 			<space height="5" />
+			<menu-separator />
+			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" text="Rotation" width="90" height="auto" horizontal-align="left" />
-				<space width="5" />
-				<space width="*" />
-				<input id="transformation_rotation_x" width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_rotation_y"  width="40" height="auto" text="0.0" />
-				<space width="5" />
-				<input id="transformation_rotation_z"  width="40" height="auto" text="0.0" />	
+				<text font="{$font.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.xaxis}" />
+					<input id="transformation_rotation_x" width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+				</layout>
 			</layout>
-								
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.yaxis}" />
+					<input id="transformation_rotation_y"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.zaxis}" />
+					<input id="transformation_rotation_z"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.xaxis}" />
+					<input id="transformation_scale_x" width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.yaxis}" />
+					<input id="transformation_scale_y"  width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+			<space height="5" />
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout width="5" height="25" background-color="{$color.zaxis}" />
+					<input id="transformation_scale_z"  width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+				</layout>
+			</layout>
+						
 		</layout>		
 	</layout>
 </element>
