@@ -461,4 +461,22 @@ public:
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 	);
 
+	/**
+	 * Mirror terrain around Z axis
+	 * @param width width
+	 * @param depth depth
+	 * @param terrainHeightVector terrain height vector
+	 * @param waterPositionMapsHeight water position maps heights
+	 * @param waterPositionMaps water position maps
+	 * @param foliageMaps foliage maps
+	 */
+	static void mirrorZAxis(
+		float width,
+		float depth,
+		vector<float>& terrainHeightVector,
+		unordered_map<int, float>& waterPositionMapsHeight,
+		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	);
+
 };

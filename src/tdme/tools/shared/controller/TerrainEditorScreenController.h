@@ -100,7 +100,7 @@ private:
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
 	GUIElementNode* mirrorXAxis { nullptr };
-	GUIElementNode* mirrorYAxis { nullptr };
+	GUIElementNode* mirrorZAxis { nullptr };
 	GUIElementNode* mirrorFlip { nullptr };
 	GUIElementNode* btnMirrorApply { nullptr };
 

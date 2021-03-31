@@ -2043,3 +2043,89 @@ void Terrain::mirrorXAxis(
 	}
 	foliageMaps = foliageMapsMirrored;
 }
+
+void Terrain::mirrorZAxis(
+	float width,
+	float depth,
+	vector<float>& terrainHeightVector,
+	unordered_map<int, float>& waterPositionMapsHeight,
+	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+) {
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
+
+	// terrain
+	vector<float> terrainHeightVectorMirrored;
+	terrainHeightVectorMirrored.resize(terrainHeightVectorVerticesPerX * terreinHeightVectorVerticesPerZ * 2);
+	for (auto z = 0; z < terreinHeightVectorVerticesPerZ; z++) {
+		for (auto x = 0; x < terrainHeightVectorVerticesPerX; x++) {
+			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+			terrainHeightVectorMirrored[(terreinHeightVectorVerticesPerZ * 2 - z - 1) * terrainHeightVectorVerticesPerX + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+		}
+	}
+	terrainHeightVector = terrainHeightVectorMirrored;
+
+	// water
+	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMapsMirrored;
+	unordered_map<int, float> waterPositionMapsHeightMirrored;
+	auto idxMax = 0;
+	for (auto& waterPositionMapsIt: waterPositionMaps) {
+		auto idx = waterPositionMapsIt.first;
+		if (idx > idxMax) idxMax = idx;
+	}
+	idxMax++;
+	for (auto& waterPositionMapsIt: waterPositionMaps) {
+		auto idx = waterPositionMapsIt.first;
+		waterPositionMapsHeightMirrored[idx] = waterPositionMapsHeight[idx];
+		waterPositionMapsHeightMirrored[idxMax + idx] = waterPositionMapsHeight[idx];
+		for (auto& zIt: waterPositionMapsIt.second) {
+			auto z = zIt.first;
+			for (auto& x: zIt.second) {
+				waterPositionMapsMirrored[idx][z].insert(x);
+				waterPositionMapsMirrored[idxMax + idx][terreinHeightVectorVerticesPerZ * 2 - z - 1].insert(x);
+			}
+		}
+	}
+	waterPositionMapsHeight = waterPositionMapsHeightMirrored;
+	waterPositionMaps = waterPositionMapsMirrored;
+
+	// foliage
+	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
+	auto partitionsZ = static_cast<int>(Math::ceil(depth * 2.0f / PARTITION_SIZE));
+	vector<unordered_map<int, vector<Transformations>>> foliageMapsMirrored;
+	createFoliageMaps(width, depth * 2.0f, foliageMapsMirrored);
+	for (auto& foliageMapPartition: foliageMaps) {
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			auto foliagePrototypeId = foliageMapPartitionIt.first;
+			for (auto& transformations: foliageMapPartitionIt.second) {
+				{
+					//
+					auto partitionX = static_cast<int>((transformations.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformations.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionIdx = partitionZ * partitionsX + partitionX;
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformations);
+				}
+				{
+					auto transformationsMirrored = transformations;
+					transformationsMirrored.setTranslation(
+						Vector3(
+							transformationsMirrored.getTranslation().getX(),
+							transformationsMirrored.getTranslation().getY(),
+							depth * 2.0f - transformationsMirrored.getTranslation().getZ()
+						)
+					);
+					transformationsMirrored.setRotationAngle(2, -transformationsMirrored.getRotationAngle(2));
+					transformationsMirrored.update();
+					//
+					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformationsMirrored.getTranslation().getZ()) / PARTITION_SIZE);
+					if (partitionZ >= partitionsZ) partitionZ = partitionsZ - 1; // special case if translation = x, y, 0.0
+					auto partitionIdx = partitionZ * partitionsX + partitionX;
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformationsMirrored);
+				}
+			}
+		}
+	}
+	foliageMaps = foliageMapsMirrored;
+}

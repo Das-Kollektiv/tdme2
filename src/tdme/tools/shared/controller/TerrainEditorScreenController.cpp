@@ -147,7 +147,7 @@ void TerrainEditorScreenController::initialize()
 		}
 
 		mirrorXAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_xaxis"));
-		mirrorYAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_yaxis"));
+		mirrorZAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_zaxis"));
 		mirrorFlip = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_flip"));
 		btnMirrorApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_mirror_apply"));
 
@@ -939,16 +939,10 @@ void TerrainEditorScreenController::onApplyMirror() {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
+	//
 	auto mirrorXAxisChecked = mirrorXAxis->getController()->getValue().equals("1");
-	auto mirrorYAxisChecked = mirrorYAxis->getController()->getValue().equals("1");
+	auto mirrorZAxisChecked = mirrorZAxis->getController()->getValue().equals("1");
 	auto mirrorFlipChecked = mirrorFlip->getController()->getValue().equals("1");
-
-	Console::println(
-		string("TerrainEditorScreenController::onApplyMirror(): ") +
-		"X: " + to_string(mirrorXAxisChecked) + ", " +
-		"Y: " + to_string(mirrorYAxisChecked) + ", " +
-		"flip: " + to_string(mirrorFlipChecked)
-	);
 
 	//
 	auto terrain = prototype->getTerrain();
@@ -964,6 +958,26 @@ void TerrainEditorScreenController::onApplyMirror() {
 			terrain->getFoliageMaps()
 		);
 		terrain->setWidth(terrain->getWidth() * 2.0f);
+		{
+			auto maxIdx = 0;
+			for (auto idx: terrain->getWaterPositionMapsIndices()) {
+				if (idx > maxIdx) maxIdx = idx;
+			}
+			while (terrain->allocateWaterPositionMapIdx() != maxIdx);
+		}
+	}
+
+	// mirror Z axis
+	if (mirrorZAxisChecked == true) {
+		Terrain::mirrorZAxis(
+			terrain->getWidth(),
+			terrain->getDepth(),
+			terrain->getHeightVector(),
+			terrain->getWaterPositionMapsHeight(),
+			terrain->getWaterPositionMaps(),
+			terrain->getFoliageMaps()
+		);
+		terrain->setDepth(terrain->getDepth() * 2.0f);
 		{
 			auto maxIdx = 0;
 			for (auto idx: terrain->getWaterPositionMapsIndices()) {

@@ -757,9 +757,9 @@
 							<space height="10" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 								<space width="20" />
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Mirror around Y axis" width="120" height="auto" horizontal-align="left" />
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Mirror around Z axis" width="120" height="auto" horizontal-align="left" />
 								<space width="35" />
-								<checkbox id="mirror_yaxis" name="mirror_yaxis" width="50" height="auto" value="1" />
+								<checkbox id="mirror_zaxis" name="mirror_zaxis" width="50" height="auto" value="1" />
 							</layout>
 							<space height="10" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
