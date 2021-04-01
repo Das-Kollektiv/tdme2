@@ -2050,6 +2050,7 @@ void Terrain::mirrorXAxis(
 }
 
 void Terrain::mirrorZAxis(
+	bool flipX,
 	float width,
 	float depth,
 	vector<float>& terrainHeightVector,
@@ -2065,8 +2066,9 @@ void Terrain::mirrorZAxis(
 	terrainHeightVectorMirrored.resize(terrainHeightVectorVerticesPerX * terreinHeightVectorVerticesPerZ * 2);
 	for (auto z = 0; z < terreinHeightVectorVerticesPerZ; z++) {
 		for (auto x = 0; x < terrainHeightVectorVerticesPerX; x++) {
+			auto _x = flipX == true?terrainHeightVectorVerticesPerX - x - 1:x;
 			terrainHeightVectorMirrored[z * terrainHeightVectorVerticesPerX + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
-			terrainHeightVectorMirrored[(terreinHeightVectorVerticesPerZ * 2 - z - 1) * terrainHeightVectorVerticesPerX + x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
+			terrainHeightVectorMirrored[(terreinHeightVectorVerticesPerZ * 2 - z - 1) * terrainHeightVectorVerticesPerX + _x] = terrainHeightVector[z * terrainHeightVectorVerticesPerX + x];
 		}
 	}
 	terrainHeightVector = terrainHeightVectorMirrored;
@@ -2087,8 +2089,9 @@ void Terrain::mirrorZAxis(
 		for (auto& zIt: waterPositionMapsIt.second) {
 			auto z = zIt.first;
 			for (auto& x: zIt.second) {
+				auto _x = flipX == true?terrainHeightVectorVerticesPerX - x - 1:x;
 				waterPositionMapsMirrored[idx][z].insert(x);
-				waterPositionMapsMirrored[idxMax + idx][terreinHeightVectorVerticesPerZ * 2 - z - 1].insert(x);
+				waterPositionMapsMirrored[idxMax + idx][terreinHeightVectorVerticesPerZ * 2 - z - 1].insert(_x);
 			}
 		}
 	}
@@ -2115,7 +2118,7 @@ void Terrain::mirrorZAxis(
 					auto transformationsMirrored = transformations;
 					transformationsMirrored.setTranslation(
 						Vector3(
-							transformationsMirrored.getTranslation().getX(),
+							flipX == true?width - transformationsMirrored.getTranslation().getX():transformationsMirrored.getTranslation().getX(),
 							transformationsMirrored.getTranslation().getY(),
 							depth * 2.0f - transformationsMirrored.getTranslation().getZ()
 						)
@@ -2125,6 +2128,7 @@ void Terrain::mirrorZAxis(
 					//
 					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
 					auto partitionZ = static_cast<int>((transformationsMirrored.getTranslation().getZ()) / PARTITION_SIZE);
+					if (partitionX >= partitionsX) partitionX = partitionsX - 1; // special case if translation = 0.0, y, z
 					if (partitionZ >= partitionsZ) partitionZ = partitionsZ - 1; // special case if translation = x, y, 0.0
 					auto partitionIdx = partitionZ * partitionsX + partitionX;
 					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformationsMirrored);

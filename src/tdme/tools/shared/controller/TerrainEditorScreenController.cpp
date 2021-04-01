@@ -971,6 +971,7 @@ void TerrainEditorScreenController::onApplyMirror() {
 	// mirror Z axis
 	if (mirrorZAxisChecked == true) {
 		Terrain::mirrorZAxis(
+			mirrorFlipChecked,
 			terrain->getWidth(),
 			terrain->getDepth(),
 			terrain->getHeightVector(),

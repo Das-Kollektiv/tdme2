@@ -465,6 +465,7 @@ public:
 
 	/**
 	 * Mirror terrain around Z axis
+	 * @param flipX flip X
 	 * @param width width
 	 * @param depth depth
 	 * @param terrainHeightVector terrain height vector
@@ -473,6 +474,7 @@ public:
 	 * @param foliageMaps foliage maps
 	 */
 	static void mirrorZAxis(
+		bool flipX,
 		float width,
 		float depth,
 		vector<float>& terrainHeightVector,
