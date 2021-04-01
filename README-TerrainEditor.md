@@ -31,7 +31,7 @@
         - normal align
       - the foliage brush is displayed on top of terrain
     - use the ramp tool to connect higher terrain with lower terrain
-    - mirror the map around x and/or y axis optionally flipped
+    - mirror the map around x and/or z axis optionally flipped
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)
