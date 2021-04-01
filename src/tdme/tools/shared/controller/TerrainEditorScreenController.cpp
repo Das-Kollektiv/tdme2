@@ -950,6 +950,7 @@ void TerrainEditorScreenController::onApplyMirror() {
 	// mirror X axis
 	if (mirrorXAxisChecked == true) {
 		Terrain::mirrorXAxis(
+			mirrorFlipChecked,
 			terrain->getWidth(),
 			terrain->getDepth(),
 			terrain->getHeightVector(),
