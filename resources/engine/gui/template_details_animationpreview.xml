@@ -77,11 +77,11 @@
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
-						<button id="button_animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
+						<button id="animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
 						<space height="5" />
-						<button id="button_animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<button id="animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
 						<space height="5" />
-						<button id="button_animationpreview_attachment1_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+						<button id="animationpreview_attachment1_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
 					</layout>
 				</layout>
 			</layout>

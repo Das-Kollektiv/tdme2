@@ -50,7 +50,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_point_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_point_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_point_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -227,7 +227,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_box_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_box_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_box_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -237,7 +237,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_box_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_box_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_box_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -403,7 +403,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_circle_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_circle_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_circle_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -413,7 +413,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_circle_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_circle_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_circle_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -578,7 +578,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_radial_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_radial_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_radial_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -588,7 +588,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_radial_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_radial_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_radial_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -725,7 +725,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_sphere_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_sphere_colorstart" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_sphere_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					
@@ -735,7 +735,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="particleemitter_sphere_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_particleemitter_sphere_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="particleemitter_sphere_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>
 					

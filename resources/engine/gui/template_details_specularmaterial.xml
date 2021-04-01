@@ -86,7 +86,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="specularmaterial_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_specularmaterial_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="specularmaterial_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>
 			<space height="5" />
@@ -95,7 +95,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="specularmaterial_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_specularmaterial_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="specularmaterial_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>
 			<space height="5" />
@@ -104,7 +104,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="specularmaterial_emission" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_specularmaterial_emission" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="specularmaterial_emission_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>
 			<space height="5" />
@@ -113,7 +113,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="specularmaterial_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_specularmaterial_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="specularmaterial_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>			
 			

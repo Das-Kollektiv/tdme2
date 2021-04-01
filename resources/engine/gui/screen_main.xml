@@ -84,7 +84,7 @@
 									<dropdown-option text="GUI" value="4" />
 								</dropdown>
 								<space width="5"/>
-								<button id="button_projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />
+								<button id="projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />
 							</layout>
 							
 							<space height="5"/>

@@ -79,7 +79,7 @@
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<image id="pbrmaterial_basecolor" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 							<space width="5" />						
-							<button id="button_pbrmaterial_basecolor" width="25" height="25" image="resources/engine/images/edit.png"/>
+							<button id="pbrmaterial_basecolor_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 						</layout>
 					</layout>					
 					

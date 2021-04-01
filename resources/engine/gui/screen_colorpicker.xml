@@ -40,7 +40,7 @@
 			</layout>
 			<space width="10" />
 			<layout width="auto" height="auto" alignment="vertical">
-				<button id="button_colorpicker_pipette" image="resources/engine/images/pipette.png" width="25" height="25" />
+				<button id="colorpicker_pipette" image="resources/engine/images/pipette.png" width="25" height="25" />
 			</layout>
 		</layout>
 		<menu-separator />

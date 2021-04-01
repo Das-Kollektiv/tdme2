@@ -21,7 +21,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<image id="light_point_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_point_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_point_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -30,7 +30,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<image id="light_point_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_point_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_point_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -39,7 +39,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<image id="light_point_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_point_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_point_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -115,7 +115,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_spot_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_spot_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_spot_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -124,7 +124,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_spot_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_spot_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_spot_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -133,7 +133,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_spot_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_spot_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_spot_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -272,7 +272,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_directional_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_directional_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_directional_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -281,7 +281,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_directional_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_directional_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_directional_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -290,7 +290,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_directional_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_directional_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_directional_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -355,7 +355,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_ambient_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_ambient_ambient" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_ambient_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -364,7 +364,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_ambient_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_ambient_diffuse" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_ambient_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
@@ -373,7 +373,7 @@
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<image id="light_ambient_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 								<space width="5" />						
-								<button id="button_light_ambient_specular" width="25" height="25" image="resources/engine/images/edit.png"/>
+								<button id="light_ambient_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 							</layout>
 						</layout>
 						<space height="5" />

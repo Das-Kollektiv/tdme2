@@ -12,11 +12,11 @@
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
-						<button id="button_lod_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
+						<button id="lod_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
 						<space height="5" />
-						<button id="button_lod_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<button id="lod_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
 						<space height="5" />
-						<button id="button_lod_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+						<button id="lod_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
 					</layout>
 				</layout>						
 			</layout>
@@ -41,7 +41,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="lod_color_add" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_lod_color_add" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="lod_color_add_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>
 			
@@ -52,7 +52,7 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<image id="lod_color_mul" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 					<space width="5" />						
-					<button id="button_lod_color_mul" width="25" height="25" image="resources/engine/images/edit.png"/>
+					<button id="lod_color_mul_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
 				</layout>
 			</layout>
 					

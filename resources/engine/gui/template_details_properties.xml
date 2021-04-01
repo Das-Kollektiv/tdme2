@@ -25,15 +25,15 @@
 				</layout>
 				<space width="5" />
 				<layout width="auto" height="auto" alignment="vertical">
-					<button id="button_properties_object_add" image="resources/engine/images/add.png" width="25" height="25" />
+					<button id="properties_object_add" image="resources/engine/images/add.png" width="25" height="25" />
 					<space height="5" />
-					<button id="button_properties_object_substract" image="resources/engine/images/substract.png" width="25" height="25" />
+					<button id="properties_object_substract" image="resources/engine/images/substract.png" width="25" height="25" />
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
-					<button id="button_properties_object_import" image="resources/engine/images/import.png" width="25" height="25" />
+					<button id="properties_object_import" image="resources/engine/images/import.png" width="25" height="25" />
 					<space height="5" />
-					<button id="button_properties_object_save" image="resources/engine/images/save.png" width="25" height="25" />
+					<button id="properties_object_save" image="resources/engine/images/save.png" width="25" height="25" />
 				</layout>
 			</layout>			
 					

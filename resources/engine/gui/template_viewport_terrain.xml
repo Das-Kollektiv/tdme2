@@ -9,9 +9,11 @@
 			<space height="5"/>
 			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_smooth" name="brush" width="40" height="40" value="4" image="resources/engine/images/terrain_smooth.png" />
 			<space height="20"/>
-			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_water" name="brush" width="40" height="40" value="5" image="resources/engine/images/terrain_water.png" />
+			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_ramp" name="brush" width="40" height="40" value="5" image="resources/engine/images/terrain_ramp.png" />
 			<space height="20"/>
-			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_delete" name="brush" width="40" height="40" value="5" image="resources/engine/images/delete.png" />
+			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_water" name="brush" width="40" height="40" value="6" image="resources/engine/images/terrain_water.png" />
+			<space height="20"/>
+			<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_delete" name="brush" width="40" height="40" value="7" image="resources/engine/images/delete.png" />
 
 		</layout>
 		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
