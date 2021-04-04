@@ -536,9 +536,9 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			auto& foliageMaps = terrain->getFoliageMaps();
 
 			//
-			auto objectIdx = 0;
-			auto idx = 0;
+			auto foliageRenderGroupIdx = 0;
 			auto partitionIdx = 0;
+			map<int, int> prototypeEntityIdx;
 			for (auto& foliageMapPartition: foliageMaps) {
 				auto partitionPrototypeInstanceCount = 0;
 				for (auto& foliageMapPartitionIt: foliageMapPartition) {
@@ -553,7 +553,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 						if (foliagePrototype->isRenderGroups() == false) {
 							for (auto& transformations: transformationsVector) {
-								Entity* entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(objectIdx++), transformations);
+								auto entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx[prototypeIdx]++), transformations);
 								if (entity == nullptr) continue;
 								entity->setTranslation(entity->getTranslation().clone().add(translation));
 								entity->setPickable(pickable);
@@ -573,7 +573,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 							if (foliagePartitionObject3DRenderGroup == nullptr) {
 								foliagePartitionObject3DRenderGroup =
 									new Object3DRenderGroup(
-										"tdme.fo3rg." + to_string(idx++),
+										"tdme.fo3rg." + to_string(foliageRenderGroupIdx++),
 										renderGroupsLODLevels,
 										renderGroupsLOD2MinDistance,
 										renderGroupsLOD3MinDistance,
@@ -921,7 +921,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 			auto& foliageMaps = terrain->getFoliageMaps();
 
 			//
-			auto objectIdx = 0;
+			map<int, int> prototypeBodyIdx;
 			for (auto& foliageMapPartition: foliageMaps) {
 				for (auto& foliageMapPartitionIt: foliageMapPartition) {
 					auto prototypeIdx = foliageMapPartitionIt.first;
@@ -929,7 +929,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 					if (transformationsVector.empty() == true) continue;
 					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 					for (auto& foliageTransformations: transformationsVector) {
-						auto rigidBody = createBody(world, foliagePrototype, "tdme.foliage." + to_string(objectIdx++), foliageTransformations);
+						auto rigidBody = createBody(world, foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeBodyIdx[prototypeIdx]++), foliageTransformations);
 						if (rigidBody == nullptr) continue;
 						if (translation.equals(Vector3()) == false) {
 							auto transformations = foliageTransformations;
@@ -975,7 +975,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 
 void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
-	// terrain + foliage + water + render groups
+	// terrain + water + foliage render groups + render groups
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
@@ -993,13 +993,6 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
-		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
-			entity->setEnabled(false);
-		}
-	}
-	{
-		auto idx = 0;
-		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
 			entity->setEnabled(false);
 		}
@@ -1011,6 +1004,25 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 			entity->setEnabled(false);
 		}
 	}
+
+	// single foliage objects
+	auto sceneLibrary = scene.getLibrary();
+	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
+		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		//
+		auto terrain = prototype->getTerrain();
+		//
+		for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+			for (auto& entityId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+				auto entity = engine->getEntity(entityId);
+				if (entity != nullptr) entity->setEnabled(false);
+			}
+		}
+		// one terrain only, so break here
+		break;
+	}
+
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -1025,30 +1037,41 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 void SceneConnector::disableScene(World* world, Scene& scene)
 {
 	// terrain
-	auto rigidBody = world->getBody("tdme.terrain");
-	if (rigidBody != nullptr) rigidBody->setEnabled(false);
-
-	// foliage
 	{
-		auto idx = 0;
-		Body* rigidBody = nullptr;
-		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
-			rigidBody->setEnabled(false);
+		auto body = world->getBody("tdme.terrain");
+		if (body != nullptr) body->setEnabled(false);
+	}
+
+	// single foliage objects
+	auto sceneLibrary = scene.getLibrary();
+	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
+		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		//
+		auto terrain = prototype->getTerrain();
+		//
+		for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+			for (auto& bodyId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+				auto body = world->getBody(bodyId);
+				if (body != nullptr) body->setEnabled(false);
+			}
 		}
+		// one terrain only, so break here
+		break;
 	}
 
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
-		auto rigidBody = world->getBody(sceneEntity->getId());
-		if (rigidBody == nullptr) continue;
-		rigidBody->setEnabled(false);
+		auto body = world->getBody(sceneEntity->getId());
+		if (body == nullptr) continue;
+		body->setEnabled(false);
 	}
 }
 
 void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
 {
-	// terrain + foliage + water + render groups
+	// terrain + water + foliage render groups + render groups
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
@@ -1066,13 +1089,6 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
-		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
-			entity->setEnabled(true);
-		}
-	}
-	{
-		auto idx = 0;
-		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
 			entity->setEnabled(true);
 		}
@@ -1084,6 +1100,25 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 			entity->setEnabled(true);
 		}
 	}
+
+	// single foliage objects
+	auto sceneLibrary = scene.getLibrary();
+	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
+		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		//
+		auto terrain = prototype->getTerrain();
+		//
+		for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+			for (auto& entityId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+				auto entity = engine->getEntity(entityId);
+				if (entity != nullptr) entity->setEnabled(true);
+			}
+		}
+		// one terrain only, so break here
+		break;
+	}
+
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -1104,19 +1139,30 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
 	// terrain
-	auto rigidBody = world->getBody("tdme.terrain");
-	if (rigidBody != nullptr) {
-		rigidBody->setEnabled(true);
-		// TODO: translate
+	{
+		auto body = world->getBody("tdme.terrain");
+		if (body != nullptr) {
+			body->setEnabled(true);
+			// TODO: translate
+		}
 	}
 
-	// foliage
-	{
-		auto idx = 0;
-		Body* rigidBody = nullptr;
-		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
-			rigidBody->setEnabled(true);
+	// single foliage objects
+	auto sceneLibrary = scene.getLibrary();
+	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
+		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		//
+		auto terrain = prototype->getTerrain();
+		//
+		for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+			for (auto& bodyId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+				auto body = world->getBody(bodyId);
+				if (body != nullptr) body->setEnabled(true);
+			}
 		}
+		// one terrain only, so break here
+		break;
 	}
 
 	// scene entities
