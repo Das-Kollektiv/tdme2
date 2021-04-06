@@ -238,14 +238,12 @@ public:
 		map<string, Transformations> foliagePrototypeEntityTransformations;
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
-			for (auto& foliageMapPartitionIt: foliageMapPartition) {
-				auto& transformationsVector = foliageMapPartition[prototypeIdx];
-				if (transformationsVector.empty() == true) continue;
-				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
-				if (foliagePrototype->isRenderGroups() == false) {
-					for (auto& transformations: transformationsVector) {
-						foliagePrototypeEntityTransformations["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transformations;
-					}
+			auto& transformationsVector = foliageMapPartition[prototypeIdx];
+			if (transformationsVector.empty() == true) continue;
+			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
+			if (foliagePrototype->isRenderGroups() == false) {
+				for (auto& transformations: transformationsVector) {
+					foliagePrototypeEntityTransformations["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transformations;
 				}
 			}
 		}
