@@ -1196,6 +1196,7 @@ void Terrain::createWaterModels(
 		auto modelId = "water." + to_string(waterModelIdx) + "." + to_string(partitionIdx);
 		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto waterMaterial = new Material("water");
+		waterMaterial->setDoubleSided(true);
 		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.022f, 0.13f, 0.56f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.026f, 0.15f, 0.64f, 1.0f));

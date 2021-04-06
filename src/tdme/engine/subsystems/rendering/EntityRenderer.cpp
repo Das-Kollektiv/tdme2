@@ -429,7 +429,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 			//	via material
 			if (specularMaterialProperties != nullptr) {
 				if (specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true) transparentFacesEntity = true;
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					renderer->disableCulling(context);
 				}
 			}
@@ -624,7 +625,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 			// keep track of rendered faces
 			faceIdx += faces;
 			if (specularMaterialProperties != nullptr) {
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					renderer->enableCulling(context);
 				}
 			}
@@ -705,7 +707,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					continue;
 				}
 
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					if (cullingMode != 0) {
 						renderer->disableCulling(context);
 						cullingMode = 0;
