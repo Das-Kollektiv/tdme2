@@ -297,10 +297,13 @@
 							<input id="boundingvolume_generated_pca" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
-					
 					<space height="10" />
-					
-					<button id="boundingvolume_generated_generate" text="Generate" width="auto" height="25" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<button id="boundingvolume_generated_generate" text="Generate BV" width="75%" height="25" />
+						</layout>
+					</layout>					
 
 				</layout> 
 				
