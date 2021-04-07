@@ -66,7 +66,7 @@ void LightingShaderTerrainEditorImplementation::registerShader() {
 			{ "brushDimension", ShaderParameter(Vector2(0.0f, 0.0f)) },
 			{ "brushTexture", ShaderParameter(0) },
 			{ "brushRotation", ShaderParameter(0.0f) },
-			{ "brushScale", ShaderParameter(1.0f) },
+			{ "brushScale", ShaderParameter(Vector2(1.0f, 1.0f)) },
 			{ "brushPosition", ShaderParameter(Vector2(0.0f, 0.0f)) }
 		}
 	);
@@ -84,9 +84,14 @@ void LightingShaderTerrainEditorImplementation::useProgram(Engine* engine, void*
 	//
 	Matrix2D3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.translate(Vector2(0.5f, 0.5f));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().translate(Vector2(0.5f, 0.5f)));
+	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(
+		Vector2(
+			1.0f / engine->getShaderParameter(getId(), "brushScale").getVector2Value().getX(),
+			1.0f / engine->getShaderParameter(getId(), "brushScale").getVector2Value().getY()
+		)
+	));
 	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(engine->getShaderParameter(getId(), "brushRotation").getFloatValue()));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(engine->getShaderParameter(getId(), "brushScale").getFloatValue()));
 
 	//
 	renderer->setProgramUniformInteger(context, uniformBrushEnabled, engine->getShaderParameter(getId(), "brushEnabled").getBooleanValue() == true?1:0);
