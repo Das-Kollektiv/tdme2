@@ -149,7 +149,7 @@ public:
 
 	/**
 	 * Set brush density/strength
-	 * @param densityStrength density strength
+	 * @param densityStrength density/strength
 	 */
 	void setBrushDensityStrength(float densityStrength);
 
