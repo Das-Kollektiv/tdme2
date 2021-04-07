@@ -198,6 +198,7 @@ void ModelEditorScreenController::initialize()
 		materialsDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_dropdown"));
 		materialsDropdownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_dropdown_apply"));
 		materialsMaterialName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_name"));
+		materialsMaterialDoubleSided = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_double_sided"));
 		materialsMaterialAmbient = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_ambient"));
 		materialsMaterialDiffuse = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse"));
 		materialsMaterialSpecular= dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_specular"));
@@ -708,6 +709,7 @@ void ModelEditorScreenController::setMaterials() {
 	//
 	materialsDropdown->getController()->setDisabled(false);
 	materialsDropdownApply->getController()->setDisabled(false);
+	materialsMaterialDoubleSided->getController()->setDisabled(false);
 	materialsMaterialAmbient->getController()->setDisabled(false);
 	materialsMaterialDiffuse->getController()->setDisabled(false);
 	materialsMaterialSpecular->getController()->setDisabled(false);
@@ -756,6 +758,8 @@ void ModelEditorScreenController::unsetMaterials() {
 	materialsDropdown->getController()->setDisabled(true);
 	materialsDropdownApply->getController()->setDisabled(true);
 	materialsMaterialName->getController()->setValue(MutableString(""));
+	materialsMaterialDoubleSided->getController()->setDisabled(true);
+	materialsMaterialDoubleSided->getController()->setValue(MutableString(""));
 	materialsMaterialAmbient->getController()->setDisabled(true);
 	materialsMaterialAmbient->getController()->setValue(MutableString(""));
 	materialsMaterialDiffuse->getController()->setDisabled(true);
@@ -822,6 +826,7 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 
 	// specular
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
+	materialsMaterialDoubleSided->getController()->setValue(MutableString(material->isDoubleSided() == true?"1":""));
 	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getAmbientColor())));
 	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getDiffuseColor())));
 	materialsMaterialSpecular->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getSpecularColor())));
@@ -932,6 +937,7 @@ void ModelEditorScreenController::onMaterialApply() {
 	try {
 		view->resetPrototype();
 		// specular
+		material->setDoubleSided(materialsMaterialDoubleSided->getController()->getValue().getString() == "1");
 		specularMaterialProperties->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
 		specularMaterialProperties->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
