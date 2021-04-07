@@ -538,10 +538,32 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		//
-		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale);
+		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorScreenController::setBrushScale(float scale) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushScale = scale;
+		terrainBrushScale->getController()->setValue(MutableString(Tools::formatFloat(scale)));
+	} else
+	if (currentFoliageBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentFoliageBrushScale = scale;
+		foliageBrushScale->getController()->setValue(MutableString(Tools::formatFloat(scale)));
+	}
+}
+
+void TerrainEditorScreenController::setBrushDensityStrength(float densityStrength) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushStrength = densityStrength;
+		terrainBrushStrength->getController()->setValue(MutableString(Tools::formatFloat(densityStrength)));
+	} else
+	if (currentFoliageBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentFoliageBrushDensity = densityStrength;
+		foliageBrushDensity->getController()->setValue(MutableString(Tools::formatFloat(densityStrength)));
 	}
 }
 
@@ -928,7 +950,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		}
 
 		//
-		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale);
+		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale, currentFoliageBrushDensity);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
