@@ -2125,6 +2125,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 
 	// use lighting shader
 	if (visibleDecomposedEntities.objects.size() > 0) {
+		Console::println(to_string(visibleDecomposedEntities.objects.size()));
 		//
 		if (lightingShader != nullptr) lightingShader->useProgram(this);
 
