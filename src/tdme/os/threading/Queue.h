@@ -4,10 +4,12 @@
 
 #include <queue>
 
+#include "AtomicOperations.h"
 #include "Condition.h"
 #include "Mutex.h"
 
 using std::queue;
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Condition;
 using tdme::os::threading::Mutex;
 
