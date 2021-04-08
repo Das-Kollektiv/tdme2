@@ -1,0 +1,511 @@
+diff --git a/src/tdme/engine/Engine.cpp b/src/tdme/engine/Engine.cpp
+index b77ce748..219a59e9 100644
+--- a/src/tdme/engine/Engine.cpp
++++ b/src/tdme/engine/Engine.cpp
+@@ -91,6 +91,8 @@
+ #include <tdme/math/Vector4.h>
+ #include <tdme/os/filesystem/FileSystem.h>
+ #include <tdme/os/filesystem/FileSystemInterface.h>
++#include <tdme/os/threading/Queue.h>
++#include <tdme/os/threading/Thread.h>
+ #include <tdme/utilities/ByteBuffer.h>
+ #include <tdme/utilities/Console.h>
+ #include <tdme/utilities/Float.h>
+@@ -168,6 +170,8 @@ using tdme::math::Vector3;
+ using tdme::math::Vector4;
+ using tdme::os::filesystem::FileSystem;
+ using tdme::os::filesystem::FileSystemInterface;
++using tdme::os::threading::Queue;
++using tdme::os::threading::Thread;
+ using tdme::utilities::ByteBuffer;
+ using tdme::utilities::Console;
+ using tdme::utilities::Float;
+@@ -206,40 +210,47 @@ float Engine::transformationsComputingReduction2Distance = 50.0f;
+ map<string, Engine::Shader> Engine::shaders;
+ 
+ vector<Engine::EngineThread*> Engine::engineThreads;
++Queue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+ 
+-Engine::EngineThread::EngineThread(int idx, void* context):
++Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* queue):
+ 	Thread("enginethread"),
+ 	idx(idx),
+-	engine(nullptr),
+-	context(context) {
++	queue(queue) {
+ 	//
+-	rendering.transparentRenderFacesPool = new TransparentRenderFacesPool();
++	transparentRenderFacesPool = new TransparentRenderFacesPool();
+ }
+ 
+ void Engine::EngineThread::run() {
+ 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
+ 	while (isStopRequested() == false) {
+-		switch(state) {
+-			case STATE_WAITING:
+-				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
++		state = STATE_WAITING;
++		auto element = queue->getElement();
++		state = STATE_BUSY;
++		switch(element->type) {
++			case EngineThreadQueueElement::TYPE_NONE:
+ 				break;
+-			case STATE_TRANSFORMATIONS:
+-				engine->computeTransformationsFunction(*transformations.decomposedEntities, threadCount, idx, transformations.computeTransformations);
+-				state = STATE_SPINNING;
+-				break;
+-			case STATE_RENDERING:
+-				rendering.transparentRenderFacesPool->reset();
+-				engine->entityRenderer->renderFunction(threadCount, idx, rendering.parameters.renderPass, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
+-				rendering.objectsByShadersAndModels.clear();
+-				state = STATE_SPINNING;
++			case EngineThreadQueueElement::TYPE_TRANSFORMATIONS:
++				Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: TRANSFORMATIONS");
++				element->engine->computeTransformationsFunction(
++					element->objects,
++					idx,
++					element->transformations.computeTransformations
++				);
+ 				break;
+-			case STATE_SPINNING:
+-				{
+-					volatile auto i = 0LL;
+-					while (state == STATE_SPINNING) i++;
+-				}
++			case EngineThreadQueueElement::TYPE_RENDERING:
++				Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: RENDERING");
++				element->engine->entityRenderer->renderFunction(
++					idx,
++					element->rendering.renderPass,
++					element->objects,
++					objectsByShadersAndModels,
++					element->rendering.collectTransparentFaces,
++					element->rendering.renderTypes,
++					transparentRenderFacesPool
++				);
+ 				break;
+ 		}
++		delete element;
+ 	}
+ 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
+ }
+@@ -680,7 +691,7 @@ void Engine::initialize()
+ 
+ 	// engine thread count
+ 	if (renderer->isSupportingMultithreadedRendering() == true) {
+-		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2, 2, 4);
++		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2, 2, 4) + 1;
+ 	} else {
+ 		threadCount = 1;
+ 	}
+@@ -822,11 +833,13 @@ void Engine::initialize()
+ 
+ 	//
+ 	if (renderer->isSupportingMultithreadedRendering() == true) {
++		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(1000000);
++		Console::println("xxxx: " + to_string(threadCount));
+ 		engineThreads.resize(threadCount - 1);
+ 		for (auto i = 0; i < threadCount - 1; i++) {
+ 			engineThreads[i] = new EngineThread(
+ 				i + 1,
+-				renderer->getContext(i + 1)
++				engineThreadsQueue
+ 			);
+ 			engineThreads[i]->start();
+ 		}
+@@ -940,35 +953,11 @@ void Engine::initRendering()
+ 	renderingInitiated = true;
+ }
+ 
+-void Engine::computeTransformationsFunction(DecomposedEntities& decomposedEntites, int threadCount, int threadIdx, bool computeTransformations) {
++void Engine::computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx, bool computeTransformations) {
+ 	auto context = renderer->getContext(threadIdx);
+-	auto objectIdx = 0;
+-	for (auto object: decomposedEntites.objects) {
+-		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+-			objectIdx++;
+-			continue;
+-		}
+-		object->preRender(context);
+-		if (computeTransformations == true) object->computeTransformations(context);
+-		objectIdx++;
+-	}
+-	for (auto object: decomposedEntites.objectsPostPostProcessing) {
+-		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+-			objectIdx++;
+-			continue;
+-		}
+-		object->preRender(context);
+-		if (computeTransformations == true) object->computeTransformations(context);
+-		objectIdx++;
+-	}
+-	for (auto object: decomposedEntites.objectsNoDepthTest) {
+-		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+-			objectIdx++;
+-			continue;
+-		}
++	for (auto object: objects) {
+ 		object->preRender(context);
+ 		if (computeTransformations == true) object->computeTransformations(context);
+-		objectIdx++;
+ 	}
+ }
+ 
+@@ -1151,22 +1140,60 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
+ 	//
+ 	if (skinningShaderEnabled == true) skinningShader->useProgram();
+ 	if (renderer->isSupportingMultithreadedRendering() == false) {
+-		computeTransformationsFunction(decomposedEntities, 1, 0, computeTransformations);
++		computeTransformationsFunction(decomposedEntities.objects, 0, computeTransformations);
++		computeTransformationsFunction(decomposedEntities.objectsPostPostProcessing, 0, computeTransformations);
++		computeTransformationsFunction(decomposedEntities.objectsNoDepthTest, 0, computeTransformations);
+ 	} else {
+-		for (auto engineThread: engineThreads) engineThread->engine = this;
+-		for (auto engineThread: engineThreads) {
+-			engineThread->transformations.computeTransformations = computeTransformations;
+-			engineThread->transformations.decomposedEntities = &decomposedEntities;
++		auto queueElement = new Engine::EngineThreadQueueElement();
++		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
++		queueElement->engine = this;
++		queueElement->transformations.computeTransformations = computeTransformations;
++		for (auto i = 0; i < decomposedEntities.objects.size(); i++) {
++			queueElement->objects.push_back(decomposedEntities.objects[i]);
++			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
++				Console::println("000");
++				engineThreadsQueue->addElement(queueElement, false);
++				queueElement = new Engine::EngineThreadQueueElement();
++				queueElement->engine = this;
++				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
++				queueElement->transformations.computeTransformations = computeTransformations;
++			}
++		}
++		for (auto i = 0; i < decomposedEntities.objectsPostPostProcessing.size(); i++) {
++			queueElement->objects.push_back(decomposedEntities.objectsPostPostProcessing[i]);
++			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
++				Console::println("111");
++				engineThreadsQueue->addElement(queueElement, false);
++				queueElement = new Engine::EngineThreadQueueElement();
++				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
++				queueElement->engine = this;
++				queueElement->transformations.computeTransformations = computeTransformations;
++			}
+ 		}
+-		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
+-		computeTransformationsFunction(decomposedEntities, threadCount, 0, computeTransformations);
+-		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
+-		for (auto engineThread: engineThreads) {
+-			engineThread->transformations.computeTransformations = false;
+-			engineThread->transformations.decomposedEntities = nullptr;
++		for (auto i = 0; i < decomposedEntities.objectsNoDepthTest.size(); i++) {
++			queueElement->objects.push_back(decomposedEntities.objectsNoDepthTest[i]);
++			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
++				Console::println("222");
++				engineThreadsQueue->addElement(queueElement, false);
++				queueElement = new Engine::EngineThreadQueueElement();
++				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
++				queueElement->engine = this;
++				queueElement->transformations.computeTransformations = computeTransformations;
++			}
+ 		}
+-		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
++		if (queueElement->objects.empty() == true) {
++			delete queueElement;
++		} else {
++			engineThreadsQueue->addElement(queueElement, false);
++			queueElement = nullptr;
++		}
++
++		//
++		while (engineThreadsQueue->isEmpty() == false);
++		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_BUSY);
+ 	}
++
++	//
+ 	if (skinningShaderEnabled == true) {
+ 		skinningShader->unUseProgram();
+ 	}
+@@ -1354,12 +1381,6 @@ void Engine::display()
+ 	renderingInitiated = false;
+ 	renderingComputedTransformations = false;
+ 
+-	//
+-	if (renderer->isSupportingMultithreadedRendering() == true) {
+-		for (auto engineThread: engineThreads) while (engineThread->state != EngineThread::STATE_SPINNING && engineThread->state != EngineThread::STATE_WAITING);
+-		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
+-	}
+-
+ 	//
+ 	if (frameBuffer != nullptr) {
+ 		FrameBuffer::disableFrameBuffer();
+diff --git a/src/tdme/engine/Engine.h b/src/tdme/engine/Engine.h
+index 1f85ac29..d2a059b5 100644
+--- a/src/tdme/engine/Engine.h
++++ b/src/tdme/engine/Engine.h
+@@ -38,6 +38,7 @@
+ #include <tdme/math/fwd-tdme.h>
+ #include <tdme/math/Matrix2D3x3.h>
+ #include <tdme/math/Matrix4x4.h>
++#include <tdme/os/threading/Queue.h>
+ #include <tdme/os/threading/Thread.h>
+ #include <tdme/utilities/Console.h>
+ 
+@@ -99,6 +100,7 @@ using tdme::math::Matrix2D3x3;
+ using tdme::math::Matrix4x4;
+ using tdme::math::Vector2;
+ using tdme::math::Vector3;
++using tdme::os::threading::Queue;
+ using tdme::os::threading::Thread;
+ using tdme::utilities::Console;
+ 
+@@ -156,6 +158,7 @@ public:
+ 	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
+ 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
+ 	static constexpr int LIGHTS_MAX { 8 };
++	static constexpr int ENGINETHREADSQUEUE_DISPATCH_COUNT { 50 };
+ 
+ protected:
+ 	static Engine* currentEngine;
+@@ -260,44 +263,61 @@ private:
+ 
+ 	map<string, map<string, ShaderParameter>> shaderParameters;
+ 
+-	class EngineThread: public Thread {
+-		friend class Engine;
+-	private:
+-		int idx;
+-		void* context;
+-	public:
+-		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
++	struct EngineThreadQueueElement {
++		enum Type { TYPE_NONE, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
++
++		Type type { TYPE_NONE };
+ 
+-		Engine* engine;
++		Engine* engine { nullptr };
+ 
+ 		struct {
+ 			bool computeTransformations { false };
+-			DecomposedEntities* decomposedEntities { nullptr };
+ 		} transformations;
+ 
+ 		struct {
+-			EntityRenderer_InstancedRenderFunctionParameters parameters;
+-			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
+-			TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
++			Entity::RenderPass renderPass;
++			uint32_t renderTypes;
++			bool collectTransparentFaces;
+ 		} rendering;
+ 
++		vector<Object3D*> objects;
++	};
++
++	class EngineThread: public Thread {
++		friend class Engine;
++		friend class tdme::engine::subsystems::rendering::EntityRenderer;
++	private:
++		enum State { STATE_WAITING, STATE_BUSY };
++
++		int idx;
++		Queue<EngineThreadQueueElement>* queue { nullptr };
++		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
++		unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
+ 		volatile State state { STATE_WAITING };
+ 
+ 	private:
+ 		/**
+ 		 * Constructor
+ 		 * @param idx thread index
+-		 * @param context context
++		 * @param queue queue
+ 		 */
+-		EngineThread(int idx, void* context);
++		EngineThread(int idx, Queue<EngineThreadQueueElement>* queue);
+ 
+ 		/**
+ 		 * Run
+ 		 */
+ 		virtual void run();
++
++		/**
++		 * @return transparent render faces pool
++		 */
++		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
++			return transparentRenderFacesPool;
++		}
+ 	};
+ 
+ 	static vector<EngineThread*> engineThreads;
++	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+ 
+ 	/**
+ 	 * @return mesh manager
+@@ -407,12 +427,11 @@ private:
+ 
+ 	/**
+ 	 * Computes visibility and transformations
+-	 * @param decomposedEntites decomposed entites
+-	 * @param threadCount thread count
+-	 * @param threadIdx thread idx
++	 * @param objects objects
++	 * @param threadIdx thread index
+ 	 * @param computeTransformations compute transformations
+ 	 */
+-	void computeTransformationsFunction(DecomposedEntities& decomposedEntites, int threadCount, int threadIdx, bool computeTransformations);
++	void computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx, bool computeTransformations);
+ 
+ 	/**
+ 	 * Computes visibility and transformations
+diff --git a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+index bedd9b1e..684c330b 100644
+--- a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+@@ -905,6 +905,7 @@ void* VKRenderer::getDefaultContext() {
+ }
+ 
+ void* VKRenderer::getContext(int contextIdx) {
++	Console::println("yyyyy: " + to_string(contextIdx) + " / " + to_string(contexts.size()));
+ 	return &contexts[contextIdx];
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+index ee363d9c..c29e4f59 100644
+--- a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+@@ -226,22 +226,41 @@ void EntityRenderer::reset()
+ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
+ {
+ 	if (renderer->isSupportingMultithreadedRendering() == false) {
+-		renderFunction(1, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
++		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+ 	} else {
+-		EntityRenderer_InstancedRenderFunctionParameters parameters;
+-		parameters.renderPass = renderPass;
+-		parameters.objects = objects;
+-		parameters.collectTransparentFaces = renderTransparentFaces;
+-		parameters.renderTypes = renderTypes;
+-
+-		for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
+-		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
+-		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
++		auto queueElement = new Engine::EngineThreadQueueElement();
++		queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
++		queueElement->engine = engine;
++		queueElement->rendering.renderPass = renderPass;
++		queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
++		queueElement->rendering.renderTypes = renderTypes;
++		for (auto i = 0; i < objects.size(); i++) {
++			queueElement->objects.push_back(objects[i]);
++			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
++				engine->engineThreadsQueue->addElement(queueElement, false);
++				queueElement = new Engine::EngineThreadQueueElement();
++				queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
++				queueElement->engine = engine;
++				queueElement->rendering.renderPass = renderPass;
++				queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
++				queueElement->rendering.renderTypes = renderTypes;
++			}
++		}
++		if (queueElement->objects.empty() == true) {
++			delete queueElement;
++		} else {
++			engine->engineThreadsQueue->addElement(queueElement, false);
++		}
+ 
+-		renderFunction(threadCount, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
++		//
++		while (engine->engineThreadsQueue->isEmpty() == false);
++		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_BUSY);
+ 
+-		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
+-		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
++		//
++		for (auto engineThread: Engine::engineThreads) {
++			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool);
++			engineThread->transparentRenderFacesPool->reset();
++		}
+ 	}
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/rendering/EntityRenderer.h b/src/tdme/engine/subsystems/rendering/EntityRenderer.h
+index 02d0c3e8..2cadedb5 100644
+--- a/src/tdme/engine/subsystems/rendering/EntityRenderer.h
++++ b/src/tdme/engine/subsystems/rendering/EntityRenderer.h
+@@ -176,7 +176,6 @@ private:
+ 
+ 	/**
+ 	 * Render function
+-	 * @param threadCount thread count
+ 	 * @param threadIdx thread index
+ 	 * @param objects objects
+ 	 * @param visibleObjectsByModels objects by models storage
+@@ -184,7 +183,6 @@ private:
+ 	 * @param renderTypes render types
+ 	 */
+ 	inline void renderFunction(
+-		int threadCount,
+ 		int threadIdx,
+ 		Entity::RenderPass renderPass,
+ 		const vector<Object3D*>& objects,
+@@ -199,7 +197,6 @@ private:
+ 		Vector3 objectCamFromAxis;
+ 		auto camera = engine->getCamera();
+ 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+-			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
+ 			auto object = objects[objectIdx];
+ 			if (object->enabledInstances == 0) continue;
+ 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
+diff --git a/src/tdme/os/threading/Queue.h b/src/tdme/os/threading/Queue.h
+index e3a68da8..51f40ed4 100644
+--- a/src/tdme/os/threading/Queue.h
++++ b/src/tdme/os/threading/Queue.h
+@@ -4,10 +4,12 @@
+ 
+ #include <queue>
+ 
++#include "AtomicOperations.h"
+ #include "Condition.h"
+ #include "Mutex.h"
+ 
+ using std::queue;
++using tdme::os::threading::AtomicOperations;
+ using tdme::os::threading::Condition;
+ using tdme::os::threading::Mutex;
+ 
+@@ -68,6 +70,7 @@ public:
+ 		} else {
+ 			T* element = data.front();
+ 			data.pop();
++			AtomicOperations::decrement(queueSize);
+ 			m.unlock();
+ 			return element;
+ 		}
+@@ -86,11 +89,19 @@ public:
+ 			return false;
+ 		}
+ 		data.push(element);
++		AtomicOperations::increment(queueSize);
+ 		c.signal();
+ 		m.unlock();
+ 		return true;
+ 	}
+ 
++	/**
++	 * @return if queue is empty
++	 */
++	volatile bool isEmpty() {
++		return queueSize == 0;
++	}
++
+ protected:
+ 	typedef queue<T*> QueueType;
+ 	QueueType data;
+@@ -100,6 +111,7 @@ private:
+ 	Mutex m;
+ 	Condition c;
+ 	volatile bool stopRequested;
++	volatile unsigned int queueSize;
+ 
+ };
+ 
