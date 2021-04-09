@@ -345,7 +345,7 @@ void SceneEditorLibraryScreenController::onPartitionPrototype()
 	// remove original object
 	scene->removeEntitiesByPrototypeId(prototype->getId());
 	// TODO: check if to delete original model
-	//	as long as .tl has not been saved it is still required to have this file
+	//	as long as .tscene has not been saved it is still required to have this file
 	// FileSystem::getInstance()->removeFile(pathName, fileName);
 
 	// (re-)load scene editor view

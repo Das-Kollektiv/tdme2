@@ -170,7 +170,7 @@ void PathFindingTest::dispose()
 void PathFindingTest::initialize()
 {
 	engine->initialize();
-	SceneReader::read("resources/tests/levels/pathfinding", "test.tl", scene);
+	SceneReader::read("resources/tests/levels/pathfinding", "test.tscene", scene);
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 	SceneConnector::addScene(world, scene);

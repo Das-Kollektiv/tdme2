@@ -147,7 +147,7 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tl", scene);
+	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene", scene);
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 
