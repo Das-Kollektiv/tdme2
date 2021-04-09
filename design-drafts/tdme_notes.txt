@@ -103,7 +103,7 @@ definition_tooltip
 resources
 	scenes
 	prototypes
-	meshes
+	models
 	music
 	particles
 	scripts
@@ -112,18 +112,22 @@ resources
 	screens
 	fonts
 	images
+	properties
 shader
 scr
 
-prototype 	= prt
-texture  	= png
-script 	 	= tsr
-sound  	 	= ogg
-gui 	 	= xml
-mesh   	 	= tme
-(animation	= tan)
-scene  	 	= tsc
-particle 	= tps
+prototype 	= .tprototype
+script 	 	= .tscript
+mesh   	 	= .tmodel
+scene  	 	= .tscene
+particle 	= .tparticle
+terrain 	= .tterrain
+sound  	 	= .ogg
+music		= .ogg
+gui 	 	= .xml
+property	= .xml
+texture  	= .png
+image		= .png
 
 light
 sky dome
