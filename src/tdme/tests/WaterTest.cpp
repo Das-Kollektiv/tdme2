@@ -152,10 +152,10 @@ void WaterTest::initialize()
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 
 	// load sky
-	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
-	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
-	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
-	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "CM_Sphere.tmm");
+	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
+	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
+	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "sphere.tmodel");
 
 	// add sky
 	{

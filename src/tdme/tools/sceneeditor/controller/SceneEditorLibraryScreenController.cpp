@@ -424,7 +424,7 @@ void SceneEditorLibraryScreenController::onValueChanged(GUIElementNode* node)
 
 			auto const sceneLibrary = TDMESceneEditor::getInstance()->getSceneLibrary();
 			vector<string> extensions = ModelReader::getModelExtensions();
-			extensions.push_back("tmm");
+			extensions.push_back("tmodel");
 			popUps->getFileDialogScreenController()->show(
 				modelPath,
 				"Load from: ",

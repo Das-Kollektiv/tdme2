@@ -832,10 +832,10 @@ void SharedTerrainEditorView::initialize()
 
 		//
 		// load sky
-		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
-		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
-		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
-		spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmm");
+		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
+		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
+		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+		spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmodel");
 
 	} catch (Exception& exception) {
 		Console::print(string("SharedTerrainEditorView::initialize(): An error occurred: "));

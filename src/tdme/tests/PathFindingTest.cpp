@@ -180,7 +180,7 @@ void PathFindingTest::initialize()
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
+	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel");
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);

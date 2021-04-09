@@ -1847,7 +1847,7 @@ void ModelEditorScreenController::onModelLoad()
 	}
 	fileName = Tools::getFileName(fileName);
 	vector<string> extensions = ModelReader::getModelExtensions();
-	extensions.push_back("tmm");
+	extensions.push_back("tmodel");
 	view->getPopUps()->getFileDialogScreenController()->show(
 		modelPath.getPath(),
 		"Load from: ",
@@ -1892,8 +1892,8 @@ void ModelEditorScreenController::onModelSave()
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
-		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == false) {
-			fileName = Tools::removeFileEnding(fileName) + ".tmm";
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
+			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
 		}
 	}
 	vector<string> extensions = {

@@ -387,7 +387,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	};
 
 	vector<string> extensions;
-	extensions.push_back("tte");
+	extensions.push_back("tterrain");
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	view->getPopUps()->getFileDialogScreenController()->show(
 		terrainPath.getPath(),
@@ -432,7 +432,7 @@ void TerrainEditorScreenController::onTerrainSave()
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	vector<string> extensions = {
-		"tte"
+		"tterrain"
 	};
 	fileName = Tools::getFileName(fileName);
 	view->getPopUps()->getFileDialogScreenController()->show(
@@ -866,7 +866,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 		int idx;
 	};
 
-	vector<string> extensions = { "tmm" };
+	vector<string> extensions = { "tmodel" };
 	view->getPopUps()->getFileDialogScreenController()->show(
 		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath.getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
 		"Load from: ",
