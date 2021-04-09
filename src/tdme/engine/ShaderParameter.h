@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Public constructor for boolean value
-	 * @param boolean value boolean value
+	 * @param booleanValue boolean value
 	 */
 	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue) {
 	}

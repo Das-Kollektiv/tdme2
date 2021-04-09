@@ -18,6 +18,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -50,6 +51,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
+using tdme::math::Vector2;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -143,6 +145,11 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeHeightMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_height_max"));
 			foliageBrushPrototypeNormalAlign[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_normalalign"));
 		}
+
+		mirrorXAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_xaxis"));
+		mirrorZAxis = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_zaxis"));
+		mirrorFlip = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("mirror_flip"));
+		btnMirrorApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_mirror_apply"));
 
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
@@ -269,6 +276,9 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(btnFoliageBrushApply->getId()) == 0) {
 			onApplyFoliageBrush();
+		} else
+		if (node->getId().compare(btnMirrorApply->getId()) == 0) {
+			onApplyMirror();
 		}
 	}
 }
@@ -548,7 +558,7 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
 
-	// delete first
+	// apply brush first
 	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
@@ -561,7 +571,7 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 		currentTerrainBrushHeight
 	);
 
-	// and update
+	// and update foliage
 	Terrain::updateFoliageTerrainBrush(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
@@ -574,6 +584,41 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 
 	//
 	view->updateTemporaryFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
+}
+
+void TerrainEditorScreenController::applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	if (terrainModels.empty() == true) return;
+
+	// apply brush first
+	Terrain::applyRampBrushToTerrainModels(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushTexture,
+		rotation,
+		scale,
+		minHeight,
+		maxHeight
+	);
+
+	// and update foliage
+	Terrain::updateFoliageTerrainRampBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushTexture,
+		rotation,
+		scale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->recreateFoliage(recreateFoliagePartitions);
 	recreateFoliagePartitions.clear();
 }
 
@@ -704,6 +749,24 @@ bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& ter
 		currentTerrainBrushHeight
 	);
 	return haveCurrentTerrainBrushHeight;
+}
+
+bool TerrainEditorScreenController::determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_RAMP) {
+		return false;
+	}
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
+	if (terrainModel == nullptr) return false;
+	return Terrain::getTerrainModelsHeight(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		height
+	);
 }
 
 void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
@@ -870,6 +933,64 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void TerrainEditorScreenController::onApplyMirror() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	auto mirrorXAxisChecked = mirrorXAxis->getController()->getValue().equals("1");
+	auto mirrorZAxisChecked = mirrorZAxis->getController()->getValue().equals("1");
+	auto mirrorFlipChecked = mirrorFlip->getController()->getValue().equals("1");
+
+	//
+	auto terrain = prototype->getTerrain();
+
+	// mirror X axis
+	if (mirrorXAxisChecked == true) {
+		Terrain::mirrorXAxis(
+			mirrorFlipChecked,
+			terrain->getWidth(),
+			terrain->getDepth(),
+			terrain->getHeightVector(),
+			terrain->getWaterPositionMapsHeight(),
+			terrain->getWaterPositionMaps(),
+			terrain->getFoliageMaps()
+		);
+		terrain->setWidth(terrain->getWidth() * 2.0f);
+		{
+			auto maxIdx = 0;
+			for (auto idx: terrain->getWaterPositionMapsIndices()) {
+				if (idx > maxIdx) maxIdx = idx;
+			}
+			while (terrain->allocateWaterPositionMapIdx() != maxIdx);
+		}
+	}
+
+	// mirror Z axis
+	if (mirrorZAxisChecked == true) {
+		Terrain::mirrorZAxis(
+			mirrorFlipChecked,
+			terrain->getWidth(),
+			terrain->getDepth(),
+			terrain->getHeightVector(),
+			terrain->getWaterPositionMapsHeight(),
+			terrain->getWaterPositionMaps(),
+			terrain->getFoliageMaps()
+		);
+		terrain->setDepth(terrain->getDepth() * 2.0f);
+		{
+			auto maxIdx = 0;
+			for (auto idx: terrain->getWaterPositionMapsIndices()) {
+				if (idx > maxIdx) maxIdx = idx;
+			}
+			while (terrain->allocateWaterPositionMapIdx() != maxIdx);
+		}
+	}
+
+	//
+	onLoadTerrain();
 }
 
 void TerrainEditorScreenController::onFoliageBrushPrototypeClear(int idx) {
