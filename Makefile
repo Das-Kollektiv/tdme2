@@ -550,7 +550,6 @@ SRCS = \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
 	src/tdme/os/threading/ReadWriteLock.cpp \
-	src/tdme/os/threading/Semaphore.cpp \
 	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \

@@ -204,7 +204,6 @@
             - consumer/producer queue
             - mutex
             - read write lock
-            - semaphore
             - spin lock
             - thread
     - Installer

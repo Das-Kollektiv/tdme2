@@ -60,7 +60,6 @@
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/threading/Semaphore.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -128,7 +127,6 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
-using tdme::os::threading::Semaphore;
 using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
