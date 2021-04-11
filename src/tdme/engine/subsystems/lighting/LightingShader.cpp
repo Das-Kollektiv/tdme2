@@ -89,9 +89,7 @@ void LightingShader::unUseProgram()
 	running = false;
 	auto i = 0;
 	for (auto& lightingShaderContext: contexts) {
-		if (lightingShaderContext.implementation != nullptr) {
-			lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
-		}
+		if (lightingShaderContext.implementation != nullptr) lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
 		lightingShaderContext.implementation = nullptr;
 		i++;
 	}
@@ -131,8 +129,6 @@ void LightingShader::updateTextureMatrix(void* context) {
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
 }
-
-// TODO: shader parameters
 
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
