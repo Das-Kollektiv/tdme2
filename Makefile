@@ -24,6 +24,7 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
+	# MacOSX, Metal via Vulkan
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN -DHAVE_UNISTD_H
 		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
@@ -37,6 +38,7 @@ ifeq ($(OS), Darwin)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
 	else
+		# MacOSX, GL
 		EXTRAFLAGS := -DGLFW3 -DHAVE_UNISTD_H
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
