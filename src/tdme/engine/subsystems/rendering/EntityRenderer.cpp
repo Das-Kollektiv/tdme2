@@ -236,21 +236,22 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 		for (auto i = 0; i < objects.size(); i++) {
 			queueElement->objects.push_back(objects[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
-				engine->engineThreadsQueue->addElement(queueElement, false);
-				elementsIssued++;
+				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
 				queueElement->engine = engine;
 				queueElement->rendering.renderPass = renderPass;
 				queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
 				queueElement->rendering.renderTypes = renderTypes;
+				elementsIssued++;
+				engine->engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
 		if (queueElement->objects.empty() == true) {
 			delete queueElement;
 		} else {
-			engine->engineThreadsQueue->addElement(queueElement, false);
 			elementsIssued++;
+			engine->engineThreadsQueue->addElement(queueElement, false);
 		}
 
 		// wait until all elements have been processed

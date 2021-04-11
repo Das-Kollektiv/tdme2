@@ -4018,6 +4018,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 	for (auto shader: contextTyped.program->shaders) {
 		//
 		if (uniformId < 0 || uniformId >= shader->uniformList.size()) {
+			/*
 			Console::println(
 				"VKRenderer::" +
 				string(__FUNCTION__) +
@@ -4034,6 +4035,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 				to_string(uniformId) + " / " +
 				contextTyped.program->uniforms[uniformId]
 			);
+			*/
 			continue;
 		}
 		auto shaderUniformPtr = uniformId != -1?shader->uniformList[uniformId]:nullptr;
@@ -4049,6 +4051,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 			shaderUniform.texture_unit = *((int32_t*)data);
 		} else {
 			if (size != shaderUniform.size) {
+				/*
 				Console::println(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
@@ -4062,6 +4065,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 					to_string(size) + " / " +
 					to_string(shaderUniform.size)
 				);
+				*/
 				shaderIdx++;
 				continue;
 			}
