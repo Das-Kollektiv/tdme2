@@ -8,7 +8,6 @@ OBJ = obj
 OBJ_DEBUG = obj-debug
 
 CPPVERSION = -std=gnu++11
-STACKFLAGS =
 SRCS_PLATFORM =
 EXT_GLSLANG_PLATFORM_SRCS =
 SRCS_DEBUG =
@@ -49,7 +48,6 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework OpenCL -framework IOKit -framework Carbon -framework OpenAL
 	endif
-	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
@@ -186,7 +184,6 @@ else
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
-	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
 endif
 
@@ -1006,11 +1003,11 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@EXECUTABLE=$$(echo $1 | grep -o '[a-zA-Z0-9]*-main' | sed -e 's/\-main//');
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
-	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $@.rc.o $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $@.rc.o $< -l$(NAME) $(EXTRA_LIBS)
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 endif
 
 hashlink:
