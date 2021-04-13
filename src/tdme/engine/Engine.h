@@ -158,8 +158,9 @@ public:
 	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
-	// TODO: make sure one can set up this parameter also, also check if we need a different value for compute
-	static constexpr int ENGINETHREADSQUEUE_DISPATCH_COUNT { 200 };
+	// TODO: make sure one can set up this parameter also
+	static constexpr int ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT { 200 };
+	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
 protected:
 	static Engine* currentEngine;

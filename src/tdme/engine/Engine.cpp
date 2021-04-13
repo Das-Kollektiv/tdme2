@@ -1150,7 +1150,7 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		queueElement->transformations.computeTransformations = computeTransformations;
 		for (auto i = 0; i < decomposedEntities.objects.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objects[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
@@ -1162,7 +1162,7 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		}
 		for (auto i = 0; i < decomposedEntities.objectsPostPostProcessing.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objectsPostPostProcessing[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
@@ -1174,7 +1174,7 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		}
 		for (auto i = 0; i < decomposedEntities.objectsNoDepthTest.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objectsNoDepthTest[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
