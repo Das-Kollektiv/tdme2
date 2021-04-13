@@ -141,9 +141,10 @@ void LightingShader::setShader(void* context, const string& id) {
 	auto shaderIt = shader.find(renderer->getShaderPrefix() + shaderId);
 	if (shaderIt == shader.end()) shaderIt = shader.find(renderer->getShaderPrefix() + "default");
 	if (shaderIt == shader.end()) shaderIt = shader.find("default");
-	lightingShaderContext.implementation = shaderIt->second;
-	if (currentImplementation != lightingShaderContext.implementation) {
+	auto nextImplementation = shaderIt->second;
+	if (currentImplementation != nextImplementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		lightingShaderContext.implementation = nextImplementation;
 		lightingShaderContext.implementation->useProgram(engine, context);
 	}
 }
