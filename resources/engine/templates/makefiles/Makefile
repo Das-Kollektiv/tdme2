@@ -63,9 +63,8 @@ else
 	OFLAGS := -O2
 endif
 
-# set default ASW build type if not yet done
+# set default application build type if not yet done
 ifeq ($(APP_BUILD_TYPE),)
-	# 0 = dev, 1 = test, 2 = live
 	override APP_BUILD_TYPE=0
 endif
 
