@@ -242,7 +242,7 @@
     - GUI effects via XML definitions
     - Simple script language
     - PBR lighting shader for GL3/CORE+
-    - Makefile generator for TDME2 based projects
+    - Add nmake support to makefile generator for TDME2 based projects
     - Installer for MacOSX
     - Improve on Vulkan
     - Expose shader and post processing programs setup API
