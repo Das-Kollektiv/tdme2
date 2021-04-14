@@ -788,6 +788,9 @@ importtmm:
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
+makefilegenerator:
+	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
