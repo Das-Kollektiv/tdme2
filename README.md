@@ -214,6 +214,18 @@
         - TDME2 tools contains the installer creation application, whereas
             - installer definitions are set up using property files
             - create-installer is able to group files into components
+    - Other tools
+        - archive tool to generate a single compressed file file system from ./resources and ./shader folders
+        - converttotm tool to generate TDME2 model files
+        - createinstaller tool to generate installer application and archives
+        - generatelicenses tool to generate complete engine or project licenses from ./ext folders
+        - importtmodel tool to generate TDME2 tmodel prototype files using model and bounding volumes models
+        - makefilegenerator tool to generate Makefiles for TDME2 based projects
+        - optimizemodel tool to generate texture atlases and bake down model mesh nodes into a few one to reduce GL/VK (render/compute) calls
+        - sortincludes tool to sort "include" and "using" source code statements
+        - GUITest tool to test GUI XML screen files
+        - Content editors, see "Links" section below
+        - others ...
 
 - What does it (maybe still) lack
     - physics

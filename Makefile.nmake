@@ -654,7 +654,7 @@ all: \
 	copyanimationsetups \
 	create-installer \
 	generatelicenses \
-	importtmm \
+	importtmodel \
 	fixdoxygen \
 	optimizemodel \
 	scenefixmodelszup2yup \
