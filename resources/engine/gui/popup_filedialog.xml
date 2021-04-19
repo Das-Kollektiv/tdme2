@@ -1,7 +1,7 @@
 <screen id="popup_filedialog" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
 		<tabs width="600" height="500">
-			<tabs-header>
+			<tabs-header id="filedialog_tabs-header">
 				<tab id="filedialog_caption" image="resources/engine/images/attention.png" text="Load" closeable="true"/>
 			</tabs-header>
 			<tabs-content>
@@ -33,10 +33,6 @@
 							<input id="filedialog_filename" name="filedialog_filename" width="*" height="25" text="./file.end" />
 							<space width="10" />
 							<dropdown width="100" height="25" id="filedialog_typedropdown" text="">
-								<dropdown-option text="all" value="1" on-mouse-click="dropdownvaluetext.condition=a" selected="true"/>
-								<dropdown-option text=".xml" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
-								<dropdown-option text=".tmm" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
-								<dropdown-option text=".blend" value="4" on-mouse-click="dropdownvaluetext.condition=d" />
 							</dropdown>
 						</layout>
 						<space height="10" />

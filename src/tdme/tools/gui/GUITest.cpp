@@ -115,6 +115,15 @@ void GUITest::initialize()
 			}
 		}
 	};
+	class CancelAction: public Action {
+	private:
+		GUITest* guiTest;
+	public:
+		CancelAction(GUITest* guiTest): guiTest(guiTest) {}
+		virtual void performAction() {
+			Application::exit(0);
+		}
+	};
 
 	try {
 		engine->initialize();
@@ -140,7 +149,8 @@ void GUITest::initialize()
 				{"xml"},
 				FileSystem::getInstance()->getFileName(screenFileName),
 				true,
-				new ScreenLoaderAction(this)
+				new ScreenLoaderAction(this),
+				new CancelAction(this)
 			);
 		}
 	} catch (Exception& exception) {

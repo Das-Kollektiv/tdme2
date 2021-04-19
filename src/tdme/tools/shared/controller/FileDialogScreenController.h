@@ -45,9 +45,12 @@ private:
 	vector<string> extensions;
 	string captionText;
 	GUITextNode* caption { nullptr };
+	GUIElementNode* path { nullptr };
 	GUIElementNode* fileName { nullptr };
 	GUIElementNode* files { nullptr };
+	GUIElementNode* typeDropDown { nullptr };
 	Action* applyAction { nullptr };
+	Action* cancelAction { nullptr };
 	vector<string> fileList;
 	bool enableFilter;
 	bool filtered;
@@ -93,9 +96,10 @@ public:
 	 * @param fileName file name
 	 * @param enableFilter enable filter
 	 * @param applyAction apply action
+	 * @param cancelAction cancel action
 	 * @throws IOException
 	 */
-	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
+	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction = nullptr);
 
 	/**
 	 * Abort the file dialog pop up

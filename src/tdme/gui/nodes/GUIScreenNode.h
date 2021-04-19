@@ -18,6 +18,7 @@
 using std::map;
 using std::set;
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
@@ -299,13 +300,30 @@ public:
 	 * @param nodeId nodeId
 	 * @return GUI node or null
 	 */
-	GUINode* getNodeById(const string& nodeId);
+	inline GUINode* getNodeById(const string& nodeId) {
+		auto nodesByIdIt = nodesById.find(nodeId);
+		if (nodesByIdIt == nodesById.end()) {
+			return nullptr;
+		}
+		return nodesByIdIt->second;
+	}
+
+	/**
+	 * Get inner GUI node by id
+	 * @param nodeId nodeId
+	 * @return GUI node or null
+	 */
+	inline GUINode* getInnerNodeById(const string& nodeId) {
+		return getNodeById(nodeId + "_inner");
+	}
 
 	/**
 	 * Allocate node id
 	 * @return node id
 	 */
-	const string allocateNodeId();
+	inline const string allocateNodeId() {
+		return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
+	}
 
 	/**
 	 * Render screen

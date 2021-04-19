@@ -53,8 +53,9 @@ private:
 
 	/**
 	 * Determine select box option controllers
+	 * @return if tabs are available
 	 */
-	void determineTabControllers();
+	bool determineTabControllers();
 
 	/**
 	 * Get selected tab idx

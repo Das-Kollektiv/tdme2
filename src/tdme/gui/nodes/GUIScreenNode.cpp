@@ -284,20 +284,6 @@ const string GUIScreenNode::getNodeType()
 	return "screen";
 }
 
-GUINode* GUIScreenNode::getNodeById(const string& nodeId)
-{
-	auto nodesByIdIt = nodesById.find(nodeId);
-	if (nodesByIdIt == nodesById.end()) {
-		return nullptr;
-	}
-	return nodesByIdIt->second;
-}
-
-const string GUIScreenNode::allocateNodeId()
-{
-	return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
-}
-
 bool GUIScreenNode::addNode(GUINode* node)
 {
 	// if node does exist do not insert it and return

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -53,6 +53,7 @@ FileDialogScreenController::FileDialogScreenController()
 
 FileDialogScreenController::~FileDialogScreenController() {
 	if (applyAction != nullptr) delete applyAction;
+	if (cancelAction != nullptr) delete cancelAction;
 }
 
 GUIScreenNode* FileDialogScreenController::getScreenNode()
@@ -78,9 +79,11 @@ void FileDialogScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
-		caption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("filedialog_caption"));
-		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("filedialog_files"));
-		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("filedialog_filename"));
+		// caption = required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("filedialog_caption")); // TODO: a.drewke
+		path = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
+		files = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
+		fileName = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
+		typeDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -99,9 +102,12 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	public:
 		bool accept(const string& pathName, const string& fileName) override {
 			if (FileSystem::getStandardFileSystem()->isPath(pathName + "/" + fileName) == true) return true;
-			for (auto& extension : fileDialogScreenController->extensions) {
+			if (extension.empty() == false) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) return true;
-
+			} else {
+				for (auto& extension : fileDialogScreenController->extensions) {
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) return true;
+				}
 			}
 			return false;
 		}
@@ -110,25 +116,24 @@ bool FileDialogScreenController::setupFileDialogListBox()
 		 * Public constructor
 		 * @param fileDialogScreenController file dialog screen controller
 		 */
-		ExtensionFilter(FileDialogScreenController* fileDialogScreenController): fileDialogScreenController(fileDialogScreenController) {
+		ExtensionFilter(FileDialogScreenController* fileDialogScreenController, const string& extension): fileDialogScreenController(fileDialogScreenController), extension(extension) {
 		}
 
 	private:
 		FileDialogScreenController* fileDialogScreenController;
+		string extension;
 	};
 
-	auto success = true;
-	auto directory = cwd;
-	if (directory.length() > 50) {
-		directory = "..." + StringTools::substring(directory, directory.length() - 50 + 3);
-	}
+	//
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("filedialog_tabs-header"))->replaceSubNodes("<tab id=\"filedialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escapeQuotes(captionText)+ "\" closeable=\"true\"/>", true);
+	path->getController()->setValue(MutableString(cwd));
 
-	caption->setText(MutableString(captionText).append(directory));
-
+	//
 	fileList.clear();
+	auto success = true;
 	try {
 		auto directory = cwd;
-		ExtensionFilter extensionsFilter(this);
+		ExtensionFilter extensionsFilter(this, typeDropDown->getController()->getValue().getString());
 		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter, FileSystem::getStandardFileSystem()->isDrive(directory));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
@@ -146,7 +151,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 }
 
 void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile) {
-	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(files->getId() + "_inner"));
+	auto filesInnerNode = required_dynamic_cast<GUIParentNode*>(files->getScreenNode()->getInnerNodeById(files->getId()));
 	auto idx = 1;
 	string filesInnerNodeSubNodesXML = "";
 	filesInnerNodeSubNodesXML =
@@ -173,7 +178,7 @@ void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string
 	}
 }
 
-void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction)
+void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction)
 {
 	try {
 		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, "");
@@ -194,6 +199,15 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
 	this->applyAction = applyAction;
+	if (this->cancelAction != nullptr) delete this->cancelAction;
+	this->cancelAction = cancelAction;
+	{
+		string extensionsDropDownOptionsXML = "<dropdown-option text=\"All supported extensions\" value=\"\" selected=\"true\"/>\n";
+		for (auto& extension: extensions) {
+			extensionsDropDownOptionsXML+= "<dropdown-option text=\"" + StringTools::toUpperCase(extension) + " Files\" value=\"" + StringTools::toLowerCase(extension) + "\" selected=\"false\" />\n";
+		}
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(typeDropDown->getId()))->replaceSubNodes(extensionsDropDownOptionsXML, true);
+	}
 }
 
 void FileDialogScreenController::close()
@@ -203,7 +217,10 @@ void FileDialogScreenController::close()
 
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId() == "filedialog_files") {
+	if (node->getId() == typeDropDown->getId()) {
+		setupFileDialogListBox();
+	} else
+	if (node->getId() == files->getId()) {
 		try {
 			auto selectedFile = node->getController()->getValue().getString();
 			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
@@ -239,7 +256,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 			fileName->getController()->setValue(MutableString());
 		}
 	} else
-	if (node->getId() == "filedialog_filename") {
+	if (node->getId() == fileName->getId()) {
 		try {
 			if (enableFilter == true) {
 				auto filterString = StringTools::toLowerCase(node->getController()->getValue().getString());
@@ -266,10 +283,28 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId() == "filedialog_apply") {
-			if (applyAction != nullptr) applyAction->performAction();
+		if (node->getId() == path->getId()) {
+			auto lastCwd = cwd;
+			cwd = path->getController()->getValue().getString();
+			if (setupFileDialogListBox() == false) {
+				cwd = lastCwd;
+				setupFileDialogListBox();
+			}
 		} else
-		if (node->getId() == "filedialog_abort") {
+		if (node->getId() == "filedialog_apply") {
+			if (applyAction != nullptr) {
+				applyAction->performAction();
+				delete applyAction;
+				applyAction = nullptr;
+			}
+		} else
+		if (node->getId() == "filedialog_abort" ||
+			StringTools::startsWith(node->getId(), "filedialog_caption_close_") == true) { // TODO: a.drewke, check with DH
+			if (cancelAction != nullptr) {
+				cancelAction->performAction();
+				delete cancelAction;
+				cancelAction = nullptr;
+			}
 			close();
 		}
 	}
