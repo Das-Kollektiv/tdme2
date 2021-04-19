@@ -44,11 +44,11 @@ private:
 	string cwd;
 	vector<string> extensions;
 	string captionText;
-	GUITextNode* caption { nullptr };
-	GUIElementNode* path { nullptr };
-	GUIElementNode* fileName { nullptr };
-	GUIElementNode* files { nullptr };
-	GUIElementNode* typeDropDown { nullptr };
+	GUIElementNode* tabsHeaderNode { nullptr };
+	GUIElementNode* pathNode { nullptr };
+	GUIElementNode* fileNameNode { nullptr };
+	GUIElementNode* filesNode { nullptr };
+	GUIElementNode* typeDropDownNode { nullptr };
 	Action* applyAction { nullptr };
 	Action* cancelAction { nullptr };
 	vector<string> fileList;

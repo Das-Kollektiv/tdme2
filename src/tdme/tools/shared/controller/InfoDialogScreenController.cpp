@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
@@ -12,6 +13,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -26,6 +28,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 InfoDialogScreenController::InfoDialogScreenController()
 {
@@ -42,7 +45,7 @@ void InfoDialogScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_infodialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
-		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_caption"));
+		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("infodialog_tabs-header"));
 		messageNode = dynamic_cast< GUIMultilineTextNode* >(screenNode->getNodeById("infodialog_message"));
 	} catch (Exception& exception) {
 		Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
@@ -58,7 +61,7 @@ void InfoDialogScreenController::dispose()
 void InfoDialogScreenController::show(const string& caption, const string& message)
 {
 	screenNode->setVisible(true);
-	captionNode->setText(caption);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"infodialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + caption + "\" closeable=\"true\"/>", true);
 	messageNode->setText(message);
 	screenNode->layout();
 }
@@ -71,7 +74,8 @@ void InfoDialogScreenController::close()
 void InfoDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId().compare("infodialog_button1") == 0) {
+		if (node->getId() == "infodialog_button1" ||
+			StringTools::startsWith(node->getId(), "infodialog_caption_close_") == true) { // TODO: a.drewke, check with DH) {
 			close();
 		}
 	}

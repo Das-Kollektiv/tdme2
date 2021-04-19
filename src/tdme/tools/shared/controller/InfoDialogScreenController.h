@@ -33,7 +33,7 @@ class tdme::tools::shared::controller::InfoDialogScreenController final
 
 private:
 	GUIScreenNode* screenNode { nullptr };
-	GUITextNode* captionNode { nullptr };
+	GUIElementNode* tabsHeaderNode { nullptr };
 	GUIMultilineTextNode* messageNode { nullptr };
 
 public:

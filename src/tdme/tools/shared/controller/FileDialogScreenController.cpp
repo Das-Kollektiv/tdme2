@@ -68,7 +68,7 @@ const string& FileDialogScreenController::getPathName()
 
 const string FileDialogScreenController::getFileName()
 {
-	return fileName->getController()->getValue().getString();
+	return fileNameNode->getController()->getValue().getString();
 }
 
 void FileDialogScreenController::initialize()
@@ -79,11 +79,11 @@ void FileDialogScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
-		// caption = required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("filedialog_caption")); // TODO: a.drewke
-		path = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
-		files = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
-		fileName = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
-		typeDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
+		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_tabs-header"));
+		pathNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
+		filesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
+		fileNameNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
+		typeDropDownNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -125,15 +125,15 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	};
 
 	//
-	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("filedialog_tabs-header"))->replaceSubNodes("<tab id=\"filedialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escapeQuotes(captionText)+ "\" closeable=\"true\"/>", true);
-	path->getController()->setValue(MutableString(cwd));
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"filedialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escapeQuotes(captionText)+ "\" closeable=\"true\"/>", true);
+	pathNode->getController()->setValue(MutableString(cwd));
 
 	//
 	fileList.clear();
 	auto success = true;
 	try {
 		auto directory = cwd;
-		ExtensionFilter extensionsFilter(this, typeDropDown->getController()->getValue().getString());
+		ExtensionFilter extensionsFilter(this, typeDropDownNode->getController()->getValue().getString());
 		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter, FileSystem::getStandardFileSystem()->isDrive(directory));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
@@ -141,7 +141,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 		success = false;
 	}
 	setupFileDialogListBoxFiles(fileList);
-	if (enableFilter == true) fileName->getController()->setValue(MutableString("Type a string to filter the list..."));
+	if (enableFilter == true) fileNameNode->getController()->setValue(MutableString("Type a string to filter the list..."));
 
 	//
 	filtered = false;
@@ -151,7 +151,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 }
 
 void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile) {
-	auto filesInnerNode = required_dynamic_cast<GUIParentNode*>(files->getScreenNode()->getInnerNodeById(files->getId()));
+	auto filesInnerNode = required_dynamic_cast<GUIParentNode*>(filesNode->getScreenNode()->getInnerNodeById(filesNode->getId()));
 	auto idx = 1;
 	string filesInnerNodeSubNodesXML = "";
 	filesInnerNodeSubNodesXML =
@@ -193,7 +193,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	}
 	this->captionText = captionText;
 	this->extensions = extensions;
-	this->fileName->getController()->setValue(fileName);
+	this->fileNameNode->getController()->setValue(fileName);
 	this->enableFilter = enableFilter;
 	setupFileDialogListBox();
 	screenNode->setVisible(true);
@@ -206,7 +206,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		for (auto& extension: extensions) {
 			extensionsDropDownOptionsXML+= "<dropdown-option text=\"" + StringTools::toUpperCase(extension) + " Files\" value=\"" + StringTools::toLowerCase(extension) + "\" selected=\"false\" />\n";
 		}
-		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(typeDropDown->getId()))->replaceSubNodes(extensionsDropDownOptionsXML, true);
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(typeDropDownNode->getId()))->replaceSubNodes(extensionsDropDownOptionsXML, true);
 	}
 }
 
@@ -217,10 +217,10 @@ void FileDialogScreenController::close()
 
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId() == typeDropDown->getId()) {
+	if (node->getId() == typeDropDownNode->getId()) {
 		setupFileDialogListBox();
 	} else
-	if (node->getId() == files->getId()) {
+	if (node->getId() == filesNode->getId()) {
 		try {
 			auto selectedFile = node->getController()->getValue().getString();
 			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
@@ -248,15 +248,15 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					setupFileDialogListBoxFiles(fileList, selectedFile);
 					filtered = false;
 				}
-				fileName->getController()->setValue(selectedFile);
+				fileNameNode->getController()->setValue(selectedFile);
 			}
 		} catch (Exception& exception) {
 			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
-			fileName->getController()->setValue(MutableString());
+			fileNameNode->getController()->setValue(MutableString());
 		}
 	} else
-	if (node->getId() == fileName->getId()) {
+	if (node->getId() == fileNameNode->getId()) {
 		try {
 			if (enableFilter == true) {
 				auto filterString = StringTools::toLowerCase(node->getController()->getValue().getString());
@@ -275,7 +275,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 		} catch (Exception& exception) {
 			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
-			fileName->getController()->setValue(MutableString());
+			fileNameNode->getController()->setValue(MutableString());
 		}
 	}
 }
@@ -283,9 +283,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId() == path->getId()) {
+		if (node->getId() == pathNode->getId()) {
 			auto lastCwd = cwd;
-			cwd = path->getController()->getValue().getString();
+			cwd = pathNode->getController()->getValue().getString();
 			if (setupFileDialogListBox() == false) {
 				cwd = lastCwd;
 				setupFileDialogListBox();

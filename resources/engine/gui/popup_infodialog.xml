@@ -2,7 +2,7 @@
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 	
 			<tabs width="400" height="200">
-				<tabs-header>
+				<tabs-header id="infodialog_tabs-header">
 					<tab id="infodialog_caption" image="resources/engine/images/attention.png" text="Information" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
