@@ -1,4 +1,4 @@
-// Forward declarations for tdme.tools.viewer
+// Forward declarations for tdme.tools.modeleditor
 #pragma once
 
 

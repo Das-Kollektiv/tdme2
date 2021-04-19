@@ -396,6 +396,9 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
+	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/controller/EditorScreenController.cpp \
+	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
@@ -659,6 +662,7 @@ all: \
 	optimizemodel \
 	scenefixmodelszup2yup \
 	sortincludes \
+	TDMEEditor \
 	TDMESceneEditor \
 	TDMEModelEditor \
 	TDMEParticleSystem \
@@ -799,6 +803,9 @@ scenefixmodelszup2yup:
 
 sortincludes:
     cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+TDMEEditor:
+	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMESceneEditor:
 	cl /FeTDMESceneEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

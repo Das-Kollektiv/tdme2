@@ -1,6 +1,5 @@
-// Forward declarations for tdme.tools.particlesystem
+// Forward declarations for tdme.tools.terraineditor
 #pragma once
-
 
 namespace tdme {
 namespace tools {

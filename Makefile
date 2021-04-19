@@ -575,6 +575,9 @@ SRCS = \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
+	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/controller/EditorScreenController.cpp \
+	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
@@ -874,6 +877,7 @@ MAIN_SRCS = \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
+	src/tdme/tools/editor/TDMEEditor-main.cpp \
 	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
