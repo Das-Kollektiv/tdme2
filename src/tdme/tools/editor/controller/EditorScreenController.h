@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -14,6 +15,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::vector;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -44,6 +46,7 @@ private:
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
 	string projectPath;
+	vector<string> tabIds;
 
 public:
 	/**

@@ -299,6 +299,16 @@ bool GUIScreenNode::addNode(GUINode* node)
 	return true;
 }
 
+void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets) {
+	auto node = getNodeById(nodeId);
+	if (node == nullptr) {
+		Console::println("GUIScreenNode::removeNodeById(): node not found: " + nodeId);
+		return;
+	}
+	if (node->parentNode != nullptr) node->parentNode->removeSubNode(node, resetScrollOffsets);
+	removeNode(node);
+}
+
 bool GUIScreenNode::removeNode(GUINode* node)
 {
 	{

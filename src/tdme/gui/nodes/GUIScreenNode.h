@@ -237,7 +237,6 @@ private:
 	void tick();
 
 public:
-
 	/**
 	 * @return content width
 	 */
@@ -307,6 +306,13 @@ public:
 		}
 		return nodesByIdIt->second;
 	}
+
+	/**
+	 * Remove GUI node by id
+	 * @param nodeId nodeId
+	 * @param resetScrollOffsets reset scroll offsets
+	 */
+	void removeNodeById(const string& nodeId, bool resetScrollOffsets);
 
 	/**
 	 * Get inner GUI node by id

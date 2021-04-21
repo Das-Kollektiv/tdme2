@@ -233,4 +233,11 @@ private:
 	 * @param requireConditionsMet require conditions met
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
+
+	/**
+	 * Remove sub node
+	 * @param node node
+	 * @param resetScrollOffsets reset scroll offsets
+	 */
+	void removeSubNode(GUINode* node, bool resetScrollOffsets);
 };

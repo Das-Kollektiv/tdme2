@@ -1,6 +1,8 @@
 #include <tdme/tools/editor/controller/EditorScreenController.h>
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
@@ -25,6 +27,8 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::vector;
+using std::remove;
 
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
@@ -117,6 +121,20 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
+		} else
+		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
+			string tabIdToClose;
+			for (auto& tabId: tabIds) {
+				if (StringTools::startsWith(node->getId(), tabId + "_close") == true) {
+					tabIdToClose = tabId;
+					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabId);
+				}
+			}
+			if (tabIdToClose.empty() == false) {
+				screenNode->removeNodeById(tabIdToClose, false);
+				screenNode->removeNodeById(tabIdToClose + "-content", false);
+				tabIds.erase(remove(tabIds.begin(), tabIds.end(), tabIdToClose), tabIds.end());
+			}
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
@@ -321,12 +339,11 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
 	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
-	auto tabId = StringTools::replace(relativeProjectFileName, ".", "_");
+	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
 	{
-		string tabsHeaderXML = "<tab id=\"tab_viewport_" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
-		Console::println("EditorScreenController::onOpenFile(): tabs header: " + tabsHeaderXML);
+		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
 		} catch (Exception& exception) {
@@ -336,10 +353,9 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	}
 	{
 		string tabsContentXML =
-			"<tab-content tab-id=\"tab_viewport_" + tabId + "\">\n" +
-				"<template id=\"tab_viewport_" + tabId + "_scene\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+			"<tab-content tab-id=\"" + tabId + "\">\n" +
+			"<template id=\"" + tabId + "_scene\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
 			"</tab-content>\n";
-		Console::println("EditorScreenController::onOpenFile(): tabs content: " + tabsContentXML);
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
 		} catch (Exception& exception) {
@@ -347,6 +363,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 			Console::println(string(exception.what()));
 		}
 	}
+	tabIds.push_back(tabId);
 }
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
