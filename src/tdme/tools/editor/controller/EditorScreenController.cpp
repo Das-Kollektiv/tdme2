@@ -2,37 +2,52 @@
 
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/os/filesystem/FileNameFilter.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
+using tdme::os::filesystem::FileNameFilter;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controller::EditorScreenController;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
+using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 EditorScreenController::EditorScreenController(EditorView* view)
 {
@@ -50,8 +65,8 @@ void EditorScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "screen_editor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
-		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
-		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
+		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
+		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -64,7 +79,6 @@ void EditorScreenController::dispose()
 
 void EditorScreenController::setScreenCaption(const string& text)
 {
-	screenCaption->setText(text);
 }
 
 void EditorScreenController::onQuit()
@@ -79,16 +93,225 @@ void EditorScreenController::showErrorPopUp(const string& caption, const string&
 
 void EditorScreenController::onValueChanged(GUIElementNode* node)
 {
+	if (node->getId() == "selectbox_projectpaths") {
+		string xml;
+		scanProjectPathFiles(node->getController()->getValue().getString(), xml);
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	} else {
+		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
+	}
 }
 
 void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "menu_file_open") {
+			onOpenProject();
+		} else {
+			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
+		}
+	}
+}
+
+void EditorScreenController::onOpenProject() {
+	class OnOpenProject: public virtual Action
+	{
+	public:
+		// overriden methods
+		void performAction() override {
+			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
+			editorScreenController->scanProjectPaths();
+		}
+
+		/**
+		 * Public constructor
+		 * @param editorScreenController editor screen controller
+		 */
+		OnOpenProject(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {
+		}
+
+	private:
+		EditorScreenController* editorScreenController;
+	};
+
+	view->getPopUps()->getFileDialogScreenController()->show(
+		string(),
+		"Open project from folder: ",
+		{},
+		string(),
+		true,
+		new OnOpenProject(this)
+	);
+}
+
+void EditorScreenController::scanProjectPaths() {
+	string xml;
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("resources") + "\" value=\"" + GUIParser::escapeQuotes("resources") + "\">\n";
+	scanProjectPaths(projectPath + "/resources", xml);
+	xml+= "</selectbox-parent-option>\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("shader") + "\" value=\"" + GUIParser::escapeQuotes("shader") + "\">\n";
+	scanProjectPaths(projectPath + "/shader", xml);
+	xml+= "</selectbox-parent-option>\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("src") + "\" value=\"" + GUIParser::escapeQuotes("src") + "\">\n";
+	scanProjectPaths(projectPath + "/src", xml);
+	xml+= "</selectbox-parent-option>\n";
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathsScrollArea->getId()))->replaceSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::scanProjectPaths(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
+	class ListFilter : public virtual FileNameFilter {
+		public:
+			virtual ~ListFilter() {}
+
+			bool accept(const string& pathName, const string& fileName) override {
+				if (fileName == ".") return false;
+				if (fileName == "..") return false;
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+				//
+				return false;
+			}
+	};
+
+	ListFilter listFilter;
+	vector<string> files;
+
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("EditorScreenController::scanProject(): Error: file does not exist: " + path);
+	} else
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			Console::println("EditorScreenController::scanProject(): Error: path is file" + path);
+		} else {
+			Console::println("EditorScreenController::scanProject(): Error: file exist, but does not match filter: " + path);
+		}
+	} else {
+		FileSystem::getInstance()->list(path, files, &listFilter);
+		for (auto fileName: files) {
+			auto relativePath = path + "/" + fileName;
+			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+				// no op for now
+			} else {
+				string innerXml;
+				scanProjectPaths(path + "/" + fileName, innerXml);
+				if (innerXml.empty() == false) {
+					xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\">\n";
+					xml+= innerXml;
+					xml+= "</selectbox-parent-option>\n";
+				} else {
+					xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" />\n";
+				}
+			}
+		}
+	}
+}
+
+void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath, string& xml) {
+	auto path = projectPath + "/" + relativeProjectPath;
+	Console::println("EditorScreenController::scanProjectPathFiles(): " + path);
+	class ListFilter : public virtual FileNameFilter {
+		public:
+			virtual ~ListFilter() {}
+
+			bool accept(const string& pathName, const string& fileName) override {
+				if (fileName == ".") return false;
+				if (fileName == "..") return false;
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return false;
+				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+				// audio
+				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) return true;
+				// code
+				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) return true;
+				// fonts
+				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
+				// images
+				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
+				// models
+				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) return true;
+				// property files
+				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) return true;
+				// shader
+				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
+				// tdme model
+				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
+				// tdme scene
+				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) return true;
+				// tdme particle system
+				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) return true;
+				// tdme terrain
+				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) return true;
+				// tdme script
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) return true;
+				// xml
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
+				// files without ending
+				if (fileName.rfind(".") == string::npos ||
+					(fileName.rfind("/") != string::npos &&
+					fileName.rfind(".") < fileName.rfind("/"))) {
+					return true;
+				}
+				//
+				return false;			}
+	};
+
+	ListFilter listFilter;
+	vector<string> files;
+
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + path);
+	} else
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file" + path);
+		} else {
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + path);
+		}
+	} else {
+		FileSystem::getInstance()->list(path, files, &listFilter);
+		auto idx = 0;
+		for (auto fileName: files) {
+			auto relativePath = path + "/" + fileName;
+			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == true) {
+				// no op for now
+			} else {
+				Console::println("xxx: " + relativePath);
+				if (idx % 2 == 0) {
+					if (xml.empty() == false) {
+						xml+= "</layout>\n";
+					}
+					xml+= "<layout alignment=\"horizontal\">\n";
+				}
+				// TODO: how to associate button with file name
+				xml+= "<button template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + fileName + "\" />\n";
+				idx++;
+			}
+		}
+	}
+	if (xml.empty() == false) {
+		xml+= "</layout>\n";
+	}
 }
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
-	auto& constraints = viewPort->getComputedConstraints();
-	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
-	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
-	width = constraints.width;
-	height = constraints.height;
 }

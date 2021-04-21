@@ -19,6 +19,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::views::EditorView;
@@ -38,8 +39,9 @@ class tdme::tools::editor::controller::EditorScreenController final
 private:
 	EditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
-	GUITextNode* screenCaption { nullptr };
-	GUIElementNode* viewPort { nullptr };
+	GUIParentNode* projectPathsScrollArea { nullptr };
+	GUIParentNode* projectPathFilesScrollArea { nullptr };
+	string projectPath;
 
 public:
 	/**
@@ -62,6 +64,30 @@ public:
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+
+	/**
+	 * On open project
+	 */
+	void onOpenProject();
+
+	/**
+	 * Scan project paths
+	 */
+	void scanProjectPaths();
+
+	/**
+	 * Scan project paths
+	 * @param path path
+	 * @param xml xml
+	 */
+	void scanProjectPaths(const string& path, string& xml);
+
+	/**
+	 * Scan project path files
+	 * @param relativeProjectPath relative project path
+	 * @param xml xml
+	 */
+	void scanProjectPathFiles(const string& relativeProjectPath, string& xml);
 
 	/**
 	 * Get viewport rectangle

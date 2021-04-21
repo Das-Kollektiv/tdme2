@@ -51,8 +51,8 @@
 							
 							<space height="5"/>
 							
-							<selectbox id="selectbox_projectlibrary" boder="0">
-								<scrollarea width="100%" height="200" focusable="true" background-color="{$color.element_midground}">
+							<selectbox id="selectbox_projectpaths" boder="0">
+								<scrollarea id="selectbox_projectpaths_scrollarea" width="100%" height="200" focusable="true" background-color="{$color.element_midground}">
 
 								
 					
@@ -82,7 +82,7 @@
 							
 							<space height="5"/>
 							
-							<scrollarea border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+							<scrollarea id="selectbox_projectpathfiles_scrollarea" border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
 							
 							</scrollarea>
