@@ -232,6 +232,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						unselect();
 						selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->select();
 					}
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;
@@ -244,6 +245,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						unselect();
 						selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->select();
 					}
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;
@@ -259,6 +261,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (multipleSelection == true) {
 						toggle();
 					}
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;

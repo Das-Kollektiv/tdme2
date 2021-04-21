@@ -112,6 +112,9 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "menu_file_open") {
 			onOpenProject();
+		} else
+		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+			Console::println("EditorScreenController::onActionPerformed(): selected file: " + required_dynamic_cast<GUIElementNode*>(node)->getValue());
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
@@ -295,7 +298,6 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == true) {
 				// no op for now
 			} else {
-				Console::println("xxx: " + relativePath);
 				if (idx % 2 == 0) {
 					if (xml.empty() == false) {
 						xml+= "</layout>\n";
@@ -303,7 +305,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					xml+= "<layout alignment=\"horizontal\">\n";
 				}
 				// TODO: how to associate button with file name
-				xml+= "<button template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + fileName + "\" />\n";
+				xml+= "<button id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + GUIParser::escapeQuotes(fileName) + "\" />\n";
 				idx++;
 			}
 		}
