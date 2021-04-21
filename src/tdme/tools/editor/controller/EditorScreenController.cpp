@@ -67,6 +67,8 @@ void EditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
+		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
+		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -114,7 +116,7 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			onOpenProject();
 		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
-			Console::println("EditorScreenController::onActionPerformed(): selected file: " + required_dynamic_cast<GUIElementNode*>(node)->getValue());
+			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
@@ -312,6 +314,38 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 	}
 	if (xml.empty() == false) {
 		xml+= "</layout>\n";
+	}
+}
+
+void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
+	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
+	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
+	auto tabId = StringTools::replace(relativeProjectFileName, ".", "_");
+	tabId = StringTools::replace(tabId, "/", "_");
+	tabId = GUIParser::escapeQuotes(tabId);
+	{
+		string tabsHeaderXML = "<tab id=\"tab_viewport_" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+		Console::println("EditorScreenController::onOpenFile(): tabs header: " + tabsHeaderXML);
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+	{
+		string tabsContentXML =
+			"<tab-content tab-id=\"tab_viewport_" + tabId + "\">\n" +
+				"<template id=\"tab_viewport_" + tabId + "_scene\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+			"</tab-content>\n";
+		Console::println("EditorScreenController::onOpenFile(): tabs content: " + tabsContentXML);
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
 	}
 }
 

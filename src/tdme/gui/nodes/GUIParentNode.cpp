@@ -145,6 +145,47 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 	}
 }
 
+void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
+{
+	screenNode->forceInvalidateLayout(this);
+	GUIParser::parse(this, xml);
+
+	floatingNodesCache.clear();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+			floatingNodesCache.push_back(guiSubNode);
+		}
+	}
+
+	invalidateRenderCaches();
+	setConditionsMet();
+	screenNode->layout(this);
+
+	if (layouted == false || resetScrollOffsets == true) {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
+	} else {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) {
+			float elementWidth = computedConstraints.width;
+			float contentWidth = getContentWidth();
+			auto scrollableWidth = contentWidth - elementWidth;
+			if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
+			if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
+			if (scrollableWidth > 0 && childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+		}
+
+		if (overflowY == GUIParentNode_Overflow::SCROLL) {
+			float elementHeight = computedConstraints.height;
+			float contentHeight = getContentHeight();
+			auto scrollableHeight = contentHeight - elementHeight;
+			if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
+			if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
+			if (scrollableHeight > 0 && childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+		}
+	}
+}
+
 void GUIParentNode::addSubNode(GUINode* node)
 {
 	if (screenNode->addNode(node) == false) {

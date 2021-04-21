@@ -143,6 +143,14 @@ public:
 	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets);
 
 	/**
+	 * Add sub nodes with given XML
+	 * @param xml xml
+	 * @param resetScrollOffsets reset scroll offsets
+	 * @throws tdme::gui::GUIParserException
+	 */
+	virtual void addSubNodes(const string& xml, bool resetScrollOffsets);
+
+	/**
 	 * Add sub node
 	 * @param node node
 	 * @throws tdme::gui::GUIParserException

@@ -41,6 +41,8 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIParentNode* projectPathsScrollArea { nullptr };
 	GUIParentNode* projectPathFilesScrollArea { nullptr };
+	GUIParentNode* tabsHeader { nullptr };
+	GUIParentNode* tabsContent { nullptr };
 	string projectPath;
 
 public:
@@ -89,6 +91,11 @@ public:
 	 */
 	void scanProjectPathFiles(const string& relativeProjectPath, string& xml);
 
+	/**
+	 * On open file
+	 * @param relativeProjectFileName relative project file name
+	 */
+	void onOpenFile(const string& relativeProjectFileName);
 	/**
 	 * Get viewport rectangle
 	 * @param left left

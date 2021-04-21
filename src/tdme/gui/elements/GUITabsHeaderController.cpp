@@ -54,6 +54,7 @@ void GUITabsHeaderController::dispose()
 
 void GUITabsHeaderController::postLayout()
 {
+	selectCurrent();
 }
 
 bool GUITabsHeaderController::hasFocus()
