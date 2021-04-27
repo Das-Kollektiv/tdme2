@@ -39,7 +39,7 @@ using tdme::tools::editor::views::PlayableSoundView;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::ModelEditorTabView
+class tdme::tools::editor::tabviews::ModelEditorTabView final
 	: public TabView
 	, public PlayableSoundView
 	, public GUIInputEventHandler

@@ -20,7 +20,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 /**
  * Prototype physics sub screen controller convex mesh generation class
  */
-class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_GenerateConvexMeshes
+class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_GenerateConvexMeshes final
 {
 public:
 	/**
