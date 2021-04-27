@@ -102,7 +102,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param ModelEditorTabController model editor tab controller
 		 * @param finalView final view
 		 */
 		OnSetPrototypeDataAction(ModelEditorTabController* modelEditorTabController, ModelEditorTabView* finalView)
@@ -597,28 +597,28 @@ void ModelEditorTabController::onLODLevelLoadModel() {
 	{
 	public:
 		void performAction() override {
-			ModelEditorTabController->lodModelFile->getController()->setValue(
+			modelEditorTabController->lodModelFile->getController()->setValue(
 				MutableString(
-					ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 					"/" +
-					ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				)
 			);
-			ModelEditorTabController->modelPath.setPath(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 */
-		OnLODModelLoad(ModelEditorTabController* ModelEditorTabController): ModelEditorTabController(ModelEditorTabController) {
+		OnLODModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 		}
 
 	private:
-		ModelEditorTabController *ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 	};
 
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
@@ -1006,29 +1006,29 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1059,29 +1059,29 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param ModelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1112,29 +1112,29 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param ModelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1165,29 +1165,29 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1214,29 +1214,29 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1263,29 +1263,29 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param ModelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1312,29 +1312,29 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 			MutableString value;
 			guiElementNode->getController()->setValue(
 				MutableString().
-					set(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
+					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
 					append("/").
-					append(ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
+					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
 			);
-			ModelEditorTabController->getModelPath()->setPath(
-				ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param ModelEditorTabController model editor tab controller
 		 * @param guiElementNode gui element node
 		 */
-		OnLoadTexture(ModelEditorTabController* ModelEditorTabController, GUIElementNode* guiElementNode)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
+			: modelEditorTabController(modelEditorTabController)
 			, guiElementNode(guiElementNode) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		GUIElementNode* guiElementNode;
 	};
 
@@ -1709,26 +1709,26 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 
 	public:
 		void performAction() override {
-			ModelEditorTabController->previewAnimationsAttachment1ModelModel->getController()->setValue(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+			modelEditorTabController->previewAnimationsAttachment1ModelModel->getController()->setValue(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			ModelEditorTabController->modelPath.setPath(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 */
-		OnPreviewAnimationsAttachment1ModelLoad(ModelEditorTabController* ModelEditorTabController): ModelEditorTabController(ModelEditorTabController) {
+		OnPreviewAnimationsAttachment1ModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 		}
 
 	private:
-		ModelEditorTabController *ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
@@ -1820,25 +1820,25 @@ void ModelEditorTabController::onModelLoad()
 
 	public:
 		void performAction() override {
-			ModelEditorTabController->view->loadFile(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->view->loadFile(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			ModelEditorTabController->modelPath.setPath(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 */
-		OnModelLoad(ModelEditorTabController* ModelEditorTabController): ModelEditorTabController(ModelEditorTabController) {
+		OnModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 		}
 
 	private:
-		ModelEditorTabController *ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 	};
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
@@ -1865,28 +1865,28 @@ void ModelEditorTabController::onModelSave()
 	public:
 		void performAction() override {
 			try {
-				ModelEditorTabController->view->saveFile(
-					ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-					ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->saveFile(
+					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);
-				ModelEditorTabController->modelPath.setPath(
-					ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->modelPath.setPath(
+					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 				);
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
-				ModelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 */
-		OnModelSave(ModelEditorTabController* ModelEditorTabController): ModelEditorTabController(ModelEditorTabController) {
+		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 		}
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 	};
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
@@ -1922,25 +1922,25 @@ void ModelEditorTabController::onModelReimport()
 
 	public:
 		void performAction() override {
-			ModelEditorTabController->view->reimportModel(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->view->reimportModel(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			ModelEditorTabController->modelPath.setPath(
-				ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			ModelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
 		 * Public constructor
-		 * @param ModelEditorTabController model editor screen controller
+		 * @param modelEditorTabController model editor tab controller
 		 */
-		OnModelLoad(ModelEditorTabController* ModelEditorTabController): ModelEditorTabController(ModelEditorTabController) {
+		OnModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 		}
 
 	private:
-		ModelEditorTabController *ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
