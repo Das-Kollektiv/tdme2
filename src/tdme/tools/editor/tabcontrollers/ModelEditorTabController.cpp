@@ -105,14 +105,14 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 		 * @param ModelEditorTabController model editor screen controller
 		 * @param finalView final view
 		 */
-		OnSetPrototypeDataAction(ModelEditorTabController* ModelEditorTabController, ModelEditorTabView* finalView)
-			: ModelEditorTabController(ModelEditorTabController)
+		OnSetPrototypeDataAction(ModelEditorTabController* modelEditorTabController, ModelEditorTabView* finalView)
+			: modelEditorTabController(modelEditorTabController)
 			, finalView(finalView) {
 		}
 
 
 	private:
-		ModelEditorTabController* ModelEditorTabController;
+		ModelEditorTabController* modelEditorTabController;
 		ModelEditorTabView* finalView;
 	};
 
