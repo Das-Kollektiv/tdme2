@@ -6,12 +6,12 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -21,7 +21,6 @@ using std::remove;
 using std::string;
 using std::vector;
 
-using tdme::engine::EntityShaderParameters;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -32,6 +31,7 @@ using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
 
 /**

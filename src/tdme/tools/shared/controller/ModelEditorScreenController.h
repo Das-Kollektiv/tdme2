@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -24,10 +24,10 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::ShaderParameter;
 using tdme::engine::model::Material;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::ShaderParameter;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;

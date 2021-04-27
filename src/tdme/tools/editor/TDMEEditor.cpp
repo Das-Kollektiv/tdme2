@@ -11,10 +11,10 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/shared/views/View.h>
+#include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
@@ -29,10 +29,10 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::GUI;
-using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::PopUps;
+using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::shared::views::View;
+using tdme::tools::editor::views::View;
 using tdme::utilities::Console;
 
 TDMEEditor* TDMEEditor::instance = nullptr;

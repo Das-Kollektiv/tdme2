@@ -47,8 +47,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUISpaceNode.h>
-#include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/nodes/GUITableCellNode.h>
+#include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/nodes/GUITableRowNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
@@ -113,8 +113,8 @@ using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
-using tdme::gui::nodes::GUITableNode;
 using tdme::gui::nodes::GUITableCellNode;
+using tdme::gui::nodes::GUITableNode;
 using tdme::gui::nodes::GUITableRowNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;

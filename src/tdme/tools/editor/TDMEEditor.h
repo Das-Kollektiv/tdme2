@@ -5,17 +5,18 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/tools/editor/views/fwd-tdme.h>
+#include <tdme/tools/editor/views/EditorView.h>
 
 using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::tools::shared::views::PopUps;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::shared::views::View;
+using tdme::tools::editor::views::View;
 
 /**
  * TDME editor

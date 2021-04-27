@@ -7,8 +7,8 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -18,11 +18,11 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/PartitionOctTree.h>
-#include <tdme/engine/EntityHierarchy.h>
-#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -49,8 +49,8 @@ using std::unordered_set;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::model::Model;
 using tdme::engine::model::Material;
+using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;

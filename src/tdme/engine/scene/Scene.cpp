@@ -11,8 +11,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -32,8 +32,8 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;

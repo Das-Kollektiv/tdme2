@@ -1,0 +1,80 @@
+#pragma once
+
+#include <string>
+#include <vector>
+
+#include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
+
+using std::string;
+using std::vector;
+
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
+
+/**
+ * Prototype display view
+ * @author Andreas Drewke
+ * @version $Id$
+ */
+class tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView final
+{
+private:
+	Engine* engine { nullptr };
+	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
+	bool displayGroundPlate;
+	bool displayShadowing;
+
+public:
+	/**
+	 * Public constructor
+	 * @param prototypeDisplaySubController entity display sub screen controller
+	 */
+	PrototypeDisplaySubView(PrototypeDisplaySubController* prototypeDisplaySubController);
+
+	/**
+	 * Destructor
+	 */
+	 ~PrototypeDisplaySubView();
+
+	/**
+	 * @return display ground plate
+	 */
+	inline bool isDisplayGroundPlate() {
+		return this->displayGroundPlate;
+	}
+
+	/**
+	 * Set up ground plate visibility
+	 * @param groundPlate ground plate visible
+	 */
+	inline void setDisplayGroundPlate(bool groundPlate) {
+		this->displayGroundPlate = groundPlate;
+	}
+
+	/**
+	 * @return display shadowing
+	 */
+	inline bool isDisplayShadowing() {
+		return displayShadowing;
+	}
+
+	/**
+	 * Set up shadow rendering
+	 * @param shadowing shadow rendering
+	 */
+	inline void setDisplayShadowing(bool shadowing) {
+		this->displayShadowing = shadowing;
+	}
+
+	/**
+	 * Display
+	 * @param prototype prototype
+	 */
+	 void display(Prototype* prototype);
+
+};

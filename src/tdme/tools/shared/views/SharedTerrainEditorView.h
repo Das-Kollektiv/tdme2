@@ -6,8 +6,8 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -22,9 +22,9 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::fileio::textures::Texture;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;

@@ -6,6 +6,8 @@ namespace tools {
 namespace editor {
 namespace views {
 	class EditorView;
+	class PlayableSoundView;
+	class View;
 }  // namespace views
 }  // namespace editor
 }  // namespace tools

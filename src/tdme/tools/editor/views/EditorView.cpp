@@ -7,12 +7,12 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/editor/controller/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
+#include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/TDMEEditor.h>
-#include <tdme/tools/shared/controller/FileDialogScreenController.h>
-#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -23,14 +23,14 @@ using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
-using tdme::tools::editor::controller::EditorScreenController;
+using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
-using tdme::tools::shared::controller::FileDialogScreenController;
-using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 

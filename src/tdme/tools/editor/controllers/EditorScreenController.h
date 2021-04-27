@@ -8,10 +8,10 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/tools/editor/controller/fwd-tdme.h>
+#include <tdme/tools/editor/controllers/fwd-tdme.h>
+#include <tdme/tools/editor/controllers/fwd-tdme.h>
+#include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
@@ -24,8 +24,8 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::shared::controller::ScreenController;
 using tdme::utilities::MutableString;
 
 /**
@@ -33,7 +33,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::controller::EditorScreenController final
+class tdme::tools::editor::controllers::EditorScreenController final
 	: public ScreenController
 	, public GUIActionListener
 	, public GUIChangeListener

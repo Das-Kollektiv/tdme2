@@ -576,7 +576,27 @@ SRCS = \
 	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/editor/TDMEEditor.cpp \
-	src/tdme/tools/editor/controller/EditorScreenController.cpp \
+	src/tdme/tools/editor/controllers/EditorScreenController.cpp \
+	src/tdme/tools/editor/controllers/FileDialogScreenController.cpp \
+	src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp \
+	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
+	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
+	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
+	src/tdme/tools/editor/misc/Gizmo.cpp \
+	src/tdme/tools/editor/misc/PopUps.cpp \
+	src/tdme/tools/editor/misc/Tools.cpp \
+	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_GenerateConvexMeshes.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
+	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
 	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \

@@ -5,17 +5,17 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/editor/controller/fwd-tdme.h>
+#include <tdme/tools/editor/controllers/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/tools/shared/views/View.h>
+#include <tdme/tools/editor/views/View.h>
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
-using tdme::tools::editor::controller::EditorScreenController;
-using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::View;
+using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::views::View;
 
 /**
  * Editor View
