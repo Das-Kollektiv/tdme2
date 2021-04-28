@@ -120,8 +120,9 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param tabId tab id
+	 * @param prototype prototype
 	 */
-	ModelEditorTabView(EditorView* editorView, const string& tabId);
+	ModelEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype);
 
 	/**
 	 * Destructor
@@ -236,13 +237,6 @@ public:
 	 * On init additional screens
 	 */
 	virtual void onInitAdditionalScreens();
-
-	/**
-	 * On load model
-	 * @param oldEntity old entity
-	 * @param entity entity
-	 */
-	virtual void onLoadModel(Prototype* oldEntity, Prototype* entity);
 
 	/**
 	 * On set prototype data hook

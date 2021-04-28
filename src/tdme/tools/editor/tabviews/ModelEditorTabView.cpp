@@ -93,7 +93,7 @@ using tdme::utilities::ModelTools;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
-ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tabId)
+ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -117,9 +117,11 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	audioStarted = -1LL;
 	audioOffset = -1LL;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
+	setPrototype(prototype);
 }
 
 ModelEditorTabView::~ModelEditorTabView() {
+	delete prototype;
 	delete modelEditorScreenController;
 	delete cameraRotationInputHandler;
 }
@@ -142,6 +144,7 @@ Prototype* ModelEditorTabView::getPrototype()
 void ModelEditorTabView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
+	if (prototype != nullptr) delete prototype;
 	this->prototype = prototype;
 	lodLevel = 1;
 	initModelRequested = true;
@@ -478,16 +481,10 @@ void ModelEditorTabView::dispose()
 	audio->reset();
 }
 
-void ModelEditorTabView::onLoadModel(Prototype* oldEntity, Prototype* entity)
-{
-	delete oldEntity;
-}
-
 void ModelEditorTabView::loadModel()
 {
 	Console::println(string("Model file: " + modelFile));
 	try {
-		auto oldEntity = prototype;
 		setPrototype(
 			loadModelPrototype(
 				FileSystem::getInstance()->getFileName(modelFile),
@@ -497,7 +494,6 @@ void ModelEditorTabView::loadModel()
 				Vector3()
 			)
 		);
-		onLoadModel(oldEntity, prototype);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}

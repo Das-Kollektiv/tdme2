@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
@@ -37,6 +39,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::FrameBuffer;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
@@ -385,7 +388,11 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		}
 	}
 	try {
-		auto tabView = new ModelEditorTabView(view, tabId);
+		auto prototype = PrototypeReader::read(
+			FileSystem::getInstance()->getPathName(absoluteFileName),
+			FileSystem::getInstance()->getFileName(absoluteFileName)
+		);
+		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
 		tabs[tabId] = EditorTabView(tabId, tabView, tabView->getFrameBuffer(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_framebuffer")));
 	} catch (Exception& exception) {
