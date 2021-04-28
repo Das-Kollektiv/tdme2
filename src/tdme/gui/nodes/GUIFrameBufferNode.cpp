@@ -1,8 +1,9 @@
-#include <tdme/gui/nodes/GUIImageNode.h>
+#include <tdme/gui/nodes/GUIFrameBufferNode.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
@@ -14,11 +15,12 @@
 #include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 
-using tdme::gui::nodes::GUIImageNode;
+using tdme::gui::nodes::GUIFrameBufferNode;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;
@@ -30,7 +32,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 
-GUIImageNode::GUIImageNode(
+GUIFrameBufferNode::GUIFrameBufferNode(
 	GUIScreenNode* screenNode,
 	GUIParentNode* parentNode,
 	const string& id,
@@ -46,7 +48,7 @@ GUIImageNode::GUIImageNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
-	const string& source,
+	FrameBuffer* frameBuffer,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
@@ -77,32 +79,31 @@ GUIImageNode::GUIImageNode(
 		maskMaxValue
 	)
 {
-	this->setSource(source);
+	this->setFrameBuffer(frameBuffer);
 }
 
-const string GUIImageNode::getNodeType()
+const string GUIFrameBufferNode::getNodeType()
 {
-	return "image";
+	return "framebuffer";
 }
 
-void GUIImageNode::dispose()
+void GUIFrameBufferNode::dispose()
 {
-	if (texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 	GUITextureNode::dispose();
 }
 
-const string& GUIImageNode::getSource() {
-	return source;
+FrameBuffer* GUIFrameBufferNode::getFrameBuffer() {
+	return frameBuffer;
 }
 
-void GUIImageNode::setSource(const string& source) {
-	if (texture != nullptr) {
-		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
-		texture = nullptr;
+void GUIFrameBufferNode::setFrameBuffer(FrameBuffer* frameBuffer) {
+	if (frameBuffer == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
 	}
-	this->source = source;
-	this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
-	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
-	this->textureWidth = texture == nullptr?0:texture->getWidth();
-	this->textureHeight = texture == nullptr?0:texture->getHeight();
+	textureId = frameBuffer->getColorBufferTextureId();
+	textureWidth = frameBuffer->getWidth();
+	textureHeight = frameBuffer->getHeight();
 }

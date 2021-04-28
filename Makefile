@@ -486,6 +486,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
 	src/tdme/gui/nodes/GUIElementNode.cpp \
+	src/tdme/gui/nodes/GUIFrameBufferNode.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp \
 	src/tdme/gui/nodes/GUIImageNode.cpp \
