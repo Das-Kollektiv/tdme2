@@ -9,6 +9,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -27,6 +28,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
+using tdme::engine::PartitionNone;
 using tdme::engine::Version;
 using tdme::gui::GUI;
 using tdme::tools::editor::misc::PopUps;
@@ -42,6 +44,7 @@ TDMEEditor::TDMEEditor()
 	Tools::loadSettings(this);
 	TDMEEditor::instance = this;
 	engine = Engine::getInstance();
+	engine->setPartition(new PartitionNone());
 	view = nullptr;
 	viewInitialized = false;
 	viewNew = nullptr;

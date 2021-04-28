@@ -82,10 +82,10 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypePhysicsSubController::PrototypePhysicsSubController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
+PrototypePhysicsSubController::PrototypePhysicsSubController(Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
 {
 	this->modelPath = modelPath;
-	this->view = new PrototypePhysicsSubView(this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->view = new PrototypePhysicsSubView(engine, this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;

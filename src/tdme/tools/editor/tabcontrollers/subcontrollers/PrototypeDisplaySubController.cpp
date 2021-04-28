@@ -23,9 +23,9 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-PrototypeDisplaySubController::PrototypeDisplaySubController(PrototypePhysicsSubView* physicsView)
+PrototypeDisplaySubController::PrototypeDisplaySubController(Engine* engine, PrototypePhysicsSubView* physicsView)
 {
-	view = new PrototypeDisplaySubView(this);
+	view = new PrototypeDisplaySubView(engine, this);
 	this->physicsView = physicsView;
 }
 
@@ -41,9 +41,9 @@ PrototypeDisplaySubView* PrototypeDisplaySubController::getView()
 void PrototypeDisplaySubController::initialize(GUIScreenNode* screenNode)
 {
 	try {
-		displayBoundingVolume = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_boundingvolume"));
-		displayShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_shadowing"));
-		displayGround = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("display_ground"));
+		displayBoundingVolume = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_boundingvolume"));
+		displayShadowing = dynamic_cast< GUIElementNode*>(screenNode->getNodeById("display_shadowing"));
+		displayGround = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_ground"));
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeDisplaySubController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

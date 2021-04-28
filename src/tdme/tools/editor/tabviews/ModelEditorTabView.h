@@ -14,6 +14,7 @@
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 
 using std::string;
@@ -32,6 +33,7 @@ using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::tabviews::TabView;
+using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 
 /**
@@ -50,6 +52,7 @@ protected:
 	Audio* audio { nullptr };
 
 private:
+	EditorView* editorView { nullptr };
 	PopUps* popUps { nullptr };
 	ModelEditorTabController* modelEditorScreenController { nullptr };
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
@@ -113,14 +116,20 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param editorView editor view
 	 * @param popUps pop ups
 	 */
-	ModelEditorTabView(PopUps* popUps);
+	ModelEditorTabView(EditorView* editorView, PopUps* popUps);
 
 	/**
 	 * Destructor
 	 */
 	~ModelEditorTabView();
+
+	/**
+	 * @return engine
+	 */
+	Engine* getEngine();
 
 	/**
 	 * @return pop up views

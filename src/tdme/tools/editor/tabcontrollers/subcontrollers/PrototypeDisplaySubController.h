@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -33,9 +35,10 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param engine engine
 	 * @param physicsView physics view
 	 */
-	PrototypeDisplaySubController(PrototypePhysicsSubView* physicsView);
+	PrototypeDisplaySubController(Engine* engine, PrototypePhysicsSubView* physicsView);
 
 	/**
 	 * Destructor

@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
@@ -14,7 +13,6 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::Engine;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
@@ -26,7 +24,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 class tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView final
 {
 private:
-	Engine* engine { nullptr };
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	PopUps* popUps { nullptr };
 

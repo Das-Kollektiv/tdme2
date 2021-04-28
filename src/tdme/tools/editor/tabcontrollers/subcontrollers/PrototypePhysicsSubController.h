@@ -110,13 +110,14 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param engine engine
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	PrototypePhysicsSubController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubController(Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

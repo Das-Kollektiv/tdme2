@@ -18,9 +18,9 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 
-PrototypeDisplaySubView::PrototypeDisplaySubView(PrototypeDisplaySubController* prototypeDisplaySubController)
+PrototypeDisplaySubView::PrototypeDisplaySubView(Engine* engine, PrototypeDisplaySubController* prototypeDisplaySubController)
 {
-	this->engine = Engine::getInstance();
+	this->engine = engine;
 	this->prototypeDisplaySubController = prototypeDisplaySubController;
 	displayGroundPlate = true;
 	displayShadowing = true;

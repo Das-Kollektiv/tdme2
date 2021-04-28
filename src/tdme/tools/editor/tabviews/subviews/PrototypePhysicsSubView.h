@@ -54,12 +54,13 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param engine engine
 	 * @param prototypePhysicsSubController pop ups
 	 * @param popUps model editor screen controller
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	PrototypePhysicsSubView(PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubView(Engine* engine, PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

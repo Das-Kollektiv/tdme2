@@ -49,6 +49,13 @@ public:
 	PopUps* getPopUps();
 
 	/**
+	 * @return screen controller
+	 */
+	EditorScreenController* getScreenController() {
+		return editorScreenController;
+	}
+
+	/**
 	 * Init GUI elements
 	 */
 	void updateGUIElements();

@@ -32,9 +32,10 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param engine engine
 	 * @param prototypeDisplaySubController entity display sub screen controller
 	 */
-	PrototypeDisplaySubView(PrototypeDisplaySubController* prototypeDisplaySubController);
+	PrototypeDisplaySubView(Engine* engine, PrototypeDisplaySubController* prototypeDisplaySubController);
 
 	/**
 	 * Destructor

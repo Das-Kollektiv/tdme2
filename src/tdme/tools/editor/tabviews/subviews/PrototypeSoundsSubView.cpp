@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 
@@ -14,13 +13,11 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 
 PrototypeSoundsSubView::PrototypeSoundsSubView(PrototypeSoundsSubController* prototypeSoundsSubController, PopUps* popUps)
 {
-	this->engine = Engine::getInstance();
 	this->prototypeSoundsSubController = prototypeSoundsSubController;
 	this->popUps = popUps;
 }

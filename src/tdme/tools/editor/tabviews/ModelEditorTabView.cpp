@@ -39,6 +39,7 @@
 #include <tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -84,6 +85,7 @@ using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -91,8 +93,9 @@ using tdme::utilities::ModelTools;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
-ModelEditorTabView::ModelEditorTabView(PopUps* popUps)
+ModelEditorTabView::ModelEditorTabView(EditorView* editorView, PopUps* popUps)
 {
+	this->editorView = editorView;
 	this->popUps = popUps;
 	engine = Engine::getInstance();
 	audio = Audio::getInstance();
@@ -114,6 +117,11 @@ ModelEditorTabView::ModelEditorTabView(PopUps* popUps)
 ModelEditorTabView::~ModelEditorTabView() {
 	delete modelEditorScreenController;
 	delete cameraRotationInputHandler;
+}
+
+Engine* ModelEditorTabView::getEngine()
+{
+	return engine;
 }
 
 PopUps* ModelEditorTabView::getPopUps()

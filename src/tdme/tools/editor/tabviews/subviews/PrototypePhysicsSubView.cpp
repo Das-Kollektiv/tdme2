@@ -67,9 +67,9 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 
-PrototypePhysicsSubView::PrototypePhysicsSubView(PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
+PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
 {
-	this->engine = Engine::getInstance();
+	this->engine = engine;
 	this->popUps = popUps;
 	this->prototypePhysicsSubController = prototypePhysicsSubController;
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
