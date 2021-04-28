@@ -37,17 +37,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubContr
 private:
 	PrototypeBaseSubView* view { nullptr };
 	PopUps* popUps { nullptr };
-	GUIElementNode* prototypeName { nullptr };
-	GUIElementNode* prototypeDescription { nullptr };
-	GUIElementNode* prototypeApply { nullptr };
-	GUIElementNode* prototypePropertyName { nullptr };
-	GUIElementNode* prototypePropertyValue { nullptr };
-	GUIElementNode* prototypePropertySave { nullptr };
-	GUIElementNode* prototypePropertyAdd { nullptr };
-	GUIElementNode* prototypePropertyRemove { nullptr };
-	GUIElementNode* prototypePropertiesList { nullptr };
-	GUIElementNode* prototypePropertyPresetApply { nullptr };
-	GUIElementNode* prototypePropertiesPresets { nullptr };
+	GUIScreenNode* screenNode { nullptr };
 	Action* onSetPrototypeDataAction { nullptr };
 
 public:

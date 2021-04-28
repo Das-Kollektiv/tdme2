@@ -7,6 +7,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -59,41 +60,27 @@ PrototypeBaseSubController::~PrototypeBaseSubController() {
 
 void PrototypeBaseSubController::initialize(GUIScreenNode* screenNode)
 {
-	try {
-		prototypeName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_name"));
-		prototypeDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_description"));
-		prototypeApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_apply"));
-		prototypePropertyName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_property_name"));
-		prototypePropertyValue = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_property_value"));
-		prototypePropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_save"));
-		prototypePropertyAdd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_add"));
-		prototypePropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_remove"));
-		prototypePropertiesList = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_properties_listbox"));
-		prototypePropertyPresetApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_entity_properties_presetapply"));
-		prototypePropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_properties_presets"));
-	} catch (Exception& exception) {
-		Console::print(string("PrototypeBaseSubController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	setPrototypePresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
+	this->screenNode = screenNode;
+	// TODO: a.drewke
+	// setPrototypePresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
 void PrototypeBaseSubController::setPrototypeData(const string& name, const string& description)
 {
-	prototypeName->getController()->setDisabled(false);
-	prototypeName->getController()->setValue(name);
-	prototypeDescription->getController()->setDisabled(false);
-	prototypeDescription->getController()->setValue(description);
-	prototypeApply->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setValue(name);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setValue(description);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_apply"))->getController()->setDisabled(false);
 }
 
 void PrototypeBaseSubController::unsetPrototypeData()
 {
-	prototypeName->getController()->setValue(MutableString());
-	prototypeName->getController()->setDisabled(true);
-	prototypeDescription->getController()->setValue(MutableString());
-	prototypeDescription->getController()->setDisabled(true);
-	prototypeApply->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_apply"))->getController()->setDisabled(true);
 }
 
 void PrototypeBaseSubController::onPrototypeDataApply(Prototype* prototype)
@@ -101,19 +88,19 @@ void PrototypeBaseSubController::onPrototypeDataApply(Prototype* prototype)
 	if (prototype == nullptr)
 		return;
 
-	view->setPrototypeData(prototype, prototypeName->getController()->getValue().getString(), prototypeDescription->getController()->getValue().getString());
+	view->setPrototypeData(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->getValue().getString(), required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->getValue().getString());
 	onSetPrototypeDataAction->performAction();
 }
 
 void PrototypeBaseSubController::setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds)
 {
-	auto prototypePropertiesPresetsInnerNode = dynamic_cast<GUIParentNode*>((prototypePropertiesPresets->getScreenNode()->getNodeById(prototypePropertiesPresets->getId() + "_inner")));
+	auto prototypePropertiesPresetsInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getId() + "_inner")));
 	auto idx = 0;
 	string prototypePropertiesPresetsInnerNodeSubNodesXML = "";
 	prototypePropertiesPresetsInnerNodeSubNodesXML =
 		prototypePropertiesPresetsInnerNodeSubNodesXML +
 		"<scrollarea id=\"" +
-		prototypePropertiesPresets->getId() +
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: prototypePresetIds) {
 		auto prototypePresetId = it.first;
@@ -138,22 +125,22 @@ void PrototypeBaseSubController::setPrototypePresetIds(const map<string, vector<
 
 void PrototypeBaseSubController::setPrototypeProperties(Prototype* prototype, const string& presetId, const string& selectedName)
 {
-	prototypePropertiesPresets->getController()->setDisabled(false);
-	prototypePropertyPresetApply->getController()->setDisabled(false);
-	prototypePropertiesList->getController()->setDisabled(false);
-	prototypePropertyAdd->getController()->setDisabled(false);
-	prototypePropertyRemove->getController()->setDisabled(false);
-	prototypePropertySave->getController()->setDisabled(true);
-	prototypePropertyName->getController()->setDisabled(true);
-	prototypePropertyValue->getController()->setDisabled(true);
-	prototypePropertiesPresets->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
-	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((prototypePropertiesList->getScreenNode()->getNodeById(prototypePropertiesList->getId() + "_inner")));
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_presetapply"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_add"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
+	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() + "_inner")));
 	auto idx = 1;
 	string prototypePropertiesListBoxSubNodesXML = "";
 	prototypePropertiesListBoxSubNodesXML =
 		prototypePropertiesListBoxSubNodesXML +
 		"<scrollarea id=\"" +
-		prototypePropertiesList->getId() +
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
 		PrototypeProperty* entityProperty = prototype->getPropertyByIndex(i);
@@ -181,28 +168,30 @@ void PrototypeBaseSubController::setPrototypeProperties(Prototype* prototype, co
 
 void PrototypeBaseSubController::unsetPrototypeProperties()
 {
-	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((prototypePropertiesList->getScreenNode()->getNodeById(prototypePropertiesList->getId() + "_inner")));
+	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() + "_inner")));
 	prototypePropertiesListBoxInnerNode->clearSubNodes();
-	prototypePropertiesPresets->getController()->setValue(MutableString("none"));
-	prototypePropertiesPresets->getController()->setDisabled(true);
-	prototypePropertyPresetApply->getController()->setDisabled(true);
-	prototypePropertiesList->getController()->setDisabled(true);
-	prototypePropertyAdd->getController()->setDisabled(true);
-	prototypePropertyRemove->getController()->setDisabled(true);
-	prototypePropertySave->getController()->setDisabled(true);
-	prototypePropertyName->getController()->setValue(MutableString());
-	prototypePropertyName->getController()->setDisabled(true);
-	prototypePropertyValue->getController()->setValue(MutableString());
-	prototypePropertyValue->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setValue(MutableString("none"));
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_presetapply"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_add"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
 }
 
 void PrototypeBaseSubController::onEntityPropertySave(Prototype* prototype)
 {
-	if (view->prototypePropertySave(
-		prototype,
-		prototypePropertiesList->getController()->getValue().getString(),
-		prototypePropertyName->getController()->getValue().getString(),
-		prototypePropertyValue->getController()->getValue().getString()) == false) {
+	if (
+		view->prototypePropertySave(
+			prototype,
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->getValue().getString()
+		) == false) {
 		showErrorPopUp("Warning", "Saving prototype property failed");
 	}
 }
@@ -216,38 +205,38 @@ void PrototypeBaseSubController::onPrototypePropertyAdd(Prototype* prototype)
 
 void PrototypeBaseSubController::onPrototypePropertyRemove(Prototype* prototype)
 {
-	if (view->prototypePropertyRemove(prototype, prototypePropertiesList->getController()->getValue().getString()) == false) {
+	if (view->prototypePropertyRemove(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString()) == false) {
 		showErrorPopUp("Warning", "Removing prototype property failed");
 	}
 }
 
 void PrototypeBaseSubController::onPrototypePropertyPresetApply(Prototype* prototype)
 {
-	view->prototypePropertiesPreset(prototype, prototypePropertiesPresets->getController()->getValue().getString());
+	view->prototypePropertiesPreset(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->getValue().getString());
 }
 
 void PrototypeBaseSubController::onPrototypePropertiesSelectionChanged(Prototype* entity)
 {
-	prototypePropertyName->getController()->setDisabled(true);
-	prototypePropertyName->getController()->setValue(MutableString());
-	prototypePropertyValue->getController()->setDisabled(true);
-	prototypePropertyValue->getController()->setValue(MutableString());
-	prototypePropertySave->getController()->setDisabled(true);
-	prototypePropertyRemove->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(prototypePropertiesList->getController()->getValue().getString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString());
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(true);
+	auto entityProperty = entity->getProperty(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString());
 	if (entityProperty != nullptr) {
-		prototypePropertyName->getController()->setValue(MutableString(entityProperty->getName()));
-		prototypePropertyValue->getController()->setValue(MutableString(entityProperty->getValue()));
-		prototypePropertyName->getController()->setDisabled(false);
-		prototypePropertyValue->getController()->setDisabled(false);
-		prototypePropertySave->getController()->setDisabled(false);
-		prototypePropertyRemove->getController()->setDisabled(false);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString(entityProperty->getName()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString(entityProperty->getValue()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(false);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(false);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(false);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(false);
 	}
 }
 
 void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* model)
 {
-	if (node == prototypePropertiesList) {
+	if (node == required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))) {
 		onPrototypePropertiesSelectionChanged(model);
 	} else {
 	}

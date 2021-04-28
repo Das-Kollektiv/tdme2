@@ -89,14 +89,6 @@ PopUps* PrototypePhysicsSubView::getPopUps()
 	return popUps;
 }
 
-void PrototypePhysicsSubView::initialize()
-{
-	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
-		prototypePhysicsSubController->setupBoundingVolumeTypes(i, boundingVolumeTypeMask);
-		prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::NONE);
-	}
-}
-
 void PrototypePhysicsSubView::resetBoundingVolume(Prototype* prototype, int idx, int type)
 {
 	BoundingBox aabb;

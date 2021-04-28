@@ -25,6 +25,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
@@ -71,6 +72,7 @@ using tdme::gui::GUI;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
@@ -378,42 +380,43 @@ void ModelEditorTabView::display()
 
 void ModelEditorTabView::updateGUIElements()
 {
-	if (prototype != nullptr) {
-		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
-		auto preset = prototype->getProperty("preset");
-		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
-		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-		modelEditorScreenController->setPivot(prototype->getPivot());
-		prototypePhysicsView->setBoundingVolumes(prototype);
-		prototypePhysicsView->setPhysics(prototype);
-		prototypePhysicsView->setTerrainMesh(prototype);
-		prototypePhysicsView->setConvexMeshes(prototype);
-		modelEditorScreenController->setRendering();
-		modelEditorScreenController->setShaderParameters();
-		modelEditorScreenController->setLODLevel(lodLevel);
-		modelEditorScreenController->setMaterials();
-		modelEditorScreenController->setAnimations();
-		modelEditorScreenController->setPreview();
-		modelEditorScreenController->setTools();
-		prototypeSoundsView->setSounds(prototype);
-	} else {
-		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
-		modelEditorScreenController->unsetPrototypeProperties();
-		modelEditorScreenController->unsetPrototypeData();
-		modelEditorScreenController->unsetPivot();
-		prototypePhysicsView->unsetBoundingVolumes();
-		prototypePhysicsView->unsetPhysics();
-		prototypePhysicsView->unsetTerrainMesh();
-		prototypePhysicsView->unsetConvexMeshes();
-		modelEditorScreenController->unsetRendering();
-		modelEditorScreenController->unsetShaderParameters();
-		modelEditorScreenController->unsetLODLevel();
-		modelEditorScreenController->unsetMaterials();
-		modelEditorScreenController->unsetAnimations();
-		modelEditorScreenController->unsetPreview();
-		modelEditorScreenController->unsetTools();
-		prototypeSoundsView->unsetSounds();
-	}
+	// TODO: a.drewke
+//	if (prototype != nullptr) {
+//		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
+//		auto preset = prototype->getProperty("preset");
+//		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
+//		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
+//		modelEditorScreenController->setPivot(prototype->getPivot());
+//		prototypePhysicsView->setBoundingVolumes(prototype);
+//		prototypePhysicsView->setPhysics(prototype);
+//		prototypePhysicsView->setTerrainMesh(prototype);
+//		prototypePhysicsView->setConvexMeshes(prototype);
+//		modelEditorScreenController->setRendering();
+//		modelEditorScreenController->setShaderParameters();
+//		modelEditorScreenController->setLODLevel(lodLevel);
+//		modelEditorScreenController->setMaterials();
+//		modelEditorScreenController->setAnimations();
+//		modelEditorScreenController->setPreview();
+//		modelEditorScreenController->setTools();
+//		prototypeSoundsView->setSounds(prototype);
+//	} else {
+//		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
+//		modelEditorScreenController->unsetPrototypeProperties();
+//		modelEditorScreenController->unsetPrototypeData();
+//		modelEditorScreenController->unsetPivot();
+//		prototypePhysicsView->unsetBoundingVolumes();
+//		prototypePhysicsView->unsetPhysics();
+//		prototypePhysicsView->unsetTerrainMesh();
+//		prototypePhysicsView->unsetConvexMeshes();
+//		modelEditorScreenController->unsetRendering();
+//		modelEditorScreenController->unsetShaderParameters();
+//		modelEditorScreenController->unsetLODLevel();
+//		modelEditorScreenController->unsetMaterials();
+//		modelEditorScreenController->unsetAnimations();
+//		modelEditorScreenController->unsetPreview();
+//		modelEditorScreenController->unsetTools();
+//		prototypeSoundsView->unsetSounds();
+//	}
 }
 
 void ModelEditorTabView::onInitAdditionalScreens()
@@ -440,20 +443,18 @@ void ModelEditorTabView::initialize()
 {
 	try {
 		modelEditorScreenController = new ModelEditorTabController(this);
-		modelEditorScreenController->initialize();
+		modelEditorScreenController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypePhysicsView = modelEditorScreenController->getPrototypePhysicsSubController()->getView();
 		prototypeDisplayView = modelEditorScreenController->getPrototypeDisplaySubController()->getView();
 		prototypeSoundsView = modelEditorScreenController->getPrototypeSoundsSubController()->getView();
-		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
-		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
-	modelEditorScreenController->getPrototypeDisplaySubController()->setupDisplay();
-	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D));
-	prototypePhysicsView->initialize();
+	// TODO: a.drewke
+	// modelEditorScreenController->getPrototypeDisplaySubController()->setupDisplay();
+	// modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D));
 	updateGUIElements();
 }
 

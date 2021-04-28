@@ -103,11 +103,6 @@ public:
 	PopUps* getPopUps();
 
 	/**
-	 * Init
-	 */
-	void initialize();
-
-	/**
 	 * Reset bounding volume
 	 * @param prototype prototype
 	 * @param idx idx

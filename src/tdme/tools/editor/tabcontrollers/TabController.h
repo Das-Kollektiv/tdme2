@@ -20,7 +20,7 @@ struct tdme::tools::editor::tabcontrollers::TabController
 	/**
 	 * Init
 	 */
-	virtual void initialize() = 0;
+	virtual void initialize(GUIScreenNode* screenNode) = 0;
 
 	/**
 	 * Dispose

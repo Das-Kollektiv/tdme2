@@ -164,7 +164,7 @@ FileDialogPath* ModelEditorTabController::getAudioPath()
 	return &audioPath;
 }
 
-void ModelEditorTabController::initialize()
+void ModelEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "screen_modeleditor.xml");

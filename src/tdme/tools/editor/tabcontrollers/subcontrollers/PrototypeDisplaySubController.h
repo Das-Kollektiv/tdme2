@@ -26,9 +26,7 @@ using tdme::utilities::MutableString;
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController final
 {
 private:
-	GUIElementNode* displayBoundingVolume { nullptr };
-	GUIElementNode* displayShadowing { nullptr };
-	GUIElementNode* displayGround { nullptr };
+	GUIScreenNode* screenNode { nullptr };
 	PrototypeDisplaySubView* view { nullptr };
 	PrototypePhysicsSubView* physicsView { nullptr };
 

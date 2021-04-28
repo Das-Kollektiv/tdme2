@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -40,43 +41,36 @@ PrototypeDisplaySubView* PrototypeDisplaySubController::getView()
 
 void PrototypeDisplaySubController::initialize(GUIScreenNode* screenNode)
 {
-	try {
-		displayBoundingVolume = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_boundingvolume"));
-		displayShadowing = dynamic_cast< GUIElementNode*>(screenNode->getNodeById("display_shadowing"));
-		displayGround = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_ground"));
-	} catch (Exception& exception) {
-		Console::print(string("PrototypeDisplaySubController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
+	this->screenNode = screenNode;
 }
 
 void PrototypeDisplaySubController::setupDisplay()
 {
-	displayShadowing->getController()->setValue(MutableString(view->isDisplayShadowing() == true?"1":""));
-	displayGround->getController()->setValue(MutableString(view->isDisplayGroundPlate() == true?"1":""));
-	displayBoundingVolume->getController()->setValue(MutableString(physicsView->isDisplayBoundingVolume() == true?"1":""));
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_shadowing"))->getController()->setValue(MutableString(view->isDisplayShadowing() == true?"1":""));
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_ground"))->getController()->setValue(MutableString(view->isDisplayGroundPlate() == true?"1":""));
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_boundingvolume"))->getController()->setValue(MutableString(physicsView->isDisplayBoundingVolume() == true?"1":""));
 }
 
 void PrototypeDisplaySubController::onDisplayApply()
 {
-	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals("1"));
-	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals("1"));
-	physicsView->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals("1"));
+	view->setDisplayShadowing(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_shadowing"))->getController()->getValue().equals("1"));
+	view->setDisplayGroundPlate(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_ground"))->getController()->getValue().equals("1"));
+	physicsView->setDisplayBoundingVolume(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_boundingvolume"))->getController()->getValue().equals("1"));
 }
 
 bool PrototypeDisplaySubController::getDisplayShadowing()
 {
-	return displayShadowing->getController()->getValue().equals("1");
+	return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_shadowing"))->getController()->getValue().equals("1");
 }
 
 bool PrototypeDisplaySubController::getDisplayGround()
 {
-	return displayGround->getController()->getValue().equals("1");
+	return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_ground"))->getController()->getValue().equals("1");
 }
 
 bool PrototypeDisplaySubController::getDisplayBoundingVolume()
 {
-	return displayBoundingVolume->getController()->getValue().equals("1");
+	return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("display_boundingvolume"))->getController()->getValue().equals("1");
 }
 
 void PrototypeDisplaySubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)

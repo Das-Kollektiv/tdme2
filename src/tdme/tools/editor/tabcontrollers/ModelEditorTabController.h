@@ -214,7 +214,7 @@ public:
 	FileDialogPath* getAudioPath();
 
 	// overridden methods
-	void initialize() override;
+	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
 
 	/**
