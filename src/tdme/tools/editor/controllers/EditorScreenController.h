@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -11,21 +13,26 @@
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
+#include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unordered_map;
 using std::vector;
 
+using tdme::engine::FrameBuffer;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 
@@ -39,6 +46,72 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
+public:
+	/**
+	 * Editor tab view
+	 */
+	class EditorTabView {
+	private:
+		string id;
+		TabView* tabView { nullptr };
+		FrameBuffer* frameBuffer { nullptr };
+		GUIFrameBufferNode* frameBufferNode { nullptr };
+
+	public:
+		/**
+		 * Public default constructor
+		 */
+		EditorTabView() {}
+
+		/**
+		 * Public constructor
+		 * @param id id
+		 * @param tabView tab view
+		 * @param frameBuffer frame buffer
+		 * @param frameBufferNode frame buffer node
+		 */
+		EditorTabView(
+			string id,
+			TabView* tabView,
+			FrameBuffer* frameBuffer,
+			GUIFrameBufferNode* frameBufferNode
+		):
+			id(id),
+			tabView(tabView),
+			frameBuffer(frameBuffer),
+			frameBufferNode(frameBufferNode)
+		{}
+
+		/**
+		 * @return id
+		 */
+		inline const string& getId() {
+			return id;
+		}
+
+		/**
+		 * @return tab view
+		 */
+		inline TabView* getTabView() {
+			return tabView;
+		}
+
+		/**
+		 * @return frame buffer
+		 */
+		inline FrameBuffer* getFrameBuffer() {
+			return frameBuffer;
+		}
+
+		/**
+		 * @return frame buffer GUI node
+		 */
+		inline GUIFrameBufferNode* getFrameBufferNode() {
+			return frameBufferNode;
+		}
+
+	};
+
 private:
 	EditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
@@ -48,9 +121,10 @@ private:
 	GUIParentNode* tabsContent { nullptr };
 	GUINode* viewPort { nullptr };
 	string projectPath;
-	vector<string> tabIds;
+	unordered_map<string, EditorTabView> tabs;
 
 public:
+
 	/**
 	 * Public constructor
 	 * @param view view
@@ -117,6 +191,13 @@ public:
 	 * @param height height
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
+
+	/**
+	 * @return tabs
+	 */
+	inline unordered_map<string, EditorTabView>& getTabs() {
+		return tabs;
+	}
 
 	/**
 	 * On quit

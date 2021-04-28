@@ -93,11 +93,16 @@ using tdme::utilities::ModelTools;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
-ModelEditorTabView::ModelEditorTabView(EditorView* editorView, PopUps* popUps)
+ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tabId)
 {
 	this->editorView = editorView;
-	this->popUps = popUps;
-	engine = Engine::getInstance();
+	this->tabId = tabId;
+	this->popUps = editorView->getPopUps();
+	int left, top, width, height;
+	editorView->getViewPort(left, top, width, height);
+	engine = Engine::createOffScreenInstance(width, height, true);
+	engine->setPartition(new PartitionNone());
+	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	audio = Audio::getInstance();
 	modelEditorScreenController = nullptr;
 	prototypeDisplayView = nullptr;
@@ -362,20 +367,6 @@ void ModelEditorTabView::display()
 		cameraRotationInputHandler->reset();
 	}
 
-	// viewport
-	auto xScale = (float)engine->getWidth() / (float)modelEditorScreenController->getScreenNode()->getScreenWidth();
-	auto yScale = (float)engine->getHeight() / (float)modelEditorScreenController->getScreenNode()->getScreenHeight();
-	auto viewPortLeft = 0;
-	auto viewPortTop = 0;
-	auto viewPortWidth = 0;
-	auto viewPortHeight = 0;
-	modelEditorScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
-	viewPortLeft = (int)((float)viewPortLeft * xScale);
-	viewPortTop = (int)((float)viewPortTop * yScale);
-	viewPortWidth = (int)((float)viewPortWidth * xScale);
-	viewPortHeight = (int)((float)viewPortHeight * yScale);
-	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
-
 	// rendering
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
@@ -463,19 +454,6 @@ void ModelEditorTabView::initialize()
 	updateGUIElements();
 }
 
-void ModelEditorTabView::activate()
-{
-	engine->reset();
-	engine->setPartition(new PartitionNone());
-	engine->setShadowMapLightEyeDistanceScale(0.1f);
-	engine->getGUI()->resetRenderScreens();
-	engine->getGUI()->addRenderScreen(modelEditorScreenController->getScreenNode()->getId());
-	onInitAdditionalScreens();
-	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
-}
-
 void ModelEditorTabView::storeSettings()
 {
 	try {
@@ -492,12 +470,8 @@ void ModelEditorTabView::storeSettings()
 	}
 }
 
-void ModelEditorTabView::deactivate()
-{
-	audio->removeEntity("sound");
-}
-
 void ModelEditorTabView::dispose()
+
 {
 	storeSettings();
 	engine->reset();
@@ -658,4 +632,8 @@ void ModelEditorTabView::onCameraRotation() {
 
 void ModelEditorTabView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
+}
+
+FrameBuffer* ModelEditorTabView::getFrameBuffer() {
+	return engine->getFrameBuffer();
 }

@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
@@ -20,6 +22,8 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
 #include <tdme/utilities/Console.h>
@@ -29,10 +33,13 @@
 
 using std::remove;
 using std::string;
+using std::unordered_set;
 using std::vector;
 
+using tdme::engine::FrameBuffer;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
@@ -47,6 +54,8 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
 using tdme::utilities::Console;
@@ -74,7 +83,7 @@ void EditorScreenController::initialize()
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
-		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("viewport"));
+		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("tabs-content"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -126,16 +135,25 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
 			string tabIdToClose;
-			for (auto& tabId: tabIds) {
-				if (StringTools::startsWith(node->getId(), tabId + "_close") == true) {
-					tabIdToClose = tabId;
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabId);
+			for (auto& tabsIt: tabs) {
+				auto& tab = tabsIt.second;
+				if (StringTools::startsWith(node->getId(), tab.getId() + "_close") == true) {
+					tabIdToClose = tab.getId();
+					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tab.getId());
 				}
 			}
 			if (tabIdToClose.empty() == false) {
 				screenNode->removeNodeById(tabIdToClose, false);
 				screenNode->removeNodeById(tabIdToClose + "-content", false);
-				tabIds.erase(remove(tabIds.begin(), tabIds.end(), tabIdToClose), tabIds.end());
+				auto tabIt = tabs.find(tabIdToClose);
+				if (tabIt == tabs.end()) {
+					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabIdToClose + ": not found");
+				} else {
+					auto& tab = tabIt->second;
+					tab.getTabView()->dispose();
+					delete tab.getTabView();
+					tabs.erase(tabIt);
+				}
 			}
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
@@ -344,6 +362,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
+	//
 	{
 		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
 		try {
@@ -365,7 +384,14 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 			Console::println(string(exception.what()));
 		}
 	}
-	tabIds.push_back(tabId);
+	try {
+		auto tabView = new ModelEditorTabView(view, tabId);
+		tabView->initialize();
+		tabs[tabId] = EditorTabView(tabId, tabView, tabView->getFrameBuffer(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_framebuffer")));
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 }
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

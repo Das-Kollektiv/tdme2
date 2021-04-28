@@ -68,4 +68,13 @@ public:
 	void deactivate() override;
 	void dispose() override;
 
+	/**
+	 * Determine viewport screen constraints
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 */
+	void getViewPort(int& left, int& top, int& width, int& height);
+
 };

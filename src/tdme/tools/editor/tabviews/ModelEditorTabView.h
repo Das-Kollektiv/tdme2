@@ -23,6 +23,7 @@ using tdme::audio::Audio;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
@@ -53,6 +54,7 @@ protected:
 
 private:
 	EditorView* editorView { nullptr };
+	string tabId;
 	PopUps* popUps { nullptr };
 	ModelEditorTabController* modelEditorScreenController { nullptr };
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
@@ -117,9 +119,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
-	 * @param popUps pop ups
+	 * @param tabId tab id
 	 */
-	ModelEditorTabView(EditorView* editorView, PopUps* popUps);
+	ModelEditorTabView(EditorView* editorView, const string& tabId);
 
 	/**
 	 * Destructor
@@ -226,9 +228,8 @@ public:
 	void handleInputEvents() override;
 	void display() override;
 	void initialize() override;
-	void activate() override;
-	void deactivate() override;
 	void dispose() override;
+	FrameBuffer* getFrameBuffer() override;
 	void playSound(const string& soundId) override;
 
 	/**

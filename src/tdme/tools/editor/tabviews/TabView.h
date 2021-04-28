@@ -32,14 +32,11 @@ struct tdme::tools::editor::tabviews::TabView
 	/**
 	 * @return frame buffer
 	 */
-	virtual FrameBuffer* getFrameBuffer();
+	virtual FrameBuffer* getFrameBuffer() = 0;
 
 	/**
 	 * Destructor
 	 */
 	virtual ~TabView() {}
-
-	virtual void activate() = 0;
-	virtual void deactivate() = 0;
 
 };

@@ -2195,11 +2195,3 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		}
 	}
 }
-
-void ModelEditorTabController::getViewPort(int& left, int& top, int& width, int& height) {
-	auto& constraints = viewPort->getComputedConstraints();
-	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
-	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
-	width = constraints.width;
-	height = constraints.height;
-}

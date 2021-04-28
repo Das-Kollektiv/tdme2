@@ -533,15 +533,6 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
-	 * Get viewport rectangle
-	 * @param left left
-	 * @param top top
-	 * @param width width
-	 * @param height height
-	 */
-	void getViewPort(int& left, int& top, int& width, int& height);
-
-	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message
