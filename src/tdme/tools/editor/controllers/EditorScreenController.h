@@ -21,6 +21,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -45,6 +46,7 @@ private:
 	GUIParentNode* projectPathFilesScrollArea { nullptr };
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
+	GUINode* viewPort { nullptr };
 	string projectPath;
 	vector<string> tabIds;
 
@@ -99,14 +101,6 @@ public:
 	 * @param relativeProjectFileName relative project file name
 	 */
 	void onOpenFile(const string& relativeProjectFileName);
-	/**
-	 * Get viewport rectangle
-	 * @param left left
-	 * @param top top
-	 * @param width width
-	 * @param height height
-	 */
-	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
 	 * Shows the error pop up
@@ -114,6 +108,15 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * Get engine viewport constraints
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 */
+	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
 	 * On quit

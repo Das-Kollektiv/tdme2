@@ -43,6 +43,7 @@ namespace nodes {
 	class GUITableCellNode;
 	class GUITableRowNode;
 	class GUITextNode;
+	class GUITextureNode;
 	class GUIVerticalScrollbarInternalController;
 	class GUIVerticalScrollbarInternalController_State;
 	class GUIVerticalScrollbarInternalNode;

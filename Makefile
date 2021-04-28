@@ -511,6 +511,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUITableCellNode.cpp \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \
 	src/tdme/gui/nodes/GUITextNode.cpp \
+	src/tdme/gui/nodes/GUITextureNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \

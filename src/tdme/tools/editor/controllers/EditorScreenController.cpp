@@ -74,6 +74,7 @@ void EditorScreenController::initialize()
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
+		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("viewport"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -368,4 +369,9 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 }
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }
