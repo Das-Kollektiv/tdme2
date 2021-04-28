@@ -378,7 +378,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	{
 		string tabsContentXML =
 			"<tab-content tab-id=\"" + tabId + "\">\n" +
-			"<template id=\"" + tabId + "_scene\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+			"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
 			"</tab-content>\n";
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
@@ -387,18 +387,20 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 			Console::println(string(exception.what()));
 		}
 	}
-	try {
+	// try {
 		auto prototype = PrototypeReader::read(
 			FileSystem::getInstance()->getPathName(absoluteFileName),
 			FileSystem::getInstance()->getFileName(absoluteFileName)
 		);
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
-		tabs[tabId] = EditorTabView(tabId, tabView, tabView->getFrameBuffer(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_framebuffer")));
+		tabs[tabId] = EditorTabView(tabId, tabView, tabView->getFrameBuffer(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+	/*
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	*/
 }
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

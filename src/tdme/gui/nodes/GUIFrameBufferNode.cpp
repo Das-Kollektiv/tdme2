@@ -84,7 +84,7 @@ GUIFrameBufferNode::GUIFrameBufferNode(
 
 const string GUIFrameBufferNode::getNodeType()
 {
-	return "framebuffer";
+	return "frame-buffer";
 }
 
 void GUIFrameBufferNode::dispose()

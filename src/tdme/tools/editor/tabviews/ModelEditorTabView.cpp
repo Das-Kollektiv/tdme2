@@ -113,7 +113,6 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	loadModelRequested = false;
 	initModelRequested = false;
 	initModelRequestedReset = false;
-	prototype = nullptr;
 	modelFile = "";
 	lodLevel = 1;
 	audioStarted = -1LL;
@@ -146,7 +145,7 @@ Prototype* ModelEditorTabView::getPrototype()
 void ModelEditorTabView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	if (prototype != nullptr) delete prototype;
+	if (this->prototype != nullptr) delete this->prototype;
 	this->prototype = prototype;
 	lodLevel = 1;
 	initModelRequested = true;
@@ -184,9 +183,12 @@ void ModelEditorTabView::initModel()
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
 		ModelUtilities::computeModelStatistics(currentModelObject->getModel(), &modelStatistics);
-		modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
-	} else {
-		modelEditorScreenController->unsetStatistics();
+		// TODO: a.drewke
+		// modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+	} else
+	{
+		// TODO: a.drewke
+		// modelEditorScreenController->unsetStatistics();
 	}
 	if (initModelRequestedReset == false) updateGUIElements();
 }
@@ -375,6 +377,9 @@ void ModelEditorTabView::display()
 	// rendering
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
+	engine->display();
+
+	// audio
 	audio->update();
 }
 
