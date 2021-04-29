@@ -46,7 +46,6 @@ using tdme::tools::editor::views::PlayableSoundView;
 class tdme::tools::editor::tabviews::ModelEditorTabView final
 	: public TabView
 	, public PlayableSoundView
-	, public GUIInputEventHandler
 	, protected CameraRotationInputHandlerEventHandler
 {
 protected:

@@ -58,7 +58,29 @@ PopUps* EditorView::getPopUps()
 
 void EditorView::handleInputEvents()
 {
-	// no op
+	auto selectedTabId = editorScreenController->getSelectedTabId();
+	auto& tabViews = editorScreenController->getTabViews();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		int left, top, width, height;
+		getViewPort(left, top, width, height);
+		auto& tab = tabViewIt->second;
+		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
+			auto eventX = event.getXUnscaled();
+			auto eventY = event.getYUnscaled();
+			event.setX(eventX - left);
+			event.setY(eventY - top);
+			event.setXUnscaled(eventX - left);
+			event.setYUnscaled(eventY - top);
+			tab.getEngine()->getGUI()->getMouseEvents().push_back(event);
+		}
+		for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
+			tab.getEngine()->getGUI()->getKeyboardEvents().push_back(event);
+		}
+		tab.getTabView()->handleInputEvents();
+		tab.getEngine()->getGUI()->getMouseEvents().clear();
+		tab.getEngine()->getGUI()->getKeyboardEvents().clear();
+	}
 }
 
 void EditorView::display()

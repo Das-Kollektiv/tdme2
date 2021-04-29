@@ -3,15 +3,17 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/gui/events/GUIInputEventHandler.h>
 
 using tdme::engine::Engine;
+using tdme::gui::events::GUIInputEventHandler;
 
 /**
  * Tab view interface
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::tools::editor::tabviews::TabView
+struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 {
 
 	/**
