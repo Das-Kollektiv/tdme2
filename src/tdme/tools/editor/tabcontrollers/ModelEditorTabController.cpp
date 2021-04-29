@@ -345,6 +345,10 @@ void ModelEditorTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void ModelEditorTabController::setDetailsContent() {
+	view->getEditorView()->setDetailsContent(string());
+}
+
 void ModelEditorTabController::setPrototypeData(const string& name, const string& description)
 {
 	prototypeBaseSubController->setPrototypeData(name, description);
@@ -2131,12 +2135,24 @@ void ModelEditorTabController::showErrorPopUp(const string& caption, const strin
 
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	if (node->getId() == "animations_dropdown") {
-		onAnimationDropDownValueChanged();
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = node->getController()->getValue().getString();
+		if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
+			auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
+			view->getEditorView()->setDetailsContent(
+				"<template id=\"details_material_spec\" src=\"resources/engine/gui/template_details_specularmaterial.xml\" />\n"
+				"<template id=\"details_material_pbr\" src=\"resources/engine/gui/template_details_pbrmaterial.xml\" />\n"
+			);
+		}
 	} else
-	if (node->getId() == "materials_material_pbr_enabled") {
-		onMaterialPBREnabledValueChanged();
-	} else {
+	// TODO :old
+//	if (node->getId() == "animations_dropdown") {
+//		onAnimationDropDownValueChanged();
+//	} else
+//	if (node->getId() == "materials_material_pbr_enabled") {
+//		onMaterialPBREnabledValueChanged();
+//	} else
+	{
 		prototypeBaseSubController->onValueChanged(node, view->getPrototype());
 		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 		prototypeSoundsSubController->onValueChanged(node, view->getPrototype());

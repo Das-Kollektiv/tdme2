@@ -171,6 +171,8 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 					delete tab.getTabView();
 					tabViews.erase(tabIt);
 				}
+				setDetailsContent(string());
+				setOutlinerContent(string());
 			}
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());

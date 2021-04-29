@@ -234,6 +234,11 @@ public:
 	void setOutlinerContent();
 
 	/**
+	 * Set details content
+	 */
+	void setDetailsContent();
+
+	/**
 	 * Set up general prototype data
 	 * @param name name
 	 * @param description description
