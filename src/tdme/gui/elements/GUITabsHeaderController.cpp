@@ -54,6 +54,7 @@ void GUITabsHeaderController::dispose()
 
 void GUITabsHeaderController::postLayout()
 {
+	// TODO: a.drewke?
 	selectCurrent();
 }
 

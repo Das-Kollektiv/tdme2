@@ -99,7 +99,7 @@
 			
 			
 			<!-- viewport -------------------------------------------------------->
-			<tabs alignment="vertical" width="*" height="100%">
+			<tabs id="tabs" alignment="vertical" width="*" height="100%">
 				<tabs-header id="tabs-header">
 				</tabs-header>
 				<tabs-content id="tabs-content">

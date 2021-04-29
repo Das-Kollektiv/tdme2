@@ -160,12 +160,3 @@ const MutableString& GUITabController::getValue()
 void GUITabController::setValue(const MutableString& value)
 {
 }
-
-void GUITabController::selectTab()
-{
-	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
-	guiTabsController->unselect();
-	setSelected(true);
-	guiTabsController->setTabContentSelected(node->getId());
-	node->getScreenNode()->getGUI()->invalidateFocussedNode();
-}

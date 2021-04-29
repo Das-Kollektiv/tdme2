@@ -63,11 +63,13 @@ void EditorView::handleInputEvents()
 
 void EditorView::display()
 {
-	int left, top, width, height;
-	getViewPort(left, top, width, height);
-	for (auto& tabViewIt: editorScreenController->getTabs()) {
-		auto tabId = tabViewIt.first;
-		auto& tab = tabViewIt.second;
+	auto selectedTabId = editorScreenController->getSelectedTabId();
+	auto& tabViews = editorScreenController->getTabViews();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		int left, top, width, height;
+		getViewPort(left, top, width, height);
+		auto& tab = tabViewIt->second;
 		if (tab.getEngine()->getWidth() != width || tab.getEngine()->getHeight() != height) tab.getEngine()->reshape(width, height);
 		tab.getTabView()->display();
 		tab.getFrameBufferNode()->setFrameBuffer(tab.getEngine()->getFrameBuffer());

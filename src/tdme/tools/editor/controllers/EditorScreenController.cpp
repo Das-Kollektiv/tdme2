@@ -86,6 +86,7 @@ void EditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
+		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
 		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("tabs-content"));
@@ -140,7 +141,7 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
 			string tabIdToClose;
-			for (auto& tabsIt: tabs) {
+			for (auto& tabsIt: tabViews) {
 				auto& tab = tabsIt.second;
 				if (StringTools::startsWith(node->getId(), tab.getId() + "_close") == true) {
 					tabIdToClose = tab.getId();
@@ -150,14 +151,14 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			if (tabIdToClose.empty() == false) {
 				screenNode->removeNodeById(tabIdToClose, false);
 				screenNode->removeNodeById(tabIdToClose + "-content", false);
-				auto tabIt = tabs.find(tabIdToClose);
-				if (tabIt == tabs.end()) {
+				auto tabIt = tabViews.find(tabIdToClose);
+				if (tabIt == tabViews.end()) {
 					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabIdToClose + ": not found");
 				} else {
 					auto& tab = tabIt->second;
 					tab.getTabView()->dispose();
 					delete tab.getTabView();
-					tabs.erase(tabIt);
+					tabViews.erase(tabIt);
 				}
 			}
 		} else {
@@ -397,7 +398,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter(180.0f));
-		tabs[tabId] = EditorTabView(tabId, tabView, tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	/*
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
@@ -412,4 +413,8 @@ void EditorScreenController::getViewPort(int& left, int& top, int& width, int& h
 	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
 	width = constraints.width;
 	height = constraints.height;
+}
+
+const string EditorScreenController::getSelectedTabId() {
+	return tabs->getController()->getValue().getString();
 }

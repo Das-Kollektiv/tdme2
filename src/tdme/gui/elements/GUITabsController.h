@@ -57,6 +57,12 @@ private:
 	 */
 	void setTabContentSelected(const string& id);
 
+	/**
+	 * Set tab content selected internal
+	 * @param id id
+	 */
+	void setTabContentSelectedInternal(const string& id);
+
 public:
 	// overridden methods
 	bool isDisabled() override;

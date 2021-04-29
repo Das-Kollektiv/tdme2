@@ -118,11 +118,13 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIParentNode* projectPathsScrollArea { nullptr };
 	GUIParentNode* projectPathFilesScrollArea { nullptr };
+	GUIParentNode* tabs { nullptr };
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
 	GUINode* viewPort { nullptr };
 	string projectPath;
-	unordered_map<string, EditorTabView> tabs;
+	unordered_map<string, EditorTabView> tabViews;
+	string selectedTabId;
 
 public:
 
@@ -194,10 +196,15 @@ public:
 	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
-	 * @return tabs
+	 * @return selected tab id
 	 */
-	inline unordered_map<string, EditorTabView>& getTabs() {
-		return tabs;
+	const string getSelectedTabId();
+
+	/**
+	 * @return tabs views
+	 */
+	inline unordered_map<string, EditorTabView>& getTabViews() {
+		return tabViews;
 	}
 
 	/**
