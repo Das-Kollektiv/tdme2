@@ -106,7 +106,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	engine->setPartition(new PartitionNone());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	audio = Audio::getInstance();
-	modelEditorScreenController = nullptr;
+	modelEditorTabController = nullptr;
 	prototypeDisplayView = nullptr;
 	prototypePhysicsView = nullptr;
 	prototypeSoundsView = nullptr;
@@ -123,8 +123,12 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 
 ModelEditorTabView::~ModelEditorTabView() {
 	delete prototype;
-	delete modelEditorScreenController;
+	delete modelEditorTabController;
 	delete cameraRotationInputHandler;
+}
+
+TabController* ModelEditorTabView::getTabController() {
+	return dynamic_cast<TabController*>(modelEditorTabController);
 }
 
 PopUps* ModelEditorTabView::getPopUps()
@@ -202,8 +206,8 @@ void ModelEditorTabView::setLodLevel(int lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
-		modelEditorScreenController->setMaterials();
-		modelEditorScreenController->setAnimations();
+		modelEditorTabController->setMaterials();
+		modelEditorTabController->setAnimations();
 	}
 }
 
@@ -264,11 +268,11 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		// set model in entity
 		prototype->setModel(model);
 	} catch (Exception& exception) {
-		modelEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 	}
 	reimportPrototype();
 	if (log.size() > 0) {
-		modelEditorScreenController->showErrorPopUp("Warning", log);
+		modelEditorTabController->showErrorPopUp("Warning", log);
 	}
 }
 
@@ -312,7 +316,7 @@ void ModelEditorTabView::optimizeModel() {
 	engine->removeEntity("model");
 	prototype->setModel(ModelTools::optimizeModel(prototype->unsetModel()));
 	initModelRequested = true;
-	modelEditorScreenController->setMaterials();
+	modelEditorTabController->setMaterials();
 }
 
 void ModelEditorTabView::handleInputEvents()
@@ -431,8 +435,8 @@ void ModelEditorTabView::loadSettings()
 		prototypePhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
 		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
-		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
-		modelEditorScreenController->getAudioPath()->setPath(settings.get("audio.path", "."));
+		modelEditorTabController->getModelPath()->setPath(settings.get("model.path", "."));
+		modelEditorTabController->getAudioPath()->setPath(settings.get("audio.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -442,11 +446,11 @@ void ModelEditorTabView::loadSettings()
 void ModelEditorTabView::initialize()
 {
 	try {
-		modelEditorScreenController = new ModelEditorTabController(this);
-		modelEditorScreenController->initialize(editorView->getScreenController()->getScreenNode());
-		prototypePhysicsView = modelEditorScreenController->getPrototypePhysicsSubController()->getView();
-		prototypeDisplayView = modelEditorScreenController->getPrototypeDisplaySubController()->getView();
-		prototypeSoundsView = modelEditorScreenController->getPrototypeSoundsSubController()->getView();
+		modelEditorTabController = new ModelEditorTabController(this);
+		modelEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		prototypePhysicsView = modelEditorTabController->getPrototypePhysicsSubController()->getView();
+		prototypeDisplayView = modelEditorTabController->getPrototypeDisplaySubController()->getView();
+		prototypeSoundsView = modelEditorTabController->getPrototypeSoundsSubController()->getView();
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -465,8 +469,8 @@ void ModelEditorTabView::storeSettings()
 		settings.put("display.boundingvolumes", prototypePhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
-		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
-		settings.put("audio.path", modelEditorScreenController->getAudioPath()->getPath());
+		settings.put("model.path", modelEditorTabController->getModelPath()->getPath());
+		settings.put("audio.path", modelEditorTabController->getAudioPath()->getPath());
 		settings.store("settings", "modeleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::storeSettings(): An error occurred: "));

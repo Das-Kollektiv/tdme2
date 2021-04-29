@@ -24,6 +24,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -58,6 +59,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
@@ -128,6 +130,13 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 	} else {
 		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
 	}
+	// forward onValueChanged to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->onValueChanged(node);
+	}
 }
 
 void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -164,6 +173,13 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
+	}
+	// forward onActionPerformed to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->onActionPerformed(type, node);
 	}
 }
 
@@ -398,7 +414,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter(180.0f));
-		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	/*
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));

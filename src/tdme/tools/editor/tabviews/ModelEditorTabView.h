@@ -29,6 +29,7 @@ using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
@@ -56,7 +57,7 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	ModelEditorTabController* modelEditorScreenController { nullptr };
+	ModelEditorTabController* modelEditorTabController { nullptr };
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	PrototypeSoundsSubView* prototypeSoundsView { nullptr };
@@ -128,6 +129,11 @@ public:
 	 * Destructor
 	 */
 	~ModelEditorTabView();
+
+	/**
+	 * @return associated tab controller
+	 */
+	TabController* getTabController();
 
 	/**
 	 * @return pop up views

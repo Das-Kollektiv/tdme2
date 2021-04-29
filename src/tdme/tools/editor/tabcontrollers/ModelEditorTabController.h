@@ -53,8 +53,6 @@ using tdme::utilities::MutableString;
  */
 class tdme::tools::editor::tabcontrollers::ModelEditorTabController final
 	: public TabController
-	, public GUIActionListener
-	, public GUIChangeListener
 {
 
 private:

@@ -11,8 +11,8 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
-#include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
+#include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -33,6 +33,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
@@ -55,6 +56,7 @@ public:
 	private:
 		string id;
 		TabView* tabView { nullptr };
+		TabController* tabController { nullptr };
 		Engine* engine { nullptr };
 		GUIFrameBufferNode* frameBufferNode { nullptr };
 
@@ -68,17 +70,20 @@ public:
 		 * Public constructor
 		 * @param id id
 		 * @param tabView tab view
+		 * @param tabController tab controller
 		 * @param engine engine
 		 * @param frameBufferNode frame buffer node
 		 */
 		EditorTabView(
 			string id,
 			TabView* tabView,
+			TabController* tabController,
 			Engine* engine,
 			GUIFrameBufferNode* frameBufferNode
 		):
 			id(id),
 			tabView(tabView),
+			tabController(tabController),
 			engine(engine),
 			frameBufferNode(frameBufferNode)
 		{}
@@ -95,6 +100,13 @@ public:
 		 */
 		inline TabView* getTabView() {
 			return tabView;
+		}
+
+		/**
+		 * @return tab controller
+		 */
+		inline TabController* getTabController() {
+			return tabController;
 		}
 
 		/**
