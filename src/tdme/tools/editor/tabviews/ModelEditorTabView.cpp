@@ -127,11 +127,6 @@ ModelEditorTabView::~ModelEditorTabView() {
 	delete cameraRotationInputHandler;
 }
 
-Engine* ModelEditorTabView::getEngine()
-{
-	return engine;
-}
-
 PopUps* ModelEditorTabView::getPopUps()
 {
 	return popUps;
@@ -636,6 +631,6 @@ void ModelEditorTabView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
 }
 
-FrameBuffer* ModelEditorTabView::getFrameBuffer() {
-	return engine->getFrameBuffer();
+Engine* ModelEditorTabView::getEngine() {
+	return engine;
 }

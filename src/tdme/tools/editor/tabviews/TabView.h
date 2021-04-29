@@ -4,7 +4,7 @@
 
 #include <tdme/engine/fwd-tdme.h>
 
-using tdme::engine::FrameBuffer;
+using tdme::engine::Engine;
 
 /**
  * Tab view interface
@@ -30,9 +30,9 @@ struct tdme::tools::editor::tabviews::TabView
 	virtual void dispose() = 0;
 
 	/**
-	 * @return frame buffer
+	 * @return engine
 	 */
-	virtual FrameBuffer* getFrameBuffer() = 0;
+	virtual Engine* getEngine() = 0;
 
 	/**
 	 * Destructor

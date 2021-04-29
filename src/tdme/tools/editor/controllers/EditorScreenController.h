@@ -21,6 +21,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -54,7 +55,7 @@ public:
 	private:
 		string id;
 		TabView* tabView { nullptr };
-		FrameBuffer* frameBuffer { nullptr };
+		Engine* engine { nullptr };
 		GUIFrameBufferNode* frameBufferNode { nullptr };
 
 	public:
@@ -67,18 +68,18 @@ public:
 		 * Public constructor
 		 * @param id id
 		 * @param tabView tab view
-		 * @param frameBuffer frame buffer
+		 * @param engine engine
 		 * @param frameBufferNode frame buffer node
 		 */
 		EditorTabView(
 			string id,
 			TabView* tabView,
-			FrameBuffer* frameBuffer,
+			Engine* engine,
 			GUIFrameBufferNode* frameBufferNode
 		):
 			id(id),
 			tabView(tabView),
-			frameBuffer(frameBuffer),
+			engine(engine),
 			frameBufferNode(frameBufferNode)
 		{}
 
@@ -97,10 +98,10 @@ public:
 		}
 
 		/**
-		 * @return frame buffer
+		 * @return engine
 		 */
-		inline FrameBuffer* getFrameBuffer() {
-			return frameBuffer;
+		inline Engine* getEngine() {
+			return engine;
 		}
 
 		/**

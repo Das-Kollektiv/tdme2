@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -21,6 +22,7 @@
 using std::string;
 
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -61,11 +63,14 @@ void EditorView::handleInputEvents()
 
 void EditorView::display()
 {
+	int left, top, width, height;
+	getViewPort(left, top, width, height);
 	for (auto& tabViewIt: editorScreenController->getTabs()) {
 		auto tabId = tabViewIt.first;
 		auto& tab = tabViewIt.second;
+		if (tab.getEngine()->getWidth() != width || tab.getEngine()->getHeight() != height) tab.getEngine()->reshape(width, height);
 		tab.getTabView()->display();
-		tab.getFrameBufferNode()->setFrameBuffer(tab.getFrameBuffer());
+		tab.getFrameBufferNode()->setFrameBuffer(tab.getEngine()->getFrameBuffer());
 	}
 }
 

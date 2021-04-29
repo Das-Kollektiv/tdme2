@@ -130,11 +130,6 @@ public:
 	~ModelEditorTabView();
 
 	/**
-	 * @return engine
-	 */
-	Engine* getEngine();
-
-	/**
 	 * @return pop up views
 	 */
 	PopUps* getPopUps();
@@ -230,7 +225,7 @@ public:
 	void display() override;
 	void initialize() override;
 	void dispose() override;
-	FrameBuffer* getFrameBuffer() override;
+	Engine* getEngine() override;
 	void playSound(const string& soundId) override;
 
 	/**
