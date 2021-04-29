@@ -65,6 +65,7 @@ void EditorView::handleInputEvents()
 		int left, top, width, height;
 		getViewPort(left, top, width, height);
 		auto& tab = tabViewIt->second;
+		if (lastSelectedTabId != selectedTabId) tab.getTabView()->activate();
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = event.getXUnscaled();
 			auto eventY = event.getYUnscaled();
@@ -81,6 +82,7 @@ void EditorView::handleInputEvents()
 		tab.getEngine()->getGUI()->getMouseEvents().clear();
 		tab.getEngine()->getGUI()->getKeyboardEvents().clear();
 	}
+	lastSelectedTabId = selectedTabId;
 }
 
 void EditorView::display()
@@ -134,6 +136,14 @@ void EditorView::deactivate()
 void EditorView::dispose()
 {
 	Engine::getInstance()->reset();
+}
+
+void EditorView::setOutlinerContent(const string& xml) {
+	editorScreenController->setOutlinerContent(xml);
+}
+
+void EditorView::setDetailsContent(const string& xml) {
+	editorScreenController->setDetailsContent(xml);
 }
 
 void EditorView::getViewPort(int& left, int& top, int& width, int& height) {

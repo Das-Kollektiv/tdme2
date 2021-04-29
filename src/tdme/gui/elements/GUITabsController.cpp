@@ -48,7 +48,7 @@ void GUITabsController::initialize()
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
-			auto tabController = required_dynamic_cast< GUITabController* >(childController);
+			auto tabController = required_dynamic_cast<GUITabController*>(childController);
 			if (static_cast<GUINode*>(tabController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
 				continue;
 
@@ -102,6 +102,8 @@ void GUITabsController::setTabContentSelectedInternal(const string& id) {
 
 void GUITabsController::setTabContentSelected(const string& id)
 {
+	// TODO: a.drewke
+	// if (value.equals(id)) return;
 	setTabContentSelectedInternal(id);
 	// TODO: a.drewke, no element node, so it cant delegate value changes
 	// node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));

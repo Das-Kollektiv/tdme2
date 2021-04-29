@@ -133,6 +133,8 @@ private:
 	GUIParentNode* tabs { nullptr };
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
+	GUIParentNode* outlinerScrollarea { nullptr };
+	GUIParentNode* detailsScrollarea { nullptr };
 	GUINode* viewPort { nullptr };
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
@@ -190,6 +192,18 @@ public:
 	 * @param relativeProjectFileName relative project file name
 	 */
 	void onOpenFile(const string& relativeProjectFileName);
+
+	/**
+	 * Set outliner content
+	 * @param xml xml
+	 */
+	void setOutlinerContent(const string& xml);
+
+	/**
+	 * Set details content
+	 * @param xml xml
+	 */
+	void setDetailsContent(const string& xml);
 
 	/**
 	 * Shows the error pop up

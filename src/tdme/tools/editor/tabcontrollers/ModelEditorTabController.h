@@ -26,6 +26,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::model::Material;
+using tdme::engine::model::Node;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::ShaderParameter;
@@ -166,6 +167,12 @@ private:
 	 * @return current selected material
 	 */
 	Material* getSelectedMaterial();
+
+	/**
+	 * Create outliner model nodes xml
+	 */
+	void createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml);
+
 public:
 	/**
 	 * Public constructor
@@ -220,6 +227,11 @@ public:
 	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
+
+	/**
+	 * Set outliner content
+	 */
+	void setOutlinerContent();
 
 	/**
 	 * Set up general prototype data

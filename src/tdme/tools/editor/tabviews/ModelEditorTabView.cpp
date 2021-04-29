@@ -127,6 +127,10 @@ ModelEditorTabView::~ModelEditorTabView() {
 	delete cameraRotationInputHandler;
 }
 
+EditorView* ModelEditorTabView::getEditorView() {
+	return editorView;
+}
+
 TabController* ModelEditorTabView::getTabController() {
 	return dynamic_cast<TabController*>(modelEditorTabController);
 }
@@ -384,6 +388,7 @@ void ModelEditorTabView::display()
 
 void ModelEditorTabView::updateGUIElements()
 {
+	modelEditorTabController->setOutlinerContent();
 	// TODO: a.drewke
 //	if (prototype != nullptr) {
 //		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
@@ -637,4 +642,9 @@ void ModelEditorTabView::onCameraScale() {
 
 Engine* ModelEditorTabView::getEngine() {
 	return engine;
+}
+
+void ModelEditorTabView::activate() {
+	// TODO: a.drewke: Rename me
+	updateGUIElements();
 }

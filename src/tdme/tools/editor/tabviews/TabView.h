@@ -37,6 +37,11 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual Engine* getEngine() = 0;
 
 	/**
+	 * Activate
+	 */
+	virtual void activate() = 0;
+
+	/**
 	 * Destructor
 	 */
 	virtual ~TabView() {}

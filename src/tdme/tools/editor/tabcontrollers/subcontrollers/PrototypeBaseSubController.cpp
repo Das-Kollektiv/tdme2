@@ -236,7 +236,7 @@ void PrototypeBaseSubController::onPrototypePropertiesSelectionChanged(Prototype
 
 void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* model)
 {
-	if (node == required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))) {
+	if (node->getId() == "entity_properties_listbox") {
 		onPrototypePropertiesSelectionChanged(model);
 	} else {
 	}

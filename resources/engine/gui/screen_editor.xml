@@ -148,7 +148,7 @@
 							
 								<selectbox id="selectbox_outliner" boder="0" height="*">
 							
-									<scrollarea background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
+									<scrollarea id="selectbox_outliner_scrollarea" background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
 
 
 
@@ -173,7 +173,7 @@
 					<tabs-content>
 						<tab-content tab-id="tab_details" horizontal-align="center" vertical-align="top">
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
-								<scrollarea width="100%" height="100%" focusable="true">
+								<scrollarea id="selectbox_details_scrollarea" width="100%" height="100%" focusable="true">
 								
 
 					

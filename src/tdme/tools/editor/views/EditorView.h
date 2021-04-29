@@ -30,6 +30,7 @@ private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
 	EditorScreenController* editorScreenController { nullptr };
+	string lastSelectedTabId;
 
 public:
 	/**
@@ -67,6 +68,18 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void dispose() override;
+
+	/**
+	 * Set outliner content
+	 * @param xml xml
+	 */
+	void setOutlinerContent(const string& xml);
+
+	/**
+	 * Set details content
+	 * @param xml xml
+	 */
+	void setDetailsContent(const string& xml);
 
 	/**
 	 * Determine viewport screen constraints

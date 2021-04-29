@@ -92,6 +92,8 @@ void EditorScreenController::initialize()
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
 		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("tabs-content"));
+		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
+		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -422,6 +424,25 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	}
 	*/
 }
+
+void EditorScreenController::setOutlinerContent(const string& xml) {
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setOutlinerContent(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void EditorScreenController::setDetailsContent(const string& xml) {
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(detailsScrollarea->getId()))->addSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setDetailsContent(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
 
 void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPort->getComputedConstraints();

@@ -130,6 +130,11 @@ public:
 	~ModelEditorTabView();
 
 	/**
+	 * @return editor view
+	 */
+	EditorView* getEditorView();
+
+	/**
 	 * @return associated tab controller
 	 */
 	TabController* getTabController();
@@ -227,6 +232,7 @@ public:
 
 	// overridden methods
 	void handleInputEvents() override;
+	void activate() override;
 	void display() override;
 	void initialize() override;
 	void dispose() override;

@@ -35,6 +35,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -82,6 +83,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
@@ -281,6 +283,66 @@ void ModelEditorTabController::dispose()
 void ModelEditorTabController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
+}
+
+void ModelEditorTabController::createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml) {
+	for (auto nodeIt: subNodes) {
+		auto node = nodeIt.second;
+		if (node->getSubNodes().empty() == false) {
+			xml+= "			<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\">\n";
+			createOutlinerModelNodesXML(node->getSubNodes(), xml);
+			xml+= "			</selectbox-parent-option>\n";
+		} else {
+			xml+= "			<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\" />\n";
+		}
+	}
+}
+
+void ModelEditorTabController::setOutlinerContent() {
+
+	string xml;
+	auto prototype = view->getPrototype();
+	if (prototype != nullptr) {
+		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
+		if (model != nullptr) {
+			for (auto it: model->getMaterials()) {
+				auto materialId = it.second->getId();
+				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes("model.material." + materialId) + "\" />\n";
+			}
+		}
+		xml+= "	</selectbox-parent-option>\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Bounding Volumes") + "\" value=\"" + GUIParser::escapeQuotes("model.boundingvolumes") + "\">\n";
+		if (model != nullptr) {
+			for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+				auto boundingVolumeId = to_string(i);
+				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("model.boundingvolume." + boundingVolumeId) + "\" />\n";
+			}
+		}
+		xml+= "	</selectbox-parent-option>\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes("model.nodes") + "\">\n";
+		if (model != nullptr) {
+			createOutlinerModelNodesXML(model->getSubNodes(), xml);
+		}
+		xml+= "	</selectbox-parent-option>\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
+		if (model != nullptr) {
+			for (auto it: model->getAnimationSetups()) {
+				auto animationSetupId = it.second->getId();
+				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
+			}
+		}
+		xml+= "	</selectbox-parent-option>\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("model.sounds") + "\">\n";
+		for (auto sound: prototype->getSounds()) {
+			auto soundId = sound->getId();
+			xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("model.sounds." + soundId) + "\" />\n";
+		}
+		xml+= "	</selectbox-parent-option>\n";
+		xml+= "</selectbox-parent-option>\n";
+	}
+	view->getEditorView()->setOutlinerContent(xml);
 }
 
 void ModelEditorTabController::setPrototypeData(const string& name, const string& description)
