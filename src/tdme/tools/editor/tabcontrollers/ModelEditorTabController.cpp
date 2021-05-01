@@ -5,6 +5,7 @@
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -14,17 +15,21 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
@@ -52,6 +57,7 @@ using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -64,13 +70,16 @@ using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUIParser;
 using tdme::math::Vector3;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::FileDialogPath;
@@ -2133,16 +2142,75 @@ void ModelEditorTabController::showErrorPopUp(const string& caption, const strin
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
+void ModelEditorTabController::setMaterialDetails(const string& materialId) {
+	Console::println("ModelEditorTabController::setMaterialDetails(): " + materialId);
+
+	Material* material = nullptr;
+
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto materialIt = model->getMaterials().find(materialId);
+	material = materialIt != model->getMaterials().end()?materialIt->second:nullptr;
+	if (material == nullptr) return;
+
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_material_spec\" src=\"resources/engine/gui/template_details_specularmaterial.xml\" />\n"
+		"<template id=\"details_material_pbr\" src=\"resources/engine/gui/template_details_pbrmaterial.xml\" />\n"
+	);
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		if (specularMaterialProperties->getDiffuseTextureFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
+				PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath(),
+					specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
+				) +
+				"/" +
+				specularMaterialProperties->getDiffuseTextureFileName()
+			);
+		}
+		if (specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
+				PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath(),
+					specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+				) +
+				"/" +
+				specularMaterialProperties->getDiffuseTextureFileName()
+			);
+		}
+		if (specularMaterialProperties->getNormalTexture() != nullptr) {
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
+		}
+		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
+		}
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->setValue(specularMaterialProperties->getShininess());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setMaterialDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = node->getController()->getValue().getString();
 		if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
 			auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
-			view->getEditorView()->setDetailsContent(
-				"<template id=\"details_material_spec\" src=\"resources/engine/gui/template_details_specularmaterial.xml\" />\n"
-				"<template id=\"details_material_pbr\" src=\"resources/engine/gui/template_details_pbrmaterial.xml\" />\n"
-			);
+			setMaterialDetails(materialId);
 		}
 	} else
 	// TODO :old

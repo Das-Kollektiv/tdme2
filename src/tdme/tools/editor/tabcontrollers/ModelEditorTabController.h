@@ -535,6 +535,12 @@ public:
 	void loadFile(const string& pathName, const string& fileName);
 
 	/**
+	 * Set material details
+	 * @param materialId material Id
+	 */
+	void setMaterialDetails(const string& materialId);
+
+	/**
 	 * On value changed
 	 * @param node node
 	 */

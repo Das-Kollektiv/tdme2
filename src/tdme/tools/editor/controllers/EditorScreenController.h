@@ -164,6 +164,13 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
+	 * @return project path
+	 */
+	const string& getProjectPath() {
+		return projectPath;
+	}
+
+	/**
 	 * On open project
 	 */
 	void onOpenProject();

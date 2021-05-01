@@ -10,7 +10,7 @@
 				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+						<image id="specularmaterial_diffuse_texture" width="100%" height="100%" />
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
@@ -28,7 +28,7 @@
 				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+						<image id="specularmaterial_transparency_texture" width="100%" height="100%" />
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
@@ -46,7 +46,7 @@
 				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+						<texture id="specularmaterial_normal_texture" width="100%" height="100%" />
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
@@ -64,7 +64,7 @@
 				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
+						<texture id="specularmaterial_specular_texture" width="100%" height="100%" />
 					</element>
 					<space width="5" />
 					<layout width="auto" height="auto" alignment="vertical">
