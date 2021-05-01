@@ -141,7 +141,7 @@
             - layouting on demand in combination with conditions
         - supported primitive nodes from which compounds are built of
             - element
-            - image
+            - image(plus framebuffer and texture image nodes) 
             - input
             - layer
             - layout
