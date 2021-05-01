@@ -541,6 +541,12 @@ public:
 	void setMaterialDetails(const string& materialId);
 
 	/**
+	 * Set animation details
+	 * @param animationId animation Id
+	 */
+	void setAnimationDetails(const string& animationId);
+
+	/**
 	 * On value changed
 	 * @param node node
 	 */

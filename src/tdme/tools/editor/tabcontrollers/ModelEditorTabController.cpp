@@ -2227,6 +2227,68 @@ void ModelEditorTabController::setMaterialDetails(const string& materialId) {
 	}
 }
 
+void ModelEditorTabController::setAnimationDetails(const string& animationId) {
+	Console::println("ModelEditorTabController::setAnimationDetails(): " + animationId);
+
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationId);
+	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
+	defaultAnimation = false;
+
+	if (animationSetup == nullptr) return;
+
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_animation.xml\" />\n"
+	);
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	{
+		auto idx = 0;
+		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML;
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = 
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
+			"<dropdown-option text=\"<None>\" value=\"\" " + (idx == 0 ? "selected=\"true\" " : "") + " />\n";
+		idx++;
+		for (auto it: model->getNodes()) {
+			auto nodeId = it.second->getId();
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML+=
+				"<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(nodeId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(nodeId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->setValue(animationSetup->getStartFrame());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->setDisabled(defaultAnimation == true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->setValue(animationSetup->getEndFrame());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->setDisabled(defaultAnimation == true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_speed"))->getController()->setValue(animationSetup->getSpeed());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_speed"))->getController()->setDisabled(defaultAnimation == true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_loop"))->getController()->setValue(MutableString(animationSetup->isLoop() == true?"1":""));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_loop"))->getController()->setDisabled(defaultAnimation == true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->setValue(animationSetup->getOverlayFromNodeId());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->setDisabled(defaultAnimation == true);
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
@@ -2234,6 +2296,10 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
 			auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
 			setMaterialDetails(materialId);
+		}
+		if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
+			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
+			setAnimationDetails(animationId);
 		}
 	} else
 	// TODO :old

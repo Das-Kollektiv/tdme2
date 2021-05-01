@@ -49,7 +49,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animation_overlaybone" width="100%" height="auto" text="bone01">
-						<scrollarea width="100%" height="70">
+						<scrollarea id="animation_overlaybone_scrollarea" width="100%" height="70">
 						</scrollarea>
 					</dropdown>
 				</layout>
