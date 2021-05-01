@@ -9,7 +9,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
+#include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
 using std::string;
@@ -26,7 +26,7 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextureNode;
+using tdme::gui::nodes::GUITextureBaseNode;
 
 /**
  * GUI image node
@@ -34,7 +34,7 @@ using tdme::gui::nodes::GUITextureNode;
  * @version $Id$
  */
 class tdme::gui::nodes::GUIImageNode final
-	: public GUITextureNode
+	: public GUITextureBaseNode
 {
 	friend class tdme::gui::GUIParser;
 

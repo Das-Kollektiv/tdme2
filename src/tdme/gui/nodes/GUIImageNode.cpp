@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
+#include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/GUI.h>
 
 using tdme::gui::nodes::GUIImageNode;
@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextureNode;
+using tdme::gui::nodes::GUITextureBaseNode;
 using tdme::gui::GUI;
 
 GUIImageNode::GUIImageNode(
@@ -53,7 +53,7 @@ GUIImageNode::GUIImageNode(
 	const GUINode_Clipping& clipping,
 	const string& mask,
 	float maskMaxValue):
-	GUITextureNode(
+	GUITextureBaseNode(
 		screenNode,
 		parentNode,
 		id,
@@ -88,7 +88,7 @@ const string GUIImageNode::getNodeType()
 void GUIImageNode::dispose()
 {
 	if (texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
-	GUITextureNode::dispose();
+	GUITextureBaseNode::dispose();
 }
 
 const string& GUIImageNode::getSource() {

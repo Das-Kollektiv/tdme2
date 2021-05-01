@@ -1,7 +1,5 @@
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -12,13 +10,11 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
+#include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/GUI.h>
 
 using tdme::gui::nodes::GUIFrameBufferNode;
 
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
@@ -29,7 +25,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextureNode;
+using tdme::gui::nodes::GUITextureBaseNode;
 using tdme::gui::GUI;
 
 GUIFrameBufferNode::GUIFrameBufferNode(
@@ -55,7 +51,7 @@ GUIFrameBufferNode::GUIFrameBufferNode(
 	const GUINode_Clipping& clipping,
 	const string& mask,
 	float maskMaxValue):
-	GUITextureNode(
+	GUITextureBaseNode(
 		screenNode,
 		parentNode,
 		id,
@@ -89,7 +85,7 @@ const string GUIFrameBufferNode::getNodeType()
 
 void GUIFrameBufferNode::dispose()
 {
-	GUITextureNode::dispose();
+	GUITextureBaseNode::dispose();
 }
 
 FrameBuffer* GUIFrameBufferNode::getFrameBuffer() {

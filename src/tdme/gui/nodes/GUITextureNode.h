@@ -3,21 +3,21 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
+using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;
@@ -28,36 +28,22 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::renderer::GUIRenderer;
-using tdme::math::Matrix2D3x3;
+using tdme::gui::nodes::GUITextureBaseNode;
 
 /**
  * GUI texture node
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUITextureNode
-	: public GUINode
+class tdme::gui::nodes::GUITextureNode final
+	: public GUITextureBaseNode
 {
 	friend class tdme::gui::GUIParser;
 
 private:
-	GUIColor effectColorMul;
-	GUIColor effectColorAdd;
-	GUINode_Clipping clipping;
-	Texture* maskTexture { nullptr };
-	float maskMaxValue;
-	int32_t maskTextureId { 0 };
-
-	Matrix2D3x3 textureMatrix;
-	GUINode_Scale9Grid scale9Grid;
-	string mask;
+	Texture* texture { nullptr };
 
 protected:
-	int32_t textureId { 0 };
-	int textureWidth { 0 };
-	int textureHeight { 0 };
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -75,6 +61,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param texture texture
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -99,6 +86,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		Texture* texture,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
@@ -110,83 +98,21 @@ protected:
 	/**
 	 * @return node type
 	 */
-	const string getNodeType() override = 0;
-	bool isContentNode() override;
+	const string getNodeType() override;
 
 public:
 	// overridden methods
-	int getContentWidth() override;
-	int getContentHeight() override;
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer) override;
 
 	/**
-	 * Set texture matrix
-	 * @param textureMatrix texture matrix
+	 * @return texture
 	 */
-	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
+	Texture* getTexture();
 
 	/**
-	 * @return effect color mul
+	 * Set texture
+	 * @param texture texture
 	 */
-	const GUIColor& getEffectColorMul();
-
-	/**
-	 * Set effect color mul
-	 * @param effectColorMul effect color mul
-	 */
-	void setEffectColorMul(const GUIColor& effectColorMul);
-
-	/**
-	 * @return effect color add
-	 */
-	const GUIColor& getEffectColorAdd();
-
-	/**
-	 * Set effect color add
-	 * @param effectColorAdd effect color add
-	 */
-	void setEffectColorAdd(const GUIColor& effectColorAdd);
-
-	/**
-	 * @return clipping
-	 */
-	GUINode_Clipping& getClipping();
-
-	/**
-	 * Create clipping
-	 * @param allClipping all sides
-	 * @param left left
-	 * @param top top
-	 * @param right right
-	 * @param bottom bottom
-	 */
-	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
-
-	/**
-	 * @return mask source
-	 */
-	const string& getMask();
-
-	/**
-	 * Set mask source
-	 * @param mask mask source
-	 */
-	void setMask(const string& mask);
-
-	/**
-	 * @return maximum value of mask to display image
-	 */
-	float getMaskMaxValue() {
-		return maskMaxValue;
-	}
-
-	/**
-	 * Set maximum value of mask to display image
-	 * @param maskMinValue value of mask to display image
-	 */
-	void setMaskMaxValue(float maskMaxValue) {
-		this->maskMaxValue = maskMaxValue;
-	}
+	void setTexture(Texture* texture);
 
 };
