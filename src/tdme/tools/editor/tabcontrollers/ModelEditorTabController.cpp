@@ -2303,13 +2303,17 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 }
 
 void ModelEditorTabController::setSoundDetails(const string& soundId) {
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
 	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
+		"<template id=\"details_sound\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
 	);
 
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
 
 	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setSoundDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -2318,12 +2322,13 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 
 void ModelEditorTabController::setPropertyDetails(const string& propertyName) {
 	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_properties.xml\" />\n"
+		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_properties.xml\" />\n"
 	);
 
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
 
 	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));

@@ -1,4 +1,4 @@
-<screen id="screen_colorpicker" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+<screen id="screen_colorpicker" min-width="1024" min-height="768" max-width="2560" max-height="1440">
 	<layout padding="5" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
 		<layout alignment="horizontal" width="200" height="auto">
 			<image src="resources/engine/images/colorpicker.png"/>

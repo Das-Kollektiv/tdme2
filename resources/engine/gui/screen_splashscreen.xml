@@ -1,4 +1,4 @@
-<screen id="screen_splashscreen" min-width="1024" min-height="768" max-width="1920" max-height="1280">>
+<screen id="screen_splashscreen" min-width="1024" min-height="768" max-width="2560" max-height="1440">
 	<layout padding-left="20" padding-right="20" padding-top="20" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" horizontal-align="center" background-color="{$color.element_foreground}">
 		<image src="resources/engine/images/tdme_fontlogo_white.png"/>
 		<space height="20"/>
