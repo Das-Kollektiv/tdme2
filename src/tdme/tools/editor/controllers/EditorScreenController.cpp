@@ -438,7 +438,7 @@ void EditorScreenController::setOutlinerContent(const string& xml) {
 
 void EditorScreenController::setDetailsContent(const string& xml) {
 	try {
-		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(detailsScrollarea->getId()))->addSubNodes(xml, true);
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(detailsScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::setDetailsContent(): An error occurred: "));
 		Console::println(string(exception.what()));

@@ -2165,6 +2165,9 @@ void ModelEditorTabController::setMaterialDetails(const string& materialId) {
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
 
 	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_spec"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_pbr"))->getActiveConditions().add("open");
+
 		if (specularMaterialProperties->getDiffuseTextureFileName().empty() == false) {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
 				PrototypeReader::getResourcePathName(
@@ -2235,7 +2238,6 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 
 	auto animationSetup = model->getAnimationSetup(animationId);
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
-	defaultAnimation = false;
 
 	if (animationSetup == nullptr) return;
 
@@ -2273,6 +2275,7 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 
 	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animation"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->setValue(animationSetup->getStartFrame());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->setDisabled(defaultAnimation == true);
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->setValue(animationSetup->getEndFrame());
