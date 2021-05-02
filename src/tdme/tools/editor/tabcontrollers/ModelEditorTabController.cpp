@@ -2263,14 +2263,14 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 
 	{
 		auto idx = 0;
-		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML;
-		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = 
-			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
+		string animationOverlayFromNodeIdDropDownXML;
+		animationOverlayFromNodeIdDropDownXML =
+			animationOverlayFromNodeIdDropDownXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (idx == 0 ? "selected=\"true\" " : "") + " />\n";
 		idx++;
 		for (auto it: model->getNodes()) {
 			auto nodeId = it.second->getId();
-			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML+=
+			animationOverlayFromNodeIdDropDownXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escapeQuotes(nodeId) +
 				"\" value=\"" +
@@ -2281,7 +2281,7 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 			idx++;
 		}
 		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationOverlayFromNodeIdDropDownXML, true);
 		} catch (Exception& exception) {
 			Console::print(string("ModelEditorTabController::setAnimationDetails(): An error occurred: "));
 			Console::println(string(exception.what()));
@@ -2307,6 +2307,11 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 }
 
 void ModelEditorTabController::setSoundDetails(const string& soundId) {
+	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
+
+	auto sound = view->getPrototype()->getSound(soundId);
+	if (sound == nullptr) return;
+
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
@@ -2316,8 +2321,47 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
 
+	{
+		auto idx = 0;
+		string animationsDropDownXML;
+		animationsDropDownXML =
+			animationsDropDownXML + "<dropdown-option text=\"" +
+			GUIParser::escapeQuotes("<None>") +
+			"\" value=\"" +
+			GUIParser::escapeQuotes("") +
+			"\" " +
+			(idx == 0 ? "selected=\"true\" " : "") +
+			" />\n";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetupId = it.second->getId();
+			animationsDropDownXML =
+				animationsDropDownXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("sound_animation_scrollarea"))->replaceSubNodes(animationsDropDownXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->setValue(MutableString(sound->getId()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_offset"))->getController()->setValue(MutableString(sound->getOffset()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_looping"))->getController()->setValue(MutableString(sound->isLooping() == true?"1":""));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->setValue(MutableString(sound->isFixed() == true?"1":""));
+
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setSoundDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -2325,6 +2369,8 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 }
 
 void ModelEditorTabController::setPropertyDetails(const string& propertyName) {
+	Console::println("ModelEditorTabController::setPropertyDetails(): " + propertyName);
+
 	view->getEditorView()->setDetailsContent(
 		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_properties.xml\" />\n"
 	);
