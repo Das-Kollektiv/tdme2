@@ -553,6 +553,12 @@ public:
 	void setSoundDetails(const string& soundId);
 
 	/**
+	 * Set property details
+	 * @param propertyName property name
+	 */
+	void setPropertyDetails(const string& propertyName);
+
+	/**
 	 * Update details panel
 	 * @param outlinerNode outliner node
 	 */

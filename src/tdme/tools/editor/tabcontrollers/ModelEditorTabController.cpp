@@ -15,6 +15,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -67,6 +68,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeLODLevel;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -312,6 +314,14 @@ void ModelEditorTabController::setOutlinerContent() {
 	string xml;
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
+		if (prototype->getPropertyCount() > 0) {
+			xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
+			for (auto i = 0; i < prototype->getPropertyCount(); i++) {
+				auto property = prototype->getPropertyByIndex(i);
+				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+			}
+			xml+= "	</selectbox-parent-option>\n";
+		}
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
 		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
@@ -2306,6 +2316,21 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 	}
 }
 
+void ModelEditorTabController::setPropertyDetails(const string& propertyName) {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_properties.xml\" />\n"
+	);
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+}
+
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
@@ -2319,6 +2344,10 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	if (StringTools::startsWith(outlinerNode, "model.sounds.") == true) {
 		auto soundId = StringTools::substring(outlinerNode, string("model.sounds.").size(), outlinerNode.size());
 		setSoundDetails(soundId);
+	} else
+	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+		auto propertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+		setPropertyDetails(propertyName);
 	}
 }
 
