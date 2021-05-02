@@ -547,6 +547,12 @@ public:
 	void setAnimationDetails(const string& animationId);
 
 	/**
+	 * Set sound details
+	 * @param soundId sound Id
+	 */
+	void setSoundDetails(const string& soundId);
+
+	/**
 	 * Update details panel
 	 * @param outlinerNode outliner node
 	 */

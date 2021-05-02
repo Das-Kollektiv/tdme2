@@ -2292,6 +2292,20 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 }
 
+void ModelEditorTabController::setSoundDetails(const string& soundId) {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
+	);
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setSoundDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
@@ -2301,6 +2315,10 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		setAnimationDetails(animationId);
+	} else
+	if (StringTools::startsWith(outlinerNode, "model.sounds.") == true) {
+		auto soundId = StringTools::substring(outlinerNode, string("model.sounds.").size(), outlinerNode.size());
+		setSoundDetails(soundId);
 	}
 }
 
