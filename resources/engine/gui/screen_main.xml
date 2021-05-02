@@ -1,4 +1,4 @@
-<screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+<screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="2560" max-height="1440">
 	<layout alignment="vertical" width="100%" height="100%">
 		<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="30">
 			<space width="5"/>
