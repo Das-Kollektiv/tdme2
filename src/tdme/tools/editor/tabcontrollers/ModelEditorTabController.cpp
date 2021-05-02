@@ -300,11 +300,11 @@ void ModelEditorTabController::createOutlinerModelNodesXML(const map<string, Nod
 	for (auto nodeIt: subNodes) {
 		auto node = nodeIt.second;
 		if (node->getSubNodes().empty() == false) {
-			xml+= "			<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\">\n";
 			createOutlinerModelNodesXML(node->getSubNodes(), xml);
-			xml+= "			</selectbox-parent-option>\n";
+			xml+= "</selectbox-parent-option>\n";
 		} else {
-			xml+= "			<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\" />\n";
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\" />\n";
 		}
 	}
 }
@@ -312,55 +312,59 @@ void ModelEditorTabController::createOutlinerModelNodesXML(const map<string, Nod
 void ModelEditorTabController::setOutlinerContent() {
 
 	string xml;
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		if (prototype->getPropertyCount() > 0) {
-			xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
 			for (auto i = 0; i < prototype->getPropertyCount(); i++) {
 				auto property = prototype->getPropertyByIndex(i);
-				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
 			}
-			xml+= "	</selectbox-parent-option>\n";
+			xml+= "</selectbox-parent-option>\n";
+		}
+		if (prototype->getBoundingVolumeCount() > 0) {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Bounding Volumes") + "\" value=\"" + GUIParser::escapeQuotes("boundingvolumes") + "\">\n";
+			for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+				auto boundingVolumeId = to_string(i);
+				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("boundingvolume." + boundingVolumeId) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
+		}
+		if (prototype->getSounds().empty() == false) {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
+			for (auto sound: prototype->getSounds()) {
+				auto soundId = sound->getId();
+				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
 		}
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
 		if (model != nullptr) {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
 			for (auto it: model->getMaterials()) {
 				auto materialId = it.second->getId();
-				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes("model.material." + materialId) + "\" />\n";
+				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes("model.material." + materialId) + "\" />\n";
 			}
+			xml+= "</selectbox-parent-option>\n";
 		}
-		xml+= "	</selectbox-parent-option>\n";
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Bounding Volumes") + "\" value=\"" + GUIParser::escapeQuotes("model.boundingvolumes") + "\">\n";
-		if (model != nullptr) {
-			for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-				auto boundingVolumeId = to_string(i);
-				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("model.boundingvolume." + boundingVolumeId) + "\" />\n";
-			}
-		}
-		xml+= "	</selectbox-parent-option>\n";
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes("model.nodes") + "\">\n";
-		if (model != nullptr) {
+		if (model != nullptr && model->getSubNodes().empty() == false) {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes("model.nodes") + "\">\n";
 			createOutlinerModelNodesXML(model->getSubNodes(), xml);
+			xml+= "</selectbox-parent-option>\n";
 		}
-		xml+= "	</selectbox-parent-option>\n";
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
-		if (model != nullptr) {
+		if (model != nullptr && model->getAnimationSetups().empty() == false) {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
 			for (auto it: model->getAnimationSetups()) {
 				auto animationSetupId = it.second->getId();
-				xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
+				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
 			}
+			xml+= "</selectbox-parent-option>\n";
 		}
-		xml+= "	</selectbox-parent-option>\n";
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("model.sounds") + "\">\n";
-		for (auto sound: prototype->getSounds()) {
-			auto soundId = sound->getId();
-			xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("model.sounds." + soundId) + "\" />\n";
-		}
-		xml+= "	</selectbox-parent-option>\n";
 		xml+= "</selectbox-parent-option>\n";
 	}
+	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
@@ -2346,8 +2350,8 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		setAnimationDetails(animationId);
 	} else
-	if (StringTools::startsWith(outlinerNode, "model.sounds.") == true) {
-		auto soundId = StringTools::substring(outlinerNode, string("model.sounds.").size(), outlinerNode.size());
+	if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+		auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
 		setSoundDetails(soundId);
 	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
