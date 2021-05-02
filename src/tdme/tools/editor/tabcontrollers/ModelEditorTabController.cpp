@@ -2292,18 +2292,23 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 }
 
+void ModelEditorTabController::updateDetails(const string& outlinerNode) {
+	view->getEditorView()->setDetailsContent(string());
+	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
+		auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
+		setMaterialDetails(materialId);
+	}
+	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
+		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
+		setAnimationDetails(animationId);
+	}
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = node->getController()->getValue().getString();
-		if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
-			auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
-			setMaterialDetails(materialId);
-		}
-		if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
-			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-			setAnimationDetails(animationId);
-		}
+		updateDetails(outlinerNode);
 	} else
 	// TODO :old
 //	if (node->getId() == "animations_dropdown") {

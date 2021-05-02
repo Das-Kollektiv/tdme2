@@ -201,6 +201,11 @@ public:
 	void onOpenFile(const string& relativeProjectFileName);
 
 	/**
+	 * @return outliner selection
+	 */
+	const string getOutlinerSelection();
+
+	/**
 	 * Set outliner content
 	 * @param xml xml
 	 */

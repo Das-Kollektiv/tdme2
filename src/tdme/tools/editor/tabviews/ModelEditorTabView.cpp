@@ -647,5 +647,5 @@ Engine* ModelEditorTabView::getEngine() {
 void ModelEditorTabView::activate() {
 	// TODO: a.drewke: Rename me
 	updateGUIElements();
-	modelEditorTabController->setDetailsContent();
+	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }

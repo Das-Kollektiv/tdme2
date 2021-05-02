@@ -427,6 +427,16 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	*/
 }
 
+const string EditorScreenController::getOutlinerSelection() {
+	try {
+		return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_outliner"))->getController()->getValue().getString();
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::getOutlinerSelection(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	return string();
+}
+
 void EditorScreenController::setOutlinerContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);

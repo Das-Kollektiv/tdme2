@@ -547,6 +547,12 @@ public:
 	void setAnimationDetails(const string& animationId);
 
 	/**
+	 * Update details panel
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(const string& outlinerNode);
+
+	/**
 	 * On value changed
 	 * @param node node
 	 */
