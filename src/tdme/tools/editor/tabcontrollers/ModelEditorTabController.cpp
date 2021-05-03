@@ -13,7 +13,6 @@
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/gui/GUI.h>
@@ -66,7 +65,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::gui::events::Action;
@@ -133,7 +131,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	auto const finalView = view;
 	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEngine(), view->getPopUps(), &modelPath, true);
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view, view->getPopUps(), &audioPath);
+	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, view->getPopUps(), &audioPath);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEngine(), this->prototypePhysicsSubController->getView());
 }
 
@@ -331,14 +329,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
-		if (prototype->getSounds().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
-			for (auto sound: prototype->getSounds()) {
-				auto soundId = sound->getId();
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
-			}
-			xml+= "</selectbox-parent-option>\n";
-		}
+		prototypeSoundsSubController->createOutlinerSoundsXML(view->getPrototype(), xml);
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
 		if (model != nullptr) {
@@ -2309,63 +2300,10 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 void ModelEditorTabController::setSoundDetails(const string& soundId) {
 	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
 
-	auto sound = view->getPrototype()->getSound(soundId);
-	if (sound == nullptr) return;
-
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
-	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_sound\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
-	);
-
-	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
-
-	{
-		auto idx = 0;
-		string animationsDropDownXML;
-		animationsDropDownXML =
-			animationsDropDownXML + "<dropdown-option text=\"" +
-			GUIParser::escapeQuotes("<None>") +
-			"\" value=\"" +
-			GUIParser::escapeQuotes("") +
-			"\" " +
-			(idx == 0 ? "selected=\"true\" " : "") +
-			" />\n";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetupId = it.second->getId();
-			animationsDropDownXML =
-				animationsDropDownXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
-				"\" " +
-				(idx == 0 ? "selected=\"true\" " : "") +
-				" />\n";
-			idx++;
-		}
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("sound_animation_scrollarea"))->replaceSubNodes(animationsDropDownXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setAnimationDetails(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->setValue(MutableString(sound->getId()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_offset"))->getController()->setValue(MutableString(sound->getOffset()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_looping"))->getController()->setValue(MutableString(sound->isLooping() == true?"1":""));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->setValue(MutableString(sound->isFixed() == true?"1":""));
-
-	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setSoundDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
+	prototypeSoundsSubController->setSoundDetails(view->getPrototype(), model, soundId);
 }
 
 void ModelEditorTabController::setPropertyDetails(const string& propertyName) {

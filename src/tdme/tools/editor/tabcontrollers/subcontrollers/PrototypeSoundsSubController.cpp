@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -19,6 +20,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -48,6 +50,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
+using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -56,8 +59,9 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeSoundsSubController::PrototypeSoundsSubController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
+PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
 {
+	this->editorView = editorView;
 	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
 	this->view = new PrototypeSoundsSubView(this, popUps);
@@ -79,27 +83,10 @@ GUIScreenNode* PrototypeSoundsSubController::getScreenNode() {
 void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
-	try {
-		for (auto i = 0; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
-			soundsSoundAnimationDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_animation_" + to_string(i)));
-			soundsSoundKey[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_key_" + to_string(i)));
-			soundsSoundFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_file_" + to_string(i)));
-			soundsSoundLoad[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_load_" + to_string(i)));
-			soundsSoundClear[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_clear_" + to_string(i)));
-			soundsSoundGain[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_gain_" + to_string(i)));
-			soundsSoundPitch[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_pitch_" + to_string(i)));
-			soundsSoundOffset[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_offset_" + to_string(i)));
-			soundsSoundLooping[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_looping_" + to_string(i)));
-			soundsSoundFixed[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_fixed_" + to_string(i)));
-			soundsSoundApply[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("sounds_sound_apply_" + to_string(i)));
-		}
-	} catch (Exception& exception) {
-		Console::print(string("PrototypeSoundsSubController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
 }
 
 void PrototypeSoundsSubController::setSoundAnimationDropDown(int soundIdx, Model* model) {
+	/*
 	auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((soundsSoundAnimationDropDown[soundIdx]->getScreenNode()->getNodeById(soundsSoundAnimationDropDown[soundIdx]->getId() + "_inner")));
 	auto idx = 0;
 	string animationsDropDownInnerNodeSubNodesXML = "";
@@ -130,10 +117,11 @@ void PrototypeSoundsSubController::setSoundAnimationDropDown(int soundIdx, Model
 	}
 	// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
 	// soundsSoundAnimation[i]->getScreenNode()->layout(soundsSoundAnimation[i]);
-
+	*/
 }
 
 void PrototypeSoundsSubController::unsetSound(int soundIdx) {
+	/*
 	setSoundAnimationDropDown(soundIdx, nullptr);
 	soundsSoundKey[soundIdx]->getController()->setValue(MutableString(""));
 	soundsSoundKey[soundIdx]->getController()->setDisabled(true);
@@ -154,6 +142,7 @@ void PrototypeSoundsSubController::unsetSound(int soundIdx) {
 	soundsSoundFixed[soundIdx]->getController()->setValue(MutableString(""));
 	soundsSoundFixed[soundIdx]->getController()->setDisabled(true);
 	soundsSoundApply[soundIdx]->getController()->setDisabled(true);
+	*/
 }
 
 void PrototypeSoundsSubController::unsetSounds() {
@@ -163,6 +152,7 @@ void PrototypeSoundsSubController::unsetSounds() {
 }
 
 void PrototypeSoundsSubController::setSounds(Prototype* prototype) {
+	/*
 	auto i = 0;
 	auto& sounds = prototype->getSounds();
 	for (auto sound: sounds) {
@@ -213,14 +203,15 @@ void PrototypeSoundsSubController::setSounds(Prototype* prototype) {
 	for (; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
 		unsetSound(i);
 	}
-
+	*/
 }
 
 void PrototypeSoundsSubController::onSoundClear(int soundIdx) {
-	soundsSoundFile[soundIdx]->getController()->setValue(MutableString(""));
+	// soundsSoundFile[soundIdx]->getController()->setValue(MutableString(""));
 }
 
 void PrototypeSoundsSubController::onSoundLoad(int soundIdx) {
+	/*
 	class LoadSoundAction: public virtual Action
 	{
 	public:
@@ -249,10 +240,12 @@ void PrototypeSoundsSubController::onSoundLoad(int soundIdx) {
 		true,
 		new LoadSoundAction(this, soundIdx)
 	);
+	*/
 }
 
 
 void PrototypeSoundsSubController::onSoundApply(int soundIdx, Prototype* prototype) {
+	/*
 	try {
 		PrototypeAudio* sound = nullptr;
 		if (soundIdx == prototype->getSounds().size()) {
@@ -278,11 +271,80 @@ void PrototypeSoundsSubController::onSoundApply(int soundIdx, Prototype* prototy
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	*/
 }
 
 void PrototypeSoundsSubController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
+}
+
+void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype, string& xml) {
+	if (prototype->getSounds().empty() == false) {
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
+		for (auto sound: prototype->getSounds()) {
+			auto soundId = sound->getId();
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
+		}
+		xml+= "</selectbox-parent-option>\n";
+	}
+}
+
+void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* model, const string& soundId) {
+	Console::println("PrototypeSoundsSubController::setSoundDetails(): " + soundId);
+
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) return;
+
+	editorView->setDetailsContent(
+		"<template id=\"details_sound\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
+	);
+
+	{
+		auto idx = 0;
+		string animationsDropDownXML;
+		animationsDropDownXML =
+			animationsDropDownXML + "<dropdown-option text=\"" +
+			GUIParser::escapeQuotes("<None>") +
+			"\" value=\"" +
+			GUIParser::escapeQuotes("") +
+			"\" " +
+			(idx == 0 ? "selected=\"true\" " : "") +
+			" />\n";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetupId = it.second->getId();
+			animationsDropDownXML =
+				animationsDropDownXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetupId) +
+				"\" " +
+				(idx == 0 ? "selected=\"true\" " : "") +
+				" />\n";
+			idx++;
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("sound_animation_scrollarea"))->replaceSubNodes(animationsDropDownXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->setValue(MutableString(sound->getId()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_offset"))->getController()->setValue(MutableString(sound->getOffset()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_looping"))->getController()->setValue(MutableString(sound->isLooping() == true?"1":""));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->setValue(MutableString(sound->isFixed() == true?"1":""));
+
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {

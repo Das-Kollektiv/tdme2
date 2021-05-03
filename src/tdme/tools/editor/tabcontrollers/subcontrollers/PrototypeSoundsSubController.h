@@ -32,6 +32,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 
 /**
@@ -49,28 +50,19 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* audioPath { nullptr };
+	EditorView* editorView { nullptr };
 	PrototypeSoundsSubView* view { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundKey;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundFile;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundLoad;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundClear;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundGain;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundPitch;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundOffset;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundLooping;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundFixed;
-	array<GUIElementNode*, Prototype::MODEL_SOUNDS_COUNT> soundsSoundApply;
 
 public:
 	/**
 	 * Public constructor
+	 * @param editorView editor view
 	 * @param playableSoundView view that supports playing sounds
 	 * @param popUps pop ups
 	 * @param audioPath audio path
 	 */
-	PrototypeSoundsSubController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
+	PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
 
 	/**
 	 * Destructor
@@ -142,6 +134,21 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * Create sounds XML for outliner
+	 * @param prototype prototype
+	 * @param xml xml
+	 */
+	void createOutlinerSoundsXML(Prototype* prototype, string& xml);
+
+	/**
+	 * Set sound details
+	 * @param prototype prototype
+	 * @param model model
+	 * @param soundId sound Id
+	 */
+	void setSoundDetails(Prototype* prototype, Model* model, const string& soundId);
 
 	/**
 	 * On value changed
