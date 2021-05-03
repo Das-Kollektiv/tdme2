@@ -2371,14 +2371,19 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 void ModelEditorTabController::setPropertyDetails(const string& propertyName) {
 	Console::println("ModelEditorTabController::setPropertyDetails(): " + propertyName);
 
+	auto property = view->getPrototype()->getProperty(propertyName);
+	if (property == nullptr) return;
+
 	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_properties.xml\" />\n"
+		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_property.xml\" />\n"
 	);
 
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->setValue(MutableString(property->getName()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
