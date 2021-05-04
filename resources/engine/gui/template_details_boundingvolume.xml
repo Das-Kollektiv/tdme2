@@ -6,11 +6,12 @@
 
 			<dropdown id="boundingvolume_type" width="100%" height="auto" text="Select Type">
 
-					<dropdown-option text="Sphere" value="1" on-mouse-click="boundingvolume_type_details.condition=sphere" />
-					<dropdown-option text="Capsule" value="2" on-mouse-click="boundingvolume_type_details.condition=capsule" />
-					<dropdown-option text="Bounding Box" value="3" on-mouse-click="boundingvolume_type_details.condition=obb" />
-					<dropdown-option text="Imported Mesh" value="4" on-mouse-click="boundingvolume_type_details.condition=imported" />
-					<dropdown-option text="Generated Mesh" value="5" on-mouse-click="boundingvolume_type_details.condition=generated" />
+					<dropdown-option text="Sphere" value="sphere" on-mouse-click="boundingvolume_type_details.condition=sphere" />
+					<dropdown-option text="Capsule" value="capsule" on-mouse-click="boundingvolume_type_details.condition=capsule" />
+					<dropdown-option text="Bounding Box" value="obb" on-mouse-click="boundingvolume_type_details.condition=obb" />
+					<dropdown-option text="Imported Mesh" value="imported" on-mouse-click="boundingvolume_type_details.condition=imported" />
+					<dropdown-option text="Generated Mesh" value="generated" on-mouse-click="boundingvolume_type_details.condition=generated" />
+					<dropdown-option text="Convex Mesh" value="convexmesh" on-mouse-click="boundingvolume_type_details.condition=convexmesh" />
 					<dropdown-option text="Terrain" value="6" on-mouse-click="boundingvolume_type_details.condition=terrain"/>
 
 			</dropdown>

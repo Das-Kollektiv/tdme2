@@ -15,6 +15,7 @@
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
+#include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -32,6 +33,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 
 /**
@@ -49,6 +51,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* modelPath { nullptr };
+	EditorView* editorView { nullptr };
 	PrototypePhysicsSubView* view { nullptr };
 	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
 	array<GUIElementNode*, Prototype::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeApply;
@@ -110,6 +113,7 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param editorView editor view
 	 * @param engine engine
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
@@ -117,7 +121,7 @@ public:
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	PrototypePhysicsSubController(Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubController(EditorView* editorView, Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor
@@ -352,6 +356,26 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * Create physics XML for outliner
+	 * @param prototype prototype
+	 * @param xml xml
+	 */
+	void createOutlinerPhysicsXML(Prototype* prototype, string& xml);
+
+	/**
+	 * Set physics details
+	 * @param prototype prototype
+	 */
+	void setPhysicsDetails(Prototype* prototype);
+
+	/**
+	 * Set bounding volume details
+	 * @param prototype prototype
+	 * @param boundingVolumeIdx bounding volume index
+	 */
+	void setBoundingVolumeDetails(Prototype* prototype, int boundingVolumeIdx);
 
 	/**
 	 * On value changed

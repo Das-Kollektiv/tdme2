@@ -14,6 +14,7 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -26,12 +27,14 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_GenerateConvexMeshes.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -72,9 +75,11 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_GenerateConvexMeshes;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -82,8 +87,9 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypePhysicsSubController::PrototypePhysicsSubController(Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
+PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, Engine* engine, PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
 {
+	this->editorView = editorView;
 	this->modelPath = modelPath;
 	this->view = new PrototypePhysicsSubView(engine, this, popUps, maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
@@ -744,7 +750,162 @@ void PrototypePhysicsSubController::showErrorPopUp(const string& caption, const 
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
+void PrototypePhysicsSubController::createOutlinerPhysicsXML(Prototype* prototype, string& xml) {
+	if (prototype->getBoundingVolumeCount() > 0) {
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Physics") + "\" value=\"" + GUIParser::escapeQuotes("physics") + "\">\n";
+		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+			auto boundingVolumeId = to_string(i);
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("physics.boundingvolume." + boundingVolumeId) + "\" />\n";
+		}
+		xml+= "</selectbox-parent-option>\n";
+	}
+}
+
+void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
+	auto physics = prototype->getPhysics();
+
+	editorView->setDetailsContent(
+		"<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n"
+	);
+
+	try {
+		// physics
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_physics"))->getActiveConditions().add("open");
+
+		if (physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("collisionbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("open");
+		} else
+		if (physics->getType() == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("dynamicrigidbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("dynamic");
+		} else
+		if (physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("staticrigidbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("static");
+		} else {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("none"));
+		}
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
+		// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor"))->getController()->setValue(MutableString(physics->getInertiaTensor()));
+
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::setPhysicsDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototype, int boundingVolumeIdx) {
+	auto physics = prototype->getPhysics();
+	auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdx);
+
+	editorView->setDetailsContent(
+		string("<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n") +
+		string("<template id=\"details_boundingvolume\" src=\"resources/engine/gui/template_details_boundingvolume.xml\" />\n")
+	);
+
+	try {
+		// physics
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_physics"))->getActiveConditions().add("open");
+
+		if (physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("collisionbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("open");
+		} else
+		if (physics->getType() == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("dynamicrigidbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("dynamic");
+		} else
+		if (physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("staticrigidbody"));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("static");
+		} else {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("none"));
+		}
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
+
+		// bounding volume
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_boundingvolume"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
+
+		{
+			auto bv = boundingVolume->getBoundingVolume();
+			if (bv == nullptr) {
+			} else
+			if (dynamic_cast<Sphere*>(bv) != nullptr) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("sphere");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("sphere"));
+				auto sphere = dynamic_cast<Sphere*>(bv);
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->setValue(MutableString(sphere->getCenter().getX()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_y"))->getController()->setValue(MutableString(sphere->getCenter().getY()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->setValue(MutableString(sphere->getCenter().getZ()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->setValue(MutableString(sphere->getRadius()));
+			} else
+			if (dynamic_cast<Capsule*>(bv) != nullptr) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("capsule");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("capsule"));
+				auto capsule = dynamic_cast<Capsule*>(bv);
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_x"))->getController()->setValue(MutableString(capsule->getA().getX()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_y"))->getController()->setValue(MutableString(capsule->getA().getY()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_z"))->getController()->setValue(MutableString(capsule->getA().getZ()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_x"))->getController()->setValue(MutableString(capsule->getB().getX()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_y"))->getController()->setValue(MutableString(capsule->getB().getY()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->setValue(MutableString(capsule->getB().getZ()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->setValue(MutableString(capsule->getRadius()));
+			} else
+			if (dynamic_cast<OrientedBoundingBox*>(bv) != nullptr) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("obb");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("obb"));
+				auto orientedBoundingBox = dynamic_cast<OrientedBoundingBox*>(bv);
+				Matrix4x4 rotationMatrix;
+				rotationMatrix.identity();
+				rotationMatrix.setAxes(orientedBoundingBox->getAxes()[0], orientedBoundingBox->getAxes()[1], orientedBoundingBox->getAxes()[2]);
+				auto rotation = rotationMatrix.computeEulerAngles();
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("sphere"));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getX()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getY()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getZ()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+				// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_halfextension"))->getController()->setValue(MutableString());
+			} else
+			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));
+			} else {
+				Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx)));
+			}
+		}
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "physics") {
+			setPhysicsDetails(prototype);
+			view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+			view->setDisplayBoundingVolume(true);
+		} else
+		if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
+			auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
+			setBoundingVolumeDetails(prototype, boundingVolumeIdx);
+			view->setDisplayBoundingVolumeIdx(boundingVolumeIdx);
+			view->startEditingBoundingVolume(prototype);
+			view->setDisplayBoundingVolume(true);
+		} else {
+			view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+			view->endEditingBoundingVolume(prototype);
+			view->setDisplayBoundingVolume(false);
+		}
+	}
 	if (StringTools::startsWith(node->getId(), "boundingvolume_convexmeshes_mode") == true) {
 		onConvexMeshModeChanged(false);
 	}

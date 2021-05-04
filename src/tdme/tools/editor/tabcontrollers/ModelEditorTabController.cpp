@@ -130,7 +130,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	this->view = view;
 	auto const finalView = view;
 	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEngine(), view->getPopUps(), &modelPath, true);
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), view->getPopUps(), &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, view->getPopUps(), &audioPath);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEngine(), this->prototypePhysicsSubController->getView());
 }
@@ -321,14 +321,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
-		if (prototype->getBoundingVolumeCount() > 0) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Bounding Volumes") + "\" value=\"" + GUIParser::escapeQuotes("boundingvolumes") + "\">\n";
-			for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-				auto boundingVolumeId = to_string(i);
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("boundingvolume." + boundingVolumeId) + "\" />\n";
-			}
-			xml+= "</selectbox-parent-option>\n";
-		}
+		prototypePhysicsSubController->createOutlinerPhysicsXML(view->getPrototype(), xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(view->getPrototype(), xml);
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
@@ -2350,7 +2343,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = node->getController()->getValue().getString();
 		updateDetails(outlinerNode);
-	} else
+	}
 	// TODO :old
 //	if (node->getId() == "animations_dropdown") {
 //		onAnimationDropDownValueChanged();
@@ -2358,10 +2351,8 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 //	if (node->getId() == "materials_material_pbr_enabled") {
 //		onMaterialPBREnabledValueChanged();
 //	} else
-	{
-		prototypeBaseSubController->onValueChanged(node, view->getPrototype());
-		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	}
+	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	{
 		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
