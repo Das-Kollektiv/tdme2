@@ -183,7 +183,6 @@ void Prototype::setLODLevel3(PrototypeLODLevel* lodLevel) {
 }
 
 PrototypeAudio* Prototype::addSound(const string& id) {
-	if (sounds.size() == MODEL_SOUNDS_COUNT) return nullptr;
 	auto sound = getSound(id);
 	if (sound != nullptr) return nullptr;
 	auto audio = new PrototypeAudio(id);

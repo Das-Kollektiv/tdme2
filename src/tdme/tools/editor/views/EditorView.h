@@ -82,6 +82,11 @@ public:
 	void setDetailsContent(const string& xml);
 
 	/**
+	 * Reload tab outliner
+	 */
+	void reloadTabOutliner();
+
+	/**
 	 * Determine viewport screen constraints
 	 * @param left left
 	 * @param top top

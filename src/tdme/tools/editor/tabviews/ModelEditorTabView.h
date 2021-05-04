@@ -232,12 +232,14 @@ public:
 
 	// overridden methods
 	void handleInputEvents() override;
-	void activate() override;
 	void display() override;
 	void initialize() override;
 	void dispose() override;
 	Engine* getEngine() override;
+	void activate() override;
+	void reloadOutliner() override;
 	void playSound(const string& soundId) override;
+	void stopSound() override;
 
 	/**
 	 * On init additional screens

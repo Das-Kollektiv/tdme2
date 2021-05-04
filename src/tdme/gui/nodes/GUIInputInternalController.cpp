@@ -191,6 +191,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > max) value = max;
 						}
 						textInputNode->getText().set(value, decimals);
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 				case TYPE_INT:
@@ -206,6 +207,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > static_cast<int>(max)) value = static_cast<int>(max);
 						}
 						textInputNode->getText().set(value);
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 			}

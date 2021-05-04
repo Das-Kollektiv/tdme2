@@ -42,11 +42,6 @@ using tdme::tools::editor::views::PlayableSoundView;
  */
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController final
 {
-	friend class PrototypeSoundsSubController_BoundingVolumeType;
-	friend class PrototypeSoundsSubController_GenerateConvexMeshes;
-	friend class PrototypeSoundsSubController_onBoundingVolumeConvexMeshesFile;
-	friend class PrototypeSoundsSubController_onBoundingVolumeConvexMeshFile;
-
 private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* audioPath { nullptr };
@@ -86,47 +81,18 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * Set sound animation drop down
-	 * @param soundIdx sound index
-	 * @param model model
-	 */
-	void setSoundAnimationDropDown(int soundIdx, Model* model);
-
-	/**
-	 * Unset sound by index
-	 * @param soundIdx sound index
-	 */
-	void unsetSound(int soundIdx);
-
-	/**
-	 * Unset sounds
-	 */
-	void unsetSounds();
-
-	/**
-	 * Set physics
-	 * @param prototype prototype
-	 */
-	void setSounds(Prototype* prototype);
-
-	/**
-	 * On sound apply
-	 * @param soundIdx sound index
-	 * @param prototype prototype
-	 */
-	void onSoundApply(int soundIdx, Prototype* prototype);
-
-	/**
 	 * On sound clear
-	 * @param soundIdx sound index
+	 * @param prototype prototype
+	 * @param soundId sound id
 	 */
-	void onSoundClear(int soundIdx);
+	void onSoundClear(Prototype* prototype, const string& soundId);
 
 	/**
 	 * On sound load
-	 * @param soundIdx sound index
+	 * @param protoype prototype
+	 * @param soundId sound id
 	 */
-	void onSoundLoad(int soundIdx);
+	void onSoundLoad(Prototype* prototype, const string& soundId);
 
 	/**
 	 * Shows the error pop up
@@ -151,11 +117,19 @@ public:
 	void setSoundDetails(Prototype* prototype, Model* model, const string& soundId);
 
 	/**
+	 * Update sound details
+	 * @param prototype prototype
+	 * @param soundId sound Id
+	 */
+	void updateSoundDetails(Prototype* prototype, const string& soundId);
+
+	/**
 	 * On value changed
 	 * @param node node
-	 * @param entity entity
+	 * @param prototype prototype
+	 * @param model model
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype);
+	void onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model);
 
 	/**
 	 * On action performed

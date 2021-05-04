@@ -15,6 +15,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -46,6 +47,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -85,193 +87,49 @@ void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
 	this->screenNode = screenNode;
 }
 
-void PrototypeSoundsSubController::setSoundAnimationDropDown(int soundIdx, Model* model) {
-	/*
-	auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((soundsSoundAnimationDropDown[soundIdx]->getScreenNode()->getNodeById(soundsSoundAnimationDropDown[soundIdx]->getId() + "_inner")));
-	auto idx = 0;
-	string animationsDropDownInnerNodeSubNodesXML = "";
-	animationsDropDownInnerNodeSubNodesXML =
-		animationsDropDownInnerNodeSubNodesXML +
-		"<scrollarea id=\"" +
-		soundsSoundAnimationDropDown[soundIdx]->getId() +
-		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" selected=\"true\" />";
-	if (model != nullptr) {
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetupId = it.second->getId();
-			animationsDropDownInnerNodeSubNodesXML =
-				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
-				"\" />\n";
-			idx++;
-		}
-	}
-	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
-	try {
-		animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
-	} catch (Exception& exception) {
-		Console::print(string("void PrototypeSoundsSubController::setSounds(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
-	// soundsSoundAnimation[i]->getScreenNode()->layout(soundsSoundAnimation[i]);
-	*/
+void PrototypeSoundsSubController::onSoundClear(Prototype* prototype, const string& soundId) {
+	playableSoundView->stopSound();
+	prototype->removeSound(soundId);
+	editorView->reloadTabOutliner();
 }
 
-void PrototypeSoundsSubController::unsetSound(int soundIdx) {
-	/*
-	setSoundAnimationDropDown(soundIdx, nullptr);
-	soundsSoundKey[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundKey[soundIdx]->getController()->setDisabled(true);
-	soundsSoundAnimationDropDown[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundAnimationDropDown[soundIdx]->getController()->setDisabled(true);
-	soundsSoundFile[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundFile[soundIdx]->getController()->setDisabled(true);
-	soundsSoundLoad[soundIdx]->getController()->setDisabled(true);
-	soundsSoundClear[soundIdx]->getController()->setDisabled(true);
-	soundsSoundGain[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundGain[soundIdx]->getController()->setDisabled(true);
-	soundsSoundPitch[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundPitch[soundIdx]->getController()->setDisabled(true);
-	soundsSoundOffset[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundOffset[soundIdx]->getController()->setDisabled(true);
-	soundsSoundLooping[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundLooping[soundIdx]->getController()->setDisabled(true);
-	soundsSoundFixed[soundIdx]->getController()->setValue(MutableString(""));
-	soundsSoundFixed[soundIdx]->getController()->setDisabled(true);
-	soundsSoundApply[soundIdx]->getController()->setDisabled(true);
-	*/
-}
-
-void PrototypeSoundsSubController::unsetSounds() {
-	for (auto i = 0; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
-		unsetSound(i);
-	}
-}
-
-void PrototypeSoundsSubController::setSounds(Prototype* prototype) {
-	/*
-	auto i = 0;
-	auto& sounds = prototype->getSounds();
-	for (auto sound: sounds) {
-		setSoundAnimationDropDown(i, prototype->getModel());
-		soundsSoundKey[i]->getController()->setValue(MutableString(sound->getId()));
-		soundsSoundKey[i]->getController()->setDisabled(false);
-		soundsSoundAnimationDropDown[i]->getController()->setValue(MutableString(sound->getAnimation()));
-		soundsSoundAnimationDropDown[i]->getController()->setDisabled(false);
-		soundsSoundFile[i]->getController()->setValue(MutableString(sound->getFileName()));
-		soundsSoundFile[i]->getController()->setDisabled(false);
-		soundsSoundLoad[i]->getController()->setDisabled(false);
-		soundsSoundClear[i]->getController()->setDisabled(false);
-		soundsSoundGain[i]->getController()->setValue(MutableString(sound->getGain()));
-		soundsSoundGain[i]->getController()->setDisabled(false);
-		soundsSoundPitch[i]->getController()->setValue(MutableString(sound->getPitch(), 4));
-		soundsSoundPitch[i]->getController()->setDisabled(false);
-		soundsSoundOffset[i]->getController()->setValue(MutableString(sound->getOffset()));
-		soundsSoundOffset[i]->getController()->setDisabled(false);
-		soundsSoundLooping[i]->getController()->setValue(sound->isLooping() == true?MutableString("1"):MutableString());
-		soundsSoundLooping[i]->getController()->setDisabled(false);
-		soundsSoundFixed[i]->getController()->setValue(sound->isFixed() == true?MutableString("1"):MutableString());
-		soundsSoundFixed[i]->getController()->setDisabled(false);
-		soundsSoundApply[i]->getController()->setDisabled(false);
-		i++;
-	}
-	for (; i < sounds.size() + 1 && i < Prototype::MODEL_SOUNDS_COUNT; i++) {
-		setSoundAnimationDropDown(i, prototype->getModel());
-		soundsSoundKey[i]->getController()->setValue(MutableString(""));
-		soundsSoundKey[i]->getController()->setDisabled(false);
-		soundsSoundAnimationDropDown[i]->getController()->setValue(MutableString(""));
-		soundsSoundAnimationDropDown[i]->getController()->setDisabled(false);
-		soundsSoundFile[i]->getController()->setValue(MutableString(""));
-		soundsSoundFile[i]->getController()->setDisabled(false);
-		soundsSoundLoad[i]->getController()->setDisabled(false);
-		soundsSoundClear[i]->getController()->setDisabled(false);
-		soundsSoundGain[i]->getController()->setValue(MutableString("1.0"));
-		soundsSoundGain[i]->getController()->setDisabled(false);
-		soundsSoundPitch[i]->getController()->setValue(MutableString("1.0"));
-		soundsSoundPitch[i]->getController()->setDisabled(false);
-		soundsSoundOffset[i]->getController()->setValue(MutableString("0"));
-		soundsSoundOffset[i]->getController()->setDisabled(false);
-		soundsSoundLooping[i]->getController()->setValue(MutableString(""));
-		soundsSoundLooping[i]->getController()->setDisabled(false);
-		soundsSoundFixed[i]->getController()->setValue(MutableString(""));
-		soundsSoundFixed[i]->getController()->setDisabled(false);
-		soundsSoundApply[i]->getController()->setDisabled(false);
-	}
-	for (; i < Prototype::MODEL_SOUNDS_COUNT; i++) {
-		unsetSound(i);
-	}
-	*/
-}
-
-void PrototypeSoundsSubController::onSoundClear(int soundIdx) {
-	// soundsSoundFile[soundIdx]->getController()->setValue(MutableString(""));
-}
-
-void PrototypeSoundsSubController::onSoundLoad(int soundIdx) {
-	/*
+void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const string& soundId) {
 	class LoadSoundAction: public virtual Action
 	{
 	public:
-		LoadSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, int soundIdx): prototypeSoundsSubController(prototypeSoundsSubController), soundIdx(soundIdx) {
+		LoadSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype, const string& soundId): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype), soundId(soundId) {
 		}
 		void performAction() override {
-			prototypeSoundsSubController->soundsSoundFile[soundIdx]->getController()->setValue(
+			auto sound = prototype->getSound(soundId);
+			if (sound == nullptr) return;
+			sound->setFileName(
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			prototypeSoundsSubController->audioPath->setPath(prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName());
 			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
 		}
 	private:
 		PrototypeSoundsSubController* prototypeSoundsSubController;
-		int soundIdx;
+		Prototype* prototype;
+		string soundId;
 	};
+
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) return;
+	auto fileName = sound->getFileName();
 
 	vector<string> extensions = {{"ogg"}};
 	view->getPopUps()->getFileDialogScreenController()->show(
-		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPathName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
-		"Load from: ",
+		fileName.empty() == false?Tools::getPathName(fileName):audioPath->getPath(),
+		"Load audio from: ",
 		extensions,
-		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getFileName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):"",
+		fileName.empty() == false?Tools::getFileName(fileName):"",
 		true,
-		new LoadSoundAction(this, soundIdx)
+		new LoadSoundAction(this, prototype, soundId)
 	);
-	*/
-}
-
-
-void PrototypeSoundsSubController::onSoundApply(int soundIdx, Prototype* prototype) {
-	/*
-	try {
-		PrototypeAudio* sound = nullptr;
-		if (soundIdx == prototype->getSounds().size()) {
-			sound = prototype->addSound(soundsSoundKey[soundIdx]->getController()->getValue().getString());
-		} else {
-			sound = prototype->getSound(prototype->getSounds()[soundIdx]->getId());
-		}
-		if (sound == nullptr) throw ExceptionBase("Sound could not be loaded or created");
-		if (sound->getId() != soundsSoundKey[soundIdx]->getController()->getValue().getString()) {
-			if (prototype->renameSound(sound->getId(), soundsSoundKey[soundIdx]->getController()->getValue().getString()) == false) {
-				throw ExceptionBase("Key could not be renamed");
-			}
-		}
-		sound->setId(soundsSoundKey[soundIdx]->getController()->getValue().getString());
-		sound->setAnimation(soundsSoundAnimationDropDown[soundIdx]->getController()->getValue().getString());
-		sound->setFileName(soundsSoundFile[soundIdx]->getController()->getValue().getString());
-		sound->setGain(Float::parseFloat(soundsSoundGain[soundIdx]->getController()->getValue().getString()));
-		sound->setPitch(Float::parseFloat(soundsSoundPitch[soundIdx]->getController()->getValue().getString()));
-		sound->setOffset(Integer::parseInt(soundsSoundOffset[soundIdx]->getController()->getValue().getString()));
-		sound->setLooping(soundsSoundLooping[soundIdx]->getController()->getValue().getString() == "1");
-		sound->setFixed(soundsSoundFixed[soundIdx]->getController()->getValue().getString() == "1");
-		playableSoundView->playSound(sound->getId());
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-	*/
 }
 
 void PrototypeSoundsSubController::showErrorPopUp(const string& caption, const string& message)
@@ -347,23 +205,76 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 	}
 }
 
-void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+void PrototypeSoundsSubController::updateSoundDetails(Prototype* prototype, const string& soundId) {
+	auto haveNewSoundId = false;
+	try {
+		auto sound = prototype->getSound(soundId);
+		if (sound == nullptr) return;
+		auto newSoundId = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString();
+		if (sound->getId() != newSoundId) {
+			if (prototype->renameSound(sound->getId(), newSoundId) == false) {
+				throw ExceptionBase("Audio key could not be renamed");
+			}
+			haveNewSoundId = true;
+		}
+		sound->setId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString());
+		sound->setAnimation(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->getValue().getString());
+		sound->setGain(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->getValue().getString()));
+		sound->setPitch(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->getValue().getString()));
+		sound->setOffset(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_offset"))->getController()->getValue().getString()));
+		sound->setLooping(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_looping"))->getController()->getValue().getString() == "1");
+		sound->setFixed(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->getValue().getString() == "1");
+		playableSoundView->playSound(sound->getId());
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+	if (haveNewSoundId == true) editorView->reloadTabOutliner();
+}
+
+void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
+	vector<string> audioChangeNodes = {
+		"sound_key",
+		"sound_animation",
+		"sound_gain",
+		"sound_pitch",
+		"sound_offset",
+		"sound_looping",
+		"sound_ambient",
+	};
+	for (auto& audioChangeNode: audioChangeNodes) {
+		if (node->getId() == audioChangeNode) {
+			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+				updateSoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			}
+		}
+	}
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+			setSoundDetails(prototype, model, soundId);
+			playableSoundView->playSound(soundId);
+		} else {
+			playableSoundView->stopSound();
+		}
+	}
 }
 
 void PrototypeSoundsSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	if (StringTools::startsWith(node->getId(), "sounds_sound_apply_") == true) {
-		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_apply_").size()));
-		onSoundApply(soundIdx, prototype);
-		setSounds(prototype);
+	if (StringTools::startsWith(node->getId(), "sound_remove") == true) {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			onSoundClear(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+		}
 	} else
-	if (StringTools::startsWith(node->getId(), "sounds_sound_clear_") == true) {
-		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_clear_").size()));
-		onSoundClear(soundIdx);
-	} else
-	if (StringTools::startsWith(node->getId(), "sounds_sound_load_") == true) {
-		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_load_").size()));
-		onSoundLoad(soundIdx);
+	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+		}
 	}
 }

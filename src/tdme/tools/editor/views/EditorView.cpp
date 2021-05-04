@@ -146,6 +146,16 @@ void EditorView::setDetailsContent(const string& xml) {
 	editorScreenController->setDetailsContent(xml);
 }
 
+void EditorView::reloadTabOutliner() {
+	auto selectedTabId = editorScreenController->getSelectedTabId();
+	auto& tabViews = editorScreenController->getTabViews();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabView()->reloadOutliner();
+	}
+}
+
 void EditorView::getViewPort(int& left, int& top, int& width, int& height) {
 	auto xScale = (float)engine->getWidth() / (float)editorScreenController->getScreenNode()->getScreenWidth();
 	auto yScale = (float)engine->getHeight() / (float)editorScreenController->getScreenNode()->getScreenHeight();

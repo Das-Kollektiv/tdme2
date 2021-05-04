@@ -24,4 +24,9 @@ struct tdme::tools::editor::views::PlayableSoundView
 	 */
 	virtual void playSound(const string& soundId) = 0;
 
+	/**
+	 * Stop sound
+	 */
+	virtual void stopSound() = 0;
+
 };

@@ -2339,10 +2339,6 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		setAnimationDetails(animationId);
 	} else
-	if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-		auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
-		setSoundDetails(soundId);
-	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 		auto propertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 		setPropertyDetails(propertyName);
@@ -2365,7 +2361,10 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	{
 		prototypeBaseSubController->onValueChanged(node, view->getPrototype());
 		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-		prototypeSoundsSubController->onValueChanged(node, view->getPrototype());
+	}
+	{
+		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
 	}
 }
 

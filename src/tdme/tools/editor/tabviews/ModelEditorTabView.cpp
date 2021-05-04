@@ -574,8 +574,8 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 }
 
 void ModelEditorTabView::playSound(const string& soundId) {
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	audio->removeEntity("sound");
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
@@ -602,6 +602,10 @@ void ModelEditorTabView::playSound(const string& soundId) {
 			audioOffset = soundDefinition->getOffset();
 		}
 	}
+}
+
+void ModelEditorTabView::stopSound() {
+	audio->removeEntity("sound");
 }
 
 void ModelEditorTabView::updateRendering() {
@@ -645,6 +649,12 @@ Engine* ModelEditorTabView::getEngine() {
 }
 
 void ModelEditorTabView::activate() {
+	// TODO: a.drewke: Rename me
+	updateGUIElements();
+	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+}
+
+void ModelEditorTabView::reloadOutliner() {
 	// TODO: a.drewke: Rename me
 	updateGUIElements();
 	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
