@@ -181,9 +181,26 @@
 					<space height="5" />
 					
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Halfsize" width="*" height="auto" horizontal-align="left" />
+						<text font="{$font.default}" color="{$color.font_normal}" text="Width" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_obb_halfextension" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<layout width="5" height="25" background-color="{$color.xaxis}" />
+							<input id="boundingvolume_obb_with" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+						</layout>
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<layout width="5" height="25" background-color="{$color.yaxis}" />
+							<input id="boundingvolume_obb_height"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+						</layout>
+					</layout>
+					<space height="5" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Depth" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<layout width="5" height="25" background-color="{$color.zaxis}" />
+							<input id="boundingvolume_obb_depth"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -308,6 +325,27 @@
 
 				</layout> 
 				
+				<layout show-on="convexmesh" id="boundingvolume_convexmesh" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+				
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Model" width="*" height="auto" horizontal-align="left" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
+							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
+							</element>
+							<space width="5" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="boundingvolume_convexmesh_open" image="resources/engine/images/folder.png" width="25" height="25" />
+								<space height="5" />
+								<button id="boundingvolume_convexmesh_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+								<space height="5" />
+								<button id="boundingvolume_convexmesh_browseto" image="resources/engine/images/search.png" width="25" height="25" />
+							</layout>
+						</layout>						
+					</layout>					
+				
+				</layout>	
+
 				<layout show-on="terrain" id="boundingvolume_terrain" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 				</layout>				
 
