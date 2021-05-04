@@ -44,7 +44,7 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="Inertia tensor" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="physics_dynamic_inertiatensor_x" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_x" width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 						<space height="5" />
@@ -52,7 +52,7 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="physics_dynamic_inertiatensor_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_y"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 						<space height="5" />
@@ -60,17 +60,9 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="physics_dynamic_inertiatensor_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_z"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
-
-
-
-
-
-
-
-						
 					</layout>
 
 					<layout show-on="static" width="100%" height="auto" alignment="vertical" vertical-align="center">
