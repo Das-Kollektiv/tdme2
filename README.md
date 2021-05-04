@@ -240,7 +240,7 @@
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Simple script language
-    - PBR lighting shader for GL3/CORE+/Vulkan
+    - PBR lighting shader for GL3/CORE+, Vulkan
     - Add nmake support to makefile generator for TDME2 based projects
     - Installer for MacOSX
     - Improve on Vulkan
