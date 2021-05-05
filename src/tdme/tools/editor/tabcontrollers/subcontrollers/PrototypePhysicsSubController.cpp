@@ -879,6 +879,57 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 		string("<template id=\"details_boundingvolume\" src=\"resources/engine/gui/template_details_boundingvolume.xml\" />\n")
 	);
 
+	BoundingBox aabb;
+	if (prototype->getModel() != nullptr) {
+		aabb = *prototype->getModel()->getBoundingBox();
+	} else {
+		aabb = BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
+	}
+	auto obb = OrientedBoundingBox(&aabb);
+
+	// set default sphere
+	{
+		setBoundingVolumeSphereDetails(obb.getCenter(), obb.getHalfExtension().computeLength());
+	}
+	// set default capsule
+	{
+		Vector3 a;
+		Vector3 b;
+		auto radius = 0.0f;
+		auto& halfExtensionXYZ = obb.getHalfExtension().getArray();
+		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
+			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+			a.set(obb.getAxes()[0]);
+			a.scale(-(halfExtensionXYZ[0] - radius));
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[0]);
+			b.scale(+(halfExtensionXYZ[0] - radius));
+			b.add(obb.getCenter());
+		} else
+		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
+			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+			a.set(obb.getAxes()[1]);
+			a.scale(-(halfExtensionXYZ[1] - radius));
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[1]);
+			b.scale(+(halfExtensionXYZ[1] - radius));
+			b.add(obb.getCenter());
+		} else {
+			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
+			a.set(obb.getAxes()[2]);
+			a.scale(-(halfExtensionXYZ[2] - radius));
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[2]);
+			b.scale(+(halfExtensionXYZ[2] - radius));
+			b.add(obb.getCenter());
+		}
+		setBoundingVolumeCapsuleDetails(a, b, radius);
+	}
+	// set default obb
+	{
+		setBoundingVolumeOBBDetails(obb.getCenter(), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, obb.getHalfExtension());
+	}
+
 	try {
 		// physics
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_physics"))->getActiveConditions().add("open");
