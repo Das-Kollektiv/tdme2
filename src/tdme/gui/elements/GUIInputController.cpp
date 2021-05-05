@@ -121,6 +121,8 @@ const MutableString& GUIInputController::getValue()
 void GUIInputController::setValue(const MutableString& value)
 {
 	inputNode->getText().set(value);
-	required_dynamic_cast<GUIInputInternalController*>(inputNode->getController())->reset();
+	auto inputInternalController = required_dynamic_cast<GUIInputInternalController*>(inputNode->getController());
+	inputInternalController->formatText();
+	inputInternalController->reset();
 	onValueChange();
 }

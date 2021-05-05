@@ -93,6 +93,8 @@ void GUIInputInternalController::initialize()
 	haveMin = minAsString.empty() == false;
 	haveMax = maxAsString.empty() == false;
 	haveStep = stepAsString.empty() == false;
+
+	formatText();
 }
 
 void GUIInputInternalController::dispose()
@@ -389,6 +391,37 @@ void GUIInputInternalController::onFocusGained()
 
 void GUIInputInternalController::onFocusLost()
 {
+	formatText();
+	showCursor = false;
+}
+
+bool GUIInputInternalController::hasValue()
+{
+	return false;
+}
+
+const MutableString& GUIInputInternalController::getValue()
+{
+	return value;
+}
+
+void GUIInputInternalController::setValue(const MutableString& value)
+{
+}
+
+void GUIInputInternalController::reset()
+{
+	index = 0;
+	offset = 0;
+	draggingActive = false;
+	resetCursorMode();
+}
+
+bool GUIInputInternalController::isShowCursor() {
+	return showCursor;
+}
+
+void GUIInputInternalController::formatText() {
 	switch (type) {
 		case TYPE_STRING:
 			break;
@@ -419,31 +452,4 @@ void GUIInputInternalController::onFocusLost()
 			}
 			break;
 	}
-	showCursor = false;
-}
-
-bool GUIInputInternalController::hasValue()
-{
-	return false;
-}
-
-const MutableString& GUIInputInternalController::getValue()
-{
-	return value;
-}
-
-void GUIInputInternalController::setValue(const MutableString& value)
-{
-}
-
-void GUIInputInternalController::reset()
-{
-	index = 0;
-	offset = 0;
-	draggingActive = false;
-	resetCursorMode();
-}
-
-bool GUIInputInternalController::isShowCursor() {
-	return showCursor;
 }

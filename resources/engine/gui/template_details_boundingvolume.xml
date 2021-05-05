@@ -184,7 +184,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Width" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_obb_with" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_width" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />

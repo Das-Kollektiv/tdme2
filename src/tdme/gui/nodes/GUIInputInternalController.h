@@ -93,6 +93,11 @@ public:
 	void reset();
 
 	/**
+	 * Format text according to options
+	 */
+	void formatText();
+
+	/**
 	 * @return show cursor
 	 */
 	bool isShowCursor();

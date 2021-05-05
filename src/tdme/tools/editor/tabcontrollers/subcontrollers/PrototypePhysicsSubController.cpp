@@ -789,7 +789,9 @@ void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
-		// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor"))->getController()->setValue(MutableString(physics->getInertiaTensor()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->setValue(physics->getInertiaTensor().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->setValue(physics->getInertiaTensor().getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->setValue(physics->getInertiaTensor().getZ());
 
 	} catch (Exception& exception) {
 		Console::println(string("PrototypePhysicsSubController::setPhysicsDetails(): An error occurred: ") + exception.what());;
@@ -827,10 +829,12 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->setValue(physics->getInertiaTensor().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->setValue(physics->getInertiaTensor().getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->setValue(physics->getInertiaTensor().getZ());
 
 		// bounding volume
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_boundingvolume"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
 
 		{
 			auto bv = boundingVolume->getBoundingVolume();
@@ -865,14 +869,15 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				rotationMatrix.identity();
 				rotationMatrix.setAxes(orientedBoundingBox->getAxes()[0], orientedBoundingBox->getAxes()[1], orientedBoundingBox->getAxes()[2]);
 				auto rotation = rotationMatrix.computeEulerAngles();
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("sphere"));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getX()));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getY()));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getZ()));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
-				// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_halfextension"))->getController()->setValue(MutableString());
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_width"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getX() * 2.0f));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getY() * 2.0f));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getZ() * 2.0f));
 			} else
 			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));
