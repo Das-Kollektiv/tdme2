@@ -8,7 +8,7 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Start frame" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="animation_startframe" width="50%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+					<input id="animation_startframe" width="50%" height="auto" text="100" options="type=int,min=0,max={$max-frames},step=1" image="resources/engine/images/inputslider.png" />
 				</layout>	
 			</layout>
 			
@@ -17,7 +17,7 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="End frame" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="animation_endframe" width="50%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+					<input id="animation_endframe" width="50%" height="auto" text="100" options="type=int,min=0,max={$max-frames},step=1" image="resources/engine/images/inputslider.png" />
 				</layout>
 			</layout>
 			

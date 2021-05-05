@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -21,6 +22,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::array;
 using std::map;
 using std::string;
 using std::vector;
@@ -157,6 +159,14 @@ private:
 
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
+
+	array<string, 7> applyAnimationNodes = {
+		"animation_startframe",
+		"animation_endframe",
+		"animation_speed",
+		"animation_loop",
+		"animation_overlaybone"
+	};
 
 	/**
 	 * @return prototype lod level or nullptr
@@ -533,6 +543,12 @@ public:
 	 * @param animationId animation Id
 	 */
 	void setAnimationDetails(const string& animationId);
+
+	/**
+	 * Apply animation details
+	 * @param animationId animation id
+	 */
+	void applyAnimationDetails(const string& animationId);
 
 	/**
 	 * Set sound details

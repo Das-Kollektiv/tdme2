@@ -413,7 +413,6 @@ void GUIInputInternalController::reset()
 {
 	index = 0;
 	offset = 0;
-	draggingActive = false;
 	resetCursorMode();
 }
 

@@ -331,10 +331,12 @@ void ModelEditorTabController::setOutlinerContent() {
 			createOutlinerModelNodesXML(model->getSubNodes(), xml);
 			xml+= "</selectbox-parent-option>\n";
 		}
-		if (model != nullptr && model->getAnimationSetups().empty() == false) {
+		if (model != nullptr &&
+			(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
 			for (auto it: model->getAnimationSetups()) {
 				auto animationSetupId = it.second->getId();
+				if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
 				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
@@ -2220,8 +2222,12 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 
 	if (animationSetup == nullptr) return;
 
+	auto defaultAnimationSetup = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
+
 	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_animation\" src=\"resources/engine/gui/template_details_animation.xml\" />\n"
+		string("<template id=\"details_animation\" src=\"resources/engine/gui/template_details_animation.xml\" max-frames=\"") +
+		to_string(defaultAnimationSetup != nullptr?defaultAnimationSetup->getEndFrame():0) +
+		string("\" />\n")
 	);
 
 	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
@@ -2271,6 +2277,42 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 }
 
+void ModelEditorTabController::applyAnimationDetails(const string& animationId) {
+	Console::println("ModelEditorTabController::applyAnimationDetails(): " + animationId);
+
+	view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
+
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto animationSetup = model->getAnimationSetup(animationId);
+	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
+
+	if (animationSetup == nullptr) return;
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		auto startFrame = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->getValue().getString());
+		auto endFrame = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->getValue().getString());
+		auto speed = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_speed"))->getController()->getValue().getString());
+		auto loop = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_loop"))->getController()->getValue().getString() == "1";
+		auto overlayFromNodeId = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->getValue().getString();
+
+		animationSetup->setStartFrame(startFrame < endFrame?startFrame:endFrame);
+		animationSetup->setEndFrame(endFrame > startFrame?endFrame:startFrame);
+		animationSetup->setSpeed(speed);
+		animationSetup->setLoop(loop);
+		animationSetup->setOverlayFromNodeId(overlayFromNodeId);
+
+		view->playAnimation(animationId);
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+}
+
 void ModelEditorTabController::setSoundDetails(const string& soundId) {
 	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
 
@@ -2295,17 +2337,16 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	auto outlinerNode = node->getController()->getValue().getString();
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(outlinerNode);
 	}
-	// TODO :old
-//	if (node->getId() == "animations_dropdown") {
-//		onAnimationDropDownValueChanged();
-//	} else
-//	if (node->getId() == "materials_material_pbr_enabled") {
-//		onMaterialPBREnabledValueChanged();
-//	} else
+	for (auto& applyAnimationNode: applyAnimationNodes) {
+		if (node->getId() == applyAnimationNode) {
+			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
+			applyAnimationDetails(animationId);
+		}
+	}
 	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	{
