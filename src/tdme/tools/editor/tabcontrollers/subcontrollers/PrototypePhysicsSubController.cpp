@@ -1086,22 +1086,30 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 	if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
 		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
-		for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
-			if (node->getId() == applyBoundingVolumeSphereNode) {
-				applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
-				break;
+		if (node->getId() == "boundingvolume_type") {
+			auto boundingVolumeType = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->getValue().getString();
+			if (boundingVolumeType == "sphere") applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx); else
+			if (boundingVolumeType == "capsule") applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx); else
+			if (boundingVolumeType == "obb") applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx); else
+				view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
+		} else {
+			for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
+				if (node->getId() == applyBoundingVolumeSphereNode) {
+					applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
+					break;
+				}
 			}
-		}
-		for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
-			if (node->getId() == applyBoundingVolumeCapsuleNode) {
-				applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
-				break;
+			for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
+				if (node->getId() == applyBoundingVolumeCapsuleNode) {
+					applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
+					break;
+				}
 			}
-		}
-		for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
-			if (node->getId() == applyBoundingVolumeOBBNode) {
-				applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
-				break;
+			for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
+				if (node->getId() == applyBoundingVolumeOBBNode) {
+					applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
+					break;
+				}
 			}
 		}
 	}
