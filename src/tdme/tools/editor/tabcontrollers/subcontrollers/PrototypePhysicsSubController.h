@@ -110,6 +110,35 @@ private:
 		"physics_dynamic_inertiatensor_z",
 	};
 
+	array<string, 4> applyBoundingVolumSphereNodes = {
+		"boundingvolume_sphere_x",
+		"boundingvolume_sphere_y",
+		"boundingvolume_sphere_z",
+		"boundingvolume_sphere_radius"
+	};
+
+	array<string, 7> applyBoundingVolumCapsuleNodes = {
+		"boundingvolume_capsule_a_x",
+		"boundingvolume_capsule_a_y",
+		"boundingvolume_capsule_a_z",
+		"boundingvolume_capsule_b_x",
+		"boundingvolume_capsule_b_y",
+		"boundingvolume_capsule_b_z",
+		"boundingvolume_capsule_radius",
+	};
+
+	array<string, 9> applyBoundingVolumOBBNodes = {
+		"boundingvolume_obb_x",
+		"boundingvolume_obb_y",
+		"boundingvolume_obb_z",
+		"boundingvolume_obb_rotation_x",
+		"boundingvolume_obb_rotation_y",
+		"boundingvolume_obb_rotation_z",
+		"boundingvolume_obb_width",
+		"boundingvolume_obb_height",
+		"boundingvolume_obb_depth"
+	};
+
 public:
 	enum BoundingVolumeType {
 		BOUNDINGVOLUMETYPE_NONE = 1,
@@ -418,6 +447,26 @@ public:
 	 */
 	void setBoundingVolumeDetails(Prototype* prototype, int boundingVolumeIdx);
 
+	/**
+	 * Apply bounding volume sphere details
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeSphereDetails(Prototype* prototype, int idx);
+
+	/**
+	 * Apply bounding volume capsule details
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeCapsuleDetails(Prototype* prototype, int idx);
+
+	/**
+	 * Apply bounding volume obb details
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeObbDetails(Prototype* prototype, int idx);
 	/**
 	 * On value changed
 	 * @param node node
