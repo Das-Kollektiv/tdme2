@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 
+#include <array>
 #include <string>
 
 #include <tdme/engine/model/AnimationSetup.h>
@@ -30,6 +31,7 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::array;
 using std::string;
 using std::to_string;
 
@@ -233,15 +235,6 @@ void PrototypeSoundsSubController::updateSoundDetails(Prototype* prototype, cons
 }
 
 void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
-	vector<string> audioChangeNodes = {
-		"sound_key",
-		"sound_animation",
-		"sound_gain",
-		"sound_pitch",
-		"sound_offset",
-		"sound_looping",
-		"sound_ambient",
-	};
 	for (auto& audioChangeNode: audioChangeNodes) {
 		if (node->getId() == audioChangeNode) {
 			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();

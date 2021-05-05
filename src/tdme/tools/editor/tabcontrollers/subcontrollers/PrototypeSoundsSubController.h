@@ -2,7 +2,6 @@
 
 #include <array>
 #include <string>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -19,7 +18,6 @@
 
 using std::array;
 using std::string;
-using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
@@ -48,6 +46,15 @@ private:
 	EditorView* editorView { nullptr };
 	PrototypeSoundsSubView* view { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
+	array<string, 7> audioChangeNodes = {
+		"sound_key",
+		"sound_animation",
+		"sound_gain",
+		"sound_pitch",
+		"sound_offset",
+		"sound_looping",
+		"sound_ambient",
+	};
 
 public:
 	/**

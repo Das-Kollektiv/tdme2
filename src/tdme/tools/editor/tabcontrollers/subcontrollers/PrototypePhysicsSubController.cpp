@@ -799,6 +799,54 @@ void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
 	}
 }
 
+void PrototypePhysicsSubController::setBoundingVolumeSphereDetails(const Vector3& center, float radius) {
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->setValue(MutableString(radius));
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeSphereDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void PrototypePhysicsSubController::setBoundingVolumeCapsuleDetails(const Vector3& a, const Vector3& b, float radius) {
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_x"))->getController()->setValue(MutableString(a.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_y"))->getController()->setValue(MutableString(a.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_z"))->getController()->setValue(MutableString(a.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_x"))->getController()->setValue(MutableString(b.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_y"))->getController()->setValue(MutableString(b.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->setValue(MutableString(b.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->setValue(MutableString(radius));
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeCapsuleDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void PrototypePhysicsSubController::setBoundingVolumeOBBDetails(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension) {
+	try {
+		Matrix4x4 rotationMatrix;
+		rotationMatrix.identity();
+		rotationMatrix.setAxes(axis0, axis1, axis2);
+		auto rotation = rotationMatrix.computeEulerAngles();
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_width"))->getController()->setValue(MutableString(halfExtension.getX() * 2.0f));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->setValue(MutableString(halfExtension.getY() * 2.0f));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->setValue(MutableString(halfExtension.getZ() * 2.0f));
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeOBBDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototype, int boundingVolumeIdx) {
 	auto physics = prototype->getPhysics();
 	auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdx);
@@ -844,40 +892,25 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("sphere");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("sphere"));
 				auto sphere = dynamic_cast<Sphere*>(bv);
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->setValue(MutableString(sphere->getCenter().getX()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_y"))->getController()->setValue(MutableString(sphere->getCenter().getY()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->setValue(MutableString(sphere->getCenter().getZ()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->setValue(MutableString(sphere->getRadius()));
+				setBoundingVolumeSphereDetails(sphere->getCenter(), sphere->getRadius());
 			} else
 			if (dynamic_cast<Capsule*>(bv) != nullptr) {
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("capsule");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("capsule"));
 				auto capsule = dynamic_cast<Capsule*>(bv);
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_x"))->getController()->setValue(MutableString(capsule->getA().getX()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_y"))->getController()->setValue(MutableString(capsule->getA().getY()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_z"))->getController()->setValue(MutableString(capsule->getA().getZ()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_x"))->getController()->setValue(MutableString(capsule->getB().getX()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_y"))->getController()->setValue(MutableString(capsule->getB().getY()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->setValue(MutableString(capsule->getB().getZ()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->setValue(MutableString(capsule->getRadius()));
+				setBoundingVolumeCapsuleDetails(capsule->getA(), capsule->getB(), capsule->getRadius());
 			} else
 			if (dynamic_cast<OrientedBoundingBox*>(bv) != nullptr) {
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("obb");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("obb"));
 				auto orientedBoundingBox = dynamic_cast<OrientedBoundingBox*>(bv);
-				Matrix4x4 rotationMatrix;
-				rotationMatrix.identity();
-				rotationMatrix.setAxes(orientedBoundingBox->getAxes()[0], orientedBoundingBox->getAxes()[1], orientedBoundingBox->getAxes()[2]);
-				auto rotation = rotationMatrix.computeEulerAngles();
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getX()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getY()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->setValue(MutableString(orientedBoundingBox->getCenter().getZ()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_width"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getX() * 2.0f));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getY() * 2.0f));
-				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->setValue(MutableString(orientedBoundingBox->getHalfExtension().getZ() * 2.0f));
+				setBoundingVolumeOBBDetails(
+					orientedBoundingBox->getCenter(),
+					orientedBoundingBox->getAxes()[0],
+					orientedBoundingBox->getAxes()[1],
+					orientedBoundingBox->getAxes()[2],
+					orientedBoundingBox->getHalfExtension()
+				);
 			} else
 			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));

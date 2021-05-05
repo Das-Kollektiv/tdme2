@@ -2330,6 +2330,7 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	}
 	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
+		view->playAnimation(animationId);
 		setAnimationDetails(animationId);
 	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {

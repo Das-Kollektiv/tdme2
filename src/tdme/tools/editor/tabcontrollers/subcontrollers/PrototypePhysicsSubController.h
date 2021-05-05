@@ -371,6 +371,31 @@ public:
 	void setPhysicsDetails(Prototype* prototype);
 
 	/**
+	 * Set bounding volume sphere details
+	 * @param center center
+	 * @param radius radius
+	 */
+	void setBoundingVolumeSphereDetails(const Vector3& center, float radius);
+
+	/**
+	 * Set bounding volume capsule details
+	 * @param a point a
+	 * @param b point b
+	 * @param radius radius
+	 */
+	void setBoundingVolumeCapsuleDetails(const Vector3& a, const Vector3& b, float radius);
+
+	/**
+	 * Set bounding volume OOB details
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param halfExtension half extension
+	 */
+	void setBoundingVolumeOBBDetails(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+
+	/**
 	 * Set bounding volume details
 	 * @param prototype prototype
 	 * @param boundingVolumeIdx bounding volume index
