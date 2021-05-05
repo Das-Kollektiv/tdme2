@@ -100,6 +100,16 @@ private:
 	int boundingVolumeIdxActivated;
 	int boundingVolumeTypeCount;
 
+	array<string, 7> applyPhysicsNodes = {
+		"physics_bodytype",
+		"physics_dynamic_mass",
+		"physics_dynamic_bounciness",
+		"physics_dynamic_friction",
+		"physics_dynamic_inertiatensor_x",
+		"physics_dynamic_inertiatensor_y",
+		"physics_dynamic_inertiatensor_z",
+	};
+
 public:
 	enum BoundingVolumeType {
 		BOUNDINGVOLUMETYPE_NONE = 1,
@@ -369,6 +379,12 @@ public:
 	 * @param prototype prototype
 	 */
 	void setPhysicsDetails(Prototype* prototype);
+
+	/**
+	 * Apply physics details
+	 * @param prototype prototype
+	 */
+	void applyPhysicsDetails(Prototype* prototype);
 
 	/**
 	 * Set bounding volume sphere details

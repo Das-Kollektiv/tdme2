@@ -799,6 +799,29 @@ void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
 	}
 }
 
+void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
+	try {
+		auto physics = prototype->getPhysics();
+		auto bodyType = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->getValue().getString();
+		if (bodyType == "collisionbody") physics->setType(PrototypePhysics_BodyType::COLLISION_BODY); else
+		if (bodyType == "dynamicrigidbody") physics->setType(PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY); else
+		if (bodyType == "staticrigidbody") physics->setType(PrototypePhysics_BodyType::STATIC_RIGIDBODY);
+		physics->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->getValue().getString()));
+		physics->setRestitution(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->getValue().getString()));
+		physics->setFriction(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->getValue().getString()));
+		physics->setInertiaTensor(
+			Vector3(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->getValue().getString()),
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->getValue().getString()),
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->getValue().getString())
+			)
+		);
+	} catch (Exception& exception) {
+		Console::println(string("PrototypePhysicsSubController::applyPhysicsDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void PrototypePhysicsSubController::setBoundingVolumeSphereDetails(const Vector3& center, float radius) {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->setValue(MutableString(center.getX()));
@@ -925,6 +948,12 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 }
 
 void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+	for (auto& applyPhysicsNode: applyPhysicsNodes) {
+		if (node->getId() == applyPhysicsNode) {
+			applyPhysicsDetails(prototype);
+			break;
+		}
+	}
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "physics") {
