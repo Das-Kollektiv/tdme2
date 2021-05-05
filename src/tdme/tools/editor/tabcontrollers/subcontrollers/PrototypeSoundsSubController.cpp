@@ -207,7 +207,7 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 	}
 }
 
-void PrototypeSoundsSubController::updateSoundDetails(Prototype* prototype, const string& soundId) {
+void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const string& soundId) {
 	auto haveNewSoundId = false;
 	try {
 		auto sound = prototype->getSound(soundId);
@@ -235,11 +235,11 @@ void PrototypeSoundsSubController::updateSoundDetails(Prototype* prototype, cons
 }
 
 void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
-	for (auto& audioChangeNode: audioChangeNodes) {
+	for (auto& audioChangeNode: applyAudioNodes) {
 		if (node->getId() == audioChangeNode) {
 			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-				updateSoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+				applySoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 			}
 		}
 	}

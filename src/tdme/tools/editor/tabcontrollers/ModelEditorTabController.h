@@ -251,18 +251,6 @@ public:
 	void unsetPrototypeData();
 
 	/**
-	 * Set up prototype properties
-	 * @param presetId preset id
-	 * @param selectedName selected name
-	 */
-	void setPrototypeProperties(const string& presetId, const string& selectedName);
-
-	/**
-	 * Unset prototype properties
-	 */
-	void unsetPrototypeProperties();
-
-	/**
 	 * Set pivot tab
 	 * @param pivot pivot
 	 */
@@ -553,29 +541,16 @@ public:
 	void setSoundDetails(const string& soundId);
 
 	/**
-	 * Set property details
-	 * @param propertyName property name
-	 */
-	void setPropertyDetails(const string& propertyName);
-
-	/**
 	 * Update details panel
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
 
-	/**
-	 * On value changed
-	 * @param node node
-	 */
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
-
-	/**
-	 * On action performed
-	 * @param type type
-	 * @param node node
-	 */
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onFocus(GUIElementNode* node) override;
+	void onUnfocus(GUIElementNode* node) override;
 
 	/**
 	 * Shows the error pop up

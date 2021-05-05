@@ -16,12 +16,15 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::string;
@@ -38,16 +41,20 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
-PrototypeBaseSubController::PrototypeBaseSubController(PopUps* popUps, Action* onSetEntityDataAction)
+PrototypeBaseSubController::PrototypeBaseSubController(EditorView* editorView, PopUps* popUps, Action* onSetEntityDataAction)
 {
+	this->editorView = editorView;
 	this->view = new PrototypeBaseSubView(this);
 	this->popUps = popUps;
 	this->onSetPrototypeDataAction = onSetEntityDataAction;
@@ -92,176 +99,83 @@ void PrototypeBaseSubController::onPrototypeDataApply(Prototype* prototype)
 	onSetPrototypeDataAction->performAction();
 }
 
-void PrototypeBaseSubController::setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds)
-{
-	auto prototypePropertiesPresetsInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getId() + "_inner")));
-	auto idx = 0;
-	string prototypePropertiesPresetsInnerNodeSubNodesXML = "";
-	prototypePropertiesPresetsInnerNodeSubNodesXML =
-		prototypePropertiesPresetsInnerNodeSubNodesXML +
-		"<scrollarea id=\"" +
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getId() +
-		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto it: prototypePresetIds) {
-		auto prototypePresetId = it.first;
-		prototypePropertiesPresetsInnerNodeSubNodesXML =
-			prototypePropertiesPresetsInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(prototypePresetId) +
-			"\" value=\"" +
-			GUIParser::escapeQuotes(prototypePresetId) +
-			"\" " +
-			(idx == 0 ? "selected=\"true\" " : "") +
-			" />\n";
-		idx++;
+void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototype, string& xml) {
+	if (prototype->getPropertyCount() > 0) {
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
+		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
+			auto property = prototype->getPropertyByIndex(i);
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+		}
+		xml+= "</selectbox-parent-option>\n";
 	}
-	prototypePropertiesPresetsInnerNodeSubNodesXML = prototypePropertiesPresetsInnerNodeSubNodesXML + "</scrollarea>";
+}
+
+void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const string& propertyName) {
+	Console::println("PrototypeBaseSubController::setPropertyDetails(): " + propertyName);
+
+	auto property = prototype->getProperty(propertyName);
+	if (property == nullptr) return;
+
+	editorView->setDetailsContent(
+		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_property.xml\" />\n"
+	);
+
+	auto screenNode = editorView->getScreenController()->getScreenNode();
+
 	try {
-		prototypePropertiesPresetsInnerNode->replaceSubNodes(prototypePropertiesPresetsInnerNodeSubNodesXML, true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->setValue(MutableString(property->getName()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
 	} catch (Exception& exception) {
-		Console::print(string("PrototypeBaseSubController::setPrototypePresetIds(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void PrototypeBaseSubController::setPrototypeProperties(Prototype* prototype, const string& presetId, const string& selectedName)
-{
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_presetapply"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_add"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
-	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() + "_inner")));
-	auto idx = 1;
-	string prototypePropertiesListBoxSubNodesXML = "";
-	prototypePropertiesListBoxSubNodesXML =
-		prototypePropertiesListBoxSubNodesXML +
-		"<scrollarea id=\"" +
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() +
-		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = prototype->getPropertyByIndex(i);
-		prototypePropertiesListBoxSubNodesXML =
-			prototypePropertiesListBoxSubNodesXML +
-			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(entityProperty->getName()) +
-			": " +
-			GUIParser::escapeQuotes(entityProperty->getValue()) +
-			"\" value=\"" +
-			GUIParser::escapeQuotes(entityProperty->getName()) +
-			"\" " +
-			(selectedName.length() > 0 && entityProperty->getName() == selectedName ? "selected=\"true\" " : "") +
-			"/>\n";
-	}
-	prototypePropertiesListBoxSubNodesXML = prototypePropertiesListBoxSubNodesXML + "</scrollarea>\n";
+void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, const string& propertyName) {
+	Console::println("PrototypeBaseSubController::applyPropertyDetails(): " + propertyName);
+
 	try {
-		prototypePropertiesListBoxInnerNode->replaceSubNodes(prototypePropertiesListBoxSubNodesXML, false);
+		if (prototype->updateProperty(
+			propertyName,
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->getValue().getString()) == false) {
+			throw ExceptionBase("Could not apply property details");
+		}
 	} catch (Exception& exception) {
-		Console::print(string("PrototypeBaseSubController::setEntityProperties(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	onPrototypePropertiesSelectionChanged(prototype);
-}
-
-void PrototypeBaseSubController::unsetPrototypeProperties()
-{
-	auto prototypePropertiesListBoxInnerNode = dynamic_cast<GUIParentNode*>((required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getScreenNode()->getNodeById(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getId() + "_inner")));
-	prototypePropertiesListBoxInnerNode->clearSubNodes();
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setValue(MutableString("none"));
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_presetapply"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_add"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
-}
-
-void PrototypeBaseSubController::onEntityPropertySave(Prototype* prototype)
-{
-	if (
-		view->prototypePropertySave(
-			prototype,
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString(),
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->getValue().getString(),
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->getValue().getString()
-		) == false) {
-		showErrorPopUp("Warning", "Saving prototype property failed");
+		Console::println(string("PrototypeBaseSubController::applyPropertyDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void PrototypeBaseSubController::onPrototypePropertyAdd(Prototype* prototype)
+void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
 {
-	if (view->prototypePropertyAdd(prototype) == false) {
-		showErrorPopUp("Warning", "Adding new prototype property failed");
-	}
-}
-
-void PrototypeBaseSubController::onPrototypePropertyRemove(Prototype* prototype)
-{
-	if (view->prototypePropertyRemove(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString()) == false) {
-		showErrorPopUp("Warning", "Removing prototype property failed");
-	}
-}
-
-void PrototypeBaseSubController::onPrototypePropertyPresetApply(Prototype* prototype)
-{
-	view->prototypePropertiesPreset(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_presets"))->getController()->getValue().getString());
-}
-
-void PrototypeBaseSubController::onPrototypePropertiesSelectionChanged(Prototype* entity)
-{
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(true);
-	auto entityProperty = entity->getProperty(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_properties_listbox"))->getController()->getValue().getString());
-	if (entityProperty != nullptr) {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setValue(MutableString(entityProperty->getName()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setValue(MutableString(entityProperty->getValue()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_name"))->getController()->setDisabled(false);
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_property_value"))->getController()->setDisabled(false);
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_save"))->getController()->setDisabled(false);
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_properties_remove"))->getController()->setDisabled(false);
-	}
-}
-
-void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* model)
-{
-	if (node->getId() == "entity_properties_listbox") {
-		onPrototypePropertiesSelectionChanged(model);
-	} else {
-	}
-}
-
-void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity)
-{
-	if (type == GUIActionListenerType::PERFORMED)
-	{
-		if (node->getId().compare("button_entity_apply") == 0) {
-			onPrototypeDataApply(entity);
-		} else
-		if (node->getId().compare("button_entity_properties_presetapply") == 0) {
-			onPrototypePropertyPresetApply(entity);
-		} else
-		if (node->getId().compare("button_entity_properties_add") == 0) {
-			onPrototypePropertyAdd(entity);
-		} else
-		if (node->getId().compare("button_entity_properties_remove") == 0) {
-			onPrototypePropertyRemove(entity);
-		} else
-		if (node->getId().compare("button_entity_properties_save") == 0) {
-			onEntityPropertySave(entity);
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+			setPropertyDetails(prototype, selectedPropertyName);
 		}
 	}
+}
+
+void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+{
+}
+
+void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
+	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+	for (auto& applyPropertyNode: applyPropertyNodes)
+	if (node->getId() == applyPropertyNode) {
+		propertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+	}
+}
+
+void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
+	if (propertyName.empty() == true) return;
+	applyPropertyDetails(prototype, propertyName);
+	propertyName.clear();
+	editorView->reloadTabOutliner();
 }
 
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)

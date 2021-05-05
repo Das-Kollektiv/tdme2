@@ -30,43 +30,6 @@ public:
 	PrototypeBaseSubView(PrototypeBaseSubController* prototypeBaseSubController);
 
 	/**
-	 * Init
-	 */
-	void initialize();
-
-	/**
-	 * Apply prototype property preset
-	 * @param prototype prototype
-	 * @param presetId preset id
-	 */
-	void prototypePropertiesPreset(Prototype* prototype, const string& presetId);
-
-	/**
-	 * Save a prototype property
-	 * @param prototype prototype
-	 * @param oldName old name
-	 * @param name name
-	 * @param value value
-	 * @return success
-	 */
-	bool prototypePropertySave(Prototype* prototype, const string& oldName, const string& name, const string& value);
-
-	/**
-	 * Add a prototype property
-	 * @param prototype prototype
-	 * @return success
-	 */
-	bool prototypePropertyAdd(Prototype* prototype);
-
-	/**
-	 * Remove a prototype property from prototype properties
-	 * @param prototype prototype
-	 * @param name name
-	 * @return success
-	 */
-	bool prototypePropertyRemove(Prototype* prototype, const string& name);
-
-	/**
 	 * Update current model data
 	 * @param prototype prototype
 	 * @param name name

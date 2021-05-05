@@ -46,7 +46,7 @@ private:
 	EditorView* editorView { nullptr };
 	PrototypeSoundsSubView* view { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
-	array<string, 7> audioChangeNodes = {
+	array<string, 7> applyAudioNodes = {
 		"sound_key",
 		"sound_animation",
 		"sound_gain",
@@ -124,11 +124,11 @@ public:
 	void setSoundDetails(Prototype* prototype, Model* model, const string& soundId);
 
 	/**
-	 * Update sound details
+	 * Apply sound details
 	 * @param prototype prototype
 	 * @param soundId sound Id
 	 */
-	void updateSoundDetails(Prototype* prototype, const string& soundId);
+	void applySoundDetails(Prototype* prototype, const string& soundId);
 
 	/**
 	 * On value changed

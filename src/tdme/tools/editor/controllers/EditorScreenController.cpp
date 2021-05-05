@@ -86,6 +86,7 @@ void EditorScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "screen_editor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
+		screenNode->addFocusListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
@@ -184,6 +185,26 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 	if (tabViewIt != tabViews.end()){
 		auto& tab = tabViewIt->second;
 		tab.getTabController()->onActionPerformed(type, node);
+	}
+}
+
+void EditorScreenController::onFocus(GUIElementNode* node) {
+	// forward onFocus to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->onFocus(node);
+	}
+}
+
+void EditorScreenController::onUnfocus(GUIElementNode* node) {
+	// forward onFocus to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->onUnfocus(node);
 	}
 }
 

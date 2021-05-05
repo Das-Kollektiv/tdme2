@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
@@ -11,8 +12,10 @@
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
+#include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::array;
 using std::map;
 using std::string;
 using std::vector;
@@ -25,6 +28,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 
 /**
@@ -35,18 +39,26 @@ using tdme::utilities::MutableString;
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController final
 {
 private:
+	EditorView* editorView { nullptr };
 	PrototypeBaseSubView* view { nullptr };
 	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	Action* onSetPrototypeDataAction { nullptr };
 
+	array<string, 2> applyPropertyNodes = {
+		"property_name",
+		"property_value"
+	};
+	string propertyName;
+
 public:
 	/**
 	 * Public constructor
+	 * @param editorView editor view
 	 * @param popUps view
 	 * @param onSetEntityDataAction on set entity data action
 	 */
-	PrototypeBaseSubController(PopUps* popUps, Action* onSetEntityDataAction);
+	PrototypeBaseSubController(EditorView* editorView, PopUps* popUps, Action* onSetEntityDataAction);
 
 	/**
 	 * Destructor
@@ -78,68 +90,54 @@ public:
 	void onPrototypeDataApply(Prototype* model);
 
 	/**
-	 * Set up prototype property preset ids
-	 * @param prototypePresetIds prototype property preset ids
-	 */
-	void setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds);
-
-	/**
-	 * Set up prototype properties
+	 * Create prototype properties XML for outliner
 	 * @param prototype prototype
-	 * @param presetId preset id
-	 * @param selectedName selected name
+	 * @param xml xml
 	 */
-	void setPrototypeProperties(Prototype* prototype, const string& presetId, const string& selectedName);
+	void createPrototypePropertiesXML(Prototype* prototype, string& xml);
 
 	/**
-	 * Unset prototype properties
-	 */
-	void unsetPrototypeProperties();
-
-	/**
-	 * On entity property save
-	 * @param entity entity
-	 */
-	void onEntityPropertySave(Prototype* prototype);
-
-	/**
-	 * On prototype property add
+	 * Set property details
 	 * @param prototype prototype
+	 * @param propertyName property name
 	 */
-	void onPrototypePropertyAdd(Prototype* prototype);
+	void setPropertyDetails(Prototype* prototype, const string& propertyName);
 
 	/**
-	 * On prototype property remove
-	 * @param entity entity
-	 */
-	void onPrototypePropertyRemove(Prototype* prototype);
-
-	/**
-	 * On prototype property preset apply
-	 * @param model model
-	 */
-	void onPrototypePropertyPresetApply(Prototype* prototype);
-
-	/**
-	 * Event callback for entity properties selection
+	 * Apply property details
 	 * @param prototype prototype
+	 * @param propertyName property name
 	 */
-	void onPrototypePropertiesSelectionChanged(Prototype* prototype);
+	void applyPropertyDetails(Prototype* prototype, const string& propertyName);
 
 	/**
 	 * On value changed
 	 * @param node node
-	 * @param model model
+	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* model);
+	void onValueChanged(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
-	 * @param entity entity
+	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* entity);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+
+	/**
+	 * On focus
+	 * @param node node
+	 * @param prototype prototype
+	 */
+	void onFocus(GUIElementNode* node, Prototype* prototype);
+
+	/**
+	 * On unfocus
+	 * @param node node
+	 * @param prototype prototype
+	 */
+	void onUnfocus(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * Shows the error pop up

@@ -129,7 +129,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
+	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), view->getPopUps(), &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, view->getPopUps(), &audioPath);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEngine(), this->prototypePhysicsSubController->getView());
@@ -313,14 +313,7 @@ void ModelEditorTabController::setOutlinerContent() {
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
-		if (prototype->getPropertyCount() > 0) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
-			for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-				auto property = prototype->getPropertyByIndex(i);
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
-			}
-			xml+= "</selectbox-parent-option>\n";
-		}
+		prototypeBaseSubController->createPrototypePropertiesXML(view->getPrototype(), xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(view->getPrototype(), xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(view->getPrototype(), xml);
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
@@ -370,18 +363,6 @@ void ModelEditorTabController::unsetPrototypeData()
 	modelReload->getController()->setDisabled(true);
 	modelReimport->getController()->setDisabled(true);
 	modelSave->getController()->setDisabled(true);
-}
-
-void ModelEditorTabController::setPrototypeProperties(const string& presetId, const string& selectedName)
-{
-	auto prototype = view->getPrototype();
-	if (prototype == nullptr) return;
-	prototypeBaseSubController->setPrototypeProperties(prototype, presetId, selectedName);
-}
-
-void ModelEditorTabController::unsetPrototypeProperties()
-{
-	prototypeBaseSubController->unsetPrototypeProperties();
 }
 
 void ModelEditorTabController::setPivot(const Vector3& pivot)
@@ -2299,29 +2280,6 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 	prototypeSoundsSubController->setSoundDetails(view->getPrototype(), model, soundId);
 }
 
-void ModelEditorTabController::setPropertyDetails(const string& propertyName) {
-	Console::println("ModelEditorTabController::setPropertyDetails(): " + propertyName);
-
-	auto property = view->getPrototype()->getProperty(propertyName);
-	if (property == nullptr) return;
-
-	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_property.xml\" />\n"
-	);
-
-	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
-
-	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->setValue(MutableString(property->getName()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
-	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-
-}
-
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
@@ -2332,17 +2290,13 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		view->playAnimation(animationId);
 		setAnimationDetails(animationId);
-	} else
-	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
-		auto propertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-		setPropertyDetails(propertyName);
 	}
 }
 
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	auto outlinerNode = node->getController()->getValue().getString();
 	if (node->getId() == "selectbox_outliner") {
-		auto outlinerNode = node->getController()->getValue().getString();
 		updateDetails(outlinerNode);
 	}
 	// TODO :old
@@ -2358,6 +2312,14 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
 	}
+}
+
+void ModelEditorTabController::onFocus(GUIElementNode* node) {
+	prototypeBaseSubController->onFocus(node, view->getPrototype());
+}
+
+void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
+	prototypeBaseSubController->onUnfocus(node, view->getPrototype());
 }
 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
