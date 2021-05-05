@@ -131,12 +131,34 @@ public:
 	void applySoundDetails(Prototype* prototype, const string& soundId);
 
 	/**
+	 * Apply sound details rename
+	 * @param prototype prototype
+	 * @param soundId sound Id
+	 * @return new sound id
+	 */
+	const string applySoundDetailsRename(Prototype* prototype, const string& soundId);
+
+	/**
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
 	 * @param model model
 	 */
 	void onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model);
+
+	/**
+	 * On focus
+	 * @param node node
+	 * @param prototype prototype
+	 */
+	void onFocus(GUIElementNode* node, Prototype* prototype);
+
+	/**
+	 * On unfocus
+	 * @param node node
+	 * @param prototype prototype
+	 */
+	void onUnfocus(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed

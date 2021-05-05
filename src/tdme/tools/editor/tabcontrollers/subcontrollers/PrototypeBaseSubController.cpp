@@ -132,13 +132,15 @@ void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const 
 	}
 }
 
-void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, const string& propertyName) {
-	Console::println("PrototypeBaseSubController::applyPropertyDetails(): " + propertyName);
+const string PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, const string& propertyName) {
+	Console::println("PrototypeBaseSubController::applyPropertyDetailsRename(): " + propertyName);
 
+	string newPropertyName;
 	try {
+		newPropertyName = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->getValue().getString();
 		if (prototype->updateProperty(
 			propertyName,
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_name"))->getController()->getValue().getString(),
+			newPropertyName,
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->getValue().getString()) == false) {
 			throw ExceptionBase("Could not apply property details");
 		}
@@ -146,6 +148,7 @@ void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, cons
 		Console::println(string("PrototypeBaseSubController::applyPropertyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	return newPropertyName;
 }
 
 void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
@@ -164,18 +167,18 @@ void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, G
 }
 
 void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
-	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-	for (auto& applyPropertyNode: applyPropertyNodes)
-	if (node->getId() == applyPropertyNode) {
-		propertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-	}
 }
 
 void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
-	if (propertyName.empty() == true) return;
-	applyPropertyDetails(prototype, propertyName);
-	propertyName.clear();
-	editorView->reloadTabOutliner();
+
+	for (auto& applyPropertyNode: applyPropertyNodes) {
+		if (node->getId() == applyPropertyNode) {
+			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+			editorView->reloadTabOutliner(applyPropertyDetails(prototype, selectedPropertyName));
+			break;
+		}
+	}
 }
 
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)

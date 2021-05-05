@@ -208,18 +208,8 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 }
 
 void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const string& soundId) {
-	auto haveNewSoundId = false;
 	try {
 		auto sound = prototype->getSound(soundId);
-		if (sound == nullptr) return;
-		auto newSoundId = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString();
-		if (sound->getId() != newSoundId) {
-			if (prototype->renameSound(sound->getId(), newSoundId) == false) {
-				throw ExceptionBase("Audio key could not be renamed");
-			}
-			haveNewSoundId = true;
-		}
-		sound->setId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString());
 		sound->setAnimation(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->getValue().getString());
 		sound->setGain(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->getValue().getString()));
 		sound->setPitch(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->getValue().getString()));
@@ -231,7 +221,26 @@ void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const
 		Console::println(string("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-	if (haveNewSoundId == true) editorView->reloadTabOutliner();
+}
+
+const string PrototypeSoundsSubController::applySoundDetailsRename(Prototype* prototype, const string& soundId) {
+	string newSoundId;
+	try {
+		auto sound = prototype->getSound(soundId);
+		if (sound == nullptr) return newSoundId;
+		newSoundId = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString();
+		if (sound->getId() != newSoundId) {
+			if (prototype->renameSound(sound->getId(), newSoundId) == false) {
+				throw ExceptionBase("Audio key could not be renamed");
+			}
+		}
+		sound->setId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString());
+		playableSoundView->playSound(sound->getId());
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeSoundsSubController::updateSoundDetailsRename(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+	return newSoundId;
 }
 
 void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
@@ -268,6 +277,19 @@ void PrototypeSoundsSubController::onActionPerformed(GUIActionListenerType type,
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+		}
+	}
+}
+
+void PrototypeSoundsSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
+}
+
+void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
+	if (node->getId() == "sound_key") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+			editorView->reloadTabOutliner(applySoundDetailsRename(prototype, soundId));
 		}
 	}
 }

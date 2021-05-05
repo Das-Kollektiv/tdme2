@@ -83,8 +83,9 @@ public:
 
 	/**
 	 * Reload tab outliner
+	 * @param newSelectionId new selection id
 	 */
-	void reloadTabOutliner();
+	void reloadTabOutliner(const string& newSelectionId = string());
 
 	/**
 	 * Determine viewport screen constraints

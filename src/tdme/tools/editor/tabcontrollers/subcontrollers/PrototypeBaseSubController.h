@@ -49,7 +49,6 @@ private:
 		"property_name",
 		"property_value"
 	};
-	string propertyName;
 
 public:
 	/**
@@ -107,8 +106,9 @@ public:
 	 * Apply property details
 	 * @param prototype prototype
 	 * @param propertyName property name
+	 * @return new property name
 	 */
-	void applyPropertyDetails(Prototype* prototype, const string& propertyName);
+	const string applyPropertyDetails(Prototype* prototype, const string& propertyName);
 
 	/**
 	 * On value changed

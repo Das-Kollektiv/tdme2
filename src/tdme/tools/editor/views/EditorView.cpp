@@ -146,7 +146,7 @@ void EditorView::setDetailsContent(const string& xml) {
 	editorScreenController->setDetailsContent(xml);
 }
 
-void EditorView::reloadTabOutliner() {
+void EditorView::reloadTabOutliner(const string& newSelectionId) {
 	auto selectedTabId = editorScreenController->getSelectedTabId();
 	auto& tabViews = editorScreenController->getTabViews();
 	auto tabViewIt = tabViews.find(selectedTabId);

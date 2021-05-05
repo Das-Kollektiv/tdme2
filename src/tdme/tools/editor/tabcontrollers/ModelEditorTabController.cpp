@@ -2316,10 +2316,12 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 
 void ModelEditorTabController::onFocus(GUIElementNode* node) {
 	prototypeBaseSubController->onFocus(node, view->getPrototype());
+	prototypeSoundsSubController->onFocus(node, view->getPrototype());
 }
 
 void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
 	prototypeBaseSubController->onUnfocus(node, view->getPrototype());
+	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
 }
 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
