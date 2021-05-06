@@ -87,7 +87,7 @@ bool PrototypeDisplaySubController::getDisplayBoundingVolume()
 
 void PrototypeDisplaySubController::createDisplayPropertiesXML(Prototype* prototype, string& xml) {
 	if (prototype->getType() == Prototype_Type::MODEL) {
-		xml+= "	<selectbox-parent-option text=\"Rendering\" value=\"rendering\">\n";
+		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"Rendering\" value=\"rendering\">\n";
 		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Shader: " + prototype->getShader()) + "\" value=\"rendering.shader\" />\n";
 		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Distance Shader: " + prototype->getDistanceShader()) + "\" value=\"rendering.distanceshader\" />\n";
 		xml+= "	</selectbox-parent-option>\n";
@@ -132,7 +132,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->setValue(MutableString(prototype->isRenderGroups() == true?"1":""));
 
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::setDisplayDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("PrototypeDisplaySubController::setDisplayDetails(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -146,10 +146,45 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 		prototype->setReceivesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_receives_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setRenderGroups(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
+
+void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype) {
+
+	auto shader = prototype->getShader();
+	auto shaderParameters = Engine::getShaderParameterDefaults(shader);
+	string shadersParametersXML = "";
+	if (shaderParameters.empty() == false) {
+		for (auto& parameterIt: shaderParameters) {
+			auto& parameterName = parameterIt.first;
+			auto parameter = prototype->getShaderParameters().getShaderParameter(parameterName);
+			auto parameterValue = parameter.toString();
+			auto parameterType = "string";
+			switch (parameter.getType()) {
+			case ShaderParameter::TYPE_FLOAT:
+					break;
+			case ShaderParameter::TYPE_INTEGER:
+					break;
+			case ShaderParameter::TYPE_BOOLEAN:
+					break;
+			case ShaderParameter::TYPE_VECTOR2:
+					break;
+			case ShaderParameter::TYPE_VECTOR3:
+					break;
+			case ShaderParameter::TYPE_VECTOR4:
+					break;
+			}
+		}
+	}
+	editorView->setDetailsContent(shadersParametersXML);
+}
+
+void PrototypeDisplaySubController::setDisplayDistanceShaderDetails(Prototype* prototype) {
+
+}
+
 
 void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
 	for (auto& applyDisplayNode: applyDisplayNodes) {
@@ -167,6 +202,8 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "rendering") setDisplayDetails(prototype);
+		if (outlinerNode == "rendering.shader") setDisplayShaderDetails(prototype);
+		if (outlinerNode == "rendering.distanceshader") setDisplayShaderDetails(prototype);
 	}
 }
 

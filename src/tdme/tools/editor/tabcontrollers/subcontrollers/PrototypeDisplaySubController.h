@@ -119,6 +119,18 @@ public:
 	void applyDisplayDetails(Prototype* prototype);
 
 	/**
+	 * Set display shader details
+	 * @param prototype prototype
+	 */
+	void setDisplayShaderDetails(Prototype* prototype);
+
+	/**
+	 * Set display distance shader details
+	 * @param prototype prototype
+	 */
+	void setDisplayDistanceShaderDetails(Prototype* prototype);
+
+	/**
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
