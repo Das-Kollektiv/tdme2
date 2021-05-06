@@ -54,10 +54,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
-	 * @param popUps view
 	 * @param onSetEntityDataAction on set entity data action
 	 */
-	PrototypeBaseSubController(EditorView* editorView, PopUps* popUps, Action* onSetEntityDataAction);
+	PrototypeBaseSubController(EditorView* editorView, Action* onSetEntityDataAction);
 
 	/**
 	 * Destructor

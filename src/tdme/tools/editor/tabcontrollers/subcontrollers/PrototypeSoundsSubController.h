@@ -61,10 +61,9 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param playableSoundView view that supports playing sounds
-	 * @param popUps pop ups
 	 * @param audioPath audio path
 	 */
-	PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
+	PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, FileDialogPath* audioPath);
 
 	/**
 	 * Destructor

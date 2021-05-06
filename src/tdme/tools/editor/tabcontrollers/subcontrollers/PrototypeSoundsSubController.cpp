@@ -63,12 +63,12 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
+PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, FileDialogPath* audioPath)
 {
 	this->editorView = editorView;
 	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
-	this->view = new PrototypeSoundsSubView(this, popUps);
+	this->view = new PrototypeSoundsSubView(this, editorView->getPopUps());
 }
 
 PrototypeSoundsSubController::~PrototypeSoundsSubController() {

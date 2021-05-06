@@ -52,11 +52,11 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeBaseSubController::PrototypeBaseSubController(EditorView* editorView, PopUps* popUps, Action* onSetEntityDataAction)
+PrototypeBaseSubController::PrototypeBaseSubController(EditorView* editorView, Action* onSetEntityDataAction)
 {
 	this->editorView = editorView;
 	this->view = new PrototypeBaseSubView(this);
-	this->popUps = popUps;
+	this->popUps = editorView->getPopUps();
 	this->onSetPrototypeDataAction = onSetEntityDataAction;
 }
 

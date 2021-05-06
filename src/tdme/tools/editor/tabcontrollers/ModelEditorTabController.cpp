@@ -129,10 +129,10 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), view->getPopUps(), new OnSetPrototypeDataAction(this, finalView));
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), view->getPopUps(), &modelPath, true);
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, view->getPopUps(), &audioPath);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEngine(), this->prototypePhysicsSubController->getView());
+	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), new OnSetPrototypeDataAction(this, finalView));
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), &modelPath, true);
+	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view->getEngine(), this->prototypePhysicsSubController->getView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
@@ -313,9 +313,10 @@ void ModelEditorTabController::setOutlinerContent() {
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
-		prototypeBaseSubController->createPrototypePropertiesXML(view->getPrototype(), xml);
-		prototypePhysicsSubController->createOutlinerPhysicsXML(view->getPrototype(), xml);
-		prototypeSoundsSubController->createOutlinerSoundsXML(view->getPrototype(), xml);
+		prototypeBaseSubController->createPrototypePropertiesXML(prototype, xml);
+		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
+		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
+		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
 		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
 		if (model != nullptr) {
@@ -2348,6 +2349,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		}
 	}
 	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	{
 		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
@@ -2367,10 +2369,11 @@ void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	prototypeBaseSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypeDisplaySubController->onActionPerformed(type, node);
-	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypeSoundsSubController->onActionPerformed(type, node, view->getPrototype());
+	auto prototype = view->getPrototype();
+	prototypeBaseSubController->onActionPerformed(type, node, prototype);
+	prototypeDisplaySubController->onActionPerformed(type, node, prototype);
+	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
+	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_model_load") == 0) {
 			onModelLoad();
