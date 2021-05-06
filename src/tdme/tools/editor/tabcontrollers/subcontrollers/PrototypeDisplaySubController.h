@@ -54,6 +54,11 @@ private:
 		"rendering_receives_shadows",
 		"rendering_render_groups"
 	};
+	array<string, 2> reloadOuterlinerDisplayNodes = {
+		"rendering_shader",
+		"rendering_distance_shader",
+	};
+
 public:
 	/**
 	 * Public constructor

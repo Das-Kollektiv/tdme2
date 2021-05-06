@@ -5,6 +5,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -28,6 +29,7 @@ using std::array;
 
 using tdme::engine::Engine;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -84,7 +86,14 @@ bool PrototypeDisplaySubController::getDisplayBoundingVolume()
 }
 
 void PrototypeDisplaySubController::createDisplayPropertiesXML(Prototype* prototype, string& xml) {
-	xml+= "	<selectbox-option text=\"Rendering\" value=\"rendering\" />\n";
+	if (prototype->getType() == Prototype_Type::MODEL) {
+		xml+= "	<selectbox-parent-option text=\"Rendering\" value=\"rendering\">\n";
+		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Shader: " + prototype->getShader()) + "\" value=\"rendering.shader\" />\n";
+		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Distance Shader: " + prototype->getDistanceShader()) + "\" value=\"rendering.distanceshader\" />\n";
+		xml+= "	</selectbox-parent-option>\n";
+	} else {
+		xml+= "	<selectbox-option text=\"Rendering\" value=\"rendering\" />\n";
+	}
 }
 
 void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
@@ -110,6 +119,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 	try {
 		// physics
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("open");
+		if (prototype->getType() == Prototype_Type::MODEL) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("shaders");
 
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_shader"))->replaceSubNodes(shaderXML, true);
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_distance_shader"))->replaceSubNodes(shaderXML, true);
@@ -142,9 +152,15 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 }
 
 void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
-	for (auto& audioChangeNode: applyDisplayNodes) {
-		if (node->getId() == audioChangeNode) {
+	for (auto& applyDisplayNode: applyDisplayNodes) {
+		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);
+			break;
+		}
+	}
+	for (auto& reloadOutlinerNode: reloadOuterlinerDisplayNodes) {
+		if (node->getId() == reloadOutlinerNode) {
+			editorView->reloadTabOutliner();
 			break;
 		}
 	}
