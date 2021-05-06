@@ -6,6 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -27,6 +28,7 @@ using std::array;
 
 using tdme::engine::Engine;
 using tdme::engine::prototype::Prototype;
+using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -90,11 +92,27 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 		"<template id=\"details_rendering\" src=\"resources/engine/gui/template_details_rendering.xml\" />\n"
 	);
 
-
+	string shaderXML;
+	{
+		for (auto& shader: Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D)) {
+			shaderXML =
+				shaderXML +
+				"<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(shader) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(shader) +
+				"\" " +
+				(shader == "default"?"selected=\"true\" " : "") +
+				"/>\n";
+		}
+	}
 
 	try {
 		// physics
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("open");
+
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_shader"))->replaceSubNodes(shaderXML, true);
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_distance_shader"))->replaceSubNodes(shaderXML, true);
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_shader"))->getController()->setValue(MutableString(prototype->getShader()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distance_shader"))->getController()->setValue(MutableString(prototype->getDistanceShader()));
