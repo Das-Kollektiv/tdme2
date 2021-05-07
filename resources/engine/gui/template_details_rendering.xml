@@ -3,7 +3,7 @@
 		<button width="100%" height="25" text="Rendering" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 
-			<layout show-on="shaders" width="100%" height="auto" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<layout show-on="shader" width="100%" height="auto" alignment="vertical" vertical-align="center" horizontal-align="center">
 				<space height="5" />
 
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
@@ -47,7 +47,7 @@
 
 				<space height="5" />
 				<menu-separator />
-				<space height="5" />
+				<space height="5" />		
 
 			</layout>
 
