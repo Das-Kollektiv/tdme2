@@ -22,8 +22,6 @@ PrototypeDisplaySubView::PrototypeDisplaySubView(Engine* engine, PrototypeDispla
 {
 	this->engine = engine;
 	this->prototypeDisplaySubController = prototypeDisplaySubController;
-	displayGroundPlate = true;
-	displayShadowing = true;
 }
 
 PrototypeDisplaySubView::~PrototypeDisplaySubView() {
@@ -33,10 +31,11 @@ void PrototypeDisplaySubView::display(Prototype* prototype)
 {
 	if (prototype != nullptr) {
 		auto model = engine->getEntity("model");
-		if (model != nullptr) model->setContributesShadows(displayShadowing);
-		if (model != nullptr) model->setReceivesShadows(displayShadowing);
+		if (model != nullptr) model->setContributesShadows(displayShadowing == true && prototype->isContributesShadows() == true);
+		if (model != nullptr) model->setReceivesShadows(displayShadowing == true && prototype->isReceivesShadows() == true);
 		auto ground = engine->getEntity("ground");
 		if (ground != nullptr) ground->setEnabled(displayGroundPlate);
+		if (ground != nullptr) ground->setContributesShadows(false);
 		if (ground != nullptr) ground->setReceivesShadows(displayShadowing);
 	}
 }

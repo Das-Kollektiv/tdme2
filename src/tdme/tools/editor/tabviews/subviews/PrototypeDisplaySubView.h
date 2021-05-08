@@ -26,8 +26,8 @@ class tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView final
 private:
 	Engine* engine { nullptr };
 	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
-	bool displayGroundPlate;
-	bool displayShadowing;
+	bool displayGroundPlate { true };
+	bool displayShadowing { true };
 
 public:
 	/**
