@@ -132,7 +132,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), new OnSetPrototypeDataAction(this, finalView));
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view->getEngine(), this->prototypePhysicsSubController->getView());
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, view->getEngine(), this->prototypePhysicsSubController->getView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {

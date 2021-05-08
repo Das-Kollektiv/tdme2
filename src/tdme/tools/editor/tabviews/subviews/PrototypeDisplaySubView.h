@@ -73,6 +73,12 @@ public:
 	}
 
 	/**
+	 * Update shader parameters
+	 * @param prototype prototype
+	 */
+	void updateShaderParameters(Prototype* prototype);
+
+	/**
 	 * Display
 	 * @param prototype prototype
 	 */

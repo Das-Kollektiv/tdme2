@@ -6,6 +6,9 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
@@ -16,6 +19,9 @@ using std::vector;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::Object3D;
+using tdme::engine::ShaderParameter;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 
 PrototypeDisplaySubView::PrototypeDisplaySubView(Engine* engine, PrototypeDisplaySubController* prototypeDisplaySubController)
@@ -26,6 +32,24 @@ PrototypeDisplaySubView::PrototypeDisplaySubView(Engine* engine, PrototypeDispla
 
 PrototypeDisplaySubView::~PrototypeDisplaySubView() {
 }
+
+void PrototypeDisplaySubView::updateShaderParameters(Prototype* prototype) {
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (object == nullptr || prototype == nullptr) return;
+	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+	for (auto& parameterIt: shaderParametersDefault) {
+		auto& parameterName = parameterIt.first;
+		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+		object->setShaderParameter(parameterName, parameterValue);
+	}
+	for (auto& parameterIt: distanceShaderParametersDefault) {
+		auto& parameterName = parameterIt.first;
+		auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+		object->setDistanceShaderParameter(parameterName, parameterValue);
+	}
+}
+
 
 void PrototypeDisplaySubView::display(Prototype* prototype)
 {

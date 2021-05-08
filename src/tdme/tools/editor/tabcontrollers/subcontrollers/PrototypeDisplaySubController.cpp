@@ -23,6 +23,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -52,6 +53,7 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -60,9 +62,10 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, Engine* engine, PrototypePhysicsSubView* physicsView)
+PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, Engine* engine, PrototypePhysicsSubView* physicsView)
 {
 	this->editorView = editorView;
+	this->tabView = tabView;
 	view = new PrototypeDisplaySubView(engine, this);
 	this->physicsView = physicsView;
 	this->popUps = editorView->getPopUps();
@@ -314,15 +317,23 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 			break;
 		}
 	}
+	for (auto& applyDisplayUpdateRenderingNode: applyDisplayUpdateRenderingNodes) {
+		if (node->getId() == applyDisplayUpdateRenderingNode) {
+			tabView->updateRendering();
+			break;
+		}
+	}
 	if (StringTools::startsWith(node->getId(), "rendering.shader.") == true) {
 		auto shaderParameters = prototype->getShaderParameters();
 		applyDisplayShaderDetails(prototype, "rendering.shader.", StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size()), shaderParameters);
 		prototype->setShaderParameters(shaderParameters);
+		view->updateShaderParameters(prototype);
 	}
 	if (StringTools::startsWith(node->getId(), "rendering.distanceshader.") == true) {
 		auto distanceShaderParameters = prototype->getDistanceShaderParameters();
 		applyDisplayShaderDetails(prototype, "rendering.distanceshader.", StringTools::substring(node->getId(), string("rendering.distanceshader.").size(), node->getId().size()), distanceShaderParameters);
 		prototype->setDistanceShaderParameters(distanceShaderParameters);
+		view->updateShaderParameters(prototype);
 	}
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();

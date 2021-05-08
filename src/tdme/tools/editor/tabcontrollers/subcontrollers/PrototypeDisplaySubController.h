@@ -12,6 +12,7 @@
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
@@ -27,6 +28,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 
@@ -40,6 +42,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubCo
 private:
 	GUIScreenNode* screenNode { nullptr };
 	EditorView* editorView { nullptr };
+	TabView* tabView { nullptr };
 	PrototypeDisplaySubView* view { nullptr };
 	PrototypePhysicsSubView* physicsView { nullptr };
 	PopUps* popUps { nullptr };
@@ -56,15 +59,20 @@ private:
 		"rendering_receives_shadows",
 		"rendering_render_groups"
 	};
+	array<string, 2> applyDisplayUpdateRenderingNodes = {
+		"rendering_shader",
+		"rendering_distance_shader"
+	};
 
 public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
+	 * @param tabView tab view
 	 * @param engine engine
 	 * @param physicsView physics view
 	 */
-	PrototypeDisplaySubController(EditorView* editorView, Engine* engine, PrototypePhysicsSubView* physicsView);
+	PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, Engine* engine, PrototypePhysicsSubView* physicsView);
 
 	/**
 	 * Destructor
