@@ -161,6 +161,11 @@ public:
 	void resetPrototype();
 
 	/**
+	 * Reload prototype
+	 */
+	void reloadPrototype();
+
+	/**
 	 * Reimport prototype
 	 */
 	void reimportPrototype();

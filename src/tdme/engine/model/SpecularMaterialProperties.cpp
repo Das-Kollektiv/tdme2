@@ -53,6 +53,7 @@ void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
 void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
 {
 	if (diffuseTexture != nullptr) diffuseTexture->releaseReference();
+	diffuseTexture = nullptr;
 	// load diffuse texture
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
@@ -98,6 +99,7 @@ void SpecularMaterialProperties::checkDiffuseTextureTransparency()
 void SpecularMaterialProperties::setSpecularTexture(const string& pathName, const string& fileName)
 {
 	if (specularTexture != nullptr) specularTexture->releaseReference();
+	specularTexture = nullptr;
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
 	specularTexture = TextureReader::read(pathName, fileName);

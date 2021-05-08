@@ -182,14 +182,16 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 	if (image == nullptr) {
 		try {
 			image = TextureReader::read(path, file, false, false);
-			image->setUseMipMap(false);
-			image->setRepeat(false);
+			if (image != nullptr) {
+				image->setUseMipMap(false);
+				image->setRepeat(false);
+			}
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));
 			Console::println(string(exception.what()));
 			throw;
 		}
-		(*imageCache)[canonicalFile] = image;
+		if (image != nullptr) (*imageCache)[canonicalFile] = image;
 	}
 	return image;
 }

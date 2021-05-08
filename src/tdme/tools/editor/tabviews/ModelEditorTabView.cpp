@@ -162,6 +162,13 @@ void ModelEditorTabView::resetPrototype()
 	initModelRequestedReset = true;
 }
 
+void ModelEditorTabView::reloadPrototype()
+{
+	engine->reset();
+	initModelRequested = true;
+	initModelRequestedReset = false;
+}
+
 void ModelEditorTabView::reimportPrototype()
 {
 	engine->reset();
@@ -193,7 +200,7 @@ void ModelEditorTabView::initModel()
 		// TODO: a.drewke
 		// modelEditorScreenController->unsetStatistics();
 	}
-	if (initModelRequestedReset == false) updateGUIElements();
+	if (initModelRequestedReset == true) updateGUIElements();
 }
 
 const string& ModelEditorTabView::getFileName()
@@ -613,7 +620,7 @@ void ModelEditorTabView::updateRendering() {
 	if (object == nullptr || prototype == nullptr) return;
 	engine->removeEntity("model");
 	ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
-	resetPrototype();
+	reloadPrototype();
 }
 
 void ModelEditorTabView::updateShaderParemeters() {

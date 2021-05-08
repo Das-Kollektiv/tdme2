@@ -351,49 +351,9 @@ public:
 	void onMaterialApply();
 
 	/**
-	 * On material load diffuse texture
-	 */
-	void onMaterialLoadDiffuseTexture();
-
-	/**
-	 * On material load diffuse transparency texture
-	 */
-	void onMaterialLoadDiffuseTransparencyTexture();
-
-	/**
-	 * On material load normal texture
-	 */
-	void onMaterialLoadNormalTexture();
-
-	/**
-	 * On material load specular texture
-	 */
-	void onMaterialLoadSpecularTexture();
-
-	/**
-	 * On material load PBR base color texture
-	 */
-	void onMaterialLoadPBRBaseColorTexture();
-
-	/**
-	 * On material load PBR metallic roughness texture
-	 */
-	void onMaterialLoadPBRMetallicRoughnessTexture();
-
-	/**
-	 * On material load PBR normal texture
-	 */
-	void onMaterialLoadPBRNormalTexture();
-
-	/**
 	 * On material PBR enabled value changed
 	 */
 	void onMaterialPBREnabledValueChanged();
-
-	/**
-	 * On material clear texture
-	 */
-	void onMaterialClearTexture(GUIElementNode* guiElementNode);
 
 	/**
 	 * Set animations
@@ -534,9 +494,13 @@ public:
 
 	/**
 	 * Set material details
-	 * @param materialId material Id
 	 */
-	void setMaterialDetails(const string& materialId);
+	void setMaterialDetails();
+
+	/**
+	 * Update material details
+	 */
+	void updateMaterialDetails();
 
 	/**
 	 * Set animation details
@@ -561,6 +525,76 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * On material load diffuse texture
+	 */
+	void onMaterialLoadDiffuseTexture();
+
+	/**
+	 * On material clear diffuse texture
+	 */
+	void onMaterialClearDiffuseTexture();
+
+	/**
+	 * On material load diffuse transparency texture
+	 */
+	void onMaterialLoadDiffuseTransparencyTexture();
+
+	/**
+	 * On material clear diffuse transparency texture
+	 */
+	void onMaterialClearDiffuseTransparencyTexture();
+
+	/**
+	 * On material load normal texture
+	 */
+	void onMaterialLoadNormalTexture();
+
+	/**
+	 * On material clear normal texture
+	 */
+	void onMaterialClearNormalTexture();
+
+	/**
+	 * On material load specular texture
+	 */
+	void onMaterialLoadSpecularTexture();
+
+	/**
+	 * On material clear specular texture
+	 */
+	void onMaterialClearSpecularTexture();
+
+	/**
+	 * On material load PBR base color texture
+	 */
+	void onMaterialLoadPBRBaseColorTexture();
+
+	/**
+	 * On material clear PBR base color texture
+	 */
+	void onMaterialClearPBRBaseColorTexture();
+
+	/**
+	 * On material load PBR metallic roughness texture
+	 */
+	void onMaterialLoadPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material clear PBR metallic roughness texture
+	 */
+	void onMaterialClearPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material load PBR normal texture
+	 */
+	void onMaterialLoadPBRNormalTexture();
+
+	/**
+	 * On material load PBR normal texture
+	 */
+	void onMaterialClearPBRNormalTexture();
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

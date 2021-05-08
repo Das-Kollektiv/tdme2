@@ -973,9 +973,16 @@ void ModelEditorTabController::onMaterialDropDownApply() {
 }
 
 Material* ModelEditorTabController::getSelectedMaterial() {
+	string materialId;
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
+		materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
+	} else {
+		return nullptr;
+	}
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return nullptr;
-	auto materialIt = model->getMaterials().find(materialsDropdown->getController()->getValue().getString());
+	auto materialIt = model->getMaterials().find(materialId);
 	return materialIt != model->getMaterials().end()?materialIt->second:nullptr;
 }
 
@@ -1045,369 +1052,6 @@ void ModelEditorTabController::onMaterialApply() {
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-}
-
-void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto specularMaterialProperties = material->getSpecularMaterialProperties();
-	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
-	}
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		specularMaterialProperties->getDiffuseTextureFileName() != ""?specularMaterialProperties->getDiffuseTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		specularMaterialProperties->getDiffuseTextureFileName(),
-		true,
-		new OnLoadTexture(this, materialsMaterialDiffuseTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto specularMaterialProperties = material->getSpecularMaterialProperties();
-	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
-	}
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		specularMaterialProperties->getDiffuseTransparencyTextureFileName() != ""?specularMaterialProperties->getDiffuseTransparencyTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		specularMaterialProperties->getDiffuseTransparencyTextureFileName(),
-		true,
-		new OnLoadTexture(this, materialsMaterialDiffuseTransparencyTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadNormalTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto specularMaterialProperties = material->getSpecularMaterialProperties();
-	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
-	}
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		specularMaterialProperties->getNormalTextureFileName() != ""?specularMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		specularMaterialProperties->getNormalTextureFileName(),
-		true,
-		new OnLoadTexture(this, materialsMaterialNormalTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadSpecularTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto specularMaterialProperties = material->getSpecularMaterialProperties();
-	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
-	}
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		specularMaterialProperties->getSpecularTextureFileName() != ""?specularMaterialProperties->getSpecularTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		specularMaterialProperties->getSpecularTextureFileName(),
-		true,
-		new OnLoadTexture(this, materialsMaterialNormalTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto pbrMaterialProperties = material->getPBRMaterialProperties();
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		pbrMaterialProperties != nullptr && pbrMaterialProperties->getBaseColorTextureFileName() != ""?pbrMaterialProperties->getBaseColorTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		pbrMaterialProperties != nullptr?pbrMaterialProperties->getBaseColorTextureFileName():"",
-		true,
-		new OnLoadTexture(this, materialsMaterialPBRBaseColorTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto pbrMaterialProperties = material->getPBRMaterialProperties();
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		pbrMaterialProperties != nullptr && pbrMaterialProperties->getMetallicRoughnessTextureFileName() != ""?pbrMaterialProperties->getMetallicRoughnessTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		pbrMaterialProperties != nullptr?pbrMaterialProperties->getMetallicRoughnessTextureFileName():"",
-		true,
-		new OnLoadTexture(this, materialsMaterialPBRMetallicRoughnessTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
-	auto material = getSelectedMaterial();
-	if (material == nullptr) return;
-	auto pbrMaterialProperties = material->getPBRMaterialProperties();
-
-	class OnLoadTexture: public virtual Action
-	{
-	public:
-		void performAction() override {
-			MutableString value;
-			guiElementNode->getController()->setValue(
-				MutableString().
-					set(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()).
-					append("/").
-					append(modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName())
-			);
-			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param guiElementNode gui element node
-		 */
-		OnLoadTexture(ModelEditorTabController* modelEditorTabController, GUIElementNode* guiElementNode)
-			: modelEditorTabController(modelEditorTabController)
-			, guiElementNode(guiElementNode) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		GUIElementNode* guiElementNode;
-	};
-
-	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		pbrMaterialProperties != nullptr && pbrMaterialProperties->getNormalTextureFileName() != ""?pbrMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		pbrMaterialProperties != nullptr?pbrMaterialProperties->getNormalTextureFileName():"",
-		true,
-		new OnLoadTexture(this, materialsMaterialPBRNormalTexture)
-	);
-}
-
-void ModelEditorTabController::onMaterialClearTexture(GUIElementNode* guiElementNode) {
-	guiElementNode->getController()->setValue(MutableString(""));
 }
 
 void ModelEditorTabController::setAnimations() {
@@ -2124,16 +1768,8 @@ void ModelEditorTabController::showErrorPopUp(const string& caption, const strin
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void ModelEditorTabController::setMaterialDetails(const string& materialId) {
-	Console::println("ModelEditorTabController::setMaterialDetails(): " + materialId);
-
-	Material* material = nullptr;
-
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto materialIt = model->getMaterials().find(materialId);
-	material = materialIt != model->getMaterials().end()?materialIt->second:nullptr;
+void ModelEditorTabController::setMaterialDetails() {
+	Material* material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
@@ -2150,32 +1786,48 @@ void ModelEditorTabController::setMaterialDetails(const string& materialId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_spec"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_pbr"))->getActiveConditions().add("open");
 
-		if (specularMaterialProperties->getDiffuseTextureFileName().empty() == false) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
-				PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath(),
-					specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
-				) +
-				"/" +
-				specularMaterialProperties->getDiffuseTextureFileName()
-			);
+		if (pbrMaterialProperties != nullptr) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().add("pbr");
+		} else {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().remove("pbr");
 		}
-		if (specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
-				PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath(),
-					specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
-				) +
-				"/" +
-				specularMaterialProperties->getDiffuseTextureFileName()
-			);
-		}
-		if (specularMaterialProperties->getNormalTexture() != nullptr) {
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
-		}
-		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
-		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setMaterialDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::updateMaterialDetails() {
+	Material* material = getSelectedMaterial();
+	if (material == nullptr) return;
+
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
+			PrototypeReader::getResourcePathName(
+				view->getEditorView()->getScreenController()->getProjectPath(),
+				specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
+			) +
+			"/" +
+			specularMaterialProperties->getDiffuseTextureFileName()
+		);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
+			PrototypeReader::getResourcePathName(
+				view->getEditorView()->getScreenController()->getProjectPath(),
+				specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+			) +
+			"/" +
+			specularMaterialProperties->getDiffuseTextureFileName()
+		);
+		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
+		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()));
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()));
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()));
@@ -2186,16 +1838,9 @@ void ModelEditorTabController::setMaterialDetails(const string& materialId) {
 
 		if (pbrMaterialProperties != nullptr) {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->setValue(MutableString("1"));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().add("pbr");
-			if (pbrMaterialProperties->getBaseColorTexture() != nullptr) {
-				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
-			}
-			if (pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr) {
-				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
-			}
-			if (pbrMaterialProperties->getNormalTexture() != nullptr) {
-				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
-			}
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->setValue(pbrMaterialProperties->getMetallicFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->setValue(pbrMaterialProperties->getRoughnessFactor());
@@ -2204,10 +1849,9 @@ void ModelEditorTabController::setMaterialDetails(const string& materialId) {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->setValue(MutableString(pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?"1":""));
 		} else {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->setValue(MutableString());
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().remove("pbr");
 		}
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setMaterialDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("ModelEditorTabController::updateMaterialDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -2326,14 +1970,486 @@ void ModelEditorTabController::setSoundDetails(const string& soundId) {
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
-		auto materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
-		setMaterialDetails(materialId);
+		setMaterialDetails();
 	}
 	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		view->playAnimation(animationId);
 		setAnimationDetails(animationId);
 	}
+}
+
+void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			specularMaterialProperties->setDiffuseTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName(),
+				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
+				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, SpecularMaterialProperties* specularMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, specularMaterialProperties(specularMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		SpecularMaterialProperties* specularMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		specularMaterialProperties->getDiffuseTextureFileName().empty() == false?specularMaterialProperties->getDiffuseTexturePathName():modelPath.getPath(),
+		"Load specular diffuse texture from: ",
+		extensions,
+		specularMaterialProperties->getDiffuseTextureFileName(),
+		true,
+		new OnLoadTexture(this, specularMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearDiffuseTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setDiffuseTexture(
+		string(),
+		string(),
+		specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			specularMaterialProperties->setDiffuseTexture(
+				specularMaterialProperties->getDiffuseTexturePathName(),
+				specularMaterialProperties->getDiffuseTextureFileName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, SpecularMaterialProperties* specularMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, specularMaterialProperties(specularMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		SpecularMaterialProperties* specularMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false?specularMaterialProperties->getDiffuseTransparencyTexturePathName():modelPath.getPath(),
+		"Load specular diffuse transparency texture from: ",
+		extensions,
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName(),
+		true,
+		new OnLoadTexture(this, specularMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearDiffuseTransparencyTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setDiffuseTexture(
+		specularMaterialProperties->getDiffuseTexturePathName(),
+		specularMaterialProperties->getDiffuseTextureFileName(),
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadNormalTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			specularMaterialProperties->setNormalTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, SpecularMaterialProperties* specularMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, specularMaterialProperties(specularMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		SpecularMaterialProperties* specularMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		specularMaterialProperties->getNormalTextureFileName().empty() == false?specularMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
+		"Load specular normal texture from: ",
+		extensions,
+		specularMaterialProperties->getNormalTextureFileName(),
+		true,
+		new OnLoadTexture(this, specularMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearNormalTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setNormalTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadSpecularTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			specularMaterialProperties->setSpecularTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, SpecularMaterialProperties* specularMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, specularMaterialProperties(specularMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		SpecularMaterialProperties* specularMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		specularMaterialProperties->getSpecularTextureFileName().empty() == false?specularMaterialProperties->getSpecularTexturePathName():modelPath.getPath(),
+		"Load specular specular texture from: ",
+		extensions,
+		specularMaterialProperties->getSpecularTextureFileName(),
+		true,
+		new OnLoadTexture(this, specularMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearSpecularTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setSpecularTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			pbrMaterialProperties->setBaseColorTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, PBRMaterialProperties* pbrMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, pbrMaterialProperties(pbrMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		PBRMaterialProperties* pbrMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		pbrMaterialProperties->getBaseColorTextureFileName().empty() == false?pbrMaterialProperties->getBaseColorTexturePathName():modelPath.getPath(),
+		"Load PBR base color texture from: ",
+		extensions,
+		pbrMaterialProperties->getBaseColorTextureFileName(),
+		true,
+		new OnLoadTexture(this, pbrMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearPBRBaseColorTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	view->reloadPrototype();
+	pbrMaterialProperties->setBaseColorTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			pbrMaterialProperties->setMetallicRoughnessTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, PBRMaterialProperties* pbrMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, pbrMaterialProperties(pbrMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		PBRMaterialProperties* pbrMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		pbrMaterialProperties->getMetallicRoughnessTextureFileName().empty() == false?pbrMaterialProperties->getMetallicRoughnessTexturePathName():modelPath.getPath(),
+		"Load PBR metallic/roughness texture from: ",
+		extensions,
+		pbrMaterialProperties->getMetallicRoughnessTextureFileName(),
+		true,
+		new OnLoadTexture(this, pbrMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearPBRMetallicRoughnessTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	view->reloadPrototype();
+	pbrMaterialProperties->setMetallicRoughnessTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			modelEditorTabController->view->reloadPrototype();
+			pbrMaterialProperties->setNormalTexture(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->updateMaterialDetails();
+			modelEditorTabController->getModelPath()->setPath(
+				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, PBRMaterialProperties* pbrMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, pbrMaterialProperties(pbrMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		PBRMaterialProperties* pbrMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		pbrMaterialProperties->getNormalTextureFileName().empty() == false?pbrMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
+		"Load PBR normal texture from: ",
+		extensions,
+		pbrMaterialProperties->getNormalTextureFileName(),
+		true,
+		new OnLoadTexture(this, pbrMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearPBRNormalTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	view->reloadPrototype();
+	pbrMaterialProperties->setNormalTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
 }
 
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
@@ -2375,6 +2491,49 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("specularmaterial_diffuse_texture_open") == 0) {
+			onMaterialLoadDiffuseTexture();
+		} else
+		if (node->getId().compare("specularmaterial_diffuse_texture_remove") == 0) {
+			onMaterialClearDiffuseTexture();
+		} else
+		if (node->getId().compare("specularmaterial_transparency_texture_open") == 0) {
+			onMaterialLoadDiffuseTransparencyTexture();
+		} else
+		if (node->getId().compare("specularmaterial_transparency_texture_remove") == 0) {
+			onMaterialClearDiffuseTransparencyTexture();
+		} else
+		if (node->getId().compare("specularmaterial_normal_texture_open") == 0) {
+			onMaterialLoadNormalTexture();
+		} else
+		if (node->getId().compare("specularmaterial_normal_texture_remove") == 0) {
+			onMaterialClearNormalTexture();
+		} else
+		if (node->getId().compare("specularmaterial_specular_texture_open") == 0) {
+			onMaterialLoadSpecularTexture();
+		} else
+		if (node->getId().compare("specularmaterial_specular_texture_remove") == 0) {
+			onMaterialClearSpecularTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_basecolor_texture_open") == 0) {
+			onMaterialLoadPBRBaseColorTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_basecolor_texture_remove") == 0) {
+			onMaterialClearPBRBaseColorTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_metallic_roughness_texture_open") == 0) {
+			onMaterialLoadPBRMetallicRoughnessTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_metallic_roughness_texture_remove") == 0) {
+			onMaterialClearPBRMetallicRoughnessTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_normal_texture_open") == 0) {
+			onMaterialLoadPBRNormalTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_normal_texture_remove") == 0) {
+			onMaterialClearPBRNormalTexture();
+		}
+		/*
 		if (node->getId().compare("button_model_load") == 0) {
 			onModelLoad();
 		} else
@@ -2480,5 +2639,6 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		if (node->getId().compare("button_tools_optimizemodel") == 0) {
 			onToolsOptimizeModel();
 		}
+		*/
 	}
 }
