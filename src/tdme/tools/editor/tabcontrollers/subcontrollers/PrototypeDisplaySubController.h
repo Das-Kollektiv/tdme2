@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -18,6 +19,7 @@
 using std::array;
 
 using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -53,10 +55,6 @@ private:
 		"rendering_contributes_shadows",
 		"rendering_receives_shadows",
 		"rendering_render_groups"
-	};
-	array<string, 2> reloadOuterlinerDisplayNodes = {
-		"rendering_shader",
-		"rendering_distance_shader",
 	};
 
 public:
@@ -117,6 +115,16 @@ public:
 	 * @param prototype prototype
 	 */
 	void applyDisplayDetails(Prototype* prototype);
+
+	/**
+	 * Create display shader details XML
+	 * @param prototype prototype
+	 * @param shaderParameterPrefix shader parameter prefix
+	 * @param shader shader
+	 * @param shaderParameters shader parameters
+	 * @param xml xml
+	 */
+	void createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml);
 
 	/**
 	 * Set display shader details

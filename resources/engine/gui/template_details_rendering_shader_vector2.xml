@@ -1,27 +1,23 @@
-<element id="{$id}" name="{$name}" unit="{$unit}" width="100%" height="auto">		
+<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 
-	<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
-			
-		<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-			<text font="{$font.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto" horizontal-align="left" />
-			<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-				<layout width="5" height="25" background-color="{$color.xaxis}" />
-				<input id="{$id}_{$name}_x" width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-			</layout>
+	<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+		<text font="{$font.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto" horizontal-align="left" />
+		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+			<layout width="5" height="25" background-color="{$color.xaxis}" />
+			<input id="{$id}_x" width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 		</layout>
-		<space height="5" />
-		<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-			<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-			<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-				<layout width="5" height="25" background-color="{$color.yaxis}" />
-				<input id="{$id}_{$name}_y"  width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-			</layout>
-		</layout>
-		
-		<space height="5" />
-		<menu-separator />
-		<space height="5" />
-
 	</layout>
-			
-</element>
+	<space height="5" />
+	<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+		<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+			<layout width="5" height="25" background-color="{$color.yaxis}" />
+			<input id="{$id}_y"  width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+		</layout>
+	</layout>
+
+	<space height="5" />
+	<menu-separator />
+	<space height="5" />
+
+</layout>

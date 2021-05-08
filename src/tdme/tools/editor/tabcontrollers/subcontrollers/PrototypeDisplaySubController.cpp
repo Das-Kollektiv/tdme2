@@ -4,6 +4,7 @@
 
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/gui/GUI.h>
@@ -28,6 +29,7 @@
 using std::array;
 
 using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::GUIParser;
@@ -86,14 +88,7 @@ bool PrototypeDisplaySubController::getDisplayBoundingVolume()
 }
 
 void PrototypeDisplaySubController::createDisplayPropertiesXML(Prototype* prototype, string& xml) {
-	if (prototype->getType() == Prototype_Type::MODEL) {
-		xml+= "	<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"Rendering\" value=\"rendering\">\n";
-		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Shader: " + prototype->getShader()) + "\" value=\"rendering.shader\" />\n";
-		xml+= "		<selectbox-option text=\"" + GUIParser::escapeQuotes("Distance Shader: " + prototype->getDistanceShader()) + "\" value=\"rendering.distanceshader\" />\n";
-		xml+= "	</selectbox-parent-option>\n";
-	} else {
-		xml+= "	<selectbox-option text=\"Rendering\" value=\"rendering\" />\n";
-	}
+	xml+= "	<selectbox-option text=\"Rendering\" value=\"rendering\" />\n";
 }
 
 void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
@@ -119,7 +114,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 	try {
 		// physics
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("open");
-		if (prototype->getType() == Prototype_Type::MODEL) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("shaders");
+		if (prototype->getType() == Prototype_Type::MODEL) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("shader");
 
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_shader"))->replaceSubNodes(shaderXML, true);
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_distance_shader"))->replaceSubNodes(shaderXML, true);
@@ -149,40 +144,61 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 		Console::println(string("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	setDisplayShaderDetails(prototype);
+	setDisplayDistanceShaderDetails(prototype);
 }
 
-void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype) {
-
-	auto shader = prototype->getShader();
-	auto shaderParameters = Engine::getShaderParameterDefaults(shader);
-	string shadersParametersXML = "";
-	if (shaderParameters.empty() == false) {
-		for (auto& parameterIt: shaderParameters) {
+void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml) {
+	auto defaultShaderParameters = Engine::getShaderParameterDefaults(shader);
+	if (defaultShaderParameters.empty() == false) {
+		for (auto& parameterIt: defaultShaderParameters) {
 			auto& parameterName = parameterIt.first;
-			auto parameter = prototype->getShaderParameters().getShaderParameter(parameterName);
+			auto parameter = shaderParameters.getShaderParameter(parameterName);
 			auto parameterValue = parameter.toString();
 			auto parameterType = "string";
 			switch (parameter.getType()) {
 			case ShaderParameter::TYPE_FLOAT:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" />\n";
+				break;
 			case ShaderParameter::TYPE_INTEGER:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" />\n";
+				break;
 			case ShaderParameter::TYPE_BOOLEAN:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" />\n";
+				break;
 			case ShaderParameter::TYPE_VECTOR2:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" />\n";
+				break;
 			case ShaderParameter::TYPE_VECTOR3:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" />\n";
+				break;
 			case ShaderParameter::TYPE_VECTOR4:
-					break;
+				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" />\n";
+				break;
+			case ShaderParameter::TYPE_NONE:
+				break;
 			}
 		}
 	}
-	editorView->setDetailsContent(shadersParametersXML);
+	if (xml.empty() == false) {
+		xml+=
+			string("<space height=\"5\" />") + string("\n") +
+			string("<menu-separator />") + string("\n") +
+			string("<space height=\"5\" />") + string("\n");
+
+	}
+}
+
+void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype) {
+	string xml;
+	createDisplayShaderDetailsXML(prototype, "rendering.shader.", prototype->getShader(), prototype->getShaderParameters(), xml);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
 }
 
 void PrototypeDisplaySubController::setDisplayDistanceShaderDetails(Prototype* prototype) {
-
+	string xml;
+	createDisplayShaderDetailsXML(prototype, "rendering.distanceshader.", prototype->getDistanceShader(), prototype->getDistanceShaderParameters(), xml);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_distanceshader_details"))->replaceSubNodes(xml, false);
 }
 
 
@@ -193,17 +209,9 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 			break;
 		}
 	}
-	for (auto& reloadOutlinerNode: reloadOuterlinerDisplayNodes) {
-		if (node->getId() == reloadOutlinerNode) {
-			editorView->reloadTabOutliner();
-			break;
-		}
-	}
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "rendering") setDisplayDetails(prototype);
-		if (outlinerNode == "rendering.shader") setDisplayShaderDetails(prototype);
-		if (outlinerNode == "rendering.distanceshader") setDisplayShaderDetails(prototype);
 	}
 }
 
