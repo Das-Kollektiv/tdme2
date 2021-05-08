@@ -4,7 +4,7 @@
 		<text font="{$font.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto" horizontal-align="left" />
 		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 			<layout width="5" height="25" background-color="{$color.xaxis}" />
-			<input id="{$id}_x" width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+			<input id="{$id}_x" width="*" height="auto" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" text="{$value_x}" />
 		</layout>
 	</layout>
 	<space height="5" />
@@ -12,7 +12,7 @@
 		<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 			<layout width="5" height="25" background-color="{$color.yaxis}" />
-			<input id="{$id}_y"  width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+			<input id="{$id}_y"  width="*" height="auto" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" text="{$value_y}" />
 		</layout>
 	</layout>
 	<space height="5" />
@@ -20,7 +20,7 @@
 		<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 			<layout width="5" height="25" background-color="{$color.zaxis}" />
-			<input id="{$id}_z"  width="*" height="auto" text="100.00" unit="{$unit}" options="type=float,step=0.10.1,decimals=2" image="resources/engine/images/inputslider.png" />
+			<input id="{$id}_z"  width="*" height="auto" unit="{$unit}" options="type=float,step=0.10.1,decimals=2" image="resources/engine/images/inputslider.png" text="{$value_z}" />
 		</layout>
 	</layout>
 

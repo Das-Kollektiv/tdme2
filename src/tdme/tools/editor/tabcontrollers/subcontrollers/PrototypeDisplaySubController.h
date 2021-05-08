@@ -139,6 +139,14 @@ public:
 	void setDisplayDistanceShaderDetails(Prototype* prototype);
 
 	/**
+	 * Apply display shader details
+	 * @param prototype prototype
+	 * @param shaderParameterPrefix shader parameter prefix
+	 * @param parameterName parameter name
+	 * @param shaderParameters shader parameters
+	 */
+	void applyDisplayShaderDetails(Prototype* prototype, const string& shaderParameterPrefix, const string& parameterName, EntityShaderParameters& shaderParameters);
+	/**
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
