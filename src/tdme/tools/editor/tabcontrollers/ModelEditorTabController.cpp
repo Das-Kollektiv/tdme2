@@ -1856,6 +1856,45 @@ void ModelEditorTabController::updateMaterialDetails() {
 	}
 }
 
+void ModelEditorTabController::applySpecularMaterialDetails() {
+	Material* material = getSelectedMaterial();
+	if (material == nullptr) return;
+
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		specularMaterialProperties->setShininess(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->getValue().getString()));
+		specularMaterialProperties->setReflection(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->getValue().getString()));
+		specularMaterialProperties->setDiffuseTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applySpecularMaterialDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::applyPBRMaterialDetails() {
+	Material* material = getSelectedMaterial();
+	if (material == nullptr) return;
+
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		pbrMaterialProperties->setMetallicFactor(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setRoughnessFactor(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setNormalScale(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setExposure(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_exposure"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setBaseColorTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	Console::println("ModelEditorTabController::setAnimationDetails(): " + animationId);
 
@@ -2462,6 +2501,18 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		if (node->getId() == applyAnimationNode) {
 			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 			applyAnimationDetails(animationId);
+		}
+	}
+	for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
+		if (node->getId() == applySpecularMaterialNode) {
+			applySpecularMaterialDetails();
+			break;
+		}
+	}
+	for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
+		if (node->getId() == applyPBRMaterialNode) {
+			applyPBRMaterialDetails();
+			break;
 		}
 	}
 	prototypeBaseSubController->onValueChanged(node, view->getPrototype());

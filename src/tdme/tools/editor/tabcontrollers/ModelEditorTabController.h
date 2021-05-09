@@ -160,12 +160,26 @@ private:
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
 
-	array<string, 7> applyAnimationNodes = {
+	array<string, 5> applyAnimationNodes = {
 		"animation_startframe",
 		"animation_endframe",
 		"animation_speed",
 		"animation_loop",
 		"animation_overlaybone"
+	};
+
+	array<string, 3> applySpecularMaterialNodes = {
+		"specularmaterial_shininess",
+		"specularmaterial_reflection",
+		"specularmaterial_maskedtransparency"
+	};
+
+	array<string, 5> applyPBRMaterialNodes = {
+		"pbrmaterial_metallic_factor",
+		"pbrmaterial_roughness_factor",
+		"pbrmaterial_normal_scale",
+		"pbrmaterial_exposure",
+		"pbrmaterial_maskedtransparency"
 	};
 
 	/**
@@ -501,6 +515,16 @@ public:
 	 * Update material details
 	 */
 	void updateMaterialDetails();
+
+	/**
+	 * Apply specular material details
+	 */
+	void applySpecularMaterialDetails();
+
+	/**
+	 * Apply PBR material details
+	 */
+	void applyPBRMaterialDetails();
 
 	/**
 	 * Set animation details
