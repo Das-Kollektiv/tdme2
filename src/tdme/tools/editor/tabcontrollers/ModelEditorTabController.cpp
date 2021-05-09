@@ -29,6 +29,7 @@
 #include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -79,6 +80,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUIParser;
 using tdme::math::Vector3;
+using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -2552,6 +2554,21 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		} else
 		if (node->getId().compare("animationpreview_attachment1_model_remove") == 0) {
 			onPreviewAnimationsAttachment1ModelClear();
+		} else
+		if (node->getId().compare("specularmaterial_ambient_edit") == 0) {
+			view->getPopUps()->getColorPickerScreenController()->show();
+		} else
+		if (node->getId().compare("specularmaterial_diffuse_edit") == 0) {
+			view->getPopUps()->getColorPickerScreenController()->show();
+		} else
+		if (node->getId().compare("specularmaterial_emission_edit") == 0) {
+			view->getPopUps()->getColorPickerScreenController()->show();
+		} else
+		if (node->getId().compare("specularmaterial_specular_edit") == 0) {
+			view->getPopUps()->getColorPickerScreenController()->show();
+		} else
+		if (node->getId().compare("pbrmaterial_basecolor_edit") == 0) {
+			view->getPopUps()->getColorPickerScreenController()->show();
 		}
 		/*
 		if (node->getId().compare("button_model_load") == 0) {
