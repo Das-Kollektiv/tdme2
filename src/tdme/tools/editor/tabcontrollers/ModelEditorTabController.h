@@ -539,6 +539,11 @@ public:
 	void applyAnimationDetails(const string& animationId);
 
 	/**
+	 * Set animation preview details
+	 */
+	void setAnimationPreviewDetails();
+
+	/**
 	 * Set sound details
 	 * @param soundId sound Id
 	 */

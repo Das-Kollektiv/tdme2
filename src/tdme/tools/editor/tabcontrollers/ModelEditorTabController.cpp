@@ -1918,14 +1918,14 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 
 	{
 		auto idx = 0;
-		string animationOverlayFromNodeIdDropDownXML;
-		animationOverlayFromNodeIdDropDownXML =
-			animationOverlayFromNodeIdDropDownXML +
+		string animationsXML;
+		animationsXML =
+			animationsXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (idx == 0 ? "selected=\"true\" " : "") + " />\n";
 		idx++;
 		for (auto it: model->getNodes()) {
 			auto nodeId = it.second->getId();
-			animationOverlayFromNodeIdDropDownXML+=
+			animationsXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escapeQuotes(nodeId) +
 				"\" value=\"" +
@@ -1936,7 +1936,7 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 			idx++;
 		}
 		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationOverlayFromNodeIdDropDownXML, true);
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationsXML, true);
 		} catch (Exception& exception) {
 			Console::print(string("ModelEditorTabController::setAnimationDetails(): An error occurred: "));
 			Console::println(string(exception.what()));
@@ -1997,6 +1997,108 @@ void ModelEditorTabController::applyAnimationDetails(const string& animationId) 
 
 }
 
+void ModelEditorTabController::setAnimationPreviewDetails() {
+	Console::println("ModelEditorTabController::setAnimationPreviewDetails(): ");
+
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetPreview();
+		return;
+	}
+
+	auto defaultAnimationSetup = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_animationpreview\" src=\"resources/engine/gui/template_details_animationpreview.xml\" />\n")
+	);
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	{
+		string animationsXML;
+		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+			animationsXML =
+				animationsXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_base_scrollarea"))->replaceSubNodes(animationsXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		string overlayAnimationsXML;
+		overlayAnimationsXML = overlayAnimationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+			overlayAnimationsXML =
+				overlayAnimationsXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay1_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay2_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_overlay3_scrollarea"))->replaceSubNodes(overlayAnimationsXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		string bonesXML;
+		bonesXML = bonesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getNodes()) {
+			auto node = it.second;
+			bonesXML =
+				bonesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animationpreview_attachment1_bone_scrollarea"))->replaceSubNodes(bonesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animationpreview"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::setSoundDetails(const string& soundId) {
 	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
 
@@ -2010,7 +2112,10 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
 		setMaterialDetails();
-	}
+	} else
+	if (outlinerNode == "model.animations") {
+		setAnimationPreviewDetails();
+	} else
 	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		view->playAnimation(animationId);
