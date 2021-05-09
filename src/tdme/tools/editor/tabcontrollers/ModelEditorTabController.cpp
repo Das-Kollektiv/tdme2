@@ -1241,7 +1241,6 @@ void ModelEditorTabController::onAnimationApply() {
 		setAnimations();
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
-		setPreview();
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1269,214 +1268,6 @@ void ModelEditorTabController::unsetAnimations() {
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
 }
-
-void ModelEditorTabController::setPreview() {
-	previewAnimationsBaseDropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
-	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelModel->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelClear->getController()->setDisabled(false);
-	buttonPreviewApply->getController()->setDisabled(false);
-
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) {
-		unsetPreview();
-		return;
-	}
-
-	{
-		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsBaseDropDown->getScreenNode()->getNodeById(previewAnimationsBaseDropDown->getId() + "_inner")));
-		string animationsDropDownInnerNodeSubNodesXML = "";
-		animationsDropDownInnerNodeSubNodesXML =
-			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea id=\"" +
-			previewAnimationsBaseDropDown->getId() +
-			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
-			if (animationSetup->isOverlayAnimationSetup() == true) continue;
-			animationsDropDownInnerNodeSubNodesXML =
-				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" " +
-				" />\n";
-		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
-		try {
-			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-	{
-		auto animationsDropDownInnerNode1 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay1DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay1DropDown->getId() + "_inner")));
-		auto animationsDropDownInnerNode2 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay2DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay2DropDown->getId() + "_inner")));
-		auto animationsDropDownInnerNode3 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay3DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay3DropDown->getId() + "_inner")));
-		string animationsDropDownInnerNodeSubNodesXML = "";
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
-			if (animationSetup->isOverlayAnimationSetup() == false) continue;
-			animationsDropDownInnerNodeSubNodesXML =
-				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" " +
-				" />\n";
-		}
-		try {
-			animationsDropDownInnerNode1->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay1DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		try {
-			animationsDropDownInnerNode2->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay2DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		try {
-			animationsDropDownInnerNode3->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay3DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-	{
-		auto animationsAttachment1BoneDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsAttachment1BoneDropdown->getScreenNode()->getNodeById(previewAnimationsAttachment1BoneDropdown->getId() + "_inner")));
-		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
-			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
-			"<scrollarea id=\"" +
-			previewAnimationsAttachment1BoneDropdown->getId() +
-			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getNodes()) {
-			auto node = it.second;
-			animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
-				animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
-				"\" " +
-				" />\n";
-		}
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea>";
-		try {
-			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-}
-
-void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
-	class OnPreviewAnimationsAttachment1ModelLoad: public virtual Action
-	{
-
-	public:
-		void performAction() override {
-			modelEditorTabController->previewAnimationsAttachment1ModelModel->getController()->setValue(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
-				"/" +
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-			);
-			modelEditorTabController->modelPath.setPath(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnPreviewAnimationsAttachment1ModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
-
-	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
-		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath.getPath():Tools::getPathName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
-		"Load from: ",
-		extensions,
-		Tools::getFileName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
-		true,
-		new OnPreviewAnimationsAttachment1ModelLoad(this)
-	);
-}
-
-void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
-	previewAnimationsAttachment1ModelModel->getController()->setValue(MutableString());
-}
-
-void ModelEditorTabController::onPreviewApply() {
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto baseAnimationName = previewAnimationsBaseDropDown->getController()->getValue().getString();
-	auto overlay1AnimationName = previewAnimationsOverlay1DropDown->getController()->getValue().getString();
-	auto overlay2AnimationName = previewAnimationsOverlay2DropDown->getController()->getValue().getString();
-	auto overlay3AnimationName = previewAnimationsOverlay3DropDown->getController()->getValue().getString();
-	try {
-		view->playAnimation(baseAnimationName, overlay1AnimationName, overlay2AnimationName, overlay3AnimationName);
-		view->addAttachment1(previewAnimationsAttachment1BoneDropdown->getController()->getValue().getString(), previewAnimationsAttachment1ModelModel->getController()->getValue().getString());
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void ModelEditorTabController::unsetPreview() {
-	previewAnimationsBaseDropDown->getController()->setDisabled(true);
-	previewAnimationsOverlay1DropDown->getController()->setDisabled(true);
-	previewAnimationsOverlay2DropDown->getController()->setDisabled(true);
-	previewAnimationsOverlay3DropDown->getController()->setDisabled(true);
-	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(true);
-	previewAnimationsAttachment1BoneDropdown->getController()->setValue(MutableString());
-	previewAnimationsAttachment1ModelModel->getController()->setDisabled(true);
-	previewAnimationsAttachment1ModelModel->getController()->setValue(MutableString());
-	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(true);
-	previewAnimationsAttachment1ModelClear->getController()->setDisabled(true);
-	buttonPreviewApply->getController()->setDisabled(true);
-}
-
 
 void ModelEditorTabController::setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount)
 {
@@ -2002,7 +1793,6 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 
 	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
-		unsetPreview();
 		return;
 	}
 
@@ -2095,6 +1885,68 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animationpreview"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
+	class OnPreviewAnimationsAttachment1ModelLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			auto screenNode = modelEditorTabController->view->getEditorView()->getScreenController()->getScreenNode();
+			modelEditorTabController->view->addAttachment1(
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_attachment1_bone"))->getController()->getValue().getString(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnPreviewAnimationsAttachment1ModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Load animation preview attachment 1 model from: ",
+		extensions,
+		string(),
+		true,
+		new OnPreviewAnimationsAttachment1ModelLoad(this)
+	);
+}
+
+void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
+	view->addAttachment1(string(), string());
+}
+
+void ModelEditorTabController::applyAnimationPreviewDetails() {
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		view->playAnimation(
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_base"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_overlay1"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_overlay2"))->getController()->getValue().getString(),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_overlay3"))->getController()->getValue().getString()
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyAnimationPreviewDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -2620,6 +2472,12 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 			break;
 		}
 	}
+	for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
+		if (node->getId() == applyAnimationPreviewNode) {
+			applyAnimationPreviewDetails();
+			break;
+		}
+	}
 	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
@@ -2688,6 +2546,12 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		} else
 		if (node->getId().compare("pbrmaterial_normal_texture_remove") == 0) {
 			onMaterialClearPBRNormalTexture();
+		} else
+		if (node->getId().compare("animationpreview_attachment1_model_open") == 0) {
+			onPreviewAnimationsAttachment1ModelLoad();
+		} else
+		if (node->getId().compare("animationpreview_attachment1_model_remove") == 0) {
+			onPreviewAnimationsAttachment1ModelClear();
 		}
 		/*
 		if (node->getId().compare("button_model_load") == 0) {
@@ -2713,7 +2577,139 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		} else
 		if (node->getId().compare("lod_level_apply") == 0) {
 			onLODLevelApply();
-		} else
+		} elsevoid ModelEditorTabController::setPreview() {
+	previewAnimationsBaseDropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
+	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelModel->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(false);
+	previewAnimationsAttachment1ModelClear->getController()->setDisabled(false);
+	buttonPreviewApply->getController()->setDisabled(false);
+
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		return;
+	}
+
+	{
+		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsBaseDropDown->getScreenNode()->getNodeById(previewAnimationsBaseDropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML =
+			animationsDropDownInnerNodeSubNodesXML +
+			"<scrollarea id=\"" +
+			previewAnimationsBaseDropDown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
+		try {
+			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		auto animationsDropDownInnerNode1 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay1DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay1DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode2 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay2DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay2DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode3 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay3DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay3DropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			animationsDropDownInnerNode1->replaceSubNodes(
+				"<scrollarea id=\"" +
+				previewAnimationsOverlay1DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode2->replaceSubNodes(
+				"<scrollarea id=\"" +
+				previewAnimationsOverlay2DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode3->replaceSubNodes(
+				"<scrollarea id=\"" +
+				previewAnimationsOverlay3DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		auto animationsAttachment1BoneDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsAttachment1BoneDropdown->getScreenNode()->getNodeById(previewAnimationsAttachment1BoneDropdown->getId() + "_inner")));
+		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
+			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
+			"<scrollarea id=\"" +
+			previewAnimationsAttachment1BoneDropdown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getNodes()) {
+			auto node = it.second;
+			animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
+				animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(node->getId()) +
+				"\" " +
+				" />\n";
+		}
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea>";
+		try {
+			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+}
+
 		if (node->getId().compare("lod_model_file_load") == 0) {
 			onLODLevelLoadModel();
 		} else

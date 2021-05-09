@@ -182,6 +182,13 @@ private:
 		"pbrmaterial_maskedtransparency"
 	};
 
+	array<string, 4> applyAnimationPreviewNodes = {
+		"animationpreview_base",
+		"animationpreview_overlay1",
+		"animationpreview_overlay2",
+		"animationpreview_overlay3"
+	};
+
 	/**
 	 * @return prototype lod level or nullptr
 	 */
@@ -400,31 +407,6 @@ public:
 	void unsetAnimations();
 
 	/**
-	 * Set preview
-	 */
-	void setPreview();
-
-	/**
-	 * On preview apply
-	 */
-	void onPreviewApply();
-
-	/**
-	 * On preview animations attachment 1 model load
-	 */
-	void onPreviewAnimationsAttachment1ModelLoad();
-
-	/**
-	 * On preview animations attachment 1 model clear
-	 */
-	void onPreviewAnimationsAttachment1ModelClear();
-
-	/**
-	 * Unset preview
-	 */
-	void unsetPreview();
-
-	/**
 	 * Set up model statistics
 	 * @param statsOpaqueFaces stats opaque faces
 	 * @param statsTransparentFaces stats transparent faces
@@ -544,6 +526,11 @@ public:
 	void setAnimationPreviewDetails();
 
 	/**
+	 * Apply animation preview details
+	 */
+	void applyAnimationPreviewDetails();
+
+	/**
 	 * Set sound details
 	 * @param soundId sound Id
 	 */
@@ -624,6 +611,16 @@ public:
 	 * On material load PBR normal texture
 	 */
 	void onMaterialClearPBRNormalTexture();
+
+	/**
+	 * On preview animations attachment 1 model load
+	 */
+	void onPreviewAnimationsAttachment1ModelLoad();
+
+	/**
+	 * On preview animations attachment 1 model clear
+	 */
+	void onPreviewAnimationsAttachment1ModelClear();
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

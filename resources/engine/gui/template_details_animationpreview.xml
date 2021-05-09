@@ -43,7 +43,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #3" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_overlay3" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_overlay3_scrollarea3" width="100%" height="100">
+						<scrollarea id="animationpreview_overlay3_scrollarea" width="100%" height="100">
 						</scrollarea>
 					</dropdown>
 				</layout>
