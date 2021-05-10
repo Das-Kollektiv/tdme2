@@ -41,7 +41,6 @@ private:
 
 	int maxBoundingVolumeCount;
 
-	int displayBoundingVolumeIdxLast;
 	int mouseDownLastX;
 	int mouseDownLastY;
 	Vector3 totalDeltaScale;
@@ -101,65 +100,6 @@ public:
 	 * @return pop ups
 	 */
 	PopUps* getPopUps();
-
-	/**
-	 * Reset bounding volume
-	 * @param prototype prototype
-	 * @param idx idx
-	 * @param type type
-	 */
-	void resetBoundingVolume(Prototype* prototype, int idx, int type);
-
-	/**
-	 * Set bounding volumes
-	 * @param prototype prototype
-	 */
-	void setBoundingVolumes(Prototype* prototype);
-
-	/**
-	 * Unset bounding volumes
-	 */
-	void unsetBoundingVolumes();
-
-	/**
-	 * Select bounding volume type
-	 * @param idx idx
-	 * @param bvTypeId bounding volume type
-	 */
-	void selectBoundingVolumeType(int idx, int bvTypeId);
-
-	/**
-	 * Set terrain mesh
-	 * @param prototype prototype
-	 */
-	void setTerrainMesh(Prototype* prototype);
-
-	/**
-	 * Unset terrain mesh
-	 */
-	void unsetTerrainMesh();
-
-	/**
-	 * Set convex meshes
-	 * @param prototype prototype
-	 */
-	void setConvexMeshes(Prototype* prototype);
-
-	/**
-	 * Unset convex meshes
-	 */
-	void unsetConvexMeshes();
-
-	/**
-	 * Unset physics
-	 */
-	void unsetPhysics();
-
-	/**
-	 * Set physics
-	 * @param prototype prototype
-	 */
-	void setPhysics(Prototype* prototype);
 
 private:
 

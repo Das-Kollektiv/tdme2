@@ -67,7 +67,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 
-PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask): Gizmo(Engine::getInstance(), "epv")
+PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysicsSubController* prototypePhysicsSubController, PopUps* popUps, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask): Gizmo(engine, "epv")
 {
 	this->engine = engine;
 	this->popUps = popUps;
@@ -76,7 +76,6 @@ PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysic
 	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-	this->displayBoundingVolumeIdxLast = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 	this->displayBoundingVolume = false;
 	this->boundingVolumeTypeMask = boundingVolumeTypeMask;
 }
@@ -87,159 +86,6 @@ PrototypePhysicsSubView::~PrototypePhysicsSubView() {
 PopUps* PrototypePhysicsSubView::getPopUps()
 {
 	return popUps;
-}
-
-void PrototypePhysicsSubView::resetBoundingVolume(Prototype* prototype, int idx, int type)
-{
-	BoundingBox aabb;
-	if (prototype->getModel() != nullptr) {
-		aabb = *prototype->getModel()->getBoundingBox();
-	} else
-	if (engine->getEntity("model") != nullptr){
-		Transformations transformations;
-		transformations.setScale(
-			Vector3(
-				1.0f / engine->getEntity("model")->getScale().getX(),
-				1.0f / engine->getEntity("model")->getScale().getY(),
-				1.0f / engine->getEntity("model")->getScale().getZ()
-			)
-		);
-		transformations.update();
-		aabb.fromBoundingVolumeWithTransformations(engine->getEntity("model")->getBoundingBoxTransformed(), transformations);
-	} else {
-		aabb = BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
-	}
-	auto obb = OrientedBoundingBox(&aabb);
-	auto boundingVolume = prototype->getBoundingVolume(idx);
-	if (type == 0) {
-		prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::NONE);
-	} else
-	if (type == 1) {
-		prototypePhysicsSubController->setupSphere(idx, obb.getCenter(), obb.getHalfExtension().computeLength());
-	} else
-	if (type == 2) {
-		Vector3 a;
-		Vector3 b;
-		auto radius = 0.0f;
-		auto& halfExtensionXYZ = obb.getHalfExtension().getArray();
-		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
-			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set(obb.getAxes()[0]);
-			a.scale(-(halfExtensionXYZ[0] - radius));
-			a.add(obb.getCenter());
-			b.set(obb.getAxes()[0]);
-			b.scale(+(halfExtensionXYZ[0] - radius));
-			b.add(obb.getCenter());
-		} else
-		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
-			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set(obb.getAxes()[1]);
-			a.scale(-(halfExtensionXYZ[1] - radius));
-			a.add(obb.getCenter());
-			b.set(obb.getAxes()[1]);
-			b.scale(+(halfExtensionXYZ[1] - radius));
-			b.add(obb.getCenter());
-		} else {
-			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
-			a.set(obb.getAxes()[2]);
-			a.scale(-(halfExtensionXYZ[2] - radius));
-			a.add(obb.getCenter());
-			b.set(obb.getAxes()[2]);
-			b.scale(+(halfExtensionXYZ[2] - radius));
-			b.add(obb.getCenter());
-		}
-		prototypePhysicsSubController->setupCapsule(idx, a, b, radius);
-	} else
-	if (type == 3) {
-		prototypePhysicsSubController->setupBoundingBox(idx, aabb.getMin(), aabb.getMax());
-	} else
-	if (type == 4) {
-		prototypePhysicsSubController->setupOrientedBoundingBox(idx, obb.getCenter(), obb.getAxes()[0], obb.getAxes()[1], obb.getAxes()[2], obb.getHalfExtension());
-	}
-}
-
-void PrototypePhysicsSubView::setBoundingVolumes(Prototype* prototype)
-{
-	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
-		resetBoundingVolume(prototype, i, 0);
-	}
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto bv = prototype->getBoundingVolume(i);
-		if (bv == nullptr) {
-			prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::NONE);
-			continue;
-		} else
-		if (dynamic_cast<Sphere*>(bv->getBoundingVolume()) != nullptr) {
-			auto sphere = dynamic_cast< Sphere* >(bv->getBoundingVolume());
-			prototypePhysicsSubController->setupSphere(i, sphere->getCenter(), sphere->getRadius());
-			prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::SPHERE);
-			prototypePhysicsSubController->setupModelBoundingVolumeType(prototype, i);
-		} else
-		if (dynamic_cast<Capsule*>(bv->getBoundingVolume()) != nullptr) {
-			auto capsule = dynamic_cast< Capsule* >(bv->getBoundingVolume());
-			prototypePhysicsSubController->setupCapsule(i, capsule->getA(), capsule->getB(), capsule->getRadius());
-			prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::CAPSULE);
-			prototypePhysicsSubController->setupModelBoundingVolumeType(prototype, i);
-		} else
-		if (dynamic_cast<BoundingBox*>(bv->getBoundingVolume()) != nullptr) {
-			auto aabb = dynamic_cast< BoundingBox* >(bv->getBoundingVolume());
-			prototypePhysicsSubController->setupBoundingBox(i, aabb->getMin(), aabb->getMax());
-			prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::BOUNDINGBOX);
-			prototypePhysicsSubController->setupModelBoundingVolumeType(prototype, i);
-		} else
-		if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
-			if ((boundingVolumeTypeMask & PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) == PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) {
-				auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
-				prototypePhysicsSubController->setupOrientedBoundingBox(i, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
-				prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
-				prototypePhysicsSubController->setupModelBoundingVolumeType(prototype, i);
-			} else
-			if ((boundingVolumeTypeMask & PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) == PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) {
-				auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
-				BoundingBox aabb(obb);
-				prototypePhysicsSubController->setupBoundingBox(i, aabb.getMin(), aabb.getMax());
-				prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::BOUNDINGBOX);
-				prototypePhysicsSubController->getView()->selectBoundingVolumeType(i, 3);
-			}
-		} else
-		if (dynamic_cast<ConvexMesh*>(bv->getBoundingVolume()) != nullptr) {
-			prototypePhysicsSubController->setupConvexMesh(i, bv->getModelMeshFile());
-			prototypePhysicsSubController->selectBoundingVolume(i, PrototypePhysicsSubController_BoundingVolumeType::CONVEXMESH);
-			prototypePhysicsSubController->setupModelBoundingVolumeType(prototype, i);
-		}
-		prototypePhysicsSubController->enableBoundingVolume(i);
-	}
-}
-
-void PrototypePhysicsSubView::unsetBoundingVolumes()
-{
-	for (auto i = 0; i < maxBoundingVolumeCount; i++) {
-		prototypePhysicsSubController->disableBoundingVolume(i);
-	}
-}
-
-void PrototypePhysicsSubView::selectBoundingVolumeType(int idx, int bvTypeId)
-{
-	switch (bvTypeId) {
-		case 0:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::NONE);
-			break;
-		case 1:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::SPHERE);
-			break;
-		case 2:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::CAPSULE);
-			break;
-		case 3:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::BOUNDINGBOX);
-			break;
-		case 4:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
-			break;
-		case 5:
-			prototypePhysicsSubController->selectBoundingVolume(idx, PrototypePhysicsSubController_BoundingVolumeType::CONVEXMESH);
-			break;
-	}
 }
 
 void PrototypePhysicsSubView::clearModelBoundingVolume(int idx) {
@@ -372,31 +218,6 @@ void PrototypePhysicsSubView::applyBoundingVolumeConvexMesh(Prototype* prototype
 	setupModelBoundingVolume(prototype, idx);
 }
 
-void PrototypePhysicsSubView::setTerrainMesh(Prototype* prototype) {
-	if (prototype == nullptr) return;
-	prototypePhysicsSubController->setTerrainMesh(prototype);
-}
-
-void PrototypePhysicsSubView::unsetTerrainMesh() {
-	prototypePhysicsSubController->unsetTerrainMesh();
-}
-
-void PrototypePhysicsSubView::unsetConvexMeshes() {
-	prototypePhysicsSubController->unsetConvexMeshes();
-}
-
-void PrototypePhysicsSubView::setConvexMeshes(Prototype* prototype) {
-	prototypePhysicsSubController->setConvexMeshes(prototype);
-}
-
-void PrototypePhysicsSubView::unsetPhysics() {
-	prototypePhysicsSubController->unsetPhysics();
-}
-
-void PrototypePhysicsSubView::setPhysics(Prototype* prototype) {
-	prototypePhysicsSubController->setPhysics(prototype);
-}
-
 void PrototypePhysicsSubView::display(Prototype* prototype) {
 	if (prototype == nullptr) return;
 
@@ -415,13 +236,10 @@ void PrototypePhysicsSubView::display(Prototype* prototype) {
 }
 
 void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vector3& objectScale) {
-	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL || displayBoundingVolumeIdx != displayBoundingVolumeIdxLast) {
-		displayBoundingVolumeIdxLast = displayBoundingVolumeIdx;
+	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL || displayBoundingVolume == false) {
 		removeGizmo();
 		return;
 	}
-	displayBoundingVolumeIdxLast = displayBoundingVolumeIdx;
-
 	// we only support sphere, capsule and obb
 	auto bv = prototype->getBoundingVolume(displayBoundingVolumeIdx);
 	if (bv == nullptr) return;
@@ -558,7 +376,7 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 			scale+= totalDeltaScale.getZ();
 		}
 		auto radius = Math::clamp(sphere->getRadius() * Math::abs(scale), 0.01f, 1000.0f);
-		prototypePhysicsSubController->setupSphere(i, center, radius);
+		prototypePhysicsSubController->setBoundingVolumeSphereDetails(center, radius);
 		if (guiOnly == false) applyBoundingVolumeSphere(prototype, i, center, radius);
 	} else
 	if (dynamic_cast<Capsule*>(bv->getBoundingVolume()) != nullptr) {
@@ -584,7 +402,7 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 			scale+= totalDeltaScale.getZ();
 		}
 		auto radius = Math::clamp(capsule->getRadius() * Math::abs(scale), 0.01f, 1000.0f);
-		prototypePhysicsSubController->setupCapsule(i, a, b, radius);
+		prototypePhysicsSubController->setBoundingVolumeCapsuleDetails(a, b, radius);
 		if (guiOnly == false) applyBoundingVolumeCapsule(prototype, i, a, b, radius);
 	} else
 	if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
@@ -608,13 +426,13 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 		axis1.normalize();
 		axis2.normalize();
 		if ((boundingVolumeTypeMask & PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) == PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX) {
-			prototypePhysicsSubController->setupOrientedBoundingBox(i, center, axis0, axis1, axis2, halfExtension);
+			prototypePhysicsSubController->setBoundingVolumeOBBDetails(center, axis0, axis1, axis2, halfExtension);
 			if (guiOnly == false) applyBoundingVolumeObb(prototype, i, center, axis0, axis1, axis2, halfExtension);
 		} else
 		if ((boundingVolumeTypeMask & PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) == PrototypePhysicsSubController::BOUNDINGVOLUMETYPE_BOUNDINGBOX) {
 			OrientedBoundingBox obb(center, axis0, axis1, axis2, halfExtension);
 			BoundingBox aabb(&obb);
-			prototypePhysicsSubController->setupBoundingBox(i, aabb.getMin(), aabb.getMax());
+			// prototypePhysicsSubController->setBoundingVolumeAABBDetails(i, aabb.getMin(), aabb.getMax());
 			if (guiOnly == false) applyBoundingVolumeAabb(prototype, i, aabb.getMin(), aabb.getMax());
 		}
 	}
