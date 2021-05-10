@@ -30,6 +30,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTokenizer.h>
@@ -68,6 +69,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTokenizer;
@@ -961,7 +963,7 @@ float GUINode::computeParentChildrenRenderOffsetYTotal()
 	return childrenRenderOffSetY;
 }
 
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& position)
+bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& position)
 {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
@@ -998,11 +1000,11 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 
 bool GUINode::isEventBelongingToNode(GUIMouseEvent* event)
 {
-	array<float, 2> position;
+	Vector2 position;
 	return isEventBelongingToNode(event, position);
 }
 
-void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position)
+void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position)
 {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
@@ -1028,7 +1030,7 @@ void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float,
 	}
 }
 
-void GUINode::getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position) {
+void GUINode::getEventNodePosition(GUIMouseEvent* event, Vector2& position) {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
 	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();

@@ -46,7 +46,6 @@ private:
 	GUIElementNode* alphaInput { nullptr };
 	GUIElementNode* hexInput { nullptr };
 	GUIElementNode* brightnessSlider { nullptr };
-	Color4Base initialColor;
 	Color4Base color;
 	Action* onColorChangeAction { nullptr };
 
@@ -65,6 +64,11 @@ public:
 	 * Public constructor
 	 */
 	ColorPickerScreenController();
+
+	/**
+	 * Public denstructor
+	 */
+	~ColorPickerScreenController();
 
 	// overriden methods
 	GUIScreenNode* getScreenNode() override;
@@ -86,6 +90,12 @@ public:
 	 * Closes the pop up
 	 */
 	void close();
+
+	/**
+	 * Set color
+	 * @param color color
+	 */
+	void setColor(const Color4Base& color);
 
 	/**
 	 * @return color

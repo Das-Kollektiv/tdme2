@@ -213,6 +213,10 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 void FileDialogScreenController::close()
 {
 	screenNode->setVisible(false);
+	if (applyAction != nullptr) delete applyAction;
+	if (cancelAction != nullptr) delete cancelAction;
+	applyAction = nullptr;
+	cancelAction = nullptr;
 }
 
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)

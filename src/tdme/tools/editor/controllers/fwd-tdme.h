@@ -8,6 +8,7 @@ namespace controllers {
 	class ColorPickerScreenController;
 	class EditorScreenController;
 	class FileDialogScreenController;
+	class ColorPickerImageController;
 	class InfoDialogScreenController;
 	class ProgressBarScreenController;
 	struct ScreenController;

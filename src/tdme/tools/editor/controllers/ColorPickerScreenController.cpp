@@ -7,6 +7,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -14,6 +15,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/ColorPickerImageController.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -24,19 +26,22 @@
 
 using std::string;
 
+using tdme::tools::editor::controllers::ColorPickerScreenController;
+
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
-using tdme::tools::editor::controllers::ColorPickerScreenController;
+using tdme::tools::editor::controllers::ColorPickerImageController;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -47,6 +52,11 @@ using tdme::utilities::StringTools;
 
 ColorPickerScreenController::ColorPickerScreenController()
 {
+}
+
+ColorPickerScreenController::~ColorPickerScreenController()
+{
+	if (onColorChangeAction != nullptr) delete onColorChangeAction;
 }
 
 GUIScreenNode* ColorPickerScreenController::getScreenNode()
@@ -68,6 +78,8 @@ void ColorPickerScreenController::initialize()
 		alphaInput = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("colorpicker_alpha"));
 		hexInput = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("colorpicker_hex"));
 		brightnessSlider = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("slider_colorpicker_brightness"));
+		auto colorPickerImage = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("colorpicker_image"));
+		colorPickerImage->setController(new ColorPickerImageController(colorPickerImage, this));
 	} catch (Exception& exception) {
 		Console::print(string("ColorPickerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -81,7 +93,6 @@ void ColorPickerScreenController::dispose()
 
 void ColorPickerScreenController::show(const Color4Base& color, Action* onColorChangeAction)
 {
-	this->initialColor = color;
 	this->color = color;
 	this->onColorChangeAction = onColorChangeAction;
 	updateColor();
@@ -187,3 +198,11 @@ void ColorPickerScreenController::updateColorHex() {
 	while (hexAlpha.size() < 2) hexAlpha = "0" + hexAlpha;
 	hexInput->getController()->setValue(MutableString("#" + hexRed + hexGreen + hexBlue + (hexAlpha == "ff"?"":hexAlpha)));
 }
+
+void ColorPickerScreenController::setColor(const Color4Base& color) {
+	this->color = color;
+	updateColor();
+	updateColorHex();
+	if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
+}
+
