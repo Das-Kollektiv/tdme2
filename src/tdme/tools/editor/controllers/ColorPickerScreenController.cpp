@@ -137,7 +137,14 @@ void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 		updateColor();
 	} else
 	if (node->getId() == "slider_colorpicker_brightness") {
-
+		auto currentBrightness = (color.getRed() + color.getGreen() + color.getBlue()) / 3.0f;
+		auto newBrightness = Float::parseFloat(node->getController()->getValue().getString());
+		auto brightnessAdjustment = 1.0f + (newBrightness - currentBrightness);
+		color.setRed(color.getRed() * brightnessAdjustment);
+		color.setGreen(color.getGreen() * brightnessAdjustment);
+		color.setBlue(color.getBlue() * brightnessAdjustment);
+		updateColor();
+		updateColorHex();
 	}
 	if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
 }

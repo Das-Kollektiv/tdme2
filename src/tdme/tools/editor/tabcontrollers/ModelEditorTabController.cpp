@@ -1621,10 +1621,6 @@ void ModelEditorTabController::updateMaterialDetails() {
 		);
 		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
 		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()));
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->setValue(specularMaterialProperties->getShininess());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
@@ -1634,7 +1630,6 @@ void ModelEditorTabController::updateMaterialDetails() {
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->setValue(pbrMaterialProperties->getMetallicFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->setValue(pbrMaterialProperties->getRoughnessFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->setValue(pbrMaterialProperties->getNormalScale());
@@ -1647,7 +1642,35 @@ void ModelEditorTabController::updateMaterialDetails() {
 		Console::println(string("ModelEditorTabController::updateMaterialDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+
+	//
+	updateMaterialColorDetails();
 }
+
+void ModelEditorTabController::updateMaterialColorDetails() {
+	Material* material = getSelectedMaterial();
+	if (material == nullptr) return;
+
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	auto screenNode = view->getEditorView()->getScreenController()->getScreenNode();
+
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_ambient"))->setEffectColorMul(Color4(specularMaterialProperties->getAmbientColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse"))->setEffectColorMul(Color4(specularMaterialProperties->getDiffuseColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_emission"))->setEffectColorMul(Color4(specularMaterialProperties->getEmissionColor()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_specular"))->setEffectColorMul(Color4(specularMaterialProperties->getSpecularColor()));
+
+		if (pbrMaterialProperties != nullptr) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()));
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 
 void ModelEditorTabController::applySpecularMaterialDetails() {
 	Material* material = getSelectedMaterial();
@@ -2564,7 +2587,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				public:
 					void performAction() override {
 						material->getSpecularMaterialProperties()->setAmbientColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
-						modelEditorTabController->updateMaterialDetails();
+						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
 					}
@@ -2584,7 +2607,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				public:
 					void performAction() override {
 						material->getSpecularMaterialProperties()->setDiffuseColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
-						modelEditorTabController->updateMaterialDetails();
+						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
 					}
@@ -2604,7 +2627,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				public:
 					void performAction() override {
 						material->getSpecularMaterialProperties()->setEmissionColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
-						modelEditorTabController->updateMaterialDetails();
+						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
 					}
@@ -2624,7 +2647,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				public:
 					void performAction() override {
 						material->getSpecularMaterialProperties()->setSpecularColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
-						modelEditorTabController->updateMaterialDetails();
+						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
 					}
@@ -2644,7 +2667,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				public:
 					void performAction() override {
 						material->getPBRMaterialProperties()->setBaseColorFactor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
-						modelEditorTabController->updateMaterialDetails();
+						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
 					}

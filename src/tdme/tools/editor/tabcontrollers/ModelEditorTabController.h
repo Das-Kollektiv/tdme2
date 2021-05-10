@@ -499,6 +499,11 @@ public:
 	void updateMaterialDetails();
 
 	/**
+	 * Update material color details
+	 */
+	void updateMaterialColorDetails();
+
+	/**
 	 * Apply specular material details
 	 */
 	void applySpecularMaterialDetails();
