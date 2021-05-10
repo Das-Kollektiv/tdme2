@@ -14,6 +14,7 @@
 using std::string;
 
 using tdme::engine::model::Color4Base;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -47,6 +48,7 @@ private:
 	GUIElementNode* brightnessSlider { nullptr };
 	Color4Base initialColor;
 	Color4Base color;
+	Action* onColorChangeAction { nullptr };
 
 	/**
 	 * Update color
@@ -76,12 +78,20 @@ public:
 	/**
 	 * Shows the pop up
 	 * @param color color
+	 * @param onColorChangeAction on color change action
 	 */
-	void show(const Color4Base& color);
+	void show(const Color4Base& color, Action* onColorChangeAction);
 
 	/**
 	 * Closes the pop up
 	 */
 	void close();
+
+	/**
+	 * @return color
+	 */
+	inline Color4Base getColor() {
+		return color;
+	}
 
 };

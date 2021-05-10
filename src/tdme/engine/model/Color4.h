@@ -34,6 +34,13 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param color color
+	 */
+	inline Color4(const Color4Base& color) : Color4Base(color) {
+	}
+
+	/**
+	 * Public constructor
 	 * @param r red
 	 * @param g green
 	 * @param b blue

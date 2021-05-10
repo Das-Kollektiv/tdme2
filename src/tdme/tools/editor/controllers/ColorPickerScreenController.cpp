@@ -2,7 +2,10 @@
 
 #include <string>
 
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -21,7 +24,11 @@
 
 using std::string;
 
+using tdme::gui::events::Action;
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
@@ -72,10 +79,11 @@ void ColorPickerScreenController::dispose()
 	screenNode = nullptr;
 }
 
-void ColorPickerScreenController::show(const Color4Base& color)
+void ColorPickerScreenController::show(const Color4Base& color, Action* onColorChangeAction)
 {
 	this->initialColor = color;
 	this->color = color;
+	this->onColorChangeAction = onColorChangeAction;
 	updateColor();
 	updateColorHex();
 	screenNode->setVisible(true);
@@ -83,11 +91,14 @@ void ColorPickerScreenController::show(const Color4Base& color)
 
 void ColorPickerScreenController::close()
 {
+	if (onColorChangeAction != nullptr) {
+		delete onColorChangeAction;
+		onColorChangeAction = nullptr;
+	}
 	screenNode->setVisible(false);
 }
 
 void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
-	Console::println("ColorPickerScreenController::onValueChanged(): " + node->getId());
 	if (node->getId() == "colorpicker_red") {
 		color.setRed(Float::parseFloat(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
@@ -128,11 +139,11 @@ void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 	if (node->getId() == "slider_colorpicker_brightness") {
 
 	}
+	if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
 }
 
 void ColorPickerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	Console::println("ColorPickerScreenController::onActionPerformed(): " + to_string(type) + ": " + node->getId());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "colorpicker_caption_close_") == true) { // TODO: a.drewke, check with DH) {
 			close();

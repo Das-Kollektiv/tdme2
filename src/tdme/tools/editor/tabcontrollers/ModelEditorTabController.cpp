@@ -2558,27 +2558,102 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		if (node->getId().compare("specularmaterial_ambient_edit") == 0) {
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
-			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getAmbientColor());
+			if (specularMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getSpecularMaterialProperties()->setAmbientColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getAmbientColor(), new OnColorChangeAction(this, material));
+			}
 		} else
 		if (node->getId().compare("specularmaterial_diffuse_edit") == 0) {
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
-			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getDiffuseColor());
+			if (specularMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getSpecularMaterialProperties()->setDiffuseColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getDiffuseColor(), new OnColorChangeAction(this, material));
+			}
 		} else
 		if (node->getId().compare("specularmaterial_emission_edit") == 0) {
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
-			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getEmissionColor());
+			if (specularMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getSpecularMaterialProperties()->setEmissionColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getEmissionColor(), new OnColorChangeAction(this, material));
+			}
 		} else
 		if (node->getId().compare("specularmaterial_specular_edit") == 0) {
 			auto material = getSelectedMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
-			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getSpecularColor());
+			if (specularMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getSpecularMaterialProperties()->setSpecularColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getSpecularColor(), new OnColorChangeAction(this, material));
+			}
 		} else
 		if (node->getId().compare("pbrmaterial_basecolor_edit") == 0) {
 			auto material = getSelectedMaterial();
 			auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
-			if (pbrMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor());
+			if (pbrMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getPBRMaterialProperties()->setBaseColorFactor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				view->getPopUps()->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor(), new OnColorChangeAction(this, material));
+			}
 		}
 		/*
 		if (node->getId().compare("button_model_load") == 0) {
