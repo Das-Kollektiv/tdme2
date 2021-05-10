@@ -100,9 +100,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	int left, top, width, height;
-	editorView->getViewPort(left, top, width, height);
-	engine = Engine::createOffScreenInstance(width, height, true);
+	engine = Engine::createOffScreenInstance(512, 512, true);
 	engine->setPartition(new PartitionNone());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	audio = Audio::getInstance();

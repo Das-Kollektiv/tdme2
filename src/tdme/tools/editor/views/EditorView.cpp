@@ -6,6 +6,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
@@ -26,6 +27,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::PartitionNone;
 using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
@@ -64,17 +66,17 @@ void EditorView::handleInputEvents()
 	auto& tabViews = editorScreenController->getTabViews();
 	auto tabViewIt = tabViews.find(selectedTabId);
 	if (tabViewIt != tabViews.end()){
-		int left, top, width, height;
-		getViewPort(left, top, width, height);
 		auto& tab = tabViewIt->second;
+		int left, top, width, height;
+		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
 		if (lastSelectedTabId != selectedTabId) tab.getTabView()->activate();
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
-			auto eventX = event.getXUnscaled();
-			auto eventY = event.getYUnscaled();
-			event.setX(eventX - left);
-			event.setY(eventY - top);
-			event.setXUnscaled(eventX - left);
-			event.setYUnscaled(eventY - top);
+			auto eventX = event.getXUnscaled() - left;
+			auto eventY = event.getYUnscaled() - top;
+			event.setX(eventX);
+			event.setY(eventY);
+			event.setXUnscaled(eventX);
+			event.setYUnscaled(eventY);
 			tab.getEngine()->getGUI()->getMouseEvents().push_back(event);
 		}
 		for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
@@ -93,10 +95,12 @@ void EditorView::display()
 	auto& tabViews = editorScreenController->getTabViews();
 	auto tabViewIt = tabViews.find(selectedTabId);
 	if (tabViewIt != tabViews.end()){
-		int left, top, width, height;
-		getViewPort(left, top, width, height);
 		auto& tab = tabViewIt->second;
-		if (tab.getEngine()->getWidth() != width || tab.getEngine()->getHeight() != height) tab.getEngine()->reshape(width, height);
+		int left, top, width, height;
+		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
+		if (tab.getEngine()->getWidth() != width || tab.getEngine()->getHeight() != height) {
+			tab.getEngine()->reshape(width, height);
+		}
 		tab.getTabView()->display();
 		tab.getFrameBufferNode()->setFrameBuffer(tab.getEngine()->getFrameBuffer());
 	}
@@ -159,10 +163,10 @@ void EditorView::reloadTabOutliner(const string& newSelectionId) {
 	}
 }
 
-void EditorView::getViewPort(int& left, int& top, int& width, int& height) {
+void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
 	auto xScale = (float)engine->getWidth() / (float)editorScreenController->getScreenNode()->getScreenWidth();
 	auto yScale = (float)engine->getHeight() / (float)editorScreenController->getScreenNode()->getScreenHeight();
-	editorScreenController->getViewPort(left, top, width, height);
+	editorScreenController->getViewPort(viewPortNode, left, top, width, height);
 	left*= xScale;
 	top*= yScale;
 	width*= xScale;

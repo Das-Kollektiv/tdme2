@@ -4,6 +4,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -12,6 +13,7 @@
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::gui::nodes::GUINode;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -89,11 +91,12 @@ public:
 
 	/**
 	 * Determine viewport screen constraints
+	 * @param viewPortNode view port node
 	 * @param left left
 	 * @param top top
 	 * @param width width
 	 * @param height height
 	 */
-	void getViewPort(int& left, int& top, int& width, int& height);
+	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height);
 
 };

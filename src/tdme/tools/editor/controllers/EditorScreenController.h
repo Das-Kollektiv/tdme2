@@ -138,7 +138,6 @@ private:
 	GUIParentNode* tabsContent { nullptr };
 	GUIParentNode* outlinerScrollarea { nullptr };
 	GUIParentNode* detailsScrollarea { nullptr };
-	GUINode* viewPort { nullptr };
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
 	string selectedTabId;
@@ -231,12 +230,13 @@ public:
 
 	/**
 	 * Get engine viewport constraints
+	 * @param viewPortNode view port node
 	 * @param left left
 	 * @param top top
 	 * @param width width
 	 * @param height height
 	 */
-	void getViewPort(int& left, int& top, int& width, int& height);
+	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height);
 
 	/**
 	 * @return selected tab id
