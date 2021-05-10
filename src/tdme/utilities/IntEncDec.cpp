@@ -15,12 +15,12 @@ void IntEncDec::encodeInt(const uint32_t decodedInt, string& encodedString) {
 	}
 }
 
-bool IntEncDec::decodeInt(const string& encodedInt, uint32_t& decodedInt) {
+bool IntEncDec::decodeInt(const string& encodedString, uint32_t& decodedInt) {
 	char encodingCharSet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW-+/*.";
 	decodedInt = 0;
-	for (auto i = 0; i < encodedInt.length(); i++) {
+	for (auto i = 0; i < encodedString.length(); i++) {
 		auto codeIdx = -1;
-		char c = encodedInt[encodedInt.length() - i - 1];
+		char c = encodedString[encodedString.length() - i - 1];
 		char* codePtr = strchr(encodingCharSet, c);
 		if (codePtr == NULL) {
 			return false;

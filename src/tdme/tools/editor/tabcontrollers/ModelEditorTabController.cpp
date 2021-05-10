@@ -2556,19 +2556,29 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			onPreviewAnimationsAttachment1ModelClear();
 		} else
 		if (node->getId().compare("specularmaterial_ambient_edit") == 0) {
-			view->getPopUps()->getColorPickerScreenController()->show();
+			auto material = getSelectedMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
+			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getAmbientColor());
 		} else
 		if (node->getId().compare("specularmaterial_diffuse_edit") == 0) {
-			view->getPopUps()->getColorPickerScreenController()->show();
+			auto material = getSelectedMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
+			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getDiffuseColor());
 		} else
 		if (node->getId().compare("specularmaterial_emission_edit") == 0) {
-			view->getPopUps()->getColorPickerScreenController()->show();
+			auto material = getSelectedMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
+			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getEmissionColor());
 		} else
 		if (node->getId().compare("specularmaterial_specular_edit") == 0) {
-			view->getPopUps()->getColorPickerScreenController()->show();
+			auto material = getSelectedMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
+			if (specularMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getSpecularColor());
 		} else
 		if (node->getId().compare("pbrmaterial_basecolor_edit") == 0) {
-			view->getPopUps()->getColorPickerScreenController()->show();
+			auto material = getSelectedMaterial();
+			auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
+			if (pbrMaterialProperties != nullptr) view->getPopUps()->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor());
 		}
 		/*
 		if (node->getId().compare("button_model_load") == 0) {
