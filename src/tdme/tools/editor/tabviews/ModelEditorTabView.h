@@ -230,11 +230,6 @@ public:
 	 */
 	void optimizeModel();
 
-	/**
-	 * Init GUI elements
-	 */
-	void updateGUIElements();
-
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
