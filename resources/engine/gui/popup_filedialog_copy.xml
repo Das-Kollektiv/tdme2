@@ -13,7 +13,7 @@
 						<space height="10" />
 					
 						<selectbox id="filedialog_files" name="filedialog_files" width="100%" height="*">
-							<scrollarea width="100%" height="100%">
+							<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
 								<selectbox-option image="resources/engine/images/tdme.png" text="Option 00" value="00" />
 								<selectbox-option image="resources/engine/images/tdme.png" text="Option 01" value="01" />
 								<selectbox-option image="resources/engine/images/tdme.png" text="Option 02" value="02" />
