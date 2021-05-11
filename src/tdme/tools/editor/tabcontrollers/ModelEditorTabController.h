@@ -16,7 +16,6 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
@@ -65,107 +64,37 @@ private:
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	ModelEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
-	GUITextNode* screenCaption { nullptr };
-	GUIElementNode* modelReload { nullptr };
-	GUIElementNode* modelReimport { nullptr };
-	GUIElementNode* modelSave { nullptr };
-	GUIElementNode* pivotX { nullptr };
-	GUIElementNode* pivotY { nullptr };
-	GUIElementNode* pivotZ { nullptr };
-	GUIElementNode* pivotApply { nullptr };
-	GUIElementNode* renderingContributesShadows { nullptr };
-	GUIElementNode* renderingReceivesShadows { nullptr };
-	GUIElementNode* renderingRenderGroups { nullptr };
-	GUIElementNode* renderingShader { nullptr };
-	GUIElementNode* renderingDistanceShader { nullptr };
-	GUIElementNode* renderingDistanceShaderDistance { nullptr };
-	GUIElementNode* renderingApply { nullptr };
-	GUIParentNode* shaderParametersContent { nullptr };
-	GUIElementNode* lodLevel { nullptr };
-	GUIElementNode* lodLevelApply { nullptr };
-	GUIElementNode* lodType { nullptr };
-	GUIElementNode* lodModelFile { nullptr };
-	GUIElementNode* lodModelFileLoad { nullptr };
-	GUIElementNode* lodModelFileClear { nullptr };
-	GUIElementNode* lodMinDistance { nullptr };
-	GUIElementNode* lodColorMul { nullptr };
-	GUIElementNode* lodColorAdd { nullptr };
-	GUIElementNode* buttonLodApply { nullptr };
-	GUIElementNode* materialsDropdown { nullptr };
-	GUIElementNode* materialsDropdownApply { nullptr };
-	GUIElementNode* materialsMaterialName { nullptr };
-	GUIElementNode* materialsMaterialDoubleSided { nullptr };
-	GUIElementNode* materialsMaterialAmbient { nullptr };
-	GUIElementNode* materialsMaterialDiffuse { nullptr };
-	GUIElementNode* materialsMaterialSpecular { nullptr };
-	GUIElementNode* materialsMaterialEmission { nullptr };
-	GUIElementNode* materialsMaterialShininess { nullptr };
-	GUIElementNode* materialsMaterialReflection { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTexture { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTransparencyTexture { nullptr };
-	GUIElementNode* materialsMaterialNormalTexture { nullptr };
-	GUIElementNode* materialsMaterialSpecularTexture { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTransparencyTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialNormalTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialSpecularTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTextureClear { nullptr };
-	GUIElementNode* materialsMaterialDiffuseTransparencyTextureClear { nullptr };
-	GUIElementNode* materialsMaterialNormalTextureClear { nullptr };
-	GUIElementNode* materialsMaterialSpecularTextureClear { nullptr };
-	GUIElementNode* materialsMaterialPBREnabled { nullptr };
-	GUIElementNode* materialsMaterialPBRBaseColorFactor { nullptr };
-	GUIElementNode* materialsMaterialPBRBaseColorTexture { nullptr };
-	GUIElementNode* materialsMaterialPBRBaseColorTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialPBRBaseColorTextureClear { nullptr };
-	GUIElementNode* materialsMaterialPBRMetallicFactor { nullptr };
-	GUIElementNode* materialsMaterialPBRRoughnessFactor { nullptr };
-	GUIElementNode* materialsMaterialPBRMetallicRoughnessTexture { nullptr };
-	GUIElementNode* materialsMaterialPBRMetallicRoughnessTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialPBRMetallicRoughnessTextureClear { nullptr };
-	GUIElementNode* materialsMaterialPBRNormalScale { nullptr };
-	GUIElementNode* materialsMaterialPBRNormalTexture { nullptr };
-	GUIElementNode* materialsMaterialPBRNormalTextureLoad { nullptr };
-	GUIElementNode* materialsMaterialPBRNormalTextureClear { nullptr };
-	GUIElementNode* materialsMaterialPBRExposure { nullptr };
-	GUIElementNode* materialsMaterialUseMaskedTransparency { nullptr };
-	GUIElementNode* materialsMaterialMaskedTransparencyThreshold { nullptr };
-	GUIElementNode* materialsMaterialApply { nullptr };
-	GUIElementNode* animationsDropDown { nullptr };
-	GUIElementNode* animationsDropDownApply { nullptr };
-	GUIElementNode* animationsDropDownDelete { nullptr };
-	GUIElementNode* animationsAnimationStartFrame { nullptr };
-	GUIElementNode* animationsAnimationEndFrame { nullptr };
-	GUIElementNode* animationsAnimationOverlayFromNodeIdDropDown { nullptr };
-	GUIElementNode* animationsAnimationLoop { nullptr };
-	GUIElementNode* animationsAnimationSpeed { nullptr };
-	GUIElementNode* animationsAnimationName { nullptr };
-	GUIElementNode* animationsAnimationApply { nullptr };
-	GUIElementNode* previewAnimationsBaseDropDown { nullptr };
-	GUIElementNode* previewAnimationsOverlay1DropDown { nullptr };
-	GUIElementNode* previewAnimationsOverlay2DropDown { nullptr };
-	GUIElementNode* previewAnimationsOverlay3DropDown { nullptr };
-	GUIElementNode* previewAnimationsAttachment1BoneDropdown { nullptr };
-	GUIElementNode* previewAnimationsAttachment1ModelModel { nullptr };
-	GUIElementNode* previewAnimationsAttachment1ModelLoad { nullptr };
-	GUIElementNode* previewAnimationsAttachment1ModelClear { nullptr };
-	GUIElementNode* buttonPreviewApply { nullptr };
-	GUIElementNode* buttonToolsComputeNormals { nullptr };
-	GUIElementNode* buttonToolsOptimizeModel { nullptr };
-	GUIElementNode* statsOpaqueFaces { nullptr };
-	GUIElementNode* statsTransparentFaces { nullptr };
-	GUIElementNode* statsMaterialCount { nullptr };
-	GUIElementNode* viewPort { nullptr };
 
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
 
-	array<string, 7> applyAnimationNodes = {
+	array<string, 5> applyAnimationNodes = {
 		"animation_startframe",
 		"animation_endframe",
 		"animation_speed",
 		"animation_loop",
 		"animation_overlaybone"
+	};
+
+	array<string, 3> applySpecularMaterialNodes = {
+		"specularmaterial_shininess",
+		"specularmaterial_reflection",
+		"specularmaterial_maskedtransparency"
+	};
+
+	array<string, 5> applyPBRMaterialNodes = {
+		"pbrmaterial_metallic_factor",
+		"pbrmaterial_roughness_factor",
+		"pbrmaterial_normal_scale",
+		"pbrmaterial_exposure",
+		"pbrmaterial_maskedtransparency"
+	};
+
+	array<string, 4> applyAnimationPreviewNodes = {
+		"animationpreview_base",
+		"animationpreview_overlay1",
+		"animationpreview_overlay2",
+		"animationpreview_overlay3"
 	};
 
 	/**
@@ -233,12 +162,6 @@ public:
 	void dispose() override;
 
 	/**
-	 * Set screen caption
-	 * @param text text
-	 */
-	void setScreenCaption(const string& text);
-
-	/**
 	 * Set outliner content
 	 */
 	void setOutlinerContent();
@@ -249,206 +172,15 @@ public:
 	void setDetailsContent();
 
 	/**
-	 * Set up general prototype data
-	 * @param name name
-	 * @param description description
-	 */
-	void setPrototypeData(const string& name, const string& description);
-
-	/**
-	 * Unset prototype data
-	 */
-	void unsetPrototypeData();
-
-	/**
-	 * Set pivot tab
-	 * @param pivot pivot
-	 */
-	void setPivot(const Vector3& pivot);
-
-	/**
-	 * Unset pivot tab
-	 */
-	void unsetPivot();
-
-	/**
-	 * Set rendering shader
-	 * @param shaders shaders
-	 */
-	void setRenderingShaders(const vector<string>& shaders);
-
-	/**
-	 * Set renering options
-	 */
-	void setRendering();
-
-	/**
-	 * Unset rendering
-	 */
-	void unsetRendering();
-
-	/**
-	 * Set shader parameters
-	 */
-	void setShaderParameters();
-
-	/**
-	 * Unset shader parameters
-	 */
-	void unsetShaderParameters();
-
-	/**
 	 * Set lod level
 	 * @param level lod level
 	 */
 	void setLODLevel(int level);
 
 	/**
-	 * Unset LOD level
+	 * @return current material
 	 */
-	void unsetLODLevel();
-
-	/**
-	 * On LOD level apply
-	 */
-	void onLODLevelApply();
-
-	/**
-	 * On LOD level load model
-	 */
-	void onLODLevelLoadModel();
-
-	/**
-	 * On LOD level clear model
-	 */
-	void onLODLevelClearModel();
-
-	/**
-	 * On LOD level apply settings
-	 */
-	void onLODLevelApplySettings();
-
-	/**
-	 * Set materials
-	 */
-	void setMaterials();
-
-	/**
-	 * Unset materials
-	 */
-	void unsetMaterials();
-
-	/**
-	 * On material drop down apply
-	 */
-	void onMaterialDropDownApply();
-
 	Material* getCurrentMaterial();
-
-	/**
-	 * On material apply
-	 */
-	void onMaterialApply();
-
-	/**
-	 * On material load diffuse texture
-	 */
-	void onMaterialLoadDiffuseTexture();
-
-	/**
-	 * On material load diffuse transparency texture
-	 */
-	void onMaterialLoadDiffuseTransparencyTexture();
-
-	/**
-	 * On material load normal texture
-	 */
-	void onMaterialLoadNormalTexture();
-
-	/**
-	 * On material load specular texture
-	 */
-	void onMaterialLoadSpecularTexture();
-
-	/**
-	 * On material load PBR base color texture
-	 */
-	void onMaterialLoadPBRBaseColorTexture();
-
-	/**
-	 * On material load PBR metallic roughness texture
-	 */
-	void onMaterialLoadPBRMetallicRoughnessTexture();
-
-	/**
-	 * On material load PBR normal texture
-	 */
-	void onMaterialLoadPBRNormalTexture();
-
-	/**
-	 * On material PBR enabled value changed
-	 */
-	void onMaterialPBREnabledValueChanged();
-
-	/**
-	 * On material clear texture
-	 */
-	void onMaterialClearTexture(GUIElementNode* guiElementNode);
-
-	/**
-	 * Set animations
-	 */
-	void setAnimations();
-
-	/**
-	 * On animation drop down value changed
-	 */
-	void onAnimationDropDownValueChanged();
-
-	/**
-	 * On animation drop down apply
-	 */
-	void onAnimationDropDownApply();
-
-	/**
-	 * On animation drop down delete
-	 */
-	void onAnimationDropDownDelete();
-
-	/**
-	 * On animation apply
-	 */
-	void onAnimationApply();
-
-	/**
-	 * Unset animations
-	 */
-	void unsetAnimations();
-
-	/**
-	 * Set preview
-	 */
-	void setPreview();
-
-	/**
-	 * On preview apply
-	 */
-	void onPreviewApply();
-
-	/**
-	 * On preview animations attachment 1 model load
-	 */
-	void onPreviewAnimationsAttachment1ModelLoad();
-
-	/**
-	 * On preview animations attachment 1 model clear
-	 */
-	void onPreviewAnimationsAttachment1ModelClear();
-
-	/**
-	 * Unset preview
-	 */
-	void unsetPreview();
 
 	/**
 	 * Set up model statistics
@@ -462,16 +194,6 @@ public:
 	 * Unset statistics
 	 */
 	void unsetStatistics();
-
-	/**
-	 * Set up tool
-	 */
-	void setTools();
-
-	/**
-	 * Unset tools
-	 */
-	void unsetTools();
 
 	/**
 	 * On model load
@@ -492,21 +214,6 @@ public:
 	 * On model reload
 	 */
 	void onModelReimport();
-
-	/**
-	 * On pivot apply
-	 */
-	void onPivotApply();
-
-	/**
-	 * On rendering apply
-	 */
-	void onRenderingApply();
-
-	/**
-	 * On shader parameters apply
-	 */
-	void onShaderParametersApply();
 
 	/**
 	 * On tools compute normals
@@ -534,9 +241,28 @@ public:
 
 	/**
 	 * Set material details
-	 * @param materialId material Id
 	 */
-	void setMaterialDetails(const string& materialId);
+	void setMaterialDetails();
+
+	/**
+	 * Update material details
+	 */
+	void updateMaterialDetails();
+
+	/**
+	 * Update material color details
+	 */
+	void updateMaterialColorDetails();
+
+	/**
+	 * Apply specular material details
+	 */
+	void applySpecularMaterialDetails();
+
+	/**
+	 * Apply PBR material details
+	 */
+	void applyPBRMaterialDetails();
 
 	/**
 	 * Set animation details
@@ -551,6 +277,16 @@ public:
 	void applyAnimationDetails(const string& animationId);
 
 	/**
+	 * Set animation preview details
+	 */
+	void setAnimationPreviewDetails();
+
+	/**
+	 * Apply animation preview details
+	 */
+	void applyAnimationPreviewDetails();
+
+	/**
 	 * Set sound details
 	 * @param soundId sound Id
 	 */
@@ -561,6 +297,86 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * On material load diffuse texture
+	 */
+	void onMaterialLoadDiffuseTexture();
+
+	/**
+	 * On material clear diffuse texture
+	 */
+	void onMaterialClearDiffuseTexture();
+
+	/**
+	 * On material load diffuse transparency texture
+	 */
+	void onMaterialLoadDiffuseTransparencyTexture();
+
+	/**
+	 * On material clear diffuse transparency texture
+	 */
+	void onMaterialClearDiffuseTransparencyTexture();
+
+	/**
+	 * On material load normal texture
+	 */
+	void onMaterialLoadNormalTexture();
+
+	/**
+	 * On material clear normal texture
+	 */
+	void onMaterialClearNormalTexture();
+
+	/**
+	 * On material load specular texture
+	 */
+	void onMaterialLoadSpecularTexture();
+
+	/**
+	 * On material clear specular texture
+	 */
+	void onMaterialClearSpecularTexture();
+
+	/**
+	 * On material load PBR base color texture
+	 */
+	void onMaterialLoadPBRBaseColorTexture();
+
+	/**
+	 * On material clear PBR base color texture
+	 */
+	void onMaterialClearPBRBaseColorTexture();
+
+	/**
+	 * On material load PBR metallic roughness texture
+	 */
+	void onMaterialLoadPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material clear PBR metallic roughness texture
+	 */
+	void onMaterialClearPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material load PBR normal texture
+	 */
+	void onMaterialLoadPBRNormalTexture();
+
+	/**
+	 * On material load PBR normal texture
+	 */
+	void onMaterialClearPBRNormalTexture();
+
+	/**
+	 * On preview animations attachment 1 model load
+	 */
+	void onPreviewAnimationsAttachment1ModelLoad();
+
+	/**
+	 * On preview animations attachment 1 model clear
+	 */
+	void onPreviewAnimationsAttachment1ModelClear();
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

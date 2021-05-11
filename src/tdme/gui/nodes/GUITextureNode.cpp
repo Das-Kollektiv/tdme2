@@ -89,7 +89,11 @@ const string GUITextureNode::getNodeType()
 
 void GUITextureNode::dispose()
 {
-	if (texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+	if (texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+		texture->releaseReference();
+		texture = nullptr;
+	}
 	GUITextureBaseNode::dispose();
 }
 
@@ -98,7 +102,11 @@ Texture* GUITextureNode::getTexture() {
 }
 
 void GUITextureNode::setTexture(Texture* texture) {
-	if (this->texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(this->texture->getId());
+	if (this->texture == texture) return;
+	if (this->texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(this->texture->getId());
+		this->texture->releaseReference();
+	}
 	this->texture = texture;
 	if (texture == nullptr) {
 		textureId = 0;
@@ -106,6 +114,7 @@ void GUITextureNode::setTexture(Texture* texture) {
 		textureHeight = 0;
 		return;
 	}
+	texture->acquireReference();
 	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 	textureWidth = texture->getWidth();
 	textureHeight = texture->getHeight();

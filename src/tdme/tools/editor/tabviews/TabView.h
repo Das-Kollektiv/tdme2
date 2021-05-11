@@ -42,6 +42,11 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void activate() = 0;
 
 	/**
+	 * Update rendering
+	 */
+	virtual void updateRendering() = 0;
+
+	/**
 	 * Activate
 	 */
 	virtual void reloadOutliner() = 0;

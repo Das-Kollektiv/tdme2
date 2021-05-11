@@ -70,7 +70,7 @@
 					<layout width="auto" height="auto" alignment="vertical">
 						<button id="specularmaterial_specular_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
 						<space height="5" />
-						<button id="specularmaterial_specular__texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
+						<button id="specularmaterial_specular_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
 						<space height="5" />
 						<button id="specularmaterial_specular__texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
 					</layout>

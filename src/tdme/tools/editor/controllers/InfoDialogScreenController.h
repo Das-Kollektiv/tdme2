@@ -40,6 +40,11 @@ public:
 	 */
 	InfoDialogScreenController();
 
+	/**
+	 * Destructor
+	 */
+	virtual ~InfoDialogScreenController();
+
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;

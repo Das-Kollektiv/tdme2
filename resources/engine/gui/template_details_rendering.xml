@@ -10,12 +10,6 @@
 					<text font="{$font.default}" color="{$color.font_normal}" text="Shader" width="*" height="auto" />
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 						<dropdown id="rendering_shader" width="100%" height="auto" text="Default">
-							<dropdown-option text="Default" value="default" />
-							<dropdown-option text="Foliage" value="foliage" />
-							<dropdown-option text="Terrain" value="terrain" />
-							<dropdown-option text="Tree" value="tree" />
-							<dropdown-option text="Water" value="water" />
-							<dropdown-option text="PBR Default" value="pbr-default" />
 						</dropdown>
 					</layout>
 				</layout>
@@ -24,16 +18,14 @@
 				<menu-separator />
 				<space height="5" />
 
+				<layout id="rendering_shader_details" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+
+				</layout>
+
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" color="{$color.font_normal}" text="Distance Shader" width="*" height="auto" />
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 						<dropdown id="rendering_distance_shader" width="100%" height="auto" text="Default">
-							<dropdown-option text="Default" value="default" />
-							<dropdown-option text="Foliage" value="foliage" />
-							<dropdown-option text="Tree" value="tree" />
-							<dropdown-option text="Terrain" value="terrain" />
-							<dropdown-option text="Water" value="water" />
-							<dropdown-option text="PBR Default" value="pbr-default" />
 						</dropdown>
 					</layout>
 				</layout>
@@ -48,6 +40,10 @@
 				<space height="5" />
 				<menu-separator />
 				<space height="5" />		
+
+				<layout id="rendering_distanceshader_details" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+
+				</layout>
 
 			</layout>
 

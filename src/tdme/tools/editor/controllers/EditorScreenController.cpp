@@ -92,7 +92,6 @@ void EditorScreenController::initialize()
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
-		viewPort = required_dynamic_cast<GUINode*>(screenNode->getNodeById("tabs-content"));
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 	} catch (Exception& exception) {
@@ -438,7 +437,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		);
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
-		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter(180.0f));
+		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	/*
 	} catch (Exception& exception) {
@@ -477,12 +476,13 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 }
 
 
-void EditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
-	auto& constraints = viewPort->getComputedConstraints();
+void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPortNode->getComputedConstraints();
+	auto& padding = viewPortNode->getPadding();
 	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
 	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
-	width = constraints.width;
-	height = constraints.height;
+	width = constraints.width - (padding.left + padding.right);
+	height = constraints.height - (padding.top + padding.bottom);
 }
 
 const string EditorScreenController::getSelectedTabId() {

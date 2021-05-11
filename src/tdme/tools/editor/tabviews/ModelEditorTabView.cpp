@@ -100,9 +100,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	int left, top, width, height;
-	editorView->getViewPort(left, top, width, height);
-	engine = Engine::createOffScreenInstance(width, height, true);
+	engine = Engine::createOffScreenInstance(512, 512, true);
 	engine->setPartition(new PartitionNone());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	audio = Audio::getInstance();
@@ -162,6 +160,13 @@ void ModelEditorTabView::resetPrototype()
 	initModelRequestedReset = true;
 }
 
+void ModelEditorTabView::reloadPrototype()
+{
+	engine->reset();
+	initModelRequested = true;
+	initModelRequestedReset = false;
+}
+
 void ModelEditorTabView::reimportPrototype()
 {
 	engine->reset();
@@ -186,14 +191,12 @@ void ModelEditorTabView::initModel()
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
 		ModelUtilities::computeModelStatistics(currentModelObject->getModel(), &modelStatistics);
-		// TODO: a.drewke
-		// modelEditorScreenController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
+		modelEditorTabController->setStatistics(modelStatistics.opaqueFaceCount, modelStatistics.transparentFaceCount, modelStatistics.materialCount);
 	} else
 	{
-		// TODO: a.drewke
-		// modelEditorScreenController->unsetStatistics();
+		modelEditorTabController->unsetStatistics();
 	}
-	if (initModelRequestedReset == false) updateGUIElements();
+	if (initModelRequestedReset == true) modelEditorTabController->setOutlinerContent();
 }
 
 const string& ModelEditorTabView::getFileName()
@@ -210,8 +213,6 @@ void ModelEditorTabView::setLodLevel(int lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
-		modelEditorTabController->setMaterials();
-		modelEditorTabController->setAnimations();
 	}
 }
 
@@ -320,7 +321,6 @@ void ModelEditorTabView::optimizeModel() {
 	engine->removeEntity("model");
 	prototype->setModel(ModelTools::optimizeModel(prototype->unsetModel()));
 	initModelRequested = true;
-	modelEditorTabController->setMaterials();
 }
 
 void ModelEditorTabView::handleInputEvents()
@@ -386,48 +386,6 @@ void ModelEditorTabView::display()
 	audio->update();
 }
 
-void ModelEditorTabView::updateGUIElements()
-{
-	modelEditorTabController->setOutlinerContent();
-	// TODO: a.drewke
-//	if (prototype != nullptr) {
-//		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
-//		auto preset = prototype->getProperty("preset");
-//		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
-//		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-//		modelEditorScreenController->setPivot(prototype->getPivot());
-//		prototypePhysicsView->setBoundingVolumes(prototype);
-//		prototypePhysicsView->setPhysics(prototype);
-//		prototypePhysicsView->setTerrainMesh(prototype);
-//		prototypePhysicsView->setConvexMeshes(prototype);
-//		modelEditorScreenController->setRendering();
-//		modelEditorScreenController->setShaderParameters();
-//		modelEditorScreenController->setLODLevel(lodLevel);
-//		modelEditorScreenController->setMaterials();
-//		modelEditorScreenController->setAnimations();
-//		modelEditorScreenController->setPreview();
-//		modelEditorScreenController->setTools();
-//		prototypeSoundsView->setSounds(prototype);
-//	} else {
-//		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
-//		modelEditorScreenController->unsetPrototypeProperties();
-//		modelEditorScreenController->unsetPrototypeData();
-//		modelEditorScreenController->unsetPivot();
-//		prototypePhysicsView->unsetBoundingVolumes();
-//		prototypePhysicsView->unsetPhysics();
-//		prototypePhysicsView->unsetTerrainMesh();
-//		prototypePhysicsView->unsetConvexMeshes();
-//		modelEditorScreenController->unsetRendering();
-//		modelEditorScreenController->unsetShaderParameters();
-//		modelEditorScreenController->unsetLODLevel();
-//		modelEditorScreenController->unsetMaterials();
-//		modelEditorScreenController->unsetAnimations();
-//		modelEditorScreenController->unsetPreview();
-//		modelEditorScreenController->unsetTools();
-//		prototypeSoundsView->unsetSounds();
-//	}
-}
-
 void ModelEditorTabView::onInitAdditionalScreens()
 {
 }
@@ -461,10 +419,7 @@ void ModelEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
-	// TODO: a.drewke
-	// modelEditorScreenController->getPrototypeDisplaySubController()->setupDisplay();
-	// modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D));
-	updateGUIElements();
+	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::storeSettings()
@@ -613,7 +568,7 @@ void ModelEditorTabView::updateRendering() {
 	if (object == nullptr || prototype == nullptr) return;
 	engine->removeEntity("model");
 	ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
-	resetPrototype();
+	reloadPrototype();
 }
 
 void ModelEditorTabView::updateShaderParemeters() {
@@ -649,13 +604,11 @@ Engine* ModelEditorTabView::getEngine() {
 }
 
 void ModelEditorTabView::activate() {
-	// TODO: a.drewke: Rename me
-	updateGUIElements();
+	modelEditorTabController->setOutlinerContent();
 	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void ModelEditorTabView::reloadOutliner() {
-	// TODO: a.drewke: Rename me
-	updateGUIElements();
+	modelEditorTabController->setOutlinerContent();
 	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }

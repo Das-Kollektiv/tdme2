@@ -86,6 +86,15 @@ private:
 	void setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile = string());
 
 public:
+	/**
+	 * Public constructor
+	 */
+	FileDialogScreenController();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FileDialogScreenController();
 
 	/**
 	 * Shows the file dialog pop up
@@ -111,13 +120,4 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 
-	/**
-	 * Public constructor
-	 */
-	FileDialogScreenController();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~FileDialogScreenController();
 };

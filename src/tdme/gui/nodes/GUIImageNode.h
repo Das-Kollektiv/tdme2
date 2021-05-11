@@ -114,4 +114,11 @@ public:
 	 */
 	void setSource(const string& source);
 
+	/**
+	 * @return texture
+	 */
+	inline Texture* getTexture() {
+		return texture;
+	}
+
 };

@@ -7,7 +7,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Base Animation" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_base" width="100%" height="auto" text="tdme.none">
-						<scrollarea width="100%" height="100">
+						<scrollarea id="animationpreview_base_scrollarea" width="100%" height="100">
 						</scrollarea>
 					</dropdown>
 				</layout>
@@ -19,7 +19,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #1" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_overlay1" width="100%" height="auto" text="tdme.none">
-						<scrollarea width="100%" height="100">
+						<scrollarea id="animationpreview_overlay1_scrollarea" width="100%" height="100">
 						</scrollarea>
 					</dropdown>
 				</layout>
@@ -31,7 +31,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #2" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_overlay2" width="100%" height="auto" text="tdme.none">
-						<scrollarea width="100%" height="100">
+						<scrollarea id="animationpreview_overlay2_scrollarea" width="100%" height="100">
 						</scrollarea>
 					</dropdown>
 				</layout>
@@ -43,7 +43,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Overlay #3" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_overlay3" width="100%" height="auto" text="tdme.none">
-						<scrollarea width="100%" height="100">
+						<scrollarea id="animationpreview_overlay3_scrollarea" width="100%" height="100">
 						</scrollarea>
 					</dropdown>
 				</layout>
@@ -57,7 +57,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Bone" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="animationpreview_attachment1_bone" width="100%" height="auto" text="tdme.none">
-						<scrollarea width="100%" height="100">
+						<scrollarea id="animationpreview_attachment1_bone_scrollarea" width="100%" height="100">
 							<dropdown-option text="<No bone>" value="" selected="true" />
 						</scrollarea>
 					</dropdown>

@@ -17,3 +17,20 @@ void HexEncDec::encodeInt(const uint64_t decodedInt, string& encodedString) {
 		if (_decodedInt == 0) break;
 	}
 }
+
+bool HexEncDec::decodeInt(const string& encodedString, uint64_t& decodedInt) {
+	char encodingCharSet[] = "0123456789abcdef";
+	decodedInt = 0;
+	for (auto i = 0; i < encodedString.length(); i++) {
+		auto codeIdx = -1;
+		char c = encodedString[encodedString.length() - i - 1];
+		char* codePtr = strchr(encodingCharSet, c);
+		if (codePtr == NULL) {
+			return false;
+		} else {
+			codeIdx = codePtr - encodingCharSet;
+		}
+		decodedInt+= codeIdx << (i * 4);
+	}
+	return true;
+}

@@ -95,7 +95,7 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::removeConvexMeshes(Prot
 			break;
 		} else {
 			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolume(i)->getModelMeshFile()) == convexHullFileName) {
-				prototypePhysicsSubController->onBoundingVolumeNoneApply(entityFinal, i);
+				// prototypePhysicsSubController->onBoundingVolumeNoneApply(entityFinal, i);
 			}
 			FileSystem::getInstance()->removeFile(
 				meshPathName,
@@ -107,9 +107,11 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::removeConvexMeshes(Prot
 
 void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* entityFinal)
 {
+	/*
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		prototypePhysicsSubController->onBoundingVolumeNoneApply(entityFinal, i);
 	}
+	*/
 	map<string, MutableString> values;
 	prototypePhysicsSubController->getScreenNode()->getValues(values);
 	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
@@ -147,6 +149,7 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(Pr
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			IVHACD::Parameters vhacdParams;
+			/*
 			vhacdParams.m_resolution = Tools::convertToInt(prototypePhysicsSubController->convexMeshesResolution->getController()->getValue().getString());
 			vhacdParams.m_concavity = Tools::convertToFloat(prototypePhysicsSubController->convexMeshesConcavity->getController()->getValue().getString());
 			vhacdParams.m_planeDownsampling = Tools::convertToInt(prototypePhysicsSubController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
@@ -156,6 +159,7 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(Pr
 			vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(prototypePhysicsSubController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
 			vhacdParams.m_minVolumePerCH = Tools::convertToFloat(prototypePhysicsSubController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
 			vhacdParams.m_pca = Tools::convertToInt(prototypePhysicsSubController->convexMeshesPCA->getController()->getValue().getString());
+			*/
 			if (vhacdParams.m_resolution < 10000 || vhacdParams.m_resolution > 64000000) {
 				throw ExceptionBase("Resolution must be between 10000 and 64000000");
 			}
@@ -189,8 +193,8 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(Pr
 			vhacdParams.m_callback = &vhacdCallback;
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
-			string meshPathName = Tools::getPathName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
-			string meshFileName = Tools::getFileName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = string(); //Tools::getPathName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = string(); //Tools::getFileName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
 				meshFileName
@@ -277,8 +281,8 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(Pr
 	} else
 	if (convexMeshMode == "model") {
 		try {
-			string meshPathName = Tools::getPathName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
-			string meshFileName = Tools::getFileName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = string(); // Tools::getPathName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = string(); // Tools::getFileName(prototypePhysicsSubController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
 				meshFileName
@@ -315,11 +319,12 @@ void PrototypePhysicsSubController_GenerateConvexMeshes::generateConvexMeshes(Pr
 			Console::println(string("Could not create convex hulls: ") + exception.what());
 		}
 	}
-	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
-		prototypePhysicsSubController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
+	/*
+	for (auto i = 0; i < i < convexMeshFileNames.size(); i++) {
 		prototypePhysicsSubController->onBoundingVolumeConvexMeshApply(entityFinal, i);
 		prototypePhysicsSubController->setupModelBoundingVolumeType(entityFinal, i);
 	}
+	*/
 }
 
 Model* PrototypePhysicsSubController_GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {

@@ -70,24 +70,6 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * Set up general prototype data
-	 * @param name name
-	 * @param description description
-	 */
-	void setPrototypeData(const string& name, const string& description);
-
-	/**
-	 * Unset entity data
-	 */
-	void unsetPrototypeData();
-
-	/**
-	 * On prototype data apply
-	 * @param model model
-	 */
-	void onPrototypeDataApply(Prototype* model);
-
-	/**
 	 * Create prototype properties XML for outliner
 	 * @param prototype prototype
 	 * @param xml xml

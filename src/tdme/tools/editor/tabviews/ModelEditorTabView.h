@@ -161,6 +161,11 @@ public:
 	void resetPrototype();
 
 	/**
+	 * Reload prototype
+	 */
+	void reloadPrototype();
+
+	/**
 	 * Reimport prototype
 	 */
 	void reimportPrototype();
@@ -225,11 +230,6 @@ public:
 	 */
 	void optimizeModel();
 
-	/**
-	 * Init GUI elements
-	 */
-	void updateGUIElements();
-
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
@@ -267,10 +267,8 @@ public:
 	 */
 	void addAttachment1(const string& nodeId, const string& attachmentModelFile);
 
-	/**
-	 * Update rendering options
-	 */
-	void updateRendering();
+	// overridden methods
+	void updateRendering() override;
 
 	/**
 	 * Update shader parameters

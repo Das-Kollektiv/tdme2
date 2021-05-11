@@ -72,33 +72,6 @@ void PrototypeBaseSubController::initialize(GUIScreenNode* screenNode)
 	// setPrototypePresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 }
 
-void PrototypeBaseSubController::setPrototypeData(const string& name, const string& description)
-{
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setValue(name);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setValue(description);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_apply"))->getController()->setDisabled(false);
-}
-
-void PrototypeBaseSubController::unsetPrototypeData()
-{
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setValue(MutableString());
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_entity_apply"))->getController()->setDisabled(true);
-}
-
-void PrototypeBaseSubController::onPrototypeDataApply(Prototype* prototype)
-{
-	if (prototype == nullptr)
-		return;
-
-	view->setPrototypeData(prototype, required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_name"))->getController()->getValue().getString(), required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("entity_description"))->getController()->getValue().getString());
-	onSetPrototypeDataAction->performAction();
-}
-
 void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototype, string& xml) {
 	if (prototype->getPropertyCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
