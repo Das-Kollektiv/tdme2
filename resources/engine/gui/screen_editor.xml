@@ -6,14 +6,14 @@
 			<space width="5"/>
 			<menu-header>
 				<menu-header-item text="File">
-					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="ctrl n"/>
-					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="ctrl o"/>
+					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="Ctrl N"/>
+					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="Ctrl O"/>
 					<menu-separator />
-					<menu-item id="menu_file_save" image="resources/engine/images/save.png" text="Save Current" shortcut="ctrl s"/>
-					<menu-item id="menu_file_saveas" image="resources/engine/images/save.png" text="Save Current as..." shortcut="shift ctrl s"/>
-					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut=""/>
+					<menu-item id="menu_file_save" image="resources/engine/images/save.png" text="Save" shortcut="Ctrl S"/>
+					<menu-item id="menu_file_saveas" text="Save as..." shortcut="Shift Ctrl S"/>
+					<menu-item id="menu_file_saveall" text="Save all" shortcut=""/>
 					<menu-separator />
-					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="ctrl + q" />
+					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="Ctrl Q" />
 				</menu-header-item>
 				<menu-header-item text="Edit">
 					<menu-item text="Undo" id="menu_edit_undo" />
