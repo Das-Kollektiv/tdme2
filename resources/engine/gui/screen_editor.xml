@@ -6,10 +6,12 @@
 			<space width="5"/>
 			<menu-header>
 				<menu-header-item text="File">
-					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="ctrl + n"/>
-					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="ctrl + o"/>
+					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="ctrl n"/>
+					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="ctrl o"/>
 					<menu-separator />
-					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut="ctrl + s"/>
+					<menu-item id="menu_file_save" image="resources/engine/images/save.png" text="Save Current" shortcut="ctrl s"/>
+					<menu-item id="menu_file_saveas" image="resources/engine/images/save.png" text="Save Current as..." shortcut="shift ctrl s"/>
+					<menu-item id="menu_file_saveall" image="resources/engine/images/save.png" text="Save all" shortcut=""/>
 					<menu-separator />
 					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="ctrl + q" />
 				</menu-header-item>
