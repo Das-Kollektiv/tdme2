@@ -135,7 +135,7 @@ void GUILayoutNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
 	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	{

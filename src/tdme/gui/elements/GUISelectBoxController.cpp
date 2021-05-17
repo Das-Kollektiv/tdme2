@@ -38,6 +38,7 @@ GUISelectBoxController::GUISelectBoxController(GUINode* node)
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 	this->multipleSelection = required_dynamic_cast<GUIElementNode*>(node)->hasOption("multiple");
 	this->keyControl = false;
+	this->focussedOptionIdx = -1;
 }
 
 bool GUISelectBoxController::isMultipleSelection() {
@@ -78,34 +79,139 @@ void GUISelectBoxController::dispose()
 
 void GUISelectBoxController::postLayout()
 {
+	// TODO: a.drewke, maybe we should have a better method for this, like onPostChildrenChange or something
+	determineExpandedOptions();
+}
+
+int GUISelectBoxController::getFocussedOptionIdx()
+{
+	if (focussedOptionIdx != -1 && (focussedOptionIdx < 0 || focussedOptionIdx >= selectBoxMultipleOptionControllers.size())) {
+		focussedOptionIdx = -1;
+	}
+	return focussedOptionIdx;
+}
+
+int GUISelectBoxController::getOptionIdx(GUIElementNode* optionElementNode) {
+	auto optionElementNodeController = optionElementNode->getController();
+	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
+		if (selectBoxMultipleOptionControllers[i] == optionElementNodeController) return i;
+	}
+	return -1;
 }
 
 void GUISelectBoxController::unselect()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxOptionController*>(childController);
-		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unselect();
-	}
+	value.set(MutableString());
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+	selectBoxMultipleOptionControllers[optionIdx]->unselect();
+}
+
+void GUISelectBoxController::select(int optionIdx) {
+	if (optionIdx < 0 || optionIdx >= selectBoxMultipleOptionControllers.size()) return;
+	selectBoxMultipleOptionControllers[optionIdx]->select();
+	value.set(required_dynamic_cast<GUIElementNode*>(selectBoxMultipleOptionControllers[optionIdx]->getNode())->getValue());
+}
+
+void GUISelectBoxController::select(GUIElementNode* optionElementNode) {
+	auto optionIdx = getOptionIdx(optionElementNode);
+	if (optionIdx == -1) return;
+	select(optionIdx);
 }
 
 void GUISelectBoxController::unfocus()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxOptionController*>(childController);
-		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unfocus();
-	}
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+	selectBoxMultipleOptionControllers[optionIdx]->unfocus();
 }
 
-void GUISelectBoxController::determineSelectBoxMultipleOptionControllers()
+void GUISelectBoxController::focus(int optionIdx)
 {
-	selectBoxMultipleOptionControllers.clear();
+	if (optionIdx < 0 || optionIdx >= selectBoxMultipleOptionControllers.size()) return;
+	selectBoxMultipleOptionControllers[optionIdx]->focus();
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+	focussedOptionIdx = optionIdx;
+}
+
+void GUISelectBoxController::focus(GUIElementNode* optionElementNode)
+{
+	auto optionIdx = getOptionIdx(optionElementNode);
+	if (optionIdx == -1) return;
+	focus(optionIdx);
+}
+
+void GUISelectBoxController::selectCurrent()
+{
+	setValue(getValue());
+}
+
+void GUISelectBoxController::focusNext()
+{
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+
+	unfocus();
+
+	optionIdx = (optionIdx + 1) % selectBoxMultipleOptionControllers.size();
+	if (optionIdx < 0)
+		optionIdx += selectBoxMultipleOptionControllers.size();
+
+	focus(optionIdx);
+}
+
+void GUISelectBoxController::focusPrevious()
+{
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+
+	unfocus();
+
+	optionIdx = (optionIdx - 1) % static_cast<int>(selectBoxMultipleOptionControllers.size());
+	if (optionIdx < 0)
+		optionIdx += selectBoxMultipleOptionControllers.size();
+
+	focus(optionIdx);
+}
+
+void GUISelectBoxController::toggle(int optionIdx)
+{
+	if (optionIdx < 0 || optionIdx >= selectBoxMultipleOptionControllers.size()) return;
+	selectBoxMultipleOptionControllers[optionIdx]->toggle();
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+}
+
+void GUISelectBoxController::toggle(GUIElementNode* optionElementNode)
+{
+	auto optionIdx = getOptionIdx(optionElementNode);
+	if (optionIdx == -1) return;
+	toggle(optionIdx);
+}
+
+void GUISelectBoxController::select()
+{
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+	selectBoxMultipleOptionControllers[optionIdx]->select();
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
+	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+}
+
+void GUISelectBoxController::toggleOpenState() {
+	auto optionIdx = getFocussedOptionIdx();
+	if (optionIdx == -1) return;
+
+	auto selectBoxMultipleParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxMultipleOptionControllers[optionIdx]);
+	if (selectBoxMultipleParentOptionController != nullptr) selectBoxMultipleParentOptionController->toggleOpenState();
+}
+
+void GUISelectBoxController::determineExpandedOptions() {
+	//
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
+	//
+	selectBoxMultipleOptionControllers.clear();
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -116,87 +222,6 @@ void GUISelectBoxController::determineSelectBoxMultipleOptionControllers()
 	}
 }
 
-int GUISelectBoxController::getFocussedOptionIdx()
-{
-	auto selectBoxOptionControllerIdx = -1;
-	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
-		auto selectBoxOptionController = selectBoxMultipleOptionControllers[i];
-		if (selectBoxOptionController->isFocussed() == true) {
-			selectBoxOptionControllerIdx = i;
-			break;
-		}
-	}
-	return selectBoxOptionControllerIdx;
-}
-
-void GUISelectBoxController::selectCurrent()
-{
-	setValue(getValue());
-}
-
-void GUISelectBoxController::focusNext()
-{
-	determineSelectBoxMultipleOptionControllers();
-	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-	unfocus();
-	if (selectBoxMultipleOptionControllers.size() == 0)
-		return;
-
-	selectBoxMultipleOptionControllerIdx = (selectBoxMultipleOptionControllerIdx + 1) % selectBoxMultipleOptionControllers.size();
-	if (selectBoxMultipleOptionControllerIdx < 0)
-		selectBoxMultipleOptionControllerIdx += selectBoxMultipleOptionControllers.size();
-
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->focus();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-}
-
-void GUISelectBoxController::focusPrevious()
-{
-	determineSelectBoxMultipleOptionControllers();
-	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-	unfocus();
-	if (selectBoxMultipleOptionControllers.size() == 0)
-		return;
-
-	selectBoxMultipleOptionControllerIdx = (selectBoxMultipleOptionControllerIdx - 1) % static_cast<int>(selectBoxMultipleOptionControllers.size());
-	if (selectBoxMultipleOptionControllerIdx < 0)
-		selectBoxMultipleOptionControllerIdx += selectBoxMultipleOptionControllers.size();
-
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->focus();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-}
-
-void GUISelectBoxController::toggle()
-{
-	determineSelectBoxMultipleOptionControllers();
-	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->toggle();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-}
-
-void GUISelectBoxController::select()
-{
-	determineSelectBoxMultipleOptionControllers();
-	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->select();
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-}
-
-void GUISelectBoxController::toggleOpenState() {
-	determineSelectBoxMultipleOptionControllers();
-	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-	if (selectBoxMultipleOptionControllers.size() == 0)
-		return;
-
-	if (selectBoxMultipleOptionControllerIdx == -1) return;
-
-	auto selectBoxMultipleParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]);
-	if (selectBoxMultipleParentOptionController != nullptr) selectBoxMultipleParentOptionController->toggleOpenState();
-}
 void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
@@ -226,12 +251,15 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					if (multipleSelection == false) {
+						unselect();
+					}
 					focusPrevious();
 					if (multipleSelection == false) {
-						auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-						unselect();
-						selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->select();
+						select(getFocussedOptionIdx());
 					}
+				} else
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
 					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
@@ -239,12 +267,15 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					if (multipleSelection == false) {
+						unselect();
+					}
 					focusNext();
 					if (multipleSelection == false) {
-						auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
-						unselect();
-						selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->select();
+						select(getFocussedOptionIdx());
 					}
+				} else
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
 					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
@@ -252,15 +283,20 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		case GUIKeyboardEvent::KEYCODE_RIGHT:
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) toggleOpenState();
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					toggleOpenState();
+					determineExpandedOptions();
+				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					if (multipleSelection == true) {
-						toggle();
+						toggle(getFocussedOptionIdx());
 					}
+				} else
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
 					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
@@ -290,28 +326,15 @@ bool GUISelectBoxController::hasValue()
 
 const MutableString& GUISelectBoxController::getValue()
 {
-	value.reset();
-	determineSelectBoxMultipleOptionControllers();
-	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
-		auto selectBoxOptionController = selectBoxMultipleOptionControllers[i];
-		if (selectBoxOptionController->isSelected() == true) {
-			value.append(required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode())->getValue());
-			if (multipleSelection == true) value.append(VALUE_DELIMITER);
-		}
-	}
-	if (value.length() > 0) {
-		if (multipleSelection == true) value.insert(0, VALUE_DELIMITER);
-	}
 	return value;
 }
 
 void GUISelectBoxController::setValue(const MutableString& value)
 {
-	determineSelectBoxMultipleOptionControllers();
 	unselect();
 	unfocus();
 	MutableString searchValue;
-	GUIElementNode* selectBoxOptionNodeLast = nullptr;
+	int selectBoxOptionNodeLastIdx = -1;
 	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxMultipleOptionControllers[i];
 		auto selectBoxOptionNode = required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode());
@@ -323,10 +346,8 @@ void GUISelectBoxController::setValue(const MutableString& value)
 			selectBoxOptionController->select();
 			selectBoxOptionNode->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
 			selectBoxOptionNode->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-			selectBoxOptionNodeLast = selectBoxOptionNode;
+			selectBoxOptionNodeLastIdx = i;
 		}
 	}
-	if (selectBoxOptionNodeLast != nullptr) {
-		required_dynamic_cast<GUISelectBoxOptionController*>(selectBoxOptionNodeLast->getController())->focus();
-	}
+	if (selectBoxOptionNodeLastIdx != -1) focus(selectBoxOptionNodeLastIdx);
 }

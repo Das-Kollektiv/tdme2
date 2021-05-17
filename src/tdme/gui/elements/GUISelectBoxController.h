@@ -16,6 +16,7 @@ using std::vector;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
@@ -39,6 +40,7 @@ private:
 	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
 	bool disabled;
 	bool multipleSelection;
+	int focussedOptionIdx;
 	MutableString value;
 
 	bool keyControl;
@@ -60,9 +62,32 @@ private:
 	bool isKeyControlDown();
 
 	/**
+	 * Get focussed option idx
+	 */
+	int getFocussedOptionIdx();
+
+	/**
+	 * Get focussed option idx
+	 * @param optionElementNode option element node
+	 */
+	int getOptionIdx(GUIElementNode* optionElementNode);
+
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
+
+	/**
+	 * Select
+	 * @param optionIdx option index
+	 */
+	void select(int optionIdx);
+
+	/**
+	 * Select
+	 * @param optionElementNode option element node
+	 */
+	void select(GUIElementNode* optionElementNode);
 
 	/**
 	 * Unfocus all nodes
@@ -70,14 +95,16 @@ private:
 	void unfocus();
 
 	/**
-	 * Determine select box option controllers
+	 * Focus
+	 * @param optionIdx option index
 	 */
-	void determineSelectBoxMultipleOptionControllers();
+	void focus(int optionIdx);
 
 	/**
-	 * Get focussed option idx
+	 * Focus
+	 * @param optionElementNode option element node
 	 */
-	int getFocussedOptionIdx();
+	void focus(GUIElementNode* optionElementNode);
 
 	/**
 	 * Select current options
@@ -100,6 +127,18 @@ private:
 	void toggle();
 
 	/**
+	 * Toggle
+	 * @param optionIdx option index
+	 */
+	void toggle(int optionIdx);
+
+	/**
+	 * Toggle
+	 * @param optionElementNode option element node
+	 */
+	void toggle(GUIElementNode* optionElementNode);
+
+	/**
 	 * Select focussed node
 	 */
 	void select();
@@ -109,6 +148,10 @@ private:
 	 */
 	void toggleOpenState();
 
+	/**
+	 * Determine expanded options
+	 */
+	void determineExpandedOptions();
 public:
 	// overridden methods
 	bool isDisabled() override;

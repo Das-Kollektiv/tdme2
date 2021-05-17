@@ -34,6 +34,7 @@ class tdme::gui::elements::GUITabsController final
 private:
 	vector<GUINode*> childControllerNodes;
 	MutableString value;
+	bool tabSelected { false };
 
 	/**
 	 * Private constructor

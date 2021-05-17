@@ -108,7 +108,7 @@ void GUITableRowNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
 	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUITableNode* guiTableNode = required_dynamic_cast<GUITableNode*>(parentNode);

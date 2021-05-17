@@ -177,14 +177,16 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-			required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->unfocus();
-			if (multipleSelection == true && required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isKeyControlDown() == true) {
-				toggle();
-				focus();
+			auto selectBoxController = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController());
+			auto optionElementNode = required_dynamic_cast<GUIElementNode*>(node);
+			selectBoxController->unfocus();
+			if (multipleSelection == true && selectBoxController->isKeyControlDown() == true) {
+				selectBoxController->toggle(optionElementNode);
+				selectBoxController->focus(optionElementNode);
 			} else {
-				required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->unselect();
-				select();
-				focus();
+				selectBoxController->unselect();
+				selectBoxController->select(optionElementNode);
+				selectBoxController->focus(optionElementNode);
 			}
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
 			node->scrollToNodeX(selectBoxNode);

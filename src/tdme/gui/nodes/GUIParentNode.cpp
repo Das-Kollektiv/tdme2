@@ -280,7 +280,7 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 void GUIParentNode::layout()
 {
 	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUINode::layout();
@@ -384,11 +384,13 @@ void GUIParentNode::dispose()
 
 void GUIParentNode::setConditionsMet()
 {
+	auto conditionsMetBefore = conditionsMet;
 	GUINode::setConditionsMet();
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
 		guiSubNode->setConditionsMet();
 	}
+	if (conditionsMetBefore != conditionsMet) invalidateRenderCaches();
 }
 
 void GUIParentNode::render(GUIRenderer* guiRenderer)
@@ -441,6 +443,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 		for (auto i = 0; i < subNodes.size(); i++) {
 			auto guiSubNode = subNodes[i];
 			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+				continue;
+			}
+			if (guiSubNode->layouted == false) {
 				continue;
 			}
 			guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);

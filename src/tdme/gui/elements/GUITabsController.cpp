@@ -65,6 +65,7 @@ void GUITabsController::dispose()
 
 void GUITabsController::postLayout()
 {
+	setTabContentSelectedInternal(value.getString());
 }
 
 void GUITabsController::unselect()
@@ -84,7 +85,9 @@ void GUITabsController::unselect()
 }
 
 void GUITabsController::setTabContentSelectedInternal(const string& id) {
+	if (value.equals(id) == true && tabSelected == true) return;
 	value.set(id);
+	tabSelected = false;
 	auto tabContentNodeId = id + "-content";
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -95,15 +98,15 @@ void GUITabsController::setTabContentSelectedInternal(const string& id) {
 			if (static_cast<GUINode*>(tabContentController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
 				continue;
 
-			required_dynamic_cast<GUITabContentController*>(childController)->setSelected(tabContentNodeId == childController->getNode()->getId());
+			auto select = tabContentNodeId == childController->getNode()->getId();
+			required_dynamic_cast<GUITabContentController*>(childController)->setSelected(select);
+			if (select == true) tabSelected = true;
 		}
 	}
 }
 
 void GUITabsController::setTabContentSelected(const string& id)
 {
-	// TODO: a.drewke
-	// if (value.equals(id)) return;
 	setTabContentSelectedInternal(id);
 	// TODO: a.drewke, no element node, so it cant delegate value changes
 	// node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));

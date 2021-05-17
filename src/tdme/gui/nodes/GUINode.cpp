@@ -206,7 +206,7 @@ void GUINode::layout()
 {
 	if (conditionsMet == false) {
 		computedConstraints = GUINode_ComputedConstraints();
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
@@ -486,7 +486,9 @@ void GUINode::setConditionsMet()
 
 void GUINode::layoutOnDemand() {
 	if (conditionsMet == false || layouted == true) return;
-	screenNode->forceLayout(this);
+	if (conditionsMet == true && layouted == false) {
+		screenNode->forceLayout(this);
+	}
 }
 
 void GUINode::render(GUIRenderer* guiRenderer)

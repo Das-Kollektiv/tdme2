@@ -148,10 +148,14 @@ void GUITabsHeaderController::selectCurrent()
 	if (determineTabControllers() == false) return;
 	auto tabControllerIdx = getSelectedTabIdx();
 	if (tabControllerIdx == -1) tabControllerIdx = 0;
-	unselect();
-	tabControllers[tabControllerIdx]->setSelected(true);
+	if (tabControllers[tabControllerIdx]->isSelected() == false) {
+		unselect();
+		tabControllers[tabControllerIdx]->setSelected(true);
+	}
 	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
-	guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
+	if (guiTabsController->getValue().equals(tabControllers[tabControllerIdx]->getNode()->getId()) == false) {
+		guiTabsController->setTabContentSelected(tabControllers[tabControllerIdx]->getNode()->getId());
+	}
 }
 
 void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

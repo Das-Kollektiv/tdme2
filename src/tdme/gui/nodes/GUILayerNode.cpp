@@ -127,7 +127,7 @@ void GUILayerNode::setLeft(int left)
 void GUILayerNode::layoutSubNodes()
 {
 	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUIParentNode::layoutSubNodes();
@@ -158,7 +158,7 @@ void GUILayerNode::layoutSubNodes()
 void GUILayerNode::layout()
 {
 	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
+		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
