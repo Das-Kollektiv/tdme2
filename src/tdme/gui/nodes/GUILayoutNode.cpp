@@ -134,10 +134,7 @@ int GUILayoutNode::getContentHeight()
 void GUILayoutNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	if (conditionsMet == false) {
-		if (layouted == true) screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	{
 		auto v = alignment;
 		if (v == GUILayoutNode_Alignment::VERTICAL) {

@@ -199,12 +199,20 @@ void GUISelectBoxController::select()
 	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
 }
 
-void GUISelectBoxController::toggleOpenState() {
-	auto optionIdx = getFocussedOptionIdx();
-	if (optionIdx == -1) return;
+void GUISelectBoxController::toggleOpenState(int optionIdx) {
+	if (optionIdx < 0 || optionIdx >= selectBoxMultipleOptionControllers.size()) return;
 
 	auto selectBoxMultipleParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxMultipleOptionControllers[optionIdx]);
 	if (selectBoxMultipleParentOptionController != nullptr) selectBoxMultipleParentOptionController->toggleOpenState();
+
+	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
+	node->getScreenNode()->layout(node);
+}
+
+void GUISelectBoxController::toggleOpenState(GUIElementNode* optionElementNode) {
+	auto optionIdx = getOptionIdx(optionElementNode);
+	if (optionIdx == -1) return;
+	toggleOpenState(optionIdx);
 }
 
 void GUISelectBoxController::determineExpandedOptions() {
@@ -284,7 +292,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		case GUIKeyboardEvent::KEYCODE_LEFT: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					toggleOpenState();
+					toggleOpenState(getFocussedOptionIdx());
 					determineExpandedOptions();
 				}
 			}

@@ -194,9 +194,9 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 		(((_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
-		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)/* &&
+		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) &&
 		// TODO: a.drewke, relayout of parent node with auto in child and same size after condition change or similar is not required
-		(_node->getContentWidth() != _node->computedConstraints.width || _node->getContentHeight() != _node->computedConstraints.height || _node->layouted == false)*/) ||
+		(_node->getContentWidth() != _node->computedConstraints.width || _node->getContentHeight() != _node->computedConstraints.height || _node->layouted == false)) ||
 		// percent depend on its parent dimensions so make sure its already layouted
 		(_node->layouted == false &&
 		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
@@ -229,7 +229,10 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 void GUIScreenNode::invalidateLayouts() {
 	for (auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
-		if (node != nullptr) forceInvalidateLayout(node);
+		if (node != nullptr) {
+			auto layoutNode = forceInvalidateLayout(node);
+			if (layoutNode != nullptr) forceLayout(layoutNode); // TODO: actually the relayout should happen automatically by layouting on demand, but we have a bug here it seems
+		}
 	}
 	invalidateLayoutNodeIds.clear();
 }

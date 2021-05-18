@@ -29,6 +29,9 @@ class tdme::gui::elements::GUISelectBoxOptionController: public GUIElementContro
 	friend class GUISelectBoxController;
 	friend class GUISelectBoxParentOptionController;
 
+protected:
+	GUIParentNode* selectBoxNode { nullptr };
+
 private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
@@ -37,7 +40,6 @@ private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
 	static string CONDITION_CHILD;
-	GUIParentNode* selectBoxNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
 	bool focussed;

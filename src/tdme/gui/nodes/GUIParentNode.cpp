@@ -279,10 +279,7 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 
 void GUIParentNode::layout()
 {
-	if (conditionsMet == false) {
-		if (layouted == true) screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	GUINode::layout();
 	layoutSubNodes();
 }

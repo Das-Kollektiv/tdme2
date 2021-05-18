@@ -111,10 +111,7 @@ int GUITableNode::getContentHeight()
 void GUITableNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	if (conditionsMet == false) {
-		if (layouted == true) screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	{
 		auto starCount = 0;
 		auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;

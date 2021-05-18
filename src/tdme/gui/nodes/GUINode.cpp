@@ -206,7 +206,6 @@ void GUINode::layout()
 {
 	if (conditionsMet == false) {
 		computedConstraints = GUINode_ComputedConstraints();
-		if (layouted == true) screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;

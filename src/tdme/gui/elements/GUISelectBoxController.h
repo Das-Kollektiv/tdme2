@@ -122,11 +122,6 @@ private:
 	void focusPrevious();
 
 	/**
-	 * Toggle selected node
-	 */
-	void toggle();
-
-	/**
 	 * Toggle
 	 * @param optionIdx option index
 	 */
@@ -144,15 +139,23 @@ private:
 	void select();
 
 	/**
-	 * Toggle open state of current parent option
-	 */
-	void toggleOpenState();
-
-	/**
 	 * Determine expanded options
 	 */
 	void determineExpandedOptions();
+
+	/**
+	 * Toggle open state of current parent option
+	 * @param optionIdx option index
+	 */
+	void toggleOpenState(int optionIdx);
+
 public:
+	/**
+	 * Toggle open state of current parent option
+	 * @param optionElementNode option element node
+	 */
+	void toggleOpenState(GUIElementNode* optionElementNode);
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
