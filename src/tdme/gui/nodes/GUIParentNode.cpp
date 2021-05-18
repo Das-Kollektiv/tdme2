@@ -220,12 +220,6 @@ void GUIParentNode::addSubNode(GUINode* node)
 	if (node->flow == GUINode_Flow::FLOATING) {
 		floatingNodesCache.push_back(node);
 	}
-
-	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
-	while (parentControllerNode != nullptr) {
-		parentControllerNode->getController()->onSubTreeChange();
-		parentControllerNode = parentControllerNode->getParentControllerNode();
-	}
 }
 
 GUIParentNode_Overflow* GUIParentNode::getOverflowX()

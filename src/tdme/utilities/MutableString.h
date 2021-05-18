@@ -193,6 +193,14 @@ public:
 	int32_t indexOf(const MutableString& s) const;
 
 	/**
+	 * Replace string with another string
+	 * @param what what to replace
+	 * @param by to replace by
+	 * @param beginIndex index to begin with
+	 */
+	void replace(const string& what, const string& by, int beginIndex = 0);
+
+	/**
 	 * Equals
 	 * @param s2 string 2
 	 * @return string 2 equals this string

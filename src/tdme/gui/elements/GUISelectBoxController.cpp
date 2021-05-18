@@ -12,6 +12,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::elements::GUISelectBoxOptionController;
@@ -26,6 +27,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 constexpr char GUISelectBoxController::VALUE_DELIMITER;
 
@@ -70,6 +72,7 @@ void GUISelectBoxController::initialize()
 		setValue(value);
 	}
 	GUIElementController::initialize();
+	determineExpandedOptions();
 }
 
 void GUISelectBoxController::dispose()
@@ -83,8 +86,17 @@ void GUISelectBoxController::postLayout()
 
 int GUISelectBoxController::getFocussedOptionIdx()
 {
-	if (focussedOptionIdx != -1 && (focussedOptionIdx < 0 || focussedOptionIdx >= selectBoxMultipleOptionControllers.size())) {
+	if (selectBoxMultipleOptionControllers.empty() == true) {
 		focussedOptionIdx = -1;
+	} else
+	if (focussedOptionIdx == -1) {
+		focussedOptionIdx = 0;
+	} else
+	if (focussedOptionIdx < 0) {
+		focussedOptionIdx = 0;
+	} else
+	if (focussedOptionIdx >= selectBoxMultipleOptionControllers.size()) {
+		focussedOptionIdx = selectBoxMultipleOptionControllers.size() - 1;
 	}
 	return focussedOptionIdx;
 }
@@ -107,8 +119,14 @@ void GUISelectBoxController::unselect()
 
 void GUISelectBoxController::select(int optionIdx) {
 	if (optionIdx < 0 || optionIdx >= selectBoxMultipleOptionControllers.size()) return;
+	if (multipleSelection == true) {
+		for (auto selectBoxMultipleOptionController: selectBoxMultipleOptionControllers) selectBoxMultipleOptionController->unselect();
+	}
 	selectBoxMultipleOptionControllers[optionIdx]->select();
-	value.set(required_dynamic_cast<GUIElementNode*>(selectBoxMultipleOptionControllers[optionIdx]->getNode())->getValue());
+	value.reset();
+	if (multipleSelection == true) value.append(VALUE_DELIMITER);
+	value.append(required_dynamic_cast<GUIElementNode*>(selectBoxMultipleOptionControllers[optionIdx]->getNode())->getValue());
+	if (multipleSelection == true) value.append(VALUE_DELIMITER);
 }
 
 void GUISelectBoxController::select(GUIElementNode* optionElementNode) {
@@ -152,9 +170,7 @@ void GUISelectBoxController::focusNext()
 
 	unfocus();
 
-	optionIdx = (optionIdx + 1) % selectBoxMultipleOptionControllers.size();
-	if (optionIdx < 0)
-		optionIdx += selectBoxMultipleOptionControllers.size();
+	if (++optionIdx >= selectBoxMultipleOptionControllers.size()) optionIdx = selectBoxMultipleOptionControllers.size() - 1;
 
 	focus(optionIdx);
 }
@@ -166,9 +182,7 @@ void GUISelectBoxController::focusPrevious()
 
 	unfocus();
 
-	optionIdx = (optionIdx - 1) % static_cast<int>(selectBoxMultipleOptionControllers.size());
-	if (optionIdx < 0)
-		optionIdx += selectBoxMultipleOptionControllers.size();
+	if (--optionIdx < 0) optionIdx = 0;
 
 	focus(optionIdx);
 }
@@ -179,6 +193,16 @@ void GUISelectBoxController::toggle(int optionIdx)
 	selectBoxMultipleOptionControllers[optionIdx]->toggle();
 	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
 	selectBoxMultipleOptionControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+	string selectionValue;
+	selectionValue+= VALUE_DELIMITER;
+	selectionValue+= required_dynamic_cast<GUIElementNode*>(selectBoxMultipleOptionControllers[optionIdx]->getNode())->getValue();
+	selectionValue+= VALUE_DELIMITER;
+	if (selectBoxMultipleOptionControllers[optionIdx]->isSelected() == true) {
+		value.append(value.getString().empty() == false?selectionValue.substr(1):selectionValue);
+	} else {
+		value.replace(selectionValue, "|");
+		if (value.equals("|") == true) value.reset();
+	}
 }
 
 void GUISelectBoxController::toggle(GUIElementNode* optionElementNode)
@@ -210,7 +234,10 @@ void GUISelectBoxController::toggleOpenState(int optionIdx) {
 void GUISelectBoxController::toggleOpenState(GUIElementNode* optionElementNode) {
 	auto optionIdx = getOptionIdx(optionElementNode);
 	if (optionIdx == -1) return;
+
 	toggleOpenState(optionIdx);
+
+	determineExpandedOptions();
 }
 
 void GUISelectBoxController::determineExpandedOptions() {
@@ -337,7 +364,7 @@ const MutableString& GUISelectBoxController::getValue()
 
 void GUISelectBoxController::setValue(const MutableString& value)
 {
-	unselect();
+	for (auto selectBoxMultipleOptionController: selectBoxMultipleOptionControllers) selectBoxMultipleOptionController->unselect();
 	unfocus();
 	MutableString searchValue;
 	int selectBoxOptionNodeLastIdx = -1;
