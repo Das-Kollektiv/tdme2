@@ -93,3 +93,6 @@ void GUITabContentController::setValue(const MutableString& value)
 {
 }
 
+void GUITabContentController::onSubTreeChange()
+{
+}

@@ -207,3 +207,7 @@ const MutableString& GUIElementController::getValue()
 void GUIElementController::setValue(const MutableString& value)
 {
 }
+
+void GUIElementController::onSubTreeChange()
+{
+}

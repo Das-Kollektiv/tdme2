@@ -53,4 +53,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 };

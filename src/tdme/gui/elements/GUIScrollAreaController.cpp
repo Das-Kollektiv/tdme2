@@ -199,3 +199,7 @@ void GUIScrollAreaController::setValue(const MutableString& value)
 {
 }
 
+void GUIScrollAreaController::onSubTreeChange()
+{
+}
+

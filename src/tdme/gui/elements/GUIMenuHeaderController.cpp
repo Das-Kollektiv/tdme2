@@ -242,3 +242,7 @@ void GUIMenuHeaderController::setValue(const MutableString& value)
 {
 }
 
+void GUIMenuHeaderController::onSubTreeChange()
+{
+}
+

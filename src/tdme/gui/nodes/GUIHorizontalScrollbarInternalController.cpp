@@ -168,3 +168,6 @@ void GUIHorizontalScrollbarInternalController::setValue(const MutableString& val
 {
 }
 
+void GUIHorizontalScrollbarInternalController::onSubTreeChange()
+{
+}

@@ -416,11 +416,13 @@ void GUIInputInternalController::reset()
 	resetCursorMode();
 }
 
-bool GUIInputInternalController::isShowCursor() {
+bool GUIInputInternalController::isShowCursor()
+{
 	return showCursor;
 }
 
-void GUIInputInternalController::formatText() {
+void GUIInputInternalController::formatText()
+{
 	switch (type) {
 		case TYPE_STRING:
 			break;
@@ -451,4 +453,8 @@ void GUIInputInternalController::formatText() {
 			}
 			break;
 	}
+}
+
+void GUIInputInternalController::onSubTreeChange()
+{
 }

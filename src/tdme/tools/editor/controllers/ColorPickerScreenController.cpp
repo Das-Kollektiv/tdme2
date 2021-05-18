@@ -205,4 +205,3 @@ void ColorPickerScreenController::setColor(const Color4Base& color) {
 	updateColorHex();
 	if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
 }
-

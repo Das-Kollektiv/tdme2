@@ -135,3 +135,7 @@ const MutableString& ColorPickerImageController::getValue()
 void ColorPickerImageController::setValue(const MutableString& value)
 {
 }
+
+void ColorPickerImageController::onSubTreeChange()
+{
+}

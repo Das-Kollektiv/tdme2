@@ -147,3 +147,7 @@ void GUITabsController::setValue(const MutableString& value)
 	setTabContentSelected(value.getString());
 }
 
+void GUITabsController::onSubTreeChange()
+{
+}
+

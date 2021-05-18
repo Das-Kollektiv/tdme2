@@ -126,3 +126,7 @@ void GUIInputController::setValue(const MutableString& value)
 	inputInternalController->reset();
 	onValueChange();
 }
+
+void GUIInputController::onSubTreeChange()
+{
+}

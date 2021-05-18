@@ -79,8 +79,6 @@ void GUISelectBoxController::dispose()
 
 void GUISelectBoxController::postLayout()
 {
-	// TODO: a.drewke, maybe we should have a better method for this, like onPostChildrenChange or something
-	determineExpandedOptions();
 }
 
 int GUISelectBoxController::getFocussedOptionIdx()
@@ -358,4 +356,8 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		}
 	}
 	if (selectBoxOptionNodeLastIdx != -1) focus(selectBoxOptionNodeLastIdx);
+}
+
+void GUISelectBoxController::onSubTreeChange() {
+	determineExpandedOptions();
 }

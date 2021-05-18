@@ -95,10 +95,15 @@ void GUIParentNode::clearSubNodes()
 	subNodes.clear();
 	screenNode->forceInvalidateLayout(this);
 
-	//
 	setConditionsMet();
 	floatingNodesCache.clear();
 	invalidateRenderCaches();
+
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+	while (parentControllerNode != nullptr) {
+		parentControllerNode->getController()->onSubTreeChange();
+		parentControllerNode = parentControllerNode->getParentControllerNode();
+	}
 }
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
@@ -145,6 +150,12 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 			if (scrollableHeight > 0 && childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
 		}
 	}
+
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+	while (parentControllerNode != nullptr) {
+		parentControllerNode->getController()->onSubTreeChange();
+		parentControllerNode = parentControllerNode->getParentControllerNode();
+	}
 }
 
 void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
@@ -186,6 +197,12 @@ void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 			if (scrollableHeight > 0 && childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
 		}
 	}
+
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+	while (parentControllerNode != nullptr) {
+		parentControllerNode->getController()->onSubTreeChange();
+		parentControllerNode = parentControllerNode->getParentControllerNode();
+	}
 }
 
 void GUIParentNode::addSubNode(GUINode* node)
@@ -202,6 +219,12 @@ void GUIParentNode::addSubNode(GUINode* node)
 	subNodes.push_back(node);
 	if (node->flow == GUINode_Flow::FLOATING) {
 		floatingNodesCache.push_back(node);
+	}
+
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+	while (parentControllerNode != nullptr) {
+		parentControllerNode->getController()->onSubTreeChange();
+		parentControllerNode = parentControllerNode->getParentControllerNode();
 	}
 }
 

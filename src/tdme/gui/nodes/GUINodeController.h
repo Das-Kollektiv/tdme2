@@ -106,4 +106,9 @@ public:
 	 */
 	virtual void setDisabled(bool disabled) = 0;
 
+	/**
+	 * On sub tree change
+	 */
+	virtual void onSubTreeChange() = 0;
+
 };
