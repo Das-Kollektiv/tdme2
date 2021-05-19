@@ -88,12 +88,10 @@
 		
 </element>
 
-<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto">
-	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto">
-		<inner-xml parent-id="{$id}"> 
-			<![CDATA[
-				{__InnerXML__}
-			]]>
-		</inner-xml>
-	</layout>
+<layout id="{$id}_inner" show-on="{$id}_arrow.opened" alignment="vertical" width="100%" height="auto">
+	<inner-xml parent-id="{$id}">
+		<![CDATA[
+			{__InnerXML__}
+		]]>
+	</inner-xml>
 </layout>
