@@ -137,6 +137,7 @@ private:
 	GUIParentNode* tabs { nullptr };
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
+	GUIElementNode* outliner { nullptr };
 	GUIParentNode* outlinerScrollarea { nullptr };
 	GUIParentNode* detailsScrollarea { nullptr };
 	string projectPath;
