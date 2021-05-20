@@ -172,8 +172,8 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 		TabView::OutlinerState outlinerState;
 		editorScreenController->storeOutlinerState(outlinerState);
 		tab.getTabView()->reloadOutliner();
+		if (newSelectionValue.empty() == false) outlinerState.value = newSelectionValue;
 		editorScreenController->restoreOutlinerState(outlinerState);
-		editorScreenController->setOutlinerSelection(newSelectionValue);
 	}
 }
 
