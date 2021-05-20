@@ -903,6 +903,10 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		view->playAnimation(animationId);
 		setAnimationDetails(animationId);
+	} else {
+		prototypeBaseSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeDisplaySubController->updateDetails(view->getPrototype(),outlinerNode);
+		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
 

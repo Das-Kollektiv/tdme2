@@ -105,6 +105,13 @@ void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const 
 	}
 }
 
+void PrototypeBaseSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
+	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+		auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+		setPropertyDetails(prototype, selectedPropertyName);
+	}
+}
+
 const string PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, const string& propertyName) {
 	Console::println("PrototypeBaseSubController::applyPropertyDetailsRename(): " + propertyName);
 
@@ -126,13 +133,6 @@ const string PrototypeBaseSubController::applyPropertyDetails(Prototype* prototy
 
 void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
 {
-	if (node->getId() == "selectbox_outliner") {
-		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
-			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-			setPropertyDetails(prototype, selectedPropertyName);
-		}
-	}
 }
 
 void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)

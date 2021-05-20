@@ -210,6 +210,25 @@ void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
 	}
 }
 
+void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
+	if (outlinerNode == "physics") {
+		setPhysicsDetails(prototype);
+		view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+		view->setDisplayBoundingVolume(true);
+	} else
+	if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
+		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
+		setBoundingVolumeDetails(prototype, boundingVolumeIdx);
+		view->setDisplayBoundingVolumeIdx(boundingVolumeIdx);
+		view->startEditingBoundingVolume(prototype);
+		view->setDisplayBoundingVolume(true);
+	} else {
+		view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+		view->endEditingBoundingVolume(prototype);
+		view->setDisplayBoundingVolume(false);
+	}
+}
+
 void PrototypePhysicsSubController::setBoundingVolumeSphereDetails(const Vector3& center, float radius) {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->setValue(MutableString(center.getX()));
@@ -499,25 +518,6 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 					break;
 				}
 			}
-		}
-	}
-	if (node->getId() == "selectbox_outliner") {
-		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (outlinerNode == "physics") {
-			setPhysicsDetails(prototype);
-			view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
-			view->setDisplayBoundingVolume(true);
-		} else
-		if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
-			auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
-			setBoundingVolumeDetails(prototype, boundingVolumeIdx);
-			view->setDisplayBoundingVolumeIdx(boundingVolumeIdx);
-			view->startEditingBoundingVolume(prototype);
-			view->setDisplayBoundingVolume(true);
-		} else {
-			view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
-			view->endEditingBoundingVolume(prototype);
-			view->setDisplayBoundingVolume(false);
 		}
 	}
 }

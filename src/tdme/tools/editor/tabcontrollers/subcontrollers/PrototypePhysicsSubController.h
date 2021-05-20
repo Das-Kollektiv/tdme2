@@ -180,6 +180,13 @@ public:
 	void applyPhysicsDetails(Prototype* prototype);
 
 	/**
+	 * Update details panel
+	 * @param prototype prototype
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(Prototype* prototype, const string& outlinerNode);
+
+	/**
 	 * Set bounding volume sphere details
 	 * @param center center
 	 * @param radius radius

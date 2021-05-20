@@ -149,6 +149,10 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 	setDisplayDistanceShaderDetails(prototype);
 }
 
+void PrototypeDisplaySubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
+	if (outlinerNode == "rendering") setDisplayDetails(prototype);
+}
+
 void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 	try {
 		prototype->setShader(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_shader"))->getController()->getValue().getString());
@@ -334,10 +338,6 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 		applyDisplayShaderDetails(prototype, "rendering.distanceshader.", StringTools::substring(node->getId(), string("rendering.distanceshader.").size(), node->getId().size()), distanceShaderParameters);
 		prototype->setDistanceShaderParameters(distanceShaderParameters);
 		view->updateShaderParameters(prototype);
-	}
-	if (node->getId() == "selectbox_outliner") {
-		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (outlinerNode == "rendering") setDisplayDetails(prototype);
 	}
 }
 

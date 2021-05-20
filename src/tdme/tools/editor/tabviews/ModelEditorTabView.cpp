@@ -605,8 +605,8 @@ Engine* ModelEditorTabView::getEngine() {
 
 void ModelEditorTabView::activate() {
 	modelEditorTabController->setOutlinerContent();
-	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
+	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void ModelEditorTabView::deactivate() {

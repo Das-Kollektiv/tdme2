@@ -488,7 +488,6 @@ void GUISelectBoxController::expandParentOptionsByValues(const vector<string>& e
 	determineParentOptions();
 	for (auto& expandedParentOptionValue: expandedParentOptionValues) {
 		for (auto selectBoxParentOptionController: selectBoxOptionControllers) {
-			Console::println("aaa: " + expandedParentOptionValue + " -> " + required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue());
 			if (expandedParentOptionValue == required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue()) {
 				auto parentOptionNodeController = required_dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxParentOptionController);
 				if (parentOptionNodeController->isExpanded() == false) parentOptionNodeController->toggleExpandState();

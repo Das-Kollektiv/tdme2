@@ -84,6 +84,13 @@ public:
 	void setPropertyDetails(Prototype* prototype, const string& propertyName);
 
 	/**
+	 * Update details panel
+	 * @param prototype prototype
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(Prototype* prototype, const string& outlinerNode);
+
+	/**
 	 * Apply property details
 	 * @param prototype prototype
 	 * @param propertyName property name
