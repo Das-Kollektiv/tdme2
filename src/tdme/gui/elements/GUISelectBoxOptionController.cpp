@@ -129,7 +129,6 @@ bool GUISelectBoxOptionController::isHierarchyExpanded() {
 }
 
 void GUISelectBoxOptionController::expandHierarchy() {
-	Console::println("GUISelectBoxOptionController::expandHierarchy(): " + dynamic_cast<GUIElementNode*>(node)->getValue());
 	if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
 		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
 		while (_parentElementNode != nullptr) {

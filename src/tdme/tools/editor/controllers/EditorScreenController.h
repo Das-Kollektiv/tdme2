@@ -140,6 +140,7 @@ private:
 	GUIElementNode* outliner { nullptr };
 	GUIParentNode* outlinerScrollarea { nullptr };
 	GUIParentNode* detailsScrollarea { nullptr };
+	GUIElementNode* outlinerAddDropDown { nullptr };
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
 	string selectedTabId;
@@ -224,10 +225,22 @@ public:
 	const string getOutlinerSelection();
 
 	/**
+	 * Set outliner selection
+	 * @param newSelectionValue new selection value
+	 */
+	void setOutlinerSelection(const string& newSelectionValue);
+
+	/**
 	 * Set outliner content
 	 * @param xml xml
 	 */
 	void setOutlinerContent(const string& xml);
+
+	/**
+	 * Set outliner add content
+	 * @param xml xml
+	 */
+	void setOutlinerAddDropDownContent(const string& xml);
 
 	/**
 	 * Set details content

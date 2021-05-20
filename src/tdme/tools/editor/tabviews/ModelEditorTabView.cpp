@@ -604,6 +604,7 @@ Engine* ModelEditorTabView::getEngine() {
 }
 
 void ModelEditorTabView::activate() {
+	modelEditorTabController->setOutlinerAddDropDownContent();
 	modelEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	modelEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());

@@ -97,6 +97,7 @@ void EditorScreenController::initialize()
 		outliner = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_outliner"));
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
+		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -474,11 +475,29 @@ const string EditorScreenController::getOutlinerSelection() {
 	return string();
 }
 
+void EditorScreenController::setOutlinerSelection(const string& newSelectionValue) {
+	try {
+		outliner->getController()->setValue(MutableString(newSelectionValue));
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setOutlinerSelection(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
 void EditorScreenController::setOutlinerContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::setOutlinerContent(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void EditorScreenController::setOutlinerAddDropDownContent(const string& xml) {
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerAddDropDown->getId()))->replaceSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setOutlinerAddDropDownContent(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }

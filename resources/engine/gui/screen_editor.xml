@@ -129,20 +129,7 @@
 									<input width="*" height="auto" hint="Search" image="resources/engine/images/search.png" />
 									<space width="5"/>
 									<dropdown template="dropdown_template_button.xml" id="dropdown_outliner_add" width="75" height="25" image="resources/engine/images/add.png" text="Add">
-										<dropdown-option text="Folder" value="1" />
-										<menu-separator />
-										<dropdown-option text="Light" value="2" />
-										<dropdown-option text="Terrain" value="3" />
-										<dropdown-option text="Sky" value="4" />
-										<dropdown-option text="Empty" value="5" />
-										<dropdown-option text="Trigger" value="6" />
-										<dropdown-option text="Env.Map" value="7" />
-										<dropdown-option text="BV" value="8" />
-										<dropdown-option text="LOD" value="9" />
-										<dropdown-option text="Particle" value="10" />
-										<dropdown-option text="Sound" value="11" />
-										<dropdown-option text="Foliage" value="12" />
-										<dropdown-option text="Property" value="13" />
+										<dropdown-option text="Add" value="" selected="true" />
 									</dropdown>
 								</layout>
 								

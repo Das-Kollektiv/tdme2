@@ -167,6 +167,11 @@ public:
 	void setOutlinerContent();
 
 	/**
+	 * Set outliner add drop down content
+	 */
+	void setOutlinerAddDropDownContent();
+
+	/**
 	 * Set details content
 	 */
 	void setDetailsContent();

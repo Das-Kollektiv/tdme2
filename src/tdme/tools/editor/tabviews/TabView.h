@@ -64,7 +64,9 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void updateRendering() = 0;
 
 	/**
-	 * Activate
+	 * Reload outliner
+	 * @param newSelectionValue new selection value
+	 *
 	 */
 	virtual void reloadOutliner() = 0;
 

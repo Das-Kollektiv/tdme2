@@ -322,7 +322,6 @@ void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* even
 	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = required_dynamic_cast<GUISelectBoxController*>(this->node->getController())->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
-		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
 		}
@@ -434,7 +433,10 @@ void GUISelectBoxController::setValue(const MutableString& value)
 {
 	unfocus();
 	determineAllOptions();
-	for (auto selectBoxOptionController: selectBoxOptionControllers) selectBoxOptionController->unselect();
+	for (auto selectBoxOptionController: selectBoxOptionControllers) {
+		selectBoxOptionController->unselect();
+		selectBoxOptionController->unfocus();
+	}
 	MutableString searchValue;
 	GUISelectBoxOptionController* selectBoxOptionNodeControllerLast = nullptr;
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
