@@ -87,7 +87,7 @@ private:
 	void unfocus();
 
 	/**
-	 * @return if is collapsed in tree view
+	 * @return if hierarchy is expanded
 	 */
 	bool isHierarchyExpanded();
 

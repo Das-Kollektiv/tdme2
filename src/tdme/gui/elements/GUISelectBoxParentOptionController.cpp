@@ -9,7 +9,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/utilities/Console.h>
 
 using tdme::gui::elements::GUISelectBoxParentOptionController;
 using tdme::gui::events::GUIActionListener;
@@ -21,7 +20,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 
 string GUISelectBoxParentOptionController::CONDITION_EXPANDED = "expanded";
 string GUISelectBoxParentOptionController::CONDITION_COLLAPSED = "collapsed";
@@ -75,7 +73,6 @@ bool GUISelectBoxParentOptionController::isExpanded() {
 
 void GUISelectBoxParentOptionController::toggleExpandState()
 {
-	Console::println("GUISelectBoxParentOptionController::toggleExpandState(): " + dynamic_cast<GUIElementNode*>(node)->getValue());
 	arrowNode->getActiveConditions().remove(expanded == true ?CONDITION_EXPANDED:CONDITION_COLLAPSED);
 	expanded = expanded == true?false:true;
 	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
