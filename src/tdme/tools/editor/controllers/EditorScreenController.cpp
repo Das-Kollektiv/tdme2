@@ -214,9 +214,9 @@ void EditorScreenController::onOpenProject() {
 		// overriden methods
 		void performAction() override {
 			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
 			editorScreenController->scanProjectPaths();
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
