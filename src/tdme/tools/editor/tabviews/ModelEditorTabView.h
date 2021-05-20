@@ -72,6 +72,7 @@ private:
 	Vector3 objectScale;
 	string attachment1Bone;
 	Model* attachment1Model { nullptr };
+	TabView::OutlinerState outlinerState;
 
 	/**
 	 * Init model
@@ -237,6 +238,7 @@ public:
 	void dispose() override;
 	Engine* getEngine() override;
 	void activate() override;
+	void deactivate() override;
 	void reloadOutliner() override;
 	void playSound(const string& soundId) override;
 	void stopSound() override;

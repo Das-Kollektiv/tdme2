@@ -302,6 +302,21 @@ void GUISelectBoxController::determineExpandedOptions() {
 	}
 }
 
+void GUISelectBoxController::determineParentOptions() {
+	//
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
+	//
+	selectBoxOptionControllers.clear();
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes[i];
+		auto childController = childControllerNode->getController();
+		auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(childController);
+		if (selectBoxParentOptionController != nullptr) {
+			selectBoxOptionControllers.push_back(selectBoxParentOptionController);
+		}
+	}
+}
+
 void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
@@ -456,4 +471,31 @@ void GUISelectBoxController::setValue(const MutableString& value)
 
 void GUISelectBoxController::onSubTreeChange() {
 	determineExpandedOptions();
+}
+
+void GUISelectBoxController::determineExpandedParentOptionValues(vector<string>& expandedParentOptionValues) {
+	expandedParentOptionValues.clear();
+	determineParentOptions();
+	for (auto selectBoxParentOptionController: selectBoxOptionControllers) {
+		if (required_dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxParentOptionController)->isExpanded() == true) {
+			expandedParentOptionValues.push_back(required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue());
+		}
+	}
+	determineExpandedOptions();
+}
+
+void GUISelectBoxController::expandParentOptionsByValues(const vector<string>& expandedParentOptionValues) {
+	determineParentOptions();
+	for (auto& expandedParentOptionValue: expandedParentOptionValues) {
+		for (auto selectBoxParentOptionController: selectBoxOptionControllers) {
+			Console::println("aaa: " + expandedParentOptionValue + " -> " + required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue());
+			if (expandedParentOptionValue == required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue()) {
+				auto parentOptionNodeController = required_dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxParentOptionController);
+				if (parentOptionNodeController->isExpanded() == false) parentOptionNodeController->toggleExpandState();
+			}
+		}
+	}
+	determineExpandedOptions();
+	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
+	node->getScreenNode()->layout(node);
 }

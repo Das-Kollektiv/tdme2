@@ -15,6 +15,7 @@
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -203,6 +204,18 @@ public:
 	 * @param relativeProjectFileName relative project file name
 	 */
 	void onOpenFile(const string& relativeProjectFileName);
+
+	/**
+	 * Store outliner state
+	 * @param outlinerState outliner state
+	 */
+	void storeOutlinerState(TabView::OutlinerState& outlinerState);
+
+	/**
+	 * Restore outliner state
+	 * @param outlinerState outliner state
+	 */
+	void restoreOutlinerState(const TabView::OutlinerState& outlinerState);
 
 	/**
 	 * @return outliner selection

@@ -69,7 +69,13 @@ void EditorView::handleInputEvents()
 		auto& tab = tabViewIt->second;
 		int left, top, width, height;
 		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
-		if (lastSelectedTabId != selectedTabId) tab.getTabView()->activate();
+		if (lastSelectedTabId != selectedTabId) {
+			auto lastTabViewIt = tabViews.find(lastSelectedTabId);
+			if (lastTabViewIt != tabViews.end()) {
+				lastTabViewIt->second.getTabView()->deactivate();
+			}
+			tab.getTabView()->activate();
+		}
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = event.getXUnscaled() - left;
 			auto eventY = event.getYUnscaled() - top;

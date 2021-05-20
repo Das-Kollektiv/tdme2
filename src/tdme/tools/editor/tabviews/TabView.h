@@ -2,11 +2,17 @@
 
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 
+#include <vector>
+
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/utilities/MutableString.h>
+
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::utilities::MutableString;
 
 /**
  * Tab view interface
@@ -15,6 +21,12 @@ using tdme::gui::events::GUIInputEventHandler;
  */
 struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 {
+	struct OutlinerState {
+		vector<string> expandedOutlinerParentOptionValues;
+		MutableString value;
+		float renderOffsetX { 0.0f };
+		float renderOffsetY { 0.0f };
+	};
 
 	/**
 	 * Initiates the view
@@ -40,6 +52,11 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	 * Activate
 	 */
 	virtual void activate() = 0;
+
+	/**
+	 * Deactivate
+	 */
+	virtual void deactivate() = 0;
 
 	/**
 	 * Update rendering

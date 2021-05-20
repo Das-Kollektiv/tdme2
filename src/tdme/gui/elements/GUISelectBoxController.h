@@ -149,6 +149,11 @@ private:
 	void determineExpandedOptions();
 
 	/**
+	 * Determine parent options
+	 */
+	void determineParentOptions();
+
+	/**
 	 * Toggle open state of current parent option
 	 * @param optionIdx option index
 	 */
@@ -188,5 +193,17 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 	void onSubTreeChange() override;
+
+	/**
+	 * Determine expanded parent option values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void determineExpandedParentOptionValues(vector<string>& expandedParentOptionValues);
+
+	/**
+	 * Expand parent options by values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void expandParentOptionsByValues(const vector<string>& expandedParentOptionValues);
 
 };
