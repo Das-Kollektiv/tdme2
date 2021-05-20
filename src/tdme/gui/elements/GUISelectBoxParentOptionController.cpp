@@ -23,11 +23,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::utilities::Console;
 
-string GUISelectBoxParentOptionController::CONDITION_OPENED = "opened";
-string GUISelectBoxParentOptionController::CONDITION_CLOSED = "closed";
+string GUISelectBoxParentOptionController::CONDITION_EXPANDED = "expanded";
+string GUISelectBoxParentOptionController::CONDITION_COLLAPSED = "collapsed";
 
 GUISelectBoxParentOptionController::GUISelectBoxParentOptionController(GUINode* node)
-	: GUISelectBoxOptionController(node), open(false)
+	: GUISelectBoxOptionController(node), expanded(false)
 {
 }
 
@@ -55,7 +55,7 @@ void GUISelectBoxParentOptionController::initialize()
 		GUISelectBoxParentOptionController* selectBoxParentOptionController { nullptr };
 	};
 	arrowNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
-	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
 	arrowNode->getScreenNode()->addActionListener(arrowNodeActionListener = new ArrowNodeActionListener(this));
 	//
 	GUISelectBoxOptionController::initialize();
@@ -69,9 +69,14 @@ void GUISelectBoxParentOptionController::dispose() {
 	}
 }
 
-void GUISelectBoxParentOptionController::toggleOpenState()
+bool GUISelectBoxParentOptionController::isExpanded() {
+	return expanded;
+}
+
+void GUISelectBoxParentOptionController::toggleExpandState()
 {
-	arrowNode->getActiveConditions().remove(open == true ?CONDITION_OPENED:CONDITION_CLOSED);
-	open = open == true?false:true;
-	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	Console::println("GUISelectBoxParentOptionController::toggleExpandState(): " + dynamic_cast<GUIElementNode*>(node)->getValue());
+	arrowNode->getActiveConditions().remove(expanded == true ?CONDITION_EXPANDED:CONDITION_COLLAPSED);
+	expanded = expanded == true?false:true;
+	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
 }

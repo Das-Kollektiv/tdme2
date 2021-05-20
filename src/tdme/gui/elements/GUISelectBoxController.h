@@ -37,7 +37,7 @@ private:
 	static string CONDITION_ENABLED;
 	static constexpr char VALUE_DELIMITER { '|' };
 	vector<GUINode*> childControllerNodes;
-	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
+	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
 	bool disabled;
 	bool multipleSelection;
 	int focussedOptionIdx;
@@ -139,6 +139,11 @@ private:
 	void select();
 
 	/**
+	 * Determine all options
+	 */
+	void determineAllOptions();
+
+	/**
 	 * Determine expanded options
 	 */
 	void determineExpandedOptions();
@@ -148,6 +153,18 @@ private:
 	 * @param optionIdx option index
 	 */
 	void toggleOpenState(int optionIdx);
+
+	/**
+	 * Expand
+	 * @param optionIdx option index
+	 */
+	void expand(int optionIdx);
+
+	/**
+	 * Collapse
+	 * @param optionIdx option index
+	 */
+	void collapse(int optionIdx);
 
 public:
 	/**

@@ -89,7 +89,12 @@ private:
 	/**
 	 * @return if is collapsed in tree view
 	 */
-	bool isCollapsed();
+	bool isHierarchyExpanded();
+
+	/**
+	 * Expand hierarchy
+	 */
+	void expandHierarchy();
 public:
 	// overridden methods
 	bool isDisabled() override;
