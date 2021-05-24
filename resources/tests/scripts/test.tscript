@@ -1,0 +1,25 @@
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log(Init)
+	console.log(MiniScript will do the job:, space(), and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true))
+	console.log(1 + 2 + 3 - 1 should be -->, space(), sub(add(1, 2, 3), 1)))
+	console.log(20 / 2 -->, space(), div(20, 2))
+	console.log(11 * 10 -->, space(), mul(11, 10))
+	$i = int(1)
+	forTime(2000)
+    	console.log($i,-->,space(),Hello World)
+    	script.wait(500)
+    	$i = add($i, 1)
+    end
+    console.log(Done)
+    emit(emittest)
+end
+# an error has occurred
+on: error
+	console.log(An error occurred)
+    script.wait(1000)
+end
+on: emittest
+	console.log(SCRIPT JUST EMITTED A CONDITION)
+    stop()
+end
