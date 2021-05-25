@@ -55,6 +55,7 @@ private:
 	};
 
 	struct ScriptState {
+		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
 		enum ConditionType {
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
@@ -67,7 +68,8 @@ private:
 		string id;
 		map<string, ScriptVariable> variables;
 		map<int, int64_t> forTimeStarted;
-		stack<ConditionType> conditionTypeStack;
+		stack<bool> conditionStack;
+		stack<EndType> endTypeStack;
 		int state { -1 };
 	};
 
