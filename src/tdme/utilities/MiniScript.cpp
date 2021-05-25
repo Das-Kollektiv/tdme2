@@ -174,6 +174,8 @@ void MiniScript::parseScriptStatement(const string& statement, string& variable,
 			argument+= c;
 		}
 	}
+	method = StringTools::trim(method);
+	variable = StringTools::trim(variable);
 }
 
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
@@ -303,6 +305,8 @@ void MiniScript::emit(const string& condition) {
 	}
 	//
 	scriptState.forTimeStarted.clear();
+	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
+	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
 	scriptState.id.clear();
 	scriptState.idx = scriptIdx;
 	scriptState.statementIdx = 0;
@@ -316,12 +320,17 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptLines);
 	} catch (FileSystemException& fse)	{
-		Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
+		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
 	}
 	auto haveCondition = false;
 	auto line = 1;
 	auto statementIdx = 1;
-	stack<int> gotoStatementIdxStack;
+	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
+	struct GotoStatementStruct {
+		GotoStatementType type;
+		int statementIdx;
+	};
+	stack<GotoStatementStruct> gotoStatementStack;
 	for (auto scriptLine: scriptLines) {
 		scriptLine = StringTools::trim(scriptLine);
 		if (StringTools::startsWith(scriptLine, "#") == true) {
@@ -343,23 +352,125 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			}
 		} else {
 			if (scriptLine == "end") {
-				if (gotoStatementIdxStack.empty() == false) {
-					auto gotoStatementIdx = gotoStatementIdxStack.top();
-					gotoStatementIdxStack.pop();
-					scripts.at(scripts.size() - 1).statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = gotoStatementIdx });
-					scripts.at(scripts.size() - 1).statements.at(gotoStatementIdx).gotoStatementIdx = scripts.at(scripts.size() - 1).statements.size();
+				if (gotoStatementStack.empty() == false) {
+					auto gotoStatementStackElement = gotoStatementStack.top();
+					gotoStatementStack.pop();
+					switch(gotoStatementStackElement.type) {
+						case GOTOSTATEMENTTYPE_FOR:
+							{
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = gotoStatementStackElement.statementIdx });
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+							}
+							break;
+						case GOTOSTATEMENTTYPE_IF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						case GOTOSTATEMENTTYPE_ELSE:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						case GOTOSTATEMENTTYPE_ELSEIF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+					}
 				} else{
 					haveCondition = false;
 				}
+			} else
+			if (scriptLine == "else") {
+				if (gotoStatementStack.empty() == false) {
+					auto gotoStatementStackElement = gotoStatementStack.top();
+					gotoStatementStack.pop();
+					switch(gotoStatementStackElement.type) {
+						case GOTOSTATEMENTTYPE_IF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						case GOTOSTATEMENTTYPE_ELSEIF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						default:
+							Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": else without if/elseif");
+							break;
+					}
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_ELSE,
+							.statementIdx = statementIdx
+						}
+					);
+				} else {
+					Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": else without if");
+				}
+			} else
+			if (StringTools::regexMatch(scriptLine, "^elseif[\\s]*\\(.*\\)$") == true) {
+				if (gotoStatementStack.empty() == false) {
+					auto gotoStatementStackElement = gotoStatementStack.top();
+					gotoStatementStack.pop();
+					switch(gotoStatementStackElement.type) {
+						case GOTOSTATEMENTTYPE_IF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						case GOTOSTATEMENTTYPE_ELSEIF:
+							{
+								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+							}
+							break;
+						default:
+							Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": elseif without if");
+							break;
+					}
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_ELSEIF,
+							.statementIdx = statementIdx
+						}
+					);
+				} else {
+					Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": elseif without if");
+				}
 			} else {
-				if (StringTools::startsWith(scriptLine, "forTime") == true) gotoStatementIdxStack.push(statementIdx);
+				if (StringTools::regexMatch(scriptLine, "^forTime[\\s]*\\(.*\\)$") == true ||
+					StringTools::regexMatch(scriptLine, "^forCondition[\\s]*\\(.*\\)$") == true) {
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_FOR,
+							.statementIdx = statementIdx
+						}
+					);
+				} else
+				if (StringTools::regexMatch(scriptLine, "^if[\\s]*\\(.*\\)$") == true) {
+					gotoStatementStack.push(
+						{
+							.type = GOTOSTATEMENTTYPE_IF,
+							.statementIdx = statementIdx
+						}
+					);
+				}
 				scripts.at(scripts.size() - 1).statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
 			}
 			statementIdx++;
 		}
 		line++;
 	}
-	Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName);
+	Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName);
 	for (auto& script: scripts) {
 		for (auto& condition: script.conditions)
 			Console::print(condition + "; ");
@@ -370,6 +481,11 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	}
 
 	//
+	if (gotoStatementStack.empty() == false) {
+		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": unbalanced forXXX/if/elseif/else/end");
+	}
+
+	//
 	startScript();
 }
 
@@ -377,6 +493,8 @@ void MiniScript::startScript(int64_t delay) {
 	if (VERBOSE == true) Console::println("MiniScript::startScript(): waiting " + to_string(delay) + "ms; starting script.");
 	scriptState.variables.clear();
 	scriptState.forTimeStarted.clear();
+	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
+	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
 	scriptState.id.clear();
 	registerVariables();
 	scriptState.statementIdx = 0;
@@ -716,8 +834,25 @@ void MiniScript::registerMethods() {
 				return "end";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
-				miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+				if (miniScript->scriptState.endTypeStack.empty() == true) {
+					Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+					miniScript->startErrorScript();
+					return;
+				}
+				auto endType = miniScript->scriptState.endTypeStack.top();
+				miniScript->scriptState.endTypeStack.pop();
+				switch(endType) {
+					case ScriptState::ENDTYPE_FOR:
+						// no op
+						break;
+					case ScriptState::ENDTYPE_IF:
+						miniScript->scriptState.conditionStack.pop();
+						break;
+				}
+				if (statement.gotoStatementIdx != STATE_NONE) {
+					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
+					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+				}
 			}
 		};
 		registerMethod(new ScriptMethodEnd(this));
@@ -741,7 +876,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t time;
 				if (miniScript->getIntegerValue(argumentValues, 0, time) == false) {
-					Console::println("ScriptMethodForTime::execute(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
+					Console::println("ScriptMethodForTime::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -754,14 +889,144 @@ void MiniScript::registerMethods() {
 				} else {
 					timeWaitStarted = forTimeStartedIt->second;
 				}
+				//
 				if (Time::getCurrentMillis() > timeWaitStarted + time) {
 					miniScript->scriptState.forTimeStarted.erase(statement.line);
+					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
+				} else {
+					miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodForTime(this));
+	}
+	{
+		//
+		class ScriptMethodForCondition: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodForCondition(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "forCondition";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				bool booleanValue;
+				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+					Console::println("ScriptMethodForTime::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: boolean expected");
+					miniScript->startErrorScript();
+					return;
+				}
+				//
+				auto now = Time::getCurrentMillis();
+				if (booleanValue == false) {
+					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
+				} else {
+					miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodForCondition(this));
+	}
+	{
+		//
+		class ScriptMethodIfCondition: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodIfCondition(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "if";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				bool booleanValue;
+				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+					Console::println("ScriptMethodIfCondition::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: boolean expected");
+					miniScript->startErrorScript();
+					return;
+				}
+				//
+				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_IF);
+				//
+				miniScript->scriptState.conditionStack.push(booleanValue);
+				if (booleanValue == false) {
 					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
 					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
 				}
 			}
 		};
-		registerMethod(new ScriptMethodForTime(this));
+		registerMethod(new ScriptMethodIfCondition(this));
+	}
+	{
+		//
+		class ScriptMethodElseIfCondition: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodElseIfCondition(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "elseif";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				bool booleanValue;
+				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+					Console::println("ScriptMethodElseIfCondition::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: boolean expected");
+					miniScript->startErrorScript();
+					return;
+				}
+				//
+				auto conditionStackElement = miniScript->scriptState.conditionStack.top();
+				if (conditionStackElement == false) {
+					miniScript->scriptState.conditionStack.pop();
+					miniScript->scriptState.conditionStack.push(booleanValue);
+				}
+				if (conditionStackElement == true || booleanValue == false) {
+					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodElseIfCondition(this));
+	}
+	{
+		//
+		class ScriptMethodElse: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodElse(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "else";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				auto conditionStackElement = miniScript->scriptState.conditionStack.top();
+				if (conditionStackElement == true) {
+					miniScript->scriptState.statementIdx = statement.gotoStatementIdx;
+					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodElse(this));
 	}
 	{
 		//
@@ -801,11 +1066,36 @@ void MiniScript::registerMethods() {
 					miniScript->scriptState.waitStarted = Time::getCurrentMillis();
 					miniScript->scriptState.waitTime = time;
 				} else {
-					Console::println("ScriptMethodScriptWait::execute(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
+					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
 				}
 			}
 		};
 		registerMethod(new ScriptMethodScriptWait(this));
+	}
+	{
+		//
+		class ScriptMethodEmit: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEmit(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "emit";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string condition;
+				if (MiniScript::getStringValue(argumentValues, 0, condition, false) == true) {
+					miniScript->emit(condition);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEmit(this));
 	}
 	{
 		//
@@ -845,13 +1135,14 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodStop(this));
 	}
+	// equals
 	{
 		//
-		class ScriptMethodStop: public ScriptMethod {
+		class ScriptMethodEquals: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStop(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodEquals(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "equals";
 			}
@@ -868,61 +1159,101 @@ void MiniScript::registerMethods() {
 				return true;
 			}
 		};
-		registerMethod(new ScriptMethodStop(this));
+		registerMethod(new ScriptMethodEquals(this));
 	}
+	// int methods
 	{
 		//
-		class ScriptMethodAnd: public ScriptMethod {
+		class ScriptMethodInt: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodInt(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "int", .optional = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "and";
+				return "int";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool success;
-					bool booleanValue;
-					if ((success = MiniScript::getBooleanValue(argumentValues, i, booleanValue, false)) == false || booleanValue == false) {
-						MiniScript::setBooleanValue(returnValue, false);
-						return;
-					}
+				bool success;
+				int64_t integerValue;
+				if ((success = MiniScript::getIntegerValue(argumentValues, 0, integerValue, false)) == true) {
+					MiniScript::setIntegerValue(returnValue, integerValue);
+				} else {
+					MiniScript::setIntegerValue(returnValue, 0);
 				}
-				MiniScript::setBooleanValue(returnValue, true);
-			}
-			bool isVariadic() override {
-				return true;
 			}
 		};
-		registerMethod(new ScriptMethodAnd(this));
+		registerMethod(new ScriptMethodInt(this));
 	}
 	{
 		//
-		class ScriptMethodAnd: public ScriptMethod {
+		class ScriptMethodGreater: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodGreater(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "or";
+				return "greater";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool success;
-					bool booleanValue;
-					if ((success = MiniScript::getBooleanValue(argumentValues, i, booleanValue, false)) == true && booleanValue == true) {
-						MiniScript::setBooleanValue(returnValue, true);
-						return;
-					}
+				bool successA;
+				bool successB;
+				int64_t integerValueA;
+				int64_t integerValueB;
+				if ((successA = MiniScript::getIntegerValue(argumentValues, 0, integerValueA, false)) == true &&
+					(successB = MiniScript::getIntegerValue(argumentValues, 1, integerValueB, false)) == true) {
+					MiniScript::setBooleanValue(returnValue, integerValueA > integerValueB);
+				} else {
+					MiniScript::setBooleanValue(returnValue, false);
 				}
-				MiniScript::setBooleanValue(returnValue, false);
-			}
-			bool isVariadic() override {
-				return true;
 			}
 		};
-		registerMethod(new ScriptMethodAnd(this));
+		registerMethod(new ScriptMethodGreater(this));
+	}
+	{
+		//
+		class ScriptMethodLesser: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLesser(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "lesser";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				bool successA;
+				bool successB;
+				int64_t integerValueA;
+				int64_t integerValueB;
+				if ((successA = MiniScript::getIntegerValue(argumentValues, 0, integerValueA, false)) == true &&
+					(successB = MiniScript::getIntegerValue(argumentValues, 1, integerValueB, false)) == true) {
+					MiniScript::setBooleanValue(returnValue, integerValueA < integerValueB);
+				} else {
+					MiniScript::setBooleanValue(returnValue, false);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodLesser(this));
 	}
 	{
 		//
@@ -1055,60 +1386,6 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodEmit: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodEmit(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false }
-					}
-				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "emit";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, condition, false) == true) {
-					miniScript->emit(condition);
-				}
-			}
-		};
-		registerMethod(new ScriptMethodEmit(this));
-	}
-	{
-		//
-		class ScriptMethodInt: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodInt(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "int", .optional = false }
-					},
-					ScriptVariableType::TYPE_INTEGER
-				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "int";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				bool success;
-				int64_t integerValue;
-				if ((success = MiniScript::getIntegerValue(argumentValues, 0, integerValue, false)) == true) {
-					MiniScript::setIntegerValue(returnValue, integerValue);
-				} else {
-					MiniScript::setIntegerValue(returnValue, 0);
-				}
-			}
-		};
-		registerMethod(new ScriptMethodInt(this));
-	}
-	{
-		//
 		class ScriptMethodBool: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -1136,6 +1413,89 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBool(this));
 	}
+	// bool methods
+	{
+		//
+		class ScriptMethodNot: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodNot(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "not";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				bool success;
+				bool booleanValue = false;
+				success = MiniScript::getBooleanValue(argumentValues, 0, booleanValue, false);
+				MiniScript::setBooleanValue(returnValue, !booleanValue);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodNot(this));
+	}
+	{
+		//
+		class ScriptMethodAnd: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "and";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool success;
+					bool booleanValue;
+					if ((success = MiniScript::getBooleanValue(argumentValues, i, booleanValue, false)) == false || booleanValue == false) {
+						MiniScript::setBooleanValue(returnValue, false);
+						return;
+					}
+				}
+				MiniScript::setBooleanValue(returnValue, true);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodAnd(this));
+	}
+	{
+		//
+		class ScriptMethodAnd: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "or";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool success;
+					bool booleanValue;
+					if ((success = MiniScript::getBooleanValue(argumentValues, i, booleanValue, false)) == true && booleanValue == true) {
+						MiniScript::setBooleanValue(returnValue, true);
+						return;
+					}
+				}
+				MiniScript::setBooleanValue(returnValue, false);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodAnd(this));
+	}
+	// string functions
 	{
 		//
 		class ScriptMethodString: public ScriptMethod {
@@ -1196,6 +1556,7 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodSpace(this));
 	}
+
 }
 
 void MiniScript::registerVariables() {

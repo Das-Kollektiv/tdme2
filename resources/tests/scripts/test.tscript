@@ -5,21 +5,49 @@ on: nothing
 	console.log(1 + 2 + 3 - 1 should be -->, space(), sub(add(1, 2, 3), 1)))
 	console.log(20 / 2 -->, space(), div(20, 2))
 	console.log(11 * 10 -->, space(), mul(11, 10))
+	console.log(2 > 1 -->, space(), greater(2, 1))
+	console.log(2 < 1 -->, space(), lesser(2, 1))
+	console.log(Lets check forTime)
 	$i = int(1)
 	forTime(2000)
-    	console.log($i,-->,space(),Hello World)
-    	script.wait(500)
-    	$i = add($i, 1)
-    end
-    console.log(Done)
-    emit(emittest)
+		console.log($i,-->,space(),Hello World)
+		script.wait(500)
+		$i = add($i, 1)
+	end
+	console.log(Lets check forCondition)
+	$i = int(1)
+	forCondition(not(equals($i, 6)))
+		console.log($i,-->,space(),Hello World)
+		script.wait(500)
+		$i = add($i, 1)
+	end
+	console.log(i ->,space(), $i)
+	console.log(Lets check forCondition with if/elseif/else)
+	$i = int(1)
+	forCondition(lesser($i, 5))
+		console.log($i,space(),:)
+		if (equals($i, 0))
+			console.log(i -> 0)
+		elseif (equals($i, 1))
+			console.log(i -> 1)
+		elseif (equals($i, 2))
+			console.log(i -> 2)
+		elseif (equals($i, 3))
+			console.log(i -> 3)
+		else
+			console.log(hans im gluck,space(), $i)
+		end
+		$i = add($i, 1)
+	end
+	console.log(Done)
+	emit(emittest)
 end
 # an error has occurred
 on: error
 	console.log(An error occurred)
-    script.wait(1000)
+	script.wait(1000)
 end
 on: emittest
 	console.log(SCRIPT JUST EMITTED A CONDITION)
-    stop()
+	stop()
 end
