@@ -1490,9 +1490,6 @@ void MiniScript::registerMethods() {
 					return;
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
 		};
 		registerMethod(new ScriptMethodNot(this));
 	}
