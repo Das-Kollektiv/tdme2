@@ -995,7 +995,7 @@ void MiniScript::registerMethods() {
 					return;
 				}
 				if (miniScript->scriptState.conditionStack.empty() == true) {
-					Console::println("ScriptMethodEnd::ScriptMethodElseIfCondition(): elseif without if");
+					Console::println("ScriptMethodElseIfCondition::executeMethod(): elseif without if");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -1025,7 +1025,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->scriptState.conditionStack.empty() == true) {
-					Console::println("ScriptMethodElse::ScriptMethodElse(): else without if");
+					Console::println("ScriptMethodElse::executeMethod(): else without if");
 					miniScript->startErrorScript();
 					return;
 				}
