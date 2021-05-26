@@ -52,6 +52,7 @@ private:
 		TYPE_INTEGER,
 		TYPE_FLOAT,
 		TYPE_STRING,
+		TYPE_VECTOR3,
 		TYPE_TRANSFORMATIONS
 	};
 
@@ -62,6 +63,7 @@ private:
 		bool booleanValue { false };
 		int64_t integerValue { 0 };
 		float floatValue { 0.0f };
+		Vector3 vector3Value;
 	};
 
 	struct ScriptState {
@@ -93,6 +95,7 @@ private:
 			case TYPE_INTEGER: return "Integer";
 			case TYPE_FLOAT: return "Float";
 			case TYPE_STRING: return "String";
+			case TYPE_VECTOR3: return "Vector3";
 			case TYPE_TRANSFORMATIONS: return "Transformations";
 		}
 		return string();
@@ -129,6 +132,13 @@ private:
 				break;
 			case TYPE_STRING:
 				result+= variable.stringValue;
+				break;
+			case TYPE_VECTOR3:
+				result+=
+					"Vector3(" +
+					to_string(variable.vector3Value.getX()) + ", " +
+					to_string(variable.vector3Value.getY()) + ", " +
+					to_string(variable.vector3Value.getZ()) + ")";
 				break;
 			case TYPE_TRANSFORMATIONS:
 				result+=
@@ -401,6 +411,8 @@ public:
 					value = lowerCaseString == "true" || lowerCaseString == "1";
 					return true;
 				}
+			case TYPE_VECTOR3:
+				return false;
 			case TYPE_TRANSFORMATIONS:
 				return false;
 				break;
@@ -445,9 +457,10 @@ public:
 				} else {
 					return optional;
 				}
+			case TYPE_VECTOR3:
+				return optional;
 			case TYPE_TRANSFORMATIONS:
 				return optional;
-				break;
 		}
 		return false;
 	}
@@ -480,9 +493,10 @@ public:
 				if (Float::isFloat(argument.stringValue) == false) return optional;
 				value = Float::parseFloat(argument.stringValue);
 				return true;
+			case TYPE_VECTOR3:
+				return optional;
 			case TYPE_TRANSFORMATIONS:
 				return optional;
-				break;
 		}
 		return false;
 	}
@@ -513,12 +527,44 @@ public:
 			case TYPE_STRING:
 				value = argument.stringValue;
 				return true;
+			case TYPE_VECTOR3:
+				return false;
 			case TYPE_TRANSFORMATIONS:
 				return false;
 		}
 		return false;
 	}
 
+	/**
+	 * Get vector3 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getVector3Value(const vector<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				return optional;
+			case TYPE_INTEGER:
+				return optional;
+			case TYPE_FLOAT:
+				return optional;
+			case TYPE_STRING:
+				return optional;
+			case TYPE_VECTOR3:
+				value = argument.vector3Value;
+				return true;
+			case TYPE_TRANSFORMATIONS:
+				return optional;
+		}
+		return false;
+	}
 	/**
 	 * Get transformations value from given variable
 	 * @param arguments arguments
@@ -586,6 +632,16 @@ public:
 	inline static void setStringValue(ScriptVariable& variable, const string& value) {
 		variable.type = TYPE_STRING;
 		variable.stringValue = value;
+	}
+
+	/**
+	 * Set vector3 value from given value into variable
+	 * @param argument argument
+	 * @param value value
+	 */
+	inline static void setVector3Value(ScriptVariable& variable, const Vector3& value) {
+		variable.type = TYPE_VECTOR3;
+		variable.vector3Value = value;
 	}
 
 	/**
