@@ -42,6 +42,7 @@ private:
 		TYPE_VOID,
 		TYPE_BOOLEAN,
 		TYPE_INTEGER,
+		TYPE_FLOAT,
 		TYPE_STRING,
 		TYPE_TRANSFORMATIONS
 	};
@@ -51,7 +52,8 @@ private:
 		string stringValue;
 		Transformations transformationsValue;
 		bool booleanValue { false };
-		int64_t integerValue { -1 };
+		int64_t integerValue { 0 };
+		float floatValue { 0.0f };
 	};
 
 	struct ScriptState {
@@ -81,6 +83,7 @@ private:
 			case TYPE_VOID: return "Void";
 			case TYPE_BOOLEAN: return "Boolean";
 			case TYPE_INTEGER: return "Integer";
+			case TYPE_FLOAT: return "Float";
 			case TYPE_STRING: return "String";
 			case TYPE_TRANSFORMATIONS: return "Transformations";
 		}
@@ -112,6 +115,9 @@ private:
 				break;
 			case TYPE_INTEGER:
 				result+= to_string(variable.integerValue);
+				break;
+			case TYPE_FLOAT:
+				result+= to_string(variable.floatValue);
 				break;
 			case TYPE_STRING:
 				result+= variable.stringValue;
@@ -384,6 +390,16 @@ public:
 	static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false);
 
 	/**
+	 * Get float value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false);
+
+	/**
 	 * Set string value from given value into variable
 	 * @param argument argument
 	 * @param value value
@@ -410,6 +426,13 @@ public:
 	 * @param value value
 	 */
 	static void setIntegerValue(ScriptVariable& variable, int64_t value);
+
+	/**
+	 * Set float value from given value into variable
+	 * @param argument argument
+	 * @param value value
+	 */
+	static void setFloatValue(ScriptVariable& variable, float value);
 
 	/**
 	 * Dump info
