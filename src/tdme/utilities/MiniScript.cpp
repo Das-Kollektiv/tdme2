@@ -108,57 +108,69 @@ void MiniScript::executeScriptLine() {
 
 void MiniScript::parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments) {
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): " + statement);
-	auto rightStatement = statement;
-	auto assigmentPosIdx = statement.find_first_of('=');
-	if (assigmentPosIdx != string::npos) {
-		variable = StringTools::trim(StringTools::substring(statement, 0, assigmentPosIdx));
-		rightStatement = StringTools::trim(StringTools::substring(statement, assigmentPosIdx + 1));
-		if (StringTools::startsWith(variable, "$") == false) {
-			Console::println("MiniScript::parseScriptStatement(): variable '" + variable + "' needs to start with a $. Ignoring this variable!");
-			variable.clear();
-		} 
-	}
 	auto argumentStartIdx = string::npos;
 	auto argumentEndIdx = string::npos;
 	auto bracketCount = 0;
+	auto quote = false;
 	string argument;
-	for (auto i = 0; i < rightStatement.size(); i++) {
-		auto c = rightStatement[i];
-		if (c == '(') {
-			bracketCount++;
-			if (bracketCount > 1) {
-				argument+= c;
-			}	
-		} else
-		if (c == ')') {
-			bracketCount--;
+	string quotedArgument;
+	for (auto i = 0; i < statement.size(); i++) {
+		auto c = statement[i];
+		if (c == '"') {
 			if (bracketCount == 0) {
-				if (argument.empty() == false) {
-					arguments.push_back(StringTools::trim(argument));
-					argument.clear();
-				}	
+				Console::println("MiniScript::parseScriptStatement(): quote without argument");
+			}
+			quote = quote == false?true:false;
+			quotedArgument+= c;
+		} else
+		if (quote == false) {
+			if (c == '=') {
+				variable = StringTools::trim(method);
+				method.clear();
+			} else
+			if (c == '(') {
+				bracketCount++;
+				if (bracketCount > 1) {
+					argument+= c;
+				}
+			} else
+			if (c == ')') {
+				bracketCount--;
+				if (bracketCount == 0) {
+					if (quotedArgument.empty() == false || argument.empty() == false) {
+						arguments.push_back(quotedArgument.empty() == false?quotedArgument:StringTools::trim(argument));
+						argument.clear();
+						quotedArgument.clear();
+					}
+				} else {
+					argument+= c;
+				}
+			} else
+			if (c == ',') {
+				if (bracketCount == 1) {
+					if (quotedArgument.empty() == false || argument.empty() == false) {
+						arguments.push_back(quotedArgument.empty() == false?quotedArgument:StringTools::trim(argument));
+						argument.clear();
+						quotedArgument.clear();
+					}
+				} else {
+					argument+= c;
+				}
+			} else
+			if (bracketCount == 0) {
+				method+= c;
 			} else {
 				argument+= c;
 			}
-		} else
-		if (c == ',') {
-			if (bracketCount == 1) {
-				if (argument.empty() == false) {
-					arguments.push_back(StringTools::trim(argument));
-					argument.clear();
-				}
-			} else {
-				argument+= c;
-			} 		
-		} else
-		if (bracketCount == 0) {
-			method+= c;
 		} else {
-			argument+= c;
+			quotedArgument+= c;
 		}
 	}
 	method = StringTools::trim(method);
 	variable = StringTools::trim(variable);
+	if (bracketCount > 0) {
+		Console::println("MiniScript::parseScriptStatement(): '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+	}
 }
 
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
@@ -169,7 +181,11 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 	ScriptVariable returnValue;
 	// check if argument is a method calls return value
 	for (auto& argument: arguments) {
-		if (argument.empty() == false && argument.find('(') != string::npos && argument.find(')') != string::npos) {
+		if (argument.empty() == false &&
+			StringTools::startsWith(argument, "\"") == false &&
+			StringTools::endsWith(argument, "\"") == false &&
+			argument.find('(') != string::npos &&
+			argument.find(')') != string::npos) {
 			// method call, call method and put its return value into argument value
 			string subVariable;
 			string subMethod;
@@ -192,7 +208,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		} else {
 			// literal
 			ScriptVariable argumentValue;
-			setStringValue(argumentValue, argument);
+			if (StringTools::startsWith(argument, "\"") == true &&
+				StringTools::endsWith(argument, "\"") == true) {
+				setStringValue(argumentValue, StringTools::substring(argument, 1, argument.size() - 1));
+			} else {
+				setStringValue(argumentValue, argument);
+			}
 			argumentValues.push_back(argumentValue);
 		}
 	}
@@ -1309,11 +1330,11 @@ void MiniScript::registerMethods() {
 	// float methods
 	{
 		//
-		class ScriptMethodInt: public ScriptMethod {
+		class ScriptMethodFloat: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodInt(MiniScript* miniScript):
+			ScriptMethodFloat(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "float", .optional = false }
@@ -1336,7 +1357,7 @@ void MiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodInt(this));
+		registerMethod(new ScriptMethodFloat(this));
 	}
 	{
 		//
@@ -1563,6 +1584,264 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodFDiv(this));
 	}
+	// vector3 methods
+	{
+		//
+		class ScriptMethodVec3: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+					MiniScript::setVector3Value(returnValue, Vector3(xValue, yValue, zValue));
+				} else {
+					Console::println("ScriptMethodVec3::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3(this));
+	}
+	{
+		//
+		class ScriptMethodVec3ComputeLength: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3ComputeLength(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false }
+					},
+					ScriptVariableType::TYPE_FLOAT),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.computeLength";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
+					MiniScript::setFloatValue(returnValue, vec3.computeLength());
+				} else {
+					Console::println("ScriptMethodVec3ComputeLength::ScriptMethodComputeLength(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3ComputeLength(this));
+	}
+	{
+		//
+		class ScriptMethodVec3ComputeLengthSquared: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3ComputeLengthSquared(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false }
+					},
+					ScriptVariableType::TYPE_FLOAT),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.computeLengthSquared";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
+					MiniScript::setFloatValue(returnValue, vec3.computeLengthSquared());
+				} else {
+					Console::println("ScriptMethodVec3ComputeLengthSquared::ScriptMethodComputeLengthSquared(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3ComputeLengthSquared(this));
+	}
+	{
+		//
+		class ScriptMethodVec3Add: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3Add(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.add";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool success;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, i, vector3Value, false)) == true) {
+						result+= vector3Value;
+					} else {
+						Console::println("ScriptMethodVec3Add::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				MiniScript::setVector3Value(returnValue, result);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodVec3Add(this));
+	}
+	{
+		//
+		class ScriptMethodVec3Sub: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3Sub(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.sub";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 result;
+				{
+					bool success;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, 0, vector3Value, false)) == true) {
+						result = vector3Value;
+					} else {
+						Console::println("ScriptMethodVec3Sub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					bool success;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, i, vector3Value, false)) == true) {
+						result-= vector3Value;
+					} else {
+						Console::println("ScriptMethodVec3Sub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				MiniScript::setVector3Value(returnValue, result);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodVec3Sub(this));
+	}
+	{
+		//
+		class ScriptMethodVec3Mul: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3Mul(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.mul";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 result;
+				{
+					bool success;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, 0, vector3Value, false)) == true) {
+						result = vector3Value;
+					} else {
+						Console::println("ScriptMethodVec3Mul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					bool success;
+					float floatValue;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, i, vector3Value, false)) == true) {
+						result*= vector3Value;
+					} else
+					if ((success = MiniScript::getFloatValue(argumentValues, i, floatValue, false)) == true) {
+						result*= floatValue;
+					} else {
+						Console::println("ScriptMethodVec3Mul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 or float expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				MiniScript::setVector3Value(returnValue, result);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodVec3Mul(this));
+	}
+	{
+		//
+		class ScriptMethodVec3Div: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3Div(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.div";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 result;
+				{
+					bool success;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, 0, vector3Value, false)) == true) {
+						result = vector3Value;
+					} else {
+						Console::println("ScriptMethodVec3Div::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					bool success;
+					float floatValue;
+					Vector3 vector3Value;
+					if ((success = MiniScript::getVector3Value(argumentValues, i, vector3Value, false)) == true) {
+						result/= vector3Value;
+					} else
+					if ((success = MiniScript::getFloatValue(argumentValues, i, floatValue, false)) == true) {
+						result/= floatValue;
+					} else {
+						Console::println("ScriptMethodVec3Div::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 or float expected");
+						miniScript->startErrorScript();
+						return;
+					}
+				}
+				MiniScript::setVector3Value(returnValue, result);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodVec3Div(this));
+	}
 	// bool methods
 	{
 		//
@@ -1595,7 +1874,6 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBool(this));
 	}
-	// bool methods
 	{
 		//
 		class ScriptMethodNot: public ScriptMethod {
