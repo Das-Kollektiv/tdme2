@@ -20,8 +20,6 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/Float.h>
-#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
@@ -46,8 +44,6 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::Float;
-using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -69,21 +65,6 @@ MiniScript::MiniScript(const string& pathName, const string& fileName) {
 MiniScript::~MiniScript() {
 	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
-}
-
-void MiniScript::executeStateMachine() {
-	if (scriptState.state == STATE_NONE) return;
-	// execute state machine
-	auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state);
-	if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
-		scriptStateMachineStateIt->second->execute();
-	} else {
-		Console::println("MiniScript::doLogic(): unknown state with id: " + to_string(scriptState.state));
-	}
-}
-
-bool MiniScript::isRunning() {
-	return scriptState.running;
 }
 
 void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
@@ -285,10 +266,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		startErrorScript();
 	}
 	return returnValue;
-}
-
-void MiniScript::startErrorScript() {
-	emit("error");
 }
 
 void MiniScript::emit(const string& condition) {
@@ -573,169 +550,6 @@ int MiniScript::determineScriptIdxToStart() {
 	}
 	scriptState.state = currentScriptStateScript;
 	return nothingScriptIdx;
-}
-
-inline bool MiniScript::getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional) {
-	if (idx >= arguments.size()) return optional;
-	auto& argument = arguments[idx];
-	switch(argument.type) {
-		case TYPE_VOID:
-			return optional;
-		case TYPE_BOOLEAN:
-			value = argument.booleanValue == true?"true":"false";
-			return true;
-		case TYPE_INTEGER:
-			value = to_string(argument.integerValue);
-			return true;
-		case TYPE_FLOAT:
-			value = to_string(argument.floatValue);
-			return true;
-		case TYPE_STRING:
-			value = argument.stringValue;
-			return true;
-		case TYPE_TRANSFORMATIONS:
-			return false;
-	} 
-	return false;
-}
-
-inline bool MiniScript::getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional) {
-	if (idx >= arguments.size()) return optional;
-	auto& argument = arguments[idx];
-	switch(argument.type) {
-		case TYPE_VOID:
-			return optional;
-		case TYPE_BOOLEAN:
-			return optional;
-		case TYPE_INTEGER:
-			return optional;
-		case TYPE_FLOAT:
-			return optional;
-		case TYPE_STRING:
-			return optional;
-		case TYPE_TRANSFORMATIONS:
-			value = argument.transformationsValue;
-			return true;
-	} 
-	return false;
-}
-
-inline bool MiniScript::getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional) {
-	if (idx >= arguments.size()) return optional;
-	auto& argument = arguments[idx];
-	switch(argument.type) {
-		case TYPE_VOID:
-			return optional;
-		case TYPE_BOOLEAN:
-			value = argument.booleanValue;
-			return true;
-			break;
-		case TYPE_INTEGER:
-			value = argument.integerValue != 0;
-			return true;
-		case TYPE_FLOAT:
-			value = argument.floatValue != 0.0f;
-			return true;
-		case TYPE_STRING:
-			{
-				auto lowerCaseString = StringTools::toLowerCase(argument.stringValue);
-				if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
-				value = lowerCaseString == "true" || lowerCaseString == "1";
-				return true;
-			}	
-		case TYPE_TRANSFORMATIONS:
-			return false;
-			break;
-	}
-	return false;
-}
-
-inline bool MiniScript::getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional) {
-	if (idx >= arguments.size()) return optional;
-	auto& argument = arguments[idx];
-	switch(argument.type) {
-		case TYPE_VOID:
-			return optional;
-		case TYPE_BOOLEAN:
-			value = argument.booleanValue == true?1:0;
-			return true;
-			break;
-		case TYPE_INTEGER:
-			value = argument.integerValue;
-			return true;
-		case TYPE_FLOAT:
-			Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-			value = argument.floatValue;
-			return true;
-		case TYPE_STRING:
-			if (Integer::isInt(argument.stringValue) == true) {
-				value = Integer::parseInt(argument.stringValue);
-				return true;
-			} else
-			if (Float::isFloat(argument.stringValue) == true) {
-				Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-				value = static_cast<int64_t>(Float::parseFloat(argument.stringValue));
-				return true;
-			} else {
-				return optional;
-			}
-		case TYPE_TRANSFORMATIONS:
-			return optional;
-			break;
-	} 
-	return false;
-}
-
-inline bool MiniScript::getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional) {
-	if (idx >= arguments.size()) return optional;
-	auto& argument = arguments[idx];
-	switch(argument.type) {
-		case TYPE_VOID:
-			return optional;
-		case TYPE_BOOLEAN:
-			value = argument.booleanValue == true?1.0f:0.0f;
-			return true;
-			break;
-		case TYPE_INTEGER:
-			value = argument.integerValue;
-			return true;
-		case TYPE_FLOAT:
-			value = argument.floatValue;
-			return true;
-		case TYPE_STRING:
-			if (Float::isFloat(argument.stringValue) == false) return optional;
-			value = Float::parseFloat(argument.stringValue);
-			return true;
-		case TYPE_TRANSFORMATIONS:
-			return optional;
-			break;
-	}
-	return false;
-}
-
-void MiniScript::setStringValue(ScriptVariable& variable, const string& value) {
-	variable.type = TYPE_STRING;
-	variable.stringValue = value;
-}
-
-void MiniScript::setTransformationsValue(ScriptVariable& variable, const Transformations& value) {
-	variable.type = TYPE_TRANSFORMATIONS;
-	variable.transformationsValue = value;
-}
-
-void MiniScript::setBooleanValue(ScriptVariable& variable, bool value) {
-	variable.type = TYPE_BOOLEAN;
-	variable.booleanValue = value;
-}
-
-void MiniScript::setIntegerValue(ScriptVariable& variable, int64_t value) {
-	variable.type = TYPE_INTEGER;
-	variable.integerValue = value;
-}
-
-void MiniScript::setFloatValue(ScriptVariable& variable, float value) {
-	variable.type = TYPE_FLOAT;
-	variable.floatValue = value;
 }
 
 const string MiniScript::dumpInfo() {

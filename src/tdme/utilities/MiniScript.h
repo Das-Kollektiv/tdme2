@@ -8,6 +8,10 @@
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::stack;
@@ -18,6 +22,10 @@ using std::vector;
 
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTools;
 
 /**
  * Miniscript
@@ -277,7 +285,9 @@ protected:
 	/**
 	 * Start error script
 	 */
-	void startErrorScript();
+	inline void startErrorScript() {
+		emit("error");
+	}
 
 	/**
 	 * Register state machine states
@@ -342,32 +352,23 @@ public:
 	 * Execute state machine
 	 * @return quit requested
 	 */
-	void executeStateMachine();
+	inline void executeStateMachine() {
+		if (scriptState.state == STATE_NONE) return;
+		// execute state machine
+		auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state);
+		if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
+			scriptStateMachineStateIt->second->execute();
+		} else {
+			Console::println("MiniScript::executeStateMachine(): unknown state with id: " + to_string(scriptState.state));
+		}
+	}
 
 	/**
 	 * @return is running
 	 */
-	bool isRunning();
-
-	/**
-	 * Get string value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	static bool getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional = false);
-
-	/**
-	 * Get transformations value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false);
+	inline bool isRunning() {
+		return scriptState.running;
+	}
 
 	/**
 	 * Get boolean value from given variable
@@ -377,7 +378,35 @@ public:
 	 * @param optional optionalfalse
 	 * @return success
 	 */
-	static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false);
+	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				value = argument.booleanValue;
+				return true;
+				break;
+			case TYPE_INTEGER:
+				value = argument.integerValue != 0;
+				return true;
+			case TYPE_FLOAT:
+				value = argument.floatValue != 0.0f;
+				return true;
+			case TYPE_STRING:
+				{
+					auto lowerCaseString = StringTools::toLowerCase(argument.stringValue);
+					if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
+					value = lowerCaseString == "true" || lowerCaseString == "1";
+					return true;
+				}
+			case TYPE_TRANSFORMATIONS:
+				return false;
+				break;
+		}
+		return false;
+	}
 
 	/**
 	 * Get integer value from given variable
@@ -387,7 +416,41 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false);
+	inline static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				value = argument.booleanValue == true?1:0;
+				return true;
+				break;
+			case TYPE_INTEGER:
+				value = argument.integerValue;
+				return true;
+			case TYPE_FLOAT:
+				Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+				value = argument.floatValue;
+				return true;
+			case TYPE_STRING:
+				if (Integer::isInt(argument.stringValue) == true) {
+					value = Integer::parseInt(argument.stringValue);
+					return true;
+				} else
+				if (Float::isFloat(argument.stringValue) == true) {
+					Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+					value = static_cast<int64_t>(Float::parseFloat(argument.stringValue));
+					return true;
+				} else {
+					return optional;
+				}
+			case TYPE_TRANSFORMATIONS:
+				return optional;
+				break;
+		}
+		return false;
+	}
 
 	/**
 	 * Get float value from given variable
@@ -397,42 +460,143 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false);
+	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				value = argument.booleanValue == true?1.0f:0.0f;
+				return true;
+				break;
+			case TYPE_INTEGER:
+				value = argument.integerValue;
+				return true;
+			case TYPE_FLOAT:
+				value = argument.floatValue;
+				return true;
+			case TYPE_STRING:
+				if (Float::isFloat(argument.stringValue) == false) return optional;
+				value = Float::parseFloat(argument.stringValue);
+				return true;
+			case TYPE_TRANSFORMATIONS:
+				return optional;
+				break;
+		}
+		return false;
+	}
 
 	/**
-	 * Set string value from given value into variable
-	 * @param argument argument
+	 * Get string value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
 	 * @param value value
+	 * @param optional optional
+	 * @return success
 	 */
-	static void setStringValue(ScriptVariable& variable, const string& value);
+	inline static bool getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				value = argument.booleanValue == true?"true":"false";
+				return true;
+			case TYPE_INTEGER:
+				value = to_string(argument.integerValue);
+				return true;
+			case TYPE_FLOAT:
+				value = to_string(argument.floatValue);
+				return true;
+			case TYPE_STRING:
+				value = argument.stringValue;
+				return true;
+			case TYPE_TRANSFORMATIONS:
+				return false;
+		}
+		return false;
+	}
 
 	/**
-	 * Set transformations value from given value into variable
-	 * @param argument argument
+	 * Get transformations value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
 	 * @param value value
+	 * @param optional optional
+	 * @return success
 	 */
-	static void setTransformationsValue(ScriptVariable& variable, const Transformations& value);
+	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		switch(argument.type) {
+			case TYPE_VOID:
+				return optional;
+			case TYPE_BOOLEAN:
+				return optional;
+			case TYPE_INTEGER:
+				return optional;
+			case TYPE_FLOAT:
+				return optional;
+			case TYPE_STRING:
+				return optional;
+			case TYPE_TRANSFORMATIONS:
+				value = argument.transformationsValue;
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Set boolean value from given value into variable
 	 * @param argument argument
 	 * @param value value
 	 */
-	static void setBooleanValue(ScriptVariable& variable, bool value);
+	inline static void setBooleanValue(ScriptVariable& variable, bool value) {
+		variable.type = TYPE_BOOLEAN;
+		variable.booleanValue = value;
+	}
 
 	/**
 	 * Set integer value from given value into variable
 	 * @param argument argument
 	 * @param value value
 	 */
-	static void setIntegerValue(ScriptVariable& variable, int64_t value);
+	inline static void setIntegerValue(ScriptVariable& variable, int64_t value) {
+		variable.type = TYPE_INTEGER;
+		variable.integerValue = value;
+	}
 
 	/**
 	 * Set float value from given value into variable
 	 * @param argument argument
 	 * @param value value
 	 */
-	static void setFloatValue(ScriptVariable& variable, float value);
+	inline static void setFloatValue(ScriptVariable& variable, float value) {
+		variable.type = TYPE_FLOAT;
+		variable.floatValue = value;
+	}
+
+	/**
+	 * Set string value from given value into variable
+	 * @param argument argument
+	 * @param value value
+	 */
+	inline static void setStringValue(ScriptVariable& variable, const string& value) {
+		variable.type = TYPE_STRING;
+		variable.stringValue = value;
+	}
+
+	/**
+	 * Set transformations value from given value into variable
+	 * @param argument argument
+	 * @param value value
+	 */
+	inline static void setTransformationsValue(ScriptVariable& variable, const Transformations& value) {
+		variable.type = TYPE_TRANSFORMATIONS;
+		variable.transformationsValue = value;
+	}
 
 	/**
 	 * Dump info
