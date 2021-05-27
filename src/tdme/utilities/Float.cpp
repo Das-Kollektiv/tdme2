@@ -20,5 +20,5 @@ bool Float::isFloat(const string& str) {
 	int dotCount = 0;
 	return
 		str.empty() == false &&
-		find_if(str.begin(), str.end(), [&dotCount](char c) { return isdigit(c) == false && (c != '.' || ++dotCount > 1); }) == str.end();
+		find_if(str.begin() + (str[0] == '-'?1:0), str.end(), [&dotCount](char c) { return isdigit(c) == false && (c != '.' || ++dotCount > 1); }) == str.end();
 }
