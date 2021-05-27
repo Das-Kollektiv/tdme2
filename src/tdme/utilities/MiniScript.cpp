@@ -2170,7 +2170,7 @@ void MiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false },
 					},
 					ScriptVariableType::TYPE_TRANSFORMATIONS),
 					miniScript(miniScript) {}
