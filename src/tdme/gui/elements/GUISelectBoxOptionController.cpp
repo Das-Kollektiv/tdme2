@@ -109,13 +109,41 @@ void GUISelectBoxOptionController::unfocus()
 	nodeConditions.add(this->focussed == true?CONDITION_FOCUSSED:CONDITION_UNFOCUSSED);
 }
 
-bool GUISelectBoxOptionController::isCollapsed() {
-	auto _node = node->getParentNode();
-	while(_node != nullptr && _node != selectBoxNode) {
-		if (_node->isConditionsMet() == false) return true;
-		_node = _node->getParentNode();
+bool GUISelectBoxOptionController::isHierarchyExpanded() {
+	if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+		while (_parentElementNode != nullptr) {
+			auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController());
+			if (selectBoxParentOptionController != nullptr) {
+				if (selectBoxParentOptionController->isExpanded() == false) return false;
+			} else {
+				break;
+			}
+			_parentElementNode =
+				_parentElementNode->getParentElementNodeId().empty() == false?
+					dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+					nullptr;
+		}
 	}
-	return false;
+	return true;
+}
+
+void GUISelectBoxOptionController::expandHierarchy() {
+	if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+		while (_parentElementNode != nullptr) {
+			auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController());
+			if (selectBoxParentOptionController != nullptr) {
+				if (selectBoxParentOptionController->isExpanded() == false) selectBoxParentOptionController->toggleExpandState();
+			} else {
+				break;
+			}
+			_parentElementNode =
+				_parentElementNode->getParentElementNodeId().empty() == false?
+					dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+					nullptr;
+		}
+	}
 }
 
 void GUISelectBoxOptionController::initialize()
@@ -135,18 +163,23 @@ void GUISelectBoxOptionController::initialize()
 
 	{
 		auto childIdx = 0;
-		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
-		while (_parentElementNode != nullptr) {
-			if (dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController()) != nullptr) {
-				childIdx++;
-			} else {
-				break;
+		if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+			GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+			while (_parentElementNode != nullptr) {
+				if (dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController()) != nullptr) {
+					childIdx++;
+				} else {
+					break;
+				}
+				_parentElementNode =
+					_parentElementNode->getParentElementNodeId().empty() == false?
+						dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+						nullptr;
 			}
-			_parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId()));
-		}
-		if (childIdx > 0) {
-			auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
-			nodeConditions.add(CONDITION_CHILD);
+			if (childIdx > 0) {
+				auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+				nodeConditions.add(CONDITION_CHILD);
+			}
 		}
 	}
 

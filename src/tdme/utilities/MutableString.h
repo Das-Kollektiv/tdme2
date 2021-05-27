@@ -201,6 +201,11 @@ public:
 	void replace(const string& what, const string& by, int beginIndex = 0);
 
 	/**
+	 * @return if mutable string is empty
+	 */
+	bool empty() const;
+
+	/**
 	 * Equals
 	 * @param s2 string 2
 	 * @return string 2 equals this string

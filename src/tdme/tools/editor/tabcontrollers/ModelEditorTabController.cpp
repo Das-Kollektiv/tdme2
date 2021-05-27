@@ -244,6 +244,16 @@ void ModelEditorTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void ModelEditorTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(
+		string("<dropdown-option text=\"Property\" value=\"property\" />\n") +
+		string("<dropdown-option text=\"BV\" value=\"boundingvolume\" />\n") +
+		string("<dropdown-option text=\"Sound\" value=\"sound\" />\n") +
+		string("<dropdown-option text=\"Animation\" value=\"animation\" />\n") +
+		string("<dropdown-option text=\"LOD\" value=\"lod\" />\n")
+	);
+}
+
 void ModelEditorTabController::setDetailsContent() {
 	view->getEditorView()->setDetailsContent(string());
 }
@@ -903,6 +913,10 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
 		view->playAnimation(animationId);
 		setAnimationDetails(animationId);
+	} else {
+		prototypeBaseSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeDisplaySubController->updateDetails(view->getPrototype(),outlinerNode);
+		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
 

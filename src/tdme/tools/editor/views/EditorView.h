@@ -78,6 +78,12 @@ public:
 	void setOutlinerContent(const string& xml);
 
 	/**
+	 * Set outliner add drop down content
+	 * @param xml xml
+	 */
+	void setOutlinerAddDropDownContent(const string& xml);
+
+	/**
 	 * Set details content
 	 * @param xml xml
 	 */
@@ -85,9 +91,9 @@ public:
 
 	/**
 	 * Reload tab outliner
-	 * @param newSelectionId new selection id
+	 * @param newSelectionValue new selection value
 	 */
-	void reloadTabOutliner(const string& newSelectionId = string());
+	void reloadTabOutliner(const string& newSelectionValue = string());
 
 	/**
 	 * Determine viewport screen constraints

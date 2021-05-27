@@ -424,7 +424,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiPanelNode, parentElementId, node, nullptr);
+				parseGUINode(guiPanelNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "layer") {
 				auto guiLayerNode = new GUILayerNode(
@@ -486,7 +486,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiLayerNode, parentElementId, node, nullptr);
+				parseGUINode(guiLayerNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "layout") {
 				auto guiLayoutNode = new GUILayoutNode(
@@ -549,7 +549,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiLayoutNode, parentElementId, node, nullptr);
+				parseGUINode(guiLayoutNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "space") {
 				auto guiSpaceNode = new GUISpaceNode(
@@ -1104,7 +1104,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiTableNode, parentElementId, node, nullptr);
+				parseGUINode(guiTableNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "table-cell") {
 				auto guiTableCellNode = new GUITableCellNode(
@@ -1167,7 +1167,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiTableCellNode, parentElementId, node, nullptr);
+				parseGUINode(guiTableCellNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "table-row") {
 				auto guiTableRowNode = new GUITableRowNode(
@@ -1229,7 +1229,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiTableRowNode, parentElementId, node, nullptr);
+				parseGUINode(guiTableRowNode, string(), node, nullptr);
 			} else
 			if (nodeTagName == "input-internal") {
 				auto guiInputInternalNode = new GUIInputInternalNode(
@@ -1576,11 +1576,13 @@ int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
 			_guiParentNode = _guiParentNode->getParentNode();
 		}
 		auto childIdx = 0;
-		while (parentElementNode != nullptr) {
+		while (parentElementNode != nullptr && parentElementNode->getParentElementNodeId().empty() == false) {
 			parentElementNode = dynamic_cast<GUIElementNode*>(guiParentNode->getScreenNode()->getNodeById(parentElementNode->getParentElementNodeId()));
-			if (parentElementNode != nullptr) childIdx++;
+			if (parentElementNode != nullptr) {
+				childIdx++;
+			}
 		}
-		return Math::clamp(childIdx - 3, 1, Integer::MAX_VALUE); // TODO: check me!
+		return childIdx;
 	} else {
 		return Integer::parseInt(factor);
 	}

@@ -69,7 +69,13 @@ void EditorView::handleInputEvents()
 		auto& tab = tabViewIt->second;
 		int left, top, width, height;
 		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
-		if (lastSelectedTabId != selectedTabId) tab.getTabView()->activate();
+		if (lastSelectedTabId != selectedTabId) {
+			auto lastTabViewIt = tabViews.find(lastSelectedTabId);
+			if (lastTabViewIt != tabViews.end()) {
+				lastTabViewIt->second.getTabView()->deactivate();
+			}
+			tab.getTabView()->activate();
+		}
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = event.getXUnscaled() - left;
 			auto eventY = event.getYUnscaled() - top;
@@ -149,17 +155,25 @@ void EditorView::setOutlinerContent(const string& xml) {
 	editorScreenController->setOutlinerContent(xml);
 }
 
+void EditorView::setOutlinerAddDropDownContent(const string& xml) {
+	editorScreenController->setOutlinerAddDropDownContent(xml);
+}
+
 void EditorView::setDetailsContent(const string& xml) {
 	editorScreenController->setDetailsContent(xml);
 }
 
-void EditorView::reloadTabOutliner(const string& newSelectionId) {
+void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 	auto selectedTabId = editorScreenController->getSelectedTabId();
 	auto& tabViews = editorScreenController->getTabViews();
 	auto tabViewIt = tabViews.find(selectedTabId);
 	if (tabViewIt != tabViews.end()){
 		auto& tab = tabViewIt->second;
+		TabView::OutlinerState outlinerState;
+		editorScreenController->storeOutlinerState(outlinerState);
 		tab.getTabView()->reloadOutliner();
+		if (newSelectionValue.empty() == false) outlinerState.value = newSelectionValue;
+		editorScreenController->restoreOutlinerState(outlinerState);
 	}
 }
 

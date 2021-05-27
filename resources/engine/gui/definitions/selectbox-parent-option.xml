@@ -77,10 +77,10 @@
 		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
 			<space show-on="child" width="15" factor="{__TreeDepth__}" />
 			<element show-on="enabled" id="{$id}_arrow" width="15" height="25" horizontal-align="center" vertical-align="center">
-				<image effect-color-mul="{$color.font_normal}" hide-on="opened,mouseover" src="resources/engine/images/arrow_right.png" vertical-align="center" />
-				<image effect-color-mul="{$color.font_highlight}" hide-on="opened" src="resources/engine/images/arrow_right.png" vertical-align="center" />
-				<image effect-color-mul="{$color.font_normal}" hide-on="closed,mouseover" src="resources/engine/images/arrow_down.png" vertical-align="center" />
-				<image effect-color-mul="{$color.font_highlight}" hide-on="closed" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_normal}" hide-on="expanded,mouseover" src="resources/engine/images/arrow_right.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_highlight}" hide-on="expanded" src="resources/engine/images/arrow_right.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_normal}" hide-on="collapsed,mouseover" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_highlight}" hide-on="collapsed" src="resources/engine/images/arrow_down.png" vertical-align="center" />
 			</element>	
 		</layout>
 		
@@ -88,12 +88,10 @@
 		
 </element>
 
-<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto">
-	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto">
-		<inner-xml parent-id="{$id}"> 
-			<![CDATA[
-				{__InnerXML__}
-			]]>
-		</inner-xml>
-	</layout>
+<layout id="{$id}_inner" show-on="{$id}_arrow.expanded" alignment="vertical" width="100%" height="auto">
+	<inner-xml parent-id="{$id}">
+		<![CDATA[
+			{__InnerXML__}
+		]]>
+	</inner-xml>
 </layout>

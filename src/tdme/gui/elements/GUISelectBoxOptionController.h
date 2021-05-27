@@ -87,9 +87,14 @@ private:
 	void unfocus();
 
 	/**
-	 * @return if is collapsed in tree view
+	 * @return if hierarchy is expanded
 	 */
-	bool isCollapsed();
+	bool isHierarchyExpanded();
+
+	/**
+	 * Expand hierarchy
+	 */
+	void expandHierarchy();
 public:
 	// overridden methods
 	bool isDisabled() override;

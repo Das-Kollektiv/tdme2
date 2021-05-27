@@ -15,6 +15,7 @@
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -136,8 +137,10 @@ private:
 	GUIParentNode* tabs { nullptr };
 	GUIParentNode* tabsHeader { nullptr };
 	GUIParentNode* tabsContent { nullptr };
+	GUIElementNode* outliner { nullptr };
 	GUIParentNode* outlinerScrollarea { nullptr };
 	GUIParentNode* detailsScrollarea { nullptr };
+	GUIElementNode* outlinerAddDropDown { nullptr };
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
 	string selectedTabId;
@@ -205,15 +208,39 @@ public:
 	void onOpenFile(const string& relativeProjectFileName);
 
 	/**
+	 * Store outliner state
+	 * @param outlinerState outliner state
+	 */
+	void storeOutlinerState(TabView::OutlinerState& outlinerState);
+
+	/**
+	 * Restore outliner state
+	 * @param outlinerState outliner state
+	 */
+	void restoreOutlinerState(const TabView::OutlinerState& outlinerState);
+
+	/**
 	 * @return outliner selection
 	 */
 	const string getOutlinerSelection();
+
+	/**
+	 * Set outliner selection
+	 * @param newSelectionValue new selection value
+	 */
+	void setOutlinerSelection(const string& newSelectionValue);
 
 	/**
 	 * Set outliner content
 	 * @param xml xml
 	 */
 	void setOutlinerContent(const string& xml);
+
+	/**
+	 * Set outliner add content
+	 * @param xml xml
+	 */
+	void setOutlinerAddDropDownContent(const string& xml);
 
 	/**
 	 * Set details content

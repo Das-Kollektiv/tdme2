@@ -1,0 +1,42 @@
+<screen id="test" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="2048" max-height="1536">
+	<layout background-color="{$color.element_background}" padding="5" width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center"> 
+		<space height="*"/>				
+		<selectbox name="select" options="">
+			<selectbox-parent-option image="resources/engine/images/folder.png" text="Option A,B,C,D" value="1" id="1">
+				<selectbox-option image="resources/engine/images/folder.png" text="Option A" value="1.1" id="1.1" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option B" value="1.2" id="1.2" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option C" value="1.3" id="1.3" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option D" value="1.4" id="1.4" />
+			</selectbox-parent-option>
+			<selectbox-parent-option image="resources/engine/images/folder.png" text="Option F,G,H,I" value="2" id="2" selected="true">
+				<selectbox-option image="resources/engine/images/folder.png" text="Option F" value="2.1" id="2.1" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option G" value="2.2" id="2.2" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option H" value="2.3" id="2.3" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option I" value="2.4" id="2.4" />
+			</selectbox-parent-option>
+			<selectbox-parent-option image="resources/engine/images/folder.png" text="Option J,K,L,M,N,O,P,Q" value="3" selected="true">
+				<selectbox-option image="resources/engine/images/folder.png" text="Option J" value="3.1" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option K" value="3.2" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option L" value="3.3" />
+				<selectbox-option image="resources/engine/images/folder.png" text="Option M" value="3.4" />
+				<selectbox-parent-option image="resources/engine/images/folder.png" text="Option N,O,P,Q" value="3.5">
+					<selectbox-option image="resources/engine/images/folder.png" text="Option N" value="3.5.1" />
+					<selectbox-option image="resources/engine/images/folder.png" text="Option O" value="3.5.2" />
+					<selectbox-option image="resources/engine/images/folder.png" text="Option P" value="3.5.3" />
+					<selectbox-option image="resources/engine/images/folder.png" text="Option Q" value="3.5.4" selected="true" />
+					<selectbox-parent-option image="resources/engine/images/folder.png" text="Option XXX" value="3.6">
+						<selectbox-option image="resources/engine/images/folder.png" text="Option XX" value="3.6.1" />
+						<selectbox-option image="resources/engine/images/folder.png" text="Option XY" value="3.6.2" />
+						<selectbox-option image="resources/engine/images/folder.png" text="Option XZ" value="3.6.3" />
+						<selectbox-option image="resources/engine/images/folder.png" text="Option YX" value="3.6.4" selected="true" />
+					</selectbox-parent-option>
+				</selectbox-parent-option>
+			</selectbox-parent-option>
+			<selectbox-option image="resources/engine/images/folder.png" text="Option R" value="4" />
+			<selectbox-option image="resources/engine/images/folder.png" text="Option S" value="5" />
+			<selectbox-option image="resources/engine/images/folder.png" text="Option T" value="6" />
+			<selectbox-option image="resources/engine/images/folder.png" text="Option U" value="7" />
+		</selectbox>
+		<space height="*"/>
+	</layout>
+</screen>

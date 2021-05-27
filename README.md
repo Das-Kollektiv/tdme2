@@ -240,7 +240,7 @@
     - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
-    - Simple script language
+    - Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
     - PBR lighting shader for GL3/CORE+
     - Add nmake support to makefile generator for TDME2 based projects
     - Installer for MacOSX

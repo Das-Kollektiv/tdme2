@@ -37,7 +37,7 @@ private:
 	static string CONDITION_ENABLED;
 	static constexpr char VALUE_DELIMITER { '|' };
 	vector<GUINode*> childControllerNodes;
-	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
+	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
 	bool disabled;
 	bool multipleSelection;
 	int focussedOptionIdx;
@@ -139,15 +139,37 @@ private:
 	void select();
 
 	/**
+	 * Determine all options
+	 */
+	void determineAllOptions();
+
+	/**
 	 * Determine expanded options
 	 */
 	void determineExpandedOptions();
+
+	/**
+	 * Determine parent options
+	 */
+	void determineParentOptions();
 
 	/**
 	 * Toggle open state of current parent option
 	 * @param optionIdx option index
 	 */
 	void toggleOpenState(int optionIdx);
+
+	/**
+	 * Expand
+	 * @param optionIdx option index
+	 */
+	void expand(int optionIdx);
+
+	/**
+	 * Collapse
+	 * @param optionIdx option index
+	 */
+	void collapse(int optionIdx);
 
 public:
 	/**
@@ -171,5 +193,17 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 	void onSubTreeChange() override;
+
+	/**
+	 * Determine expanded parent option values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void determineExpandedParentOptionValues(vector<string>& expandedParentOptionValues);
+
+	/**
+	 * Expand parent options by values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void expandParentOptionsByValues(const vector<string>& expandedParentOptionValues);
 
 };

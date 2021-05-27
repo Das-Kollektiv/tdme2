@@ -27,11 +27,11 @@ class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUIS
 	friend class GUISelectBoxParentOption;
 
 private:
-	static string CONDITION_OPENED;
-	static string CONDITION_CLOSED;
+	static string CONDITION_EXPANDED;
+	static string CONDITION_COLLAPSED;
 
 	GUIElementNode* arrowNode { nullptr };
-	bool open;
+	bool expanded;
 	GUIActionListener* arrowNodeActionListener { nullptr };
 
 	/**
@@ -41,9 +41,14 @@ private:
 	GUISelectBoxParentOptionController(GUINode* node);
 
 	/**
-	 * Toggle open state
+	 * @return is expanded
 	 */
-	void toggleOpenState();
+	bool isExpanded();
+
+	/**
+	 * Toggle expand state
+	 */
+	void toggleExpandState();
 
 public:
 	// overriden methods

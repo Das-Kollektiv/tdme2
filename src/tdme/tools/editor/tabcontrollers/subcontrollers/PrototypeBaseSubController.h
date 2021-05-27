@@ -45,8 +45,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	Action* onSetPrototypeDataAction { nullptr };
 
-	array<string, 2> applyPropertyNodes = {
-		"property_name",
+	array<string, 1> applyPropertyNodes = {
 		"property_value"
 	};
 
@@ -84,12 +83,24 @@ public:
 	void setPropertyDetails(Prototype* prototype, const string& propertyName);
 
 	/**
+	 * Update details panel
+	 * @param prototype prototype
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(Prototype* prototype, const string& outlinerNode);
+
+	/**
 	 * Apply property details
 	 * @param prototype prototype
 	 * @param propertyName property name
-	 * @return new property name
 	 */
-	const string applyPropertyDetails(Prototype* prototype, const string& propertyName);
+	void applyPropertyDetails(Prototype* prototype, const string& propertyName);
+
+	/**
+	 * Create property
+	 * @param prototype prototype
+	 */
+	void createProperty(Prototype* prototype);
 
 	/**
 	 * On value changed

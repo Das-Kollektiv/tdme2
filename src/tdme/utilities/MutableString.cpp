@@ -188,6 +188,10 @@ void MutableString::replace(const string& what, const string& by, int beginIndex
 	data = StringTools::replace(data, what, by, beginIndex);
 }
 
+bool MutableString::empty() const {
+	return data.empty();
+}
+
 bool MutableString::equals(const string& s2) const
 {
 	return data == s2;

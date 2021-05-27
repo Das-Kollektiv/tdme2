@@ -7,6 +7,7 @@
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
@@ -42,6 +43,7 @@ using std::vector;
 
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
@@ -92,8 +94,10 @@ void EditorScreenController::initialize()
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
 		tabsHeader = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-header"));
 		tabsContent = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs-content"));
+		outliner = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_outliner"));
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
+		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -214,9 +218,9 @@ void EditorScreenController::onOpenProject() {
 		// overriden methods
 		void performAction() override {
 			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
 			editorScreenController->scanProjectPaths();
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -447,9 +451,23 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	*/
 }
 
+void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
+	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->determineExpandedParentOptionValues(outlinerState.expandedOutlinerParentOptionValues);
+	outlinerState.value = required_dynamic_cast<GUISelectBoxController*>(screenNode->getNodeById("selectbox_outliner")->getController())->getValue();
+	outlinerState.renderOffsetX = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("selectbox_outliner_scrollarea"))->getChildrenRenderOffsetX();
+	outlinerState.renderOffsetY = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("selectbox_outliner_scrollarea"))->getChildrenRenderOffsetY();
+}
+
+void EditorScreenController::restoreOutlinerState(const TabView::OutlinerState& outlinerState) {
+	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->setValue(outlinerState.value);
+	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->expandParentOptionsByValues(outlinerState.expandedOutlinerParentOptionValues);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->setChildrenRenderOffsetX(outlinerState.renderOffsetX);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->setChildrenRenderOffsetY(outlinerState.renderOffsetY);
+}
+
 const string EditorScreenController::getOutlinerSelection() {
 	try {
-		return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_outliner"))->getController()->getValue().getString();
+		return outliner->getController()->getValue().getString();
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::getOutlinerSelection(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -457,11 +475,29 @@ const string EditorScreenController::getOutlinerSelection() {
 	return string();
 }
 
+void EditorScreenController::setOutlinerSelection(const string& newSelectionValue) {
+	try {
+		outliner->getController()->setValue(MutableString(newSelectionValue));
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setOutlinerSelection(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
 void EditorScreenController::setOutlinerContent(const string& xml) {
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::setOutlinerContent(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void EditorScreenController::setOutlinerAddDropDownContent(const string& xml) {
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerAddDropDown->getId()))->replaceSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::setOutlinerAddDropDownContent(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
