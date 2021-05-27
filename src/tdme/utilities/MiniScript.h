@@ -142,17 +142,22 @@ private:
 				break;
 			case TYPE_TRANSFORMATIONS:
 				result+=
-					"translation = Vector3(" +
+					"Transformations(translation = Vector3(" +
 					to_string(variable.transformationsValue.getTranslation().getX()) + ", " +
 					to_string(variable.transformationsValue.getTranslation().getY()) + ", " +
-					to_string(variable.transformationsValue.getTranslation().getZ()) + ")";
+					to_string(variable.transformationsValue.getTranslation().getZ()) + "), " +
+					"scale = Vector3(" +
+					to_string(variable.transformationsValue.getScale().getX()) + ", " +
+					to_string(variable.transformationsValue.getScale().getY()) + ", " +
+					to_string(variable.transformationsValue.getScale().getZ()) + ")";
 				for (auto i = 0; i < variable.transformationsValue.getRotationCount(); i++) {
-					", rotation = (axis = Vector3(" +
-					to_string(variable.transformationsValue.getRotationAxis(i).getX()) + ", " +
-					to_string(variable.transformationsValue.getRotationAxis(i).getY()) + ", " +
-					to_string(variable.transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
-					to_string(variable.transformationsValue.getRotationAngle(i)) + ")";
+					result+= ", rotations = (axis = Vector3(" +
+							to_string(variable.transformationsValue.getRotationAxis(i).getX()) + ", " +
+							to_string(variable.transformationsValue.getRotationAxis(i).getY()) + ", " +
+							to_string(variable.transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
+							to_string(variable.transformationsValue.getRotationAngle(i)) + ")";
 				}
+				result+= ")";
 		}
 		return result;
 	}
