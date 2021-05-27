@@ -31,19 +31,19 @@ using tdme::utilities::StringTools;
  * Miniscript
  */
 class tdme::utilities::MiniScript {
-private:
-	static constexpr bool VERBOSE { false };
+public:
+	enum StateMachineState {
+		STATE_NONE = -1,
+		STATE_NEXT_STATEMENT,
+		STATE_WAIT,
+		STATE_WAIT_FOR_CONDITION
+	};
 
 	struct ScriptStatement {
 		int line;
 		int statementIdx;
 		string statement;
 		int gotoStatementIdx;
-	};
-	struct Script {
-		int line;
-		vector<string> conditions;
-		vector<ScriptStatement> statements;
 	};
 
 	enum ScriptVariableType {
@@ -65,102 +65,6 @@ private:
 		float floatValue { 0.0f };
 		Vector3 vector3Value;
 	};
-
-	struct ScriptState {
-		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
-		enum ConditionType {
-			SCRIPT,
-			CONDITIONTYPE_FORTIME
-		};
-		bool running { false };
-		int idx { -1 };
-		int statementIdx { -1 };
-		int64_t waitStarted { -1LL };
-		int64_t waitTime { -1LL };
-		string id;
-		map<string, ScriptVariable> variables;
-		map<int, int64_t> forTimeStarted;
-		stack<bool> conditionStack;
-		stack<EndType> endTypeStack;
-		int state { -1 };
-	};
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableTypeAsString(ScriptVariableType type) {
-		switch(type) {
-			case TYPE_VOID: return "Void";
-			case TYPE_BOOLEAN: return "Boolean";
-			case TYPE_INTEGER: return "Integer";
-			case TYPE_FLOAT: return "Float";
-			case TYPE_STRING: return "String";
-			case TYPE_VECTOR3: return "Vector3";
-			case TYPE_TRANSFORMATIONS: return "Transformations";
-		}
-		return string();
-	}
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableAsString(const ScriptVariable& variable) {
-		string result;
-		result+= getScriptVariableTypeAsString(variable.type);
-		result+= "(";
-		result+= getScriptVariableValueString(variable);
-		result+= ")";
-		return result;
-	}
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableValueString(const ScriptVariable& variable) {
-		string result;
-		switch (variable.type) {
-			case TYPE_VOID:
-				break;
-			case TYPE_BOOLEAN:
-				result+= variable.booleanValue == true?"1":"0";
-				break;
-			case TYPE_INTEGER:
-				result+= to_string(variable.integerValue);
-				break;
-			case TYPE_FLOAT:
-				result+= to_string(variable.floatValue);
-				break;
-			case TYPE_STRING:
-				result+= variable.stringValue;
-				break;
-			case TYPE_VECTOR3:
-				result+=
-					"Vector3(" +
-					to_string(variable.vector3Value.getX()) + ", " +
-					to_string(variable.vector3Value.getY()) + ", " +
-					to_string(variable.vector3Value.getZ()) + ")";
-				break;
-			case TYPE_TRANSFORMATIONS:
-				result+=
-					"Transformations(translation = Vector3(" +
-					to_string(variable.transformationsValue.getTranslation().getX()) + ", " +
-					to_string(variable.transformationsValue.getTranslation().getY()) + ", " +
-					to_string(variable.transformationsValue.getTranslation().getZ()) + "), " +
-					"scale = Vector3(" +
-					to_string(variable.transformationsValue.getScale().getX()) + ", " +
-					to_string(variable.transformationsValue.getScale().getY()) + ", " +
-					to_string(variable.transformationsValue.getScale().getZ()) + ")";
-				for (auto i = 0; i < variable.transformationsValue.getRotationCount(); i++) {
-					result+= ", rotations = (axis = Vector3(" +
-							to_string(variable.transformationsValue.getRotationAxis(i).getX()) + ", " +
-							to_string(variable.transformationsValue.getRotationAxis(i).getY()) + ", " +
-							to_string(variable.transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
-							to_string(variable.transformationsValue.getRotationAngle(i)) + ")";
-				}
-				result+= ")";
-		}
-		return result;
-	}
 
 	/**
 	 * Script State Machine State
@@ -255,15 +159,115 @@ private:
 		ScriptVariableType returnValueType;
 	};
 
-	enum StateMachineState {
-		STATE_NONE = -1,
-		STATE_NEXT_STATEMENT,
-		STATE_WAIT,
-		STATE_WAIT_FOR_CONDITION
+private:
+	static constexpr bool VERBOSE { false };
+
+	struct ScriptState {
+		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
+		enum ConditionType {
+			SCRIPT,
+			CONDITIONTYPE_FORTIME
+		};
+		bool running { false };
+		int idx { -1 };
+		int statementIdx { -1 };
+		int64_t waitStarted { -1LL };
+		int64_t waitTime { -1LL };
+		string id;
+		map<string, ScriptVariable> variables;
+		map<int, int64_t> forTimeStarted;
+		stack<bool> conditionStack;
+		stack<EndType> endTypeStack;
+		int state { -1 };
 	};
 
-	vector<Script> scripts;
+	struct Script {
+		int line;
+		vector<string> conditions;
+		vector<ScriptStatement> statements;
+	};
+
+	//
 	ScriptState scriptState;
+
+	/**
+	 * @return string representation of script variable type
+	 */
+	inline static const string getScriptVariableTypeAsString(ScriptVariableType type) {
+		switch(type) {
+			case TYPE_VOID: return "Void";
+			case TYPE_BOOLEAN: return "Boolean";
+			case TYPE_INTEGER: return "Integer";
+			case TYPE_FLOAT: return "Float";
+			case TYPE_STRING: return "String";
+			case TYPE_VECTOR3: return "Vector3";
+			case TYPE_TRANSFORMATIONS: return "Transformations";
+		}
+		return string();
+	}
+
+	/**
+	 * @return string representation of script variable type
+	 */
+	inline static const string getScriptVariableAsString(const ScriptVariable& variable) {
+		string result;
+		result+= getScriptVariableTypeAsString(variable.type);
+		result+= "(";
+		result+= getScriptVariableValueString(variable);
+		result+= ")";
+		return result;
+	}
+
+	/**
+	 * @return string representation of script variable type
+	 */
+	inline static const string getScriptVariableValueString(const ScriptVariable& variable) {
+		string result;
+		switch (variable.type) {
+			case TYPE_VOID:
+				break;
+			case TYPE_BOOLEAN:
+				result+= variable.booleanValue == true?"1":"0";
+				break;
+			case TYPE_INTEGER:
+				result+= to_string(variable.integerValue);
+				break;
+			case TYPE_FLOAT:
+				result+= to_string(variable.floatValue);
+				break;
+			case TYPE_STRING:
+				result+= variable.stringValue;
+				break;
+			case TYPE_VECTOR3:
+				result+=
+					"Vector3(" +
+					to_string(variable.vector3Value.getX()) + ", " +
+					to_string(variable.vector3Value.getY()) + ", " +
+					to_string(variable.vector3Value.getZ()) + ")";
+				break;
+			case TYPE_TRANSFORMATIONS:
+				result+=
+					"Transformations(translation = Vector3(" +
+					to_string(variable.transformationsValue.getTranslation().getX()) + ", " +
+					to_string(variable.transformationsValue.getTranslation().getY()) + ", " +
+					to_string(variable.transformationsValue.getTranslation().getZ()) + "), " +
+					"scale = Vector3(" +
+					to_string(variable.transformationsValue.getScale().getX()) + ", " +
+					to_string(variable.transformationsValue.getScale().getY()) + ", " +
+					to_string(variable.transformationsValue.getScale().getZ()) + ")";
+				for (auto i = 0; i < variable.transformationsValue.getRotationCount(); i++) {
+					result+= ", rotations = (axis = Vector3(" +
+							to_string(variable.transformationsValue.getRotationAxis(i).getX()) + ", " +
+							to_string(variable.transformationsValue.getRotationAxis(i).getY()) + ", " +
+							to_string(variable.transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
+							to_string(variable.transformationsValue.getRotationAngle(i)) + ")";
+				}
+				result+= ")";
+		}
+		return result;
+	}
+
+	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
 
@@ -305,32 +309,38 @@ protected:
 	}
 
 	/**
+	 * Set script state machine state
+	 * @param state state
+	 */
+	inline void setScriptState(int state) {
+		scriptState.state = state;
+	}
+
+	/**
 	 * Register state machine states
 	 */
-	void registerStateMachineStates();
+	virtual void registerStateMachineStates();
 
 	/**
 	 * Register methods
 	 */
-	void registerMethods();
+	virtual void registerMethods();
 
 	/**
 	 * Register variables
 	 */
-	void registerVariables();
+	virtual void registerVariables();
 
 public:
 	/**
-	 * Public constructor
-	 * @param pathName path name
-	 * @param fileName file name
+	 * Default constructor
 	 */
-	MiniScript(const string& pathName, const string& fileName);
+	MiniScript();
 
 	/**
 	 * Destructor
 	 */
-	~MiniScript();
+	virtual ~MiniScript();
 
 	/**
 	 * Register script state machine state
@@ -343,6 +353,20 @@ public:
 	 * @param method method
 	 */
 	void registerMethod(ScriptMethod* method);
+
+	/**
+	 * Returns variable with given name
+	 * @param name name
+	 * @return variable
+	 */
+	const ScriptVariable getVariable(const string& name);
+
+	/**
+	 * Set script variable
+	 * @param name name
+	 * @param variable variable
+	 */
+	void setVariable(const string& name, const ScriptVariable& variable);
 
 	/**
 	 * Load script
@@ -383,6 +407,13 @@ public:
 	 */
 	inline bool isRunning() {
 		return scriptState.running;
+	}
+
+	/**
+	 * @return script state machine state
+	 */
+	inline int getScriptState() {
+		return scriptState.state;
 	}
 
 	/**
