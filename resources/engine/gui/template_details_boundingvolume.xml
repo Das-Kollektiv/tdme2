@@ -11,7 +11,6 @@
 					<dropdown-option text="Bounding Box" value="obb" on-mouse-click="boundingvolume_type_details.condition=obb" />
 					<dropdown-option text="Imported Mesh" value="imported" on-mouse-click="boundingvolume_type_details.condition=imported" />
 					<dropdown-option text="Generated Mesh" value="generated" on-mouse-click="boundingvolume_type_details.condition=generated" />
-					<dropdown-option text="Convex Mesh" value="convexmesh" on-mouse-click="boundingvolume_type_details.condition=convexmesh" />
 					<dropdown-option text="Terrain" value="6" on-mouse-click="boundingvolume_type_details.condition=terrain"/>
 
 			</dropdown>
@@ -207,22 +206,8 @@
 				</layout>
 				
 				<layout show-on="imported" id="boundingvolume_imported" alignment="horizontal" width="100%" height="auto" vertical-align="center">
-					
-					<text font="{$font.default}" color="{$color.font_normal}" text="Mesh" width="*" height="auto" horizontal-align="left" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-						<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-							<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-							<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-						</element>
-						<space width="5" />
-						<layout width="auto" height="auto" alignment="vertical">
-							<button id="boundingvolume_imported_open" image="resources/engine/images/folder.png" width="25" height="25" />
-							<space height="5" />
-							<button id="boundingvolume_imported_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-							<space height="5" />
-							<button id="boundingvolume_imported_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-						</layout>
-					</layout>
+				
+					<template show-on="imported" src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_imported" type="Convex Mesh" />
 					
 				</layout> 
 				
@@ -323,27 +308,6 @@
 						</layout>
 					</layout>					
 
-				</layout> 
-				
-				<layout show-on="convexmesh" id="boundingvolume_convexmesh" alignment="vertical" width="100%" height="auto" horizontal-align="center">
-				
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Model" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="boundingvolume_convexmesh_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="boundingvolume_convexmesh_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="boundingvolume_convexmesh_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>					
-				
 				</layout>	
 
 				<layout show-on="terrain" id="boundingvolume_terrain" alignment="vertical" width="100%" height="auto" horizontal-align="center">

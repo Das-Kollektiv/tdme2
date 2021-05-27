@@ -12,24 +12,8 @@
 			<element id="particletype_type_details" width="100%" height="auto">
 			
 				<layout show-on="object" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
-					<space height="5" /> 
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Model" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="particletype_object_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_object_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_object_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>					
+					<space height="5" />
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="particletype_object" type="Model" />
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
@@ -59,41 +43,9 @@
 				
 				<layout show-on="point" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
 					<space height="5" />	
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="particletype_point_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_point_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_point_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="particletype_point_texture" type="Texture" />
 					<space height="10" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Transparency" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="particletype_point_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_point_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_point_transparency_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>					
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="particletype_point_transparency" type="Transparency" />					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
@@ -146,41 +98,9 @@
 				
 				<layout show-on="fog" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
 					<space height="5" />	
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="particletype_fog_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_fog_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_fog_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="particletype_fog_texture" type="Texture" />
 					<space height="10" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Transparency" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="particletype_fog_transparency_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_fog_transparency_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="particletype_fog_transparency_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>					
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="particletype_fog_transparency" type="Transparency" />
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />

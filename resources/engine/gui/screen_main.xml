@@ -256,7 +256,7 @@
 									<template id="particletype" src="resources/engine/gui/template_details_particletype.xml"/>
 									<template id="pbr_material" src="resources/engine/gui/template_details_pbrmaterial.xml"/>
 									<template id="physics" src="resources/engine/gui/template_details_physics.xml"/>
-									<template id="properties" src="resources/engine/gui/template_details_properties.xml"/>
+									<template id="propertiy" src="resources/engine/gui/template_details_property.xml"/>
 									<template id="reflection" src="resources/engine/gui/template_details_reflection.xml"/>
 									<template id="rendering" src="resources/engine/gui/template_details_rendering.xml"/>
 									<template id="sky" src="resources/engine/gui/template_details_sky.xml"/>

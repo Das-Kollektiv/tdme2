@@ -3,23 +3,7 @@
 		<button width="100%" height="25" text="LOD" on-mouse-click="{$id}.condition!=open"/>
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Model" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="lod_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="lod_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="lod_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>						
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="lod_model" type="Model" />
 			
 			<space height="5" />
 			<menu-separator />
@@ -36,25 +20,11 @@
 			<menu-separator />
 			<space height="5" />
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Color add" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="lod_color_add" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="lod_color_add_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="lod_color_add" name="Color add" />
 			
 			<space height="5" />
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Color mul" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="lod_color_mul" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="lod_color_mul_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="lod_color_mul" name="Color mul" />
 					
 		</layout>		
 	</layout>

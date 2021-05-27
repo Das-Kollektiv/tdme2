@@ -7,23 +7,9 @@
 			
 				<layout width="100%" height="auto" alignment="vertical" vertical-align="top" horizontal-align="left">	
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="foliagebrush_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="foliagebrush_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="foliagebrush_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>							
+					
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="foliagebrush_texture" type="Texture" />
+												
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
@@ -53,26 +39,40 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="top">
 						<layout width="*" height="auto" alignment="vertical">
 							<selectbox width="100%" id="selectbox_foliagebrush_objects" boder="0">
-								<scrollarea background-color="{$color.element_midground}" width="100%" height="100" focusable="true">
-
+								<scrollarea background-color="{$color.element_midground}" width="100%" height="150" focusable="true">
+									
+									<layout alignment="horizontal" >
+										<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="10"/>
+										<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="5"/>
+									</layout>
+									
+									<layout alignment="horizontal" >
+										<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="10"/>
+										<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="5"/>
+									</layout>
 
 								</scrollarea>
 							</selectbox>
-							<space height="5" />
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
-								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-									<input id="foliagebrush_object_count" width="100%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"  />
-								</layout>
-							</layout>
 						</layout>
 						<space width="5" />
 						<layout width="auto" height="auto" alignment="vertical">
 							<button id="foliagebrush_object_add" image="resources/engine/images/add.png" width="25" height="25" />
 							<space height="5" />
-							<button id="foliagebrush_object_substract" image="resources/engine/images/substract.png" width="25" height="25" />
+							<button id="foliagebrush_object_substract" image="resources/engine/images/delete.png" width="25" height="25" />
 						</layout>
-					</layout>	
+					</layout>
+					
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+					
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="foliagebrush_object_count" width="100%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"  />
+						</layout>
+					</layout>
+					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />

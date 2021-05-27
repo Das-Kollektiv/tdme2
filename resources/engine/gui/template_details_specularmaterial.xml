@@ -4,118 +4,25 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 		
 			<space height="5" />
-
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<image id="specularmaterial_diffuse_texture" width="100%" height="100%" />
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="specularmaterial_diffuse_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_diffuse_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_diffuse_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>						
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_diffuse_texture" type="Diffuse" />
 			<space height="10" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Transparency" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<image id="specularmaterial_transparency_texture" width="100%" height="100%" />
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="specularmaterial_transparency_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_transparency_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_transparency_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>						
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_tranparency_texture" type="Transparency" />
 			<space height="10" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Normal" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<texture id="specularmaterial_normal_texture" width="100%" height="100%" />
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="specularmaterial_normal_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_normal_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_normal_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>						
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_normal_texture" type="Normal" />
 			<space height="10" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<texture id="specularmaterial_specular_texture" width="100%" height="100%" />
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="specularmaterial_specular_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_specular_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="specularmaterial_specular__texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>						
-			</layout>			
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_specular_texture" type="Specular" />			
 			
 			<space height="5" />
 			<menu-separator />
 			<space height="5" />
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="specularmaterial_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="specularmaterial_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_ambient" name="Ambient" />
 			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="specularmaterial_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="specularmaterial_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_diffuse" name="Diffuse" />
 			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Emission" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="specularmaterial_emission" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="specularmaterial_emission_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_emission" name="Emission" />
 			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<image id="specularmaterial_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-					<space width="5" />						
-					<button id="specularmaterial_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-				</layout>
-			</layout>			
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_specular" name="Specular" />			
 			
 			<space height="5" />
 			<menu-separator />

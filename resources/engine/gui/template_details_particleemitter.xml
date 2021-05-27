@@ -45,24 +45,11 @@
 					<menu-separator />
 					<space height="5" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color Start" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_point_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_point_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_point_colorstart" name="Color Start" />
 					
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color End" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_point_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="button_particleemitter_point_colorend" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_point_colorend" name="Color End" />
 					
 					<space height="5" />
 					<menu-separator />
@@ -222,24 +209,11 @@
 					<menu-separator />
 					<space height="5" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color Start" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_box_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_box_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_box_colorstart" name="Color Start" />
 					
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color End" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_box_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_box_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_box_colorend" name="Color End" />
 					
 					<space height="5" />
 					<menu-separator />
@@ -398,24 +372,11 @@
 					<menu-separator />
 					<space height="5" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color Start" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_circle_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_circle_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_circle_colorstart" name="Color Start" />
 					
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color End" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_circle_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_circle_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_circle_colorend" name="Color End" />
 					
 					<space height="5" />
 					<menu-separator />
@@ -573,24 +534,11 @@
 					<menu-separator />
 					<space height="5" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color Start" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_radial_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_radial_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_radial_colorstart" name="Color Start" />
 					
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color End" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_radial_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_radial_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_radial_colorend" name="Color End" />
 					
 					<space height="5" />
 					<menu-separator />
@@ -720,24 +668,11 @@
 					<menu-separator />
 					<space height="5" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color Start" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_sphere_colorstart" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_sphere_colorstart_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_sphere_colorstart" name="Color Start" />
 					
 					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Color End" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="particleemitter_sphere_colorend" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="particleemitter_sphere_colorend_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>
+					
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleemitter_sphere_colorend" name="Color End" />
 					
 					<space height="5" />
 					<menu-separator />
