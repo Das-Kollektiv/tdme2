@@ -1935,6 +1935,90 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodVec3ComputeAngle(this));
 	}
+	{
+		//
+		class ScriptMethodVec3GetX: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3GetX(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false },
+					},
+					ScriptVariableType::TYPE_FLOAT),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.getX";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
+					MiniScript::setFloatValue(returnValue, vec3.getX());
+				} else {
+					Console::println("ScriptMethodVec3GetX::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3GetX(this));
+	}
+	{
+		//
+		class ScriptMethodVec3GetY: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3GetY(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false },
+					},
+					ScriptVariableType::TYPE_FLOAT),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.getY";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
+					MiniScript::setFloatValue(returnValue, vec3.getY());
+				} else {
+					Console::println("ScriptMethodVec3GetY::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3GetY(this));
+	}
+	{
+		//
+		class ScriptMethodVec3GetZ: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodVec3GetZ(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false },
+					},
+					ScriptVariableType::TYPE_FLOAT),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "vec3.getZ";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
+					MiniScript::setFloatValue(returnValue, vec3.getZ());
+				} else {
+					Console::println("ScriptMethodVec3GetZ::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodVec3GetZ(this));
+	}
 	// bool methods
 	{
 		//
@@ -2119,7 +2203,6 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodSpace(this));
 	}
-
 }
 
 void MiniScript::registerVariables() {
