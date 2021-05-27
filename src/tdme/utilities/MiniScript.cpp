@@ -251,10 +251,18 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 							argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
 						}
 						break;
+					case TYPE_VECTOR3:
+						{
+							Vector3 vector3Value;
+							argumentOk = getVector3Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
+							break;
+						}
 					case TYPE_TRANSFORMATIONS:
-						Transformations transformationsValue;
-						argumentOk = getTransformationsValue(argumentValues, argumentIdx, transformationsValue, argumentType.optional);
-						break;
+						{
+							Transformations transformationsValue;
+							argumentOk = getTransformationsValue(argumentValues, argumentIdx, transformationsValue, argumentType.optional);
+							break;
+						}
 				}
 				if (argumentOk == false) {
 					Console::println(
