@@ -15,33 +15,12 @@
 				
 					<!-- Point Light Start -->
 					<layout show-on="point" width="100%" height="auto" alignment="vertical">
+						<space height="5" />						
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_ambient" name="Ambient" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<image id="light_point_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_point_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_diffuse" name="Diffuse" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<image id="light_point_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_point_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<image id="light_point_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_point_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_specular" name="Specular" />
 						<space height="5" />
 						<menu-separator />
 						<space height="5" />
@@ -110,32 +89,11 @@
 					<!-- Spot Light Start -->
 					<layout show-on="spot" width="100%" height="auto" alignment="vertical">
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_spot_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_spot_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_ambient" name="Ambient" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_spot_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_spot_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_diffuse" name="Diffuse" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_spot_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_spot_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_specular" name="Specular" />
 						<space height="5" />
 						<menu-separator />
 						<space height="5" />
@@ -267,32 +225,11 @@
 					<!-- Directional Light Start -->
 					<layout show-on="directional" width="100%" height="auto" alignment="vertical">			
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_directional_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_directional_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_ambient" name="Ambient" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_directional_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_directional_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_diffuse" name="Diffuse" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_directional_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_directional_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_specular" name="Specular" />
 						<space height="5" />
 						<menu-separator />
 						<space height="5" />
@@ -350,32 +287,11 @@
 					<!-- Ambient Light Start -->
 					<layout show-on="ambient" width="100%" height="auto" alignment="vertical">
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_ambient_ambient" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_ambient_ambient_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_ambient" name="Ambient" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Diffuse" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_ambient_diffuse" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_ambient_diffuse_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_diffuse" name="Diffuse" />
 						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Specular" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<image id="light_ambient_specular" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-								<space width="5" />						
-								<button id="light_ambient_specular_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-							</layout>
-						</layout>
+						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_specular" name="Specular" />
 						<space height="5" />
 						<menu-separator />
 						<space height="5" />

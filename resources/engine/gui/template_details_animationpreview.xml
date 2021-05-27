@@ -68,23 +68,7 @@
 			<menu-separator />
 			<space height="5" />
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Attachment" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-					<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-						<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-						<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png"/> -->
-					</element>
-					<space width="5" />
-					<layout width="auto" height="auto" alignment="vertical">
-						<button id="animationpreview_attachment1_model_open" image="resources/engine/images/folder.png" width="25" height="25" />
-						<space height="5" />
-						<button id="animationpreview_attachment1_model_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-						<space height="5" />
-						<button id="animationpreview_attachment1_model_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-					</layout>
-				</layout>
-			</layout>
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="animationpreview_attachment1_model" type="Attachment" />
 								
 		</layout>		
 	</layout>

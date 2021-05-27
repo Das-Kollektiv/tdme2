@@ -15,73 +15,17 @@
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
-					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Texture" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<texture id="pbrmaterial_basecolor_texture" width="100%" height="100%" />
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="pbrmaterial_basecolor_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_basecolor_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_basecolor_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_basecolor_texture" type="Texture" />
 					<space height="10" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Met./Roug." width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<texture id="pbrmaterial_metallic_roughness_texture" width="100%" height="100%" />
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="pbrmaterial_metallic_roughness_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_metallic_roughness_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_metallic_roughness_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_metallic_roughness_texture" type="Met./Roug." />
 					<space height="10" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Normal" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
-							<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
-								<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
-								<texture id="pbrmaterial_normal_texture" width="100%" height="100%" />
-							</element>
-							<space width="5" />
-							<layout width="auto" height="auto" alignment="vertical">
-								<button id="pbrmaterial_normal_texture_open" image="resources/engine/images/folder.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_normal_texture_remove" image="resources/engine/images/delete.png" width="25" height="25" />
-								<space height="5" />
-								<button id="pbrmaterial_normal_texture_browseto" image="resources/engine/images/search.png" width="25" height="25" />
-							</layout>
-						</layout>						
-					</layout>					
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_normal_texture" type="Normal" />					
 					
 					<space height="5" />
 					<menu-separator />
 					<space height="5" />
-					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Base Color" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<image id="pbrmaterial_basecolor" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
-							<space width="5" />						
-							<button id="pbrmaterial_basecolor_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
-						</layout>
-					</layout>					
+
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="pbrmaterial_basecolor" name="Base Color" />					
 					
 					<space height="5" />
 					<menu-separator />
