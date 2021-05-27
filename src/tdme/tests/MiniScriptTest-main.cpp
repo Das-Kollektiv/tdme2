@@ -9,10 +9,12 @@ using tdme::utilities::Console;
 
 int main(int argc, char *argv[]) {
 	Console::println("MiniScript");
-	MiniScript script("resources/tests/scripts", "test.tscript");
-	while (script.isRunning() == true) {
-		script.executeStateMachine();
+	MiniScript* script = new MiniScript();
+	script->loadScript("resources/tests/scripts", "test.tscript");
+	while (script->isRunning() == true) {
+		script->executeStateMachine();
 	}
+	delete script;
 	return 0;
 }
 

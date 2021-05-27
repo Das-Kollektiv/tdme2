@@ -49,17 +49,7 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
-MiniScript::MiniScript(const string& pathName, const string& fileName) {
-	//
-	registerStateMachineStates();
-	registerMethods();
-	registerVariables();
-
-	//
-	loadScript(pathName, fileName);
-
-	//
-	Console::println("DUMPINFO:\n\n" + dumpInfo() + "\n\n");
+MiniScript::MiniScript() {
 }
 
 MiniScript::~MiniScript() {
@@ -83,6 +73,24 @@ void MiniScript::registerMethod(ScriptMethod* method) {
 		return;
 	}
 	scriptMethods[method->getMethodName()] = method;
+}
+
+const MiniScript::ScriptVariable MiniScript::getVariable(const string& name) {
+	auto scriptVariableIt = scriptState.variables.find(name);
+	if (scriptVariableIt == scriptState.variables.end()) {
+		Console::println("MiniScript::getVariable(): variable with name '" + name + "' does not exist.");
+		return ScriptVariable();
+	}
+	return scriptVariableIt->second;
+}
+
+void MiniScript::setVariable(const string& name, const ScriptVariable& variable) {
+	auto scriptVariableIt = scriptState.variables.find(name);
+	if (scriptVariableIt != scriptState.variables.end()) {
+		Console::println("MiniScript::getVariable(): variable with name '" + name + "' does exist.");
+		return;
+	}
+	scriptState.variables[name] = variable;
 }
 
 void MiniScript::executeScriptLine() {
@@ -330,6 +338,30 @@ void MiniScript::emit(const string& condition) {
 }
 
 void MiniScript::loadScript(const string& pathName, const string& fileName) {
+	// shutdown methods and machine states
+	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
+	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
+	scriptMethods.clear();
+	scriptStateMachineStates.clear();
+
+	// shutdown script state
+	scriptState.variables.clear();
+	scriptState.forTimeStarted.clear();
+	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
+	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+	scriptState.id.clear();
+	scriptState.statementIdx = 0;
+	scriptState.waitStarted = Time::getCurrentMillis();
+	scriptState.waitTime = 0LL;
+	scriptState.state = STATE_WAIT_FOR_CONDITION;
+	scriptState.running = false;
+
+	//
+	registerStateMachineStates();
+	registerMethods();
+	registerVariables();
+
+	//
 	vector<string> scriptLines;
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptLines);
@@ -498,6 +530,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	if (gotoStatementStack.empty() == false) {
 		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": unbalanced forXXX/if/elseif/else/end");
 	}
+
+	//
+	Console::println("DUMPINFO:\n\n" + dumpInfo() + "\n\n");
 
 	//
 	startScript();
