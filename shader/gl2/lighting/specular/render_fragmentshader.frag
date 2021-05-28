@@ -170,7 +170,7 @@ void main (void) {
 				vec2 brushTextureUV = vec2(brushTextureMatrix * vec3(((vsPosition.xz - brushPosition) / brushTextureDimension), 1.0));
 				if (brushTextureUV.x >= 0.0 && brushTextureUV.x < 1.0 &&
 					brushTextureUV.y >= 0.0 && brushTextureUV.y < 1.0) {
-					outColor+= vec4(texture2D(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
+					gl_FragColor+= vec4(texture2D(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
 				}
 			}
 		#endif
