@@ -2,15 +2,6 @@
 
 precision mediump float;
 
-struct Material {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 emission;
-	float shininess;
-	float reflection;
-};
-
 uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
@@ -22,7 +13,7 @@ uniform samplerCube environmentMappingTextureUnit;
 uniform int environmentMappingTextureAvailable;
 uniform vec3 environmentMappingPosition;
 
-uniform Material material;
+uniform float materialReflection;
 
 varying vec3 vsPosition;
 varying vec3 vsNormal;
@@ -186,9 +177,9 @@ void main (void) {
 
 	// reflection
 	#if !defined(HAVE_WATER_SHADER)
-		if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+		if (materialReflection > 0.0 && environmentMappingTextureAvailable == 1) {
 			vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), vsNormal);
-			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * material.reflection, 0.0, 1.0);
+			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * materialReflection, 0.0, 1.0);
 		}
 	#endif
 }
