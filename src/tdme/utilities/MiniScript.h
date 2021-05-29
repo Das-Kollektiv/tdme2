@@ -623,6 +623,8 @@ public:
 				return optional;
 			case TYPE_STRING:
 				return optional;
+			case TYPE_VECTOR3:
+				return optional;
 			case TYPE_TRANSFORMATIONS:
 				value = argument.transformationsValue;
 				return true;
