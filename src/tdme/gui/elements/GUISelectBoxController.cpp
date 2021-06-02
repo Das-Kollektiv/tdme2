@@ -273,6 +273,7 @@ void GUISelectBoxController::toggleOpenState(GUIElementNode* optionElementNode) 
 }
 
 void GUISelectBoxController::determineAllOptions() {
+	vector<GUINode*> childControllerNodes;
 	//
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	//
@@ -288,6 +289,7 @@ void GUISelectBoxController::determineAllOptions() {
 }
 
 void GUISelectBoxController::determineExpandedOptions() {
+	vector<GUINode*> childControllerNodes;
 	//
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	//
@@ -303,6 +305,7 @@ void GUISelectBoxController::determineExpandedOptions() {
 }
 
 void GUISelectBoxController::determineParentOptions() {
+	vector<GUINode*> childControllerNodes;
 	//
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	//

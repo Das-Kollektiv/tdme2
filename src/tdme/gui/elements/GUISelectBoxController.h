@@ -36,7 +36,6 @@ private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
 	static constexpr char VALUE_DELIMITER { '|' };
-	vector<GUINode*> childControllerNodes;
 	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
 	bool disabled;
 	bool multipleSelection;
