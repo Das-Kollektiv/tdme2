@@ -25,11 +25,38 @@ using tdme::utilities::MutableString;
 GUITabsController::GUITabsController(GUINode* node)
 	: GUINodeController(node)
 {
-	init();
 }
 
-void GUITabsController::init()
-{
+void GUITabsController::determineTabControllers() {
+	tabControllers.clear();
+	vector<GUINode*> childControllerNodes;
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes[i];
+		auto childController = childControllerNode->getController();
+		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
+			auto tabController = required_dynamic_cast<GUITabController*>(childController);
+			if (static_cast<GUINode*>(tabController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
+				continue;
+			tabControllers.push_back(tabController);
+		}
+	}
+}
+
+void GUITabsController::determineTabContentControllers() {
+	tabContentControllers.clear();
+	vector<GUINode*> childControllerNodes;
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes[i];
+		auto childController = childControllerNode->getController();
+		if (dynamic_cast<GUITabContentController*>(childController) != nullptr) {
+			auto tabContentController = required_dynamic_cast<GUITabContentController*>(childController);
+			if (static_cast<GUINode*>(tabContentController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
+				continue;
+			tabContentControllers.push_back(tabContentController);
+		}
+	}
 }
 
 bool GUITabsController::isDisabled()
@@ -43,19 +70,12 @@ void GUITabsController::setDisabled(bool disabled)
 
 void GUITabsController::initialize()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
-			auto tabController = required_dynamic_cast<GUITabController*>(childController);
-			if (static_cast<GUINode*>(tabController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
-				continue;
-
-			tabController->setSelected(true);
-			setTabContentSelected(tabController->getNode()->getId());
-			break;
-		}
+	determineTabControllers();
+	determineTabContentControllers();
+	for (auto tabController: tabControllers) {
+		tabController->setSelected(true);
+		setTabContentSelected(tabController->getNode()->getId());
+		break;
 	}
 }
 
@@ -65,22 +85,12 @@ void GUITabsController::dispose()
 
 void GUITabsController::postLayout()
 {
-	setTabContentSelectedInternal(value.getString());
 }
 
 void GUITabsController::unselect()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
-			auto tabController = required_dynamic_cast<GUITabController*>(childController);
-			if (static_cast<GUINode*>(tabController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
-				continue;
-
-			tabController->setSelected(false);
-		}
+	for (auto tabController: tabControllers) {
+		tabController->setSelected(false);
 	}
 }
 
@@ -89,19 +99,10 @@ void GUITabsController::setTabContentSelectedInternal(const string& id) {
 	value.set(id);
 	tabSelected = false;
 	auto tabContentNodeId = id + "-content";
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUITabContentController*>(childController) != nullptr) {
-			auto tabContentController = required_dynamic_cast<GUITabContentController*>(childController);
-			if (static_cast<GUINode*>(tabContentController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
-				continue;
-
-			auto select = tabContentNodeId == childController->getNode()->getId();
-			required_dynamic_cast<GUITabContentController*>(childController)->setSelected(select);
-			if (select == true) tabSelected = true;
-		}
+	for (auto tabContentController: tabContentControllers) {
+		auto select = tabContentNodeId == tabContentController->getNode()->getId();
+		tabContentController->setSelected(select);
+		if (select == true) tabSelected = true;
 	}
 }
 
@@ -149,5 +150,8 @@ void GUITabsController::setValue(const MutableString& value)
 
 void GUITabsController::onSubTreeChange()
 {
+	determineTabControllers();
+	determineTabContentControllers();
+	setTabContentSelectedInternal(value.getString());
 }
 

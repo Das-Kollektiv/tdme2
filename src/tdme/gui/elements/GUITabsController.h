@@ -32,7 +32,8 @@ class tdme::gui::elements::GUITabsController final
 	friend class GUITabsHeaderController;
 
 private:
-	vector<GUINode*> childControllerNodes;
+	vector<GUITabController*> tabControllers;
+	vector<GUITabContentController*> tabContentControllers;
 	MutableString value;
 	bool tabSelected { false };
 
@@ -43,9 +44,14 @@ private:
 	GUITabsController(GUINode* node);
 
 	/**
-	 * Initialize
+	 * Determine tab controllers
 	 */
-	void init();
+	void determineTabControllers();
+
+	/**
+	 * Determine tab controllers
+	 */
+	void determineTabContentControllers();
 
 	/**
 	 * Unselect all tab nodes
