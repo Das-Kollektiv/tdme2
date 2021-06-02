@@ -38,7 +38,6 @@ private:
 	static string CONDITION_ENABLED;
 	static string CONDITION_OPENED;
 	static string CONDITION_CLOSED;
-	vector<GUINode*> childControllerNodes;
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
 	bool open;
 	bool disabled;
@@ -116,5 +115,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };

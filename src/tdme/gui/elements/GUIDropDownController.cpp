@@ -75,6 +75,9 @@ void GUIDropDownController::initialize()
 
 	//
 	GUIElementController::initialize();
+
+	//
+	determineDropDownOptionControllers();
 }
 
 void GUIDropDownController::dispose()
@@ -93,11 +96,8 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
-		if (childController != nullptr) childController->unselect();
+	for (auto dropDownOptionController: dropDownOptionControllers) {
+		dropDownOptionController->unselect();
 	}
 }
 
@@ -117,6 +117,7 @@ void GUIDropDownController::toggleOpenState()
 
 void GUIDropDownController::determineDropDownOptionControllers()
 {
+	vector<GUINode*> childControllerNodes;
 	dropDownOptionControllers.clear();
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -141,7 +142,6 @@ int GUIDropDownController::getSelectedOptionIdx()
 
 void GUIDropDownController::selectNext()
 {
-	determineDropDownOptionControllers();
 	auto selectedDropDownOptionControlerIdx = getSelectedOptionIdx();
 	unselect();
 	if (dropDownOptionControllers.size() == 0)
@@ -158,7 +158,6 @@ void GUIDropDownController::selectNext()
 
 void GUIDropDownController::selectPrevious()
 {
-	determineDropDownOptionControllers();
 	auto selectedDropDownOptionControlerIdx = getSelectedOptionIdx();
 	unselect();
 	if (dropDownOptionControllers.size() == 0)
@@ -175,7 +174,6 @@ void GUIDropDownController::selectPrevious()
 
 void GUIDropDownController::selectLast()
 {
-	determineDropDownOptionControllers();
 	if (lastSelectedDropDownOptionControlerIdx == -1 || lastSelectedDropDownOptionControlerIdx >= dropDownOptionControllers.size()) {
 		lastSelectedDropDownOptionControlerIdx = -1;
 		return;
@@ -334,9 +332,7 @@ bool GUIDropDownController::hasValue()
 const MutableString& GUIDropDownController::getValue()
 {
 	value.reset();
-	determineDropDownOptionControllers();
-	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers[i];
+	for (auto dropDownOptionController: dropDownOptionControllers) {
 		if (dropDownOptionController->isSelected() == true) {
 			value.append(required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode())->getValue());
 		}
@@ -346,10 +342,8 @@ const MutableString& GUIDropDownController::getValue()
 
 void GUIDropDownController::setValue(const MutableString& value)
 {
-	determineDropDownOptionControllers();
 	unselect();
-	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers[i];
+	for (auto dropDownOptionController: dropDownOptionControllers) {
 		auto dropDownOptionNode = required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode());
 		if (value.equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();
@@ -360,3 +354,6 @@ void GUIDropDownController::setValue(const MutableString& value)
 	}
 }
 
+void GUIDropDownController::onSubTreeChange() {
+	determineDropDownOptionControllers();
+}
