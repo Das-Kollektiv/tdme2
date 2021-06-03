@@ -46,7 +46,8 @@ private:
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
 	string search;
-	int lastSelectedDropDownOptionControlerIdx { -1 };
+	int selectedDropDownOptionControllerIdx { -1 };
+	int lastSelectedDropDownOptionControllerIdx { -1 };
 
 private:
 	/**
@@ -61,9 +62,21 @@ private:
 	bool isOpen();
 
 	/**
-	 * Unselect all nodes
+	 * Unselect
 	 */
 	void unselect();
+
+	/**
+	 * Select by index
+	 * @param idx index
+	 */
+	void select(int idx);
+
+	/**
+	 * Select by option element node
+	 * @param selectedDropDownOptionElementNode selected drop down option element node
+	 */
+	void select(GUIElementNode* selectedDropDownOptionElementNode);
 
 	/**
 	 * Toggle open state
@@ -74,11 +87,6 @@ private:
 	 * Determine drop down option controllers
 	 */
 	void determineDropDownOptionControllers();
-
-	/**
-	 * Get selected option idx
-	 */
-	int getSelectedOptionIdx();
 
 	/**
 	 * Select next node
