@@ -14,6 +14,7 @@ using std::vector;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
@@ -30,8 +31,8 @@ class tdme::gui::elements::GUITabsHeaderController final
 
 private:
 	GUINode* tabsNode { nullptr };
-	vector<GUINode*> childControllerNodes;
 	vector<GUITabController*> tabControllers;
+	int tabControllerIdx { -1 };
 	bool focus;
 	MutableString value;
 
@@ -47,21 +48,9 @@ private:
 	bool hasFocus();
 
 	/**
-	 * Unselect all nodes
-	 */
-	void unselect();
-
-	/**
 	 * Determine select box option controllers
-	 * @return if tabs are available
 	 */
-	bool determineTabControllers();
-
-	/**
-	 * Get selected tab idx
-	 * @return selected tab index
-	 */
-	int getSelectedTabIdx();
+	void determineTabControllers();
 
 	/**
 	 * Select next node
@@ -79,6 +68,28 @@ private:
 	void selectCurrent();
 
 public:
+	/**
+	 * Unselect selected tab
+	 */
+	void unselect();
+
+	/**
+	 * Select selected tab
+	 */
+	void select();
+
+	/**
+	 * Select tab by index
+	 * @param idx index
+	 */
+	void select(int idx);
+
+	/**
+	 * Select tab by index
+	 * @param tabElementNode tab element node
+	 */
+	void select(GUIElementNode* tabElementNode);
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
@@ -93,5 +104,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };

@@ -86,6 +86,8 @@ GUIParentNode::GUIParentNode(
 
 void GUIParentNode::clearSubNodes()
 {
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -93,26 +95,48 @@ void GUIParentNode::clearSubNodes()
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
+
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
+	}
+
 	screenNode->forceInvalidateLayout(this);
 
 	setConditionsMet();
 	floatingNodesCache.clear();
 	invalidateRenderCaches();
 
-	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
-	while (parentControllerNode != nullptr) {
-		parentControllerNode->getController()->onSubTreeChange();
-		parentControllerNode = parentControllerNode->getParentControllerNode();
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
 	}
 }
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 {
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto subNode = subNodes[i];
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
+
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
+	}
+
 	screenNode->forceInvalidateLayout(this);
 	GUIParser::parse(this, xml);
 
@@ -151,10 +175,12 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 		}
 	}
 
-	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
-	while (parentControllerNode != nullptr) {
-		parentControllerNode->getController()->onSubTreeChange();
-		parentControllerNode = parentControllerNode->getParentControllerNode();
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
 	}
 }
 
@@ -199,9 +225,12 @@ void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 	}
 
 	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
-	while (parentControllerNode != nullptr) {
-		parentControllerNode->getController()->onSubTreeChange();
-		parentControllerNode = parentControllerNode->getParentControllerNode();
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
 	}
 }
 
