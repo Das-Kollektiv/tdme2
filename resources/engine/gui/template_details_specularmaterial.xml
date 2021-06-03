@@ -6,7 +6,7 @@
 			<space height="5" />
 			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_diffuse_texture" type="Diffuse" />
 			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_tranparency_texture" type="Transparency" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_transparency_texture" type="Transparency" />
 			<space height="10" />
 			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_normal_texture" type="Normal" />
 			<space height="10" />
