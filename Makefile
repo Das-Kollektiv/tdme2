@@ -204,8 +204,6 @@ else
 	HL_CFLAGS =
 endif
 
-OFLAGS := 
-
 CPPFLAGS := $(INCLUDES)
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
