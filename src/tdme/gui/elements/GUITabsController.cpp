@@ -2,6 +2,7 @@
 
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/elements/GUITabController.h>
+#include <tdme/gui/elements/GUITabsHeaderController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -14,6 +15,7 @@ using tdme::gui::elements::GUITabsController;
 
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::elements::GUITabController;
+using tdme::gui::elements::GUITabsHeaderController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -25,22 +27,6 @@ using tdme::utilities::MutableString;
 GUITabsController::GUITabsController(GUINode* node)
 	: GUINodeController(node)
 {
-}
-
-void GUITabsController::determineTabControllers() {
-	tabControllers.clear();
-	vector<GUINode*> childControllerNodes;
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUITabController*>(childController) != nullptr) {
-			auto tabController = required_dynamic_cast<GUITabController*>(childController);
-			if (static_cast<GUINode*>(tabController->getNode()->getParentControllerNode()->getParentControllerNode()) != node)
-				continue;
-			tabControllers.push_back(tabController);
-		}
-	}
 }
 
 void GUITabsController::determineTabContentControllers() {
@@ -70,13 +56,26 @@ void GUITabsController::setDisabled(bool disabled)
 
 void GUITabsController::initialize()
 {
-	determineTabControllers();
 	determineTabContentControllers();
-	for (auto tabController: tabControllers) {
-		tabController->setSelected(true);
-		setTabContentSelected(tabController->getNode()->getId());
-		break;
+	vector<GUINode*> childControllerNodes;
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
+	for (auto i = 0; i < childControllerNodes.size(); i++) {
+		auto childControllerNode = childControllerNodes[i];
+		auto childController = childControllerNode->getController();
+		if (dynamic_cast<GUITabsHeaderController*>(childController) != nullptr) {
+			auto _tabsHeaderController = required_dynamic_cast<GUITabsHeaderController*>(childController);
+			if (static_cast<GUINode*>(_tabsHeaderController->getNode()->getParentControllerNode()) != node)
+				continue;
+			tabsHeaderController = _tabsHeaderController;
+		}
 	}
+	auto preselectedTabIdx = 0;
+	auto i = 0;
+	for (auto tabContentController: tabContentControllers) {
+		if (tabContentController->isSelected() == true) preselectedTabIdx = i;
+		i++;
+	}
+	tabsHeaderController->select(preselectedTabIdx);
 }
 
 void GUITabsController::dispose()
@@ -89,12 +88,15 @@ void GUITabsController::postLayout()
 
 void GUITabsController::unselect()
 {
-	for (auto tabController: tabControllers) {
-		tabController->setSelected(false);
-	}
+	tabsHeaderController->unselect();
+}
+
+void GUITabsController::select(GUIElementNode* tabElementNode) {
+	tabsHeaderController->select(tabElementNode);
 }
 
 void GUITabsController::setTabContentSelectedInternal(const string& id) {
+	// TODO: a.drewke: improve me!
 	if (value.equals(id) == true && tabSelected == true) return;
 	value.set(id);
 	tabSelected = false;
@@ -150,7 +152,6 @@ void GUITabsController::setValue(const MutableString& value)
 
 void GUITabsController::onSubTreeChange()
 {
-	determineTabControllers();
 	determineTabContentControllers();
 	setTabContentSelectedInternal(value.getString());
 }

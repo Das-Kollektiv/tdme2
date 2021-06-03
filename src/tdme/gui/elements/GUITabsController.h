@@ -13,8 +13,10 @@
 using std::string;
 using std::vector;
 
+using tdme::gui::elements::GUITabsHeaderController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
@@ -34,6 +36,7 @@ class tdme::gui::elements::GUITabsController final
 private:
 	vector<GUITabController*> tabControllers;
 	vector<GUITabContentController*> tabContentControllers;
+	GUITabsHeaderController* tabsHeaderController { nullptr };
 	MutableString value;
 	bool tabSelected { false };
 
@@ -46,17 +49,18 @@ private:
 	/**
 	 * Determine tab controllers
 	 */
-	void determineTabControllers();
-
-	/**
-	 * Determine tab controllers
-	 */
 	void determineTabContentControllers();
 
 	/**
-	 * Unselect all tab nodes
+	 * Unselect
 	 */
 	void unselect();
+
+	/**
+	 * Select
+	 * @param tabElementNode tab element node
+	 */
+	void select(GUIElementNode* tabElementNode);
 
 	/**
 	 * Set tab content selected

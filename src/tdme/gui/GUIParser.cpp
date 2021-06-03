@@ -242,6 +242,15 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	guiScreenNode->setBackgroundImage(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))));
 	parseGUINode(guiScreenNode, string(), xmlRoot, nullptr);
 	guiScreenNode->setConditionsMet();
+
+	//
+	vector<GUINode*> childControllerNodes;
+	guiScreenNode->getChildControllerNodes(childControllerNodes);
+	for (auto node: childControllerNodes) {
+		node->getController()->onSubTreeChange();
+	}
+
+	//
 	return guiScreenNode;
 }
 

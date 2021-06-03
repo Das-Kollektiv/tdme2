@@ -48,7 +48,6 @@ void GUITabContentController::initialize()
 	auto _parentElementNode = this->node->getParentNode();
 	while (dynamic_cast<GUIElementNode*>(_parentElementNode) == nullptr) _parentElementNode = _parentElementNode->getParentNode();
 	parentElementNode = required_dynamic_cast<GUIElementNode*>(_parentElementNode);
-	setSelected(selected);
 }
 
 void GUITabContentController::dispose()
