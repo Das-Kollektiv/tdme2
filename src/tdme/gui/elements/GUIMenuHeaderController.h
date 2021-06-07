@@ -13,6 +13,7 @@ using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
@@ -33,6 +34,7 @@ private:
 	vector<GUIMenuHeaderItemController*> menuHeaderItemControllers;
 	bool focus;
 	MutableString value;
+	int menuHeaderItemControllerIdx { -1 };
 
 	/**
 	 * Private constructor
@@ -49,12 +51,6 @@ private:
 	 * Determine menu header item controllers
 	 */
 	void determineMenuHeaderItemControllers();
-
-	/**
-	 * Get selected header item idx
-	 * @return selected header item index
-	 */
-	int getSelectedHeaderItemIdx();
 
 	/**
 	 * @return if menu is open
@@ -75,6 +71,18 @@ private:
 	 * Select previous
 	 */
 	void selectPrevious();
+
+	/**
+	 * Select by index
+	 * @param idx index
+	 */
+	void select(int idx);
+
+	/**
+	 * Select element node
+	 * @param elementNode element node
+	 */
+	void select(GUIElementNode* elementNode);
 
 public:
 	// overridden methods

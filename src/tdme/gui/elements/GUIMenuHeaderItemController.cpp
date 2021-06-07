@@ -201,7 +201,8 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			node->isEventBelongingToNode(event) == true) {
 			if (open == false) {
 				event->setProcessed(true);
-				toggleOpenState();
+				unselect();
+				menuHeaderController->select(required_dynamic_cast<GUIElementNode*>(this->node));
 			}
 		}
 	} else {
@@ -212,7 +213,7 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
 			if (innerNode->isEventBelongingToNode(event) == false) {
 				event->setProcessed(true);
-				toggleOpenState();
+				menuHeaderController->unselect();
 			}
 		} else
 		if (node == this->node &&
@@ -220,9 +221,7 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			if (node == this->node && node->isEventBelongingToNode(event) == true) {
 				if (open == false) {
 					event->setProcessed(true);
-					menuHeaderController->unselect();
-					toggleOpenState();
-				}
+					menuHeaderController->select(required_dynamic_cast<GUIElementNode*>(this->node));				}
 			}
 		}
 	}
