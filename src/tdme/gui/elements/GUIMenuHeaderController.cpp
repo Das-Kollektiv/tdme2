@@ -91,10 +91,19 @@ void GUIMenuHeaderController::selectNext()
 {
 	unselect();
 	if (menuHeaderItemControllers.empty() == true) return;
-	if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = 0;
-	menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx + 1) % (int)menuHeaderItemControllers.size();
-	if (menuHeaderItemControllerIdx < 0)
-		menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
+
+	auto disabledItems = 0;
+	while (disabledItems < menuHeaderItemControllers.size()) {
+		menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx + 1) % (int)menuHeaderItemControllers.size();
+		if (menuHeaderItemControllerIdx < 0)
+			menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
+		if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
+	if (disabledItems == menuHeaderItemControllers.size()) {
+		menuHeaderItemControllerIdx = -1;
+		return;
+	}
 
 	menuHeaderItemControllers[menuHeaderItemControllerIdx]->select();
 	if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();
@@ -105,10 +114,20 @@ void GUIMenuHeaderController::selectPrevious()
 {
 	unselect();
 	if (menuHeaderItemControllers.empty() == true) return;
-	if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = 0;
-	menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx - 1) % (int)menuHeaderItemControllers.size();
-	if (menuHeaderItemControllerIdx < 0)
-		menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
+	if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = (int)menuHeaderItemControllers.size();
+
+	auto disabledItems = 0;
+	while (disabledItems < menuHeaderItemControllers.size()) {
+		menuHeaderItemControllerIdx = (menuHeaderItemControllerIdx - 1) % (int)menuHeaderItemControllers.size();
+		if (menuHeaderItemControllerIdx < 0)
+			menuHeaderItemControllerIdx += menuHeaderItemControllers.size();
+		if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
+	if (disabledItems == menuHeaderItemControllers.size()) {
+		menuHeaderItemControllerIdx = -1;
+		return;
+	}
 
 	menuHeaderItemControllers[menuHeaderItemControllerIdx]->select();
 	if (menuHeaderItemControllers[menuHeaderItemControllerIdx]->isOpen() == false) menuHeaderItemControllers[menuHeaderItemControllerIdx]->toggleOpenState();

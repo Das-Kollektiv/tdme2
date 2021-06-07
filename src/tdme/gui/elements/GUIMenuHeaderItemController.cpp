@@ -140,18 +140,29 @@ void GUIMenuHeaderItemController::selectFirst()
 {
 	unselectSelection();
 	if (menuItemControllers.empty() == true) return;
-	selectedMenuItemControllerIdx = 0;
-	menuItemControllers[selectedMenuItemControllerIdx]->select();
+	selectedMenuItemControllerIdx = -1;
+	selectNext();
 }
 
 void GUIMenuHeaderItemController::selectNext()
 {
 	unselectSelection();
 	if (menuItemControllers.empty() == true) return;
-	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = 0;
-	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx + 1) % (int)menuItemControllers.size();
-	if (selectedMenuItemControllerIdx < 0)
-		selectedMenuItemControllerIdx += menuItemControllers.size();
+
+	auto disabledItems = 0;
+	while (disabledItems < menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx + 1) % (int)menuItemControllers.size();
+		if (selectedMenuItemControllerIdx < 0)
+			selectedMenuItemControllerIdx += menuItemControllers.size();
+		if (menuItemControllers[selectedMenuItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
+
+	if (disabledItems == menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = -1;
+		return;
+	}
+
 	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
@@ -159,12 +170,23 @@ void GUIMenuHeaderItemController::selectPrevious()
 {
 	unselectSelection();
 	if (menuItemControllers.empty() == true) return;
-	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = 0;
-	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx - 1) % (int)menuItemControllers.size();
-	if (selectedMenuItemControllerIdx < 0)
-		selectedMenuItemControllerIdx += menuItemControllers.size();
-	menuItemControllers[selectedMenuItemControllerIdx]->select();
-}
+	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = (int)menuItemControllers.size();
+
+	auto disabledItems = 0;
+	while (disabledItems < menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx - 1) % (int)menuItemControllers.size();
+		if (selectedMenuItemControllerIdx < 0)
+			selectedMenuItemControllerIdx += menuItemControllers.size();
+		if (menuItemControllers[selectedMenuItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
+
+	if (disabledItems == menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = -1;
+		return;
+	}
+
+	menuItemControllers[selectedMenuItemControllerIdx]->select();}
 
 void GUIMenuHeaderItemController::handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event)
 {

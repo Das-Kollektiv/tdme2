@@ -138,7 +138,6 @@ void GUIDropDownController::toggleOpenState()
 
 void GUIDropDownController::determineDropDownOptionControllers()
 {
-	if (selectedDropDownOptionControllerIdx == -1) selectedDropDownOptionControllerIdx = 0;
 	vector<GUINode*> childControllerNodes;
 	dropDownOptionControllers.clear();
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
@@ -176,6 +175,8 @@ void GUIDropDownController::selectPrevious()
 	unselect();
 	if (dropDownOptionControllers.size() == 0)
 		return;
+
+	if (selectedDropDownOptionControllerIdx == -1) selectedDropDownOptionControllerIdx = (int)dropDownOptionControllers.size() - 1;
 
 	auto disabledCount = 0;
 	while (disabledCount < dropDownOptionControllers.size()) {
