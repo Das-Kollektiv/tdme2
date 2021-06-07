@@ -97,7 +97,6 @@ private:
 	void expandHierarchy();
 public:
 	// overridden methods
-	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;

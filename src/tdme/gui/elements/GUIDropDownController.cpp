@@ -155,9 +155,16 @@ void GUIDropDownController::selectNext()
 	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx + 1) % dropDownOptionControllers.size();
-	if (selectedDropDownOptionControllerIdx < 0)
-		selectedDropDownOptionControllerIdx += dropDownOptionControllers.size();
+	auto disabledCount = 0;
+	while (disabledCount < dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx + 1) % dropDownOptionControllers.size();
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = -1;
+		return;
+	}
 
 	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->select();
 	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
@@ -170,9 +177,19 @@ void GUIDropDownController::selectPrevious()
 	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx - 1) % dropDownOptionControllers.size();
-	if (selectedDropDownOptionControllerIdx < 0)
-		selectedDropDownOptionControllerIdx += dropDownOptionControllers.size();
+	auto disabledCount = 0;
+	while (disabledCount < dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx - 1) % dropDownOptionControllers.size();
+		if (selectedDropDownOptionControllerIdx < 0)
+			selectedDropDownOptionControllerIdx += dropDownOptionControllers.size();
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = -1;
+		return;
+	}
+
 
 	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->select();
 	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);

@@ -49,19 +49,6 @@ bool GUISelectBoxController::isKeyControlDown() {
 	return keyControl;
 }
 
-bool GUISelectBoxController::isDisabled()
-{
-	return disabled;
-}
-
-void GUISelectBoxController::setDisabled(bool disabled)
-{
-	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
-	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
-	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true ?CONDITION_DISABLED:CONDITION_ENABLED);
-}
-
 void GUISelectBoxController::initialize()
 {
 	GUIElementController::initialize();
@@ -178,7 +165,16 @@ void GUISelectBoxController::focusNext()
 
 	unfocus();
 
-	if (++optionIdx >= selectBoxOptionControllers.size()) optionIdx = selectBoxOptionControllers.size() - 1;
+	auto disabledCount = 0;
+	while (disabledCount < selectBoxOptionControllers.size()) {
+		if (++optionIdx >= selectBoxOptionControllers.size()) optionIdx = selectBoxOptionControllers.size() - 1;
+		if (selectBoxOptionControllers[optionIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == selectBoxOptionControllers.size()) {
+		optionIdx = -1;
+		return;
+	}
 
 	focus(optionIdx);
 }
@@ -190,7 +186,16 @@ void GUISelectBoxController::focusPrevious()
 
 	unfocus();
 
-	if (--optionIdx < 0) optionIdx = 0;
+	auto disabledCount = 0;
+	while (disabledCount < selectBoxOptionControllers.size()) {
+		if (--optionIdx < 0) optionIdx = 0;
+		if (selectBoxOptionControllers[optionIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == selectBoxOptionControllers.size()) {
+		optionIdx = -1;
+		return;
+	}
 
 	focus(optionIdx);
 }

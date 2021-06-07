@@ -41,13 +41,10 @@ GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	this->focussed = false;
 }
 
-bool GUISelectBoxOptionController::isDisabled()
-{
-	return false;
-}
-
 void GUISelectBoxOptionController::setDisabled(bool disabled)
 {
+	unselect();
+	GUIElementController::setDisabled(disabled);
 }
 
 bool GUISelectBoxOptionController::isSelected()

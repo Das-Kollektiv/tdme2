@@ -48,13 +48,10 @@ bool GUIDropDownOptionController::isSelected()
 	return selected;
 }
 
-bool GUIDropDownOptionController::isDisabled()
-{
-	return false;
-}
-
 void GUIDropDownOptionController::setDisabled(bool disabled)
 {
+	GUIElementController::setDisabled(disabled);
+	unselect();
 }
 
 void GUIDropDownOptionController::select()
@@ -132,6 +129,7 @@ void GUIDropDownOptionController::dispose()
 
 void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	if (isDisabled() == true) return;
 	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);

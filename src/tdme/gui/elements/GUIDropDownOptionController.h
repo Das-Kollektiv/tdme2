@@ -69,7 +69,6 @@ private:
 
 public:
 	// overridden methods
-	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void postLayout() override;
