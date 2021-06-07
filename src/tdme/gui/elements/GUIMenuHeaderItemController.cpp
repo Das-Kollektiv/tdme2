@@ -116,74 +116,60 @@ void GUIMenuHeaderItemController::toggleOpenState()
 
 void GUIMenuHeaderItemController::determineMenuItemControllers()
 {
+	vector<GUINode*> childControllerNodes;
 	menuItemControllers.clear();
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		auto menuItemController = dynamic_cast<GUIMenuItemController*>(childController);
-		if (menuItemController != nullptr && menuItemController->isDisabled() == false) {
+		if (menuItemController != nullptr) {
 			menuItemControllers.push_back(menuItemController);
 		}
 	}
 }
 
-int GUIMenuHeaderItemController::getSelectedMenuItemControllerIdx()
+void GUIMenuHeaderItemController::unselectSelection()
 {
-	auto selectedMenuItemControllerIdx = 0;
-	for (auto i = 0; i < menuItemControllers.size(); i++) {
-		auto selectBoxOptionController = menuItemControllers[i];
-		if (selectBoxOptionController->isSelected() == true) {
-			selectedMenuItemControllerIdx = i;
-			break;
-		}
-	}
-	return selectedMenuItemControllerIdx;
+	if (selectedMenuItemControllerIdx == -1) return;
+	if (menuItemControllers.empty() == true) return;
+	menuItemControllers[selectedMenuItemControllerIdx]->unselect();
 }
 
 void GUIMenuHeaderItemController::selectFirst()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
-
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
-	menuItemControllers[0]->select();
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
+	selectedMenuItemControllerIdx = 0;
+	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
 void GUIMenuHeaderItemController::selectNext()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
-
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
+	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = 0;
 	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx + 1) % (int)menuItemControllers.size();
 	if (selectedMenuItemControllerIdx < 0)
 		selectedMenuItemControllerIdx += menuItemControllers.size();
-
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
 	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
 void GUIMenuHeaderItemController::selectPrevious()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
-
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
+	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = 0;
 	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx - 1) % (int)menuItemControllers.size();
 	if (selectedMenuItemControllerIdx < 0)
 		selectedMenuItemControllerIdx += menuItemControllers.size();
-
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
 	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
 void GUIMenuHeaderItemController::handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event)
 {
 	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
+	if (selectedMenuItemControllerIdx == -1) return;
 	menuItemControllers[selectedMenuItemControllerIdx]->handleKeyboardEvent(event);
 }
 
@@ -259,5 +245,10 @@ const MutableString& GUIMenuHeaderItemController::getValue()
 
 void GUIMenuHeaderItemController::setValue(const MutableString& value)
 {
+	determineMenuItemControllers();
 }
 
+void GUIMenuHeaderItemController::onSubTreeChange() {
+	determineMenuItemControllers();
+	selectedMenuItemControllerIdx = -1;
+}

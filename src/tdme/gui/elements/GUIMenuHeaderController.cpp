@@ -238,5 +238,6 @@ void GUIMenuHeaderController::setValue(const MutableString& value)
 void GUIMenuHeaderController::onSubTreeChange()
 {
 	determineMenuHeaderItemControllers();
+	menuHeaderItemControllerIdx = -1;
 }
 

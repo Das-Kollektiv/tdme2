@@ -302,6 +302,7 @@ void GUISelectBoxController::determineExpandedOptions() {
 			selectBoxOptionControllers.push_back(selectBoxOptionController);
 		}
 	}
+	if (focussedOptionIdx >= selectBoxOptionControllers.size()) focussedOptionIdx = selectBoxOptionControllers.size() - 1;
 }
 
 void GUISelectBoxController::determineParentOptions() {

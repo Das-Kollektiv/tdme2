@@ -147,7 +147,6 @@ void GUIDropDownController::determineDropDownOptionControllers()
 		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
 		if (childController != nullptr) dropDownOptionControllers.push_back(childController);
 	}
-	if (selectedDropDownOptionControllerIdx >= dropDownOptionControllers.size()) selectedDropDownOptionControllerIdx = dropDownOptionControllers.size() - 1;
 }
 
 void GUIDropDownController::selectNext()
@@ -359,4 +358,5 @@ void GUIDropDownController::setValue(const MutableString& value)
 
 void GUIDropDownController::onSubTreeChange() {
 	determineDropDownOptionControllers();
+	selectedDropDownOptionControllerIdx = -1;
 }

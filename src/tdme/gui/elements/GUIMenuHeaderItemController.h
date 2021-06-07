@@ -41,11 +41,11 @@ private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
 	GUIElementNode* menuHeaderNode { nullptr };
-	vector<GUINode*> childControllerNodes;
 	vector<GUIMenuItemController*> menuItemControllers;
 	bool open;
 	bool selected;
 	MutableString value;
+	int selectedMenuItemControllerIdx { -1 };
 
 private:
 	/**
@@ -85,10 +85,9 @@ private:
 	void determineMenuItemControllers();
 
 	/**
-	 * Get selected option idx
-	 * @return selected menu item controller index
+	 * Unselect selection
 	 */
-	int getSelectedMenuItemControllerIdx();
+	void unselectSelection();
 
 	/**
 	 * Select first menu item
@@ -124,5 +123,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };
