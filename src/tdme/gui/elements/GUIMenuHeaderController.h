@@ -30,7 +30,6 @@ class tdme::gui::elements::GUIMenuHeaderController final
 	friend class GUIMenuHeaderItemController;
 
 private:
-	vector<GUINode*> childControllerNodes;
 	vector<GUIMenuHeaderItemController*> menuHeaderItemControllers;
 	bool focus;
 	MutableString value;

@@ -60,6 +60,7 @@ bool GUIMenuHeaderController::hasFocus()
 void GUIMenuHeaderController::determineMenuHeaderItemControllers()
 {
 	menuHeaderItemControllers.clear();
+	vector<GUINode*> childControllerNodes;
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
