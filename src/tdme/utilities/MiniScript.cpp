@@ -25,6 +25,7 @@
 #include <tdme/utilities/Time.h>
 
 using std::map;
+using std::remove;
 using std::sort;
 using std::stack;
 using std::string;
@@ -94,14 +95,14 @@ void MiniScript::setVariable(const string& name, const ScriptVariable& variable)
 }
 
 void MiniScript::executeScriptLine() {
-	if (scriptState.idx == -1 || scriptState.statementIdx == -1 || scriptState.running == false) return;
-	auto& script = scripts[scriptState.idx];
+	if (scriptState.scriptIdx == -1 || scriptState.statementIdx == -1 || scriptState.running == false) return;
+	auto& script = scripts[scriptState.scriptIdx];
 	auto& statement = script.statements[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": " + statement.statement);
 
 	scriptState.statementIdx++;
 	if (scriptState.statementIdx >= script.statements.size()) {
-		scriptState.idx = -1;
+		scriptState.scriptIdx = -1;
 		scriptState.statementIdx = -1;
 		scriptState.state = STATE_WAIT_FOR_CONDITION;
 	}
@@ -310,6 +311,9 @@ void MiniScript::emit(const string& condition) {
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
 		auto conditionMet = true;
+		if (script.name.empty() == false && script.name == condition) {
+			break;
+		} else
 		if (script.conditions.size() == 1 && script.conditions[0] == condition) {
 			break;
 		} else {
@@ -321,7 +325,7 @@ void MiniScript::emit(const string& condition) {
 		startErrorScript();
 		return;
 	}
-	if (scriptState.idx == scriptIdx) {
+	if (scriptState.scriptIdx == scriptIdx) {
 		Console::println("MiniScript::emit(): script already running: " + condition);
 		return;
 	}
@@ -330,10 +334,10 @@ void MiniScript::emit(const string& condition) {
 	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
 	scriptState.id.clear();
-	scriptState.idx = scriptIdx;
+	scriptState.scriptIdx = scriptIdx;
 	scriptState.statementIdx = 0;
-	scriptState.waitStarted = Time::getCurrentMillis();
-	scriptState.waitTime = 0LL;
+	scriptState.timeWaitStarted = Time::getCurrentMillis();
+	scriptState.timeWaitTime = 0LL;
 	scriptState.state = STATE_NEXT_STATEMENT;
 }
 
@@ -351,8 +355,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
 	scriptState.id.clear();
 	scriptState.statementIdx = 0;
-	scriptState.waitStarted = Time::getCurrentMillis();
-	scriptState.waitTime = 0LL;
+	scriptState.timeWaitStarted = Time::getCurrentMillis();
+	scriptState.timeWaitTime = 0LL;
 	scriptState.state = STATE_WAIT_FOR_CONDITION;
 	scriptState.running = false;
 
@@ -388,11 +392,15 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				haveCondition = true;
 				scriptLine = StringTools::trim(StringTools::substring(scriptLine, string("on:").size()));
 				vector<string> conditions;
-				StringTokenizer t;
-				t.tokenize(scriptLine, ";");
-				while (t.hasMoreTokens()) conditions.push_back(StringTools::trim(t.nextToken()));
-				scripts.push_back({ .line = line, .conditions = conditions, .statements = {} });
+				StringTokenizer t1;
+				t1.tokenize(scriptLine, "=");
+				StringTokenizer t2;
+				t2.tokenize(t1.nextToken(), ";");
+				while (t2.hasMoreTokens()) conditions.push_back(StringTools::trim(t2.nextToken()));
 				statementIdx = 0;
+				string name;
+				if (t1.hasMoreTokens() == true) name = StringTools::trim(t1.nextToken());
+				scripts.push_back({ .line = line, .conditions = conditions, .name = name, .statements = {} });
 			} else {
 				Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": expecting 'on:' script condition");
 			}
@@ -520,6 +528,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	for (auto& script: scripts) {
 		for (auto& condition: script.conditions)
 			Console::print(condition + "; ");
+		if (script.name.empty() == false) {
+			Console::print("name = '" + script.name + "'");
+		}
 		Console::println();
 		for (auto& scriptStatement: script.statements) {
 			Console::println("\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != -1?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":""));
@@ -547,20 +558,33 @@ void MiniScript::startScript(int64_t delay) {
 	scriptState.id.clear();
 	registerVariables();
 	scriptState.statementIdx = 0;
-	scriptState.waitStarted = Time::getCurrentMillis();
-	scriptState.waitTime = delay;
+	scriptState.timeWaitStarted = Time::getCurrentMillis();
+	scriptState.timeWaitTime = delay;
 	scriptState.state = delay > 0LL?STATE_WAIT:STATE_WAIT_FOR_CONDITION;
 	scriptState.running = true;
 }
 
-int MiniScript::determineScriptIdxToStart() {
+int MiniScript::determineScriptIdxToStart(bool checkNamedConditions) {
 	if (VERBOSE == true) Console::println("MiniScript::determineScriptIdxToStart()");
 	auto currentScriptStateScript = scriptState.state;
 	auto nothingScriptIdx = -1;
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
 		auto conditionMet = true;
-		if (script.conditions.size() == 1 && script.conditions[0] == "nothing") {
+		if (script.name.empty() == false) {
+			if (checkNamedConditions == false ||
+				find(scriptState.enabledConditionNames.begin(), scriptState.enabledConditionNames.end(), script.name) == scriptState.enabledConditionNames.end()) {
+				scriptIdx++;
+				continue;
+			}
+		} else {
+			if (checkNamedConditions == true) {
+				scriptIdx++;
+				continue;
+			}
+		}
+		if (checkNamedConditions == false &&
+			script.conditions.size() == 1 && script.conditions[0] == "nothing") {
 			nothingScriptIdx = scriptIdx;
 		} else
 		if (script.conditions.size() == 1 &&
@@ -692,8 +716,27 @@ void MiniScript::registerStateMachineStates() {
 			}
 			virtual void execute() override {
 				if (miniScript->scriptState.statementIdx == -1) {
+					miniScript->scriptState.enabledConditionNames.clear();
+					miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
 					miniScript->scriptState.state = STATE_WAIT_FOR_CONDITION;
 					return;
+				}
+				auto now = Time::getCurrentMillis();
+				if (miniScript->scriptState.enabledConditionNames.empty() == false &&
+					(miniScript->scriptState.timeEnabledConditionsCheckLast == -1LL || now >= miniScript->scriptState.timeEnabledConditionsCheckLast + 100LL)) {
+					auto scriptIdxToStart = miniScript->determineScriptIdxToStart(true);
+					if (scriptIdxToStart != -1) {
+						miniScript->scriptState.scriptIdx = scriptIdxToStart;
+						miniScript->scriptState.statementIdx = 0;
+						miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
+						miniScript->scriptState.timeWaitTime = 0LL;
+						miniScript->scriptState.id.clear();
+						miniScript->scriptState.forTimeStarted.clear();
+						while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
+						while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
+						miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+					}
+					miniScript->scriptState.timeEnabledConditionsCheckLast = now;
 				}
 				miniScript->executeScriptLine();
 			}
@@ -715,7 +758,7 @@ void MiniScript::registerStateMachineStates() {
 			}
 			virtual void execute() override {
 				auto now = Time::getCurrentMillis();
-				if (now > miniScript->scriptState.waitStarted + miniScript->scriptState.waitTime) {
+				if (now > miniScript->scriptState.timeWaitStarted + miniScript->scriptState.timeWaitTime) {
 					miniScript->scriptState.state = STATE_NEXT_STATEMENT;
 				}
 			}
@@ -737,23 +780,24 @@ void MiniScript::registerStateMachineStates() {
 			}
 			virtual void execute() override {
 				auto now = Time::getCurrentMillis();
-				if (now < miniScript->scriptState.waitStarted + miniScript->scriptState.waitTime) {
+				if (now < miniScript->scriptState.timeWaitStarted + miniScript->scriptState.timeWaitTime) {
 					return;
 				}
-				auto scriptIdxToStart = miniScript->determineScriptIdxToStart();
+				auto scriptIdxToStart = miniScript->determineScriptIdxToStart(false);
 				if (scriptIdxToStart == -1) {
-					miniScript->scriptState.waitStarted = now;
-					miniScript->scriptState.waitTime = 1000LL;
+					miniScript->scriptState.timeWaitStarted = now;
+					miniScript->scriptState.timeWaitTime = 100LL;
 					return;
 				}
-				miniScript->scriptState.forTimeStarted.clear();
-				miniScript->scriptState.id.clear();
-				miniScript->scriptState.idx = scriptIdxToStart;
+				miniScript->scriptState.scriptIdx = scriptIdxToStart;
 				miniScript->scriptState.statementIdx = 0;
-				miniScript->scriptState.waitStarted = Time::getCurrentMillis();
-				miniScript->scriptState.waitTime = 0LL;
+				miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
+				miniScript->scriptState.timeWaitTime = 0LL;
+				miniScript->scriptState.id.clear();
+				miniScript->scriptState.forTimeStarted.clear();
+				while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
+				while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
 				miniScript->scriptState.state = STATE_NEXT_STATEMENT;
-
 			}
 		};
 		registerStateMachineState(new ScriptStateWaitForCondition(this));
@@ -990,11 +1034,13 @@ void MiniScript::registerMethods() {
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				// script bindings
 				miniScript->scriptState.state = STATE_WAIT_FOR_CONDITION;
-				miniScript->scriptState.waitStarted = Time::getCurrentMillis();
-				miniScript->scriptState.waitTime = 1000LL;
+				miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
+				miniScript->scriptState.timeWaitTime = 100LL;
 			}
 		};
 		registerMethod(new ScriptMethodScriptWaitForCondition(this));
+	}
+	{
 		//
 		class ScriptMethodScriptWait: public ScriptMethod {
 		private:
@@ -1012,8 +1058,8 @@ void MiniScript::registerMethods() {
 				int64_t time;
 				if (miniScript->getIntegerValue(argumentValues, 0, time) == true) {
 					miniScript->scriptState.state = STATE_WAIT;
-					miniScript->scriptState.waitStarted = Time::getCurrentMillis();
-					miniScript->scriptState.waitTime = time;
+					miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
+					miniScript->scriptState.timeWaitTime = time;
 				} else {
 					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
 				}
@@ -1023,11 +1069,11 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodEmit: public ScriptMethod {
+		class ScriptMethodScriptEmit: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEmit(MiniScript* miniScript):
+			ScriptMethodScriptEmit(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false }
@@ -1035,7 +1081,7 @@ void MiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "emit";
+				return "script.emit";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string condition;
@@ -1048,7 +1094,102 @@ void MiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodEmit(this));
+		registerMethod(new ScriptMethodScriptEmit(this));
+	}
+	{
+		//
+		class ScriptMethodScriptEnableNamedCondition: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScriptEnableNamedCondition(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "script.enableNamedCondition";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string name;
+				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
+					miniScript->scriptState.enabledConditionNames.erase(
+						remove(
+							miniScript->scriptState.enabledConditionNames.begin(),
+							miniScript->scriptState.enabledConditionNames.end(),
+							name
+						),
+						miniScript->scriptState.enabledConditionNames.end()
+					);
+					miniScript->scriptState.enabledConditionNames.push_back(name);
+				} else {
+					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodScriptEnableNamedCondition(this));
+	}
+	{
+		//
+		class ScriptMethodScriptDisableNamedCondition: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScriptDisableNamedCondition(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "script.disableNamedCondition";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string name;
+				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
+					miniScript->scriptState.enabledConditionNames.erase(
+						remove(
+							miniScript->scriptState.enabledConditionNames.begin(),
+							miniScript->scriptState.enabledConditionNames.end(),
+							name
+						),
+						miniScript->scriptState.enabledConditionNames.end()
+					);
+				} else {
+					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodScriptDisableNamedCondition(this));
+	}
+	{
+		//
+		class ScriptMethodScriptGetNamedConditions: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScriptGetNamedConditions(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "script.getNamedConditions";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string result;
+				for (auto& namedCondition: miniScript->scriptState.enabledConditionNames) {
+					result+= result.empty() == false?",":namedCondition;
+				}
+				returnValue.setValue(result);
+			}
+		};
+		registerMethod(new ScriptMethodScriptGetNamedConditions(this));
 	}
 	{
 		//
@@ -1074,19 +1215,19 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodStop: public ScriptMethod {
+		class ScriptMethodStringStop: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStop(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			ScriptMethodStringStop(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "stop";
+				return "script.stop";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				miniScript->scriptState.running = false;
 			}
 		};
-		registerMethod(new ScriptMethodStop(this));
+		registerMethod(new ScriptMethodStringStop(this));
 	}
 	// equals
 	{

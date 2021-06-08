@@ -563,21 +563,24 @@ private:
 			CONDITIONTYPE_FORTIME
 		};
 		bool running { false };
-		int idx { -1 };
+		int scriptIdx { -1 };
 		int statementIdx { -1 };
-		int64_t waitStarted { -1LL };
-		int64_t waitTime { -1LL };
+		int64_t timeWaitStarted { -1LL };
+		int64_t timeWaitTime { -1LL };
 		string id;
 		map<string, ScriptVariable> variables;
 		map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
 		int state { -1 };
+		vector<string> enabledConditionNames;
+		int64_t timeEnabledConditionsCheckLast { -1LL };
 	};
 
 	struct Script {
 		int line;
 		vector<string> conditions;
+		string name;
 		vector<ScriptStatement> statements;
 	};
 
@@ -612,9 +615,10 @@ private:
 
 	/**
 	 * Determine script index to start
+	 * @param checkNamedConditions check named conditions
 	 * @return script index or -1 if no script to start
 	 */
-	int determineScriptIdxToStart();
+	int determineScriptIdxToStart(bool checkNamedConditions);
 
 protected:
 	/**
