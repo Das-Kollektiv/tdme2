@@ -725,7 +725,7 @@ void MiniScript::registerStateMachineStates() {
 				if (miniScript->scriptState.enabledConditionNames.empty() == false &&
 					(miniScript->scriptState.timeEnabledConditionsCheckLast == -1LL || now >= miniScript->scriptState.timeEnabledConditionsCheckLast + 100LL)) {
 					auto scriptIdxToStart = miniScript->determineScriptIdxToStart(true);
-					if (scriptIdxToStart != -1) {
+					if (scriptIdxToStart != -1 && scriptIdxToStart != miniScript->scriptState.scriptIdx) {
 						miniScript->scriptState.scriptIdx = scriptIdxToStart;
 						miniScript->scriptState.statementIdx = 0;
 						miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
