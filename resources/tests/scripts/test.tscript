@@ -88,10 +88,15 @@ on: nothing
 		end
 		$i = add($i, 1)
 	end
-	console.log("-----------")
-	console.log("Test emit")
-	console.log("-----------")
-	emit(emittest)
+	console.log("--------------------------------------------------")
+	console.log("Test if enabled naming condition will be emitted")
+	console.log("--------------------------------------------------")
+	script.enableNamedCondition("named_condition_1")
+	script.wait(2000)
+	script.disableNamedCondition("named_condition_1")
+	console.log("---------------------------------------")
+	console.log("Naming condition has not been emitted")
+	console.log("---------------------------------------")
 end
 # an error has occurred
 on: error
@@ -99,6 +104,18 @@ on: error
 	script.wait(1000)
 end
 on: emittest
+	console.log("---------------------------------")
 	console.log("SCRIPT JUST EMITTED A CONDITION")
-	stop()
+	console.log("---------------------------------")
+	script.stop()
+end
+on: equals(1,1) = named_condition_1
+	script.disableNamedCondition("named_condition_1")
+	console.log("------------------------------------")
+	console.log("named_condition_1 has been emitted")
+	console.log("------------------------------------")
+	console.log("-----------")
+	console.log("Test emit")
+	console.log("-----------")
+	script.emit(emittest)
 end
