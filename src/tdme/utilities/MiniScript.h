@@ -56,7 +56,8 @@ public:
 		TYPE_TRANSFORMATIONS
 	};
 
-	struct ScriptVariable {
+	class ScriptVariable {
+	private:
 		ScriptVariableType type { TYPE_VOID };
 		string stringValue;
 		Transformations transformationsValue;
@@ -64,6 +65,399 @@ public:
 		int64_t integerValue { 0 };
 		float floatValue { 0.0f };
 		Vector3 vector3Value;
+
+	public:
+		/**
+		 * Constructor
+		 */
+		inline ScriptVariable() {
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(bool value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(int64_t value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(float value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const string& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const Vector3& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const Transformations& value) {
+			setValue(value);
+		}
+
+		/**
+		 * @return type
+		 */
+		inline ScriptVariableType getType() const {
+			return type;
+		}
+
+		/**
+		 * Get boolean value from given variable
+		 * @param value value
+		 * @param optional optionalfalse
+		 * @return success
+		 */
+		inline bool getBooleanValue(bool& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					value = booleanValue;
+					return true;
+					break;
+				case TYPE_INTEGER:
+					value = integerValue != 0;
+					return true;
+				case TYPE_FLOAT:
+					value = floatValue != 0.0f;
+					return true;
+				case TYPE_STRING:
+					{
+						auto lowerCaseString = StringTools::toLowerCase(stringValue);
+						if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
+						value = lowerCaseString == "true" || lowerCaseString == "1";
+						return true;
+					}
+				case TYPE_VECTOR3:
+					return false;
+				case TYPE_TRANSFORMATIONS:
+					return false;
+					break;
+			}
+			return false;
+		}
+
+		/**
+		 * Get integer value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getIntegerValue(int64_t& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					value = booleanValue == true?1:0;
+					return true;
+					break;
+				case TYPE_INTEGER:
+					value = integerValue;
+					return true;
+				case TYPE_FLOAT:
+					Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+					value = floatValue;
+					return true;
+				case TYPE_STRING:
+					if (Integer::isInt(stringValue) == true) {
+						value = Integer::parseInt(stringValue);
+						return true;
+					} else
+					if (Float::isFloat(stringValue) == true) {
+						Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+						value = static_cast<int64_t>(Float::parseFloat(stringValue));
+						return true;
+					} else {
+						return optional;
+					}
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_TRANSFORMATIONS:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get float value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getFloatValue(float& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					value = booleanValue == true?1.0f:0.0f;
+					return true;
+					break;
+				case TYPE_INTEGER:
+					value = integerValue;
+					return true;
+				case TYPE_FLOAT:
+					value = floatValue;
+					return true;
+				case TYPE_STRING:
+					if (Float::isFloat(stringValue) == false) return optional;
+					value = Float::parseFloat(stringValue);
+					return true;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_TRANSFORMATIONS:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get string value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getStringValue(string& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					value = booleanValue == true?"true":"false";
+					return true;
+				case TYPE_INTEGER:
+					value = to_string(integerValue);
+					return true;
+				case TYPE_FLOAT:
+					value = to_string(floatValue);
+					return true;
+				case TYPE_STRING:
+					value = stringValue;
+					return true;
+				case TYPE_VECTOR3:
+					return false;
+				case TYPE_TRANSFORMATIONS:
+					return false;
+			}
+			return false;
+		}
+
+		/**
+		 * Get vector3 value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getVector3Value(Vector3& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR3:
+					value = vector3Value;
+					return true;
+				case TYPE_TRANSFORMATIONS:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get transformations value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getTransformationsValue(Transformations& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_TRANSFORMATIONS:
+					value = transformationsValue;
+					return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Set boolean value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(bool value) {
+			type = TYPE_BOOLEAN;
+			booleanValue = value;
+		}
+
+		/**
+		 * Set integer value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(int64_t value) {
+			type = TYPE_INTEGER;
+			integerValue = value;
+		}
+
+		/**
+		 * Set float value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(float value) {
+			type = TYPE_FLOAT;
+			floatValue = value;
+		}
+
+		/**
+		 * Set string value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const string& value) {
+			type = TYPE_STRING;
+			stringValue = value;
+		}
+
+		/**
+		 * Set vector3 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Vector3& value) {
+			type = TYPE_VECTOR3;
+			vector3Value = value;
+		}
+
+		/**
+		 * Set transformations value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Transformations& value) {
+			type = TYPE_TRANSFORMATIONS;
+			transformationsValue = value;
+		}
+
+		/**
+		 * @return string representation of script variable type
+		 */
+		inline static const string getTypeAsString(ScriptVariableType type) {
+			switch(type) {
+				case TYPE_VOID: return "Void";
+				case TYPE_BOOLEAN: return "Boolean";
+				case TYPE_INTEGER: return "Integer";
+				case TYPE_FLOAT: return "Float";
+				case TYPE_STRING: return "String";
+				case TYPE_VECTOR3: return "Vector3";
+				case TYPE_TRANSFORMATIONS: return "Transformations";
+			}
+			return string();
+		}
+
+		/**
+		 * @return string representation of script variable type
+		 */
+		inline const string getTypeAsString() {
+			return getTypeAsString(type);
+		}
+
+		/**
+		 * @return string representation of script variable type
+		 */
+		inline const string getAsString() {
+			string result;
+			result+= getTypeAsString();
+			result+= "(";
+			result+= getValueString();
+			result+= ")";
+			return result;
+		}
+
+		/**
+		 * @return string representation of script variable type
+		 */
+		inline const string getValueString() const {
+			string result;
+			switch (type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					result+= booleanValue == true?"1":"0";
+					break;
+				case TYPE_INTEGER:
+					result+= to_string(integerValue);
+					break;
+				case TYPE_FLOAT:
+					result+= to_string(floatValue);
+					break;
+				case TYPE_STRING:
+					result+= stringValue;
+					break;
+				case TYPE_VECTOR3:
+					result+=
+						"Vector3(" +
+						to_string(vector3Value.getX()) + ", " +
+						to_string(vector3Value.getY()) + ", " +
+						to_string(vector3Value.getZ()) + ")";
+					break;
+				case TYPE_TRANSFORMATIONS:
+					result+=
+						"Transformations(translation = Vector3(" +
+						to_string(transformationsValue.getTranslation().getX()) + ", " +
+						to_string(transformationsValue.getTranslation().getY()) + ", " +
+						to_string(transformationsValue.getTranslation().getZ()) + "), " +
+						"scale = Vector3(" +
+						to_string(transformationsValue.getScale().getX()) + ", " +
+						to_string(transformationsValue.getScale().getY()) + ", " +
+						to_string(transformationsValue.getScale().getZ()) + ")";
+					for (auto i = 0; i < transformationsValue.getRotationCount(); i++) {
+						result+= ", rotations = (axis = Vector3(" +
+								to_string(transformationsValue.getRotationAxis(i).getX()) + ", " +
+								to_string(transformationsValue.getRotationAxis(i).getY()) + ", " +
+								to_string(transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
+								to_string(transformationsValue.getRotationAngle(i)) + ")";
+					}
+					result+= ")";
+			}
+			return result;
+		}
 	};
 
 	/**
@@ -189,84 +583,6 @@ private:
 
 	//
 	ScriptState scriptState;
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableTypeAsString(ScriptVariableType type) {
-		switch(type) {
-			case TYPE_VOID: return "Void";
-			case TYPE_BOOLEAN: return "Boolean";
-			case TYPE_INTEGER: return "Integer";
-			case TYPE_FLOAT: return "Float";
-			case TYPE_STRING: return "String";
-			case TYPE_VECTOR3: return "Vector3";
-			case TYPE_TRANSFORMATIONS: return "Transformations";
-		}
-		return string();
-	}
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableAsString(const ScriptVariable& variable) {
-		string result;
-		result+= getScriptVariableTypeAsString(variable.type);
-		result+= "(";
-		result+= getScriptVariableValueString(variable);
-		result+= ")";
-		return result;
-	}
-
-	/**
-	 * @return string representation of script variable type
-	 */
-	inline static const string getScriptVariableValueString(const ScriptVariable& variable) {
-		string result;
-		switch (variable.type) {
-			case TYPE_VOID:
-				break;
-			case TYPE_BOOLEAN:
-				result+= variable.booleanValue == true?"1":"0";
-				break;
-			case TYPE_INTEGER:
-				result+= to_string(variable.integerValue);
-				break;
-			case TYPE_FLOAT:
-				result+= to_string(variable.floatValue);
-				break;
-			case TYPE_STRING:
-				result+= variable.stringValue;
-				break;
-			case TYPE_VECTOR3:
-				result+=
-					"Vector3(" +
-					to_string(variable.vector3Value.getX()) + ", " +
-					to_string(variable.vector3Value.getY()) + ", " +
-					to_string(variable.vector3Value.getZ()) + ")";
-				break;
-			case TYPE_TRANSFORMATIONS:
-				result+=
-					"Transformations(translation = Vector3(" +
-					to_string(variable.transformationsValue.getTranslation().getX()) + ", " +
-					to_string(variable.transformationsValue.getTranslation().getY()) + ", " +
-					to_string(variable.transformationsValue.getTranslation().getZ()) + "), " +
-					"scale = Vector3(" +
-					to_string(variable.transformationsValue.getScale().getX()) + ", " +
-					to_string(variable.transformationsValue.getScale().getY()) + ", " +
-					to_string(variable.transformationsValue.getScale().getZ()) + ")";
-				for (auto i = 0; i < variable.transformationsValue.getRotationCount(); i++) {
-					result+= ", rotations = (axis = Vector3(" +
-							to_string(variable.transformationsValue.getRotationAxis(i).getX()) + ", " +
-							to_string(variable.transformationsValue.getRotationAxis(i).getY()) + ", " +
-							to_string(variable.transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
-							to_string(variable.transformationsValue.getRotationAngle(i)) + ")";
-				}
-				result+= ")";
-		}
-		return result;
-	}
-
 	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
@@ -330,6 +646,89 @@ protected:
 	 * Register variables
 	 */
 	virtual void registerVariables();
+
+	/**
+	 * Get boolean value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optionalfalse
+	 * @return success
+	 */
+	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getBooleanValue(value, optional);
+	}
+
+	/**
+	 * Get integer value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getIntegerValue(value, optional);
+	}
+
+	/**
+	 * Get float value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getFloatValue(value, optional);
+	}
+
+	/**
+	 * Get string value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getStringValue(value, optional);
+	}
+
+	/**
+	 * Get vector3 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getVector3Value(const vector<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector3Value(value, optional);
+	}
+	/**
+	 * Get transformations value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getTransformationsValue(value, optional);
+	}
 
 public:
 	/**
@@ -414,282 +813,6 @@ public:
 	 */
 	inline int getScriptState() {
 		return scriptState.state;
-	}
-
-	/**
-	 * Get boolean value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optionalfalse
-	 * @return success
-	 */
-	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				value = argument.booleanValue;
-				return true;
-				break;
-			case TYPE_INTEGER:
-				value = argument.integerValue != 0;
-				return true;
-			case TYPE_FLOAT:
-				value = argument.floatValue != 0.0f;
-				return true;
-			case TYPE_STRING:
-				{
-					auto lowerCaseString = StringTools::toLowerCase(argument.stringValue);
-					if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
-					value = lowerCaseString == "true" || lowerCaseString == "1";
-					return true;
-				}
-			case TYPE_VECTOR3:
-				return false;
-			case TYPE_TRANSFORMATIONS:
-				return false;
-				break;
-		}
-		return false;
-	}
-
-	/**
-	 * Get integer value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				value = argument.booleanValue == true?1:0;
-				return true;
-				break;
-			case TYPE_INTEGER:
-				value = argument.integerValue;
-				return true;
-			case TYPE_FLOAT:
-				Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-				value = argument.floatValue;
-				return true;
-			case TYPE_STRING:
-				if (Integer::isInt(argument.stringValue) == true) {
-					value = Integer::parseInt(argument.stringValue);
-					return true;
-				} else
-				if (Float::isFloat(argument.stringValue) == true) {
-					Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-					value = static_cast<int64_t>(Float::parseFloat(argument.stringValue));
-					return true;
-				} else {
-					return optional;
-				}
-			case TYPE_VECTOR3:
-				return optional;
-			case TYPE_TRANSFORMATIONS:
-				return optional;
-		}
-		return false;
-	}
-
-	/**
-	 * Get float value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				value = argument.booleanValue == true?1.0f:0.0f;
-				return true;
-				break;
-			case TYPE_INTEGER:
-				value = argument.integerValue;
-				return true;
-			case TYPE_FLOAT:
-				value = argument.floatValue;
-				return true;
-			case TYPE_STRING:
-				if (Float::isFloat(argument.stringValue) == false) return optional;
-				value = Float::parseFloat(argument.stringValue);
-				return true;
-			case TYPE_VECTOR3:
-				return optional;
-			case TYPE_TRANSFORMATIONS:
-				return optional;
-		}
-		return false;
-	}
-
-	/**
-	 * Get string value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				value = argument.booleanValue == true?"true":"false";
-				return true;
-			case TYPE_INTEGER:
-				value = to_string(argument.integerValue);
-				return true;
-			case TYPE_FLOAT:
-				value = to_string(argument.floatValue);
-				return true;
-			case TYPE_STRING:
-				value = argument.stringValue;
-				return true;
-			case TYPE_VECTOR3:
-				return false;
-			case TYPE_TRANSFORMATIONS:
-				return false;
-		}
-		return false;
-	}
-
-	/**
-	 * Get vector3 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getVector3Value(const vector<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				return optional;
-			case TYPE_INTEGER:
-				return optional;
-			case TYPE_FLOAT:
-				return optional;
-			case TYPE_STRING:
-				return optional;
-			case TYPE_VECTOR3:
-				value = argument.vector3Value;
-				return true;
-			case TYPE_TRANSFORMATIONS:
-				return optional;
-		}
-		return false;
-	}
-	/**
-	 * Get transformations value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		switch(argument.type) {
-			case TYPE_VOID:
-				return optional;
-			case TYPE_BOOLEAN:
-				return optional;
-			case TYPE_INTEGER:
-				return optional;
-			case TYPE_FLOAT:
-				return optional;
-			case TYPE_STRING:
-				return optional;
-			case TYPE_VECTOR3:
-				return optional;
-			case TYPE_TRANSFORMATIONS:
-				value = argument.transformationsValue;
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Set boolean value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setBooleanValue(ScriptVariable& variable, bool value) {
-		variable.type = TYPE_BOOLEAN;
-		variable.booleanValue = value;
-	}
-
-	/**
-	 * Set integer value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setIntegerValue(ScriptVariable& variable, int64_t value) {
-		variable.type = TYPE_INTEGER;
-		variable.integerValue = value;
-	}
-
-	/**
-	 * Set float value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setFloatValue(ScriptVariable& variable, float value) {
-		variable.type = TYPE_FLOAT;
-		variable.floatValue = value;
-	}
-
-	/**
-	 * Set string value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setStringValue(ScriptVariable& variable, const string& value) {
-		variable.type = TYPE_STRING;
-		variable.stringValue = value;
-	}
-
-	/**
-	 * Set vector3 value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setVector3Value(ScriptVariable& variable, const Vector3& value) {
-		variable.type = TYPE_VECTOR3;
-		variable.vector3Value = value;
-	}
-
-	/**
-	 * Set transformations value from given value into variable
-	 * @param argument argument
-	 * @param value value
-	 */
-	inline static void setTransformationsValue(ScriptVariable& variable, const Transformations& value) {
-		variable.type = TYPE_TRANSFORMATIONS;
-		variable.transformationsValue = value;
 	}
 
 	/**
