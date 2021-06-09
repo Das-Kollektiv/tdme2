@@ -564,7 +564,7 @@ void MiniScript::startScript(int64_t delay) {
 	scriptState.running = true;
 }
 
-int MiniScript::determineScriptIdxToStart(bool checkNamedConditions) {
+int MiniScript::determineScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineScriptIdxToStart()");
 	auto currentScriptStateScript = scriptState.state;
 	auto nothingScriptIdx = -1;
@@ -572,20 +572,11 @@ int MiniScript::determineScriptIdxToStart(bool checkNamedConditions) {
 	for (auto& script: scripts) {
 		auto conditionMet = true;
 		if (script.name.empty() == false) {
-			if (checkNamedConditions == false ||
-				find(scriptState.enabledConditionNames.begin(), scriptState.enabledConditionNames.end(), script.name) == scriptState.enabledConditionNames.end()) {
-				scriptIdx++;
-				continue;
-			}
-		} else {
-			if (checkNamedConditions == true) {
-				scriptIdx++;
-				continue;
-			}
-		}
-		if (checkNamedConditions == false &&
-			script.conditions.size() == 1 && script.conditions[0] == "nothing") {
+			// no op
+		} else
+		if (script.conditions.size() == 1 && script.conditions[0] == "nothing") {
 			nothingScriptIdx = scriptIdx;
+			// no op
 		} else
 		if (script.conditions.size() == 1 &&
 			script.conditions[0].find('(') == string::npos &&
@@ -639,6 +630,67 @@ int MiniScript::determineScriptIdxToStart(bool checkNamedConditions) {
 	}
 	scriptState.state = currentScriptStateScript;
 	return nothingScriptIdx;
+}
+
+int MiniScript::determineNamedScriptIdxToStart() {
+	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
+	auto currentScriptStateScript = scriptState.state;
+	auto scriptIdx = 0;
+	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
+	for (auto& enabledConditionName: scriptState.enabledConditionNames) {
+		for (auto& script: scripts) {
+			auto conditionMet = true;
+			if (script.name != enabledConditionName) {
+				// no op
+			} else {
+				for (auto condition: script.conditions) {
+					string variable;
+					string method;
+					vector<string> arguments;
+					parseScriptStatement(condition, variable, method, arguments);
+					auto returnValue = executeScriptStatement(
+						method,
+						arguments,
+						{
+							.line = 0,
+							.statementIdx = 0,
+							.statement = condition,
+							.gotoStatementIdx = -0
+						}
+					);
+					auto returnValueBoolValue = false;
+					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
+						Console::println("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": expecting boolean return value, but got: " + returnValue.getAsString());
+						conditionMet = false;
+						break;
+					} else
+					if (returnValueBoolValue == false) {
+						conditionMet = false;
+						break;
+					}
+				}
+				if (conditionMet == false) {
+					if (VERBOSE == true) {
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
+						for (auto condition: script.conditions) Console::print(condition + "; ");
+						Console::println(": FAILED");
+					}
+					scriptIdx++;
+					continue;
+				}
+				if (VERBOSE == true) {
+					Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
+					for (auto condition: script.conditions) Console::print(condition + "; ");
+					Console::println(": OK");
+				}
+				scriptState.state = currentScriptStateScript;
+				return scriptIdx;
+			}
+			scriptIdx++;
+		}
+	}
+	scriptState.state = currentScriptStateScript;
+	return -1;
 }
 
 const string MiniScript::dumpInfo() {
@@ -724,7 +776,7 @@ void MiniScript::registerStateMachineStates() {
 				auto now = Time::getCurrentMillis();
 				if (miniScript->scriptState.enabledConditionNames.empty() == false &&
 					(miniScript->scriptState.timeEnabledConditionsCheckLast == -1LL || now >= miniScript->scriptState.timeEnabledConditionsCheckLast + 100LL)) {
-					auto scriptIdxToStart = miniScript->determineScriptIdxToStart(true);
+					auto scriptIdxToStart = miniScript->determineNamedScriptIdxToStart();
 					if (scriptIdxToStart != -1 && scriptIdxToStart != miniScript->scriptState.scriptIdx) {
 						miniScript->scriptState.scriptIdx = scriptIdxToStart;
 						miniScript->scriptState.statementIdx = 0;
@@ -735,6 +787,7 @@ void MiniScript::registerStateMachineStates() {
 						while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
 						while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
 						miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+						miniScript->scriptState.enabledConditionNames.clear();
 					}
 					miniScript->scriptState.timeEnabledConditionsCheckLast = now;
 				}
@@ -783,7 +836,7 @@ void MiniScript::registerStateMachineStates() {
 				if (now < miniScript->scriptState.timeWaitStarted + miniScript->scriptState.timeWaitTime) {
 					return;
 				}
-				auto scriptIdxToStart = miniScript->determineScriptIdxToStart(false);
+				auto scriptIdxToStart = miniScript->determineScriptIdxToStart();
 				if (scriptIdxToStart == -1) {
 					miniScript->scriptState.timeWaitStarted = now;
 					miniScript->scriptState.timeWaitTime = 100LL;
@@ -798,6 +851,7 @@ void MiniScript::registerStateMachineStates() {
 				while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
 				while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
 				miniScript->scriptState.state = STATE_NEXT_STATEMENT;
+				miniScript->scriptState.enabledConditionNames.clear();
 			}
 		};
 		registerStateMachineState(new ScriptStateWaitForCondition(this));
