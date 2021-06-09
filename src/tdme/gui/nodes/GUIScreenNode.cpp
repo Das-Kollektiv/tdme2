@@ -7,6 +7,7 @@
 
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
@@ -455,6 +456,21 @@ void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
 {
 	for (auto i = 0; i < mouseOverListener.size(); i++) {
 		mouseOverListener[i]->onMouseOver(node);
+	}
+}
+
+void GUIScreenNode::addContextMenuRequestListener(GUIContextMenuRequestListener* listener) {
+	removeContextMenuRequestListener(listener);
+	contextMenuRequestListener.push_back(listener);
+}
+
+void GUIScreenNode::removeContextMenuRequestListener(GUIContextMenuRequestListener* listener) {
+	contextMenuRequestListener.erase(std::remove(contextMenuRequestListener.begin(), contextMenuRequestListener.end(), listener), contextMenuRequestListener.end());
+}
+
+void GUIScreenNode::delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < contextMenuRequestListener.size(); i++) {
+		contextMenuRequestListener[i]->onContextMenuRequested(node, mouseX, mouseY);
 	}
 }
 

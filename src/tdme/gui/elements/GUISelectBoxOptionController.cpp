@@ -204,7 +204,7 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isDisabled();
 	auto multipleSelection = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isMultipleSelection();
-	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
+	if (disabled == false && node == this->node && node->isEventBelongingToNode(event)) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			auto selectBoxController = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController());
@@ -222,6 +222,9 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 			node->scrollToNodeX(selectBoxNode);
 			node->scrollToNodeY(selectBoxNode);
 			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
+			if (event->getButton() == MOUSE_BUTTON_RIGHT) {
+				node->getScreenNode()->delegateContextMenuRequest(required_dynamic_cast<GUIElementNode*>(selectBoxNode), event->getXUnscaled(), event->getYUnscaled());
+			}
 		}
 	}
 }

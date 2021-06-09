@@ -24,6 +24,7 @@ using std::vector;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIContextMenuRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -74,6 +75,7 @@ private:
 	vector<GUIActionListener*> actionListener;
 	vector<GUIChangeListener*> changeListener;
 	vector<GUIMouseOverListener*> mouseOverListener;
+	vector<GUIContextMenuRequestListener*> contextMenuRequestListener;
 	vector<GUIFocusListener*> focusListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
@@ -418,6 +420,26 @@ public:
 	 * @param node node
 	 */
 	void delegateMouseOver(GUIElementNode* node);
+
+	/**
+	 * Add context menu request listener
+	 * @param listener listener
+	 */
+	void addContextMenuRequestListener(GUIContextMenuRequestListener* listener);
+
+	/**
+	 * Remove context menu request listener
+	 * @param listener listener
+	 */
+	void removeContextMenuRequestListener(GUIContextMenuRequestListener* listener);
+
+	/**
+	 * Delegate mouse over event
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 */
+	void delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY);
 
 	/**
 	 * Add focus listener
