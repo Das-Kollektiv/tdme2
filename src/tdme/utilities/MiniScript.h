@@ -615,10 +615,15 @@ private:
 
 	/**
 	 * Determine script index to start
-	 * @param checkNamedConditions check named conditions
 	 * @return script index or -1 if no script to start
 	 */
-	int determineScriptIdxToStart(bool checkNamedConditions);
+	int determineScriptIdxToStart();
+
+	/**
+	 * Determine named script index to start
+	 * @return script index or -1 if no script to start
+	 */
+	int determineNamedScriptIdxToStart();
 
 protected:
 	/**
