@@ -7,6 +7,8 @@
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>
 #include <tdme/gui/elements/GUICheckbox.h>
+#include <tdme/gui/elements/GUIContextMenu.h>
+#include <tdme/gui/elements/GUIContextMenuItem.h>
 #include <tdme/gui/elements/GUIDropDown.h>
 #include <tdme/gui/elements/GUIDropDownOption.h>
 #include <tdme/gui/elements/GUIElement.h>
@@ -77,6 +79,8 @@ using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUICheckbox;
+using tdme::gui::elements::GUIContextMenu;
+using tdme::gui::elements::GUIContextMenuItem;
 using tdme::gui::elements::GUIDropDown;
 using tdme::gui::elements::GUIDropDownOption;
 using tdme::gui::elements::GUIElement;
@@ -1814,6 +1818,20 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIMenuSeparator();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIContextMenu();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIContextMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

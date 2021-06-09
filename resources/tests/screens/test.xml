@@ -35,6 +35,7 @@
 				<tab id="tab9" text="Template" />
 				<tab id="tab10" text="Conditions" />
 				<tab id="tab11" text="Table" />
+				<tab id="tab12" text="Contextmenu" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -364,6 +365,14 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 							</table-cell>
 						</table-row>
 					</table>
+				</tab-content>
+				<tab-content tab-id="tab12" vertical-align="center" horizontal-align="center">
+					<context-menu>
+						<context-menu-item image="resources/engine/images/folder.png" text="Cut" shortcut="ctrl + F4" />
+						<context-menu-item text="Copy" />
+						<context-menu-item text="Paste" />
+						<context-menu-item text="Delete" />
+					</context-menu>
 				</tab-content>
 			</tabs-content>
 		</tabs>

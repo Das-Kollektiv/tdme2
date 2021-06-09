@@ -260,6 +260,10 @@ SRCS = \
 	src/tdme/gui/elements/GUIButtonController.cpp \
 	src/tdme/gui/elements/GUICheckbox.cpp \
 	src/tdme/gui/elements/GUICheckboxController.cpp \
+	src/tdme/gui/elements/GUIContextMenu.cpp \
+	src/tdme/gui/elements/GUIContextMenuController.cpp \
+	src/tdme/gui/elements/GUIContextMenuItem.cpp \
+	src/tdme/gui/elements/GUIContextMenuItemController.cpp \
 	src/tdme/gui/elements/GUIDropDown.cpp \
 	src/tdme/gui/elements/GUIDropDownController.cpp \
 	src/tdme/gui/elements/GUIDropDownOption.cpp \

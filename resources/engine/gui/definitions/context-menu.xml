@@ -1,0 +1,5 @@
+<element id="{$id}" width="auto" height="auto" name="{$name}" disabled="{$disabled}" focusable="false" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layout id="{$id}_inner" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_front}">
+		{__InnerXML__}
+	</layout>
+</element>

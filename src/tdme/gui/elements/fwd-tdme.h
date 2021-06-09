@@ -8,6 +8,10 @@ namespace elements {
 	class GUIButtonController;
 	class GUICheckbox;
 	class GUICheckboxController;
+	class GUIContextMenu;
+	class GUIContextMenuController;
+	class GUIContextMenuItem;
+	class GUIContextMenuItemController;
 	class GUIDropDown;
 	class GUIDropDownController;
 	class GUIDropDownOption;
