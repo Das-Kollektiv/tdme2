@@ -89,6 +89,7 @@ void EditorScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
+		screenNode->addContextMenuRequestListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
@@ -208,6 +209,16 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	if (tabViewIt != tabViews.end()){
 		auto& tab = tabViewIt->second;
 		tab.getTabController()->onUnfocus(node);
+	}
+}
+
+void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+	// forward onFocus to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->onContextMenuRequested(node, mouseX, mouseY);
 	}
 }
 

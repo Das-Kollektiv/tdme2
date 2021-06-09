@@ -1442,6 +1442,12 @@ void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
 	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
 }
 
+void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+	prototypeBaseSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+}
+
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();

@@ -293,3 +293,7 @@ void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* pr
 		}
 	}
 }
+
+void PrototypeSoundsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeSoundsSubController::onContextMenuRequested(): " + node->getId());
+}

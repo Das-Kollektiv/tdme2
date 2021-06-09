@@ -560,3 +560,7 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 		}
 	}
 }
+
+void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypePhysicsSubController::onContextMenuRequested(): " + node->getId());
+}

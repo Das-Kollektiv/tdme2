@@ -388,6 +388,7 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
+	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
 	 * Shows the error pop up

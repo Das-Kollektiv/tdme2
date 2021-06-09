@@ -152,6 +152,10 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 	}
 }
 
+void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeBaseSubController::onContextMenuRequested(): " + node->getId());
+}
+
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);

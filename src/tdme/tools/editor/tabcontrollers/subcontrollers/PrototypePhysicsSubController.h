@@ -253,4 +253,12 @@ public:
 	 */
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
+	/**
+	 * On context menu requested
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 * @param prototype prototype
+	 */
+	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
 };
