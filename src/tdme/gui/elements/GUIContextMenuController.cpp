@@ -137,6 +137,27 @@ void GUIContextMenuController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 void GUIContextMenuController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 	GUIElementController::handleKeyboardEvent(event);
+	if (event->isProcessed() == true) return;
+	switch (event->getKeyCode()) {
+		case GUIKeyboardEvent::KEYCODE_ESCAPE: {
+			// TODO: a.drewke
+		}
+		break;
+	case GUIKeyboardEvent::KEYCODE_UP: {
+			event->setProcessed(true);
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				selectPrevious();
+			}
+		}
+		break;
+	case GUIKeyboardEvent::KEYCODE_DOWN: {
+			event->setProcessed(true);
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				selectNext();
+			}
+		}
+		break;
+	}
 }
 
 void GUIContextMenuController::tick()
