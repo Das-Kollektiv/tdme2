@@ -799,16 +799,7 @@ public:
 	 * Execute state machine
 	 * @return quit requested
 	 */
-	inline void executeStateMachine() {
-		if (scriptState.state == STATE_NONE) return;
-		// execute state machine
-		auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state);
-		if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
-			scriptStateMachineStateIt->second->execute();
-		} else {
-			Console::println("MiniScript::executeStateMachine(): unknown state with id: " + to_string(scriptState.state));
-		}
-	}
+	void executeStateMachine();
 
 	/**
 	 * @return is running

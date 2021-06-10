@@ -125,10 +125,7 @@ void MiniScript::parseScriptStatement(const string& statement, string& variable,
 	string quotedArgument;
 	for (auto i = 0; i < statement.size(); i++) {
 		auto c = statement[i];
-		if (c == '"') {
-			if (bracketCount == 0) {
-				Console::println("MiniScript::parseScriptStatement(): quote without argument");
-			}
+		if (c == '"' && bracketCount == 1) {
 			quote = quote == false?true:false;
 			quotedArgument+= c;
 		} else
@@ -278,7 +275,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 						string("MiniScript::executeScriptStatement(): ") +
 						"@" + to_string(statement.line) +
 						": method '" + method + "'" +
-						": argument value @ " + to_string(argumentIdx + 1) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + argumentValues[argumentIdx].getAsString());
+						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + argumentValues[argumentIdx].getAsString());
 				}
 				argumentIdx++;
 			}
@@ -339,6 +336,38 @@ void MiniScript::emit(const string& condition) {
 	scriptState.timeWaitStarted = Time::getCurrentMillis();
 	scriptState.timeWaitTime = 0LL;
 	scriptState.state = STATE_NEXT_STATEMENT;
+}
+
+void MiniScript::executeStateMachine() {
+	if (scriptState.state == STATE_NONE) return;
+
+	// check named conditions
+	auto now = Time::getCurrentMillis();
+	if (scriptState.enabledConditionNames.empty() == false &&
+		(scriptState.timeEnabledConditionsCheckLast == -1LL || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
+		auto scriptIdxToStart = determineNamedScriptIdxToStart();
+		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
+			scriptState.scriptIdx = scriptIdxToStart;
+			scriptState.statementIdx = 0;
+			scriptState.timeWaitStarted = Time::getCurrentMillis();
+			scriptState.timeWaitTime = 0LL;
+			scriptState.id.clear();
+			scriptState.forTimeStarted.clear();
+			while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
+			while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+			scriptState.state = STATE_NEXT_STATEMENT;
+			scriptState.enabledConditionNames.clear();
+		}
+		scriptState.timeEnabledConditionsCheckLast = now;
+	}
+
+	// execute state machine
+	auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state);
+	if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
+		scriptStateMachineStateIt->second->execute();
+	} else {
+		Console::println("MiniScript::executeStateMachine(): unknown state with id: " + to_string(scriptState.state));
+	}
 }
 
 void MiniScript::loadScript(const string& pathName, const string& fileName) {
@@ -595,7 +624,7 @@ int MiniScript::determineScriptIdxToStart() {
 						.line = 0,
 						.statementIdx = 0,
 						.statement = condition,
-						.gotoStatementIdx = -0
+						.gotoStatementIdx = -1
 					}
 				);
 				auto returnValueBoolValue = false;
@@ -655,7 +684,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 							.line = 0,
 							.statementIdx = 0,
 							.statement = condition,
-							.gotoStatementIdx = -0
+							.gotoStatementIdx = -1
 						}
 					);
 					auto returnValueBoolValue = false;
@@ -772,24 +801,6 @@ void MiniScript::registerStateMachineStates() {
 					miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
 					miniScript->scriptState.state = STATE_WAIT_FOR_CONDITION;
 					return;
-				}
-				auto now = Time::getCurrentMillis();
-				if (miniScript->scriptState.enabledConditionNames.empty() == false &&
-					(miniScript->scriptState.timeEnabledConditionsCheckLast == -1LL || now >= miniScript->scriptState.timeEnabledConditionsCheckLast + 100LL)) {
-					auto scriptIdxToStart = miniScript->determineNamedScriptIdxToStart();
-					if (scriptIdxToStart != -1 && scriptIdxToStart != miniScript->scriptState.scriptIdx) {
-						miniScript->scriptState.scriptIdx = scriptIdxToStart;
-						miniScript->scriptState.statementIdx = 0;
-						miniScript->scriptState.timeWaitStarted = Time::getCurrentMillis();
-						miniScript->scriptState.timeWaitTime = 0LL;
-						miniScript->scriptState.id.clear();
-						miniScript->scriptState.forTimeStarted.clear();
-						while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
-						while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
-						miniScript->scriptState.state = STATE_NEXT_STATEMENT;
-						miniScript->scriptState.enabledConditionNames.clear();
-					}
-					miniScript->scriptState.timeEnabledConditionsCheckLast = now;
 				}
 				miniScript->executeScriptLine();
 			}
