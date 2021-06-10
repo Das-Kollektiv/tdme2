@@ -86,8 +86,6 @@ private:
 	bool visible;
 	bool popUp;
 
-	bool reshapeRequested;
-
 	map<int64_t, string> timedExpressions;
 
 public:

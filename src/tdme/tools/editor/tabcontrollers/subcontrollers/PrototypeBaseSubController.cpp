@@ -15,6 +15,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -39,6 +40,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -154,6 +156,11 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 
 void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	Console::println("PrototypeBaseSubController::onContextMenuRequested(): " + node->getId());
+	popUps->getContextMenuScreenController()->clear();
+	popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename");
+	popUps->getContextMenuScreenController()->addMenuSeparator();
+	popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete");
+	popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 }
 
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)

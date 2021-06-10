@@ -7,6 +7,7 @@ using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 
 /**
  * Pop ups controller accessor class
@@ -19,6 +20,7 @@ private:
 	FileDialogScreenController* fileDialogScreenController { nullptr };
 	ProgressBarScreenController* progressBarScreenController { nullptr };
 	ColorPickerScreenController* colorPickerScreenController { nullptr };
+	ContextMenuScreenController* contextMenuScreenController { nullptr };
 
 public:
 	/**
@@ -29,27 +31,42 @@ public:
 	/**
 	 * Destructor
 	 */
-	 ~PopUps();
+	~PopUps();
 
 	/**
 	 * @return file dialog screen controller
 	 */
-	 FileDialogScreenController* getFileDialogScreenController();
+	inline FileDialogScreenController* getFileDialogScreenController() {
+		return fileDialogScreenController;
+	}
 
 	/**
 	 * @return info dialog screen controller
 	 */
-	 InfoDialogScreenController* getInfoDialogScreenController();
+	inline InfoDialogScreenController* getInfoDialogScreenController() {
+		return infoDialogScreenController;
+	}
 
 	/**
 	 * @return progress bar screen controller
 	 */
-	 ProgressBarScreenController* getProgressBarScreenController();
+	inline ProgressBarScreenController* getProgressBarScreenController() {
+		return progressBarScreenController;
+	}
 
 	/**
 	 * @return color picker screen controller
 	 */
-	 ColorPickerScreenController* getColorPickerScreenController();
+	inline ColorPickerScreenController* getColorPickerScreenController() {
+		return colorPickerScreenController;
+	}
+
+	/**
+ 	 * @return context menu screen controller
+	 */
+	inline ContextMenuScreenController* getContextMenuScreenController() {
+		return contextMenuScreenController;
+	}
 
 	/**
 	 * Init

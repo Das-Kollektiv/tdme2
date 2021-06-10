@@ -89,7 +89,6 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
-	this->reshapeRequested = false;
 }
 
 GUIScreenNode::~GUIScreenNode() {

@@ -103,7 +103,10 @@ void GUI::reshape(int width, int height)
 {
 	this->width = width;
 	this->height = height;
-	for (auto screenIt: screens) screenIt.second->reshapeRequested = true;
+	for (auto screenIt: screens) {
+		auto screen = screenIt.second;
+		reshapeScreen(screen);
+	}
 }
 
 void GUI::dispose()
@@ -278,8 +281,9 @@ void GUI::addRenderScreen(const string& screenId)
 	if (screenIt == screens.end()) return;
 
 	//
-	screenIt->second->setGUI(this);
-	screenIt->second->setConditionsMet();
+	auto screen = screenIt->second;
+	screen->setGUI(this);
+	screen->setConditionsMet();
 	renderScreens.push_back(screenIt->second);
 
 	// focussed node
@@ -446,9 +450,6 @@ void GUI::render()
 		auto screen = renderScreens[i];
 
 		if (screen->isVisible() == false) continue;
-
-		// reshape if requested
-		if (screen->reshapeRequested == true) reshapeScreen(screen);
 
 		screen->render(guiRenderer);
 	}
@@ -998,7 +999,6 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->reshapeRequested = false;
 }
 
 void GUI::addMouseOutCandidateElementNode(GUINode* node) {
