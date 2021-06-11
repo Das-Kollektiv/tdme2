@@ -174,6 +174,16 @@ void MiniScript::parseScriptStatement(const string& statement, string& variable,
 	}
 	method = StringTools::trim(method);
 	variable = StringTools::trim(variable);
+	if (VERBOSE == true) {
+		Console::print("MiniScript::parseScriptStatement(): method: '" + method + "', variable = '" + variable + "', arguments: ");
+		int variableIdx = 0;
+		for (auto& argument: arguments) {
+			if (variableIdx > 0) Console::print(", ");
+			Console::print("'" + argument + "'");
+			variableIdx++;
+		}
+		Console::println();
+	}
 	if (bracketCount > 0) {
 		Console::println("MiniScript::parseScriptStatement(): '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 	}
@@ -182,7 +192,7 @@ void MiniScript::parseScriptStatement(const string& statement, string& variable,
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
 	string argumentsString;
 	for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?",":"") + argument;
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): " + method + "(" + argumentsString + ")");
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): string arguments: " + method + "(" + argumentsString + ")");
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// check if argument is a method calls return value
@@ -222,6 +232,11 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 			}
 			argumentValues.push_back(argumentValue);
 		}
+	}
+	if (VERBOSE == true) {
+		string argumentValuesString;
+		for (auto& argumentValue: argumentValues) argumentValuesString+= (argumentValuesString.empty() == false?",":"") + argumentValue.getAsString();
+		Console::println("MiniScript::executeScriptStatement(): arguments: " + method + "(" + argumentValuesString + ")");
 	}
 	auto scriptMethodsIt = scriptMethods.find(method);
 	if (scriptMethodsIt != scriptMethods.end()) {
