@@ -785,9 +785,8 @@ public:
 
 	/**
 	 * Start script
-	 * @param delay delay
 	 */
-	void startScript(int64_t delay = 0LL);
+	void startScript();
 
 	/**
 	 * Emit

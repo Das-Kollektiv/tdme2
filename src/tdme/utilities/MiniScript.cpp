@@ -593,19 +593,12 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	startScript();
 }
 
-void MiniScript::startScript(int64_t delay) {
-	if (VERBOSE == true) Console::println("MiniScript::startScript(): waiting " + to_string(delay) + "ms; starting script.");
+void MiniScript::startScript() {
+	if (VERBOSE == true) Console::println("MiniScript::startScript(): starting script.");
 	scriptState.variables.clear();
-	scriptState.forTimeStarted.clear();
-	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-	scriptState.id.clear();
-	registerVariables();
-	scriptState.statementIdx = 0;
-	scriptState.timeWaitStarted = Time::getCurrentMillis();
-	scriptState.timeWaitTime = delay;
-	scriptState.state = delay > 0LL?STATE_WAIT:STATE_WAIT_FOR_CONDITION;
 	scriptState.running = true;
+	registerVariables();
+	emit("initialize");
 }
 
 int MiniScript::determineScriptIdxToStart() {
