@@ -97,6 +97,7 @@ void MiniScript::setVariable(const string& name, const ScriptVariable& variable)
 void MiniScript::executeScriptLine() {
 	if (scriptState.scriptIdx == -1 || scriptState.statementIdx == -1 || scriptState.running == false) return;
 	auto& script = scripts[scriptState.scriptIdx];
+	if (script.statements.empty() == true) return;
 	auto& statement = script.statements[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": " + statement.statement);
 
@@ -616,7 +617,6 @@ int MiniScript::determineScriptIdxToStart() {
 	auto nothingScriptIdx = -1;
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
-		auto conditionMet = true;
 		if (script.name.empty() == false) {
 			// no op
 		} else
@@ -629,6 +629,7 @@ int MiniScript::determineScriptIdxToStart() {
 			script.conditions[0].rfind(')') == string::npos) {
 			// user emit condition
 		} else {
+			auto conditionMet = true;
 			for (auto condition: script.conditions) {
 				string variable;
 				string method;
@@ -661,17 +662,16 @@ int MiniScript::determineScriptIdxToStart() {
 					for (auto condition: script.conditions) Console::print(condition + "; ");
 					Console::println(": FAILED");
 				}	
-				scriptIdx++;
-				continue;
+			} else {
+				if (VERBOSE == true) {
+					Console::print("MiniScript::determineScriptIdxToStart(): ");
+					for (auto condition: script.conditions) Console::print(condition + "; ");
+					Console::println(": OK");
+				}
+				scriptState.state = currentScriptStateScript;
+				return scriptIdx;
 			}
-			if (VERBOSE == true) {
-				Console::print("MiniScript::determineScriptIdxToStart(): ");
-				for (auto condition: script.conditions) Console::print(condition + "; ");
-				Console::println(": OK");
-			}
-			scriptState.state = currentScriptStateScript;
-			return scriptIdx;
-		}	
+		}
 		scriptIdx++;
 	}
 	scriptState.state = currentScriptStateScript;
@@ -681,14 +681,14 @@ int MiniScript::determineScriptIdxToStart() {
 int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
 	auto currentScriptStateState = scriptState.state;
-	auto scriptIdx = 0;
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
 	for (auto& enabledConditionName: scriptState.enabledConditionNames) {
+		auto scriptIdx = 0;
 		for (auto& script: scripts) {
-			auto conditionMet = true;
 			if (script.name != enabledConditionName) {
 				// no op
 			} else {
+				auto conditionMet = true;
 				for (auto condition: script.conditions) {
 					string variable;
 					string method;
@@ -721,16 +721,15 @@ int MiniScript::determineNamedScriptIdxToStart() {
 						for (auto condition: script.conditions) Console::print(condition + "; ");
 						Console::println(": FAILED");
 					}
-					scriptIdx++;
-					continue;
+				} else {
+					if (VERBOSE == true) {
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
+						for (auto condition: script.conditions) Console::print(condition + "; ");
+						Console::println(": OK");
+					}
+					scriptState.state = currentScriptStateState;
+					return scriptIdx;
 				}
-				if (VERBOSE == true) {
-					Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
-					for (auto condition: script.conditions) Console::print(condition + "; ");
-					Console::println(": OK");
-				}
-				scriptState.state = currentScriptStateState;
-				return scriptIdx;
 			}
 			scriptIdx++;
 		}
