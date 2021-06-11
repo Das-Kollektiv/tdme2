@@ -562,6 +562,11 @@ private:
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
 		};
+		struct StateMachineState {
+			int state { -1 };
+			int lastState { -1 };
+			ScriptStateMachineState* lastStateMachineState { nullptr };
+		};
 		bool running { false };
 		int scriptIdx { -1 };
 		int statementIdx { -1 };
@@ -572,7 +577,7 @@ private:
 		map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
-		int state { -1 };
+		StateMachineState state;
 		vector<string> enabledConditionNames;
 		int64_t timeEnabledConditionsCheckLast { -1LL };
 	};
@@ -638,7 +643,10 @@ protected:
 	 * @param state state
 	 */
 	inline void setScriptState(int state) {
-		scriptState.state = state;
+		if (scriptState.state.state == state) return;
+		scriptState.state.state = state;
+		scriptState.state.lastState = -1;
+		scriptState.state.lastStateMachineState = nullptr;
 	}
 
 	/**
@@ -811,7 +819,7 @@ public:
 	 * @return script state machine state
 	 */
 	inline int getScriptState() {
-		return scriptState.state;
+		return scriptState.state.state;
 	}
 
 	/**
