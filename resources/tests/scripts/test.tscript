@@ -1,6 +1,16 @@
+# initialize
+on: initialize
+	console.log("------------")
+	console.log("Initialize")
+	console.log("------------")
+	console.log()
+end
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log(Init)
+	console.log("---------")
+	console.log("Nothing")
+	console.log("----------")
+	console.log()
 	console.log("-----------------------")
 	console.log("Check bool operations")
 	console.log("-----------------------")
@@ -107,6 +117,7 @@ on: emittest
 	console.log("---------------------------------")
 	console.log("SCRIPT JUST EMITTED A CONDITION")
 	console.log("---------------------------------")
+	console.log()
 	script.stop()
 end
 on: equals(1,1) = named_condition_1
@@ -114,8 +125,10 @@ on: equals(1,1) = named_condition_1
 	console.log("------------------------------------")
 	console.log("named_condition_1 has been emitted")
 	console.log("------------------------------------")
+	console.log()
 	console.log("-----------")
 	console.log("Test emit")
 	console.log("-----------")
+	console.log()
 	script.emit(emittest)
 end
