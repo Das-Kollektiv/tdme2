@@ -387,6 +387,7 @@ SRCS = \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/FlowMapTest.cpp \
+	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -673,6 +674,7 @@ all: \
 	HTTPDownloadClientTest \
 	LODTest \
 	FlowMapTest \
+	FlowMapTest2 \
 	FoliageTest \
 	MathOperatorTest \
 	MiniScriptTest \
@@ -758,6 +760,9 @@ LODTest:
 
 FlowMapTest:
 	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+FlowMapTest2:
+	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 FoliageTest: 
 	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
