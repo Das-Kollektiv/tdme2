@@ -242,10 +242,11 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param path path to test along
 	 * @param complete complete
+	 * @param favorPathDirection favor path direction over shortest path if possible
 	 * @param customTest custom test
 	 * @return flow map
 	 */
-	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), bool complete = true, PathFindingCustomTest* customTest = nullptr);
+	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), bool complete = true, bool favorPathDirection = false, PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**

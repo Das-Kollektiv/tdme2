@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/math/Math.h>
@@ -10,9 +11,9 @@
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/Reference.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::math::Math;
@@ -31,7 +32,7 @@ friend class PathFinding;
 private:
 	bool complete;
 	float stepSize;
-	map<string, FlowMapCell> cells;
+	unordered_map<string, FlowMapCell> cells;
 	vector<Vector3> endPositions;
 	vector<Vector3> path;
 
@@ -55,9 +56,10 @@ private:
 	 * @param position position
 	 * @param walkable walkable
 	 * @param direction direction
+	 * @param pathIdx path index
 	 */
-	inline void addCell(const string& id, const Vector3& position, bool walkable, const Vector3& direction) {
-		cells[id] = FlowMapCell(position, walkable, direction);
+	inline void addCell(const string& id, const Vector3& position, bool walkable, const Vector3& direction, int pathIdx) {
+		cells[id] = FlowMapCell(position, walkable, direction, pathIdx);
 	}
 
 	/**
@@ -246,7 +248,7 @@ public:
 	 * Cell map getter
 	 * @returns cell map
 	 */
-	inline const map<string, FlowMapCell>& getCellMap() const {
+	inline const unordered_map<string, FlowMapCell>& getCellMap() const {
 		return cells;
 	}
 
@@ -259,12 +261,16 @@ public:
 		// complete
 		complete = flowMap->complete;
 		// add path
+		auto pathSize = path.size();
 		for (auto& pathNode: flowMap->path) {
 			path.push_back(pathNode);
 		}
 		// add cells
 		for (auto& cellIt: flowMap->cells) {
+			auto cellExists = cells.find(cellIt.first) != cells.end();
+			if (cellExists == true && cellIt.second.isBorderCell() == true) continue;
 			cells[cellIt.first] = cellIt.second;
+			cells[cellIt.first].pathNodeIdx+= pathSize;
 		}
 		// end positions
 		endPositions = flowMap->endPositions;

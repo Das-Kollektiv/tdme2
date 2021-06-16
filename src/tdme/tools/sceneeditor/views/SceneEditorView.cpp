@@ -1750,7 +1750,10 @@ void SceneEditorView::updateGizmo() {
 		auto selectedSceneEntity = scene.getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
-		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
+		if (selectedPrototype != nullptr) setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
+		if (selectedSceneEntity == nullptr || selectedPrototype == nullptr) {
+			removeGizmo();
+		}
 	} else {
 		gizmoCenter.scale(1.0f / entityCount);
 	}

@@ -10,11 +10,13 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::utilities::FlowMapCell final {
+	friend class PathFinding;
+	friend class FlowMap;
 public:
 	/**
 	 * Default constructor
 	 */
-	FlowMapCell(): walkable(false) {
+	FlowMapCell(): walkable(false), pathNodeIdx(-1) {
 	}
 
 	/**
@@ -22,8 +24,13 @@ public:
 	 * @param position position
 	 * @param walkable walkable
 	 * @param direction direction
+	 * @param pathNodeIdx path node index
 	 */
-	FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction): position(position), walkable(walkable), direction(direction) {
+	FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction, int pathNodeIdx):
+		position(position),
+		walkable(walkable),
+		direction(direction),
+		pathNodeIdx(pathNodeIdx) {
 	}
 
 	/**
@@ -49,6 +56,45 @@ public:
 	}
 
 	/**
+	 * Get path node index
+	 * @return path node index
+	 */
+	inline int getPathNodeIdx() {
+		return pathNodeIdx;
+	}
+
+	/**
+	 * Returns if has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
+	 * @return missing neighbor cells
+	 */
+	inline bool isMissingNeighborCells() const {
+		return missingNeighborCells;
+	}
+
+	/**
+	 * @return is border cell
+	 */
+	inline bool isBorderCell() const {
+		return borderCell;
+	}
+
+private:
+	Vector3 position;
+	bool walkable;
+	Vector3 direction;
+	int pathNodeIdx;
+	bool missingNeighborCells { false };
+	bool borderCell { false };
+
+	/**
+	 * Set path node index
+	 * @param pathNodeIdx path node index
+	 */
+	inline void setPathNodeIdx(int pathNodeIdx) {
+		this->pathNodeIdx = pathNodeIdx;
+	}
+
+	/**
 	 * Set movement direction
 	 * @param cell movement direction
 	 */
@@ -56,8 +102,20 @@ public:
 		this->direction = direction;
 	}
 
-private:
-	Vector3 position;
-	bool walkable;
-	Vector3 direction;
+	/**
+	 * Set has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
+	 * @param missingNeighborCell missing neighbor cells
+	 */
+	inline void setMissingNeighborCells(bool missingNeighborCell) {
+		this->missingNeighborCells = missingNeighborCell;
+	}
+
+	/**
+	 * Set if border cell
+	 * @param borderCell border cell
+	 */
+	inline void setBorderCell(bool borderCell) {
+		this->borderCell = borderCell;
+	}
+
 };
