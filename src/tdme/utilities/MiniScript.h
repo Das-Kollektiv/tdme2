@@ -630,7 +630,17 @@ private:
 	 */
 	int determineNamedScriptIdxToStart();
 
-protected:
+public:
+	/**
+	 * Default constructor
+	 */
+	MiniScript();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MiniScript();
+
 	/**
 	 * Start error script
 	 */
@@ -746,17 +756,6 @@ protected:
 		auto& argument = arguments[idx];
 		return argument.getTransformationsValue(value, optional);
 	}
-
-public:
-	/**
-	 * Default constructor
-	 */
-	MiniScript();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~MiniScript();
 
 	/**
 	 * Register script state machine state
