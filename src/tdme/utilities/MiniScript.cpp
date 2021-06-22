@@ -111,12 +111,16 @@ void MiniScript::executeScriptLine() {
 	string variable;
 	string method;
 	vector<string> arguments;
-	parseScriptStatement(statement.statement, variable, method, arguments);
-	auto returnValue = executeScriptStatement(method, arguments, statement);
-	if (variable.empty() == false) scriptState.variables[variable] = returnValue;
+	if (parseScriptStatement(statement.statement, variable, method, arguments) == true) {
+		auto returnValue = executeScriptStatement(method, arguments, statement);
+		if (variable.empty() == false) scriptState.variables[variable] = returnValue;
+	} else {
+		Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": '" + statement.statement + "': parse error");
+		startErrorScript();
+	}
 }
 
-void MiniScript::parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments) {
+bool MiniScript::parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments) {
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): " + statement);
 	auto argumentStartIdx = string::npos;
 	auto argumentEndIdx = string::npos;
@@ -187,7 +191,9 @@ void MiniScript::parseScriptStatement(const string& statement, string& variable,
 	}
 	if (bracketCount > 0) {
 		Console::println("MiniScript::parseScriptStatement(): '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+		return false;
 	}
+	return true;
 }
 
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
@@ -207,10 +213,14 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 			string subVariable;
 			string subMethod;
 			vector<string> subArguments;
-			parseScriptStatement(argument, subVariable, subMethod, subArguments);
-			auto argumentValue = executeScriptStatement(subMethod, subArguments, statement);
-			if (subVariable.empty() == false) scriptState.variables[subVariable] = argumentValue;
-			argumentValues.push_back(argumentValue);
+			if (parseScriptStatement(argument, subVariable, subMethod, subArguments) == true) {
+				auto argumentValue = executeScriptStatement(subMethod, subArguments, statement);
+				if (subVariable.empty() == false) scriptState.variables[subVariable] = argumentValue;
+				argumentValues.push_back(argumentValue);
+			} else {
+				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + argument + "': parse error");
+				startErrorScript();
+			}
 		} else
 		// variable
 		if (StringTools::startsWith(argument, "$") == true) {
@@ -304,7 +314,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 			}
 		}
 		scriptMethod->executeMethod(argumentValues, returnValue, statement);
-		if (returnValue.getType() != scriptMethod->getReturnValueType()) {
+		if (scriptMethod->isMixedReturnValue() == false && returnValue.getType() != scriptMethod->getReturnValueType()) {
 			Console::println(
 				string("MiniScript::executeScriptStatement(): ") +
 				"@" + to_string(statement.line) +
@@ -634,26 +644,29 @@ int MiniScript::determineScriptIdxToStart() {
 				string variable;
 				string method;
 				vector<string> arguments;
-				parseScriptStatement(condition, variable, method, arguments);
-				auto returnValue = executeScriptStatement(
-					method,
-					arguments,
-					{
-						.line = 0,
-						.statementIdx = 0,
-						.statement = condition,
-						.gotoStatementIdx = -1
+				if (parseScriptStatement(condition, variable, method, arguments) == true) {
+					auto returnValue = executeScriptStatement(
+						method,
+						arguments,
+						{
+							.line = 0,
+							.statementIdx = 0,
+							.statement = condition,
+							.gotoStatementIdx = -1
+						}
+					);
+					auto returnValueBoolValue = false;
+					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
+						Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
+						conditionMet = false;
+						break;
+					} else
+					if (returnValueBoolValue == false) {
+						conditionMet = false;
+						break;
 					}
-				);
-				auto returnValueBoolValue = false;
-				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
-					Console::println("MiniScript::determineScriptIdxToStart(): " + condition + ": expecting boolean return value, but got: " + returnValue.getAsString());
-					conditionMet = false;
-					break;
-				} else
-				if (returnValueBoolValue == false) {
-					conditionMet = false;
-					break;
+				} else {
+					Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': parseScriptStatement(): parse error");
 				}
 			}
 			if (conditionMet == false) {
@@ -693,26 +706,29 @@ int MiniScript::determineNamedScriptIdxToStart() {
 					string variable;
 					string method;
 					vector<string> arguments;
-					parseScriptStatement(condition, variable, method, arguments);
-					auto returnValue = executeScriptStatement(
-						method,
-						arguments,
-						{
-							.line = 0,
-							.statementIdx = 0,
-							.statement = condition,
-							.gotoStatementIdx = -1
+					if (parseScriptStatement(condition, variable, method, arguments) == true) {
+						auto returnValue = executeScriptStatement(
+							method,
+							arguments,
+							{
+								.line = 0,
+								.statementIdx = 0,
+								.statement = condition,
+								.gotoStatementIdx = -1
+							}
+						);
+						auto returnValueBoolValue = false;
+						if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
+							Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
+							conditionMet = false;
+							break;
+						} else
+						if (returnValueBoolValue == false) {
+							conditionMet = false;
+							break;
 						}
-					);
-					auto returnValueBoolValue = false;
-					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
-						Console::println("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": expecting boolean return value, but got: " + returnValue.getAsString());
-						conditionMet = false;
-						break;
-					} else
-					if (returnValueBoolValue == false) {
-						conditionMet = false;
-						break;
+					} else {
+						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': parseScriptStatement(): parse error");
 					}
 				}
 				if (conditionMet == false) {
@@ -774,7 +790,7 @@ const string MiniScript::dumpInfo() {
 				}
 			}
 			method+= "): ";
-			method+= ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			method+= scriptMethod->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
 			methods.push_back(method);
 		}
 		sort(methods.begin(), methods.end());
@@ -2817,6 +2833,128 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodSpace(this));
+	}
+	{
+		//
+		class ScriptMethodConcatenate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodConcatenate(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_STRING), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "concatenate";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string result;
+				for (auto& argumentValue: argumentValues) {
+					result+= argumentValue.getValueString();
+				}
+				returnValue.setValue(result);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodConcatenate(this));
+	}
+	{
+		//
+		class ScriptMethodToUpperCase: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodToUpperCase(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "toUpperCase";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+					returnValue.setValue(StringTools::toUpperCase(stringValue));
+				} else {
+					Console::println("ScriptMethodToUpperCase::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodToUpperCase(this));
+	}
+	{
+		//
+		class ScriptMethodToLowerCase: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodToLowerCase(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "toLowerCase";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+					returnValue.setValue(StringTools::toLowerCase(stringValue));
+				} else {
+					Console::println("ScriptMethodToLowerCase::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+		};
+		registerMethod(new ScriptMethodToLowerCase(this));
+	}
+	{
+		//
+		class ScriptMethodGetVariable: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGetVariable(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "getVariable";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+
+		};
+		registerMethod(new ScriptMethodGetVariable(this));
 	}
 }
 
