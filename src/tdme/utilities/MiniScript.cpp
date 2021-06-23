@@ -301,7 +301,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 						string("MiniScript::executeScriptStatement(): ") +
 						"@" + to_string(statement.line) +
 						": method '" + method + "'" +
-						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + argumentValues[argumentIdx].getAsString());
+						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
 				argumentIdx++;
 			}
