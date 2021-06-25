@@ -323,7 +323,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		}
 		return returnValue;
 	} else {
-		Console::println("MiniScript::executeScriptStatement(): unknown method: " + method + "(" + argumentsString + ")");
+		Console::println("MiniScript::executeScriptStatement(): unknown method @" + to_string(statement.line) + ": " + statement.statement + ": " + method + "(" + argumentsString + ")");
 		startErrorScript();
 	}
 	return returnValue;

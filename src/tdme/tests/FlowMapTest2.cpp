@@ -264,6 +264,9 @@ void FlowMapTest2::doPathFinding() {
 				pathA.push_back(path[i]);
 			} else {
 				if (pathB.empty() == true) {
+					pathB.push_back(pathA[pathA.size() - 8]);
+					pathB.push_back(pathA[pathA.size() - 7]);
+					pathB.push_back(pathA[pathA.size() - 6]);
 					pathB.push_back(pathA[pathA.size() - 5]);
 					pathB.push_back(pathA[pathA.size() - 4]);
 					pathB.push_back(pathA[pathA.size() - 3]);
