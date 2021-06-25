@@ -99,7 +99,7 @@ void MiniScript::executeScriptLine() {
 	auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
 	auto& statement = script.statements[scriptState.statementIdx];
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": " + statement.statement);
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": '" + statement.statement + "'");
 
 	scriptState.statementIdx++;
 	if (scriptState.statementIdx >= script.statements.size()) {
@@ -121,7 +121,7 @@ void MiniScript::executeScriptLine() {
 }
 
 bool MiniScript::parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments) {
-	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): " + statement);
+	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + statement + "'");
 	auto argumentStartIdx = string::npos;
 	auto argumentEndIdx = string::npos;
 	auto bracketCount = 0;
@@ -300,6 +300,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 					Console::println(
 						string("MiniScript::executeScriptStatement(): ") +
 						"@" + to_string(statement.line) +
+						": '" + statement.statement + "'" +
 						": method '" + method + "'" +
 						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
@@ -309,6 +310,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 				Console::println(
 					string("MiniScript::executeScriptStatement(): ") +
 					"@" + to_string(statement.line) +
+					": '" + statement.statement + "'" +
 					": method '" + method + "'" +
 					": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
 			}
@@ -318,12 +320,13 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 			Console::println(
 				string("MiniScript::executeScriptStatement(): ") +
 				"@" + to_string(statement.line) +
+				": '" + statement.statement + "'" +
 				": method '" + method + "'" +
 				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
 		}
 		return returnValue;
 	} else {
-		Console::println("MiniScript::executeScriptStatement(): unknown method @" + to_string(statement.line) + ": " + statement.statement + ": " + method + "(" + argumentsString + ")");
+		Console::println("MiniScript::executeScriptStatement(): unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentsString + ")");
 		startErrorScript();
 	}
 	return returnValue;
