@@ -61,7 +61,7 @@ MiniScript::~MiniScript() {
 void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
 	auto scriptStateMachineStateIt = scriptStateMachineStates.find(state->getId());
 	if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
-		Console::println("MiniScript::registerStateMachineState(): state with id + " + to_string(state->getId()) + ", name '" + state->getName() + "' already registered.");
+		Console::println("MiniScript::registerStateMachineState(): '" + scriptFileName + "': state with id + " + to_string(state->getId()) + ", name '" + state->getName() + "' already registered.");
 		return;
 	}
 	scriptStateMachineStates[state->getId()] = state;
@@ -70,7 +70,7 @@ void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
 void MiniScript::registerMethod(ScriptMethod* method) {
 	auto scriptMethodsIt = scriptMethods.find(method->getMethodName());
 	if (scriptMethodsIt != scriptMethods.end()) {
-		Console::println("MiniScript::registerMethod(): method with name '" + method->getMethodName() + "' already registered.");
+		Console::println("MiniScript::registerMethod(): '" + scriptFileName + "': method with name '" + method->getMethodName() + "' already registered.");
 		return;
 	}
 	scriptMethods[method->getMethodName()] = method;
@@ -79,7 +79,7 @@ void MiniScript::registerMethod(ScriptMethod* method) {
 const MiniScript::ScriptVariable MiniScript::getVariable(const string& name) {
 	auto scriptVariableIt = scriptState.variables.find(name);
 	if (scriptVariableIt == scriptState.variables.end()) {
-		Console::println("MiniScript::getVariable(): variable with name '" + name + "' does not exist.");
+		Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist.");
 		return ScriptVariable();
 	}
 	return scriptVariableIt->second;
@@ -88,7 +88,7 @@ const MiniScript::ScriptVariable MiniScript::getVariable(const string& name) {
 void MiniScript::setVariable(const string& name, const ScriptVariable& variable) {
 	auto scriptVariableIt = scriptState.variables.find(name);
 	if (scriptVariableIt != scriptState.variables.end()) {
-		Console::println("MiniScript::getVariable(): variable with name '" + name + "' does exist.");
+		Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does exist.");
 		return;
 	}
 	scriptState.variables[name] = variable;
@@ -99,7 +99,7 @@ void MiniScript::executeScriptLine() {
 	auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
 	auto& statement = script.statements[scriptState.statementIdx];
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": '" + statement.statement + "'");
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "'");
 
 	scriptState.statementIdx++;
 	if (scriptState.statementIdx >= script.statements.size()) {
@@ -115,13 +115,13 @@ void MiniScript::executeScriptLine() {
 		auto returnValue = executeScriptStatement(method, arguments, statement);
 		if (variable.empty() == false) scriptState.variables[variable] = returnValue;
 	} else {
-		Console::println("MiniScript::executeScriptLine(): @" + to_string(statement.line) + ": '" + statement.statement + "': parse error");
+		Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': parse error");
 		startErrorScript();
 	}
 }
 
 bool MiniScript::parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments) {
-	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + statement + "'");
+	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + statement + "'");
 	auto argumentStartIdx = string::npos;
 	auto argumentEndIdx = string::npos;
 	auto bracketCount = 0;
@@ -180,7 +180,7 @@ bool MiniScript::parseScriptStatement(const string& statement, string& variable,
 	method = StringTools::trim(method);
 	variable = StringTools::trim(variable);
 	if (VERBOSE == true) {
-		Console::print("MiniScript::parseScriptStatement(): method: '" + method + "', variable = '" + variable + "', arguments: ");
+		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + method + "', variable = '" + variable + "', arguments: ");
 		int variableIdx = 0;
 		for (auto& argument: arguments) {
 			if (variableIdx > 0) Console::print(", ");
@@ -190,7 +190,7 @@ bool MiniScript::parseScriptStatement(const string& statement, string& variable,
 		Console::println();
 	}
 	if (bracketCount > 0) {
-		Console::println("MiniScript::parseScriptStatement(): '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		return false;
 	}
 	return true;
@@ -199,7 +199,7 @@ bool MiniScript::parseScriptStatement(const string& statement, string& variable,
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
 	string argumentsString;
 	for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?",":"") + argument;
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): string arguments: " + method + "(" + argumentsString + ")");
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + method + "(" + argumentsString + ")");
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// check if argument is a method calls return value
@@ -218,7 +218,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 				if (subVariable.empty() == false) scriptState.variables[subVariable] = argumentValue;
 				argumentValues.push_back(argumentValue);
 			} else {
-				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + argument + "': parse error");
+				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + argument + "': parse error");
 				startErrorScript();
 			}
 		} else
@@ -226,7 +226,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		if (StringTools::startsWith(argument, "$") == true) {
 			auto variableIt = scriptState.variables.find(argument);
 			if (variableIt == scriptState.variables.end()) {
-				Console::println("MiniScript::executeScriptStatement(): " + method + "(" + argument + "): variable: '" + argument + "' does not exist");
+				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argument + "): variable: '" + argument + "' does not exist");
 				argumentValues.push_back(ScriptVariable());
 			} else {
 				auto argumentValue = variableIt->second;
@@ -247,7 +247,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 	if (VERBOSE == true) {
 		string argumentValuesString;
 		for (auto& argumentValue: argumentValues) argumentValuesString+= (argumentValuesString.empty() == false?",":"") + argumentValue.getAsString();
-		Console::println("MiniScript::executeScriptStatement(): arguments: " + method + "(" + argumentValuesString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentValuesString + ")");
 	}
 	auto scriptMethodsIt = scriptMethods.find(method);
 	if (scriptMethodsIt != scriptMethods.end()) {
@@ -299,6 +299,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 				if (argumentOk == false) {
 					Console::println(
 						string("MiniScript::executeScriptStatement(): ") +
+						"'" + scriptFileName + "': " +
 						"@" + to_string(statement.line) +
 						": '" + statement.statement + "'" +
 						": method '" + method + "'" +
@@ -309,6 +310,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 			if (argumentValues.size() > scriptMethod->getArgumentTypes().size()) {
 				Console::println(
 					string("MiniScript::executeScriptStatement(): ") +
+					"'" + scriptFileName + "': " +
 					"@" + to_string(statement.line) +
 					": '" + statement.statement + "'" +
 					": method '" + method + "'" +
@@ -319,6 +321,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		if (scriptMethod->isMixedReturnValue() == false && returnValue.getType() != scriptMethod->getReturnValueType()) {
 			Console::println(
 				string("MiniScript::executeScriptStatement(): ") +
+				"'" + scriptFileName + "': " +
 				"@" + to_string(statement.line) +
 				": '" + statement.statement + "'" +
 				": method '" + method + "'" +
@@ -326,14 +329,14 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		}
 		return returnValue;
 	} else {
-		Console::println("MiniScript::executeScriptStatement(): unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentsString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentsString + ")");
 		startErrorScript();
 	}
 	return returnValue;
 }
 
 void MiniScript::emit(const string& condition) {
-	if (VERBOSE == true) Console::println("MiniScript::emit(): " + condition);
+	if (VERBOSE == true) Console::println("MiniScript::emit(): '" + scriptFileName + "': " + condition);
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
 		auto conditionMet = true;
@@ -352,7 +355,7 @@ void MiniScript::emit(const string& condition) {
 		return;
 	}
 	if (scriptState.scriptIdx == scriptIdx) {
-		Console::println("MiniScript::emit(): script already running: " + condition);
+		Console::println("MiniScript::emit(): '" + scriptFileName + "': script already running: " + condition);
 		return;
 	}
 	//
@@ -404,11 +407,15 @@ void MiniScript::executeStateMachine() {
 	if (scriptState.state.lastStateMachineState != nullptr) {
 		scriptState.state.lastStateMachineState->execute();
 	} else {
-		Console::println("MiniScript::executeStateMachine(): unknown state with id: " + to_string(scriptState.state.state));
+		Console::println("MiniScript::executeStateMachine(): '" + scriptFileName + "': unknown state with id: " + to_string(scriptState.state.state));
 	}
 }
 
 void MiniScript::loadScript(const string& pathName, const string& fileName) {
+	scriptValid = true;
+	scriptPathName = pathName;
+	scriptFileName = fileName;
+
 	// shutdown methods and machine states
 	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
@@ -450,7 +457,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	stack<GotoStatementStruct> gotoStatementStack;
 	for (auto scriptLine: scriptLines) {
 		scriptLine = StringTools::trim(scriptLine);
-		if (StringTools::startsWith(scriptLine, "#") == true) {
+		if (StringTools::startsWith(scriptLine, "#") == true || scriptLine.empty() == true) {
 			line++;
 			continue;
 		}
@@ -469,9 +476,14 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				if (t1.hasMoreTokens() == true) name = StringTools::trim(t1.nextToken());
 				scripts.push_back({ .line = line, .conditions = conditions, .name = name, .statements = {} });
 			} else {
-				Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": expecting 'on:' script condition");
+				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:' script condition");
+				scriptValid = false;
 			}
 		} else {
+			if (StringTools::startsWith(scriptLine, "on:") == true) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
+				scriptValid = false;
+			} else
 			if (scriptLine == "end") {
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
@@ -524,7 +536,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": else without if/elseif");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": else without if/elseif");
+							scriptValid = false;
 							break;
 					}
 					gotoStatementStack.push(
@@ -534,7 +547,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": else without if");
+					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": else without if");
+					scriptValid = false;
 				}
 			} else
 			if (StringTools::regexMatch(scriptLine, "^elseif[\\s]*\\(.*\\)$") == true) {
@@ -555,7 +569,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": elseif without if");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
+							scriptValid = false;
 							break;
 					}
 					gotoStatementStack.push(
@@ -565,7 +580,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): " + pathName + "/" + fileName + ": elseif without if");
+					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
 				}
 			} else {
 				if (StringTools::regexMatch(scriptLine, "^forTime[\\s]*\\(.*\\)$") == true ||
@@ -585,7 +600,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				}
-				scripts.at(scripts.size() - 1).statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
+				scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = -1 });
 			}
 			statementIdx++;
 		}
@@ -596,28 +611,32 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		for (auto& condition: script.conditions)
 			Console::print(condition + "; ");
 		if (script.name.empty() == false) {
-			Console::print("name = '" + script.name + "'");
+			Console::print("name = '" + script.name + "';");
+		} else {
+			Console::println();
 		}
 		Console::println();
 		for (auto& scriptStatement: script.statements) {
 			Console::println("\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != -1?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":""));
 		}
+		Console::println();
 	}
 
 	//
-	if (gotoStatementStack.empty() == false) {
-		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": unbalanced forXXX/if/elseif/else/end");
+	if (scriptValid == true && gotoStatementStack.empty() == false) {
+		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
+	} else {
+		//
+		startScript();
 	}
-
-	//
-	Console::println("DUMPINFO:\n\n" + dumpInfo() + "\n\n");
-
-	//
-	startScript();
 }
 
 void MiniScript::startScript() {
-	if (VERBOSE == true) Console::println("MiniScript::startScript(): starting script.");
+	if (VERBOSE == true) Console::println("MiniScript::startScript(): '" + scriptFileName + ": starting script.");
+	if (scriptValid == false) {
+		Console::println("MiniScript::startScript(): '" + scriptFileName + "': script not valid: not starting");
+		return;
+	}
 	scriptState.variables.clear();
 	scriptState.running = true;
 	registerVariables();
