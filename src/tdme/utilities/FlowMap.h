@@ -253,6 +253,16 @@ public:
 	}
 
 	/**
+	 * Remove cell by id
+	 * @param id id
+	 */
+	inline void removeCell(const string& id) {
+		auto cellIt = cells.find(id);
+		if (cellIt == cells.end()) return;
+		cells.erase(cellIt);
+	}
+
+	/**
 	 * Merge given flow map into this flow map, please note that given flow map step size needs to match this flow maps step size
 	 * This only applies to a series of flow maps created sequentially and in correct order along a path
 	 * @param flowMap flow map

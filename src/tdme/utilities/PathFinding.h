@@ -1,9 +1,10 @@
 #pragma once
 
-#include <map>
 #include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,10 +19,11 @@
 #include <tdme/utilities/PathFindingCustomTest.h>
 
 using std::map;
-using std::set;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::physics::World;
@@ -380,7 +382,7 @@ private:
 	 * @param flowMapRequest flow map request
 	 * @return step status
 	 */
-	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTest, bool flowMapRequest);
+	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<string>* nodesToTest, bool flowMapRequest);
 
 	// properties
 	World* world { nullptr };
@@ -397,11 +399,9 @@ private:
 	float flowMapStepSize;
 	float flowMapScaleActorBoundingVolumes;
 	PathFindingNode end;
-	stack<PathFindingNode> successorNodes;
-	map<string, PathFindingNode> openNodes;
-	map<string, PathFindingNode> closedNodes;
-	set<string> nodesToTest;
+	unordered_map<string, PathFindingNode> openNodes;
+	unordered_map<string, PathFindingNode> closedNodes;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
-	map<string, float> walkableCache;
+	unordered_map<string, float> walkableCache;
 };
