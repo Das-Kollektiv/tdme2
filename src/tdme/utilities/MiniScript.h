@@ -599,6 +599,9 @@ private:
 	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
+	string scriptPathName;
+	string scriptFileName;
+	bool scriptValid { false };
 
 	/**
 	 * Execute a single script line
