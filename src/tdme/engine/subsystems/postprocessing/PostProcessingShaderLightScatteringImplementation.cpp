@@ -101,7 +101,7 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(void
 			#endif
 			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 1);
 			renderer->setProgramUniformFloatVec2(context, uniformLightPosition[i], lightSourcePosition2D.getArray());
-			renderer->setProgramUniformFloat(context, uniformLightIntensity[i], intensity);
+			renderer->setProgramUniformFloat(context, uniformLightIntensity[i], intensity * 0.6f);
 		}
 	}
 }
