@@ -114,6 +114,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 	//
 	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	//
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
 	auto shader = Engine::getShadowMapRenderShader();
@@ -122,6 +123,8 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	// user shader program
 	shader->useProgram(engine);
 	// render each shadow map
+	renderer->enableBlending();
+
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		// skip on unused shadow mapping
 		if (shadowMaps[i] == nullptr) continue;
@@ -137,6 +140,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			auto context = renderer->getContext(j);
 			// set up light shader uniforms
 			shadowMap->updateDepthBiasMVPMatrix(context);
+			//
 			// bind shadow map texture on shadow map texture unit
 			auto textureUnit = renderer->getTextureUnit(context);
 			renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
@@ -145,9 +149,6 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			renderer->setTextureUnit(context, textureUnit);
 		}
 
-		// render objects, enable blending
-		//	will be disabled after rendering transparent faces
-		renderer->enableBlending();
 		// 	only opaque face entities as shadows will not be produced on transparent faces
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
@@ -161,9 +162,10 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 				EntityRenderer::RENDERTYPE_SHADOWMAPPING
 			);
 		}
-		//	disable blending
-		renderer->disableBlending();
 	}
+
+	//
+	renderer->disableBlending();
 
 	// unuse shader program
 	shader->unUseProgram();
@@ -303,6 +305,7 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBias
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
+
 	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
 	// upload

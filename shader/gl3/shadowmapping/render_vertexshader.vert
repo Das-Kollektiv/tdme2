@@ -66,17 +66,17 @@ void main() {
 	// texure UV
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
+	// world position of vertex, needed in various calculations
+	vec4 vsPosition4 = inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vsPosition = vsPosition4.xyz / vsPosition4.w;
+
 	// shadow coord
-	vsShadowCoord = depthBiasMVPMatrix * inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vsShadowCoord = depthBiasMVPMatrix * vsPosition4;
 	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;
 
 	// shadow intensity
 	vec3 normalTransformed = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	vsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normalTransformed)), 0.0, 1.0);
-
-	// eye coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
-	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// compute gl position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
