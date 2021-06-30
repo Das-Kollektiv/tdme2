@@ -36,8 +36,11 @@ private:
 	bool keyD { false };
 	bool keyMinus { false };
 	bool keyPlus { false };
+	bool keyComma { false };
+	bool keyDot { false };
 	float camRotationY { 0.0f };
 	float camRotationX { 0.0f };
+	float lightRotationX { -60.0f };
 
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;

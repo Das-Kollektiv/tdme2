@@ -73,6 +73,16 @@ void TreeTest::main(int argc, char** argv)
 
 void TreeTest::display()
 {
+	// light
+	if (keyComma == true) lightRotationX-= 0.5f;
+	if (keyDot == true) lightRotationX+= 0.5f;
+	Quaternion lightRotationXQuaternion;
+	lightRotationXQuaternion.rotate(Vector3(1.0f, 0.0f, 0.0f), lightRotationX);
+	auto light0 = engine->getLightAt(0);
+	auto lightPosition = lightRotationXQuaternion * Vector3(0.0f, 50.0f, 1.0f);
+	light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 1.0f));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
+
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
@@ -138,56 +148,74 @@ void TreeTest::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookFrom(Vector3(0.0f, 3.5f, 28.0f));
-	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
+	cam->setLookFrom(Vector3(0.0f, 3.0f, 48.0f));
+	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
-	light0->setConstantAttenuation(0.5f);
-	light0->setLinearAttenuation(0.0f);
-	light0->setQuadraticAttenuation(0.0f);
-	light0->setSpotExponent(0.0f);
-	light0->setSpotCutOff(180.0f);
+	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setRenderLightSource(true);
 	light0->setEnabled(true);
+
+	/*
+	auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));
+	auto grass = new Object3D("ground", _grass);
+	grass->setEnabled(true);
+	grass->setScale(Vector3(16.0f, 1.0f, 16.0f));
+	grass->setReceivesShadows(true);
+	grass->update();
+	engine->addEntity(grass);
+	*/
+
+	// TODO: Looks like we have a precision issue here, using a single ground with e.g. 240m x 240m does not work yet :(
+	/*
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
-	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
-	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
+	*/
+	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(5.0f, 1.0f, 5.0f)));
+	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	auto groundIdx = 0;
+	for (float z = -40.0f; z <= 40.0f; z+= 5.0f) {
+		for (float x = -40.0f; x <= 40.0f; x+= 5.0f) {
+			entity = new Object3D("ground." + to_string(groundIdx++), groundModel);
+			entity->setTranslation(Vector3(x, -1.0f, z));
+			entity->setReceivesShadows(true);
+			entity->update();
+			engine->addEntity(entity);
+		}
+	}
+
 	auto treePine = modelDeleter.add(ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.tm"));
 	ModelTools::prepareForShader(treePine, "tree");
 	int treeIdx = 0;
-	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
-	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
-		auto entity = new Object3D(
-			"tree." + to_string(treeIdx++),
-			treePine
-		);
-		entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
-		float scale = 1.0f + Math::random() / 3.0f;
-		entity->setScale(
-			Vector3(
-				Math::random() < 0.5f?scale:-scale,
-				scale,
-				Math::random() < 0.5f?scale:-scale
-			)
-		);
-		entity->setTranslation(Vector3(x, 0.0f, z));
-		entity->setContributesShadows(true);
-		entity->setReceivesShadows(true);
-		entity->setShader("tree");
-		entity->setShaderParameter("speed", ShaderParameter(0.5f));
-		entity->update();
-		engine->addEntity(entity);
+	for (float z = -20.0f; z < 20.0f; z+= 5.0f) {
+		for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
+			auto entity = new Object3D(
+				"tree." + to_string(treeIdx++),
+				treePine
+			);
+			entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
+			float scale = 1.0f + Math::random() / 3.0f;
+			entity->setScale(
+				Vector3(
+					Math::random() < 0.5f?scale:-scale,
+					scale,
+					Math::random() < 0.5f?scale:-scale
+				)
+			);
+			entity->setTranslation(Vector3(x, 0.0f, z));
+			entity->setContributesShadows(true);
+			entity->setReceivesShadows(true);
+			entity->setShader("tree");
+			entity->setShaderParameter("speed", ShaderParameter(0.5f));
+			entity->update();
+			engine->addEntity(entity);
+		}
 	}
 }
 
@@ -206,7 +234,10 @@ void TreeTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == 's') keyS = true;
 	if (keyChar == 'd') keyD = true;
 	if (keyChar == '-') keyMinus = true;
-	if (keyChar == '+') keyPlus = true;}
+	if (keyChar == '+') keyPlus = true;
+	if (keyChar == ',') keyComma = true;
+	if (keyChar == '.') keyDot = true;
+}
 
 void TreeTest::onKeyUp(unsigned char key, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
@@ -216,6 +247,8 @@ void TreeTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == 'd') keyD = false;
 	if (keyChar == '-') keyMinus = false;
 	if (keyChar == '+') keyPlus = false;
+	if (keyChar == ',') keyComma = false;
+	if (keyChar == '.') keyDot = false;
 }
 
 void TreeTest::onSpecialKeyDown (int key, int x, int y) {
