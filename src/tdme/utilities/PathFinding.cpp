@@ -4,6 +4,7 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -16,7 +17,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/PathFindingCustomTest.h>
 #include <tdme/utilities/Time.h>
 
@@ -25,6 +25,7 @@ using std::reverse;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
@@ -37,7 +38,6 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::Integer;
 using tdme::utilities::PathFindingCustomTest;
 using tdme::utilities::Time;
 
@@ -662,7 +662,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	return success;
 }
 
-FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, bool favorPathDirection, PathFindingCustomTest* customTest) {
+FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, PathFindingCustomTest* customTest) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -791,156 +791,6 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
 	auto flowMap = new FlowMap(pathToUse, endPositions, flowMapStepSize, complete);
 	flowMap->acquireReference();
-
-	{
-		auto pathIdx = 0;
-		for (auto& _centerPathNode: pathToUse) {
-			auto centerPathNode = Vector3(
-				FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
-				_centerPathNode.getY(),
-				FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
-			);
-			auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
-			auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
-			for (auto z = zMin; z <= zMax; z++) {
-				for (auto x = xMin; x <= xMax; x++) {
-					auto cellPosition = Vector3(
-						static_cast<float>(centerPathNodeX) * flowMapStepSize + static_cast<float>(x) * flowMapStepSize,
-						0.0f,
-						static_cast<float>(centerPathNodeZ) * flowMapStepSize + static_cast<float>(z) * flowMapStepSize
-					);
-					auto cellId = FlowMap::toIdInt(
-						centerPathNodeX + x,
-						centerPathNodeZ + z
-					);
-					auto nodeId = toIdInt(
-						centerPathNodeX + x,
-						0,
-						centerPathNodeZ + z
-					);
-
-					// do we already have this cell?
-					if (flowMap->hasCell(cellId) == true) continue;
-
-					// walkable?
-					auto nodeIt = closedNodes.find(nodeId);
-					if (nodeIt == closedNodes.end()) {
-						continue;
-					}
-					auto& node = nodeIt->second;
-					// set y
-					cellPosition.setY(node.position.getY());
-
-					// check neighbours around our current cell
-					PathFindingNode* minCostsNode = nullptr;
-					auto minCosts = Float::MAX_VALUE;
-					for (auto _z = -1; _z <= 1; _z++)
-					for (auto _x = -1; _x <= 1; _x++)
-					if (_z != 0 || _x != 0) {
-						//
-						auto neighbourNodeId = toIdInt(
-							centerPathNodeX + x + _x,
-							0,
-							centerPathNodeZ + z + _z
-						);
-						// same node?
-						if (neighbourNodeId == nodeId) continue;
-						// do we have this cell?
-						auto neighbourNodeIt = closedNodes.find(neighbourNodeId);
-						if (neighbourNodeIt == closedNodes.end()) {
-							// nope
-							continue;
-						} else {
-							// yes && walkable
-							auto& neighbourNode = neighbourNodeIt->second;
-							if (minCostsNode == nullptr || neighbourNode.costsReachPoint < minCosts) {
-								minCostsNode = &neighbourNode;
-								minCosts = neighbourNode.costsReachPoint;
-							}
-						}
-					}
-					if (minCostsNode != nullptr) {
-						auto direction = minCostsNode->position.clone().sub(node.position).setY(0.0f).normalize();
-						if (Float::isNaN(direction.getX()) || Float::isNaN(direction.getY()) || Float::isNaN(direction.getZ())) {
-							Console::println(
-								minCostsNode->id + "; " +
-								to_string(minCostsNode->position.getX()) + ", " +
-								to_string(minCostsNode->position.getY()) + ", " +
-								to_string(minCostsNode->position.getZ()) + " -> " +
-								node.id + "; " +
-								to_string(node.position.getX()) + ", " +
-								to_string(node.position.getY()) + ", " +
-								to_string(node.position.getZ()) + ": " +
-								to_string(minCostsNode == &node) + "; " +
-								to_string(cellPosition.getX()) + ", " +
-								to_string(cellPosition.getY()) + ", " +
-								to_string(cellPosition.getZ()) + "; " +
-								cellId
-							);
-						}
-						flowMap->addCell(
-							cellId,
-							cellPosition,
-							true,
-							direction,
-							pathIdx
-						);
-					}
-				}
-			}
-			pathIdx++;
-		}
-	}
-
-	// reset
-	openNodes.clear();
-	closedNodes.clear();
-
-	//
-	auto allZMin = Integer::MAX_VALUE;
-	auto allZMax = Integer::MIN_VALUE;
-	auto allXMin = Integer::MAX_VALUE;
-	auto allXMax = Integer::MIN_VALUE;
-
-	// do some post adjustments
-	for (auto& _centerPathNode : pathToUse) {
-		auto centerPathNode = Vector3(
-			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
-			_centerPathNode.getY(),
-			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
-		);
-		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
-		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
-		for (auto z = zMin; z <= zMax; z++) {
-			for (auto x = xMin; x <= xMax; x++) {
-				allZMin = Math::min(allZMin, centerPathNodeZ + z);
-				allZMax = Math::max(allZMax, centerPathNodeZ + z);
-				allXMin = Math::min(allXMin, centerPathNodeX + x);
-				allXMax = Math::max(allXMax, centerPathNodeX + x);
-				auto cellId = FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z);
-				auto cell = flowMap->getCell(cellId);
-				if (cell == nullptr) continue;
-				auto topCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z - 1));
-				if (topCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() < 0.0f) {
-					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
-				}
-				auto bottomCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z + 1));
-				if (bottomCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() > 0.0f) {
-					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
-				}
-				auto leftCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x - 1, centerPathNodeZ + z));
-				if (leftCell == nullptr && cell->getDirection().getX() < 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f) {
-					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
-				}
-				auto rightCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x + 1, centerPathNodeZ + z));
-				if (rightCell == nullptr && cell->getDirection().getX() > 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f) {
-					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
-				}
-			}
-		}
-	}
-
-	// do some more post adjustments
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
@@ -951,132 +801,137 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
 		for (auto z = zMin; z <= zMax; z++) {
 			for (auto x = xMin; x <= xMax; x++) {
+				auto cellPosition = Vector3(
+					static_cast<float>(centerPathNodeX) * flowMapStepSize + static_cast<float>(x) * flowMapStepSize,
+					0.0f,
+					static_cast<float>(centerPathNodeZ) * flowMapStepSize + static_cast<float>(z) * flowMapStepSize
+				);
+				auto cellId = FlowMap::toIdInt(
+					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
+				auto nodeId = toIdInt(
+					centerPathNodeX + x,
+					0,
+					centerPathNodeZ + z
+				);
+
+				// do we already have this cell?
+				if (flowMap->hasCell(cellId) == true) continue;
+
+				// walkable?
+				auto nodeIt = closedNodes.find(nodeId);
+				if (nodeIt == closedNodes.end()) {
+					continue;
+				}
+				auto& node = nodeIt->second;
+				// set y
+				cellPosition.setY(node.position.getY());
+
+				// check neighbours around our current cell
+				PathFindingNode* minCostsNode = nullptr;
+				auto minCosts = Float::MAX_VALUE;
+				for (auto _z = -1; _z <= 1; _z++)
+				for (auto _x = -1; _x <= 1; _x++)
+				if (_z != 0 || _x != 0) {
+					//
+					auto neighbourNodeId = toIdInt(
+						centerPathNodeX + x + _x,
+						0,
+						centerPathNodeZ + z + _z
+					);
+					// same node?
+					if (neighbourNodeId == nodeId) continue;
+					// do we have this cell?
+					auto neighbourNodeIt = closedNodes.find(neighbourNodeId);
+					if (neighbourNodeIt == closedNodes.end()) {
+						// nope
+						continue;
+					} else {
+						// yes && walkable
+						auto& neighbourNode = neighbourNodeIt->second;
+						if (minCostsNode == nullptr || neighbourNode.costsReachPoint < minCosts) {
+							minCostsNode = &neighbourNode;
+							minCosts = neighbourNode.costsReachPoint;
+						}
+					}
+				}
+				if (minCostsNode != nullptr) {
+					auto direction = minCostsNode->position.clone().sub(node.position).setY(0.0f).normalize();
+					if (Float::isNaN(direction.getX()) || Float::isNaN(direction.getY()) || Float::isNaN(direction.getZ())) {
+						Console::println(
+							minCostsNode->id + "; " +
+							to_string(minCostsNode->position.getX()) + ", " +
+							to_string(minCostsNode->position.getY()) + ", " +
+							to_string(minCostsNode->position.getZ()) + " -> " +
+							node.id + "; " +
+							to_string(node.position.getX()) + ", " +
+							to_string(node.position.getY()) + ", " +
+							to_string(node.position.getZ()) + ": " +
+							to_string(minCostsNode == &node) + "; " +
+							to_string(cellPosition.getX()) + ", " +
+							to_string(cellPosition.getY()) + ", " +
+							to_string(cellPosition.getZ()) + "; " +
+							cellId
+						);
+					}
+					flowMap->addCell(
+						cellId,
+						cellPosition,
+						true,
+						direction,
+						-1
+					);
+				}
+			}
+		}
+	}
+
+	// reset
+	openNodes.clear();
+	closedNodes.clear();
+
+	// do some post adjustments
+	for (auto& _centerPathNode: pathToUse) {
+		auto centerPathNode = Vector3(
+			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
+			_centerPathNode.getY(),
+			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
+		);
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
+		for (auto z = zMin; z <= zMax; z++) {
+			for (auto x = xMin; x <= xMax; x++) {
+				auto cellPosition = Vector3(
+					static_cast<float>(centerPathNodeX) * flowMapStepSize + static_cast<float>(x) * flowMapStepSize,
+					0.0f,
+					static_cast<float>(centerPathNodeZ) * flowMapStepSize + static_cast<float>(z) * flowMapStepSize
+				);
 				auto cellId = FlowMap::toIdInt(
 					centerPathNodeX + x,
 					centerPathNodeZ + z
 				);
 				auto cell = flowMap->getCell(cellId);
 				if (cell == nullptr) continue;
-
-				//
-				auto missesNeighborCells = false;
-				for (auto nZ = -2; nZ < 3; nZ++) {
-					for (auto nX = -2; nX < 3; nX++) {
-						if (nZ == 0 && nX == 0) continue;
-						auto neighborCellId = FlowMap::toIdInt(
-							centerPathNodeX + x + nX,
-							centerPathNodeZ + z + nZ
-						);
-						auto neighborCell = flowMap->getCell(neighborCellId);
-						if (neighborCell == nullptr) {
-							missesNeighborCells = true;
-							break;
-						}
-					}
+				auto topCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z - 1));
+				if (topCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() < 0.0f){
+					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
 				}
-
-				//
-				if (missesNeighborCells == true) {
-					cell->setMissingNeighborCells(true);
+				auto bottomCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z + 1));
+				if (bottomCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
+				}
+				auto leftCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x - 1, centerPathNodeZ + z));
+				if (leftCell == nullptr && cell->getDirection().getX() < 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
+				}
+				auto rightCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x + 1, centerPathNodeZ + z));
+				if (rightCell == nullptr && cell->getDirection().getX() > 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
 				}
 			}
 		}
 	}
-
-	// determine border cells
-	{
-		for (auto z = allZMin; z <= allZMax; z++) {
-			auto removed = 0;
-			for (auto x = allXMin; x <= allXMax; x++) {
-				auto cellId = FlowMap::toIdInt(
-					x,
-					z
-				);
-				auto cell = flowMap->getCell(cellId);
-				if (cell == nullptr) {
-					if (nodesToTest.find(cellId) != nodesToTest.end()) removed = 2;
-					continue;
-				}
-				if (removed < 2) {
-					flowMap->removeCell(cellId);
-					removed++;
-				} else {
-					cell->setBorderCell(true);
-					break;
-				}
-			}
-		}
-	}
-	{
-		for (auto z = allZMin; z <= allZMax; z++) {
-			auto removed = 0;
-			for (auto x = allXMax; x >= allXMin; x--) {
-				auto cellId = FlowMap::toIdInt(
-					x,
-					z
-				);
-				auto cell = flowMap->getCell(cellId);
-				if (cell == nullptr) {
-					if (nodesToTest.find(cellId) != nodesToTest.end()) removed = 2;
-					continue;
-				}
-				if (removed < 2) {
-					flowMap->removeCell(cellId);
-					removed++;
-				} else {
-					cell->setBorderCell(true);
-					break;
-				}
-			}
-		}
-	}
-	{
-		for (auto x = allXMin; x <= allXMax; x++) {
-			auto removed = 0;
-			for (auto z = allZMin; z <= allZMax; z++) {
-				auto cellId = FlowMap::toIdInt(
-					x,
-					z
-				);
-				auto cell = flowMap->getCell(cellId);
-				if (cell == nullptr) {
-					if (nodesToTest.find(cellId) != nodesToTest.end()) removed = 2;
-					continue;
-				}
-				if (removed < 2) {
-					flowMap->removeCell(cellId);
-					removed++;
-				} else {
-					cell->setBorderCell(true);
-					break;
-				}
-			}
-		}
-	}
-	{
-		for (auto x = allXMin; x <= allXMax; x++) {
-			auto removed = 0;
-			for (auto z = allZMax; z >= allZMin; z--) {
-				auto cellId = FlowMap::toIdInt(
-					x,
-					z
-				);
-				auto cell = flowMap->getCell(cellId);
-				if (cell == nullptr) {
-					if (nodesToTest.find(cellId) != nodesToTest.end()) removed = 2;
-					continue;
-				}
-				if (removed < 2) {
-					flowMap->removeCell(cellId);
-					removed++;
-				} else {
-					cell->setBorderCell(true);
-					break;
-				}
-			}
-		}
-	}
-
 
 	// do some more post adjustments
 	Vector3 lastCenterPathNode = pathToUse.size() < 2?Vector3():pathToUse[0] - (pathToUse[1] - pathToUse[0]);
@@ -1115,15 +970,6 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 						i++;
 					}
 					cell->setPathNodeIdx(pathNodeIdx < pathToUse.size() - 1?pathNodeIdx + 1:pathNodeIdx);
-				}
-
-				if (cell->isMissingNeighborCells() == false &&
-					pathToUse.size() >= 2 &&
-					favorPathDirection == true &&
-					Vector3::computeDotProduct(pathDirection, cell->getDirection()) > 0.0f &&
-					cellsProcessed.find(cellId) == cellsProcessed.end()) {
-					cell->setDirection(pathDirection);
-					cellsProcessed.insert(cellId);
 				}
 			}
 		}
