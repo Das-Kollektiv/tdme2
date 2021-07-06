@@ -34,8 +34,8 @@ Light::Light()
 	constantAttenuation = 1.0f;
 	linearAttenuation = 0.0f;
 	quadraticAttenuation = 0.0f;
-	renderLightSource = false;
-	lightSourceSize = 0.25f;
+	renderSource = false;
+	sourceSize = 0.25f;
 	lightSourceTextureId = 0;
 }
 
@@ -54,12 +54,12 @@ Light::Light(Renderer* renderer, int32_t id)
 	constantAttenuation = 1.0f;
 	linearAttenuation = 0.0f;
 	quadraticAttenuation = 0.0f;
-	renderLightSource = false;
-	lightSourceSize = 0.25f;
+	renderSource = false;
+	sourceSize = 0.25f;
 	lightSourceTextureId = 0;
 }
 
-void Light::setLightSourceTexture(Texture* texture) {
+void Light::setSourceTexture(Texture* texture) {
 	if (lightSourceTexture == texture) return;
 	if (lightSourceTexture != nullptr) lightSourceTexture->releaseReference();
 	lightSourceTexture = texture;

@@ -205,7 +205,7 @@ void Tools::setDefaultLight(Light* light)
 	light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
 	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);

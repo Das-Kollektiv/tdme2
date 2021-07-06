@@ -95,4 +95,16 @@ public:
 	 * @return line segment collides with triangle
 	 */
 	static bool doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact);
+
+	/**
+	 * Does line segment collides with triangle
+	 * @param n n plane normal
+	 * @param d d plane distance from origin
+	 * @param p1 p1 line segment point 1
+	 * @param p2 p2 line segment point 2
+	 * @param contact point of intersection
+	 * @return line segment collides with plane
+	 */
+	static bool doesLineSegmentCollideWithPlane(const Vector3& n, float d, const Vector3& p1, const Vector3& p2, Vector3& contact);
+
 };

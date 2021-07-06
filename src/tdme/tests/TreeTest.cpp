@@ -80,7 +80,7 @@ void TreeTest::display()
 	lightRotationXQuaternion.rotate(Vector3(1.0f, 0.0f, 0.0f), lightRotationX);
 	auto light0 = engine->getLightAt(0);
 	auto lightPosition = lightRotationXQuaternion * Vector3(0.0f, 50.0f, 1.0f);
-	light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 1.0f));
+	light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
 	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
 
 	// camera
@@ -153,7 +153,7 @@ void TreeTest::initialize()
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setRenderLightSource(true);
+	light0->setRenderSource(true);
 	light0->setEnabled(true);
 
 	/*

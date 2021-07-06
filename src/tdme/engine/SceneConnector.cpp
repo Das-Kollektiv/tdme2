@@ -187,7 +187,7 @@ void SceneConnector::setLights(Engine* engine, Scene& scene, const Vector3& tran
 				scene.getLightAt(i)->getPosition().getX() + translation.getX(),
 				scene.getLightAt(i)->getPosition().getY() + translation.getY(),
 				scene.getLightAt(i)->getPosition().getZ() + translation.getZ(),
-				1.0f
+				scene.getLightAt(i)->getPosition().getW()
 			)
 		);
 	}
