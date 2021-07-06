@@ -36,8 +36,8 @@ private:
 	float constantAttenuation;
 	float linearAttenuation;
 	float quadraticAttenuation;
-	bool renderLightSource;
-	float lightSourceSize;
+	bool renderSource;
+	float sourceSize;
 	Texture* lightSourceTexture { nullptr };
 	int32_t lightSourceTextureId;
 	Renderer* renderer { nullptr };
@@ -230,40 +230,39 @@ public:
 	 * Returns if rendering light source is enabled
 	 * @return rendering light source is enabled
 	 */
-	inline bool isRenderLightSource() const {
-		return renderLightSource;
+	inline bool isRenderSource() const {
+		return renderSource;
 	}
 
 	/**
 	 * Set rendering light source enabled/disabled
 	 * @param renderLightSource render light source enabled
 	 */
-	inline void setRenderLightSource(bool renderLightSource) {
-		this->renderLightSource = renderLightSource;
+	inline void setRenderSource(bool renderSource) {
+		this->renderSource = renderSource;
 	}
 
 	/**
 	 * Returns light source size
 	 * @return light source size (moon, sun)
 	 */
-	inline float getLightSourceSize() const {
-		return lightSourceSize;
+	inline float getSourceSize() const {
+		return sourceSize;
 	}
 
 	/**
 	 * Set light source size (moon, sun)
-	 * TODO: this is a hack until we have shader properties
 	 * @param lightSourceSize light source size
 	 */
-	inline void setLightSourceSize(float lightSourceSize) {
-		this->lightSourceSize = lightSourceSize;
+	inline void setLightSourceSize(float sourceSize) {
+		this->sourceSize = sourceSize;
 	}
 
 	/**
 	 * Returns light source texture
 	 * @return light source texture
 	 */
-	inline Texture* getLightSourceTexture() const {
+	inline Texture* getSourceTexture() const {
 		return lightSourceTexture;
 	}
 
@@ -271,14 +270,22 @@ public:
 	 * Returns light source texture
 	 * @return light source texture
 	 */
-	void setLightSourceTexture(Texture* texture);
+	void setSourceTexture(Texture* texture);
 
 	/**
 	 * Returns light source texture id
 	 * @return light source texture id
 	 */
-	inline int32_t getLightSourceTextureId() const {
+	inline int32_t getSourceTextureId() const {
 		return lightSourceTextureId;
+	}
+
+	/**
+	 * Returns if light is directional light like sun, moon lights
+	 * @return directional light like sun, moon lights
+	 */
+	inline bool isDirectional() const {
+		return position.getW() < Math::EPSILON;
 	}
 
 	/**

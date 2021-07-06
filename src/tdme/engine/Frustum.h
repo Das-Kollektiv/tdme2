@@ -64,15 +64,13 @@ public:
 	void updateFrustum();
 
 	/**
-	 * Checks if given vector is in frustum
-	 * @param vector vecto
+	 * Checks if given vertex is in frustum
+	 * @param vector vector
 	 * @return visibility
 	 */
-	inline bool isVisible(const Vector3& vector) {
-		for (auto& p : planes) {
-			auto& normal = p.getNormal();
-			auto distance = p.getDistance();
-			if (Vector3::computeDotProduct(normal, vector) + distance <= 0) {
+	inline bool isVisible(const Vector3& vertex) {
+		for (auto& p: planes) {
+			if (Vector3::computeDotProduct(p.getNormal(), vertex) + p.getDistance() < 0.0f) {
 				return false;
 			}
 		}
@@ -87,9 +85,8 @@ public:
 	inline bool isVisible(Sphere* s) {
 		auto& center = s->getCenter();
 		auto radius = s->getRadius();
-		for (auto& p : planes) {
-			auto& normal = p.getNormal();
-			if (Vector3::computeDotProduct(normal, center) + p.getDistance() <= -radius) {
+		for (auto& p: planes) {
+			if (Vector3::computeDotProduct(p.getNormal(), center) + p.getDistance() < -radius) {
 				return false;
 			}
 		}
@@ -109,17 +106,17 @@ public:
 		auto maxY = b->getMax()[1];
 		auto maxZ = b->getMax()[2];
 		Vector3 point;
-		for (auto& p : planes) {
+		for (auto& p :planes) {
 			auto& normal = p.getNormal();
 			auto distance = p.getDistance();
-			if (Vector3::computeDotProduct(normal, point.set(minX, minY, minZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, minZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, minZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, minZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(minX, minY, maxZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, maxZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, maxZ)) + distance > 0) continue;
-			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, maxZ)) + distance > 0) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, minY, minZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, minZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, minZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, minZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, minY, maxZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, minY, maxZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(minX, maxY, maxZ)) + distance > 0.0f) continue;
+			if (Vector3::computeDotProduct(normal, point.set(maxX, maxY, maxZ)) + distance > 0.0f) continue;
 			return false;
 		}
 		return true;

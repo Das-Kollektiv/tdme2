@@ -21,6 +21,7 @@ using tdme::math::Vector3;
 class tdme::engine::Camera final
 {
 public:
+	enum FrustumMode { FRUSTUMMODE_PERSPECTIVE, FRUSTUMMODE_ORTHOGRAPHIC };
 	enum CameraMode { CAMERAMODE_LOOKAT, CAMERAMODE_NONE };
 
 private:
@@ -33,6 +34,8 @@ private:
 	float zNear;
 	float zFar;
 	CameraMode cameraMode;
+	FrustumMode frustumMode;
+	float orthographicFrustumScale;
 	Vector3 lookFrom;
 	Vector3 lookAt;
 	Vector3 upVector;
@@ -94,6 +97,36 @@ public:
 	 */
 	inline void setCameraMode(CameraMode cameraMode) {
 		this->cameraMode = cameraMode;
+	}
+
+	/**
+	 * @return frustum mode
+	 */
+	inline FrustumMode getFrustumMode() const {
+		return frustumMode;
+	}
+
+	/**
+	 * Set frustum mode
+	 * @param frustum mode
+	 */
+	inline void setFrustumMode(FrustumMode frustumMode) {
+		this->frustumMode = frustumMode;
+	}
+
+	/**
+	 * @return orthographic frustum scale
+	 */
+	inline float getOrthographicFrustumScale() const {
+		return orthographicFrustumScale;
+	}
+
+	/**
+	 * Set orthographic frustum scale
+	 * @param orthographicFrustumScale orthographic frustum scale
+	 */
+	inline void setOrthographicFrustumScale(float orthographicFrustumScale) {
+		this->orthographicFrustumScale = orthographicFrustumScale;
 	}
 
 	/**
@@ -335,18 +368,6 @@ private:
 	 * @return projection matrix
 	 */
 	Matrix4x4& computeProjectionMatrix();
-
-	/**
-	 * Computes frustum matrix
-	 * @param leftPlane left plane
-	 * @param rightPlane right plane
-	 * @param bottomPlane top plane
-	 * @param topPlane bottom plane
-	 * @param nearPlane near plane
-	 * @param farPlane far plane
-	 * @return frustum matrix
-	 */
-	Matrix4x4& computeFrustumMatrix(float leftPlane, float rightPlane, float bottomPlane, float topPlane, float nearPlane, float farPlane);
 
 	/**
 	 * Computes projection matrix for given look from, look at and up vector

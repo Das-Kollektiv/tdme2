@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
@@ -25,6 +26,7 @@
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
@@ -113,11 +115,90 @@ void ShadowMap::createShadowMap(Light* light)
 	// TODO: object->preRender only uses default context, lets see how to make this multithreaded
 	auto context = shadowMapping->renderer->getDefaultContext();
 
+	//
+	auto camera = shadowMapping->engine->getCamera();
+
+	//
+	auto lightDirection = light->getSpotDirection().clone().normalize();
+
+	// directional lights
+	if (light->isDirectional() == true) {
+		// try to determine light position
+		// 	left
+		auto left = camera->getModelViewProjectionInvertedMatrix().multiply(
+			Vector4(
+				(2.0f * 0.0f) - 1.0f,
+				1.0f - (2.0f * 0.5f),
+				2.0f * 0.997f - 1.0f,
+				1.0f
+			)
+		);
+		left.scale(1.0f / left.getW());
+
+		//	right
+		auto right = camera->getModelViewProjectionInvertedMatrix().multiply(
+			Vector4(
+				(2.0f * 1.0f) - 1.0f,
+				1.0f - (2.0f * 0.5f),
+				2.0f * 0.997f - 1.0f,
+				1.0f
+			)
+		);
+		right.scale(1.0f / right.getW());
+
+		//	center
+		auto center4 = camera->getModelViewProjectionInvertedMatrix().multiply(
+			Vector4(
+				(2.0f * 0.5f) - 1.0f,
+				1.0f - (2.0f * 1.0f),
+				2.0f * 0.5f - 1.0f,
+				1.0f
+			)
+		);
+		center4.scale(1.0f / center4.getW());
+
+		// so we get some contraints for the shadow map camera, TODO: improve me
+		Vector3 center(Vector3(center4.getX(), center4.getY(), center4.getZ()));
+		auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * shadowMapping->engine->getShadowMapLightEyeDistanceScale();
+
+		// light camera
+		// compute camera from view of light
+		auto lightLookFrom = center.clone().sub(lightDirection.clone().scale(width * 0.5f));
+
+		// set up light camera from view of light
+		Vector3 lightCameraUpVector;
+		Vector3 lightCameraSideVector;
+		lightCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
+		lightCamera->setOrthographicFrustumScale((width / frameBuffer->getWidth()) / 1.25f);
+		lightCamera->setZNear(camera->getZNear());
+		lightCamera->setZFar(250.0f);
+		lightCamera->setLookFrom(lightLookFrom);
+	} else {
+		auto lightPosition = light->getPosition();
+		lightPosition.scale(1.0f / lightPosition.getW());
+		auto lightPosition3 = Vector3(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ());
+		lightCamera->setFrustumMode(Camera::FRUSTUMMODE_PERSPECTIVE);
+		lightCamera->setZNear(camera->getZNear());
+		lightCamera->setZFar(150.0f);
+		lightCamera->setLookFrom(lightPosition3);
+	}
+
+	//
+	lightCamera->setForwardVector(lightDirection);
+	lightCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
+	// TODO: fix cross product NaN if side vector == forward vector
+	auto lightCameraUpVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getSideVector());
+	lightCamera->setUpVector(lightCameraUpVector);
+	auto lightCameraSideVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector());
+	lightCamera->setSideVector(lightCameraSideVector);
+	lightCamera->setUpVector(lightCameraUpVector);
+	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
+
 	// clear visible objects
 	visibleObjects.clear();
 
 	// determine visible objects and objects that should generate a shadow
-	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(shadowMapping->engine->getCamera()->getFrustum())) {
+	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		switch (entity->getEntityType()) {
 			case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
 				{
@@ -211,71 +292,6 @@ void ShadowMap::createShadowMap(Light* light)
 		}
 	}
 
-	//
-	auto camera = shadowMapping->engine->getCamera();
-
-	// try to determine light position
-
-	// 	left
-	auto left = camera->getModelViewProjectionInvertedMatrix().multiply(
-		Vector4(
-			(2.0f * 0.0f) - 1.0f,
-			1.0f - (2.0f * 0.5f),
-			2.0f * 0.997f - 1.0f,
-			1.0f
-		)
-	);
-	left.scale(1.0f / left.getW());
-
-	//	right
-	auto right = camera->getModelViewProjectionInvertedMatrix().multiply(
-		Vector4(
-			(2.0f * 1.0f) - 1.0f,
-			1.0f - (2.0f * 0.5f),
-			2.0f * 0.997f - 1.0f,
-			1.0f
-		)
-	);
-	right.scale(1.0f / right.getW());
-
-	//	center
-	auto center4 = camera->getModelViewProjectionInvertedMatrix().multiply(
-		Vector4(
-			(2.0f * 0.5f) - 1.0f,
-			1.0f - (2.0f * 1.0f),
-			2.0f * 0.5f - 1.0f,
-			1.0f
-		)
-	);
-	center4.scale(1.0f / center4.getW());
-
-	// so we get some contraints for the shadow map camera, TODO: improve me
-	Vector3 center(Vector3(center4.getX(), center4.getY(), center4.getZ()));
-	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * shadowMapping->engine->getShadowMapLightEyeDistanceScale();
-
-	// viewers camera
-	Vector3 lightDirection;
-	Vector3 lightLookFrom;
-	// compute camera from view of light
-	lightDirection.set(light->getSpotDirection()).normalize();
-	lightLookFrom
-		.set(center)
-		.sub(lightDirection.clone().scale(width * 1.25f));
-	// set up light camera from view of light
-	Vector3 lightCameraUpVector;
-	Vector3 lightCameraSideVector;
-	lightCamera->setZNear(camera->getZNear());
-	lightCamera->setZFar(150.0f);
-	lightCamera->setLookFrom(lightLookFrom);
-	lightCamera->setForwardVector(lightDirection);
-	lightCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
-	// TODO: fix cross product NaN if side vector == forward vector
-	lightCameraUpVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getSideVector());
-	lightCamera->setUpVector(lightCameraUpVector);
-	lightCameraSideVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector());
-	lightCamera->setSideVector(lightCameraSideVector);
-	lightCamera->setUpVector(lightCameraUpVector);
-	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
 	// bind frame buffer
 	frameBuffer->enableFrameBuffer();
 	// clear depth buffer

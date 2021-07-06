@@ -28,6 +28,7 @@ using tdme::math::Vector4;
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 {
+	friend class tdme::engine::Engine;
 	friend class ShadowMap;
 
 private:

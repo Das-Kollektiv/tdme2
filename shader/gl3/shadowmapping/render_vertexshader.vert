@@ -76,7 +76,7 @@ void main() {
 
 	// shadow intensity
 	vec3 normalTransformed = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
-	vsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normalTransformed)), 0.0, 1.0);
+	vsShadowIntensity = dot(normalize(lightDirection.xyz), normalTransformed) < 0.0?1.25:0.0;
 
 	// compute gl position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
