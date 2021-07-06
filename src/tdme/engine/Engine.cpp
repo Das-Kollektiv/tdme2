@@ -852,6 +852,9 @@ void Engine::initialize()
 
 void Engine::reshape(int32_t width, int32_t height)
 {
+	// apparently windows sends 0x0 dimension if windows gets minimized
+	if (width == 0 && height == 0) return;
+
 	// set current engine
 	currentEngine = this;
 
