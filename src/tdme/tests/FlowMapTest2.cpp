@@ -287,8 +287,7 @@ void FlowMapTest2::doPathFinding() {
 			5.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathA,
-			false,
-			true
+			false
 		);
 		auto flowMap2 = pathFinding->createFlowMap(
 			{
@@ -300,7 +299,6 @@ void FlowMapTest2::doPathFinding() {
 			5.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathB,
-			true,
 			true
 		);
 		flowMap->merge(flowMap2);
@@ -316,7 +314,6 @@ void FlowMapTest2::doPathFinding() {
 			5.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			path,
-			true,
 			true
 		);
 	}
