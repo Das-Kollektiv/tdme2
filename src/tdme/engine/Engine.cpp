@@ -1984,6 +1984,7 @@ void Engine::resetPostProcessingPrograms() {
 }
 
 void Engine::addPostProcessingProgram(const string& programId) {
+	postProcessingPrograms.erase(remove(postProcessingPrograms.begin(), postProcessingPrograms.end(), programId), postProcessingPrograms.end());
 	if (postProcessing->getPostProcessingProgram(programId) != nullptr) postProcessingPrograms.push_back(programId);
 }
 
