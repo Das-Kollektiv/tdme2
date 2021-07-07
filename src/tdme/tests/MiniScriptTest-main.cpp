@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	MiniScript* script = new MiniScript();
 	script->loadScript("resources/tests/scripts", "test.tscript");
 	while (script->isRunning() == true) {
-		script->executeStateMachine();
+		script->execute();
 	}
 	delete script;
 	return 0;

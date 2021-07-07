@@ -811,10 +811,9 @@ public:
 	void emit(const string& condition);
 
 	/**
-	 * Execute state machine
-	 * @return quit requested
+	 * Execute
 	 */
-	void executeStateMachine();
+	void execute();
 
 	/**
 	 * @return is running
