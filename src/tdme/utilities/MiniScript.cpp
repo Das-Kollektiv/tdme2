@@ -370,7 +370,7 @@ void MiniScript::emit(const string& condition) {
 	setScriptState(STATE_NEXT_STATEMENT);
 }
 
-void MiniScript::executeStateMachine() {
+void MiniScript::execute() {
 	if (scriptState.state.state == STATE_NONE) return;
 
 	// check named conditions
@@ -393,21 +393,28 @@ void MiniScript::executeStateMachine() {
 		scriptState.timeEnabledConditionsCheckLast = now;
 	}
 
-	// determine state machine state if it did change
-	if (scriptState.state.lastStateMachineState == nullptr || scriptState.state.state != scriptState.state.lastState) {
-		scriptState.state.lastState = scriptState.state.state;
-		scriptState.state.lastStateMachineState = nullptr;
-		auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state.state);
-		if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
-			scriptState.state.lastStateMachineState = scriptStateMachineStateIt->second;
+	// execute while having statements to be processed
+	while (true == true) {
+		// determine state machine state if it did change
+		if (scriptState.state.lastStateMachineState == nullptr || scriptState.state.state != scriptState.state.lastState) {
+			scriptState.state.lastState = scriptState.state.state;
+			scriptState.state.lastStateMachineState = nullptr;
+			auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state.state);
+			if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
+				scriptState.state.lastStateMachineState = scriptStateMachineStateIt->second;
+			}
 		}
-	}
 
-	// execute state machine
-	if (scriptState.state.lastStateMachineState != nullptr) {
-		scriptState.state.lastStateMachineState->execute();
-	} else {
-		Console::println("MiniScript::executeStateMachine(): '" + scriptFileName + "': unknown state with id: " + to_string(scriptState.state.state));
+		// execute state machine
+		if (scriptState.state.lastStateMachineState != nullptr) {
+			scriptState.state.lastStateMachineState->execute();
+		} else {
+			Console::println("MiniScript::executeStateMachine(): '" + scriptFileName + "': unknown state with id: " + to_string(scriptState.state.state));
+			break;
+		}
+
+		// break if no next statement but other state machine state or not running
+		if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == true) break;
 	}
 }
 
