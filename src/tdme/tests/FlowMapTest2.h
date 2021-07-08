@@ -49,6 +49,7 @@ private:
 		Vector3 pathFindingNodeLast;
 		Vector3 cellDirection;
 		Vector3 movementDirection;
+		float speed;
 		Object3D* object { nullptr };
 	};
 	World* world { nullptr };
@@ -64,6 +65,8 @@ private:
 	bool pause { false };
 	vector<Vector3> path;
 	vector<CombatUnit> combatUnits;
+	float formationYRotationAngle { 0.0f };
+	Vector3 formationMovement;
 
 	array<Transformations, 11> combatUnitTransformations;
 	array<Transformations, 11> combatUnitFormationTransformations;
