@@ -104,10 +104,10 @@ void FlowMapTest2::display()
 		Quaternion formationRotationQuaternion;
 		formationRotationQuaternion.identity();
 		if (combatUnits[0].pathFindingNodeIdx != -1) {
-			auto formationMovement = combatUnits[0].pathFindingNode - combatUnits[0].pathFindingNodeLast;
-			auto formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
-			formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
+			formationMovement = combatUnits[0].pathFindingNode - combatUnits[0].pathFindingNodeLast;
+			formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
 		}
+		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
 			auto cell = flowMap->getCell(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ());
 			if (cell != nullptr) {
@@ -129,35 +129,47 @@ void FlowMapTest2::display()
 				if (pathFindingNodeDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
 					pathFindingNodeDirection.normalize();
 					pcdDotPND = Math::clamp(Vector3::computeDotProduct(combatUnit.cellDirection, pathFindingNodeDirection), 0.0f, 1.0f);
+					{
+						auto nextCellTranslation = combatUnit.object->getTranslation() + pathFindingNodeDirection * flowMap->getStepSize();
+						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
+						if (nextCell == nullptr || nextCell->isWalkable() == false) pcdDotPND = 0.0f;
+					}
+					if (pcdDotPND > 0.0f) {
+						pcdDotPND = 1.0f;
+						combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND) + pathFindingNodeDirection * pcdDotPND).normalize();
+						auto nextCellTranslation = combatUnit.object->getTranslation() + combatUnit.movementDirection * flowMap->getStepSize();
+						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
+						if (nextCell == nullptr || nextCell->isWalkable() == false) pcdDotPND = 0.0f;
+					}
 				}
-				combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND)+ pathFindingNodeDirection * pcdDotPND).normalize();
-
+				combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND) + pathFindingNodeDirection * pcdDotPND).normalize();
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
-				auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
+				auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), combatUnit.movementDirection, Vector3(0.0f, 1.0f, 0.0f));
 				combatUnit.object->setRotationAngle(0, yRotationAngle);
-				{
-					auto pathFindingNodeId = "pathfindingnodecurrent." + to_string(combatUnit.idx);
-					auto pathFindingNodeObject = new Object3D(pathFindingNodeId, emptyModel);
-					pathFindingNodeObject->setScale(Vector3(2.0f, 2.0f, 2.0f));
-					pathFindingNodeObject->setTranslation(combatUnit.pathFindingNode + Vector3(0.0f, 0.0f, 0.0f));
-					pathFindingNodeObject->addRotation(Vector3(0.0f, 0.0f, 1.0f), 90.0f);
-					pathFindingNodeObject->setDisableDepthTest(true);
-					pathFindingNodeObject->setEffectColorMul(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-					pathFindingNodeObject->update();
-					engine->addEntity(pathFindingNodeObject);
+				if (combatUnit.idx != 0) {
+					{
+						auto pathFindingNodeId = "pathfindingnodecurrent." + to_string(combatUnit.idx);
+						auto pathFindingNodeObject = new Object3D(pathFindingNodeId, emptyModel);
+						pathFindingNodeObject->setScale(Vector3(2.0f, 2.0f, 2.0f));
+						pathFindingNodeObject->setTranslation(combatUnit.pathFindingNode + Vector3(0.0f, 0.0f, 0.0f));
+						pathFindingNodeObject->addRotation(Vector3(0.0f, 0.0f, 1.0f), 90.0f);
+						pathFindingNodeObject->setDisableDepthTest(true);
+						pathFindingNodeObject->setEffectColorMul(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+						pathFindingNodeObject->update();
+						engine->addEntity(pathFindingNodeObject);
+					}
+					{
+						auto flowDirectionEntityId = "flowdirectioncurrent" + to_string(combatUnit.idx);
+						auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), pathFindingNodeDirection, Vector3(0.0f, 1.0f, 0.0f));
+						auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
+						cellObject->setScale(Vector3(5.0f, 5.0f, 5.0f));
+						cellObject->setTranslation(Vector3(-0.0f, 0.5f, 3.0f - (combatUnit.idx * 5.0f)));
+						cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);
+						cellObject->setDisableDepthTest(true);
+						cellObject->update();
+						engine->addEntity(cellObject);
+					}
 				}
-				{
-					auto flowDirectionEntityId = "flowdirectioncurrent" + to_string(combatUnit.idx);
-					auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), pathFindingNodeDirection, Vector3(0.0f, 1.0f, 0.0f));
-					auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
-					cellObject->setScale(Vector3(5.0f, 5.0f, 5.0f));
-					cellObject->setTranslation(Vector3(-0.0f, 0.5f, 3.0f - (combatUnit.idx * 5.0f)));
-					cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);
-					cellObject->setDisableDepthTest(true);
-					cellObject->update();
-					engine->addEntity(cellObject);
-				}
-
 			} else {
 				combatUnit.object->setAnimation("still");
 				combatUnit.cellDirection = Vector3();
@@ -167,10 +179,27 @@ void FlowMapTest2::display()
 			if (path[path.size() - 1].clone().sub(combatUnit.object->getTranslation()).computeLength() < 1.0f) {
 				doPathFinding();
 			} else {
-				combatUnit.object->setTranslation(combatUnit.object->getTranslation() + combatUnit.movementDirection * 2.0f / 60.0f);
+				combatUnit.object->setTranslation((combatUnit.object->getTranslation() + (combatUnit.movementDirection * 2.0f * combatUnit.speed / 60.0f)));
 				combatUnit.object->update();
 			}
 		}
+		/*
+		auto leaderFormationPositionDistance = (combatUnits[0].pathFindingNode - combatUnits[0].object->getTranslation()).computeLength();
+		for (auto& combatUnit: combatUnits) {
+			if (combatUnit.idx == 0) continue;
+			auto villagerPathNodeIdx = Math::min(combatUnit.pathFindingNodeIdx + 1, flowMap->getPath().size() - 1);
+			auto formationPositionDistance = (combatUnit.pathFindingNode - combatUnit.object->getTranslation()).computeLength();
+			if (formationPositionDistance > leaderFormationPositionDistance) {
+				combatUnit.speed = 1.5f;
+			} else
+			if (formationPositionDistance < leaderFormationPositionDistance) {
+				combatUnit.speed = 0.5f;
+			} else {
+				combatUnit.speed = 1.0f;
+			}
+			Console::println(to_string(combatUnit.idx) + ": " + to_string(combatUnit.speed));
+		}
+		*/
 	}
 	engine->display();
 }
@@ -199,11 +228,13 @@ void FlowMapTest2::initialize()
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
+	// first line
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 0;
-		combatUnit.formationIdx = 3;
+		combatUnit.formationIdx = 2;
 		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
 		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
@@ -217,8 +248,9 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 1;
-		combatUnit.formationIdx = 2;
+		combatUnit.formationIdx = 0;
 		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
 		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
@@ -232,8 +264,138 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 2;
+		combatUnit.formationIdx = 1;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 3;
+		combatUnit.formationIdx = 3;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 4;
 		combatUnit.formationIdx = 4;
 		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 5;
+		combatUnit.formationIdx = 5;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	// second line
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 6;
+		combatUnit.formationIdx = 6;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 7;
+		combatUnit.formationIdx = 7;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 8;
+		combatUnit.formationIdx = 8;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 9;
+		combatUnit.formationIdx = 9;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
+		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+		combatUnit.object->update();
+		combatUnit.object->setAnimation("still");
+		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
+		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
+		engine->addEntity(combatUnit.object);
+		combatUnits.push_back(combatUnit);
+	}
+	{
+		CombatUnit combatUnit;
+		combatUnit.idx = 10;
+		combatUnit.formationIdx = 10;
+		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
 		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
@@ -274,14 +436,19 @@ void FlowMapTest2::doPathFinding() {
 		flowMap->releaseReference();
 		flowMap = nullptr;
 	}
+
+	//
 	auto startPosition = endPositions[(int)(Math::random() * endPositions.size())];
 	for (auto& combatUnit: combatUnits) {
 		combatUnit.pathFindingNodeIdx = -1;
+		combatUnit.speed = 1.0f;
 		combatUnit.object->update();
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
 		combatUnit.cellDirection.set(0.0f, 0.0f, 0.0f);
 	}
+
+	//
 	pathFinding->findPath(
 		combatUnits[0].object->getTransformations().getTranslation(),
 		endPositions[(int)(Math::random() * endPositions.size())],
@@ -318,8 +485,8 @@ void FlowMapTest2::doPathFinding() {
 				pathA[pathA.size() - 1]
 			},
 			center,
-			5.0f,
-			5.0f,
+			12.0f,
+			12.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathA,
 			false
@@ -329,8 +496,8 @@ void FlowMapTest2::doPathFinding() {
 				path[path.size() - 1]
 			},
 			center,
-			5.0f,
-			5.0f,
+			12.0f,
+			12.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathB,
 			true
@@ -343,8 +510,8 @@ void FlowMapTest2::doPathFinding() {
 				path[path.size() - 1]
 			},
 			center,
-			5.0f,
-			5.0f,
+			12.0f,
+			12.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			path,
 			true
@@ -369,6 +536,21 @@ void FlowMapTest2::doPathFinding() {
 		}
 	}
 	if (flowMap == nullptr) return;
+
+	Quaternion formationRotationQuaternion;
+	formationRotationQuaternion.identity();
+	formationMovement = path[1] - path[0];
+	formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+	formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
+	for (auto& combatUnit: combatUnits) {
+		if (combatUnit.idx == 0) continue;
+		auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
+		auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
+		combatUnit.object->setTranslation(combatUnit.object->getTranslation() + formationPosition);
+		combatUnit.object->update();
+	}
+
+	// draw flow map
 	{
 		auto i = 0;
 		auto j = 0;
