@@ -134,7 +134,7 @@ void FlowMapTest2::display()
 					Console::println(to_string(combatUnit.idx) + ": 0: " + to_string(pcdDotPND));
 					if (pcdDotPND < 0.0f) pcdDotPND = 0.0f;
 					{
-						auto nextCellTranslation = combatUnit.object->getTranslation() + pathFindingNodeDirection * flowMap->getStepSize();
+						auto nextCellTranslation = combatUnit.object->getTranslation() + pathFindingNodeDirection * flowMap->getStepSize() * 0.5f;
 						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
 						if (nextCell == nullptr || nextCell->isWalkable() == false) {
 							Console::println(to_string(combatUnit.idx) + ": a: NULL");
@@ -144,7 +144,7 @@ void FlowMapTest2::display()
 					if (pcdDotPND > 0.0f) {
 						pcdDotPND = 1.0f;
 						combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND) + pathFindingNodeDirection * pcdDotPND * 100.0f).normalize();
-						auto nextCellTranslation = combatUnit.object->getTranslation() + combatUnit.movementDirection * flowMap->getStepSize();
+						auto nextCellTranslation = combatUnit.object->getTranslation() + combatUnit.movementDirection * flowMap->getStepSize() * 0.5f;
 						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
 						if (nextCell == nullptr || nextCell->isWalkable() == false) {
 							Console::println(to_string(combatUnit.idx) + ": b: NULL");
@@ -190,7 +190,7 @@ void FlowMapTest2::display()
 			if (path[path.size() - 1].clone().sub(combatUnit.object->getTranslation()).computeLength() < 1.0f) {
 				doPathFinding();
 			} else {
-				combatUnit.object->setTranslation((combatUnit.object->getTranslation() + (combatUnit.movementDirection * 2.0f * combatUnit.speed / 60.0f)));
+				combatUnit.object->setTranslation((combatUnit.object->getTranslation() + (combatUnit.movementDirection * combatUnit.speed / 60.0f)));
 				combatUnit.object->update();
 			}
 		}
