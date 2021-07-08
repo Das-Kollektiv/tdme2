@@ -63,28 +63,11 @@ public:
 		return pathNodeIdx;
 	}
 
-	/**
-	 * Returns if has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
-	 * @return missing neighbor cells
-	 */
-	inline bool isMissingNeighborCells() const {
-		return missingNeighborCells;
-	}
-
-	/**
-	 * @return is border cell
-	 */
-	inline bool isBorderCell() const {
-		return borderCell;
-	}
-
 private:
 	Vector3 position;
 	bool walkable;
 	Vector3 direction;
 	int pathNodeIdx;
-	bool missingNeighborCells { false };
-	bool borderCell { false };
 
 	/**
 	 * Set path node index
@@ -100,22 +83,6 @@ private:
 	 */
 	inline void setDirection(const Vector3& direction) {
 		this->direction = direction;
-	}
-
-	/**
-	 * Set has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
-	 * @param missingNeighborCell missing neighbor cells
-	 */
-	inline void setMissingNeighborCells(bool missingNeighborCell) {
-		this->missingNeighborCells = missingNeighborCell;
-	}
-
-	/**
-	 * Set if border cell
-	 * @param borderCell border cell
-	 */
-	inline void setBorderCell(bool borderCell) {
-		this->borderCell = borderCell;
 	}
 
 };
