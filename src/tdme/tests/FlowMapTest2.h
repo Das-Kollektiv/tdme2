@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/PathFinding.h>
 
+using std::array;
 using std::vector;
 
 using tdme::application::Application;
@@ -39,23 +41,28 @@ class tdme::tests::FlowMapTest2 final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
+	struct CombatUnit {
+		Vector3 cellDirection;
+		Vector3 movementDirection;
+		Vector3 cellPosition;
+		Object3D* object { nullptr };
+	};
 	World* world { nullptr };
 	Engine* engine { nullptr };
 	Scene scene;
 	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
-	Object3D* startPlayerObject { nullptr };
-	Vector3 startPlayerCellDirection;
-	Vector3 startPlayerPathFindingNode;
-	Vector3 startPlayerMovementDirection;
-	Vector3 startPlayerCellPosition;
-	Object3D* endPlayerObject1 { nullptr };
-	Object3D* endPlayerObject2 { nullptr };
+	Model* formationLinePrototype { nullptr };
 	PathFinding* pathFinding { nullptr };
-	vector<Vector3> pathPositions;
+	vector<Vector3> endPositions;
 	int64_t timeLastUpdate;
 	FlowMap* flowMap { nullptr };
 	bool pause { false };
+	vector<Vector3> path;
+	vector<CombatUnit> combatUnits;
+
+	array<Transformations, 11> combatUnitTransformations;
+	array<Transformations, 11> combatUnitFormationTransformations;
 
 	/**
 	 * Do path finding
