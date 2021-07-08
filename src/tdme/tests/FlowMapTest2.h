@@ -42,6 +42,11 @@ class tdme::tests::FlowMapTest2 final
 {
 private:
 	struct CombatUnit {
+		int idx;
+		int formationIdx;
+		int pathFindingNodeIdx;
+		Vector3 pathFindingNode;
+		Vector3 pathFindingNodeLast;
 		Vector3 cellDirection;
 		Vector3 movementDirection;
 		Object3D* object { nullptr };

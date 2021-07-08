@@ -278,7 +278,6 @@ public:
 		// add cells
 		for (auto& cellIt: flowMap->cells) {
 			auto cellExists = cells.find(cellIt.first) != cells.end();
-			if (cellExists == true && cellIt.second.isBorderCell() == true) continue;
 			cells[cellIt.first] = cellIt.second;
 			cells[cellIt.first].pathNodeIdx+= pathSize;
 		}
