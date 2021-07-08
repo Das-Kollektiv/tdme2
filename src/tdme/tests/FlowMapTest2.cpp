@@ -121,7 +121,6 @@ void FlowMapTest2::display()
 				);
 				combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND)+ pathFindingNodeDirection * pcdDotPND).normalize();
 
-				combatUnit.cellPosition = combatUnit.object->getTranslation().clone().add(combatUnit.cellDirection.clone().scale(flowMap->getStepSize()));
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
 				auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
 				combatUnit.object->setRotationAngle(0, yRotationAngle);
@@ -232,8 +231,7 @@ void FlowMapTest2::doPathFinding() {
 	}
 	for (auto& combatUnit: combatUnits) {
 		combatUnit.object->update();
-		combatUnit.cellPosition.set(endPositions[(int)(Math::random() * endPositions.size())]);
-		combatUnit.object->setTranslation(combatUnit.cellPosition);
+		combatUnit.object->setTranslation(endPositions[(int)(Math::random() * endPositions.size())]);
 		combatUnit.object->update();
 		combatUnit.cellDirection.set(0.0f, 0.0f, 0.0f);
 	}

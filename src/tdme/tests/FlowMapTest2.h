@@ -44,7 +44,6 @@ private:
 	struct CombatUnit {
 		Vector3 cellDirection;
 		Vector3 movementDirection;
-		Vector3 cellPosition;
 		Object3D* object { nullptr };
 	};
 	World* world { nullptr };
