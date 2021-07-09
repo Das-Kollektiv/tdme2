@@ -30,7 +30,9 @@ public:
 		position(position),
 		walkable(walkable),
 		direction(direction),
-		pathNodeIdx(pathNodeIdx) {
+		pathNodeIdx(pathNodeIdx),
+		missingNeighborCell(false) {
+		//
 	}
 
 	/**
@@ -62,11 +64,19 @@ public:
 		return pathNodeIdx;
 	}
 
+	/**
+	 * @return has missing neighbor cell
+	 */
+	inline bool hasMissingNeighborCell() {
+		return missingNeighborCell;
+	}
+
 private:
 	Vector3 position;
 	bool walkable;
 	Vector3 direction;
 	int pathNodeIdx;
+	bool missingNeighborCell;
 
 	/**
 	 * Set path node index
@@ -82,6 +92,14 @@ private:
 	 */
 	inline void setDirection(const Vector3& direction) {
 		this->direction = direction;
+	}
+
+	/**
+	 * Set has missing neighbor cell
+	 * @param missingNeighborCell missing neighbor cell
+	 */
+	inline void setMissingNeighborCell(bool missingNeighborCell) {
+		this->missingNeighborCell = missingNeighborCell;
 	}
 
 };

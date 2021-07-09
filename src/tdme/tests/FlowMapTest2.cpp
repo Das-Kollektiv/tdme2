@@ -104,14 +104,16 @@ void FlowMapTest2::display()
 		Quaternion formationRotationQuaternion;
 		formationRotationQuaternion.identity();
 		if (combatUnits[0].pathFindingNodeIdx != -1) {
-			formationMovement = combatUnits[0].pathFindingNode - combatUnits[0].pathFindingNodeLast;
-			formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+			formationMovement = combatUnits[0].movementDirection;
+			auto currentFormationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, -1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+			if (Float::isNaN(currentFormationYRotationAngle) == false) formationYRotationAngle = currentFormationYRotationAngle;
 		}
 		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
 			auto cell = flowMap->getCell(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ());
+			auto flowMapDirection = flowMap->computeDirection(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ());
 			if (cell != nullptr) {
-				auto pathFindingNodeIdx = Math::min(cell->getPathNodeIdx() + 2, flowMap->getPath().size() - 1);
+				auto pathFindingNodeIdx = Math::min(cell->getPathNodeIdx() + 1, flowMap->getPath().size() - 1);
 				if (pathFindingNodeIdx > combatUnit.pathFindingNodeIdx) {
 					combatUnit.pathFindingNodeIdx = pathFindingNodeIdx;
 					combatUnit.pathFindingNodeLast = combatUnit.pathFindingNode;
@@ -122,37 +124,31 @@ void FlowMapTest2::display()
 					} else {
 						auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
 						auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
-						combatUnit.pathFindingNode = combatUnits[0].pathFindingNode + formationPosition;
+						combatUnit.pathFindingNode = combatUnits[0].object->getTranslation() + formationPosition;
 					}
 				}
+				//combatUnit.cellDirection = flowMapDirection.computeLengthSquared() > Math::square(Math::EPSILON)?flowMapDirection:cell->getDirection();
 				combatUnit.cellDirection = cell->getDirection();
-				auto pathFindingNodeDirection = combatUnit.pathFindingNode - combatUnit.object->getTranslation();
-				auto pcdDotPND = 0.0f;
-				if (pathFindingNodeDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
-					pathFindingNodeDirection.normalize();
-					pcdDotPND = Math::clamp(Vector3::computeDotProduct(combatUnit.cellDirection, pathFindingNodeDirection), -1.0f, 1.0f);
-					Console::println(to_string(combatUnit.idx) + ": 0: " + to_string(pcdDotPND));
-					if (pcdDotPND < 0.0f) pcdDotPND = 0.0f;
-					{
-						auto nextCellTranslation = combatUnit.object->getTranslation() + pathFindingNodeDirection * flowMap->getStepSize() * 0.5f;
-						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
-						if (nextCell == nullptr || nextCell->isWalkable() == false) {
-							Console::println(to_string(combatUnit.idx) + ": a: NULL");
-							pcdDotPND = 0.0f;
-						}
-					}
-					if (pcdDotPND > 0.0f) {
-						pcdDotPND = 1.0f;
-						combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND) + pathFindingNodeDirection * pcdDotPND * 100.0f).normalize();
-						auto nextCellTranslation = combatUnit.object->getTranslation() + combatUnit.movementDirection * flowMap->getStepSize() * 0.5f;
-						auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
-						if (nextCell == nullptr || nextCell->isWalkable() == false) {
-							Console::println(to_string(combatUnit.idx) + ": b: NULL");
-							pcdDotPND = 0.0f;
+				combatUnit.pcdDotPND = 0.0f;
+				Vector3 pathFindingNodeDirection;
+				if (cell->hasMissingNeighborCell() == false) {
+					pathFindingNodeDirection = combatUnit.pathFindingNode - combatUnit.object->getTranslation();
+					if (pathFindingNodeDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
+						pathFindingNodeDirection.normalize();
+						combatUnit.pcdDotPND = (Math::clamp(Vector3::computeDotProduct(combatUnit.cellDirection, pathFindingNodeDirection), -0.25f, 1.0f) + 0.25f) / 1.25f;
+						if (combatUnit.pcdDotPND > 0.0f) {
+							combatUnit.pcdDotPND = 1.0f;
+							combatUnit.movementDirection = (combatUnit.cellDirection * ((1.0f - combatUnit.pcdDotPND)) + pathFindingNodeDirection * combatUnit.pcdDotPND).normalize();
+							auto nextCellTranslation = combatUnit.object->getTranslation() + combatUnit.movementDirection * flowMap->getStepSize();
+							auto nextCell = flowMap->getCell(nextCellTranslation.getX(), nextCellTranslation.getZ());
+							if (nextCell == nullptr || nextCell->isWalkable() == false) {
+								combatUnit.pcdDotPND = 0.0f;
+								combatUnit.movementDirection = (combatUnit.cellDirection * ((1.0f - combatUnit.pcdDotPND)) + pathFindingNodeDirection * combatUnit.pcdDotPND).normalize();
+							}
 						}
 					}
 				}
-				combatUnit.movementDirection = (combatUnit.cellDirection * (1.0f - pcdDotPND) + pathFindingNodeDirection * pcdDotPND * 100.0f).normalize();
+				combatUnit.movementDirection = (combatUnit.cellDirection * ((1.0f - combatUnit.pcdDotPND)) + pathFindingNodeDirection * combatUnit.pcdDotPND).normalize();
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
 				auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), combatUnit.movementDirection, Vector3(0.0f, 1.0f, 0.0f));
 				combatUnit.object->setRotationAngle(0, yRotationAngle);
@@ -184,6 +180,7 @@ void FlowMapTest2::display()
 			} else {
 				combatUnit.object->setAnimation("still");
 				combatUnit.cellDirection = Vector3();
+				combatUnit.movementDirection = Vector3();
 			}
 		}
 		for (auto& combatUnit: combatUnits) {
@@ -194,23 +191,20 @@ void FlowMapTest2::display()
 				combatUnit.object->update();
 			}
 		}
-		/*
-		auto leaderFormationPositionDistance = (combatUnits[0].pathFindingNode - combatUnits[0].object->getTranslation()).computeLength();
 		for (auto& combatUnit: combatUnits) {
 			if (combatUnit.idx == 0) continue;
 			auto villagerPathNodeIdx = Math::min(combatUnit.pathFindingNodeIdx + 1, flowMap->getPath().size() - 1);
-			auto formationPositionDistance = (combatUnit.pathFindingNode - combatUnit.object->getTranslation()).computeLength();
-			if (formationPositionDistance > leaderFormationPositionDistance) {
-				combatUnit.speed = 1.5f;
-			} else
-			if (formationPositionDistance < leaderFormationPositionDistance) {
-				combatUnit.speed = 0.5f;
+			auto formationPositionMovement = combatUnit.pathFindingNode - combatUnit.object->getTranslation();
+			auto formationPositionDistance = formationPositionMovement.computeLength();
+			formationPositionMovement.normalize();
+			auto formationPositionMovementDotMovementDirection = Vector3::computeDotProduct(combatUnit.movementDirection, formationPositionMovement);
+			if (formationPositionDistance > 0.1f) {
+				combatUnit.speed = formationPositionMovementDotMovementDirection > 0.0f?2.0f:0.5f;
 			} else {
 				combatUnit.speed = 1.0f;
 			}
 			Console::println(to_string(combatUnit.idx) + ": " + to_string(combatUnit.speed));
 		}
-		*/
 	}
 	engine->display();
 }
@@ -230,7 +224,7 @@ void FlowMapTest2::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
-	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 20.0f, 0.0f));
+	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 25.0f, 0.0f));
 	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
@@ -417,9 +411,9 @@ void FlowMapTest2::initialize()
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
 	}
-	endPositions.push_back(Vector3(-17.0f, 0.25f, -0.5f));
-	endPositions.push_back(Vector3(0.0f, 0.25f, 1.5f));
-	endPositions.push_back(Vector3(0.0f, 0.25f, -9.5f));
+	endPositions.push_back(Vector3(-17.0f, 0.25f, 2.5f));
+	endPositions.push_back(Vector3(0.0f, 0.25f, 2.5f));
+	endPositions.push_back(Vector3(0.0f, 0.25f, -10.0f));
 	pathFinding = new PathFinding(world, true, 1000, 2.0f, 0.5f, 0.5f);
 	doPathFinding();
 
@@ -551,7 +545,14 @@ void FlowMapTest2::doPathFinding() {
 	Quaternion formationRotationQuaternion;
 	formationRotationQuaternion.identity();
 	formationMovement = path[1] - path[0];
-	formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+	formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, -1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+	Console::println(
+		"FlowMapTest2::doPathFinding(): " +
+		to_string(formationMovement.getX()) + ", " +
+		to_string(formationMovement.getY()) + ", " +
+		to_string(formationMovement.getZ()) + ": " +
+		to_string(formationYRotationAngle)
+	);
 	formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 	for (auto& combatUnit: combatUnits) {
 		if (combatUnit.idx == 0) continue;
