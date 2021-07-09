@@ -130,6 +130,7 @@ on: error
 	console.log("An error occurred")
 	script.wait(1000)
 end
+# emit test
 on: emittest
 	console.log("---------------------------------")
 	console.log("SCRIPT JUST EMITTED A CONDITION")
@@ -137,7 +138,8 @@ on: emittest
 	console.log()
 	script.stop()
 end
-on: equals(1,1) = named_condition_1
+# on-enabled with named conditions
+on-enabled: equals(1,1) = named_condition_1
 	script.disableNamedCondition("named_condition_1")
 	console.log("------------------------------------")
 	console.log("named_condition_1 has been emitted")

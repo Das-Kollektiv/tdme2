@@ -30,7 +30,9 @@ public:
 		position(position),
 		walkable(walkable),
 		direction(direction),
-		pathNodeIdx(pathNodeIdx) {
+		pathNodeIdx(pathNodeIdx),
+		missingNeighborCell(false) {
+		//
 	}
 
 	/**
@@ -39,7 +41,6 @@ public:
 	inline const Vector3& getPosition() const {
 		return position;
 	}
-
 
 	/**
 	 * @return if cell is walkable
@@ -64,18 +65,10 @@ public:
 	}
 
 	/**
-	 * Returns if has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
-	 * @return missing neighbor cells
+	 * @return has missing neighbor cell
 	 */
-	inline bool isMissingNeighborCells() const {
-		return missingNeighborCells;
-	}
-
-	/**
-	 * @return is border cell
-	 */
-	inline bool isBorderCell() const {
-		return borderCell;
+	inline bool hasMissingNeighborCell() {
+		return missingNeighborCell;
 	}
 
 private:
@@ -83,8 +76,7 @@ private:
 	bool walkable;
 	Vector3 direction;
 	int pathNodeIdx;
-	bool missingNeighborCells { false };
-	bool borderCell { false };
+	bool missingNeighborCell;
 
 	/**
 	 * Set path node index
@@ -103,19 +95,11 @@ private:
 	}
 
 	/**
-	 * Set has missing neighbor cells like it happens with border cells or cells that have direct obstacles neighbors
-	 * @param missingNeighborCell missing neighbor cells
+	 * Set has missing neighbor cell
+	 * @param missingNeighborCell missing neighbor cell
 	 */
-	inline void setMissingNeighborCells(bool missingNeighborCell) {
-		this->missingNeighborCells = missingNeighborCell;
-	}
-
-	/**
-	 * Set if border cell
-	 * @param borderCell border cell
-	 */
-	inline void setBorderCell(bool borderCell) {
-		this->borderCell = borderCell;
+	inline void setMissingNeighborCell(bool missingNeighborCell) {
+		this->missingNeighborCell = missingNeighborCell;
 	}
 
 };

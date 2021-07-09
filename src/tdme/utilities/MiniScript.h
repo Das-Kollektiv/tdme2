@@ -595,6 +595,8 @@ private:
 	};
 
 	struct Script {
+		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
+		ConditionType conditionType;
 		int line;
 		vector<string> conditions;
 		string name;
@@ -837,8 +839,8 @@ public:
 	}
 
 	/**
-	 * Dump info
+	 * Get miniscript instance information
 	 */
-	const string dumpInfo();
+	const string getInformation();
 
 };
