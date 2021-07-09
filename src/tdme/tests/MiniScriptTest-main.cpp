@@ -11,6 +11,7 @@ int main(int argc, char *argv[]) {
 	Console::println("MiniScript");
 	MiniScript* script = new MiniScript();
 	script->loadScript("resources/tests/scripts", "test.tscript");
+	Console::println(script->getInformation());
 	while (script->isRunning() == true) {
 		script->execute();
 	}
