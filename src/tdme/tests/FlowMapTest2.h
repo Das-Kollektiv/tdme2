@@ -50,7 +50,9 @@ private:
 		Vector3 cellDirection;
 		Vector3 movementDirection;
 		float speed;
-		float pcdDotPND;
+		array<Vector3, 60> movementDirectionRing;
+		int movementDirectionRingLength;
+		int movementDirectionRingIdx;
 		Object3D* object { nullptr };
 	};
 	World* world { nullptr };
