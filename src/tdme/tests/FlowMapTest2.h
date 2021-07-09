@@ -50,6 +50,7 @@ private:
 		Vector3 cellDirection;
 		Vector3 movementDirection;
 		float speed;
+		float pcdDotPND;
 		Object3D* object { nullptr };
 	};
 	World* world { nullptr };

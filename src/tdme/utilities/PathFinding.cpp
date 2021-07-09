@@ -955,6 +955,18 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 				auto cell = flowMap->getCell(cellId);
 				if (cell == nullptr) continue;
 
+				// check if we have missing neighbour cells
+				for (auto nZ = -1; nZ < 2; nZ++) {
+					for (auto nX = -1; nX < 2; nX++) {
+						auto neighbourCellId = FlowMap::toIdInt(
+							centerPathNodeX + x + nX,
+							centerPathNodeZ + z + nZ
+						);
+						auto neighbourCell = flowMap->getCell(neighbourCellId);
+						if (neighbourCell == nullptr) cell->setMissingNeighborCell(true);
+					}
+				}
+
 				// determine path node index
 				{
 					auto i = 0;
