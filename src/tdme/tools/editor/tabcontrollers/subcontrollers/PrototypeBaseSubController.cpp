@@ -4,10 +4,11 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -21,6 +22,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
@@ -30,9 +32,10 @@ using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -47,6 +50,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
@@ -155,7 +159,18 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 			applyPropertyDetails(prototype, selectedPropertyName);
-			editorView->reloadTabOutliner(outlinerNode);
+			//
+			class ReloadTabOutlinerAction: public Action {
+			private:
+				EditorView* editorView;
+				string outlinerNode;
+			public:
+				ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+				virtual void performAction() {
+					editorView->reloadTabOutliner(outlinerNode);
+				}
+			};
+			Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
 			break;
 		}
 	}

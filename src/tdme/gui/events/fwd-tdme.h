@@ -4,7 +4,6 @@
 namespace tdme {
 namespace gui {
 namespace events {
-	struct Action;
 	struct GUIActionListener;
 	struct GUIChangeListener;
 	struct GUIContextMenuRequestListener;

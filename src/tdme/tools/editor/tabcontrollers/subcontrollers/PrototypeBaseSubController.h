@@ -22,7 +22,7 @@ using std::vector;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;

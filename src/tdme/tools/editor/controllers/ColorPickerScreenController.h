@@ -14,7 +14,7 @@
 using std::string;
 
 using tdme::engine::model::Color4Base;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;

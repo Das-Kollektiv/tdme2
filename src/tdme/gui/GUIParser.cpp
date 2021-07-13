@@ -32,7 +32,7 @@
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
 #include <tdme/gui/elements/GUITabContent.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
@@ -104,7 +104,7 @@ using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
 using tdme::gui::elements::GUITabContent;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;

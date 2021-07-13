@@ -40,6 +40,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/RealtimeQueue.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 
 using std::array;
@@ -102,6 +103,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::RealtimeQueue;
 using tdme::os::threading::Thread;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 
 /**
@@ -264,6 +266,8 @@ private:
 	bool isUsingPostProcessingTemporaryFrameBuffer;
 
 	map<string, map<string, ShaderParameter>> shaderParameters;
+
+	vector<Action*> actions;
 
 	struct EngineThreadQueueElement {
 		enum Type { TYPE_NONE, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
@@ -1065,6 +1069,14 @@ public:
 	 * Print registered shaders and it default parameters to console
 	 */
 	void dumpShaders();
+
+	/**
+	 * Add action to action queue to be executed before next engine update
+	 * @param action action
+	 */
+	inline void enqueueAction(Action* action) {
+		actions.push_back(action);
+	}
 
 private:
 	/**
