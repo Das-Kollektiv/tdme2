@@ -193,7 +193,6 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->setValue(MutableString(sound->getId()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
