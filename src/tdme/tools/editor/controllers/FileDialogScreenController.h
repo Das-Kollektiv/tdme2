@@ -9,8 +9,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/controller/ScreenController.h>
+#include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
@@ -24,7 +23,7 @@ using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::shared::controller::ScreenController;
+using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::MutableString;
 
 /**
@@ -32,7 +31,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::FileDialogScreenController final
+class tdme::tools::editor::controllers::FileDialogScreenController final
 	: public ScreenController
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
@@ -44,10 +43,13 @@ private:
 	string cwd;
 	vector<string> extensions;
 	string captionText;
-	GUITextNode* caption { nullptr };
-	GUIElementNode* fileName { nullptr };
-	GUIElementNode* files { nullptr };
+	GUIElementNode* tabsHeaderNode { nullptr };
+	GUIElementNode* pathNode { nullptr };
+	GUIElementNode* fileNameNode { nullptr };
+	GUIElementNode* filesNode { nullptr };
+	GUIElementNode* typeDropDownNode { nullptr };
 	Action* applyAction { nullptr };
+	Action* cancelAction { nullptr };
 	vector<string> fileList;
 	bool enableFilter;
 	bool filtered;
@@ -84,6 +86,15 @@ private:
 	void setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile = string());
 
 public:
+	/**
+	 * Public constructor
+	 */
+	FileDialogScreenController();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FileDialogScreenController();
 
 	/**
 	 * Shows the file dialog pop up
@@ -93,9 +104,10 @@ public:
 	 * @param fileName file name
 	 * @param enableFilter enable filter
 	 * @param applyAction apply action
+	 * @param cancelAction cancel action
 	 * @throws IOException
 	 */
-	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
+	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction = nullptr);
 
 	/**
 	 * Abort the file dialog pop up
@@ -108,13 +120,4 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 
-	/**
-	 * Public constructor
-	 */
-	FileDialogScreenController();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~FileDialogScreenController();
 };

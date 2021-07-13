@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -20,7 +20,7 @@
 
 using std::string;
 
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;

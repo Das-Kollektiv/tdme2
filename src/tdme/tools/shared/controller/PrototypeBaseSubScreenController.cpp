@@ -7,7 +7,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -29,7 +29,7 @@ using std::vector;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::scene::ScenePropertyPresets;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

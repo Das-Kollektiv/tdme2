@@ -1223,6 +1223,13 @@ void Engine::display()
 	// set current engine
 	currentEngine = this;
 
+	// execute enqueued actions
+	for (auto action: actions) {
+		action->performAction();
+		delete action;
+	}
+	actions.clear();
+
 	// init frame
 	if (this == Engine::instance) Engine::renderer->initializeFrame();
 

@@ -4,9 +4,10 @@
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
-using tdme::gui::events::Action;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utilities::Action;
 
 /**
  * GUI effect base class

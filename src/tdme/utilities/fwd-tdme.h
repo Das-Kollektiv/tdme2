@@ -3,6 +3,7 @@
 
 namespace tdme {
 namespace utilities {
+	struct Action;
 	class Base64EncDec;
 	class Buffer;
 	class ByteBuffer;
