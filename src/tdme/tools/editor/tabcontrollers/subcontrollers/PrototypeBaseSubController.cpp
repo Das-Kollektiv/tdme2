@@ -132,6 +132,13 @@ void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype*
 		if (addOutlinerType == "property") {
 			createProperty(prototype);
 		}
+	} else
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+			setPropertyDetails(prototype, selectedPropertyName);
+		}
 	}
 }
 
