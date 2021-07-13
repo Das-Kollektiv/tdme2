@@ -177,12 +177,16 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 }
 
 void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypeBaseSubController::onContextMenuRequested(): " + node->getId());
-	popUps->getContextMenuScreenController()->clear();
-	popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename");
-	popUps->getContextMenuScreenController()->addMenuSeparator();
-	popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete");
-	popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+			popUps->getContextMenuScreenController()->clear();
+			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename");
+			popUps->getContextMenuScreenController()->addMenuSeparator();
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete");
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 }
 
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)

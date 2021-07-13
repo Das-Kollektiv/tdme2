@@ -600,6 +600,9 @@ void GUI::handleEvents()
 	map<string, set<string>> _mouseOutCandidateEventNodeIds;
 	map<string, set<string>> _mouseOutClickCandidateEventNodeIds;
 
+	//
+	auto renderScreensCopy = renderScreens;
+
 	// handle mouse events
 	for (auto& event: mouseEvents) {
 
@@ -613,11 +616,10 @@ void GUI::handleEvents()
 			mouseOutClickCandidateEventNodeIds.clear();
 		}
 
-
 		// handle mouse dragged event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
-				auto screen = renderScreens[i];
+			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+				auto screen = renderScreensCopy[i];
 				if (mouseIsDragging[screen->getId()] == false) {
 					mouseIsDragging[screen->getId()] = true;
 					mouseDraggingEventNodeIds[screen->getId()] = mousePressedEventNodeIds[screen->getId()];
@@ -626,8 +628,8 @@ void GUI::handleEvents()
 		}
 
 		// handle floating nodes first
-		for (int i = renderScreens.size() - 1; i >= 0; i--) {
-			auto screen = renderScreens[i];
+		for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+			auto screen = renderScreensCopy[i];
 
 			// skip on invisible
 			if (screen->isVisible() == false) continue;
@@ -651,8 +653,8 @@ void GUI::handleEvents()
 		// handle normal screen nodes if not processed already by floating node
 		// 	Note: Different screens should not have UI elements that overlap and process events
 		if (event.isProcessed() == false) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
-				auto screen = renderScreens[i];
+			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+				auto screen = renderScreensCopy[i];
 				if (screen->isVisible() == false) continue;
 				handleMouseEvent(screen, &event, _mouseOutCandidateEventNodeIds[screen->getId()], _mouseOutClickCandidateEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()], false);
 				if (screen->isPopUp() == true) break;
@@ -661,8 +663,8 @@ void GUI::handleEvents()
 
 		// handle mouse released event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
-				auto screen = renderScreens[i];
+			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+				auto screen = renderScreensCopy[i];
 				mouseIsDragging[screen->getId()] = false;
 				mouseDraggingEventNodeIds.erase(screen->getId());
 				mousePressedEventNodeIds.erase(screen->getId());
@@ -676,8 +678,8 @@ void GUI::handleEvents()
 	}
 
 	// call tick and input event handler at very last
-	for (int i = renderScreens.size() - 1; i >= 0; i--) {
-		auto screen = renderScreens[i];
+	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+		auto screen = renderScreensCopy[i];
 		if (screen->isVisible() == false) continue;
 		screen->tick();
 		if (screen->getInputEventHandler() != nullptr) {
@@ -692,8 +694,8 @@ void GUI::handleEvents()
 	unlockEvents();
 
 	// invalidate layouts
-	for (int i = renderScreens.size() - 1; i >= 0; i--) {
-		auto screen = renderScreens[i];
+	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+		auto screen = renderScreensCopy[i];
 		screen->invalidateLayouts();
 	}
 }
