@@ -24,6 +24,7 @@ using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
+using tdme::engine::physics::Body;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
@@ -47,13 +48,17 @@ private:
 		int pathFindingNodeIdx;
 		Vector3 pathFindingNode;
 		Vector3 pathFindingNodeLast;
-		Vector3 cellDirection;
 		Vector3 movementDirection;
 		float speed;
 		array<Vector3, 60> movementDirectionRing;
 		int movementDirectionRingLength;
 		int movementDirectionRingIdx;
+		vector<Vector3> path;
+		int pathIdx;
+		Vector3 endPosition;
+		float rotationY;
 		Object3D* object { nullptr };
+		Body* rigidBody { nullptr };
 	};
 	World* world { nullptr };
 	Engine* engine { nullptr };
@@ -62,7 +67,6 @@ private:
 	Model* emptyModel { nullptr };
 	Model* formationLinePrototype { nullptr };
 	PathFinding* pathFinding { nullptr };
-	vector<Vector3> endPositions;
 	int64_t timeLastUpdate;
 	FlowMap* flowMap { nullptr };
 	bool pause { false };
@@ -74,10 +78,17 @@ private:
 	array<Transformations, 11> combatUnitTransformations;
 	array<Transformations, 11> combatUnitFormationTransformations;
 
+	bool mouseClicked { false };
+	array<int, 2> mouseClickPosition;
+
+	Vector3 startPosition;
+	Vector3 endPosition;
+
 	/**
 	 * Do path finding
+	 * @param endPosition endPosition
 	 */
-	void doPathFinding();
+	void doPathFinding(const Vector3& endPosition);
 public:
 	/**
 	 * Public constructor
