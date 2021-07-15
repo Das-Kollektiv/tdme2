@@ -898,7 +898,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 			}
 			{
 				Transformations transformations;
-				transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
+				transformations.setTranslation(Vector3(width / 2.0f, (minHeight + maxHeight) / 2.0f, depth / 2.0f));
 				transformations.update();
 				auto rigidBody = world->addStaticRigidBody(
 					"tdme.terrain",
