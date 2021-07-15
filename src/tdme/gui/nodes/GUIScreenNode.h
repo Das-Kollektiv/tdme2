@@ -302,6 +302,15 @@ public:
 	GUINode* getNodeById(const string& nodeId);
 
 	/**
+	 * Get inner GUI node by id
+	 * @param nodeId nodeId
+	 * @return GUI node or null
+	 */
+	inline GUINode* getInnerNodeById(const string& nodeId) {
+		return getNodeById(nodeId + "_inner");
+	}
+
+	/**
 	 * Allocate node id
 	 * @return node id
 	 */
