@@ -740,7 +740,7 @@
 								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 6" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
 									<input id="foliage_brush_prototype_6" name="foliage_brush_prototype_6" width="*" heigt="auto" text="" />
 									<space width="5" />
@@ -846,7 +846,7 @@
 								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 7" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
 									<input id="foliage_brush_prototype_7" name="foliage_brush_prototype_7" width="*" heigt="auto" text="" />
 									<space width="5" />
@@ -952,7 +952,7 @@
 								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 8" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
 									<input id="foliage_brush_prototype_8" name="foliage_brush_prototype_8" width="*" heigt="auto" text="" />
 									<space width="5" />
@@ -1057,7 +1057,7 @@
 									<space width="*" />
 								</layout>
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 9" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
 									<input id="foliage_brush_prototype_9" name="foliage_brush_prototype_9" width="*" heigt="auto" text="" />
 									<space width="5" />
@@ -1163,7 +1163,7 @@
 								</layout>
 								<space height="20" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 10" width="140" height="auto" horizontal-align="left" />
 									<space width="5" />
 									<input id="foliage_brush_prototype_10" name="foliage_brush_prototype_10" width="*" heigt="auto" text="" />
 									<space width="5" />

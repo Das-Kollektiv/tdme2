@@ -243,37 +243,15 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		} else
 		if (node->getId().compare(foliageBrushFileClear->getId()) == 0) {
 			onFoliageBrushFileClear();
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileLoad[0]->getId()) == 0) {
-			onFoliageBrushPrototypeLoad(0);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileClear[0]->getId()) == 0) {
-			onFoliageBrushPrototypeClear(0);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileLoad[1]->getId()) == 0) {
-			onFoliageBrushPrototypeLoad(1);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileClear[1]->getId()) == 0) {
-			onFoliageBrushPrototypeClear(1);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileLoad[2]->getId()) == 0) {
-			onFoliageBrushPrototypeLoad(2);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileClear[2]->getId()) == 0) {
-			onFoliageBrushPrototypeClear(2);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileLoad[3]->getId()) == 0) {
-			onFoliageBrushPrototypeLoad(3);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileClear[3]->getId()) == 0) {
-			onFoliageBrushPrototypeClear(3);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileLoad[4]->getId()) == 0) {
-			onFoliageBrushPrototypeLoad(4);
-		} else
-		if (node->getId().compare(foliageBrushPrototypeFileClear[4]->getId()) == 0) {
-			onFoliageBrushPrototypeClear(4);
-		} else
+		}
+		for (auto i = 0; i < 10; i++) {
+			if (node->getId().compare(foliageBrushPrototypeFileLoad[i]->getId()) == 0) {
+				onFoliageBrushPrototypeLoad(i);
+			} else
+			if (node->getId().compare(foliageBrushPrototypeFileClear[i]->getId()) == 0) {
+				onFoliageBrushPrototypeClear(i);
+			}
+		}
 		if (node->getId().compare(btnFoliageBrushApply->getId()) == 0) {
 			onApplyFoliageBrush();
 		} else
