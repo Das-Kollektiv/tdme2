@@ -739,6 +739,535 @@
 									<space width="*" />
 								</layout>
 								<space height="20" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_6" name="foliage_brush_prototype_6" width="*" heigt="auto" text="" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_6_count" name="foliage_brush_prototype_6_count" width="40" height="auto" text="1" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_6_load" name="foliage_brush_prototype_6_load" text="Load" width="60" height="auto" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_6_clear" name="foliage_brush_prototype_6_clear" text="Clear" width="60" height="auto" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale Range" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_scale_min" name="foliage_brush_prototype_6_scale_min" width="50" height="auto" text="S" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_scale_max" name="foliage_brush_prototype_6_scale_max" width="50" height="auto" text="S" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range X" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_xmin" name="foliage_brush_prototype_6_range_xmin" width="50" height="auto" text="X" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_xmax" name="foliage_brush_prototype_6_range_xmax" width="50" height="auto" text="X" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Y" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_ymin" name="foliage_brush_prototype_6_range_ymin" width="50" height="auto" text="Y" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_ymax" name="foliage_brush_prototype_6_range_ymax" width="50" height="auto" text="Y" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Z" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_zmin" name="foliage_brush_prototype_6_range_zmin" width="50" height="auto" text="Z" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_range_zmax" name="foliage_brush_prototype_6_range_zmax" width="50" height="auto" text="Z" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Slope" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_slope_min" name="foliage_brush_prototype_6_slope_min" width="50" height="auto" text="SL" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_slope_max" name="foliage_brush_prototype_6_slope_max" width="50" height="auto" text="SL" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_height_min" name="foliage_brush_prototype_6_height_min" width="50" height="auto" text="H" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_6_height_max" name="foliage_brush_prototype_6_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_6_normalalign" name="foliage_brush_prototype_6_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
+								<space height="20" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_7" name="foliage_brush_prototype_7" width="*" heigt="auto" text="" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_7_count" name="foliage_brush_prototype_7_count" width="40" height="auto" text="1" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_7_load" name="foliage_brush_prototype_7_load" text="Load" width="60" height="auto" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_7_clear" name="foliage_brush_prototype_7_clear" text="Clear" width="60" height="auto" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale Range" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_scale_min" name="foliage_brush_prototype_7_scale_min" width="50" height="auto" text="S" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_scale_max" name="foliage_brush_prototype_7_scale_max" width="50" height="auto" text="S" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range X" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_xmin" name="foliage_brush_prototype_7_range_xmin" width="50" height="auto" text="X" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_xmax" name="foliage_brush_prototype_7_range_xmax" width="50" height="auto" text="X" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Y" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_ymin" name="foliage_brush_prototype_7_range_ymin" width="50" height="auto" text="Y" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_ymax" name="foliage_brush_prototype_7_range_ymax" width="50" height="auto" text="Y" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Z" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_zmin" name="foliage_brush_prototype_7_range_zmin" width="50" height="auto" text="Z" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_range_zmax" name="foliage_brush_prototype_7_range_zmax" width="50" height="auto" text="Z" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Slope" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_slope_min" name="foliage_brush_prototype_7_slope_min" width="50" height="auto" text="SL" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_slope_max" name="foliage_brush_prototype_7_slope_max" width="50" height="auto" text="SL" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_height_min" name="foliage_brush_prototype_7_height_min" width="50" height="auto" text="H" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_7_height_max" name="foliage_brush_prototype_7_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_7_normalalign" name="foliage_brush_prototype_7_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
+								<space height="20" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_8" name="foliage_brush_prototype_8" width="*" heigt="auto" text="" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_8_count" name="foliage_brush_prototype_8_count" width="40" height="auto" text="1" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_8_load" name="foliage_brush_prototype_8_load" text="Load" width="60" height="auto" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_8_clear" name="foliage_brush_prototype_8_clear" text="Clear" width="60" height="auto" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale Range" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_scale_min" name="foliage_brush_prototype_8_scale_min" width="50" height="auto" text="S" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_scale_max" name="foliage_brush_prototype_8_scale_max" width="50" height="auto" text="S" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range X" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_xmin" name="foliage_brush_prototype_8_range_xmin" width="50" height="auto" text="X" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_xmax" name="foliage_brush_prototype_8_range_xmax" width="50" height="auto" text="X" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Y" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_ymin" name="foliage_brush_prototype_8_range_ymin" width="50" height="auto" text="Y" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_ymax" name="foliage_brush_prototype_8_range_ymax" width="50" height="auto" text="Y" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Z" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_zmin" name="foliage_brush_prototype_8_range_zmin" width="50" height="auto" text="Z" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_range_zmax" name="foliage_brush_prototype_8_range_zmax" width="50" height="auto" text="Z" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Slope" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_slope_min" name="foliage_brush_prototype_8_slope_min" width="50" height="auto" text="SL" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_slope_max" name="foliage_brush_prototype_8_slope_max" width="50" height="auto" text="SL" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_height_min" name="foliage_brush_prototype_8_height_min" width="50" height="auto" text="H" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_8_height_max" name="foliage_brush_prototype_8_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_8_normalalign" name="foliage_brush_prototype_8_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_9" name="foliage_brush_prototype_9" width="*" heigt="auto" text="" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_9_count" name="foliage_brush_prototype_9_count" width="40" height="auto" text="1" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_9_load" name="foliage_brush_prototype_9_load" text="Load" width="60" height="auto" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_9_clear" name="foliage_brush_prototype_9_clear" text="Clear" width="60" height="auto" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale Range" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_scale_min" name="foliage_brush_prototype_9_scale_min" width="50" height="auto" text="S" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_scale_max" name="foliage_brush_prototype_9_scale_max" width="50" height="auto" text="S" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range X" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_xmin" name="foliage_brush_prototype_9_range_xmin" width="50" height="auto" text="X" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_xmax" name="foliage_brush_prototype_9_range_xmax" width="50" height="auto" text="X" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Y" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_ymin" name="foliage_brush_prototype_9_range_ymin" width="50" height="auto" text="Y" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_ymax" name="foliage_brush_prototype_9_range_ymax" width="50" height="auto" text="Y" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Z" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_zmin" name="foliage_brush_prototype_9_range_zmin" width="50" height="auto" text="Z" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_range_zmax" name="foliage_brush_prototype_9_range_zmax" width="50" height="auto" text="Z" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Slope" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_slope_min" name="foliage_brush_prototype_9_slope_min" width="50" height="auto" text="SL" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_slope_max" name="foliage_brush_prototype_9_slope_max" width="50" height="auto" text="SL" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_height_min" name="foliage_brush_prototype_9_height_min" width="50" height="auto" text="H" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_9_height_max" name="foliage_brush_prototype_9_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_9_normalalign" name="foliage_brush_prototype_9_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
+								<space height="20" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Prototype 5" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_10" name="foliage_brush_prototype_10" width="*" heigt="auto" text="" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Count" width="50" height="auto" horizontal-align="center" />
+									<space width="5" />
+									<input id="foliage_brush_prototype_10_count" name="foliage_brush_prototype_10_count" width="40" height="auto" text="1" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_10_load" name="foliage_brush_prototype_10_load" text="Load" width="60" height="auto" />
+									<space width="10" />
+									<button id="foliage_brush_prototype_10_clear" name="foliage_brush_prototype_10_clear" text="Clear" width="60" height="auto" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale Range" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_scale_min" name="foliage_brush_prototype_10_scale_min" width="50" height="auto" text="S" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_scale_max" name="foliage_brush_prototype_10_scale_max" width="50" height="auto" text="S" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range X" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_xmin" name="foliage_brush_prototype_10_range_xmin" width="50" height="auto" text="X" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_xmax" name="foliage_brush_prototype_10_range_xmax" width="50" height="auto" text="X" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Y" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_ymin" name="foliage_brush_prototype_10_range_ymin" width="50" height="auto" text="Y" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_ymax" name="foliage_brush_prototype_10_range_ymax" width="50" height="auto" text="Y" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Rot. Range Z" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_zmin" name="foliage_brush_prototype_10_range_zmin" width="50" height="auto" text="Z" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_range_zmax" name="foliage_brush_prototype_10_range_zmax" width="50" height="auto" text="Z" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Slope" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_slope_min" name="foliage_brush_prototype_10_slope_min" width="50" height="auto" text="SL" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_slope_max" name="foliage_brush_prototype_10_slope_max" width="50" height="auto" text="SL" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="120" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Min" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_height_min" name="foliage_brush_prototype_10_height_min" width="50" height="auto" text="H" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Max" width="auto" height="auto" horizontal-align="center" />
+									<space width="10" />
+									<input id="foliage_brush_prototype_10_height_max" name="foliage_brush_prototype_10_height_max" width="50" height="auto" text="H" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="20" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Normal Align" width="120" height="auto" horizontal-align="left" />
+									<space width="35" />
+									<checkbox id="foliage_brush_prototype_10_normalalign" name="foliage_brush_prototype_10_normalalign" width="50" height="auto" value="1" />
+									<space width="*" />
+								</layout>
+								<space height="20" />
 								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
 									<button id="button_foliage_brush_apply" name="button_foliage_brush_apply" text="Apply" />
 								</layout>

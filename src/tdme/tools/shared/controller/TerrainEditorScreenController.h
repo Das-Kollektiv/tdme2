@@ -79,23 +79,23 @@ private:
 	GUIElementNode* foliageBrushFileLoad { nullptr };
 	GUIElementNode* foliageBrushFileClear { nullptr };
 
-	array<GUIElementNode*, 5> foliageBrushPrototypeFileCount;
-	array<GUIElementNode*, 5> foliageBrushPrototypeFile;
-	array<GUIElementNode*, 5> foliageBrushPrototypeFileLoad;
-	array<GUIElementNode*, 5> foliageBrushPrototypeFileClear;
-	array<GUIElementNode*, 5> foliageBrushPrototypeScaleMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeScaleMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeXMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeXMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeYMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeYMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeRangeZMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeSlopeMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeSlopeMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMin;
-	array<GUIElementNode*, 5> foliageBrushPrototypeHeightMax;
-	array<GUIElementNode*, 5> foliageBrushPrototypeNormalAlign;
+	array<GUIElementNode*, 10> foliageBrushPrototypeFileCount;
+	array<GUIElementNode*, 10> foliageBrushPrototypeFile;
+	array<GUIElementNode*, 10> foliageBrushPrototypeFileLoad;
+	array<GUIElementNode*, 10> foliageBrushPrototypeFileClear;
+	array<GUIElementNode*, 10> foliageBrushPrototypeScaleMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeScaleMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeXMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeXMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeYMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeYMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeZMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeRangeZMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeSlopeMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeSlopeMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeHeightMin;
+	array<GUIElementNode*, 10> foliageBrushPrototypeHeightMax;
+	array<GUIElementNode*, 10> foliageBrushPrototypeNormalAlign;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
 
@@ -118,37 +118,57 @@ private:
 	Texture* currentFoliageBrushTexture { nullptr };
 	float currentFoliageBrushScale { 1.0f };
 	float currentFoliageBrushDensity { 1.0f };
-	array<int, 5> currentFoliageBrushIds { -1, -1, -1, -1, -1 };
-	array<float, 5> currentFoliageBrushCount { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-	array<array<float, 2>, 5> currentFoliageBrushPrototypeScale {{
+	array<int, 10> currentFoliageBrushIds { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	array<float, 10> currentFoliageBrushCount { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	array<array<float, 2>, 10> currentFoliageBrushPrototypeScale {{
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 1.0f },
 		{ 1.0f, 1.0f },
 		{ 1.0f, 1.0f },
 		{ 1.0f, 1.0f },
 		{ 1.0f, 1.0f },
 		{ 1.0f, 1.0f }
 	}};
-	array<array<float, 6>, 5> currentFoliageBrushPrototypeRotations {{
+	array<array<float, 6>, 10> currentFoliageBrushPrototypeRotations {{
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	}};
-	array<array<float, 2>, 5> currentFoliageBrushPrototypeSlope {{
+	array<array<float, 2>, 10> currentFoliageBrushPrototypeSlope {{
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
+		{ 0.0f, 90.0f },
 		{ 0.0f, 90.0f },
 		{ 0.0f, 90.0f },
 		{ 0.0f, 90.0f },
 		{ 0.0f, 90.0f },
 		{ 0.0f, 90.0f }
 	}};
-	array<array<float, 2>, 5> currentFoliageBrushPrototypeHeight {{
+	array<array<float, 2>, 10> currentFoliageBrushPrototypeHeight {{
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
+		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f },
 		{ 0.0f, 100.0f }
 	}};
-	array<bool, 5> currentFoliageBrushPrototypeNormalAlign { false, false, false, false, false };
+	array<bool, 10> currentFoliageBrushPrototypeNormalAlign { false, false, false, false, false, false, false, false, false, false };
 	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 	unordered_set<int> recreateFoliagePartitions;
