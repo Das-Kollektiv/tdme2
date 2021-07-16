@@ -79,7 +79,7 @@ void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototy
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
 		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
 			auto property = prototype->getPropertyByIndex(i);
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
@@ -129,6 +129,38 @@ void PrototypeBaseSubController::createProperty(Prototype* prototype) {
 	Console::println("PrototypeBaseSubController::createProperty()");
 }
 
+void PrototypeBaseSubController::renameProperty(Prototype* prototype) {
+	auto property = prototype->getProperty(renamePropertyName);
+	renamePropertyName.clear();
+	if (property != nullptr) {
+		try {
+			if (prototype->renameProperty(
+				property->getName(),
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("tdme.properties.rename_input"))->getController()->getValue().getString()
+				) == false) {
+				//
+				throw ExceptionBase("Could not rename property");
+			}
+		} catch (Exception& exception) {
+			Console::println(string("PrototypeBaseSubController::renameProperty(): An error occurred: ") + exception.what());;
+			showErrorPopUp("Warning", (string(exception.what())));
+		}
+	}
+
+	//
+	class ReloadTabOutlinerAction: public Action {
+	private:
+		EditorView* editorView;
+		string outlinerNode;
+	public:
+		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+		virtual void performAction() {
+			editorView->reloadTabOutliner(outlinerNode);
+		}
+	};
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
+}
+
 void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
 {
 	if (node->getId() == "dropdown_outliner_add") {
@@ -148,6 +180,11 @@ void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype*
 
 void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "tdme.properties.rename_input") {
+			renameProperty(prototype);
+		}
+	}
 }
 
 void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
@@ -174,6 +211,9 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 			break;
 		}
 	}
+	if (node->getId() == "tdme.properties.rename_input") {
+		renameProperty(prototype);
+	}
 }
 
 void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
@@ -183,7 +223,39 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// rename
-			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename");
+			class OnRenameAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = prototypeBaseSubController->editorView->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+						auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+						auto property = prototype->getProperty(selectedPropertyName);
+						if (property == nullptr) return;
+						auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(prototypeBaseSubController->editorView->getScreenController()->getScreenNode()->getNodeById(outlinerNode));
+						if (selectBoxOptionParentNode == nullptr) return;
+						prototypeBaseSubController->renamePropertyName = selectedPropertyName;
+						selectBoxOptionParentNode->replaceSubNodes(
+							string() +
+							"<layout width=\"100%\" height=\"auto\" alignment=\"horizontal\" horizontal-align=\"left\" vertical-align=\"center\">\n" +
+							"	<space show-on=\"child\" width=\"15\" factor=\"{__TreeDepth__}\" />\n" +
+							"	<space width=\"15\"/>\n" +
+							"	<layout width=\"25\" height=\"25\" horizontal-align=\"center\" vertical-align=\"center\">\n" +
+							"	</layout>\n" +
+							"	<input id=\"tdme.properties.rename_input\" width=\"100%\" height=\"25\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\" />\n" +
+							"</layout>\n",
+							true
+						);
+						Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(prototypeBaseSubController->editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));
+					}
+				}
+				OnRenameAction(PrototypeBaseSubController* prototypeBaseSubController, Prototype* prototype): prototypeBaseSubController(prototypeBaseSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeBaseSubController* prototypeBaseSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnRenameAction(this, prototype));
 
 			// separator
 			popUps->getContextMenuScreenController()->addMenuSeparator();

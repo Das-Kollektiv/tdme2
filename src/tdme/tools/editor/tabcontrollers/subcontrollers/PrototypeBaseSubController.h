@@ -48,6 +48,7 @@ private:
 	array<string, 1> applyPropertyNodes = {
 		"property_value"
 	};
+	string renamePropertyName;
 
 public:
 	/**
@@ -101,6 +102,12 @@ public:
 	 * @param prototype prototype
 	 */
 	void createProperty(Prototype* prototype);
+
+	/**
+	 * Rename property
+	 * @param prototype prototype
+	 */
+	void renameProperty(Prototype* prototype);
 
 	/**
 	 * On value changed
