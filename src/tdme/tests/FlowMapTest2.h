@@ -47,7 +47,6 @@ private:
 		int formationIdx;
 		int pathFindingNodeIdx;
 		Vector3 pathFindingNode;
-		Vector3 pathFindingNodeLast;
 		Vector3 movementDirection;
 		float speed;
 		array<Vector3, 60> movementDirectionRing;

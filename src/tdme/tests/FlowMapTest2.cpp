@@ -140,6 +140,7 @@ void FlowMapTest2::display()
 				combatUnit.object->removeRotation(combatUnit.object->getRotationCount() - 1);
 			}
 			combatUnit.object->setRotationAxis(0, Vector3(0.0f, 1.0f, 0.0f));
+			combatUnit.object->setRotationAngle(0, combatUnit.rotationY);
 			combatUnit.object->update();
 			FlowMapCell* cell = nullptr;
 			// find path to end position?
@@ -162,11 +163,13 @@ void FlowMapTest2::display()
 			if (combatUnit.path.empty() == false) {
 				float xDirection = 0.0f;
 				float zDirection = 0.0f;
-				if (combatUnit.pathIdx >= combatUnit.path.size()) {
+				if (combatUnit.object->getTranslation().equals(combatUnit.endPosition, 0.1f) == true ||
+					combatUnit.pathIdx >= combatUnit.path.size()) {
+					combatUnit.pathIdx = combatUnit.path.size();
 					combatUnit.movementDirection = Vector3();
 					if (combatUnit.object->getAnimation() != "still") combatUnit.object->setAnimation("still");
 				} else {
-					if (Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.01f)  {
+					if (Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.1f)  {
 						xDirection = 0.0f;
 					} else
 					if (combatUnit.object->getTranslation().getX() < combatUnit.path[combatUnit.pathIdx].getX())  {
@@ -175,7 +178,7 @@ void FlowMapTest2::display()
 					if (combatUnit.object->getTranslation().getX() > combatUnit.path[combatUnit.pathIdx].getX())  {
 						xDirection = -1.0f;
 					}
-					if (Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.01f)  {
+					if (Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.1f)  {
 						zDirection = 0.0f;
 					} else
 					if (combatUnit.object->getTranslation().getZ() < combatUnit.path[combatUnit.pathIdx].getZ())  {
@@ -187,11 +190,11 @@ void FlowMapTest2::display()
 					auto xDirectionFinished =
 						(xDirection > 0.1f && combatUnit.object->getTranslation().getX() >= combatUnit.path[combatUnit.pathIdx].getX()) ||
 						(xDirection < -0.1f && combatUnit.object->getTranslation().getX() <= combatUnit.path[combatUnit.pathIdx].getX()) ||
-						(Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.01f);
+						(Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.1f);
 					auto zDirectionFinished =
 						(zDirection > 0.1f && combatUnit.object->getTranslation().getZ() >= combatUnit.path[combatUnit.pathIdx].getZ()) ||
 						(zDirection < -0.1f && combatUnit.object->getTranslation().getZ() <= combatUnit.path[combatUnit.pathIdx].getZ()) ||
-						(Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.01f);
+						(Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.1f);
 					combatUnit.movementDirection = Vector3(xDirectionFinished == true?0.0f:xDirection, 0.0f, zDirectionFinished == true?0.0f:zDirection);
 					if (xDirectionFinished == true && zDirectionFinished == true) combatUnit.pathIdx++;
 				}
@@ -201,7 +204,6 @@ void FlowMapTest2::display()
 				auto pathFindingNodeIdx = Math::min(cell->getPathNodeIdx() + 1, flowMap->getPath().size() - 1);
 				if (pathFindingNodeIdx > combatUnit.pathFindingNodeIdx) {
 					combatUnit.pathFindingNodeIdx = pathFindingNodeIdx;
-					combatUnit.pathFindingNodeLast = combatUnit.pathFindingNode;
 				}
 				if (combatUnit.pathFindingNodeIdx != -1) {
 					if (combatUnit.idx == 0) {
@@ -251,8 +253,9 @@ void FlowMapTest2::display()
 				combatUnit.movementDirection = Vector3();
 			}
 			//
+			combatUnit.movementDirection.setY(0.0f);
 			if (combatUnit.movementDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
-				combatUnit.movementDirection.setY(0.0f).normalize();
+				combatUnit.movementDirection.normalize();
 				// movement direction
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
 				combatUnit.movementDirectionRing[combatUnit.movementDirectionRingIdx] = combatUnit.movementDirection;
@@ -261,8 +264,12 @@ void FlowMapTest2::display()
 				for (auto i = 0; i < combatUnit.movementDirectionRingLength; i++) {
 					movementDirection.add(combatUnit.movementDirectionRing[(combatUnit.movementDirectionRingIdx - i) % combatUnit.movementDirectionRing.size()]);
 				}
-				movementDirection.normalize();
-				combatUnit.rotationY = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), movementDirection, Vector3(0.0f, 1.0f, 0.0f));
+				if (movementDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
+					movementDirection.normalize();
+					combatUnit.rotationY = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), movementDirection, Vector3(0.0f, 1.0f, 0.0f));
+				} else {
+					combatUnit.rotationY = 0.0f;
+				}
 				combatUnit.object->setRotationAngle(0, combatUnit.rotationY);
 				combatUnit.movementDirectionRingIdx = (combatUnit.movementDirectionRingIdx + 1) % combatUnit.movementDirectionRing.size();
 				combatUnit.object->update();
@@ -286,6 +293,10 @@ void FlowMapTest2::display()
 	}
 	// speed detection
 	for (auto& combatUnit: combatUnits) {
+		if (combatUnit.path.empty() == false) {
+			combatUnit.speed = 1.5f;
+			continue;
+		}
 		if (combatUnit.idx == 0) continue;
 		auto villagerPathNodeIdx = Math::min(combatUnit.pathFindingNodeIdx + 1, flowMap->getPath().size() - 1);
 		auto formationPositionMovement = combatUnit.pathFindingNode - combatUnit.object->getTranslation();
@@ -755,12 +766,6 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
 			auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
 			combatUnit.endPosition = endPosition + formationPosition;
-			Console::println(
-				to_string(combatUnit.idx) + ": " +
-				to_string(combatUnit.endPosition.getX()) + ", " +
-				to_string(combatUnit.endPosition.getY()) + ", " +
-				to_string(combatUnit.endPosition.getZ())
-			);
 			combatUnit.pathIdx = 0;
 		}
 	}
