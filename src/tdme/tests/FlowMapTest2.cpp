@@ -149,7 +149,7 @@ void FlowMapTest2::display()
 				if (combatUnit.object->getAnimation() != "still") combatUnit.object->setAnimation("still");
 			} else
 			if (combatUnit.path.empty() == true &&
-				distanceSquared <= Math::square(3.0f)) {
+				distanceSquared <= Math::square(8.0f)) {
 				pathFinding->findPath(
 					combatUnit.object->getTransformations().getTranslation(),
 					combatUnit.endPosition,
@@ -252,6 +252,7 @@ void FlowMapTest2::display()
 			}
 			//
 			if (combatUnit.movementDirection.computeLengthSquared() > Math::square(Math::EPSILON)) {
+				combatUnit.movementDirection.setY(0.0f).normalize();
 				// movement direction
 				if (combatUnit.object->getAnimation() != "walk") combatUnit.object->setAnimation("walk");
 				combatUnit.movementDirectionRing[combatUnit.movementDirectionRingIdx] = combatUnit.movementDirection;
@@ -658,7 +659,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 	//
 	pathFinding->findPath(
 		combatUnits[0].object->getTransformations().getTranslation(),
-		newEndPosition,
+		endPosition,
 		SceneConnector::RIGIDBODY_TYPEID_STATIC,
 		path
 	);
@@ -744,25 +745,6 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 	}
 	if (flowMap == nullptr) return;
 
-	// formation start
-	{
-		Quaternion formationRotationQuaternion;
-		formationMovement = path.size() >= 2?path[1] - path[0]:Vector3(1.0f, 0.0f, 0.0f);
-		if (formationMovement.computeLengthSquared() < Math::square(Math::EPSILON)) formationMovement = Vector3(1.0f, 0.0f, 0.0f);
-		formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, -1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
-		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
-		for (auto& combatUnit: combatUnits) {
-			auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
-			auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
-			combatUnit.movementDirection = formationMovement.clone().normalize();
-			combatUnit.rotationY = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), combatUnit.movementDirection, Vector3(0.0f, 1.0f, 0.0f));
-			combatUnit.object->setTranslation(combatUnits[0].object->getTranslation() + formationPosition);
-			combatUnit.object->setRotationAngle(0, combatUnit.rotationY);
-			combatUnit.object->update();
-			combatUnit.rigidBody->fromTransformations(combatUnit.object->getTransformations());
-		}
-	}
-
 	// formation end
 	{
 		Quaternion formationRotationQuaternion;
@@ -773,6 +755,12 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
 			auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
 			combatUnit.endPosition = endPosition + formationPosition;
+			Console::println(
+				to_string(combatUnit.idx) + ": " +
+				to_string(combatUnit.endPosition.getX()) + ", " +
+				to_string(combatUnit.endPosition.getY()) + ", " +
+				to_string(combatUnit.endPosition.getZ())
+			);
 			combatUnit.pathIdx = 0;
 		}
 	}
