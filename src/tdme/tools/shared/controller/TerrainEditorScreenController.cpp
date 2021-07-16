@@ -159,18 +159,18 @@ void TerrainEditorScreenController::initialize()
 	btnTerrainDimensionSave->getController()->setDisabled(true);
 	onApplyTerrainBrush();
 	for (auto i = 0; i < 10; i++) {
-		foliageBrushPrototypeScaleMin[i]->getController()->setValue(MutableString(1.0f));
-		foliageBrushPrototypeScaleMax[i]->getController()->setValue(MutableString(1.0f));
-		foliageBrushPrototypeRangeXMin[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeRangeXMax[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeRangeYMin[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeSlopeMin[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeSlopeMax[i]->getController()->setValue(MutableString(90.0f));
-		foliageBrushPrototypeHeightMin[i]->getController()->setValue(MutableString(0.0f));
-		foliageBrushPrototypeHeightMax[i]->getController()->setValue(MutableString(100.0f));
+		foliageBrushPrototypeScaleMin[i]->getController()->setValue(MutableString(0.8f, 2));
+		foliageBrushPrototypeScaleMax[i]->getController()->setValue(MutableString(1.2f, 2));
+		foliageBrushPrototypeRangeXMin[i]->getController()->setValue(MutableString(-5.0f, 2));
+		foliageBrushPrototypeRangeXMax[i]->getController()->setValue(MutableString(5.0f, 2));
+		foliageBrushPrototypeRangeYMin[i]->getController()->setValue(MutableString(0.0f, 2));
+		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(360.0f, 2));
+		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(-5.0f, 2));
+		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(5.0f, 2));
+		foliageBrushPrototypeSlopeMin[i]->getController()->setValue(MutableString(0.0f, 2));
+		foliageBrushPrototypeSlopeMax[i]->getController()->setValue(MutableString(30.0f, 2));
+		foliageBrushPrototypeHeightMin[i]->getController()->setValue(MutableString(0.0f, 2));
+		foliageBrushPrototypeHeightMax[i]->getController()->setValue(MutableString(100.0f, 2));
 		foliageBrushPrototypeNormalAlign[i]->getController()->setValue(MutableString());
 	}
 }
