@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -20,6 +21,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
@@ -44,6 +46,8 @@ ContextMenuScreenController::ContextMenuScreenController()
 
 ContextMenuScreenController::~ContextMenuScreenController()
 {
+	for (auto& actionIt: actions) delete actionIt.second;
+	actions.clear();
 	screenNode = nullptr;
 }
 
@@ -90,11 +94,14 @@ void ContextMenuScreenController::close()
 
 void ContextMenuScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	Console::println("ContextMenuScreenController::onActionPerformed(): " + node->getId());
+	if (type == GUIActionListenerType::PERFORMED) {
+		close();
+		auto actionIt = actions.find(node->getId());
+		if (actionIt != actions.end() && actionIt->second != nullptr) actionIt->second->performAction();
+	}
 }
 
 void ContextMenuScreenController::onFocus(GUIElementNode* node) {
-	if (screenNode->isVisible() == true && node->getId() == "background") close();
 }
 
 void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {
@@ -102,13 +109,18 @@ void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {
 
 void ContextMenuScreenController::clear() {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->clearSubNodes();
+	for (auto& actionIt: actions) delete actionIt.second;
+	actions.clear();
 }
 
-void ContextMenuScreenController::addMenuItem(const string& text, const string& id) {
+void ContextMenuScreenController::addMenuItem(const string& text, const string& id, Action* action) {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->addSubNodes(
 		"<context-menu-item text=\"" + GUIParser::escapeQuotes(text) + "\" id=\"" + GUIParser::escapeQuotes(id) + "\" />",
 		true
 	);
+	auto actionIt = actions.find(id);
+	if (actionIt != actions.end() && actionIt->second != nullptr) delete actionIt->second;
+	if (action != nullptr) actions[id] = action;
 }
 
 void ContextMenuScreenController::addMenuSeparator() {

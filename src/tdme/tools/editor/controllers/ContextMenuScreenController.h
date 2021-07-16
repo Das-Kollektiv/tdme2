@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -10,6 +11,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -19,6 +21,7 @@ using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::utilities::Action;
 using tdme::utilities::MutableString;
 
 /**
@@ -35,6 +38,7 @@ class tdme::tools::editor::controllers::ContextMenuScreenController final
 private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* contextMenuNode { nullptr };
+	unordered_map<string, Action*> actions;
 
 public:
 	/**
@@ -56,8 +60,9 @@ public:
 	 * Add menu item
 	 * @param text text
 	 * @param id id
+	 * @param action action
 	 */
-	void addMenuItem(const string& text, const string& id);
+	void addMenuItem(const string& text, const string& id, Action* action = nullptr);
 
 	/**
 	 * Add menu separator

@@ -180,10 +180,35 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+			// clear
 			popUps->getContextMenuScreenController()->clear();
+			// rename
 			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename");
+
+			// separator
 			popUps->getContextMenuScreenController()->addMenuSeparator();
-			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete");
+
+			// delete
+			class OnDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = prototypeBaseSubController->editorView->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "properties.") == true) {
+						auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+						prototype->removeProperty(selectedPropertyName);
+						prototypeBaseSubController->editorView->reloadTabOutliner("properties");
+					}
+				}
+				OnDeleteAction(PrototypeBaseSubController* prototypeBaseSubController, Prototype* prototype): prototypeBaseSubController(prototypeBaseSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeBaseSubController* prototypeBaseSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, prototype));
+
+			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
