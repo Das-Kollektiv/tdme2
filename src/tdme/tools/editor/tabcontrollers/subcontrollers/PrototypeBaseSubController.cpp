@@ -236,14 +236,7 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 						if (selectBoxOptionParentNode == nullptr) return;
 						prototypeBaseSubController->renamePropertyName = selectedPropertyName;
 						selectBoxOptionParentNode->replaceSubNodes(
-							string() +
-							"<layout width=\"100%\" height=\"auto\" alignment=\"horizontal\" horizontal-align=\"left\" vertical-align=\"center\">\n" +
-							"	<space show-on=\"child\" width=\"15\" factor=\"{__TreeDepth__}\" />\n" +
-							"	<space width=\"15\"/>\n" +
-							"	<layout width=\"25\" height=\"25\" horizontal-align=\"center\" vertical-align=\"center\">\n" +
-							"	</layout>\n" +
-							"	<input id=\"tdme.properties.rename_input\" width=\"100%\" height=\"25\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\" />\n" +
-							"</layout>\n",
+							"<template id=\"tdme.properties.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 							true
 						);
 						Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(prototypeBaseSubController->editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));
