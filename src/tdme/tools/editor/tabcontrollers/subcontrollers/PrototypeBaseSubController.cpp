@@ -126,7 +126,57 @@ void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, cons
 }
 
 void PrototypeBaseSubController::createProperty(Prototype* prototype) {
-	Console::println("PrototypeBaseSubController::createProperty()");
+	auto propertyCreated = false;
+	auto propertyName = string() + "New property";
+	if (prototype->addProperty(
+		propertyName,
+		"No value"
+		) == true) {
+		propertyCreated = true;
+	} else {
+		//
+		for (auto i = 1; i < 10001; i++) {
+			propertyName = string() + "New property " + to_string(i);
+			if (prototype->addProperty(
+				propertyName,
+				"No value"
+				) == true) {
+				propertyCreated = true;
+				//
+				break;
+			}
+		}
+	}
+	try {
+		if (propertyCreated == false) {
+			throw ExceptionBase("Could not create property");
+		}
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeBaseSubController::createProperty(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	if (propertyCreated == true) {
+		editorView->reloadTabOutliner(string() + "properties." + propertyName);
+		startRenameProperty(
+			prototype,
+			propertyName
+		);
+	}
+}
+
+void PrototypeBaseSubController::startRenameProperty(Prototype* prototype, const string& propertyName) {
+	auto property = prototype->getProperty(propertyName);
+	if (property == nullptr) return;
+	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("properties." + propertyName));
+	if (selectBoxOptionParentNode == nullptr) return;
+	renamePropertyName = propertyName;
+	selectBoxOptionParentNode->replaceSubNodes(
+		"<template id=\"tdme.properties.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		true
+	);
+	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));
+	editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void PrototypeBaseSubController::renameProperty(Prototype* prototype) {
@@ -156,6 +206,7 @@ void PrototypeBaseSubController::renameProperty(Prototype* prototype) {
 		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 		virtual void performAction() {
 			editorView->reloadTabOutliner(outlinerNode);
+			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 	};
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
@@ -193,21 +244,7 @@ void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* protot
 void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
 	for (auto& applyPropertyNode: applyPropertyNodes) {
 		if (node->getId() == applyPropertyNode) {
-			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-			applyPropertyDetails(prototype, selectedPropertyName);
-			//
-			class ReloadTabOutlinerAction: public Action {
-			private:
-				EditorView* editorView;
-				string outlinerNode;
-			public:
-				ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-				virtual void performAction() {
-					editorView->reloadTabOutliner(outlinerNode);
-				}
-			};
-			Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
+			applyPropertyValue(prototype);
 			break;
 		}
 	}
@@ -229,17 +266,10 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 				void performAction() override {
 					auto outlinerNode = prototypeBaseSubController->editorView->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "properties.") == true) {
-						auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-						auto property = prototype->getProperty(selectedPropertyName);
-						if (property == nullptr) return;
-						auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(prototypeBaseSubController->editorView->getScreenController()->getScreenNode()->getNodeById(outlinerNode));
-						if (selectBoxOptionParentNode == nullptr) return;
-						prototypeBaseSubController->renamePropertyName = selectedPropertyName;
-						selectBoxOptionParentNode->replaceSubNodes(
-							"<template id=\"tdme.properties.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
-							true
+						prototypeBaseSubController->startRenameProperty(
+							prototype,
+							StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size())
 						);
-						Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(prototypeBaseSubController->editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));
 					}
 				}
 				OnRenameAction(PrototypeBaseSubController* prototypeBaseSubController, Prototype* prototype): prototypeBaseSubController(prototypeBaseSubController), prototype(prototype) {
@@ -277,6 +307,24 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
+}
+
+void PrototypeBaseSubController::applyPropertyValue(Prototype* prototype) {
+	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+	auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
+	applyPropertyDetails(prototype, selectedPropertyName);
+	//
+	class ReloadTabOutlinerAction: public Action {
+	private:
+		EditorView* editorView;
+		string outlinerNode;
+	public:
+		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+		virtual void performAction() {
+			editorView->reloadTabOutliner(outlinerNode);
+		}
+	};
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
 }
 
 void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)

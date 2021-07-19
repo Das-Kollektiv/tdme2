@@ -104,6 +104,13 @@ public:
 	void createProperty(Prototype* prototype);
 
 	/**
+	 * Start rename property
+	 * @param property property
+	 * @param propertyName property name
+	 */
+	void startRenameProperty(Prototype* prototype, const string& propertyName);
+
+	/**
 	 * Rename property
 	 * @param prototype prototype
 	 */
@@ -146,6 +153,12 @@ public:
 	 * @param prototype prototype
 	 */
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+
+	/**
+	 * Apply property value
+	 * @param prototype prototype
+	 */
+	void applyPropertyValue(Prototype* prototype);
 
 	/**
 	 * Shows the error pop up
