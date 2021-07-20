@@ -54,7 +54,7 @@ private:
 	VectorIteratorMultiple<Entity*> entityIterator;
 	unordered_map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
-	unordered_set<string> visibleEntitiesById;
+	unordered_set<void*> visibleEntitiesSet;
 	PartitionOctTree_PartitionTreeNode treeRoot;
 
 	// overridden methods
@@ -208,10 +208,10 @@ private:
 				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
 
 				// lets have this only once in result
-				if (visibleEntitiesById.count(entity->getId()) == 1) {
+				if (visibleEntitiesSet.count(entity) == 1) {
 					continue;
 				}
-				visibleEntitiesById.insert(entity->getId());
+				visibleEntitiesSet.insert(entity);
 
 				// done
 				visibleEntities.push_back(entity);
