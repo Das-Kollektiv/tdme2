@@ -167,6 +167,8 @@ void FlowMapTest2::display()
 					combatUnit.pathIdx >= combatUnit.path.size()) {
 					combatUnit.pathIdx = combatUnit.path.size();
 					combatUnit.movementDirection = Vector3();
+					combatUnit.path.clear();
+					combatUnit.pathIdx = -1;
 					if (combatUnit.object->getAnimation() != "still") combatUnit.object->setAnimation("still");
 				} else {
 					if (Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.1f)  {
@@ -251,6 +253,43 @@ void FlowMapTest2::display()
 			} else {
 				if (combatUnit.object->getAnimation() != "still") combatUnit.object->setAnimation("still");
 				combatUnit.movementDirection = Vector3();
+
+				//
+				if (flowMap != nullptr) {
+					auto combatUnitTranslation = combatUnit.object->getTranslation();
+					float minDistance = Float::MAX_VALUE;
+					Vector3 minDistancePathFindingNode;
+					for (auto& flowMapPathFindingNode: flowMap->getPath()) {
+						auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
+						if (candidateDistance < minDistance && flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ()) != nullptr) {
+							minDistance = candidateDistance;
+							minDistancePathFindingNode = flowMapPathFindingNode;
+						}
+					}
+
+					//
+					//	line of sight check, then compute direct path
+					bool foundPath = false;
+					if (combatUnitTranslation.equals(minDistancePathFindingNode, 0.1f) == false) {
+						for (auto i = 0; i < 3; i++) {
+							if (pathFinding->findPath(
+								combatUnitTranslation,
+								minDistancePathFindingNode,
+								SceneConnector::RIGIDBODY_TYPEID_STATIC,
+								combatUnit.path,
+								3,
+								minDistance * 6
+							) == true) {
+								foundPath = true;
+								break;
+							}
+						}
+					}
+
+					// try to do direct path
+					if (foundPath == false) combatUnit.path = pathFinding->generateDirectPath(combatUnitTranslation, minDistancePathFindingNode);
+					combatUnit.pathIdx = 0;
+				}
 			}
 			//
 			combatUnit.movementDirection.setY(0.0f);
@@ -292,6 +331,7 @@ void FlowMapTest2::display()
 		}
 	}
 	// speed detection
+	// TODO: if distance of CU to CU 0 gets bigger over time, also increase speed
 	for (auto& combatUnit: combatUnits) {
 		if (combatUnit.path.empty() == false) {
 			combatUnit.speed = 1.5f;
@@ -761,6 +801,8 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 		Quaternion formationRotationQuaternion;
 		formationMovement = path.size() >= 2?path[path.size() - 1] - path[path.size() - 2]:Vector3(1.0f, 0.0f, 0.0f);
 		if (formationMovement.computeLengthSquared() < Math::square(Math::EPSILON)) formationMovement = Vector3(1.0f, 0.0f, 0.0f);
+		auto currentFormationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, -1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
+		if (Float::isNaN(currentFormationYRotationAngle) == false) formationYRotationAngle = currentFormationYRotationAngle;
 		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
 			auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
