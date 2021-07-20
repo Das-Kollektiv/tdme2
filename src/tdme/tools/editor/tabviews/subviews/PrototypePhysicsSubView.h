@@ -101,8 +101,6 @@ public:
 	 */
 	PopUps* getPopUps();
 
-private:
-
 	/**
 	 * Clear model bounding volume
 	 * @param idx idx
@@ -115,8 +113,6 @@ private:
 	 * @param idx idx
 	 */
 	void setupModelBoundingVolume(Prototype* prototype, int idx);
-
-public:
 
 	/**
 	 * On bounding volume none apply

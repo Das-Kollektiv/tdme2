@@ -53,6 +53,7 @@ private:
 	FileDialogPath* modelPath { nullptr };
 	EditorView* editorView { nullptr };
 	PrototypePhysicsSubView* view { nullptr };
+	PopUps* popUps { nullptr };
 	bool isModelBoundingVolumes;
 	int maxBoundingVolumeCount;
 	bool boundingVolumeTabActivated;
@@ -238,6 +239,13 @@ public:
 	 * @param idx bounding volume index
 	 */
 	void applyBoundingVolumeObbDetails(Prototype* prototype, int idx);
+
+	/**
+	 * Create bounding volume
+	 * @param prototype prototype
+	 */
+	void createBoundingVolume(Prototype* prototype);
+
 	/**
 	 * On value changed
 	 * @param node node

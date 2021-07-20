@@ -247,6 +247,7 @@ public:
 	/**
 	 * Set default bounding volumes(to be used with SceneEditor)
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
+	 * @deprecated REMOVE ME
 	 */
 	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
 

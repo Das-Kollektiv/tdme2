@@ -31,6 +31,7 @@ char Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
 char Prototype::MODEL_BOUNDINGVOLUMES_ID[] = "model_bv";
 
+// @deprecated REMOVE ME!
 char Prototype::MODEL_BOUNDINGVOLUME_IDS[][Prototype::MODEL_BOUNDINGVOLUME_COUNT] = {
 	"model_bv.0",
 	"model_bv.1",
@@ -157,6 +158,7 @@ bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBou
 
 void Prototype::removeBoundingVolume(int idx)
 {
+	if (idx < 0 || idx >= boundingVolumes.size()) return;
 	delete boundingVolumes[idx];
 	boundingVolumes.erase(boundingVolumes.begin() + idx);
 }

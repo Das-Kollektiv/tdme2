@@ -25,6 +25,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -70,6 +71,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::FileDialogPath;
@@ -92,6 +94,7 @@ PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorV
 	this->editorView = editorView;
 	this->modelPath = modelPath;
 	this->view = new PrototypePhysicsSubView(engine, this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->popUps = editorView->getPopUps();
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;
@@ -143,7 +146,7 @@ void PrototypePhysicsSubController::createOutlinerPhysicsXML(Prototype* prototyp
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Physics") + "\" value=\"" + GUIParser::escapeQuotes("physics") + "\">\n";
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto boundingVolumeId = to_string(i);
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("physics.boundingvolume." + boundingVolumeId) + "\" />\n";
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("physics.boundingvolumes." + boundingVolumeId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
@@ -216,8 +219,8 @@ void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const st
 		view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 		view->setDisplayBoundingVolume(true);
 	} else
-	if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
-		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
+	if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
+		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
 		setBoundingVolumeDetails(prototype, boundingVolumeIdx);
 		view->setDisplayBoundingVolumeIdx(boundingVolumeIdx);
 		view->startEditingBoundingVolume(prototype);
@@ -280,6 +283,7 @@ void PrototypePhysicsSubController::setBoundingVolumeOBBDetails(const Vector3& c
 void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototype, int boundingVolumeIdx) {
 	auto physics = prototype->getPhysics();
 	auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdx);
+	if (boundingVolume == nullptr) return;
 
 	editorView->setDetailsContent(
 		string("<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n") +
@@ -483,39 +487,54 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 	view->updateGizmo(prototype);
 }
 
+void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
+	auto boundingVolumeIdx = prototype->getBoundingVolumeCount();
+	auto boundingVolume = new PrototypeBoundingVolume(boundingVolumeIdx, prototype);
+	prototype->addBoundingVolume(boundingVolumeIdx, boundingVolume);
+	setBoundingVolumeDetails(prototype, boundingVolumeIdx);
+	editorView->reloadTabOutliner(string() + "physics.boundingvolumes." + to_string(boundingVolumeIdx));
+}
+
 void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
-	for (auto& applyPhysicsNode: applyPhysicsNodes) {
-		if (node->getId() == applyPhysicsNode) {
-			applyPhysicsDetails(prototype);
-			break;
+	if (node->getId() == "dropdown_outliner_add") {
+		auto addOutlinerType = node->getController()->getValue().getString();
+		if (addOutlinerType == "boundingvolume") {
+			createBoundingVolume(prototype);
 		}
-	}
-	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-	if (StringTools::startsWith(outlinerNode, "physics.boundingvolume.") == true) {
-		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolume.").size(), outlinerNode.size()));
-		if (node->getId() == "boundingvolume_type") {
-			auto boundingVolumeType = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->getValue().getString();
-			if (boundingVolumeType == "sphere") applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx); else
-			if (boundingVolumeType == "capsule") applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx); else
-			if (boundingVolumeType == "obb") applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx); else
-				view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
-		} else {
-			for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
-				if (node->getId() == applyBoundingVolumeSphereNode) {
-					applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
-					break;
-				}
+	} else {
+		for (auto& applyPhysicsNode: applyPhysicsNodes) {
+			if (node->getId() == applyPhysicsNode) {
+				applyPhysicsDetails(prototype);
+				break;
 			}
-			for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
-				if (node->getId() == applyBoundingVolumeCapsuleNode) {
-					applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
-					break;
+		}
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
+			auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+			if (node->getId() == "boundingvolume_type") {
+				auto boundingVolumeType = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->getValue().getString();
+				if (boundingVolumeType == "sphere") applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx); else
+				if (boundingVolumeType == "capsule") applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx); else
+				if (boundingVolumeType == "obb") applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx); else
+					view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
+			} else {
+				for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
+					if (node->getId() == applyBoundingVolumeSphereNode) {
+						applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
+						break;
+					}
 				}
-			}
-			for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
-				if (node->getId() == applyBoundingVolumeOBBNode) {
-					applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
-					break;
+				for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
+					if (node->getId() == applyBoundingVolumeCapsuleNode) {
+						applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
+						break;
+					}
+				}
+				for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
+					if (node->getId() == applyBoundingVolumeOBBNode) {
+						applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
+						break;
+					}
 				}
 			}
 		}
@@ -562,5 +581,42 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 }
 
 void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypePhysicsSubController::onContextMenuRequested(): " + node->getId());
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// delete
+			class OnDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = prototypePhysicsSubController->editorView->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
+						auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+						prototypePhysicsSubController->view->clearModelBoundingVolume(-1);
+						for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+							prototypePhysicsSubController->view->clearModelBoundingVolume(i);
+						}
+						prototype->removeBoundingVolume(boundingVolumeIdx);
+						for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+							prototypePhysicsSubController->view->setupModelBoundingVolume(prototype, i);
+						}
+						prototypePhysicsSubController->editorView->reloadTabOutliner("physics");
+						prototypePhysicsSubController->updateDetails(prototype, "physics");
+					}
+				}
+				OnDeleteAction(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypePhysicsSubController* prototypePhysicsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, prototype));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 }
