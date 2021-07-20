@@ -100,6 +100,7 @@ public:
 		uint32_t clearCalls { 0 };
 		uint32_t renderCalls { 0 };
 		uint32_t computeCalls { 0 };
+		uint32_t instances { 0 };
 		uint32_t triangles { 0 };
 		uint32_t points { 0 };
 		uint32_t linePoints { 0 };
