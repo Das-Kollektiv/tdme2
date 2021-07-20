@@ -45,6 +45,7 @@ private:
 	FileDialogPath* audioPath { nullptr };
 	EditorView* editorView { nullptr };
 	PrototypeSoundsSubView* view { nullptr };
+	PopUps* popUps { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
 	array<string, 7> applyAudioNodes = {
 		"sound_key",
@@ -55,6 +56,7 @@ private:
 		"sound_looping",
 		"sound_ambient",
 	};
+	string renameSoundName;
 
 public:
 	/**
@@ -136,6 +138,25 @@ public:
 	 * @return new sound id
 	 */
 	const string applySoundDetailsRename(Prototype* prototype, const string& soundId);
+
+	/**
+	 * Create sound
+	 * @param prototype prototype
+	 */
+	void createSound(Prototype* prototype);
+
+	/**
+	 * Start rename sound
+	 * @param property property
+	 * @param soundName sound name
+	 */
+	void startRenameSound(Prototype* prototype, const string& soundName);
+
+	/**
+	 * Rename sound
+	 * @param prototype prototype
+	 */
+	void renameSound(Prototype* prototype);
 
 	/**
 	 * On value changed

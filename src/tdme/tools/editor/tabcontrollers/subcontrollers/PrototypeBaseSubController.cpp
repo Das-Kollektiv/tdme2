@@ -242,14 +242,15 @@ void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* protot
 }
 
 void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
-	for (auto& applyPropertyNode: applyPropertyNodes) {
-		if (node->getId() == applyPropertyNode) {
-			applyPropertyValue(prototype);
-			break;
-		}
-	}
 	if (node->getId() == "tdme.properties.rename_input") {
 		renameProperty(prototype);
+	} else {
+		for (auto& applyPropertyNode: applyPropertyNodes) {
+			if (node->getId() == applyPropertyNode) {
+				applyPropertyValue(prototype);
+				break;
+			}
+		}
 	}
 }
 

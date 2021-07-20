@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/Entity.h>
@@ -503,6 +504,7 @@ public:
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return false;
 		auto sound = soundIt->second;
+		sound->setId(newId);
 		soundsById.erase(soundIt);
 		soundsById[newId] = sound;
 		return true;
