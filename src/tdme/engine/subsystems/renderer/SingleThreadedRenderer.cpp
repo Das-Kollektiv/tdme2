@@ -94,6 +94,7 @@ const Renderer::Renderer_Statistics SingleThreadedRenderer::getStatistics() {
 	statistics.memoryUsageShared = -1LL;
 	statistics.clearCalls = 0;
 	statistics.renderCalls = 0;
+	statistics.instances = 0;
 	statistics.computeCalls = 0;
 	statistics.triangles = 0;
 	statistics.points = 0;

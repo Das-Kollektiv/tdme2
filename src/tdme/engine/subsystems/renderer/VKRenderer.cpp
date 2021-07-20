@@ -6177,6 +6177,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
+	AtomicOperations::increment(statistics.instances, instances);
 	AtomicOperations::increment(statistics.triangles, triangles * instances);
 }
 
@@ -7136,6 +7137,7 @@ const Renderer::Renderer_Statistics VKRenderer::getStatistics() {
 	statistics.memoryUsageShared = -1LL;
 	statistics.clearCalls = 0;
 	statistics.renderCalls = 0;
+	statistics.instances = 0;
 	statistics.computeCalls = 0;
 	statistics.triangles = 0;
 	statistics.points = 0;

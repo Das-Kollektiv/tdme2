@@ -856,6 +856,7 @@ void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
 	statistics.renderCalls++;
+	statistics.instances+= 1;
 	statistics.triangles+= triangles;
 }
 
@@ -867,6 +868,7 @@ void GLES2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triang
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 	statistics.renderCalls++;
+	statistics.instances+= 1;
 	statistics.triangles+= triangles;
 }
 
