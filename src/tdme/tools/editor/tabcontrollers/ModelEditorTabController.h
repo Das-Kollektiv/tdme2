@@ -39,6 +39,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
@@ -64,6 +65,7 @@ private:
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	ModelEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
+	PopUps* popUps { nullptr };
 
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
@@ -96,6 +98,8 @@ private:
 		"animationpreview_overlay2",
 		"animationpreview_overlay3"
 	};
+
+	string renameAnimationId;
 
 	/**
 	 * @return prototype lod level or nullptr
@@ -382,6 +386,22 @@ public:
 	 * On preview animations attachment 1 model clear
 	 */
 	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
+	 * Start rename animation
+	 * @param animationId animation id
+	 */
+	void startRenameAnimation(const string& animationId);
+
+	/**
+	 * Rename animation
+	 */
+	void renameAnimation();
+
+	/**
+	 * Create animation setup
+	 */
+	void createAnimationSetup();
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

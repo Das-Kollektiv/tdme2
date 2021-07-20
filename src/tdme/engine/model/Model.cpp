@@ -117,6 +117,23 @@ AnimationSetup* Model::getAnimationSetup(const string& id)
 	return nullptr;
 }
 
+bool Model::removeAnimationSetup(const string& id) {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt == animationSetups.end()) return false;
+	animationSetups.erase(animationSetupIt);
+	return true;
+}
+
+bool Model::renameAnimationSetup(const string& id, const string& newId) {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt == animationSetups.end()) return false;
+	auto animationSetup = animationSetupIt->second;
+	animationSetups.erase(animationSetupIt);
+	animationSetup->setId(newId);
+	animationSetups[newId] = animationSetup;
+	return true;
+}
+
 BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb

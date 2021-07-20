@@ -289,7 +289,7 @@ void PrototypeSoundsSubController::startRenameSound(Prototype* prototype, const 
 	if (selectBoxOptionParentNode == nullptr) return;
 	renameSoundName = soundName;
 	selectBoxOptionParentNode->replaceSubNodes(
-		"<template id=\"tdme.sounds.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(sound->getId()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		"<template id=\"tdme.sounds.rename_input\" hint=\"Sound name\" text=\"" + GUIParser::escapeQuotes(sound->getId()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.sounds.rename_input")));

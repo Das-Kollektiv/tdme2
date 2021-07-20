@@ -244,6 +244,22 @@ public:
 	AnimationSetup* getAnimationSetup(const string& id);
 
 	/**
+	 * Remove animation setup
+	 * @param id id
+	 * @return success
+	 */
+	bool removeAnimationSetup(const string& id);
+
+	/**
+	 * Rename animation set up
+	 * @param id id
+	 * @param newId new id
+	 * @return success
+	 */
+	bool renameAnimationSetup(const string& id, const string& newId);
+
+	/**
+	 * TODO: return const map
 	 * @return animation setup for given id or null
 	 */
 	inline map<string, AnimationSetup*>& getAnimationSetups() {
