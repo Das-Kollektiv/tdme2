@@ -403,6 +403,11 @@ public:
 	 */
 	void createAnimationSetup();
 
+	/**
+	 * Create LOD
+	 */
+	void createLOD();
+
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;

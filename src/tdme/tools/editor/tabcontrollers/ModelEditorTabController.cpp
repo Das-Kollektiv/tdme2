@@ -218,32 +218,48 @@ void ModelEditorTabController::setOutlinerContent() {
 		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
-		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
-		if (model != nullptr) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
-			for (auto it: model->getMaterials()) {
-				auto materialId = it.second->getId();
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes("model.material." + materialId) + "\" />\n";
+		for (auto lodLevel = 1; lodLevel < 4; lodLevel++) {
+			Model* model = nullptr;
+			switch (lodLevel) {
+				case 1:
+					model = prototype->getModel();
+					break;
+				case 2:
+					model = prototype->getLODLevel2() != nullptr?prototype->getLODLevel2()->getModel():nullptr;
+					if (prototype->getLODLevel2() == nullptr) continue;
+					break;
+				case 3:
+					model = prototype->getLODLevel3() != nullptr?prototype->getLODLevel3()->getModel():nullptr;
+					if (prototype->getLODLevel3() == nullptr) continue;
+					break;
+			}
+			auto modelPrefix = lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\">\n";
+			if (model != nullptr) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
+				for (auto it: model->getMaterials()) {
+					auto materialId = it.second->getId();
+					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".material." + materialId) + "\" />\n";
+				}
+				xml+= "</selectbox-parent-option>\n";
+			}
+			if (model != nullptr && model->getSubNodes().empty() == false) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".nodes") + "\">\n";
+				createOutlinerModelNodesXML(model->getSubNodes(), xml);
+				xml+= "</selectbox-parent-option>\n";
+			}
+			if (model != nullptr &&
+				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations") + "\">\n";
+				for (auto it: model->getAnimationSetups()) {
+					auto animationSetupId = it.second->getId();
+					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
+					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
+				}
+				xml+= "</selectbox-parent-option>\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
-		if (model != nullptr && model->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes("model.nodes") + "\">\n";
-			createOutlinerModelNodesXML(model->getSubNodes(), xml);
-			xml+= "</selectbox-parent-option>\n";
-		}
-		if (model != nullptr &&
-			(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
-			for (auto it: model->getAnimationSetups()) {
-				auto animationSetupId = it.second->getId();
-				if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
-			}
-			xml+= "</selectbox-parent-option>\n";
-		}
-		xml+= "</selectbox-parent-option>\n";
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
@@ -275,7 +291,7 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
-						0.0f
+						75.0f
 					);
 					prototype->setLODLevel2(prototypeLodLevel);
 				}
@@ -289,7 +305,7 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
-						0.0f
+						150.0f
 					);
 					prototype->setLODLevel3(prototypeLodLevel);
 				}
@@ -941,16 +957,16 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setDiffuseTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
 				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
 				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1016,14 +1032,14 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 			specularMaterialProperties->setDiffuseTexture(
 				specularMaterialProperties->getDiffuseTexturePathName(),
 				specularMaterialProperties->getDiffuseTextureFileName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1087,14 +1103,14 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setNormalTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1156,14 +1172,14 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setSpecularTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1222,14 +1238,14 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setBaseColorTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1285,14 +1301,14 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setMetallicRoughnessTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1348,14 +1364,14 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setNormalTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1502,48 +1518,131 @@ void ModelEditorTabController::createAnimationSetup() {
 	}
 }
 
+void ModelEditorTabController::createLOD() {
+	class OnLoadLODModel: public virtual Action
+	{
+	public:
+		void performAction() override {
+			PrototypeLODLevel* lodLevel = nullptr;
+			if (modelEditorTabController->view->getPrototype()->getLODLevel2() == nullptr) {
+				lodLevel = modelEditorTabController->getLODLevel(2);
+			} else
+			if (modelEditorTabController->view->getPrototype()->getLODLevel3() == nullptr) {
+				lodLevel = modelEditorTabController->getLODLevel(3);
+			}
+			if (lodLevel == nullptr) return;
+
+			lodLevel->setFileName(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			lodLevel->setType(LODObject3D::LODLEVELTYPE_MODEL);
+			try {
+				lodLevel->setModel(
+						lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
+						ModelReader::read(
+							Tools::getPathName(lodLevel->getFileName()),
+							Tools::getFileName(lodLevel->getFileName())
+						):
+						nullptr
+				);
+			} catch (Exception& exception) {
+				Console::println(string("OnLoadLODModel::performAction(): An error occurred: ") + exception.what());;
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getEditorView()->reloadTabOutliner();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnLoadLODModel(ModelEditorTabController* modelEditorTabController)
+			: modelEditorTabController(modelEditorTabController) {
+			//
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	PrototypeLODLevel* lodLevel = nullptr;
+	if (view->getPrototype()->getLODLevel2() != nullptr && view->getPrototype()->getLODLevel3() != nullptr) {
+		Console::println("ModelEditorTabController::createLOD(): LOD level 2 and LOD level 3 is already in use");
+		showErrorPopUp("Warning", "LOD level 2 and LOD level 3 is already in use");
+		return;
+	}
+
+	auto extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Load LOD model from: ",
+		extensions,
+		string(),
+		true,
+		new OnLoadLODModel(this)
+	);
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "animation") {
 			createAnimationSetup();
+		} else
+		if (addOutlinerType == "lod") {
+			createLOD();
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "lod2.model") == true ||
+			StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
+			if (view->getLodLevel() != 2) view->setLodLevel(2);
+		} else
+		if (StringTools::startsWith(outlinerNode, "lod3.model") == true ||
+			StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
+			if (view->getLodLevel() != 3) view->setLodLevel(3);
+		} else {
+			if (view->getLodLevel() != 1) view->setLodLevel(1);
+		}
 		updateDetails(outlinerNode);
-	}
-	for (auto& applyAnimationNode: applyAnimationNodes) {
-		if (node->getId() == applyAnimationNode) {
-			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-			applyAnimationDetails(animationId);
+	} else {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		for (auto& applyAnimationNode: applyAnimationNodes) {
+			if (node->getId() == applyAnimationNode) {
+				auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
+				applyAnimationDetails(animationId);
+			}
 		}
-	}
-	for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
-		if (node->getId() == applySpecularMaterialNode) {
-			applySpecularMaterialDetails();
-			break;
+		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
+			if (node->getId() == applySpecularMaterialNode) {
+				applySpecularMaterialDetails();
+				break;
+			}
 		}
-	}
-	for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
-		if (node->getId() == applyPBRMaterialNode) {
-			applyPBRMaterialDetails();
-			break;
+		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
+			if (node->getId() == applyPBRMaterialNode) {
+				applyPBRMaterialDetails();
+				break;
+			}
 		}
-	}
-	for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
-		if (node->getId() == applyAnimationPreviewNode) {
-			applyAnimationPreviewDetails();
-			break;
+		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
+			if (node->getId() == applyAnimationPreviewNode) {
+				applyAnimationPreviewDetails();
+				break;
+			}
 		}
-	}
-	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	{
-		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
+		prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+		prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
+		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+		{
+			Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+			if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
+		}
 	}
 }
 
