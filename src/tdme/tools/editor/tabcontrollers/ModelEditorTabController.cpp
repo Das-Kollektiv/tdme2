@@ -195,15 +195,15 @@ void ModelEditorTabController::dispose()
 {
 }
 
-void ModelEditorTabController::createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml) {
+void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
 	for (auto nodeIt: subNodes) {
 		auto node = nodeIt.second;
 		if (node->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\">\n";
-			createOutlinerModelNodesXML(node->getSubNodes(), xml);
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\">\n";
+			createOutlinerModelNodesXML(prefix, node->getSubNodes(), xml);
 			xml+= "</selectbox-parent-option>\n";
 		} else {
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\" />\n";
+			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\" />\n";
 		}
 	}
 }
@@ -239,13 +239,13 @@ void ModelEditorTabController::setOutlinerContent() {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
 				for (auto it: model->getMaterials()) {
 					auto materialId = it.second->getId();
-					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".material." + materialId) + "\" />\n";
+					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}
 			if (model != nullptr && model->getSubNodes().empty() == false) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".nodes") + "\">\n";
-				createOutlinerModelNodesXML(model->getSubNodes(), xml);
+				createOutlinerModelNodesXML(modelPrefix, model->getSubNodes(), xml);
 				xml+= "</selectbox-parent-option>\n";
 			}
 			if (model != nullptr &&
@@ -327,18 +327,43 @@ void ModelEditorTabController::setLODLevel(int level) {
 	view->setLodLevel(level);
 }
 
+Model* ModelEditorTabController::getSelectedModel() {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	return model;
+}
+
 Material* ModelEditorTabController::getSelectedMaterial() {
 	string materialId;
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
-		materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (model == nullptr) return nullptr;
+	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {
+		materialId = StringTools::substring(outlinerNodeModel, string("model.materials.").size(), outlinerNode.size());
 	} else {
 		return nullptr;
 	}
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return nullptr;
 	auto materialIt = model->getMaterials().find(materialId);
 	return materialIt != model->getMaterials().end()?materialIt->second:nullptr;
+}
+
+AnimationSetup* ModelEditorTabController::getSelectedAnimationSetup() {
+	string animationId;
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (model == nullptr) return nullptr;
+	if (StringTools::startsWith(outlinerNodeModel, "model.animations.") == true) {
+		animationId = StringTools::substring(outlinerNodeModel, string("model.animations.").size(), outlinerNode.size());
+	} else {
+		return nullptr;
+	}
+	return model->getAnimationSetup(animationId);
 }
 
 void ModelEditorTabController::setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount)
@@ -657,13 +682,11 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 	}
 }
 
-void ModelEditorTabController::setAnimationDetails(const string& animationId) {
-	Console::println("ModelEditorTabController::setAnimationDetails(): " + animationId);
+void ModelEditorTabController::setAnimationDetails() {
+	Console::println("ModelEditorTabController::setAnimationDetails(): ");
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto animationSetup = model->getAnimationSetup(animationId);
+	auto model = getSelectedModel();
+	auto animationSetup = getSelectedAnimationSetup();
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 
 	if (animationSetup == nullptr) return;
@@ -721,15 +744,13 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 }
 
-void ModelEditorTabController::applyAnimationDetails(const string& animationId) {
-	Console::println("ModelEditorTabController::applyAnimationDetails(): " + animationId);
+void ModelEditorTabController::applyAnimationDetails() {
+	Console::println("ModelEditorTabController::applyAnimationDetails(): ");
 
 	view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto animationSetup = model->getAnimationSetup(animationId);
+	auto model = getSelectedModel();
+	auto animationSetup = getSelectedAnimationSetup();
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 
 	if (animationSetup == nullptr) return;
@@ -747,7 +768,7 @@ void ModelEditorTabController::applyAnimationDetails(const string& animationId) 
 		animationSetup->setLoop(loop);
 		animationSetup->setOverlayFromNodeId(overlayFromNodeId);
 
-		view->playAnimation(animationId);
+		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -758,11 +779,7 @@ void ModelEditorTabController::applyAnimationDetails(const string& animationId) 
 void ModelEditorTabController::setAnimationPreviewDetails() {
 	Console::println("ModelEditorTabController::setAnimationPreviewDetails(): ");
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) {
-		return;
-	}
-
+	auto model = getSelectedModel();
 	auto defaultAnimationSetup = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 
 	view->getEditorView()->setDetailsContent(
@@ -897,9 +914,6 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
 }
 
 void ModelEditorTabController::applyAnimationPreviewDetails() {
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
 	try {
 		view->playAnimation(
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_base"))->getController()->getValue().getString(),
@@ -913,31 +927,26 @@ void ModelEditorTabController::applyAnimationPreviewDetails() {
 	}
 }
 
-void ModelEditorTabController::setSoundDetails(const string& soundId) {
-	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
-
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	prototypeSoundsSubController->setSoundDetails(view->getPrototype(), model, soundId);
-}
-
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
-	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {
 		setMaterialDetails();
 	} else
-	if (outlinerNode == "model.animations") {
+	if (outlinerNodeModel == "model.animations") {
 		setAnimationPreviewDetails();
 	} else
-	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
-		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-		view->playAnimation(animationId);
-		setAnimationDetails(animationId);
+	if (StringTools::startsWith(outlinerNodeModel, "model.animations.") == true) {
+		auto animationSetup = getSelectedAnimationSetup();
+		view->playAnimation(animationSetup == nullptr?Model::ANIMATIONSETUP_DEFAULT:animationSetup->getId());
+		setAnimationDetails();
 	} else {
 		prototypeBaseSubController->updateDetails(view->getPrototype(), outlinerNode);
-		prototypeDisplaySubController->updateDetails(view->getPrototype(),outlinerNode);
+		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
 	}
 }
 
@@ -1418,10 +1427,7 @@ void ModelEditorTabController::startRenameAnimation(const string& animationId) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
-	Model* model =
-		view->getLodLevel() == 1?
-			view->getPrototype()->getModel():
-			getLODLevel(view->getLodLevel())->getModel();
+	Model* model = getSelectedModel();
 	if (model == nullptr) return;
 
 	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("model.animations." + animationId));
@@ -1437,10 +1443,7 @@ void ModelEditorTabController::startRenameAnimation(const string& animationId) {
 }
 
 void ModelEditorTabController::renameAnimation() {
-	Model* model =
-		view->getLodLevel() == 1?
-			view->getPrototype()->getModel():
-			getLODLevel(view->getLodLevel())->getModel();
+	Model* model = getSelectedModel();
 	if (model == nullptr) return;
 
 	auto animationSetup = model->getAnimationSetup(renameAnimationId);
@@ -1477,10 +1480,7 @@ void ModelEditorTabController::renameAnimation() {
 }
 
 void ModelEditorTabController::createAnimationSetup() {
-	Model* model =
-		view->getLodLevel() == 1?
-			view->getPrototype()->getModel():
-			getLODLevel(view->getLodLevel())->getModel();
+	Model* model = getSelectedModel();
 	if (model == nullptr) return;
 
 	//
@@ -1551,8 +1551,8 @@ void ModelEditorTabController::createLOD() {
 				Console::println(string("OnLoadLODModel::performAction(): An error occurred: ") + exception.what());;
 				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
-			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 			modelEditorTabController->view->getEditorView()->reloadTabOutliner();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1586,6 +1586,28 @@ void ModelEditorTabController::createLOD() {
 	);
 }
 
+bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model, int* lodLevel) {
+	if (StringTools::startsWith(outlinerNode, "model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getModel();
+		if (lodLevel != nullptr) *lodLevel = 1;
+		modelOutlinerNode = outlinerNode;
+	} else
+	if (StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod2.").size(), outlinerNode.size());
+	} else
+	if (StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod3.").size(), outlinerNode.size());
+	} else {
+		if (model != nullptr) *model = view->getPrototype()->getModel();
+		if (lodLevel != nullptr) *lodLevel = 1;
+	}
+	return model != nullptr;
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "dropdown_outliner_add") {
@@ -1599,6 +1621,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	} else
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		Console::println(outlinerNode);
 		if (StringTools::startsWith(outlinerNode, "lod2.model") == true ||
 			StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
 			if (view->getLodLevel() != 2) view->setLodLevel(2);
@@ -1614,8 +1637,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		for (auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
-				auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-				applyAnimationDetails(animationId);
+				applyAnimationDetails();
 			}
 		}
 		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
@@ -1636,13 +1658,13 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 				break;
 			}
 		}
-		prototypeBaseSubController->onValueChanged(node, view->getPrototype());
-		prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-		{
-			Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-			if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
-		}
+	}
+	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+	{
+		auto model = getSelectedModel();
+		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
 	}
 }
 

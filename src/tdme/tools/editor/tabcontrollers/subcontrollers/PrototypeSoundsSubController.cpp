@@ -155,9 +155,12 @@ void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype,
 	}
 }
 
-void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* model, const string& soundId) {
-	Console::println("PrototypeSoundsSubController::setSoundDetails(): " + soundId);
+void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* model, const string& outlinerNode) {
+	Console::println("PrototypeSoundsSubController::setSoundDetails(): " + outlinerNode);
 
+	if (StringTools::startsWith(outlinerNode, "sounds.") == false) return;
+
+	auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
 	auto sound = prototype->getSound(soundId);
 	if (sound == nullptr) return;
 
@@ -165,7 +168,8 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 		"<template id=\"details_sound\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
 	);
 
-	{
+	//
+	if (model != nullptr) {
 		auto idx = 0;
 		string animationsDropDownXML;
 		animationsDropDownXML =
@@ -347,7 +351,7 @@ void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototyp
 			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
-				setSoundDetails(prototype, model, soundId);
+				updateDetails(prototype, model, soundId);
 				playableSoundView->playSound(soundId);
 			} else {
 				playableSoundView->stopSound();

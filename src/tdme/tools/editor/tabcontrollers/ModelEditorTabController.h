@@ -26,7 +26,9 @@ using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Material;
+using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -100,6 +102,7 @@ private:
 	};
 
 	string renameAnimationId;
+	int renameAnimationLOD { -1 };
 
 	/**
 	 * @return prototype lod level or nullptr
@@ -107,14 +110,27 @@ private:
 	PrototypeLODLevel* getLODLevel(int level);
 
 	/**
+	 * @return current selected model
+	 */
+	Model* getSelectedModel();
+
+	/**
 	 * @return current selected material
 	 */
 	Material* getSelectedMaterial();
 
 	/**
-	 * Create outliner model nodes xml
+	 * @return current selected animation setup
 	 */
-	void createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml);
+	AnimationSetup* getSelectedAnimationSetup();
+
+	/**
+	 * Create outliner model nodes xml
+	 * @param prefix prefix
+	 * @param subNodes sub nodes
+	 * @param xml xml
+	 */
+	void createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml);
 
 public:
 	/**
@@ -275,15 +291,13 @@ public:
 
 	/**
 	 * Set animation details
-	 * @param animationId animation Id
 	 */
-	void setAnimationDetails(const string& animationId);
+	void setAnimationDetails();
 
 	/**
 	 * Apply animation details
-	 * @param animationId animation id
 	 */
-	void applyAnimationDetails(const string& animationId);
+	void applyAnimationDetails();
 
 	/**
 	 * Set animation preview details
@@ -294,12 +308,6 @@ public:
 	 * Apply animation preview details
 	 */
 	void applyAnimationPreviewDetails();
-
-	/**
-	 * Set sound details
-	 * @param soundId sound Id
-	 */
-	void setSoundDetails(const string& soundId);
 
 	/**
 	 * Update details panel
@@ -407,6 +415,16 @@ public:
 	 * Create LOD
 	 */
 	void createLOD();
+
+	/**
+	 * Get outliner node within model or LOD models
+	 * @param outlinerNode outliner node
+	 * @param modelOutlinerNode model outliner node
+	 * @param model model
+	 * @param lodLevel lod level
+	 * @return success
+	 */
+	bool getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model = nullptr, int* lodLevel = nullptr);
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

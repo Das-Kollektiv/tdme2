@@ -117,12 +117,12 @@ public:
 	void createOutlinerSoundsXML(Prototype* prototype, string& xml);
 
 	/**
-	 * Set sound details
+	 * Update details
 	 * @param prototype prototype
 	 * @param model model
-	 * @param soundId sound Id
+	 * @param outlinerNode outliner node
 	 */
-	void setSoundDetails(Prototype* prototype, Model* model, const string& soundId);
+	void updateDetails(Prototype* prototype, Model* model, const string& outlinerNode);
 
 	/**
 	 * Apply sound details
