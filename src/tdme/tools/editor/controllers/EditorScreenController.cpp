@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
@@ -41,6 +42,7 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::gui::elements::GUISelectBoxController;
@@ -165,19 +167,30 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				}
 			}
 			if (tabIdToClose.empty() == false) {
-				screenNode->removeNodeById(tabIdToClose, false);
-				screenNode->removeNodeById(tabIdToClose + "-content", false);
-				auto tabIt = tabViews.find(tabIdToClose);
-				if (tabIt == tabViews.end()) {
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabIdToClose + ": not found");
-				} else {
-					auto& tab = tabIt->second;
-					tab.getTabView()->dispose();
-					delete tab.getTabView();
-					tabViews.erase(tabIt);
-				}
-				setDetailsContent(string());
-				setOutlinerContent(string());
+				//
+				class CloseTabAction: public Action {
+				private:
+					EditorScreenController* editorScreenController;
+					string tabIdToClose;
+				public:
+					CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
+					virtual void performAction() {
+						editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
+						editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
+						auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
+						if (tabIt == editorScreenController->tabViews.end()) {
+							Console::println("CloseTabAction::performAction(): close tab: " + tabIdToClose + ": not found");
+						} else {
+							auto& tab = tabIt->second;
+							tab.getTabView()->dispose();
+							delete tab.getTabView();
+							editorScreenController->tabViews.erase(tabIt);
+						}
+						editorScreenController->setDetailsContent(string());
+						editorScreenController->setOutlinerContent(string());
+					}
+				};
+				Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabIdToClose));
 			}
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());

@@ -224,12 +224,11 @@ void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 		}
 	}
 
-	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
 	{
-		auto _parentControllerNode = parentControllerNode;
-		while (_parentControllerNode != nullptr) {
-			_parentControllerNode->getController()->onSubTreeChange();
-			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+		while (parentControllerNode != nullptr) {
+			parentControllerNode->getController()->onSubTreeChange();
+			parentControllerNode = parentControllerNode->getParentControllerNode();
 		}
 	}
 }
@@ -609,6 +608,15 @@ void GUIParentNode::removeSubNode(GUINode* node, bool resetScrollOffsets)
 
 	invalidateRenderCaches();
 	setConditionsMet();
+
+	{
+		auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+		while (parentControllerNode != nullptr) {
+			parentControllerNode->getController()->onSubTreeChange();
+			parentControllerNode = parentControllerNode->getParentControllerNode();
+		}
+	}
+
 	screenNode->layout(this);
 
 	if (layouted == false || resetScrollOffsets == true) {
