@@ -282,7 +282,7 @@ void ModelEditorTabController::setDetailsContent() {
 PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return nullptr;
-	switch(level) {
+	switch (level) {
 		case 2:
 			{
 				auto prototypeLodLevel = prototype->getLODLevel2();
@@ -311,20 +311,19 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 				}
 				return prototypeLodLevel;
 			}
-		default:
-			{
-				return nullptr;
-			}
 	}
+	return nullptr;
 }
 
-void ModelEditorTabController::setLODLevel(int level) {
-	auto prototype = view->getPrototype();
-	if (prototype == nullptr) return;
-
-	auto prototypeLodLevel = getLODLevel(level);
-
-	view->setLodLevel(level);
+Model* ModelEditorTabController::getLODLevelModel(int level) {
+	Model* model = nullptr;
+	switch (level) {
+		case 1: model = view->getPrototype()->getModel(); break;
+		case 2: model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr; break;
+		case 3: model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr; break;
+		default: model = nullptr;
+	}
+	return model;
 }
 
 Model* ModelEditorTabController::getSelectedModel() {
@@ -1423,17 +1422,15 @@ void ModelEditorTabController::onMaterialClearPBRNormalTexture() {
 	updateMaterialDetails();
 }
 
-void ModelEditorTabController::startRenameAnimation(const string& animationId) {
+void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& animationId) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
-	Model* model = getSelectedModel();
-	if (model == nullptr) return;
-
-	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("model.animations." + animationId));
+	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById((lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model") + ".animations." + animationId));
 	if (selectBoxOptionParentNode == nullptr) return;
 
 	renameAnimationId = animationId;
+	renameAnimationLOD = lodLevel;
 	selectBoxOptionParentNode->replaceSubNodes(
 		"<template id=\"tdme.animations.rename_input\" hint=\"Animation name\" text=\"" + GUIParser::escapeQuotes(animationId) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
@@ -1443,8 +1440,12 @@ void ModelEditorTabController::startRenameAnimation(const string& animationId) {
 }
 
 void ModelEditorTabController::renameAnimation() {
-	Model* model = getSelectedModel();
-	if (model == nullptr) return;
+	Model* model = getLODLevelModel(renameAnimationLOD);
+	if (model == nullptr) {
+		renameAnimationLOD = -1;
+		renameAnimationId.clear();
+		return;
+	}
 
 	auto animationSetup = model->getAnimationSetup(renameAnimationId);
 	renameAnimationId.clear();
@@ -1476,10 +1477,11 @@ void ModelEditorTabController::renameAnimation() {
 			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), "model.animations" + (animationSetup != nullptr?"." + animationSetup->getId():"")));
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), (renameAnimationLOD == 1?"model":"lod" + to_string(renameAnimationLOD) + ".model") + ".animations" + (animationSetup != nullptr?"." + animationSetup->getId():"")));
+	renameAnimationLOD = -1;
 }
 
-void ModelEditorTabController::createAnimationSetup() {
+void ModelEditorTabController::createAnimationSetup(int lodLevel) {
 	Model* model = getSelectedModel();
 	if (model == nullptr) return;
 
@@ -1514,7 +1516,7 @@ void ModelEditorTabController::createAnimationSetup() {
 
 	if (animationSetupCreated == true) {
 		view->getEditorView()->reloadTabOutliner(string() + "model.animations." + animationSetupName);
-		startRenameAnimation(animationSetupName);
+		startRenameAnimation(lodLevel, animationSetupName);
 	}
 }
 
@@ -1604,6 +1606,7 @@ bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, st
 	} else {
 		if (model != nullptr) *model = view->getPrototype()->getModel();
 		if (lodLevel != nullptr) *lodLevel = 1;
+		modelOutlinerNode = outlinerNode;
 	}
 	return model != nullptr;
 }
@@ -1613,7 +1616,11 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "animation") {
-			createAnimationSetup();
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			createAnimationSetup(lodLevel);
 		} else
 		if (addOutlinerType == "lod") {
 			createLOD();
@@ -1687,7 +1694,10 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
+		string modelOutlinerNode;
+		int lodLevel = -1;
+		getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+		if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			// rename
@@ -1696,9 +1706,13 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			public:
 				void performAction() override {
 					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
-					if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
 						modelEditorTabController->startRenameAnimation(
-							StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size())
+							lodLevel,
+							StringTools::substring(modelOutlinerNode, string("model.animations.").size(), modelOutlinerNode.size())
 						);
 					}
 				}
@@ -1719,16 +1733,15 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			public:
 				void performAction() override {
 					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
-					if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
 						modelEditorTabController->view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
-						auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-						Model* model =
-							modelEditorTabController->view->getLodLevel() == 1?
-								prototype->getModel():
-								modelEditorTabController->getLODLevel(modelEditorTabController->view->getLodLevel())->getModel();
-						if (model == nullptr) return;
+						auto animationId = StringTools::substring(modelOutlinerNode, string("model.animations.").size(), modelOutlinerNode.size());
+						Model* model = modelEditorTabController->getLODLevelModel(lodLevel);
 						model->removeAnimationSetup(animationId);
-						modelEditorTabController->view->getEditorView()->reloadTabOutliner("model.animations");
+						modelEditorTabController->view->getEditorView()->reloadTabOutliner((lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model") + ".animations");
 					}
 				}
 				OnDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
@@ -1916,30 +1929,6 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		} else
 		if (node->getId().compare("button_model_save") == 0) {
 			onModelSave();
-		} else
-		if (node->getId().compare("button_pivot_apply") == 0) {
-			onPivotApply();
-		} else
-		if (node->getId().compare("button_rendering_apply") == 0) {
-			onRenderingApply();
-		} else
-		if (node->getId().compare("button_shaderparameters_apply") == 0) {
-			onShaderParametersApply();
-		} else
-		if (node->getId().compare("lod_level_apply") == 0) {
-			onLODLevelApply();
-		} else
-		if (node->getId().compare("lod_model_file_load") == 0) {
-			onLODLevelLoadModel();
-		} else
-		if (node->getId().compare("lod_model_file_clear") == 0) {
-			onLODLevelClearModel();
-		} else
-		if (node->getId().compare("button_lod_apply") == 0) {
-			onLODLevelApplySettings();
-		} else
-		if (node->getId().compare("button_materials_dropdown_apply") == 0) {
-			onMaterialDropDownApply();
 		} else
 		*/
 	}

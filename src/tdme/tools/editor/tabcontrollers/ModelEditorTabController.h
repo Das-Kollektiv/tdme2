@@ -105,9 +105,15 @@ private:
 	int renameAnimationLOD { -1 };
 
 	/**
-	 * @return prototype lod level or nullptr
+	 * Get LOD level
+	 * @return created or existing LOD level with given level
 	 */
 	PrototypeLODLevel* getLODLevel(int level);
+
+	/**
+	 * @return prototype lod level or nullptr
+	 */
+	Model* getLODLevelModel(int level);
 
 	/**
 	 * @return current selected model
@@ -195,12 +201,6 @@ public:
 	 * Set details content
 	 */
 	void setDetailsContent();
-
-	/**
-	 * Set lod level
-	 * @param level lod level
-	 */
-	void setLODLevel(int level);
 
 	/**
 	 * @return current material
@@ -397,9 +397,10 @@ public:
 
 	/**
 	 * Start rename animation
+	 * @param lodLevel lod level
 	 * @param animationId animation id
 	 */
-	void startRenameAnimation(const string& animationId);
+	void startRenameAnimation(int lodLevel, const string& animationId);
 
 	/**
 	 * Rename animation
@@ -408,8 +409,9 @@ public:
 
 	/**
 	 * Create animation setup
+	 * @param lodLevel lod level
 	 */
-	void createAnimationSetup();
+	void createAnimationSetup(int lodLevel);
 
 	/**
 	 * Create LOD
