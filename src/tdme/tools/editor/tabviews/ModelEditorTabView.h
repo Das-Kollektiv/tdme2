@@ -179,13 +179,18 @@ public:
 	/**
 	 * @return LOD level
 	 */
-	int getLodLevel() const;
+	int getLODLevel() const;
 
 	/**
-	 * Set lod level to display
+	 * Set LOD level to display
 	 * @param lodLevel lod level
 	 */
-	void setLodLevel(int lodLevel);
+	void setLODLevel(int lodLevel);
+
+	/**
+	 * Update LOD level
+	 */
+	void updateLODLevel();
 
 	/**
 	 * Issue file loading

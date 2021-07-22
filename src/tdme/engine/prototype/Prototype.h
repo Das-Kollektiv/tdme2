@@ -260,7 +260,7 @@ public:
 	}
 
 	/**
-	 * @return lod level 2
+	 * @return LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
 		return lodLevel2;
@@ -268,12 +268,12 @@ public:
 
 	/**
 	 * Set LOD level 2
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel2(PrototypeLODLevel* lodLevel);
 
 	/**
-	 * @return lod level 3
+	 * @return LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
 		return lodLevel3;
@@ -281,9 +281,15 @@ public:
 
 	/**
 	 * Set LOD level 3
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel3(PrototypeLODLevel* lodLevel);
+
+	/**
+	 * Remove LOD level
+	 * @param lodLevel LOD level
+	 */
+	void removeLODLevel(int lodLevel);
 
 	/**
 	 * @return particle systems count

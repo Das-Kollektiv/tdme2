@@ -450,51 +450,6 @@ void ModelEditorTabController::onQuit()
 {
 }
 
-void ModelEditorTabController::onModelLoad()
-{
-	class OnModelLoad: public virtual Action
-	{
-
-	public:
-		void performAction() override {
-			modelEditorTabController->view->loadFile(
-				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-			);
-			modelEditorTabController->modelPath.setPath(
-				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
-
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	if (fileName.length() == 0) {
-		fileName = view->getFileName();
-	}
-	fileName = Tools::getFileName(fileName);
-	vector<string> extensions = ModelReader::getModelExtensions();
-	extensions.push_back("tmodel");
-	popUps->getFileDialogScreenController()->show(
-		modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		view->getFileName(),
-		true,
-		new OnModelLoad(this)
-	);
-}
-
 void ModelEditorTabController::onModelReload()
 {
 	view->reloadFile();
@@ -531,7 +486,7 @@ void ModelEditorTabController::onModelReimport()
 	vector<string> extensions = ModelReader::getModelExtensions();
 	popUps->getFileDialogScreenController()->show(
 		modelPath.getPath(),
-		"Reimport model: ",
+		"Reimport model from: ",
 		ModelReader::getModelExtensions(),
 		view->getFileName(),
 		true,
@@ -785,7 +740,6 @@ void ModelEditorTabController::applyAnimationDetails() {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-
 }
 
 void ModelEditorTabController::setAnimationPreviewDetails() {
@@ -1601,16 +1555,98 @@ void ModelEditorTabController::createLOD() {
 	);
 }
 
+void ModelEditorTabController::setLODDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::setLODDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_lod\" src=\"resources/engine/gui/template_details_lod.xml\" />\n")
+	);
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_lod"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->setValue(prototypeLODLevel->getMinDistance());
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setLODDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateLODColorDetails(lodLevel);
+}
+
+void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::updateLODColorDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()));
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::updateLODColorDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::applyLODDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::applyLODDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	try {
+		prototypeLODLevel->setMinDistance(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyLODDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model, int* lodLevel) {
 	if (StringTools::startsWith(outlinerNode, "model.") == true) {
 		if (model != nullptr) *model = view->getPrototype()->getModel();
 		if (lodLevel != nullptr) *lodLevel = 1;
 		modelOutlinerNode = outlinerNode;
 	} else
+	if (outlinerNode == "lod2.model") {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = outlinerNode;
+	} else
 	if (StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
 		if (model != nullptr) *model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr;
 		if (lodLevel != nullptr) *lodLevel = 2;
 		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod2.").size(), outlinerNode.size());
+	} else
+	if (outlinerNode == "lod3.model") {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 3;
+		modelOutlinerNode = outlinerNode;
 	} else
 	if (StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
 		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
@@ -1642,17 +1678,26 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		Console::println(outlinerNode);
-		if (StringTools::startsWith(outlinerNode, "lod2.model") == true ||
+		auto haveDetails = false;
+		if (outlinerNode == "lod2.model" ||
 			StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
-			if (view->getLodLevel() != 2) view->setLodLevel(2);
+			if (view->getLODLevel() != 2) view->setLODLevel(2);
+			if (outlinerNode == "lod2.model") {
+				haveDetails = true;
+				setLODDetails(2);
+			}
 		} else
-		if (StringTools::startsWith(outlinerNode, "lod3.model") == true ||
+		if (outlinerNode == "lod3.model" ||
 			StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
-			if (view->getLodLevel() != 3) view->setLodLevel(3);
+			if (view->getLODLevel() != 3) view->setLODLevel(3);
+			if (outlinerNode == "lod3.model") {
+				haveDetails = true;
+				setLODDetails(3);
+			}
 		} else {
-			if (view->getLodLevel() != 1) view->setLodLevel(1);
+			if (view->getLODLevel() != 1) view->setLODLevel(1);
 		}
-		updateDetails(outlinerNode);
+		if (haveDetails == false) updateDetails(outlinerNode);
 	} else {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		for (auto& applyAnimationNode: applyAnimationNodes) {
@@ -1675,6 +1720,19 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
 			if (node->getId() == applyAnimationPreviewNode) {
 				applyAnimationPreviewDetails();
+				break;
+			}
+		}
+		for (auto& applyLODNode: applyLODNodes) {
+			if (node->getId() == applyLODNode) {
+				auto lodLevel = -1;
+				if (outlinerNode == "lod2.model") {
+					lodLevel = 2;
+				} else
+				if (outlinerNode == "lod3.model") {
+					lodLevel = 3;
+				}
+				if (lodLevel != -1) applyLODDetails(lodLevel);
 				break;
 			}
 		}
@@ -1713,19 +1771,6 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 		if (outlinerNode == "model") {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
-			// load
-			class OnModelLoadAction: public virtual Action
-			{
-			public:
-				void performAction() override {
-					modelEditorTabController->onModelReimport();
-				}
-				OnModelLoadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-				}
-			private:
-				ModelEditorTabController* modelEditorTabController;
-			};
-			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnModelLoadAction(this));
 
 			// reload
 			class OnModelReloadAction: public virtual Action
@@ -1754,6 +1799,58 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				ModelEditorTabController* modelEditorTabController;
 			};
 			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "lod2.model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// reimport
+			class OnLODDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					if (prototype == nullptr) return;
+					modelEditorTabController->view->setLODLevel(1);
+					prototype->removeLODLevel(lodLevel);
+					modelEditorTabController->view->getEditorView()->reloadTabOutliner("model");
+				}
+				OnLODDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_reimport", new OnLODDeleteAction(this, view->getPrototype(), 2));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "lod3.model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// reimport
+			class OnLODDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					if (prototype == nullptr) return;
+					modelEditorTabController->view->setLODLevel(2);
+					prototype->removeLODLevel(lodLevel);
+					modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod2.model");
+				}
+				OnLODDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_reimport", new OnLODDeleteAction(this, view->getPrototype(), 3));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
@@ -1974,6 +2071,64 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				};
 				popUps->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor(), new OnColorChangeAction(this, material));
 			}
+		} else
+		if (node->getId().compare("lod_color_add_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+			class OnColorChangeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeLODLevel->setColorAdd(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+					modelEditorTabController->updateLODColorDetails(lodLevel);
+					modelEditorTabController->view->updateLODLevel();
+				}
+				OnColorChangeAction(ModelEditorTabController* modelEditorTabController, int lodLevel, PrototypeLODLevel* prototypeLODLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel), prototypeLODLevel(prototypeLODLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+				PrototypeLODLevel* prototypeLODLevel;
+			};
+			popUps->getColorPickerScreenController()->show(prototypeLODLevel->getColorAdd(), new OnColorChangeAction(this, lodLevel, prototypeLODLevel));
+		} else
+		if (node->getId().compare("lod_color_mul_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+			class OnColorChangeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeLODLevel->setColorMul(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+					modelEditorTabController->updateLODColorDetails(lodLevel);
+					modelEditorTabController->view->updateLODLevel();
+				}
+				OnColorChangeAction(ModelEditorTabController* modelEditorTabController, int lodLevel, PrototypeLODLevel* prototypeLODLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel), prototypeLODLevel(prototypeLODLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+				PrototypeLODLevel* prototypeLODLevel;
+			};
+			popUps->getColorPickerScreenController()->show(prototypeLODLevel->getColorMul(), new OnColorChangeAction(this, lodLevel, prototypeLODLevel));
 		} else
 		if (node->getId() == "tdme.animations.rename_input") {
 			renameAnimation();

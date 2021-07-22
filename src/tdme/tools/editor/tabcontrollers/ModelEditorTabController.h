@@ -101,6 +101,10 @@ private:
 		"animationpreview_overlay3"
 	};
 
+	array<string, 4> applyLODNodes = {
+		"lod_min_distance",
+	};
+
 	string renameAnimationId;
 	int renameAnimationLOD { -1 };
 
@@ -221,11 +225,6 @@ public:
 	 * Unset statistics
 	 */
 	void unsetStatistics();
-
-	/**
-	 * On model load
-	 */
-	void onModelLoad();
 
 	/**
 	 * On model reload
@@ -414,6 +413,24 @@ public:
 	 * Create LOD
 	 */
 	void createLOD();
+
+	/**
+	 * Set LOD details
+	 * @param lodLevel lod level
+	 */
+	void setLODDetails(int lodLevel);
+
+	/**
+	 * Set LOD color details
+	 * @param lodLevel lod level
+	 */
+	void updateLODColorDetails(int lodLevel);
+
+	/**
+	 * Apply LOD details
+	 * @param lodLevel LOD level
+	 */
+	void applyLODDetails(int lodLevel);
 
 	/**
 	 * Get outliner node within model or LOD models

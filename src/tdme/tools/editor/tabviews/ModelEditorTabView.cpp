@@ -204,16 +204,21 @@ const string& ModelEditorTabView::getFileName()
 	return modelFile;
 }
 
-int ModelEditorTabView::getLodLevel() const {
+int ModelEditorTabView::getLODLevel() const {
 	return lodLevel;
 }
 
-void ModelEditorTabView::setLodLevel(int lodLevel) {
+void ModelEditorTabView::setLODLevel(int lodLevel) {
 	if (this->lodLevel != lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
 	}
+}
+
+void ModelEditorTabView::updateLODLevel() {
+	engine->reset();
+	initModelRequested = true;
 }
 
 void ModelEditorTabView::loadFile(const string& pathName, const string& fileName)

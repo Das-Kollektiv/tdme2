@@ -156,7 +156,7 @@ void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype,
 }
 
 void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* model, const string& outlinerNode) {
-	Console::println("PrototypeSoundsSubController::setSoundDetails(): " + outlinerNode);
+	Console::println("PrototypeSoundsSubController::updateDetails(): " + outlinerNode);
 
 	if (StringTools::startsWith(outlinerNode, "sounds.") == false) return;
 

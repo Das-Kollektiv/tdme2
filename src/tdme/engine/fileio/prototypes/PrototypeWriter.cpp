@@ -179,7 +179,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 				Value jLodLevel;
 				jLodLevel.SetObject();
 				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
-				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
+				jEntityRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
+				lodLevelIdx++;
 			}
 		}
 		{
@@ -193,7 +194,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 				Value jLodLevel;
 				jLodLevel.SetObject();
 				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
-				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
+				jEntityRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
+				lodLevelIdx++;
 			}
 		}
 	}

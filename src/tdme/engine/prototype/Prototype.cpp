@@ -184,6 +184,26 @@ void Prototype::setLODLevel3(PrototypeLODLevel* lodLevel) {
 	lodLevel3 = lodLevel;
 }
 
+void Prototype::removeLODLevel(int lodLevel) {
+	if (lodLevel == 2) {
+		if (lodLevel2 != nullptr) {
+			delete lodLevel2;
+		}
+		if (lodLevel3 == nullptr) {
+			lodLevel2 = nullptr;
+		} else {
+			lodLevel2 = lodLevel3;
+			lodLevel3 = nullptr;
+		}
+	} else
+	if (lodLevel == 3) {
+		if (lodLevel3 != nullptr) {
+			delete lodLevel3;
+		}
+		lodLevel3 = nullptr;
+	}
+}
+
 PrototypeAudio* Prototype::addSound(const string& id) {
 	auto sound = getSound(id);
 	if (sound != nullptr) return nullptr;
