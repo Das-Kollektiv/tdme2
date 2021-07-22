@@ -197,7 +197,7 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadFile(const string& pathName, const string& fileName);
+	void loadModel(const string& pathName, const string& fileName);
 
 	/**
 	 * Issue reimport model file

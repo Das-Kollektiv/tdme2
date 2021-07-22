@@ -455,14 +455,13 @@ void ModelEditorTabController::onModelReload()
 	view->reloadFile();
 }
 
-void ModelEditorTabController::onModelReimport()
-{
+void ModelEditorTabController::onModelLoad() {
 	class OnModelLoad: public virtual Action
 	{
 
 	public:
 		void performAction() override {
-			modelEditorTabController->view->reimportModel(
+			modelEditorTabController->view->loadModel(
 				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 				modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 			);
@@ -486,11 +485,50 @@ void ModelEditorTabController::onModelReimport()
 	vector<string> extensions = ModelReader::getModelExtensions();
 	popUps->getFileDialogScreenController()->show(
 		modelPath.getPath(),
-		"Reimport model from: ",
+		"Load model from: ",
 		ModelReader::getModelExtensions(),
 		view->getFileName(),
 		true,
 		new OnModelLoad(this)
+	);
+}
+
+void ModelEditorTabController::onModelReimport()
+{
+	class OnModelReimport: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			modelEditorTabController->view->reimportModel(
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnModelReimport(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Reimport model from: ",
+		ModelReader::getModelExtensions(),
+		view->getFileName(),
+		true,
+		new OnModelReimport(this)
 	);
 }
 
@@ -501,7 +539,7 @@ void ModelEditorTabController::saveFile(const string& pathName, const string& fi
 
 void ModelEditorTabController::loadFile(const string& pathName, const string& fileName)
 {
-	view->loadFile(pathName, fileName);
+	view->loadModel(pathName, fileName);
 }
 
 void ModelEditorTabController::showErrorPopUp(const string& caption, const string& message)
@@ -1785,6 +1823,20 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				ModelEditorTabController* modelEditorTabController;
 			};
 			popUps->getContextMenuScreenController()->addMenuItem("Reload", "contextmenu_reload", new OnModelReloadAction(this));
+
+			// load
+			class OnModelLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelLoad();
+				}
+				OnModelLoadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnModelLoadAction(this));
 
 			// reimport
 			class OnModelReimportAction: public virtual Action

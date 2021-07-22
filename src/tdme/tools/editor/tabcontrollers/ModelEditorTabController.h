@@ -232,6 +232,11 @@ public:
 	void onModelReload();
 
 	/**
+	 * On model load
+	 */
+	void onModelLoad();
+
+	/**
 	 * On model reload
 	 */
 	void onModelReimport();

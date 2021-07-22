@@ -221,10 +221,22 @@ void ModelEditorTabView::updateLODLevel() {
 	initModelRequested = true;
 }
 
-void ModelEditorTabView::loadFile(const string& pathName, const string& fileName)
+void ModelEditorTabView::loadModel(const string& pathName, const string& fileName)
 {
-	loadModelRequested = true;
+	// new model file
 	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
+	try {
+		// set model in entity
+		prototype->setModel(
+			ModelReader::read(
+				pathName,
+				fileName
+			)
+		);
+	} catch (Exception& exception) {
+		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	}
+	reimportPrototype();
 }
 
 void ModelEditorTabView::reimportModel(const string& pathName, const string& fileName)
