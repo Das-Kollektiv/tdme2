@@ -542,6 +542,65 @@ void ModelEditorTabController::loadFile(const string& pathName, const string& fi
 	view->loadModel(pathName, fileName);
 }
 
+void ModelEditorTabController::onLODLoad(int lodLevel) {
+	class OnLODLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+
+			modelEditorTabController->view->setLODLevel(1);
+
+			try {
+				// set model in LOD level
+				prototypeLODLevel->setModel(
+					ModelReader::read(
+						modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+						modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+					)
+				);
+			} catch (Exception& exception) {
+				Console::println(string("OnLODLoad::performAction(): An error occurred: ") + exception.what());;
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+
+			modelEditorTabController->view->setLODLevel(lodLevel);
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param prototype prototype
+		 * @param lodLevel LOD level
+		 */
+		OnLODLoad(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		Prototype* prototype;
+		int lodLevel;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Load LOD " + to_string(lodLevel) + " model from: ",
+		ModelReader::getModelExtensions(),
+		view->getFileName(),
+		true,
+		new OnLODLoad(this, view->getPrototype(), lodLevel)
+	);
+}
+
 void ModelEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
@@ -1859,7 +1918,22 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 
-			// reimport
+			// load
+			class OnLODLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onLODLoad(lodLevel);
+				}
+				OnLODLoadAction(ModelEditorTabController* modelEditorTabController, int lodLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 2));
+
+			// delete
 			class OnLODDeleteAction: public virtual Action
 			{
 			public:
@@ -1876,7 +1950,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				Prototype* prototype;
 				int lodLevel;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_reimport", new OnLODDeleteAction(this, view->getPrototype(), 2));
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLODDeleteAction(this, view->getPrototype(), 2));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
@@ -1885,7 +1959,22 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 
-			// reimport
+			// load
+			class OnLODLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onLODLoad(lodLevel);
+				}
+				OnLODLoadAction(ModelEditorTabController* modelEditorTabController, int lodLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 3));
+
+			// delete
 			class OnLODDeleteAction: public virtual Action
 			{
 			public:
@@ -1902,7 +1991,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				Prototype* prototype;
 				int lodLevel;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_reimport", new OnLODDeleteAction(this, view->getPrototype(), 3));
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLODDeleteAction(this, view->getPrototype(), 3));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);

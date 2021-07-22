@@ -242,6 +242,11 @@ public:
 	void onModelReimport();
 
 	/**
+	 * On LOD load
+	 */
+	void onLODLoad(int lodLevel);
+
+	/**
 	 * On tools compute normals
 	 */
 	void onToolsComputeNormal();
