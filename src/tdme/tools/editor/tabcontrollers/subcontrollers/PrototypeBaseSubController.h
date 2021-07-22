@@ -48,6 +48,12 @@ private:
 	array<string, 1> applyPropertyNodes = {
 		"property_value"
 	};
+
+	array<string, 2> applyBaseNodes = {
+		"prototype_name",
+		"prototype_description"
+	};
+
 	string renamePropertyName;
 
 public:
@@ -75,6 +81,18 @@ public:
 	 * @param xml xml
 	 */
 	void createPrototypePropertiesXML(Prototype* prototype, string& xml);
+
+	/**
+	 * Set property base details
+	 * @param prototype prototype
+	 */
+	void setPrototypeBaseDetails(Prototype* prototype);
+
+	/**
+	 * Apply property base details
+	 * @param prototype prototype
+	 */
+	void applyPrototypeBaseDetails(Prototype* prototype);
 
 	/**
 	 * Set property details

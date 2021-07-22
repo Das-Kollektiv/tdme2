@@ -85,6 +85,31 @@ void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototy
 	}
 }
 
+void PrototypeBaseSubController::setPrototypeBaseDetails(Prototype* prototype) {
+	editorView->setDetailsContent(
+		"<template id=\"details_prototype_base\" src=\"resources/engine/gui/template_details_base.xml\" />\n"
+	);
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_prototype_base"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_name"))->getController()->setValue(MutableString(prototype->getName()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_description"))->getController()->setValue(MutableString(prototype->getDescription()));
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void PrototypeBaseSubController::applyPrototypeBaseDetails(Prototype* prototype) {
+	try {
+		prototype->setName(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_name"))->getController()->getValue().getString());
+		prototype->setDescription(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_description"))->getController()->getValue().getString());
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeBaseSubController::applyPrototypeBaseDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const string& propertyName) {
 	auto property = prototype->getProperty(propertyName);
 	if (property == nullptr) return;
@@ -93,18 +118,19 @@ void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const 
 		"<template id=\"details_property\" src=\"resources/engine/gui/template_details_property.xml\" />\n"
 	);
 
-	auto screenNode = editorView->getScreenController()->getScreenNode();
-
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_property"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setPropertyDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("PrototypeBaseSubController::setPropertyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
 void PrototypeBaseSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
+	if (StringTools::startsWith(outlinerNode, "prototype") == true) {
+		setPrototypeBaseDetails(prototype);
+	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 		auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 		setPropertyDetails(prototype, selectedPropertyName);
@@ -248,6 +274,12 @@ void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prot
 		for (auto& applyPropertyNode: applyPropertyNodes) {
 			if (node->getId() == applyPropertyNode) {
 				applyPropertyValue(prototype);
+				break;
+			}
+		}
+		for (auto& applyBaseNode: applyBaseNodes) {
+			if (node->getId() == applyBaseNode) {
+				applyPrototypeBaseDetails(prototype);
 				break;
 			}
 		}
