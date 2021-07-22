@@ -154,6 +154,15 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		if (node->getId() == "menu_file_open") {
 			onOpenProject();
 		} else
+		if (node->getId() == "menu_file_save") {
+			onSaveCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveas") {
+			onSaveAsCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveall") {
+			onSaveAllTabs();
+		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
 		} else
@@ -226,7 +235,7 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	// forward onFocus to active tab tab controller
+	// forward onContextMenuRequested to active tab tab controller
 	auto selectedTabId = getSelectedTabId();
 	auto tabViewIt = tabViews.find(selectedTabId);
 	if (tabViewIt != tabViews.end()){
@@ -433,6 +442,10 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
 	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
+	if (StringTools::endsWith(fileName, ".tmodel") == false) {
+		showErrorPopUp("Error", "File format not yet supported");
+		return;
+	}
 	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
@@ -458,7 +471,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 			Console::println(string(exception.what()));
 		}
 	}
-	// try {
+	try {
 		auto prototype = PrototypeReader::read(
 			FileSystem::getInstance()->getPathName(absoluteFileName),
 			FileSystem::getInstance()->getFileName(absoluteFileName)
@@ -467,12 +480,10 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
-	/*
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	*/
 }
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
@@ -535,6 +546,33 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 	}
 }
 
+void EditorScreenController::onSaveCurrentTab() {
+	// forward save to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->save();
+	}
+}
+
+void EditorScreenController::onSaveAsCurrentTab() {
+	// forward saveAs to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->saveAs();
+	}
+}
+
+void EditorScreenController::onSaveAllTabs() {
+	// forward saveAs to active tab tab controller
+	for (auto& tabViewIt: tabViews) {
+		auto& tab = tabViewIt.second;
+		tab.getTabController()->save();
+	}
+}
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPortNode->getComputedConstraints();

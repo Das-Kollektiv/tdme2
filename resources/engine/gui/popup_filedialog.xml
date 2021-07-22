@@ -37,7 +37,7 @@
 						</layout>
 						<space height="10" />
 						<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-							<button id="filedialog_apply" width="*" text="Open" />
+							<button id="filedialog_apply" width="*" text="Apply" />
 							<space width="10" />
 							<button id="filedialog_abort" width="*" text="Cancel" />
 						</layout>						

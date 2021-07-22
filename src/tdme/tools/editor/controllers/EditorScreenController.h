@@ -252,6 +252,21 @@ public:
 	void setDetailsContent(const string& xml);
 
 	/**
+	 * On save current tab
+	 */
+	void onSaveCurrentTab();
+
+	/**
+	 * On save as current tab
+	 */
+	void onSaveAsCurrentTab();
+
+	/**
+	 * On save all tabs
+	 */
+	void onSaveAllTabs();
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

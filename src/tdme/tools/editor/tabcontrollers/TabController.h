@@ -38,4 +38,14 @@ struct tdme::tools::editor::tabcontrollers::TabController: public GUIActionListe
 	// ???
 	virtual GUIScreenNode* getScreenNode() = 0;
 
+	/**
+	 * Save
+	 */
+	virtual void save() = 0;
+
+	/**
+	 * Save
+	 */
+	virtual void saveAs() = 0;
+
 };

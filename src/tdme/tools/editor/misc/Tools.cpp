@@ -391,6 +391,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
 	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
+
 	if (modelEntity != nullptr) {
 		modelEntity->setPickable(true);
 		modelEntity->setScale(objectScale);

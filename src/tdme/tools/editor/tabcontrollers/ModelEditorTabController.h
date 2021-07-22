@@ -186,6 +186,8 @@ public:
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
+	void save() override;
+	void saveAs() override;
 
 	/**
 	 * Set outliner content
@@ -224,11 +226,6 @@ public:
 	 * On model load
 	 */
 	void onModelLoad();
-
-	/**
-	 * On model save
-	 */
-	void onModelSave();
 
 	/**
 	 * On model reload

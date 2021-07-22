@@ -195,6 +195,71 @@ void ModelEditorTabController::dispose()
 {
 }
 
+void ModelEditorTabController::save()
+{
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	try {
+		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::saveAs()
+{
+	class OnModelSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				modelEditorTabController->view->saveFile(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				modelEditorTabController->modelPath.setPath(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				);
+				modelEditorTabController->popUps->getFileDialogScreenController()->close();
+			} catch (Exception& exception) {
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	if (fileName.length() == 0) {
+		fileName = view->getFileName();
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
+			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
+		}
+	}
+	vector<string> extensions = {
+		"tmodel"
+	};
+	popUps->getFileDialogScreenController()->show(
+		Tools::getPathName(fileName),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnModelSave(this)
+	);
+}
+
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
 	for (auto nodeIt: subNodes) {
 		auto node = nodeIt.second;
@@ -427,58 +492,6 @@ void ModelEditorTabController::onModelLoad()
 		view->getFileName(),
 		true,
 		new OnModelLoad(this)
-	);
-}
-
-void ModelEditorTabController::onModelSave()
-{
-	class OnModelSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				modelEditorTabController->view->saveFile(
-					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-				modelEditorTabController->modelPath.setPath(
-					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
-				modelEditorTabController->popUps->getFileDialogScreenController()->close();
-			} catch (Exception& exception) {
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-			}
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
-
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	if (fileName.length() == 0) {
-		fileName = view->getFileName();
-		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
-			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
-		}
-	}
-	vector<string> extensions = {
-		"tmm"
-	};
-	fileName = Tools::getFileName(fileName);
-	popUps->getFileDialogScreenController()->show(
-		modelPath.getPath(),
-		"Save to: ",
-		extensions,
-		fileName,
-		false,
-		new OnModelSave(this)
 	);
 }
 
@@ -1697,6 +1710,54 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 		string modelOutlinerNode;
 		int lodLevel = -1;
 		getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+		if (outlinerNode == "model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// load
+			class OnModelLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelReimport();
+				}
+				OnModelLoadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnModelLoadAction(this));
+
+			// reload
+			class OnModelReloadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelReload();
+				}
+				OnModelReloadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Reload", "contextmenu_reload", new OnModelReloadAction(this));
+
+			// reimport
+			class OnModelReimportAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelReimport();
+				}
+				OnModelReimportAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
@@ -1917,19 +1978,5 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		if (node->getId() == "tdme.animations.rename_input") {
 			renameAnimation();
 		}
-		/*
-		if (node->getId().compare("button_model_load") == 0) {
-			onModelLoad();
-		} else
-		if (node->getId().compare("button_model_reload") == 0) {
-			onModelReload();
-		} else
-		if (node->getId().compare("button_model_reimport") == 0) {
-			onModelReimport();
-		} else
-		if (node->getId().compare("button_model_save") == 0) {
-			onModelSave();
-		} else
-		*/
 	}
 }
