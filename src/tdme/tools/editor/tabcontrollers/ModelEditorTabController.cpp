@@ -573,6 +573,7 @@ void ModelEditorTabController::onLODLoad(int lodLevel) {
 
 			modelEditorTabController->view->setLODLevel(lodLevel);
 			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevel) + ".model");
 		}
 
 		/**
