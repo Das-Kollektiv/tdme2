@@ -1177,6 +1177,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
 			// add texture
 			specularMaterialProperties->setDiffuseTexture(pathName, xmlDiffuseTextureFilename, pathName, xmlTransparencyTextureFilename);
+			if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 		}
 	}
 
