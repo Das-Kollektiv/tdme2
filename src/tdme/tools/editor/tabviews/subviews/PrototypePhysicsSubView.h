@@ -162,6 +162,13 @@ public:
 	void applyBoundingVolumeObb(Prototype* prototype, int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
+	 * Apply bounding volume convex mesh clear
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeConvexMeshClear(Prototype* prototype, int idx);
+
+	/**
 	 * On bounding volume convex mesh apply
 	 * @param prototype prototype
 	 * @param idx bounding volume index

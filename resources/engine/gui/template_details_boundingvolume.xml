@@ -9,8 +9,10 @@
 					<dropdown-option text="Sphere" value="sphere" on-mouse-click="boundingvolume_type_details.condition=sphere" />
 					<dropdown-option text="Capsule" value="capsule" on-mouse-click="boundingvolume_type_details.condition=capsule" />
 					<dropdown-option text="Bounding Box" value="obb" on-mouse-click="boundingvolume_type_details.condition=obb" />
-					<dropdown-option text="Imported Mesh" value="imported" on-mouse-click="boundingvolume_type_details.condition=imported" />
+					<dropdown-option text="Convex Mesh" value="convexmesh" on-mouse-click="boundingvolume_type_details.condition=convexmesh" />
+					<!--
 					<dropdown-option text="Generated Mesh" value="generated" on-mouse-click="boundingvolume_type_details.condition=generated" />
+					-->
 					<dropdown-option text="Terrain" value="6" on-mouse-click="boundingvolume_type_details.condition=terrain"/>
 
 			</dropdown>
@@ -205,12 +207,13 @@
 					
 				</layout>
 				
-				<layout show-on="imported" id="boundingvolume_imported" alignment="horizontal" width="100%" height="auto" vertical-align="center">
+				<layout show-on="convexmesh" id="boundingvolume_convexmesh" alignment="horizontal" width="100%" height="auto" vertical-align="center">
 				
-					<template show-on="imported" src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_imported_file" type="Convex Mesh" />
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_convexmesh_file" type="Convex Mesh" />
 					
 				</layout> 
 				
+				<!--
 				<layout show-on="generated" id="boundingvolume_generated" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
@@ -312,8 +315,10 @@
 
 				<layout show-on="terrain" id="boundingvolume_terrain" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 				</layout>				
+				-->
 
-			</element>			
+			</element>
+		
 		</layout>		
 	</layout>
 </element>

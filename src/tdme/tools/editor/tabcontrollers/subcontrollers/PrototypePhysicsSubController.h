@@ -241,6 +241,13 @@ public:
 	void applyBoundingVolumeObbDetails(Prototype* prototype, int idx);
 
 	/**
+	 * Apply bounding volume convex mesh details
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeConvexMeshDetails(Prototype* prototype, int idx);
+
+	/**
 	 * Create bounding volume
 	 * @param prototype prototype
 	 */

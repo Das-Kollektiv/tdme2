@@ -206,6 +206,16 @@ void PrototypePhysicsSubView::applyBoundingVolumeObb(Prototype* prototype, int i
 	setupModelBoundingVolume(prototype, idx);
 }
 
+void PrototypePhysicsSubView::applyBoundingVolumeConvexMeshClear(Prototype* prototype, int idx)
+{
+	if (prototype == nullptr) return;
+	clearModelBoundingVolume(idx);
+	auto prototypeBoundingVolume = prototype->getBoundingVolume(idx);
+	prototypeBoundingVolume->clearConvexMesh();
+	setupModelBoundingVolume(prototype, idx);
+}
+
+
 void PrototypePhysicsSubView::applyBoundingVolumeConvexMesh(Prototype* prototype, int idx, const string& fileName)
 {
 	if (prototype == nullptr) return;

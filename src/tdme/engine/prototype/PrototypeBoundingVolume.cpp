@@ -146,6 +146,15 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 	modelMeshFile = "";
 }
 
+void PrototypeBoundingVolume::clearConvexMesh()
+{
+	if (boundingVolume != nullptr) delete boundingVolume;
+	if (model != nullptr) delete model;
+	boundingVolume = nullptr;
+	model = nullptr;
+	modelMeshFile.clear();
+}
+
 void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;

@@ -115,7 +115,12 @@ public:
 	void setupAabb(const Vector3& min, const Vector3& max);
 
 	/**
-	 * Setup bounding volume sphere
+	 * Clear convex mesh
+	 */
+	void clearConvexMesh();
+
+	/**
+	 * Setup convex mesh
 	 * @param pathName path name
 	 * @param fileName file name
 	 */

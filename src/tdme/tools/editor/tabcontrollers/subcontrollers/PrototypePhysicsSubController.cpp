@@ -216,17 +216,19 @@ void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
 void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
 	if (outlinerNode == "physics") {
 		setPhysicsDetails(prototype);
-		view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+		boundingVolumeIdxActivated = PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->setDisplayBoundingVolume(true);
 	} else
 	if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
-		auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
-		setBoundingVolumeDetails(prototype, boundingVolumeIdx);
-		view->setDisplayBoundingVolumeIdx(boundingVolumeIdx);
+		boundingVolumeIdxActivated = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+		setBoundingVolumeDetails(prototype, boundingVolumeIdxActivated);
+		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->startEditingBoundingVolume(prototype);
 		view->setDisplayBoundingVolume(true);
 	} else {
-		view->setDisplayBoundingVolumeIdx(PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+		boundingVolumeIdxActivated = PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->endEditingBoundingVolume(prototype);
 		view->setDisplayBoundingVolume(false);
 	}
@@ -398,6 +400,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				);
 			} else
 			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("convexmesh");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));
 			} else {
 				Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx)));
@@ -487,6 +490,20 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 	view->updateGizmo(prototype);
 }
 
+void PrototypePhysicsSubController::applyBoundingVolumeConvexMeshDetails(Prototype* prototype, int idx) {
+	try {
+		auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdxActivated);
+		view->applyBoundingVolumeConvexMesh(
+			prototype,
+			idx,
+			boundingVolume != nullptr?boundingVolume->getModelMeshFile():""
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+	view->removeGizmo();
+}
+
 void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
 	auto boundingVolumeIdx = prototype->getBoundingVolumeCount();
 	auto boundingVolume = new PrototypeBoundingVolume(boundingVolumeIdx, prototype);
@@ -516,6 +533,7 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 				if (boundingVolumeType == "sphere") applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx); else
 				if (boundingVolumeType == "capsule") applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx); else
 				if (boundingVolumeType == "obb") applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx); else
+				if (boundingVolumeType == "convexmesh") applyBoundingVolumeConvexMeshDetails(prototype, boundingVolumeIdx); else
 					view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
 			} else {
 				for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
@@ -544,31 +562,58 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (StringTools::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
+		if (node->getId() == "boundingvolume_convexmesh_file_open") {
 			if (prototype != nullptr) {
-				boundingVolumeIdxActivated = Integer::parseInt(StringTools::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->startEditingBoundingVolume(prototype);
+				class OnConvexMeshFileOpen: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							prototypePhysicsSubController->view->applyBoundingVolumeConvexMesh(
+								prototype,
+								boundingVolumeIdx,
+								prototypePhysicsSubController->popUps->getFileDialogScreenController()->getPathName() + "/" + prototypePhysicsSubController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						prototypePhysicsSubController->view->removeGizmo();
+						prototypePhysicsSubController->popUps->getFileDialogScreenController()->close();
+					}
+					OnConvexMeshFileOpen(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype, int boundingVolumeIdx):
+						prototypePhysicsSubController(prototypePhysicsSubController),
+						prototype(prototype),
+						boundingVolumeIdx(boundingVolumeIdx) {
+						//
+					}
+				private:
+					PrototypePhysicsSubController* prototypePhysicsSubController;
+					Prototype* prototype;
+					int boundingVolumeIdx;
+				};
+
+				auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdxActivated);
+				if (boundingVolume != nullptr) {
+					auto fileName = boundingVolume->getModelMeshFile();
+					auto extensions = ModelReader::getModelExtensions();
+					popUps->getFileDialogScreenController()->show(
+						fileName.empty() == true?modelPath->getPath():Tools::getPathName(fileName),
+						"Load convex mesh from: ",
+						extensions,
+						Tools::getFileName(fileName),
+						false,
+						new OnConvexMeshFileOpen(this, prototype, boundingVolumeIdxActivated)
+					);
+				}
 			}
 		} else
-		if (node->getId() == "tab_properties_boundingvolume") {
+		if (node->getId() == "boundingvolume_convexmesh_file_remove") {
 			if (prototype != nullptr) {
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				if (boundingVolumeIdxActivated != PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(prototype);
-			}
-		} else
-		if (StringTools::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
-			if (prototype != nullptr) {
-				boundingVolumeIdxActivated = PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->endEditingBoundingVolume(prototype);
-			}
-		} else
-		if (StringTools::startsWith(node->getId(), "tab_properties_terrain") == true) {
-			if (prototype != nullptr) {
-				boundingVolumeIdxActivated = PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->endEditingBoundingVolume(prototype);
+				auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdxActivated);
+				if (boundingVolume != nullptr) {
+					view->applyBoundingVolumeConvexMeshClear(prototype, boundingVolumeIdxActivated);
+					view->removeGizmo();
+				}
 			}
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_") == true) {
@@ -614,6 +659,34 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 				Prototype* prototype;
 			};
 			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, prototype));
+
+			// import convex meshes from model
+			class OnImportConvexMeshesFromModel: public virtual Action
+			{
+			public:
+				void performAction() override {
+				}
+				OnImportConvexMeshesFromModel(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypePhysicsSubController* prototypePhysicsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Import convex meshes from model file", "contextmenu_importconvexmeshfrommodel", new OnImportConvexMeshesFromModel(this, prototype));
+
+			// generate convex meshes from model
+			class OnGenerateConvexMeshesFromModel: public virtual Action
+			{
+			public:
+				void performAction() override {
+				}
+				OnGenerateConvexMeshesFromModel(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypePhysicsSubController* prototypePhysicsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Generate convex meshes from model file", "contextmenu_generateconvexmeshfrommodel", new OnGenerateConvexMeshesFromModel(this, prototype));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
