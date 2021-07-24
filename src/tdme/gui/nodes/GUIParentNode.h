@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <unordered_set>
 #include <string>
 #include <vector>
 
@@ -13,7 +13,7 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::set;
+using std::unordered_set;
 using std::string;
 using std::vector;
 
@@ -219,7 +219,7 @@ public:
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
 
 	/**
 	 * Invalidate render caches

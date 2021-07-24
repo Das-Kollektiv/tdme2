@@ -1,9 +1,9 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -26,12 +26,12 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::map;
 using std::remove;
 using std::reverse;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
@@ -385,7 +385,7 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
 {
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
@@ -523,7 +523,7 @@ void GUIScreenNode::tick() {
 	}
 }
 
-void GUIScreenNode::getValues(map<string, MutableString>& values)
+void GUIScreenNode::getValues(unordered_map<string, MutableString>& values)
 {
 	values.clear();
 	getChildControllerNodes(childControllerNodes);
@@ -545,7 +545,7 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 	}
 }
 
-void GUIScreenNode::setValues(const map<string, MutableString>& values)
+void GUIScreenNode::setValues(const unordered_map<string, MutableString>& values)
 {
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {

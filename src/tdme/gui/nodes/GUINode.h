@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -27,9 +27,9 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
-using std::set;
 using std::string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -160,7 +160,7 @@ protected:
 	GUINodeConditions showOn;
 	GUINodeConditions hideOn;
 	GUINodeController* controller { nullptr };
-	map<string, GUIEffect*> effects;
+	unordered_map<string, GUIEffect*> effects;
 	int guiEffectOffsetX;
 	int guiEffectOffsetY;
 	bool conditionsMet;
@@ -518,7 +518,7 @@ public:
 	 * @param eventNodeIds event node ids
 	 * @param eventFloatingNodeIds event floating node ids
 	 */
-	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds);
 
 	/**
 	 * @return controller

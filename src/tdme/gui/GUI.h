@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -23,10 +23,10 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
 
-using std::map;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::application::InputEventHandler;
@@ -69,12 +69,12 @@ class tdme::gui::GUI final: public virtual InputEventHandler
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
 private:
-	static map<string, GUIFont*>* fontCache;
-	static map<string, Texture*>* imageCache;
+	static unordered_map<string, GUIFont*>* fontCache;
+	static unordered_map<string, Texture*>* imageCache;
 
 	GUIRenderer* guiRenderer { nullptr };
 	Engine* engine { nullptr };
-	map<string, GUIScreenNode*> screens;
+	unordered_map<string, GUIScreenNode*> screens;
 	GUIColor foccussedBorderColor;
 	vector<GUIElementNode*> focusableNodes;
 	vector<GUIScreenNode*> focusableScreenNodes;
@@ -90,11 +90,11 @@ private:
 	int width;
 	int height;
 	int mouseButtonLast;
-	map<string, set<string>> mouseOutCandidateEventNodeIds;
-	map<string, set<string>> mouseOutClickCandidateEventNodeIds;
-	map<string, set<string>> mousePressedEventNodeIds;
-	map<string, set<string>> mouseDraggingEventNodeIds;
-	map<string, bool> mouseIsDragging;
+	unordered_map<string, unordered_set<string>> mouseOutCandidateEventNodeIds;
+	unordered_map<string, unordered_set<string>> mouseOutClickCandidateEventNodeIds;
+	unordered_map<string, unordered_set<string>> mousePressedEventNodeIds;
+	unordered_map<string, unordered_set<string>> mouseDraggingEventNodeIds;
+	unordered_map<string, bool> mouseIsDragging;
 
 	bool altDown { false };
 	bool controlDown { false };
@@ -126,7 +126,7 @@ private:
 	 * @param mousePressedEventNodeIds mouse pressed event node ids
 	 * @param floatingNodes check if to gather floating nodes only
 	 */
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, const set<string>& mouseOutClickCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes);
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_set<string>& mouseOutCandidateEventNodeIds, const unordered_set<string>& mouseOutClickCandidateEventNodeIds, unordered_set<string>& mousePressedEventNodeIds, bool floatingNodes);
 
 	/**
 	 * Handle mouse event for given node

@@ -1,8 +1,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 #include <algorithm>
-#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -28,9 +28,9 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::events::GUIMouseEvent;
@@ -545,7 +545,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
 }
 
-void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
+void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
 {
 	if (conditionsMet == false)
 		return;

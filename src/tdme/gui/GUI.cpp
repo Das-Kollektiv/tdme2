@@ -5,9 +5,9 @@
 #endif
 
 #include <algorithm>
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -33,11 +33,11 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
 
-using std::map;
 using std::remove;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -64,8 +64,8 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Time;
 
-map<string, GUIFont*>* GUI::fontCache = new map<string, GUIFont*>();
-map<string, Texture*>* GUI::imageCache = new map<string, Texture*>();
+unordered_map<string, GUIFont*>* GUI::fontCache = new unordered_map<string, GUIFont*>();
+unordered_map<string, Texture*>* GUI::imageCache = new unordered_map<string, Texture*>();
 
 GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
@@ -471,11 +471,11 @@ bool GUI::isHavingMouseInteraction(GUINode* node) {
 		mouseDraggingEventNodeIds[screenNodeId].find(nodeId) != mouseDraggingEventNodeIds[screenNodeId].end();
 }
 
-void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, const set<string>& mouseOutClickCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes)
+void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_set<string>& mouseOutCandidateEventNodeIds, const unordered_set<string>& mouseOutClickCandidateEventNodeIds, unordered_set<string>& mousePressedEventNodeIds, bool floatingNodes)
 {
 	// handle each event
-	set<string> mouseEventNodeIgnore;
-	set<string> mouseEventNodeIds;
+	unordered_set<string> mouseEventNodeIgnore;
+	unordered_set<string> mouseEventNodeIds;
 
 	//
 	event->setX((float)event->getXUnscaled() * (float)node->getScreenNode()->getScreenWidth() / (float)width + node->getScreenNode()->getGUIEffectOffsetX());
@@ -597,8 +597,8 @@ void GUI::handleEvents()
 {
 	lockEvents();
 
-	map<string, set<string>> _mouseOutCandidateEventNodeIds;
-	map<string, set<string>> _mouseOutClickCandidateEventNodeIds;
+	unordered_map<string, unordered_set<string>> _mouseOutCandidateEventNodeIds;
+	unordered_map<string, unordered_set<string>> _mouseOutClickCandidateEventNodeIds;
 
 	//
 	auto renderScreensCopy = renderScreens;

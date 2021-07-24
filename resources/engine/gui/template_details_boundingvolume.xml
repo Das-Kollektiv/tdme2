@@ -207,7 +207,7 @@
 				
 				<layout show-on="imported" id="boundingvolume_imported" alignment="horizontal" width="100%" height="auto" vertical-align="center">
 				
-					<template show-on="imported" src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_imported" type="Convex Mesh" />
+					<template show-on="imported" src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_imported_file" type="Convex Mesh" />
 					
 				</layout> 
 				
