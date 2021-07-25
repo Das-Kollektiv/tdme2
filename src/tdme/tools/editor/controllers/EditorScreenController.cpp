@@ -428,7 +428,20 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					xml+= "<layout alignment=\"horizontal\">\n";
 				}
 				// TODO: how to associate button with file name
-				xml+= "<button id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + GUIParser::escapeQuotes(fileName) + "\" />\n";
+				string icon = "resources/engine/images/folder.png";
+				string thumbNail = "resources/engine/textures/terrain_dirt.png";
+				if (StringTools::endsWith(fileName, ".png") == true) thumbNail = relativePath;
+				xml+=
+					string() +
+					"<button " +
+					"id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"value=\"" + GUIParser::escapeQuotes(relativePath) + "\" " +
+					"template=\"button_template_thumbnail.xml\" " +
+					"size=\"75\" " +
+					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
+					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"/>\n";
 				idx++;
 			}
 		}
