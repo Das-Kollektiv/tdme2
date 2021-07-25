@@ -15,10 +15,13 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 
 using std::string;
 using std::unordered_map;
@@ -34,7 +37,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
-using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::math::Math;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
@@ -78,6 +81,8 @@ void ContextMenuScreenController::show(int mouseX, int mouseY)
 {
 	auto x = static_cast<int>((float)mouseX * (float)screenNode->getScreenWidth() / (float)Engine::getInstance()->getGUI()->getWidth());
 	auto y = static_cast<int>((float)mouseY * (float)screenNode->getScreenHeight() / (float)Engine::getInstance()->getGUI()->getHeight());
+	x = Math::min(x, screenNode->getScreenWidth() - contextMenuNode->getComputedConstraints().width);
+	y = Math::min(y, screenNode->getScreenHeight() - contextMenuNode->getComputedConstraints().height);
 	contextMenuNode->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	contextMenuNode->getRequestsConstraints().left = x;
 	contextMenuNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;

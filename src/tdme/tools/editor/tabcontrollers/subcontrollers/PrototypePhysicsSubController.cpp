@@ -862,7 +862,7 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 			private:
 				PrototypePhysicsSubController* prototypePhysicsSubController;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Import convex meshes from model file", "contextmenu_importconvexmeshfrommodel", new OnImportConvexMeshesFromModel(this, prototype));
+			popUps->getContextMenuScreenController()->addMenuItem("Import convex meshes", "contextmenu_importconvexmeshfrommodel", new OnImportConvexMeshesFromModel(this, prototype));
 
 			// generate convex meshes from model
 			class OnGenerateConvexMeshesFromModel: public virtual Action
@@ -877,7 +877,7 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 				PrototypePhysicsSubController* prototypePhysicsSubController;
 				Prototype* prototype;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Generate convex meshes from model file", "contextmenu_generateconvexmeshfrommodel", new OnGenerateConvexMeshesFromModel(this, prototype));
+			popUps->getContextMenuScreenController()->addMenuItem("Generate convex meshes", "contextmenu_generateconvexmeshfrommodel", new OnGenerateConvexMeshesFromModel(this, prototype));
 
 			// delete convex meshes
 			class OnDeleteConvexMeshesFromModel: public virtual Action
