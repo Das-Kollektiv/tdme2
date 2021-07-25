@@ -593,6 +593,7 @@ SRCS = \
 	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
 	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
 	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
+	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
