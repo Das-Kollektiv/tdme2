@@ -10,6 +10,7 @@ namespace misc {
 	class CameraRotationInputHandler;
 	class CameraRotationInputHandlerEventHandler;
 	class FileDialogPath;
+	class GenerateConvexMeshes;
 	class Gizmo;
 	class PopUps;
 	class Tools;

@@ -213,6 +213,16 @@ public:
 	void setBoundingVolumeOBBDetails(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
+	 * Set import convex mesh from model details
+	 */
+	void setImportConvexMeshFromModelDetails();
+
+	/**
+	 * Set generate convex mesh from model details
+	 */
+	void setGenerateConvexMeshFromModelDetails();
+
+	/**
 	 * Set bounding volume details
 	 * @param prototype prototype
 	 * @param boundingVolumeIdx bounding volume index
