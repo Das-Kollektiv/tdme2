@@ -55,6 +55,7 @@ PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
 	modelMeshFile = "";
 	model = nullptr;
 	boundingVolume = nullptr;
+	generated = false;
 }
 
 PrototypeBoundingVolume::~PrototypeBoundingVolume() {

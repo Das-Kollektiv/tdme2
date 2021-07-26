@@ -81,13 +81,13 @@ private:
 	 * Reads a prototype from JSON object
 	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name or null
-	 * @param jEntityRoot JSON entity root
+	 * @param jPrototypeRoot JSON entity root
 	 * @param transformFilter transform filter or nullptr
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	static Prototype* read(int id, const string& pathName, Value& jEntityRoot, PrototypeTransformFilter* transformFilter = nullptr);
+	static Prototype* read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr);
 
 	/**
 	 * Parse bounding volume
