@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -56,6 +57,7 @@ using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 
+using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -158,7 +160,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			modelFileName
 		);
 
-		{
+		// we can only use the offscreen engine currently if having a GL/Vulkan window and context
+		if (Application::hasApplication() == true) {
 			vector<uint8_t> pngData;
 			string base64PNGData;
 			Tools::oseThumbnail(prototype, pngData);

@@ -54,6 +54,13 @@ public:
 	static constexpr int FPS { 60 };
 
 	/**
+	 * @return if having a GL/Vulkan window and context
+	 */
+	inline static bool hasApplication() {
+		return application != nullptr;
+	}
+
+	/**
 	 * @return if FPS should be limited to 60 frames per seconds
 	 */
 	inline static bool isLimitFPS() {

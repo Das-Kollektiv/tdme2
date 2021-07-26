@@ -139,9 +139,9 @@ int main(int argc, char** argv)
 				Prototype_Type::MODEL,
 				fileNameWithoutExtension,
 				fileNameWithoutExtension,
-				"",
+				pathName + "/" + fileName,
 				FileSystem::getInstance()->getPathName(modelFileName) + "/" + FileSystem::getInstance()->getFileName(modelFileName),
-				StringTools::replace(StringTools::replace(StringTools::replace(FileSystem::getInstance()->getFileName(modelFileName), "\\", "_"), "/", "_"), ":", "_") + ".png",
+				string(),
 				model,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
