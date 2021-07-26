@@ -1986,6 +1986,40 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	return true;
 }
 
+bool Engine::makeScreenshot(vector<uint8_t>& pngData)
+{
+	// use framebuffer if we have one
+	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
+
+	// fetch pixel
+	auto pixels = renderer->readPixels(0, 0, width, height);
+	if (pixels == nullptr) {
+		Console::println("Engine::makeScreenshot(): Failed to read pixels");
+		return false;
+	}
+
+	// create texture, write and delete
+	auto texture = new Texture(
+		"tdme.engine.makescreenshot",
+		32,
+		width,
+		height,
+		width,
+		height,
+		pixels
+	);
+
+	texture->acquireReference();
+	PNGTextureWriter::write(texture, pngData);
+	texture->releaseReference();
+
+	// unuse framebuffer if we have one
+	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
+
+	//
+	return true;
+}
+
 void Engine::resetPostProcessingPrograms() {
 	postProcessingPrograms.clear();
 }

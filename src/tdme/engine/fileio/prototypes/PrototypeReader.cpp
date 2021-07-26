@@ -36,6 +36,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -82,6 +83,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
+using tdme::utilities::Base64EncDec;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -92,6 +94,25 @@ using tdme::utilities::Terrain;
 
 using rapidjson::Document;
 using rapidjson::Value;
+
+bool PrototypeReader::readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData) {
+	try {
+		auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+
+		Document jEntityRoot;
+		jEntityRoot.Parse(jsonContent.c_str());
+
+		string thumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()?jEntityRoot["thumbnail"].GetString():"";
+		if (thumbnail.empty() == true) return false;
+
+		Base64EncDec::decode(thumbnail, pngData);
+
+		return true;
+	} catch (Exception& exception) {
+		Console::println("PrototypeReader::readThumbnail(): An error occurred: " + pathName + "/" + fileName + ": " + exception.what());
+		return false;
+	}
+}
 
 Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter)
 {
@@ -115,7 +136,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		static_cast<float>(jEntityRoot["pz"].GetFloat())
 	);
 	auto prototypeType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
-	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
+	auto thumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()?jEntityRoot["thumbnail"].GetString():"";
 	auto name = (jEntityRoot["name"].GetString());
 	auto description = (jEntityRoot["descr"].GetString());
 	string modelFileName = "";
@@ -153,7 +174,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		description,
 		"",
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
-		modelThumbnail,
+		thumbnail,
 		model,
 		pivot
 	);

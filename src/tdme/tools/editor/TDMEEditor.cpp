@@ -68,11 +68,6 @@ void TDMEEditor::main(int argc, char** argv)
 	tdmeEditor->run(argc, argv, "TDMEEditor");
 }
 
-TDMEEditor* TDMEEditor::getInstance()
-{
-	return instance;
-}
-
 void TDMEEditor::setView(View* view)
 {
 	viewNew = view;

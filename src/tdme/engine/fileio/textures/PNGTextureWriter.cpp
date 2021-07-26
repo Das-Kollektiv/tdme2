@@ -4,8 +4,11 @@
 #include <stdlib.h>
 
 #include <string>
+#include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
@@ -13,40 +16,60 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
+using tdme::engine::fileio::textures::PNGTextureWriter;
+
+using tdme::engine::fileio::textures::Texture;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Console;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+
+void PNGTextureWriter::writePNGDataToMemory(png_structp png_ptr, png_bytep inBytes, png_size_t inBytesToWrite) {
+	png_voidp io_ptr = png_get_io_ptr(png_ptr);
+	if (io_ptr == nullptr) return;
+
+	PNGOutputStream* pngOutputStream = static_cast<PNGOutputStream*>(io_ptr);
+	pngOutputStream->writeBytes((int8_t*)inBytes, inBytesToWrite);
+}
+
+void PNGTextureWriter::flushPNGDataToMemory(png_structp png_ptr) {
+	// no op
+}
 
 bool PNGTextureWriter::write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel, bool flipY) {
-	// TODO: use tdme::os::filesystem
-	// see: https://gist.github.com/niw/5963798
-	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
-	if (!fp) {
-		Console::println("PNGTextureWriter::write(): Failed to create file: " + pathName + "/" + fileName);
-		return false;
-	}
+	vector<uint8_t> data;
+	if (write(texture, data, removeAlphaChannel, flipY) == false) return false;
 
+	FileSystem::getInstance()->setContent(pathName, fileName, data);
+
+	return true;
+}
+
+bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
+	// see: https://gist.github.com/niw/5963798
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png) {
-		fclose(fp);
 		return false;
 	}
 
 	png_infop info = png_create_info_struct(png);
 	if (!info) {
-		fclose(fp);
 		return false;
 	}
 
 	if (setjmp(png_jmpbuf(png))) {
-		fclose(fp);
 		return false;
 	}
 
-	png_init_io(png, fp);
+	// create PNG input stream
+	PNGOutputStream pngOutputStream(&pngData);
+
+	// set up custom read function
+	png_set_write_fn(png, &pngOutputStream, PNGTextureWriter::writePNGDataToMemory, PNGTextureWriter::flushPNGDataToMemory);
 
 	//
 	auto bytesPerPixel = texture->getDepth() / 8;
@@ -85,8 +108,6 @@ bool PNGTextureWriter::write(Texture* texture, const string& pathName, const str
 	png_write_end(png, NULL);
 
 	free (row_pointers);
-
-	fclose(fp);
 
 	png_destroy_write_struct(&png, &info);
 

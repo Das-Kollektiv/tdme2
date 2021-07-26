@@ -107,7 +107,7 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 	this->description = description;
 	this->fileName = fileName;
 	this->modelFileName = modelFileName;
-	this->thumbnailFileName = thumbnail;
+	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
 	if (this->type == Prototype_Type::PARTICLESYSTEM) {

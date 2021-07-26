@@ -110,6 +110,7 @@ Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
 Model* Tools::defaultOBB = nullptr;
+Tools::ToolsShutdown Tools::toolsShutdown;
 
 void Tools::setDefaultLight(Light* light)
 {
@@ -128,6 +129,7 @@ void Tools::setDefaultLight(Light* light)
 
 void Tools::oseInit()
 {
+	if (osEngine != nullptr) return;
 	osEngine = Engine::createOffScreenInstance(128, 128, false);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
@@ -140,21 +142,24 @@ void Tools::oseDispose()
 	delete osEngine;
 }
 
-void Tools::oseThumbnail(Prototype* model)
+void Tools::oseThumbnail(Prototype* prototype, vector<uint8_t>& pngData)
 {
+	oseInit();
 	Vector3 objectScale;
 	Transformations oseLookFromRotations;
 	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupPrototype(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
+	Tools::setupPrototype(prototype, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
-	// osEngine->makeScreenshot("tmp", model->getThumbnail());
+	osEngine->makeScreenshot(pngData);
+	/*
 	osEngine->setSceneColor(Color4(0.8f, 0.0f, 0.0f, 1.0f));
 	osEngine->display();
-	// osEngine->makeScreenshot("tmp", "selected_" + model->getThumbnail());
+	osEngine->makeScreenshot(pngData);
+	*/
 	osEngine->reset();
 }
 
@@ -529,3 +534,8 @@ Model* Tools::getDefaultObb() {
 	return defaultOBB;
 
 }
+
+Tools::ToolsShutdown::~ToolsShutdown() {
+	Console::println("Tools::ToolsShutdown::~ToolsShutdown(): Disposing offscreen engine");
+	Tools::oseDispose();
+};

@@ -45,6 +45,12 @@ private:
 	static Model* gizmoRotations;
 	static Model* defaultOBB;
 
+	struct ToolsShutdown {
+		~ToolsShutdown();
+	};
+
+	static ToolsShutdown toolsShutdown;
+
 public:
 	/**
 	 * Set up given engine light with default light
@@ -63,10 +69,11 @@ public:
 	static void oseDispose();
 
 	/**
-	 * Make a thumbnail of given model with off screen engine
-	 * @param model model
+	 * Make a thumbnail of given prototype with off screen engine
+	 * @param prototype prototype
+	 * @param pngData PNG data
 	 */
-	static void oseThumbnail(Prototype* model);
+	static void oseThumbnail(Prototype* prototype, vector<uint8_t>& pngData);
 
 	/**
 	 * Compute max axis dimension for given bounding box

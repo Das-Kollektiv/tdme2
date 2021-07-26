@@ -36,6 +36,14 @@ class tdme::engine::fileio::prototypes::PrototypeReader final
 
 public:
 	/**
+	 * Read thumbnail from file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param pngData PNG data
+	 */
+	static bool readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData);
+
+	/**
 	 * Reads a prototype from file
 	 * @param pathName path name
 	 * @param fileName file name

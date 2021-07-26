@@ -60,7 +60,7 @@ private:
 	string description;
 	string fileName;
 	string modelFileName;
-	string thumbnailFileName;
+	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
 	PrototypeLODLevel* lodLevel2 { nullptr };
@@ -93,7 +93,7 @@ public:
 	 * @param description description
 	 * @param fileName file name
 	 * @param modelFileName model file name
-	 * @param thumbnail thumbnail
+	 * @param thumbnail thumbnail PNG data
 	 * @param model model
 	 * @param pivot pivot
 	 */
@@ -179,10 +179,10 @@ public:
 	}
 
 	/**
-	 * @return thumbnail file name
+	 * @return thumbnail PNG data
 	 */
-	inline const string& getThumbnailFileName() {
-		return thumbnailFileName;
+	inline const string& getThumbnail() {
+		return thumbnail;
 	}
 
 	/**

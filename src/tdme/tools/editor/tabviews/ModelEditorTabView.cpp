@@ -185,7 +185,6 @@ void ModelEditorTabView::initModel()
 	}
 	modelFile = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
-	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {

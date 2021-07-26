@@ -1048,6 +1048,14 @@ public:
 	bool makeScreenshot(const string& pathName, const string& fileName);
 
 	/**
+	 * Creates a PNG file from current screen into a data vector
+	 * 	This does not seem to work with GLES2 and offscreen engines
+	 * @param pngData png data
+	 * @return success
+	 */
+	bool makeScreenshot(vector<uint8_t>& pngData);
+
+	/**
 	 * Clear post processing programs
 	 */
 	void resetPostProcessingPrograms();

@@ -41,7 +41,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
@@ -89,7 +90,8 @@ using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
+using tdme::utilities::Base64EncDec;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
@@ -106,6 +108,7 @@ void PrototypeWriter::copyFile(const string& source, const string& dest)
 void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
 {
 	prototype->setFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+
 	Document jRoot;
 	jRoot.SetObject();
 	write(jRoot, jRoot, prototype);
@@ -154,19 +157,16 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			modelPathName,
 			modelFileName
 		);
-		jEntityRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
-		/*
-		try {
-			auto thumbnail = modelFileName + ".png";
-			jEntityRoot.AddMember("thumbnail] = (thumbnail));
-			copyFile("./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
-		} catch (Exception& exception) {
-			Console::print(string("PrototypeWriter::export(): An error occurred: '));
-			Console::print(entity->getFileName());
-			Console::print(string(": "));
-			Console::println(exception.what());
+
+		{
+			vector<uint8_t> pngData;
+			string base64PNGData;
+			Tools::oseThumbnail(prototype, pngData);
+			Base64EncDec::encode(pngData, base64PNGData);
+			jEntityRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
-		*/
+
+		jEntityRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 		jEntityRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
