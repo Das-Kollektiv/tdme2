@@ -314,13 +314,16 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	path.clear();
 
 	// equal start and end position?
-	if (startPosition.equals(endPosition, 0.1f) == true) {
+	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
+		path.push_back(startPosition);
 		path.push_back(endPosition);
 		return true;
 	} else
 	// equal start and end position?
 	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
+		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
+		path.push_back(startPosition);
 		path.push_back(endPosition);
 		return true;
 	}
