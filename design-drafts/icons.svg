@@ -47,8 +47,8 @@
      showgrid="false"
      inkscape:pagecheckerboard="true"
      inkscape:zoom="2"
-     inkscape:cx="146.5"
-     inkscape:cy="-282.75"
+     inkscape:cx="464"
+     inkscape:cy="-202.75"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -5491,7 +5491,7 @@
        id="path17991-2"
        inkscape:label="info" />
     <g
-       transform="matrix(-1,0,0,1,1652.7129,-42.262354)"
+       transform="matrix(-1,0,0,1,1661.7129,-42.262354)"
        style="display:inline;opacity:0.99;fill:#ffffff;enable-background:new"
        id="g8530-0-8"
        inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\scene.png"
@@ -6177,6 +6177,60 @@
       <rect
          style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
          id="rect5588-9-6-5-5-2"
+         width="5.4323902"
+         height="5.4323902"
+         x="1.573222"
+         y="17.994387"
+         rx="0.20626861"
+         ry="0.22020571" />
+    </g>
+    <g
+       style="display:inline;stroke-width:1.3125;enable-background:new"
+       id="bv"
+       inkscape:label="bv"
+       transform="matrix(0.76190479,0,0,0.76190479,370.30136,-337.34897)"
+       inkscape:export-filename="D:\Projekte\AScottishWarstory\tdme2-ui\resources\engine\images\bv.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="opacity:1;fill:none;fill-opacity:0.6;stroke:#ffffff;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5588-6-3"
+         width="15.818021"
+         height="15.818021"
+         x="4.1642118"
+         y="5.017767"
+         rx="0.60061246"
+         ry="0.64119446" />
+      <rect
+         style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+         id="rect5588-9-6-6"
+         width="5.4323902"
+         height="5.4323902"
+         x="1.573222"
+         y="2.4267774"
+         rx="0.20626861"
+         ry="0.22020571" />
+      <rect
+         style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+         id="rect5588-9-6-5-7"
+         width="5.4323902"
+         height="5.4323902"
+         x="17.140831"
+         y="2.4267774"
+         rx="0.20626861"
+         ry="0.22020571" />
+      <rect
+         style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+         id="rect5588-9-6-5-5-8"
+         width="5.4323902"
+         height="5.4323902"
+         x="17.140831"
+         y="17.994387"
+         rx="0.20626861"
+         ry="0.22020571" />
+      <rect
+         style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.31249;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new"
+         id="rect5588-9-6-5-5-2-7"
          width="5.4323902"
          height="5.4323902"
          x="1.573222"
