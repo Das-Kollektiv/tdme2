@@ -6,9 +6,12 @@
 #include <vector>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/utilities/Action.h>
@@ -29,6 +32,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
@@ -47,9 +51,12 @@ using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::utilities::Action;
 using tdme::gui::nodes::GUIElementNode;
@@ -69,6 +76,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
@@ -494,10 +502,34 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
 	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
-	if (StringTools::endsWith(fileName, ".tmodel") == false) {
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	auto isModel = false;
+	auto isPrototype = false;
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) isPrototype = true;
+	for (auto& extension: ModelReader::getModelExtensions()) {
+		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+	}
+	if (isModel == false && isPrototype == false) {
 		showErrorPopUp("Error", "File format not yet supported");
 		return;
 	}
+
+	//
+	Model* model = nullptr;
+	if (isModel == true) {
+		try {
+			model = ModelReader::read(Tools::getPathName(relativeProjectFileName), Tools::getFileName(relativeProjectFileName));
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		if (model == nullptr) {
+			showErrorPopUp("Error", "Could not read model file");
+			return;
+		}
+	}
+
+	//
 	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
@@ -524,10 +556,26 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 		}
 	}
 	try {
-		auto prototype = PrototypeReader::read(
-			FileSystem::getInstance()->getPathName(absoluteFileName),
-			FileSystem::getInstance()->getFileName(absoluteFileName)
-		);
+		Prototype* prototype = nullptr;
+		if (isPrototype == true) {
+			prototype = PrototypeReader::read(
+				FileSystem::getInstance()->getPathName(absoluteFileName),
+				FileSystem::getInstance()->getFileName(absoluteFileName)
+			);
+		} else
+		if (isModel == true) {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::MODEL,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName) + ".tmodel",
+				relativeProjectFileName,
+				string(),
+				model,
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+		}
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
