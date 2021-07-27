@@ -5,10 +5,16 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -16,6 +22,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -25,6 +32,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
@@ -41,10 +49,16 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::elements::GUISelectBoxController;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -52,6 +66,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix2D3x3;
 using tdme::os::filesystem::FileNameFilter;
@@ -61,6 +76,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
@@ -127,12 +143,26 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_projectpaths") {
 		string xml;
-		scanProjectPathFiles(node->getController()->getValue().getString(), xml);
+		unordered_map<string, Texture*> fileNameTextureMapping;
+		scanProjectPathFiles(node->getController()->getValue().getString(), xml, fileNameTextureMapping);
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
 		} catch (Exception& exception) {
 			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
+		}
+		for (auto& fileNameTextureMappingIt: fileNameTextureMapping) {
+			auto& fileName = fileNameTextureMappingIt.first;
+			auto texture = fileNameTextureMappingIt.second;
+			try {
+				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_normal"))->setTexture(texture);
+				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_mouseover"))->setTexture(texture);
+				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_clicked"))->setTexture(texture);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+			texture->releaseReference();
 		}
 	} else {
 		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
@@ -152,6 +182,15 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		if (node->getId() == "menu_file_open") {
 			onOpenProject();
 		} else
+		if (node->getId() == "menu_file_save") {
+			onSaveCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveas") {
+			onSaveAsCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveall") {
+			onSaveAllTabs();
+		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
 		} else
@@ -165,20 +204,34 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				}
 			}
 			if (tabIdToClose.empty() == false) {
-				screenNode->removeNodeById(tabIdToClose, false);
-				screenNode->removeNodeById(tabIdToClose + "-content", false);
-				auto tabIt = tabViews.find(tabIdToClose);
-				if (tabIt == tabViews.end()) {
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabIdToClose + ": not found");
-				} else {
-					auto& tab = tabIt->second;
-					tab.getTabView()->dispose();
-					delete tab.getTabView();
-					tabViews.erase(tabIt);
-				}
-				setDetailsContent(string());
-				setOutlinerContent(string());
+				//
+				class CloseTabAction: public Action {
+				private:
+					EditorScreenController* editorScreenController;
+					string tabIdToClose;
+				public:
+					CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
+					virtual void performAction() {
+						editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
+						editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
+						auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
+						if (tabIt == editorScreenController->tabViews.end()) {
+							Console::println("CloseTabAction::performAction(): close tab: " + tabIdToClose + ": not found");
+						} else {
+							auto& tab = tabIt->second;
+							tab.getTabView()->dispose();
+							delete tab.getTabView();
+							editorScreenController->tabViews.erase(tabIt);
+						}
+						editorScreenController->setDetailsContent(string());
+						editorScreenController->setOutlinerContent(string());
+					}
+				};
+				Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabIdToClose));
 			}
+		} else
+		if (node->getId() == "menu_file_quit") {
+			TDMEEditor::getInstance()->quit();
 		} else {
 			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
@@ -213,7 +266,7 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	// forward onFocus to active tab tab controller
+	// forward onContextMenuRequested to active tab tab controller
 	auto selectedTabId = getSelectedTabId();
 	auto tabViewIt = tabViews.find(selectedTabId);
 	if (tabViewIt != tabViews.end()){
@@ -322,9 +375,9 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 	}
 }
 
-void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath, string& xml) {
-	auto path = projectPath + "/" + relativeProjectPath;
-	Console::println("EditorScreenController::scanProjectPathFiles(): " + path);
+void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath, string& xml, unordered_map<string, Texture*>& fileNameTextureMapping) {
+	auto pathName = projectPath + "/" + relativeProjectPath;
+	Console::println("EditorScreenController::scanProjectPathFiles(): " + pathName);
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -381,22 +434,22 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
-		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + path);
+	if (FileSystem::getInstance()->fileExists(pathName) == false) {
+		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + pathName);
 	} else
-	if (FileSystem::getInstance()->isPath(path) == false) {
-		if (listFilter.accept(".", path) == true) {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file" + path);
+	if (FileSystem::getInstance()->isPath(pathName) == false) {
+		if (listFilter.accept(".", pathName) == true) {
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file: " + pathName);
 		} else {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + path);
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + pathName);
 		}
 	} else {
-		FileSystem::getInstance()->list(path, files, &listFilter);
+		FileSystem::getInstance()->list(pathName, files, &listFilter);
 		auto idx = 0;
 		for (auto fileName: files) {
-			auto relativePath = path + "/" + fileName;
+			auto relativePath = pathName + "/" + fileName;
 			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
-			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == true) {
+			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
 				// no op for now
 			} else {
 				if (idx % 2 == 0) {
@@ -406,7 +459,36 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					xml+= "<layout alignment=\"horizontal\">\n";
 				}
 				// TODO: how to associate button with file name
-				xml+= "<button id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + GUIParser::escapeQuotes(fileName) + "\" />\n";
+				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+				string icon = "resources/engine/images/folder.png";
+				string thumbNail = "resources/engine/textures/terrain_dirt.png";
+				if (StringTools::endsWith(fileName, ".png") == true) thumbNail = relativePath;
+				string templateSource = StringTools::endsWith(fileNameLowerCase, ".tmodel") == true?"button_template_thumbnail_texture.xml":"button_template_thumbnail.xml";
+				vector<uint8_t> thumbnailPNGData;
+				if (PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) {
+					auto thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(idx), thumbnailPNGData, true);
+					if (thumbnailTexture != nullptr) {
+						thumbnailTexture->acquireReference();
+						fileNameTextureMapping[fileName] = thumbnailTexture;
+					} else {
+						// no valid thumbnail texture
+						templateSource = "button_template_thumbnail.xml";
+					}
+				} else {
+					// no valid thumbnail texture
+					templateSource = "button_template_thumbnail.xml";
+				}
+				xml+=
+					string() +
+					"<button " +
+					"id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"value=\"" + GUIParser::escapeQuotes(relativePath) + "\" " +
+					"template=\"" + templateSource + "\" " +
+					"size=\"75\" " +
+					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
+					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"/>\n";
 				idx++;
 			}
 		}
@@ -420,6 +502,34 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
 	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	auto isModel = false;
+	auto isPrototype = false;
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) isPrototype = true;
+	for (auto& extension: ModelReader::getModelExtensions()) {
+		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+	}
+	if (isModel == false && isPrototype == false) {
+		showErrorPopUp("Error", "File format not yet supported");
+		return;
+	}
+
+	//
+	Model* model = nullptr;
+	if (isModel == true) {
+		try {
+			model = ModelReader::read(Tools::getPathName(relativeProjectFileName), Tools::getFileName(relativeProjectFileName));
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		if (model == nullptr) {
+			showErrorPopUp("Error", "Could not read model file");
+			return;
+		}
+	}
+
+	//
 	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
@@ -445,21 +555,35 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 			Console::println(string(exception.what()));
 		}
 	}
-	// try {
-		auto prototype = PrototypeReader::read(
-			FileSystem::getInstance()->getPathName(absoluteFileName),
-			FileSystem::getInstance()->getFileName(absoluteFileName)
-		);
+	try {
+		Prototype* prototype = nullptr;
+		if (isPrototype == true) {
+			prototype = PrototypeReader::read(
+				FileSystem::getInstance()->getPathName(absoluteFileName),
+				FileSystem::getInstance()->getFileName(absoluteFileName)
+			);
+		} else
+		if (isModel == true) {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::MODEL,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName) + ".tmodel",
+				relativeProjectFileName,
+				string(),
+				model,
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+		}
 		auto tabView = new ModelEditorTabView(view, tabId, prototype);
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
-	/*
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	*/
 }
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
@@ -522,6 +646,33 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 	}
 }
 
+void EditorScreenController::onSaveCurrentTab() {
+	// forward save to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->save();
+	}
+}
+
+void EditorScreenController::onSaveAsCurrentTab() {
+	// forward saveAs to active tab tab controller
+	auto selectedTabId = getSelectedTabId();
+	auto tabViewIt = tabViews.find(selectedTabId);
+	if (tabViewIt != tabViews.end()){
+		auto& tab = tabViewIt->second;
+		tab.getTabController()->saveAs();
+	}
+}
+
+void EditorScreenController::onSaveAllTabs() {
+	// forward saveAs to active tab tab controller
+	for (auto& tabViewIt: tabViews) {
+		auto& tab = tabViewIt.second;
+		tab.getTabController()->save();
+	}
+}
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPortNode->getComputedConstraints();

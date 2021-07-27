@@ -1,9 +1,9 @@
 #pragma once
 
-#include <map>
-#include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,10 +18,11 @@
 #include <tdme/utilities/PathFindingCustomTest.h>
 
 using std::map;
-using std::set;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::physics::World;
@@ -182,11 +183,12 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
 	 * @param alternativeEndSteps alternative end steps
+	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
 	 * @return success
 	 */
-	inline bool findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr) {
-		return findPathCustom(startPosition, endPosition, stepSize, 1.0f, collisionTypeIds, path, alternativeEndSteps, customTest);
+	inline bool findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr) {
+		return findPathCustom(startPosition, endPosition, stepSize, 1.0f, collisionTypeIds, path, alternativeEndSteps, maxTriesOverride, customTest);
 	}
 
 
@@ -197,11 +199,12 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
 	 * @param alternativeEndSteps alternative end steps
+	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
 	 * @return success
 	 */
-	inline bool findFlowMapPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr) {
-		return findPathCustom(startPosition, endPosition, flowMapStepSize, flowMapScaleActorBoundingVolumes, collisionTypeIds, path, alternativeEndSteps, customTest);
+	inline bool findFlowMapPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr) {
+		return findPathCustom(startPosition, endPosition, flowMapStepSize, flowMapScaleActorBoundingVolumes, collisionTypeIds, path, alternativeEndSteps, maxTriesOverride, customTest);
 	}
 
 	/**
@@ -213,10 +216,11 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
 	 * @param alternativeEndSteps alternative end steps
+	 * @param maxTriesOverride max tries override or -1 for default
 	 * @param customTest custom test
 	 * @return success
 	 */
-	bool findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr);
+	bool findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, int maxTriesOverride = -1, PathFindingCustomTest* customTest = nullptr);
 
 	/**
 	 * Checks if a cell is walkable
@@ -247,6 +251,13 @@ public:
 	 */
 	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), bool complete = true, PathFindingCustomTest* customTest = nullptr);
 
+	/**
+	 * Generate direct path from start to end
+	 * @param start start
+	 * @param end end
+	 * @return path nodes
+	 */
+	const vector<Vector3> generateDirectPath(const Vector3& start, const Vector3& end);
 private:
 	/**
 	 * Path finding node
@@ -379,7 +390,7 @@ private:
 	 * @param flowMapRequest flow map request
 	 * @return step status
 	 */
-	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTest, bool flowMapRequest);
+	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<string>* nodesToTest, bool flowMapRequest);
 
 	// properties
 	World* world { nullptr };
@@ -396,11 +407,9 @@ private:
 	float flowMapStepSize;
 	float flowMapScaleActorBoundingVolumes;
 	PathFindingNode end;
-	stack<PathFindingNode> successorNodes;
-	map<string, PathFindingNode> openNodes;
-	map<string, PathFindingNode> closedNodes;
-	set<string> nodesToTest;
+	unordered_map<string, PathFindingNode> openNodes;
+	unordered_map<string, PathFindingNode> closedNodes;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
-	map<string, float> walkableCache;
+	unordered_map<string, float> walkableCache;
 };

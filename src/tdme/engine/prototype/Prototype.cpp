@@ -31,6 +31,7 @@ char Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
 char Prototype::MODEL_BOUNDINGVOLUMES_ID[] = "model_bv";
 
+// @deprecated REMOVE ME!
 char Prototype::MODEL_BOUNDINGVOLUME_IDS[][Prototype::MODEL_BOUNDINGVOLUME_COUNT] = {
 	"model_bv.0",
 	"model_bv.1",
@@ -106,7 +107,7 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 	this->description = description;
 	this->fileName = fileName;
 	this->modelFileName = modelFileName;
-	this->thumbnailFileName = thumbnail;
+	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
 	if (this->type == Prototype_Type::PARTICLESYSTEM) {
@@ -157,6 +158,7 @@ bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBou
 
 void Prototype::removeBoundingVolume(int idx)
 {
+	if (idx < 0 || idx >= boundingVolumes.size()) return;
 	delete boundingVolumes[idx];
 	boundingVolumes.erase(boundingVolumes.begin() + idx);
 }
@@ -180,6 +182,26 @@ void Prototype::setLODLevel3(PrototypeLODLevel* lodLevel) {
 	if (this->type != Prototype_Type::MODEL) return;
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	lodLevel3 = lodLevel;
+}
+
+void Prototype::removeLODLevel(int lodLevel) {
+	if (lodLevel == 2) {
+		if (lodLevel2 != nullptr) {
+			delete lodLevel2;
+		}
+		if (lodLevel3 == nullptr) {
+			lodLevel2 = nullptr;
+		} else {
+			lodLevel2 = lodLevel3;
+			lodLevel3 = nullptr;
+		}
+	} else
+	if (lodLevel == 3) {
+		if (lodLevel3 != nullptr) {
+			delete lodLevel3;
+		}
+		lodLevel3 = nullptr;
+	}
 }
 
 PrototypeAudio* Prototype::addSound(const string& id) {

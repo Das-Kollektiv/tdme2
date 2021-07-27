@@ -139,9 +139,9 @@ int main(int argc, char** argv)
 				Prototype_Type::MODEL,
 				fileNameWithoutExtension,
 				fileNameWithoutExtension,
-				"",
+				pathName + "/" + fileName,
 				FileSystem::getInstance()->getPathName(modelFileName) + "/" + FileSystem::getInstance()->getFileName(modelFileName),
-				StringTools::replace(StringTools::replace(StringTools::replace(FileSystem::getInstance()->getFileName(modelFileName), "\\", "_"), "/", "_"), ":", "_") + ".png",
+				string(),
 				model,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
@@ -157,20 +157,23 @@ int main(int argc, char** argv)
 		for (auto i = 0; i < tmm->getBoundingVolumeCount(); i++) {
 			auto bv = tmm->getBoundingVolume(i);
 			auto bvModelMesh = bv->getModelMeshFile();
-			if (bvModelMesh.empty() == false && FileSystem::getInstance()->fileExists(bvModelMesh) == true) {
-				try {
-					Console::println(
-						"Removing old convex mesh model file@" +
-						to_string(i) +
-						": " + bvModelMesh
-					);
-					FileSystem::getInstance()->removeFile(
-						FileSystem::getInstance()->getPathName(bvModelMesh),
-						FileSystem::getInstance()->getFileName(bvModelMesh)
-					);
-				} catch (Exception& exception) {
-					Console::println("An error occurred: " + string(exception.what()));
-				}
+			if (bvModelMesh.empty() == true ||
+				FileSystem::getInstance()->fileExists(bvModelMesh) == false ||
+				bv->isGenerated() == false) {
+				continue;
+			}
+			try {
+				Console::println(
+					"Removing old convex mesh model file@" +
+					to_string(i) +
+					": " + bvModelMesh
+				);
+				FileSystem::getInstance()->removeFile(
+					FileSystem::getInstance()->getPathName(bvModelMesh),
+					FileSystem::getInstance()->getFileName(bvModelMesh)
+				);
+			} catch (Exception& exception) {
+				Console::println("An error occurred: " + string(exception.what()));
 			}
 		}
 		// remove references to it
@@ -222,6 +225,7 @@ int main(int argc, char** argv)
 					FileSystem::getInstance()->getPathName(convexMeshFileName),
 					FileSystem::getInstance()->getFileName(convexMeshFileName)
 				);
+				tmm->getBoundingVolume(tmm->getBoundingVolumeCount() - 1)->setGenerated(true);
 			}
 		}
 		Console::println("Saving tmodel: " + tmmFileName);

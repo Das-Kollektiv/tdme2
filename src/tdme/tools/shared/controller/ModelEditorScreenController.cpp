@@ -14,7 +14,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -60,7 +60,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeLODLevel;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

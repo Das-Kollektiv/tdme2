@@ -48,6 +48,9 @@ on: nothing
 	console.log("vec3.getX(vec3(1, 2, 3)): ", vec3.getX(vec3(1, 2, 3)))
 	console.log("vec3.getY(vec3(1, 2, 3)): ", vec3.getY(vec3(1, 2, 3)))
 	console.log("vec3.getZ(vec3(1, 2, 3)): ", vec3.getZ(vec3(1, 2, 3)))
+	console.log("-----------------------------------")
+	console.log("Check transformations computation")
+	console.log("-----------------------------------")
 	$transformations = transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
 	$transformations = transformations.setRotationAngle($transformations, 0, 90));
 	console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): ", $transformations)
@@ -60,6 +63,20 @@ on: nothing
 	console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): ", transformations.setRotationAngle($transformations, 0, 90))
 	console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): ", transformations.multiply($transformations, vec3(0,0,0)))
 	console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): ", transformations.rotate($transformations, vec3(0,0,1)))
+	console.log("------------------------")
+	console.log("Check string functions")
+	console.log("------------------------")
+	console.log(space(0), "1"))
+	console.log(space(2), "1.1"))
+	console.log(space(2), "1.2"))
+	console.log(toUpperCase("xxxyyyzzz"))
+	console.log(toLowerCase("XXXYYYZZZ"))
+	console.log(concatenate("abc", "def", "ghi"))
+	console.log("------------------------")
+	console.log("Variable")
+	console.log("------------------------")
+	$variable = string("1234")
+	console.log(getVariable("$variable"))
 	console.log("--------------------")
 	console.log("Lets check forTime")
 	console.log("--------------------")
@@ -113,6 +130,7 @@ on: error
 	console.log("An error occurred")
 	script.wait(1000)
 end
+# emit test
 on: emittest
 	console.log("---------------------------------")
 	console.log("SCRIPT JUST EMITTED A CONDITION")
@@ -120,7 +138,8 @@ on: emittest
 	console.log()
 	script.stop()
 end
-on: equals(1,1) = named_condition_1
+# on-enabled with named conditions
+on-enabled: equals(1,1) = named_condition_1
 	script.disableNamedCondition("named_condition_1")
 	console.log("------------------------------------")
 	console.log("named_condition_1 has been emitted")

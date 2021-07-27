@@ -22,7 +22,7 @@ using std::vector;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -48,6 +48,13 @@ private:
 	array<string, 1> applyPropertyNodes = {
 		"property_value"
 	};
+
+	array<string, 2> applyBaseNodes = {
+		"prototype_name",
+		"prototype_description"
+	};
+
+	string renamePropertyName;
 
 public:
 	/**
@@ -76,6 +83,18 @@ public:
 	void createPrototypePropertiesXML(Prototype* prototype, string& xml);
 
 	/**
+	 * Set property base details
+	 * @param prototype prototype
+	 */
+	void setPrototypeBaseDetails(Prototype* prototype);
+
+	/**
+	 * Apply property base details
+	 * @param prototype prototype
+	 */
+	void applyPrototypeBaseDetails(Prototype* prototype);
+
+	/**
 	 * Set property details
 	 * @param prototype prototype
 	 * @param propertyName property name
@@ -101,6 +120,19 @@ public:
 	 * @param prototype prototype
 	 */
 	void createProperty(Prototype* prototype);
+
+	/**
+	 * Start rename property
+	 * @param property property
+	 * @param propertyName property name
+	 */
+	void startRenameProperty(Prototype* prototype, const string& propertyName);
+
+	/**
+	 * Rename property
+	 * @param prototype prototype
+	 */
+	void renameProperty(Prototype* prototype);
 
 	/**
 	 * On value changed
@@ -139,6 +171,12 @@ public:
 	 * @param prototype prototype
 	 */
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+
+	/**
+	 * Apply property value
+	 * @param prototype prototype
+	 */
+	void applyPropertyValue(Prototype* prototype);
 
 	/**
 	 * Shows the error pop up

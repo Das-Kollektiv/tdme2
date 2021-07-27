@@ -59,6 +59,14 @@ public:
 	 */
 	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true);
 
+	/**
+	 * Read PNG
+	 * @param textureId texture id
+	 * @param pngData PNG data
+	 * @param powerOfTwo scale image to fit power of two dimensions
+	 */
+	static Texture* readPNG(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo = true);
+
 private:
 	/**
 	 * PNG input stream
@@ -68,12 +76,9 @@ private:
 
 		/**
 		 * Public constructor
-		 * @author Andreas Drewke
-		 * @version $Id$
+		 * @param data data
 		 */
-		PNGInputStream(vector<uint8_t>* data) {
-			this->offset = 0;
-			this->data = data;
+		PNGInputStream(const vector<uint8_t>* data): offset(0), data(data) {
 		}
 
 		/**
@@ -83,7 +88,7 @@ private:
 		}
 
 		/**
-		 * Read byte
+		 * Read bytes
 		 * @param outBytes out bytes
 		 * @param outBytesToRead out bytes to read
 		 */
@@ -95,7 +100,7 @@ private:
 
 	private:
 		int32_t offset;
-		vector<uint8_t>* data;
+		const vector<uint8_t>* data;
 
 	};
 
@@ -112,14 +117,6 @@ private:
 	 * @param texture texture
 	 */
 	static void removeFromCache(Texture* texture);
-
-	/**
-	 * Load PNG
-	 * @param path path name
-	 * @param fileName file name
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 */
-	static Texture* loadPNG(const string& path, const string& fileName, bool powerOfTwo = true);
 
 	/**
 	 * Scales a texture line

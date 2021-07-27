@@ -2,12 +2,12 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::gui::effects::GUIEffect;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 
 GUIEffect::GUIEffect()
 {

@@ -4,6 +4,7 @@
 		<text font="{$font.default}" color="{$color.font_normal}" text="{$type}" width="*" height="auto" horizontal-align="left" />
 		<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 			<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+				<image id="{$id}" width="100%" height="100%" />
 				<text font="{$font.default}" color="{$color.font_hint}" text="Select"  />
 			</element>
 			<space width="5" />

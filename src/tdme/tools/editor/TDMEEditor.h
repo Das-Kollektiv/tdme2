@@ -50,7 +50,9 @@ public:
 	/**
 	 * @return particle system instance
 	 */
-	static TDMEEditor* getInstance();
+	inline static TDMEEditor* getInstance() {
+		return instance;
+	}
 
 	/**
 	 * Public constructor

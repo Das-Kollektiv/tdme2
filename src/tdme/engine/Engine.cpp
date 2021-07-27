@@ -342,7 +342,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
 		offScreenEngine->lights[i] = Light(renderer, i);
-		offScreenEngine->lights[i].setLightSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
+		offScreenEngine->lights[i].setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
@@ -726,7 +726,7 @@ void Engine::initialize()
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
 		lights[i] = Light(renderer, i);
-		lights[i].setLightSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
+		lights[i].setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 
 	// create partition
@@ -852,6 +852,9 @@ void Engine::initialize()
 
 void Engine::reshape(int32_t width, int32_t height)
 {
+	// apparently windows sends 0x0 dimension if windows gets minimized
+	if (width == 0 && height == 0) return;
+
 	// set current engine
 	currentEngine = this;
 
@@ -1219,6 +1222,13 @@ void Engine::display()
 
 	// set current engine
 	currentEngine = this;
+
+	// execute enqueued actions
+	for (auto action: actions) {
+		action->performAction();
+		delete action;
+	}
+	actions.clear();
 
 	// init frame
 	if (this == Engine::instance) Engine::renderer->initializeFrame();
@@ -1976,11 +1986,46 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	return true;
 }
 
+bool Engine::makeScreenshot(vector<uint8_t>& pngData)
+{
+	// use framebuffer if we have one
+	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
+
+	// fetch pixel
+	auto pixels = renderer->readPixels(0, 0, width, height);
+	if (pixels == nullptr) {
+		Console::println("Engine::makeScreenshot(): Failed to read pixels");
+		return false;
+	}
+
+	// create texture, write and delete
+	auto texture = new Texture(
+		"tdme.engine.makescreenshot",
+		32,
+		width,
+		height,
+		width,
+		height,
+		pixels
+	);
+
+	texture->acquireReference();
+	PNGTextureWriter::write(texture, pngData);
+	texture->releaseReference();
+
+	// unuse framebuffer if we have one
+	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
+
+	//
+	return true;
+}
+
 void Engine::resetPostProcessingPrograms() {
 	postProcessingPrograms.clear();
 }
 
 void Engine::addPostProcessingProgram(const string& programId) {
+	postProcessingPrograms.erase(remove(postProcessingPrograms.begin(), postProcessingPrograms.end(), programId), postProcessingPrograms.end());
 	if (postProcessing->getPostProcessingProgram(programId) != nullptr) postProcessingPrograms.push_back(programId);
 }
 
@@ -2300,17 +2345,17 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 bool Engine::renderLightSources(int width, int height) {
 	auto lightSourceVisible = false;
 	for (auto& light: lights) {
-		if (light.isEnabled() == false || light.isRenderLightSource() == false) continue;
-		auto lightSourceSize = light.getLightSourceSize();
+		if (light.isEnabled() == false || light.isRenderSource() == false) continue;
+		auto lightSourceSize = light.getSourceSize();
 		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
 		Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
 		Vector2 lightSourcePosition2D;
 		Vector3 lightSourcePosition = Vector3(light.getPosition().getX(), light.getPosition().getY(), light.getPosition().getZ());
-		lightSourcePosition.scale(1.0f / light.getPosition().getW());
+		if (light.getPosition().getW() > Math::EPSILON) lightSourcePosition.scale(1.0f / light.getPosition().getW());
 		auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D, width, height);
 		lightSourcePosition2D.sub(lightSourceDimension2D.clone().scale(0.5f));
 		if (visible == true) {
-			texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, light.getLightSourceTextureId(), width, height);
+			texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, light.getSourceTextureId(), width, height);
 			lightSourceVisible = true;
 		}
 	}

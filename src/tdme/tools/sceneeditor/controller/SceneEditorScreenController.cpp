@@ -12,7 +12,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>

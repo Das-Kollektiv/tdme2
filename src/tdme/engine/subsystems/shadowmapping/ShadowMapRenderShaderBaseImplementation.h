@@ -29,7 +29,7 @@ protected:
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
 	int32_t renderUniformShadowMapLookUps { -1 };
-	int32_t renderUniformTextureUnit { -1 };
+	int32_t uniformTextureUnit { -1 };
 	int32_t renderUniformTexturePixelWidth { -1 };
 	int32_t renderUniformTexturePixelHeight { -1 };
 	int32_t renderUniformDepthBiasMVPMatrix { -1 };

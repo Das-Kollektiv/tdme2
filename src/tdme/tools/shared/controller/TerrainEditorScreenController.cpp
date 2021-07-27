@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -11,7 +12,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -35,6 +36,7 @@
 using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -44,7 +46,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrain;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -499,7 +501,7 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		currentTerrainBrushTexture = nullptr;
 
 		// operation
-		map<string, MutableString> values;
+		unordered_map<string, MutableString> values;
 		screenNode->getValues(values);
 		auto brushOperationName = values["terrain_brush_operation"].getString();
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -894,7 +896,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		currentFoliageBrushTexture = nullptr;
 
 		// operation
-		map<string, MutableString> values;
+		unordered_map<string, MutableString> values;
 		screenNode->getValues(values);
 		auto brushOperationName = values["foliage_brush_operation"].getString();
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;

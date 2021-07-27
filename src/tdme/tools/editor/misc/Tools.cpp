@@ -110,102 +110,14 @@ Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
 Model* Tools::defaultOBB = nullptr;
-
-string Tools::formatFloat(float value)
-{
-
-	string floatString = to_string(value);
-	return floatString.substr(0, floatString.length() - 3);
-}
-
-string Tools::formatVector3(const Vector3& value)
-{
-	return
-		formatFloat(value.getX()) +
-		", " +
-		formatFloat(value.getY()) +
-		", " +
-		formatFloat(value.getZ());
-}
-
-string Tools::formatColor4(const Color4& value)
-{
-	return
-		formatFloat(value.getRed()) +
-		", " +
-		formatFloat(value.getGreen()) +
-		", " +
-		formatFloat(value.getBlue()) +
-		", " +
-		formatFloat(value.getAlpha());
-}
-
-void Tools::convertToArray(const string& text, array<float, 3>& array)
-{
-	auto i = 0;
-	StringTokenizer t;
-	t.tokenize(text, ",");
-	while (t.hasMoreTokens() && i < array.size()) {
-		array[i++] = Float::parseFloat(t.nextToken());
-	}
-}
-
-void Tools::convertToArray(const string& text, array<float, 4>& array)
-{
-	auto i = 0;
-	StringTokenizer t;
-	t.tokenize(text, ",");
-	while (t.hasMoreTokens() && i < array.size()) {
-		array[i++] = Float::parseFloat(t.nextToken());
-	}
-}
-
-Vector3 Tools::convertToVector3(const string& text)
-{
-	Vector3 v;
-	convertToArray(text, v.getArray());
-	return v;
-}
-
-Vector4 Tools::convertToVector4(const string& text)
-{
-	Vector4 v;
-	convertToArray(text, v.getArray());
-	return v;
-}
-
-Color4 Tools::convertToColor4(const string& text)
-{
-	Color4 color;
-	convertToArray(text, color.getArray());
-	return color;
-}
-
-float Tools::convertToFloat(const string& text)
-{
-	return Float::parseFloat(text);
-}
-
-int Tools::convertToInt(const string& text)
-{
-	return Integer::parseInt(text);
-}
-
-int Tools::convertToIntSilent(const string& text)
-{
-	try {
-		return Integer::parseInt(text);
-	} catch (Exception& exception) {
-		return -1;
-	}
-}
+Tools::ToolsShutdown Tools::toolsShutdown;
 
 void Tools::setDefaultLight(Light* light)
 {
 	light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
 	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
@@ -217,6 +129,7 @@ void Tools::setDefaultLight(Light* light)
 
 void Tools::oseInit()
 {
+	if (osEngine != nullptr) return;
 	osEngine = Engine::createOffScreenInstance(128, 128, false);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
@@ -229,21 +142,24 @@ void Tools::oseDispose()
 	delete osEngine;
 }
 
-void Tools::oseThumbnail(Prototype* model)
+void Tools::oseThumbnail(Prototype* prototype, vector<uint8_t>& pngData)
 {
+	oseInit();
 	Vector3 objectScale;
 	Transformations oseLookFromRotations;
 	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupPrototype(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
+	Tools::setupPrototype(prototype, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
-	// osEngine->makeScreenshot("tmp", model->getThumbnail());
+	osEngine->makeScreenshot(pngData);
+	/*
 	osEngine->setSceneColor(Color4(0.8f, 0.0f, 0.0f, 1.0f));
 	osEngine->display();
-	// osEngine->makeScreenshot("tmp", "selected_" + model->getThumbnail());
+	osEngine->makeScreenshot(pngData);
+	*/
 	osEngine->reset();
 }
 
@@ -391,6 +307,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
 	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
+
 	if (modelEntity != nullptr) {
 		modelEntity->setPickable(true);
 		modelEntity->setScale(objectScale);
@@ -617,3 +534,8 @@ Model* Tools::getDefaultObb() {
 	return defaultOBB;
 
 }
+
+Tools::ToolsShutdown::~ToolsShutdown() {
+	Console::println("Tools::ToolsShutdown::~ToolsShutdown(): Disposing offscreen engine");
+	Tools::oseDispose();
+};

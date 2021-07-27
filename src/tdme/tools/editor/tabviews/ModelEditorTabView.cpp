@@ -185,7 +185,6 @@ void ModelEditorTabView::initModel()
 	}
 	modelFile = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
-	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
@@ -204,11 +203,11 @@ const string& ModelEditorTabView::getFileName()
 	return modelFile;
 }
 
-int ModelEditorTabView::getLodLevel() const {
+int ModelEditorTabView::getLODLevel() const {
 	return lodLevel;
 }
 
-void ModelEditorTabView::setLodLevel(int lodLevel) {
+void ModelEditorTabView::setLODLevel(int lodLevel) {
 	if (this->lodLevel != lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
@@ -216,10 +215,27 @@ void ModelEditorTabView::setLodLevel(int lodLevel) {
 	}
 }
 
-void ModelEditorTabView::loadFile(const string& pathName, const string& fileName)
+void ModelEditorTabView::updateLODLevel() {
+	engine->reset();
+	initModelRequested = true;
+}
+
+void ModelEditorTabView::loadModel(const string& pathName, const string& fileName)
 {
-	loadModelRequested = true;
+	// new model file
 	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
+	try {
+		// set model in entity
+		prototype->setModel(
+			ModelReader::read(
+				pathName,
+				fileName
+			)
+		);
+	} catch (Exception& exception) {
+		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	}
+	reimportPrototype();
 }
 
 void ModelEditorTabView::reimportModel(const string& pathName, const string& fileName)

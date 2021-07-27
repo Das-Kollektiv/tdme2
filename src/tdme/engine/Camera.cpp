@@ -25,6 +25,8 @@ Camera::Camera(Renderer* renderer)
 	zNear = 0.1f;
 	zFar = 150.0f;
 	cameraMode = CAMERAMODE_LOOKAT;
+	frustumMode = FRUSTUMMODE_PERSPECTIVE;
+	orthographicFrustumScale = 1.0f;
 	upVector.set(0.0f, 1.0f, 0.0f);
 	forwardVector.set(0.0f, 0.0f, 1.0f);
 	sideVector.set(1.0f, 0.0f, 0.0f);
@@ -64,33 +66,65 @@ Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 Matrix4x4& Camera::computeProjectionMatrix()
 {
 	// see: see http://www.songho.ca/opengl/gl_transform.html
-	auto tangent = static_cast<float>(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
-	auto height = zNear * tangent;
-	auto width = height * aspect;
-	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);
-}
-
-Matrix4x4& Camera::computeFrustumMatrix(float leftPlane, float rightPlane, float bottomPlane, float topPlane, float nearPlane, float farPlane)
-{
-	// see: http://www.songho.ca/opengl/gl_transform.html
-	return projectionMatrix.set(
-		2.0f * nearPlane / (rightPlane - leftPlane),
-		0.0f,
-		0.0f,
-		0.0f,
-		0.0f,
-		2.0f * nearPlane / (topPlane - bottomPlane),
-		0.0f,
-		0.0f,
-		(rightPlane + leftPlane) / (rightPlane - leftPlane),
-		(topPlane + bottomPlane) / (topPlane - bottomPlane),
-		-(farPlane + nearPlane) / (farPlane - nearPlane),
-		-1.0f,
-		0.0f,
-		0.0f,
-		-(2.0f * farPlane * nearPlane) / (farPlane - nearPlane),
-		1.0f
-	);
+	switch(frustumMode) {
+		case FRUSTUMMODE_ORTHOGRAPHIC:
+			{
+				auto leftPlane = (-width / 2.0f) * orthographicFrustumScale;
+				auto rightPlane = (width / 2.0f) * orthographicFrustumScale;
+				auto topPlane = (height / 2.0f) * orthographicFrustumScale;
+				auto bottomPlane = (-height / 2.0f) * orthographicFrustumScale;
+				auto nearPlane = zNear;
+				auto farPlane = zFar;
+				return projectionMatrix.set(
+					2.0f / (rightPlane - leftPlane),
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					2.0f / (topPlane - bottomPlane),
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					-2.0f / (farPlane - nearPlane),
+					0.0f,
+					-(rightPlane + leftPlane) / (rightPlane - leftPlane),
+					-(topPlane + bottomPlane) / (topPlane - bottomPlane),
+					-(farPlane + nearPlane) / (farPlane - nearPlane),
+					1.0f
+				);
+			}
+		default:
+			{
+				auto tangent = static_cast<float>(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
+				auto height = zNear * tangent;
+				auto width = height * aspect;
+				auto leftPlane = -width;
+				auto rightPlane = width;
+				auto topPlane = height;
+				auto bottomPlane = -height;
+				auto nearPlane = zNear;
+				auto farPlane = zFar;
+				return projectionMatrix.set(
+					2.0f * nearPlane / (rightPlane - leftPlane),
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					2.0f * nearPlane / (topPlane - bottomPlane),
+					0.0f,
+					0.0f,
+					(rightPlane + leftPlane) / (rightPlane - leftPlane),
+					(topPlane + bottomPlane) / (topPlane - bottomPlane),
+					-(farPlane + nearPlane) / (farPlane - nearPlane),
+					-1.0f,
+					0.0f,
+					0.0f,
+					-(2.0f * farPlane * nearPlane) / (farPlane - nearPlane),
+					1.0f
+				);
+			}
+	}
 }
 
 Matrix4x4& Camera::computeModelViewMatrix()

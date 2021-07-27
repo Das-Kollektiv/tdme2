@@ -343,7 +343,9 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
 						pbrMaterialProperties->setBaseColorTexture(pathName, fileName);
+						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
 						specularMaterialProperties->setDiffuseTexture(pathName, fileName);
+						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}

@@ -4,6 +4,8 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/physics/Body.h>
@@ -23,6 +25,8 @@ using std::reverse;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::physics::Body;
@@ -184,10 +188,11 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 }
 
-void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool flowMapRequest) {
+void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<string>* nodesToTestPtr, bool flowMapRequest) {
 	auto nodeId = node.id;
 
 	// Find valid successors
+	stack<PathFindingNode> successorNodes;
 	for (auto z = -1; z <= 1; z++)
 	for (auto x = -1; x <= 1; x++)
 	if ((z != 0 || x != 0) &&
@@ -304,7 +309,7 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 	openNodes.erase(nodeId);
 }
 
-bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
+bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, int maxTriesOverride, PathFindingCustomTest* customTest) {
 	// clear path
 	path.clear();
 
@@ -322,6 +327,9 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 
 	//
 	auto now = Time::getCurrentMillis();
+
+	//
+	auto currentMaxTries = maxTriesOverride == -1?this->maxTries:maxTriesOverride;
 
 	// set up custom test
 	this->customTest = customTest;
@@ -400,7 +408,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 			}
-			if (maxTries == 0) {
+			if (currentMaxTries == 0) {
 				forcedAlternativeEndSteps = 27 * 2;
 				auto forwardDistance = 0.0f;
 				auto i = 0;
@@ -582,7 +590,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				end.previousNodeId = node.previousNodeId;
 				// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 				int nodesCount = 0;
-				map<string, PathFindingNode>::iterator nodeIt;
+				unordered_map<string, PathFindingNode>::iterator nodeIt;
 				for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeId)) != closedNodes.end()?&nodeIt->second:nullptr) {
 					nodesCount++;
 					// if (nodesCount > 0 && nodesCount % 100 == 0) {
@@ -621,7 +629,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		tries++;
 
 		//
-		if (success == true || tries >= maxTries + forcedAlternativeEndSteps) break;
+		if (success == true || tries >= currentMaxTries + forcedAlternativeEndSteps) break;
 	}
 
 	//
@@ -744,6 +752,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	}
 
 	// nodes to test
+	unordered_set<string> nodesToTest;
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
@@ -873,7 +882,8 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 						cellId,
 						cellPosition,
 						true,
-						direction
+						direction,
+						-1
 					);
 				}
 			}
@@ -926,6 +936,61 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		}
 	}
 
+	// do some more post adjustments
+	Vector3 lastCenterPathNode = pathToUse.size() < 2?Vector3():pathToUse[0] - (pathToUse[1] - pathToUse[0]);
+	unordered_set<string> cellsProcessed;
+	for (int i = pathToUse.size() - 1; i >= 0; i--) {
+		auto _centerPathNode = pathToUse[i];
+		auto centerPathNode = Vector3(
+			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
+			_centerPathNode.getY(),
+			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
+		);
+		auto pathDirection = (lastCenterPathNode - centerPathNode).setY(0.0f).normalize();
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
+		for (auto z = zMin; z <= zMax; z++) {
+			for (auto x = xMin; x <= xMax; x++) {
+				auto cellId = FlowMap::toIdInt(
+					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
+				auto cell = flowMap->getCell(cellId);
+				if (cell == nullptr) continue;
+
+				// check if we have missing neighbour cells
+				for (auto nZ = -1; nZ < 2; nZ++) {
+					for (auto nX = -1; nX < 2; nX++) {
+						auto neighbourCellId = FlowMap::toIdInt(
+							centerPathNodeX + x + nX,
+							centerPathNodeZ + z + nZ
+						);
+						auto neighbourCell = flowMap->getCell(neighbourCellId);
+						if (neighbourCell == nullptr) cell->setMissingNeighborCell(true);
+					}
+				}
+
+				// determine path node index
+				{
+					auto i = 0;
+					auto pathNodeIdx = -1;
+					auto pathNodeNodeDistanceSquared = Float::MAX_VALUE;
+					for (auto& pathNode: pathToUse) {
+						auto pathNodeCellAxis = pathNode - cell->getPosition();
+						auto pathNodeCandidateDistanceSquared = pathNodeCellAxis.computeLengthSquared();
+						if (pathNodeIdx == -1 || pathNodeCandidateDistanceSquared < pathNodeNodeDistanceSquared) {
+							pathNodeIdx = i;
+							pathNodeNodeDistanceSquared = pathNodeCandidateDistanceSquared;
+						}
+						i++;
+					}
+					cell->setPathNodeIdx(pathNodeIdx < pathToUse.size() - 1?pathNodeIdx + 1:pathNodeIdx);
+				}
+			}
+		}
+		lastCenterPathNode = centerPathNode;
+	}
+
 	// unset actor bounding volume and remove rigid body
 	world->removeBody("tdme.pathfinding.actor");
 	world->removeBody("tdme.pathfinding.actor.slopetest");
@@ -942,4 +1007,18 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	//
 	return flowMap;
+}
+
+const vector<Vector3> PathFinding::generateDirectPath(const Vector3& start, const Vector3& end) {
+	vector<Vector3> path;
+	Vector3 axis;
+	axis.set(end).sub(start);
+	auto length = axis.computeLength();
+	auto step = axis.clone().normalize() * stepSize;
+	Vector3 current = start;
+	for (auto i = stepSize; i < length; i+= stepSize) {
+		path.push_back(current.add(step));
+	}
+	path.push_back(end);
+	return path;
 }

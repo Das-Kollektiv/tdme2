@@ -565,6 +565,7 @@ SRCS = \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/FlowMapTest.cpp \
+	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
@@ -592,6 +593,7 @@ SRCS = \
 	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
 	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
 	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
+	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
@@ -893,6 +895,7 @@ MAIN_SRCS = \
 	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/FlowMapTest-main.cpp \
+	src/tdme/tests/FlowMapTest2-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/MathOperatorTest-main.cpp \
 	src/tdme/tests/MiniScriptTest-main.cpp \

@@ -79,6 +79,14 @@ public:
 	bool addProperty(const string& name, const string& value);
 
 	/**
+	 * Rename a property
+	 * @param oldName old name
+	 * @param name name
+	 * @return success
+	 */
+	bool renameProperty(const string& oldName, const string& name);
+
+	/**
 	 * Update a property
 	 * @param oldName old name
 	 * @param name name

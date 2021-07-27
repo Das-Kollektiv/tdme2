@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,10 +15,11 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::map;
-using std::set;
+using std::unordered_set;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
@@ -69,8 +70,8 @@ private:
 	int nodeCounter;
 	int screenWidth;
 	int screenHeight;
-	map<string, GUINode*> nodesById;
-	map<string, GUINode*> tickNodesById;
+	unordered_map<string, GUINode*> nodesById;
+	unordered_map<string, GUINode*> tickNodesById;
 	vector<GUINode*> floatingNodes;
 	vector<GUIActionListener*> actionListener;
 	vector<GUIChangeListener*> changeListener;
@@ -80,13 +81,13 @@ private:
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
-	set<string> invalidateLayoutNodeIds;
-	map<string, set<string>> elementNodeToNodeMapping;
+	unordered_set<string> invalidateLayoutNodeIds;
+	unordered_map<string, unordered_set<string>> elementNodeToNodeMapping;
 
 	bool visible;
 	bool popUp;
 
-	map<int64_t, string> timedExpressions;
+	unordered_map<int64_t, string> timedExpressions;
 
 public:
 
@@ -351,7 +352,7 @@ public:
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
 	// overridden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
 
 	/**
 	 * Add action listener
@@ -478,13 +479,13 @@ public:
 	 * Get values
 	 * @param values values
 	 */
-	void getValues(map<string, MutableString>& values);
+	void getValues(unordered_map<string, MutableString>& values);
 
 	/**
 	 * Set values
 	 * @param values values
 	 */
-	void setValues(const map<string, MutableString>& values);
+	void setValues(const unordered_map<string, MutableString>& values);
 
 	/**
 	 * Create size constraints

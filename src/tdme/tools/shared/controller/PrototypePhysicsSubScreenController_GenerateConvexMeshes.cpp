@@ -1,6 +1,7 @@
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <ext/v-hacd/src/VHACD_Lib/public/VHACD.h>
@@ -43,6 +44,7 @@
 
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using namespace VHACD;
@@ -110,7 +112,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		prototypePhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 	}
-	map<string, MutableString> values;
+	unordered_map<string, MutableString> values;
 	prototypePhysicsSubScreenController->getScreenNode()->getValues(values);
 	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
 	vector<string> convexMeshFileNames;

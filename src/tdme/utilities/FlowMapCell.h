@@ -10,11 +10,13 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::utilities::FlowMapCell final {
+	friend class PathFinding;
+	friend class FlowMap;
 public:
 	/**
 	 * Default constructor
 	 */
-	FlowMapCell(): walkable(false) {
+	FlowMapCell(): walkable(false), pathNodeIdx(-1) {
 	}
 
 	/**
@@ -22,8 +24,15 @@ public:
 	 * @param position position
 	 * @param walkable walkable
 	 * @param direction direction
+	 * @param pathNodeIdx path node index
 	 */
-	FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction): position(position), walkable(walkable), direction(direction) {
+	FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction, int pathNodeIdx):
+		position(position),
+		walkable(walkable),
+		direction(direction),
+		pathNodeIdx(pathNodeIdx),
+		missingNeighborCell(false) {
+		//
 	}
 
 	/**
@@ -32,7 +41,6 @@ public:
 	inline const Vector3& getPosition() const {
 		return position;
 	}
-
 
 	/**
 	 * @return if cell is walkable
@@ -49,6 +57,36 @@ public:
 	}
 
 	/**
+	 * Get path node index
+	 * @return path node index
+	 */
+	inline int getPathNodeIdx() {
+		return pathNodeIdx;
+	}
+
+	/**
+	 * @return has missing neighbor cell
+	 */
+	inline bool hasMissingNeighborCell() {
+		return missingNeighborCell;
+	}
+
+private:
+	Vector3 position;
+	bool walkable;
+	Vector3 direction;
+	int pathNodeIdx;
+	bool missingNeighborCell;
+
+	/**
+	 * Set path node index
+	 * @param pathNodeIdx path node index
+	 */
+	inline void setPathNodeIdx(int pathNodeIdx) {
+		this->pathNodeIdx = pathNodeIdx;
+	}
+
+	/**
 	 * Set movement direction
 	 * @param cell movement direction
 	 */
@@ -56,8 +94,12 @@ public:
 		this->direction = direction;
 	}
 
-private:
-	Vector3 position;
-	bool walkable;
-	Vector3 direction;
+	/**
+	 * Set has missing neighbor cell
+	 * @param missingNeighborCell missing neighbor cell
+	 */
+	inline void setMissingNeighborCell(bool missingNeighborCell) {
+		this->missingNeighborCell = missingNeighborCell;
+	}
+
 };

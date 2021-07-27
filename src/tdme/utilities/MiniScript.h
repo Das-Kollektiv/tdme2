@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -13,7 +12,6 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::map;
 using std::stack;
 using std::string;
 using std::to_string;
@@ -548,6 +546,13 @@ public:
 			return false;
 		}
 
+		/**
+		 * @return if mixed return value
+		 */
+		virtual bool isMixedReturnValue() {
+			return false;
+		}
+
 	private:
 		vector<ArgumentType> argumentTypes;
 		ScriptVariableType returnValueType;
@@ -573,8 +578,8 @@ private:
 		int64_t timeWaitStarted { -1LL };
 		int64_t timeWaitTime { -1LL };
 		string id;
-		map<string, ScriptVariable> variables;
-		map<int, int64_t> forTimeStarted;
+		unordered_map<string, ScriptVariable> variables;
+		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
 		StateMachineState state;
@@ -583,6 +588,8 @@ private:
 	};
 
 	struct Script {
+		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
+		ConditionType conditionType;
 		int line;
 		vector<string> conditions;
 		string name;
@@ -594,6 +601,9 @@ private:
 	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
+	string scriptPathName;
+	string scriptFileName;
+	bool scriptValid { false };
 
 	/**
 	 * Execute a single script line
@@ -606,8 +616,9 @@ private:
 	 * @param variable variable
 	 * @param method method
 	 * @param arguments arguments
+	 * @return success
 	 */
-	void parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments);
+	bool parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments);
 
 	/**
 	 * Execute a script statement
@@ -630,7 +641,17 @@ private:
 	 */
 	int determineNamedScriptIdxToStart();
 
-protected:
+public:
+	/**
+	 * Default constructor
+	 */
+	MiniScript();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MiniScript();
+
 	/**
 	 * Start error script
 	 */
@@ -747,17 +768,6 @@ protected:
 		return argument.getTransformationsValue(value, optional);
 	}
 
-public:
-	/**
-	 * Default constructor
-	 */
-	MiniScript();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~MiniScript();
-
 	/**
 	 * Register script state machine state
 	 * @param state state
@@ -803,10 +813,9 @@ public:
 	void emit(const string& condition);
 
 	/**
-	 * Execute state machine
-	 * @return quit requested
+	 * Execute
 	 */
-	void executeStateMachine();
+	void execute();
 
 	/**
 	 * @return is running
@@ -823,8 +832,8 @@ public:
 	}
 
 	/**
-	 * Dump info
+	 * Get miniscript instance information
 	 */
-	const string dumpInfo();
+	const string getInformation();
 
 };

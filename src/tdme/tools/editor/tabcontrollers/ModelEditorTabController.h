@@ -26,7 +26,9 @@ using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Material;
+using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -39,6 +41,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
@@ -64,6 +67,7 @@ private:
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	ModelEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
+	PopUps* popUps { nullptr };
 
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
@@ -97,10 +101,28 @@ private:
 		"animationpreview_overlay3"
 	};
 
+	array<string, 4> applyLODNodes = {
+		"lod_min_distance",
+	};
+
+	string renameAnimationId;
+	int renameAnimationLOD { -1 };
+
+	/**
+	 * Get LOD level
+	 * @return created or existing LOD level with given level
+	 */
+	PrototypeLODLevel* getLODLevel(int level);
+
 	/**
 	 * @return prototype lod level or nullptr
 	 */
-	PrototypeLODLevel* getLODLevel(int level);
+	Model* getLODLevelModel(int level);
+
+	/**
+	 * @return current selected model
+	 */
+	Model* getSelectedModel();
 
 	/**
 	 * @return current selected material
@@ -108,9 +130,17 @@ private:
 	Material* getSelectedMaterial();
 
 	/**
-	 * Create outliner model nodes xml
+	 * @return current selected animation setup
 	 */
-	void createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml);
+	AnimationSetup* getSelectedAnimationSetup();
+
+	/**
+	 * Create outliner model nodes xml
+	 * @param prefix prefix
+	 * @param subNodes sub nodes
+	 * @param xml xml
+	 */
+	void createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml);
 
 public:
 	/**
@@ -160,6 +190,8 @@ public:
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
+	void save() override;
+	void saveAs() override;
 
 	/**
 	 * Set outliner content
@@ -175,12 +207,6 @@ public:
 	 * Set details content
 	 */
 	void setDetailsContent();
-
-	/**
-	 * Set lod level
-	 * @param level lod level
-	 */
-	void setLODLevel(int level);
 
 	/**
 	 * @return current material
@@ -201,24 +227,24 @@ public:
 	void unsetStatistics();
 
 	/**
-	 * On model load
-	 */
-	void onModelLoad();
-
-	/**
-	 * On model save
-	 */
-	void onModelSave();
-
-	/**
 	 * On model reload
 	 */
 	void onModelReload();
 
 	/**
+	 * On model load
+	 */
+	void onModelLoad();
+
+	/**
 	 * On model reload
 	 */
 	void onModelReimport();
+
+	/**
+	 * On LOD load
+	 */
+	void onLODLoad(int lodLevel);
 
 	/**
 	 * On tools compute normals
@@ -271,15 +297,13 @@ public:
 
 	/**
 	 * Set animation details
-	 * @param animationId animation Id
 	 */
-	void setAnimationDetails(const string& animationId);
+	void setAnimationDetails();
 
 	/**
 	 * Apply animation details
-	 * @param animationId animation id
 	 */
-	void applyAnimationDetails(const string& animationId);
+	void applyAnimationDetails();
 
 	/**
 	 * Set animation preview details
@@ -290,12 +314,6 @@ public:
 	 * Apply animation preview details
 	 */
 	void applyAnimationPreviewDetails();
-
-	/**
-	 * Set sound details
-	 * @param soundId sound Id
-	 */
-	void setSoundDetails(const string& soundId);
 
 	/**
 	 * Update details panel
@@ -382,6 +400,57 @@ public:
 	 * On preview animations attachment 1 model clear
 	 */
 	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
+	 * Start rename animation
+	 * @param lodLevel lod level
+	 * @param animationId animation id
+	 */
+	void startRenameAnimation(int lodLevel, const string& animationId);
+
+	/**
+	 * Rename animation
+	 */
+	void renameAnimation();
+
+	/**
+	 * Create animation setup
+	 * @param lodLevel lod level
+	 */
+	void createAnimationSetup(int lodLevel);
+
+	/**
+	 * Create LOD
+	 */
+	void createLOD();
+
+	/**
+	 * Set LOD details
+	 * @param lodLevel lod level
+	 */
+	void setLODDetails(int lodLevel);
+
+	/**
+	 * Set LOD color details
+	 * @param lodLevel lod level
+	 */
+	void updateLODColorDetails(int lodLevel);
+
+	/**
+	 * Apply LOD details
+	 * @param lodLevel LOD level
+	 */
+	void applyLODDetails(int lodLevel);
+
+	/**
+	 * Get outliner node within model or LOD models
+	 * @param outlinerNode outliner node
+	 * @param modelOutlinerNode model outliner node
+	 * @param model model
+	 * @param lodLevel lod level
+	 * @return success
+	 */
+	bool getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model = nullptr, int* lodLevel = nullptr);
 
 	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;

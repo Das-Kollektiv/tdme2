@@ -141,7 +141,7 @@ void SkinningTest::initialize()
 	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
 	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);

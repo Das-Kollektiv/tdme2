@@ -1,13 +1,13 @@
 #pragma once
 
-#include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 /**
  * Action Interface
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::gui::events::Action
+struct tdme::utilities::Action
 {
 	/**
 	 * Perform action

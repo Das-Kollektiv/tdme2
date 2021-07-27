@@ -67,8 +67,8 @@ void ShadowMapRenderShaderBaseImplementation::initialize()
 	if (uniformTextureAtlasSize == -1) return;
 	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(programId, "textureAtlasPixelDimension");
 	if (uniformTextureAtlasPixelDimension == -1) return;
-	renderUniformTextureUnit = renderer->getProgramUniformLocation(programId, "textureUnit");
-	if (renderUniformTextureUnit == -1) return;
+	uniformTextureUnit = renderer->getProgramUniformLocation(programId, "textureUnit");
+	if (uniformTextureUnit == -1) return;
 	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(programId, "texturePixelWidth");
 	if (renderUniformTexturePixelWidth == -1) return;
 	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(programId, "texturePixelHeight");
@@ -129,7 +129,9 @@ void ShadowMapRenderShaderBaseImplementation::useProgram(Engine* engine, void* c
 {
 	renderer->useProgram(context, programId);
 	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
-	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
+	renderer->setProgramUniformInteger(context, uniformTextureUnit, ShadowMap::TEXTUREUNIT);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, 0);
 	if (renderUniformTime != -1) renderer->setProgramUniformFloat(context, renderUniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(context, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());
 }

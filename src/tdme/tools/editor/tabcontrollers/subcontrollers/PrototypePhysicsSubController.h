@@ -53,6 +53,7 @@ private:
 	FileDialogPath* modelPath { nullptr };
 	EditorView* editorView { nullptr };
 	PrototypePhysicsSubView* view { nullptr };
+	PopUps* popUps { nullptr };
 	bool isModelBoundingVolumes;
 	int maxBoundingVolumeCount;
 	bool boundingVolumeTabActivated;
@@ -212,6 +213,16 @@ public:
 	void setBoundingVolumeOBBDetails(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
+	 * Set import convex mesh from model details
+	 */
+	void setImportConvexMeshFromModelDetails();
+
+	/**
+	 * Set generate convex mesh from model details
+	 */
+	void setGenerateConvexMeshFromModelDetails();
+
+	/**
 	 * Set bounding volume details
 	 * @param prototype prototype
 	 * @param boundingVolumeIdx bounding volume index
@@ -238,6 +249,20 @@ public:
 	 * @param idx bounding volume index
 	 */
 	void applyBoundingVolumeObbDetails(Prototype* prototype, int idx);
+
+	/**
+	 * Apply bounding volume convex mesh details
+	 * @param prototype prototype
+	 * @param idx bounding volume index
+	 */
+	void applyBoundingVolumeConvexMeshDetails(Prototype* prototype, int idx);
+
+	/**
+	 * Create bounding volume
+	 * @param prototype prototype
+	 */
+	void createBoundingVolume(Prototype* prototype);
+
 	/**
 	 * On value changed
 	 * @param node node

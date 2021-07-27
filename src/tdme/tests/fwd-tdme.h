@@ -9,6 +9,7 @@ namespace tests {
 	class EngineTest;
 	class EntityHierarchyTest;
 	class FlowMapTest;
+	class FlowMapTest2;
 	class FoliageTest;
 	class LODTest;
 	class MathOperatorTest;

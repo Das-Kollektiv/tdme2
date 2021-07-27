@@ -574,6 +574,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						)?pathName:FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName)
 					);
+					if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 				}
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
 				string normalTextureFileName =

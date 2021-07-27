@@ -1,6 +1,7 @@
 #include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -14,7 +15,7 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -41,6 +42,7 @@
 
 using std::string;
 using std::to_string;
+using std::unordered_map;
 
 using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
 
@@ -56,7 +58,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::Transformations;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -713,7 +715,7 @@ void PrototypePhysicsSubScreenController::onPhysicsBodyApply(Prototype* prototyp
 }
 
 void PrototypePhysicsSubScreenController::onConvexMeshModeChanged(bool disabled) {
-	map<string, MutableString> values;
+	unordered_map<string, MutableString> values;
 	screenNode->getValues(values);
 	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
 	auto disableVHACDSettings = disabled == true || convexMeshMode != "vhacd";

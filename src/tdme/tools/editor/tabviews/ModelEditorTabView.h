@@ -179,20 +179,25 @@ public:
 	/**
 	 * @return LOD level
 	 */
-	int getLodLevel() const;
+	int getLODLevel() const;
 
 	/**
-	 * Set lod level to display
+	 * Set LOD level to display
 	 * @param lodLevel lod level
 	 */
-	void setLodLevel(int lodLevel);
+	void setLODLevel(int lodLevel);
+
+	/**
+	 * Update LOD level
+	 */
+	void updateLODLevel();
 
 	/**
 	 * Issue file loading
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadFile(const string& pathName, const string& fileName);
+	void loadModel(const string& pathName, const string& fileName);
 
 	/**
 	 * Issue reimport model file

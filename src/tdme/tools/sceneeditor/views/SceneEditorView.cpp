@@ -868,7 +868,7 @@ void SceneEditorView::initialize()
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
 	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
@@ -901,7 +901,7 @@ void SceneEditorView::activate()
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
 	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
@@ -1750,7 +1750,10 @@ void SceneEditorView::updateGizmo() {
 		auto selectedSceneEntity = scene.getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
-		setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
+		if (selectedPrototype != nullptr) setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
+		if (selectedSceneEntity == nullptr || selectedPrototype == nullptr) {
+			removeGizmo();
+		}
 	} else {
 		gizmoCenter.scale(1.0f / entityCount);
 	}

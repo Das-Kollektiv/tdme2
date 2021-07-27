@@ -133,7 +133,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 const vector<Entity*>& PartitionOctTree::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
-	visibleEntitiesById.clear();
+	visibleEntitiesSet.clear();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
 		lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);

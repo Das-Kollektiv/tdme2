@@ -35,7 +35,7 @@ private:
 	static string CONDITION_UNSELECTED;
 	bool selected;
 	MutableString value;
-	GUIParentNode* contextMenuItem { nullptr };
+	GUIParentNode* contextMenuNode { nullptr };
 
 	/**
 	 * Private constructor

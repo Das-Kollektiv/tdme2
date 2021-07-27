@@ -60,6 +60,25 @@ bool PrototypeProperties::addProperty(const string& name, const string& value)
 	return true;
 }
 
+bool PrototypeProperties::renameProperty(const string& oldName, const string& name) {
+	auto propertyByNameIt = propertiesByName.find(oldName);
+	if (propertyByNameIt == propertiesByName.end())
+		return false;
+
+	if (oldName != name && getProperty(name) != nullptr) {
+		return false;
+	}
+
+	propertiesByName.erase(propertyByNameIt);
+
+	PrototypeProperty* property = propertyByNameIt->second;
+	property->setName(name);
+
+	propertiesByName[property->getName()] = property;
+
+	return true;
+}
+
 bool PrototypeProperties::updateProperty(const string& oldName, const string& name, const string& value)
 {
 	auto propertyByNameIt = propertiesByName.find(oldName);

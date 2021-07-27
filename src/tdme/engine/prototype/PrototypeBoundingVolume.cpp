@@ -55,6 +55,7 @@ PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
 	modelMeshFile = "";
 	model = nullptr;
 	boundingVolume = nullptr;
+	generated = false;
 }
 
 PrototypeBoundingVolume::~PrototypeBoundingVolume() {
@@ -144,6 +145,15 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
+}
+
+void PrototypeBoundingVolume::clearConvexMesh()
+{
+	if (boundingVolume != nullptr) delete boundingVolume;
+	if (model != nullptr) delete model;
+	boundingVolume = nullptr;
+	model = nullptr;
+	modelMeshFile.clear();
 }
 
 void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)

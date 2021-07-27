@@ -9,17 +9,8 @@
 			
 			<space height="5" />
 			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Key" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<input id="sound_key" width="100%" height="auto" text="key" />
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			
+			<space height="5" />		
+		
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">

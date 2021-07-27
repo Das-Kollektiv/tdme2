@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/math/Math.h>
@@ -10,9 +11,9 @@
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/Reference.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::math::Math;
@@ -31,7 +32,7 @@ friend class PathFinding;
 private:
 	bool complete;
 	float stepSize;
-	map<string, FlowMapCell> cells;
+	unordered_map<string, FlowMapCell> cells;
 	vector<Vector3> endPositions;
 	vector<Vector3> path;
 
@@ -55,9 +56,10 @@ private:
 	 * @param position position
 	 * @param walkable walkable
 	 * @param direction direction
+	 * @param pathIdx path index
 	 */
-	inline void addCell(const string& id, const Vector3& position, bool walkable, const Vector3& direction) {
-		cells[id] = FlowMapCell(position, walkable, direction);
+	inline void addCell(const string& id, const Vector3& position, bool walkable, const Vector3& direction, int pathIdx) {
+		cells[id] = FlowMapCell(position, walkable, direction, pathIdx);
 	}
 
 	/**
@@ -243,11 +245,45 @@ public:
 	}
 
 	/**
+	 * Compute direction also taking neighbour cells into account
+	 * @param x x
+	 * @param y y
+	 * @param direction direction
+	 */
+	inline const Vector3 computeDirection(float x, float z) const {
+		// https://howtorts.github.io/2014/01/04/basic-flow-fields.html
+		auto cellCount = 0;
+		auto xInt = getIntegerPositionComponent(x);
+		auto zInt = getIntegerPositionComponent(z);
+		auto f00 = getCell(toIdInt(xInt, zInt));
+		if (f00 == nullptr) return Vector3();
+		auto f01 = getCell(toIdInt(xInt, zInt + 1));
+		auto f10 = getCell(toIdInt(xInt + 1, zInt));
+		auto f11 = getCell(toIdInt(xInt + 1, zInt + 1));
+		auto xWeight = x - xInt * stepSize;
+		auto top = f10 != nullptr?f00->getDirection().clone().scale(1.0f - xWeight).add(f10->getDirection().clone().scale(xWeight)):f00->getDirection();
+		auto bottom = f01 != nullptr && f11 != nullptr?f01->getDirection().clone().scale(1.0f - xWeight).add(f11->getDirection().clone().scale(xWeight)):top;
+		auto yWeight = z - zInt * stepSize;
+		auto direction = top.clone().scale(1.0f - yWeight).add(bottom.clone().scale(yWeight)).normalize();
+		return direction;
+	}
+
+	/**
 	 * Cell map getter
 	 * @returns cell map
 	 */
-	inline const map<string, FlowMapCell>& getCellMap() const {
+	inline const unordered_map<string, FlowMapCell>& getCellMap() const {
 		return cells;
+	}
+
+	/**
+	 * Remove cell by id
+	 * @param id id
+	 */
+	inline void removeCell(const string& id) {
+		auto cellIt = cells.find(id);
+		if (cellIt == cells.end()) return;
+		cells.erase(cellIt);
 	}
 
 	/**
@@ -259,12 +295,15 @@ public:
 		// complete
 		complete = flowMap->complete;
 		// add path
+		auto pathSize = path.size();
 		for (auto& pathNode: flowMap->path) {
 			path.push_back(pathNode);
 		}
 		// add cells
 		for (auto& cellIt: flowMap->cells) {
+			auto cellExists = cells.find(cellIt.first) != cells.end();
 			cells[cellIt.first] = cellIt.second;
+			cells[cellIt.first].pathNodeIdx+= pathSize;
 		}
 		// end positions
 		endPositions = flowMap->endPositions;

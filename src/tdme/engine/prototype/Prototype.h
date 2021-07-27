@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/Entity.h>
@@ -59,7 +60,7 @@ private:
 	string description;
 	string fileName;
 	string modelFileName;
-	string thumbnailFileName;
+	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
 	PrototypeLODLevel* lodLevel2 { nullptr };
@@ -92,7 +93,7 @@ public:
 	 * @param description description
 	 * @param fileName file name
 	 * @param modelFileName model file name
-	 * @param thumbnail thumbnail
+	 * @param thumbnail thumbnail PNG data
 	 * @param model model
 	 * @param pivot pivot
 	 */
@@ -178,10 +179,10 @@ public:
 	}
 
 	/**
-	 * @return thumbnail file name
+	 * @return thumbnail PNG data
 	 */
-	inline const string& getThumbnailFileName() {
-		return thumbnailFileName;
+	inline const string& getThumbnail() {
+		return thumbnail;
 	}
 
 	/**
@@ -247,6 +248,7 @@ public:
 	/**
 	 * Set default bounding volumes(to be used with SceneEditor)
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
+	 * @deprecated REMOVE ME
 	 */
 	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
 
@@ -258,7 +260,7 @@ public:
 	}
 
 	/**
-	 * @return lod level 2
+	 * @return LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
 		return lodLevel2;
@@ -266,12 +268,12 @@ public:
 
 	/**
 	 * Set LOD level 2
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel2(PrototypeLODLevel* lodLevel);
 
 	/**
-	 * @return lod level 3
+	 * @return LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
 		return lodLevel3;
@@ -279,9 +281,15 @@ public:
 
 	/**
 	 * Set LOD level 3
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel3(PrototypeLODLevel* lodLevel);
+
+	/**
+	 * Remove LOD level
+	 * @param lodLevel LOD level
+	 */
+	void removeLODLevel(int lodLevel);
 
 	/**
 	 * @return particle systems count
@@ -502,6 +510,7 @@ public:
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return false;
 		auto sound = soundIt->second;
+		sound->setId(newId);
 		soundsById.erase(soundIt);
 		soundsById[newId] = sound;
 		return true;

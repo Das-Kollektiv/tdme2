@@ -209,3 +209,16 @@ bool LineSegment::doesLineSegmentCollideWithTriangle(const Vector3& p1, const Ve
 		return false;
 	}
 }
+
+bool LineSegment::doesLineSegmentCollideWithPlane(const Vector3& n, float d, const Vector3& p1, const Vector3& p2, Vector3& contact) {
+	// see: https://math.stackexchange.com/questions/83990/line-and-plane-intersection-in-3d
+	auto lineDirection = p2.clone().sub(p1);
+	auto lineLength = lineDirection.computeLength();
+	lineDirection.normalize();
+	float nDotP1 = Vector3::computeDotProduct(n, p1);
+	float nDotLineDirection = Vector3::computeDotProduct(n, lineDirection);
+	auto t = ((d - nDotP1) / nDotLineDirection);
+	if (t < 0.0 || t > lineLength) return false;
+	contact.set(p1 + (lineDirection * t));
+	return true;
+}

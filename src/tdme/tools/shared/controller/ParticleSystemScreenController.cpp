@@ -21,7 +21,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -72,7 +72,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::Transformations;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;

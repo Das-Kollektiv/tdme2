@@ -1,7 +1,7 @@
 #pragma once
 
-#include <set>
 #include <string>
+#include <unordered_set>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -9,8 +9,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
-using std::set;
 using std::string;
+using std::unordered_set;
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -87,6 +87,6 @@ protected:
 
 public:
 	// overridden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
 
 };

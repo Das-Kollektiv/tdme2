@@ -1,15 +1,15 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 #include <array>
-#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/effects/GUIEffect.h>
-#include <tdme/gui/events/Action.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -37,9 +37,9 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::nodes::GUINode;
@@ -48,7 +48,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::effects::GUIEffect;
-using tdme::gui::events::Action;
+using tdme::utilities::Action;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -122,7 +122,7 @@ GUINode::GUINode(
 	// register this id with related element nodes
 	vector<string> elementNodeDependencies;
 	cfDetermineElementNodeDependencies(elementNodeDependencies);
-	for (auto elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
+	for (auto& elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
 }
 
 GUINode::~GUINode() {
@@ -1053,7 +1053,7 @@ GUIParentNode* GUINode::getParentControllerNode()
 	return node;
 }
 
-void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
+void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
 {
 	if (conditionsMet == false)
 		return;
@@ -1296,12 +1296,14 @@ void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string
 	for (auto& argument: arguments) {
 		string elementNodeId;
 		auto condition = argument;
-		if (condition.find('.') != -1) {
+		if (condition.find('.') != string::npos) {
 			t.tokenize(condition, ".");
 			elementNodeId = t.nextToken();
 			condition = t.nextToken();
 		}
-		if (elementNodeId.empty() == false) elementNodeDependencies.push_back(elementNodeId);
+		if (elementNodeId.empty() == false) {
+			elementNodeDependencies.push_back(elementNodeId);
+		}
 	}
 }
 
