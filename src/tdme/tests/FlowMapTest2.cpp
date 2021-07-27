@@ -171,7 +171,7 @@ void FlowMapTest2::display()
 					combatUnit.pathIdx = -1;
 					if (combatUnit.object->getAnimation() != "still") combatUnit.object->setAnimation("still");
 				} else {
-					if (Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.1f)  {
+					if (Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.05f)  {
 						xDirection = 0.0f;
 					} else
 					if (combatUnit.object->getTranslation().getX() < combatUnit.path[combatUnit.pathIdx].getX())  {
@@ -180,7 +180,7 @@ void FlowMapTest2::display()
 					if (combatUnit.object->getTranslation().getX() > combatUnit.path[combatUnit.pathIdx].getX())  {
 						xDirection = -1.0f;
 					}
-					if (Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.1f)  {
+					if (Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.05f)  {
 						zDirection = 0.0f;
 					} else
 					if (combatUnit.object->getTranslation().getZ() < combatUnit.path[combatUnit.pathIdx].getZ())  {
@@ -192,11 +192,11 @@ void FlowMapTest2::display()
 					auto xDirectionFinished =
 						(xDirection > 0.1f && combatUnit.object->getTranslation().getX() >= combatUnit.path[combatUnit.pathIdx].getX()) ||
 						(xDirection < -0.1f && combatUnit.object->getTranslation().getX() <= combatUnit.path[combatUnit.pathIdx].getX()) ||
-						(Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.1f);
+						(Math::abs(combatUnit.object->getTranslation().getX() - combatUnit.path[combatUnit.pathIdx].getX()) < 0.05f);
 					auto zDirectionFinished =
 						(zDirection > 0.1f && combatUnit.object->getTranslation().getZ() >= combatUnit.path[combatUnit.pathIdx].getZ()) ||
 						(zDirection < -0.1f && combatUnit.object->getTranslation().getZ() <= combatUnit.path[combatUnit.pathIdx].getZ()) ||
-						(Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.1f);
+						(Math::abs(combatUnit.object->getTranslation().getZ() - combatUnit.path[combatUnit.pathIdx].getZ()) < 0.05f);
 					combatUnit.movementDirection = Vector3(xDirectionFinished == true?0.0f:xDirection, 0.0f, zDirectionFinished == true?0.0f:zDirection);
 					if (xDirectionFinished == true && zDirectionFinished == true) combatUnit.pathIdx++;
 				}
@@ -236,8 +236,19 @@ void FlowMapTest2::display()
 							}
 						}
 					}
+					combatUnit.movementDirection = (cellDirection * ((1.0f - pcdDotPND)) + pathFindingNodeDirection * pcdDotPND).normalize();
+				} else {
+					auto nextCellPosition = combatUnit.object->getTranslation() + (cell->getDirection() * (flowMap->getStepSize() + 0.1f));
+					auto nextCell = flowMap->getCell(nextCellPosition.getX(), nextCellPosition.getZ());
+					if (nextCell != nullptr) {
+						// TODO: improve me!
+						auto cellPositionDirection = (nextCell->getPosition() - combatUnit.object->getTranslation()).setY(0.0f).normalize();
+						float cellPositionDirectionScale = Math::max(1.0f, cellPositionDirection.computeLength());
+						cellPositionDirection.normalize();
+						combatUnit.movementDirection = (cellDirection + (cellPositionDirection * cellPositionDirectionScale)).normalize();
+					}
 				}
-				combatUnit.movementDirection = (cellDirection * ((1.0f - pcdDotPND)) + pathFindingNodeDirection * pcdDotPND).normalize();
+
 				if (combatUnit.idx == 0)
 				{
 					auto flowDirectionEntityId = "flowdirectioncurrent" + to_string(combatUnit.idx);
@@ -261,9 +272,10 @@ void FlowMapTest2::display()
 					Vector3 minDistancePathFindingNode;
 					for (auto& flowMapPathFindingNode: flowMap->getPath()) {
 						auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
-						if (candidateDistance < minDistance && flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ()) != nullptr) {
+						auto pathCell = flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ());
+						if (candidateDistance < minDistance && pathCell != nullptr) {
 							minDistance = candidateDistance;
-							minDistancePathFindingNode = flowMapPathFindingNode;
+							minDistancePathFindingNode = pathCell->getPosition() + pathCell->getDirection() * (flowMap->getStepSize() * 0.5f);
 						}
 					}
 

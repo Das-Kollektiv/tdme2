@@ -300,6 +300,7 @@ public:
 			path.push_back(pathNode);
 		}
 		// add cells
+		// TODO: check again cell misssing neighbour cells
 		for (auto& cellIt: flowMap->cells) {
 			auto cellExists = cells.find(cellIt.first) != cells.end();
 			cells[cellIt.first] = cellIt.second;

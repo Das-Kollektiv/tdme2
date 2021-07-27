@@ -16,7 +16,7 @@ public:
 	/**
 	 * Default constructor
 	 */
-	FlowMapCell(): walkable(false), pathNodeIdx(-1) {
+	FlowMapCell(): walkable(false), pathNodeIdx(-1), missingNeighborCell(false) {
 	}
 
 	/**
