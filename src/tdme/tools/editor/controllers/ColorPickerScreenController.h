@@ -14,17 +14,14 @@
 using std::string;
 
 using tdme::engine::model::Color4Base;
-using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
-using tdme::utilities::MutableString;
+using tdme::utilities::Action;
 
 /**
  * Color picker screen controller
@@ -68,16 +65,24 @@ public:
 	/**
 	 * Public denstructor
 	 */
-	~ColorPickerScreenController();
+	virtual ~ColorPickerScreenController();
 
 	// overriden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
-	void onFocus(GUIElementNode* node) override;
-	void onUnfocus(GUIElementNode* node) override;
+	#if defined(_WIN32) && defined(_MSC_VER)
+		// I do not get it currently, somehow it does not accept override whereas everything works fine
+		void onValueChanged(GUIElementNode* node);
+		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node);
+		void onFocus(GUIElementNode* node);
+		void onUnfocus(GUIElementNode* node);
+	#else
+		void onValueChanged(GUIElementNode* node) override;
+		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+		void onFocus(GUIElementNode* node) override;
+		void onUnfocus(GUIElementNode* node) override;
+	#endif
 
 	/**
 	 * Shows the pop up

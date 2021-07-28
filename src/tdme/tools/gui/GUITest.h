@@ -10,7 +10,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/gui/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 
 using std::string;
 
@@ -20,7 +20,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::tools::shared::views::PopUps;
+using tdme::tools::editor::misc::PopUps;
 
 
 /**

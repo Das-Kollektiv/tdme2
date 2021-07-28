@@ -96,7 +96,7 @@ public:
 	/**
 	 * @return boolean value
 	 */
-	inline float getBooleanValue() const {
+	inline bool getBooleanValue() const {
 		return integerValue;
 	}
 

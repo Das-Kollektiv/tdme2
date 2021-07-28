@@ -4,13 +4,13 @@
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleSystem;
 
