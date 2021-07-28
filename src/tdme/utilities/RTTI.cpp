@@ -6,10 +6,12 @@
 	#include <cxxabi.h>
 	#include <stdlib.h>
 
-	#include <stdio.h>
-	#include <execinfo.h>
-	#include <signal.h>
-	#include <unistd.h>
+	#if !defined(_WIN32)
+		#include <stdio.h>
+		#include <execinfo.h>
+		#include <signal.h>
+		#include <unistd.h>
+	#endif
 #endif
 
 #include <string>
@@ -33,7 +35,7 @@ const string RTTI::demangle(const string& name) {
 }
 
 const string RTTI::backtrace() {
-	#if defined(_WIN32) && defined(_MSC_VER)
+	#if defined(_WIN32)
 		return "No backtrace available";
 	#else
 		// Note: This is *nix only and requires to compile with -rdynamic flag
