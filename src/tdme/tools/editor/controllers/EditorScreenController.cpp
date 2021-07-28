@@ -282,7 +282,11 @@ void EditorScreenController::onOpenProject() {
 		// overriden methods
 		void performAction() override {
 			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+			if (StringTools::endsWith(editorScreenController->projectPath, "/") == true) {
+				editorScreenController->projectPath = StringTools::substring(editorScreenController->projectPath, 0, editorScreenController->projectPath.size() - 1);
+			}
 			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
+			editorScreenController->clearProjectPathFiles();
 			editorScreenController->scanProjectPaths();
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -375,9 +379,12 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 	}
 }
 
+void EditorScreenController::clearProjectPathFiles() {
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
+}
+
 void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath, string& xml, unordered_map<string, Texture*>& fileNameTextureMapping) {
 	auto pathName = projectPath + "/" + relativeProjectPath;
-	Console::println("EditorScreenController::scanProjectPathFiles(): " + pathName);
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -428,7 +435,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					return true;
 				}
 				//
-				return false;			}
+				return false;
+			}
 	};
 
 	ListFilter listFilter;
@@ -447,8 +455,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 		FileSystem::getInstance()->list(pathName, files, &listFilter);
 		auto idx = 0;
 		for (auto fileName: files) {
-			auto relativePath = pathName + "/" + fileName;
-			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
+			auto absolutePath = pathName + "/" + fileName;
 			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
 				// no op for now
 			} else {
@@ -462,7 +469,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 				string icon = "resources/engine/images/folder.png";
 				string thumbNail = "resources/engine/textures/terrain_dirt.png";
-				if (StringTools::endsWith(fileName, ".png") == true) thumbNail = relativePath;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
 				string templateSource = StringTools::endsWith(fileNameLowerCase, ".tmodel") == true?"button_template_thumbnail_texture.xml":"button_template_thumbnail.xml";
 				vector<uint8_t> thumbnailPNGData;
 				if (PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) {
@@ -482,7 +489,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					string() +
 					"<button " +
 					"id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" " +
-					"value=\"" + GUIParser::escapeQuotes(relativePath) + "\" " +
+					"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
 					"template=\"" + templateSource + "\" " +
 					"size=\"75\" " +
 					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
@@ -498,10 +505,9 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 	}
 }
 
-void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
-	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
+void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
-	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
+	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 	auto isModel = false;
 	auto isPrototype = false;
@@ -518,7 +524,7 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	Model* model = nullptr;
 	if (isModel == true) {
 		try {
-			model = ModelReader::read(Tools::getPathName(relativeProjectFileName), Tools::getFileName(relativeProjectFileName));
+			model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
 		} catch (Exception& exception) {
 			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 			Console::println(string(exception.what()));
@@ -530,12 +536,12 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 	}
 
 	//
-	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
+	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
 	//
 	{
-		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
 		} catch (Exception& exception) {
@@ -569,8 +575,8 @@ void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
 				Prototype_Type::MODEL,
 				Tools::removeFileEnding(fileName),
 				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName) + ".tmodel",
-				relativeProjectFileName,
+				FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileEnding(fileName) + ".tmodel",
+				absoluteFileName,
 				string(),
 				model,
 				Vector3(0.0f, 0.0f, 0.0f)

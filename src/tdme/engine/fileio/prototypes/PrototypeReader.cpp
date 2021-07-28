@@ -171,7 +171,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		prototypeType,
 		name,
 		description,
-		"",
+		string(),
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
 		thumbnail,
 		model,

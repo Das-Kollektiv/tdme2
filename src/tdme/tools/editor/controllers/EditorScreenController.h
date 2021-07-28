@@ -200,6 +200,11 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Clear project path files
+	 */
+	void clearProjectPathFiles();
+
+	/**
 	 * Scan project path files
 	 * @param relativeProjectPath relative project path
 	 * @param xml xml
@@ -209,9 +214,9 @@ public:
 
 	/**
 	 * On open file
-	 * @param relativeProjectFileName relative project file name
+	 * @param absoluteProjectFileName absolute project file name
 	 */
-	void onOpenFile(const string& relativeProjectFileName);
+	void onOpenFile(const string& absoluteFileName);
 
 	/**
 	 * Store outliner state
