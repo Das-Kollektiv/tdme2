@@ -62,10 +62,10 @@ public:
 	/**
 	 * Read PNG
 	 * @param textureId texture id
-	 * @param pngData PNG data
+	 * @param data vector data to write PNG to
 	 * @param powerOfTwo scale image to fit power of two dimensions
 	 */
-	static Texture* readPNG(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo = true);
+	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true);
 
 private:
 	/**
@@ -99,7 +99,7 @@ private:
 		}
 
 	private:
-		int32_t offset;
+		int offset;
 		const vector<uint8_t>* data;
 
 	};

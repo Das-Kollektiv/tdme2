@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tdme/tdme.h>
+
 #include <array>
 #include <map>
 #include <string>
@@ -43,16 +45,14 @@ namespace models {
  */
 class TMReaderInputStream {
 private:
-	vector<uint8_t>* data;
-	int32_t position;
+	const vector<uint8_t>* data;
+	int position;
 public:
 	/**
 	 * Constructor
 	 * @param data input data array
 	 */
-	inline TMReaderInputStream(vector<uint8_t>* data) {
-		this->data = data;
-		this->position = 0;
+	inline TMReaderInputStream(const vector<uint8_t>* data): data(data), position(0) {
 	}
 
 	/**
@@ -238,6 +238,16 @@ public:
 	 * @return model
 	 */
 	static Model* read(const string& pathName, const string& fileName);
+
+	/**
+	 * TDME model format reader
+	 * @param data data vector to read TM from
+	 * @param pathName path name file was read from
+	 * @param fileName file name was read from
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return model
+	 */
+	static Model* read(const vector<uint8_t>& data, const string& pathName = string(), const string& fileName = string());
 
 private:
 	/**

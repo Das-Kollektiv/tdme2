@@ -9,7 +9,6 @@ namespace subcontrollers {
 	class PrototypeBaseSubController;
 	class PrototypeDisplaySubController;
 	class PrototypePhysicsSubController_BoundingVolumeType;
-	class PrototypePhysicsSubController_GenerateConvexMeshes;
 	class PrototypePhysicsSubController;
 	class PrototypeSoundsSubController;
 }  // namespace subcontrollers

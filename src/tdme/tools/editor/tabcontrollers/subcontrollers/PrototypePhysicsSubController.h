@@ -143,18 +143,6 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * On bounding volume convex meshes remove
-	 * @param prototype prototype
-	 */
-	void onBoundingVolumeConvexMeshesRemove(Prototype* prototype);
-
-	/**
-	 * On bounding volume convex meshes generate
-	 * @param prototype prototype
-	 */
-	void onBoundingVolumeConvexMeshesGenerate(Prototype* prototype);
-
-	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

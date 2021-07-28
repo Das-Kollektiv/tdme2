@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -26,6 +27,7 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -52,7 +54,7 @@ PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
 {
 	this->id = id;
 	this->prototype = prototype;
-	modelMeshFile = "";
+	convexMeshFile.clear();
 	model = nullptr;
 	boundingVolume = nullptr;
 	generated = false;
@@ -67,7 +69,9 @@ void PrototypeBoundingVolume::setupNone()
 {
 	boundingVolume = nullptr;
 	model = nullptr;
-	modelMeshFile = "";
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 int PrototypeBoundingVolume::allocateModelIdx() {
@@ -89,7 +93,9 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 			string(".") +
 			to_string(allocateModelIdx())
 	);
-	modelMeshFile = "";
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, float radius)
@@ -107,7 +113,9 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 			string(".") +
 			to_string(allocateModelIdx())
 	);
-	modelMeshFile = "";
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
@@ -125,7 +133,9 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 			string(".") +
 			to_string(allocateModelIdx())
 	);
-	modelMeshFile = "";
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
@@ -144,7 +154,9 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 			string(".") +
 			to_string(allocateModelIdx())
 	);
-	modelMeshFile = "";
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 void PrototypeBoundingVolume::clearConvexMesh()
@@ -153,7 +165,9 @@ void PrototypeBoundingVolume::clearConvexMesh()
 	if (model != nullptr) delete model;
 	boundingVolume = nullptr;
 	model = nullptr;
-	modelMeshFile.clear();
+	convexMeshFile.clear();
+	convexMeshData.clear();
+	generated = false;
 }
 
 void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
@@ -162,7 +176,9 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 	if (model != nullptr) delete model;
 	boundingVolume = nullptr;
 	model = nullptr;
-	modelMeshFile = pathName + "/" + fileName;
+	convexMeshFile = pathName + "/" + fileName;
+	convexMeshData.clear();
+	generated = false;
 	try {
 		auto convexMeshModel = ModelReader::read(
 			pathName,
@@ -174,7 +190,29 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 		Primitives::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (Exception& exception) {
-		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: " + modelMeshFile + ": "));
+		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: " + convexMeshFile + ": "));
+		Console::println(string(exception.what()));
+		setupNone();
+	}
+}
+
+void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
+	convexMeshData = data;
+	if (boundingVolume != nullptr) delete boundingVolume;
+	if (model != nullptr) delete model;
+	boundingVolume = nullptr;
+	model = nullptr;
+	convexMeshFile = string();
+	generated = true;
+	try {
+		auto convexMeshModel = TMReader::read(convexMeshData);
+		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
+		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
+		delete convexMeshObject3DModel;
+		Primitives::setupConvexMeshModel(convexMeshModel);
+		model = convexMeshModel;
+	} catch (Exception& exception) {
+		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));
 		setupNone();
 	}

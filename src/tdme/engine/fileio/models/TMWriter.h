@@ -46,13 +46,15 @@ namespace models {
  */
 class TMWriterOutputStream {
 private:
-	vector<uint8_t> data;
+	vector<uint8_t>* data;
 public:
 
 	/**
 	 * Constructor
+	 * @param data data vector to write TM to
 	 */
-	inline TMWriterOutputStream() {
+	inline TMWriterOutputStream(vector<uint8_t>* data) {
+		this->data = data;
 	}
 
 	/**
@@ -60,7 +62,7 @@ public:
 	 * @return data
 	 */
 	inline vector<uint8_t>* getData() {
-		return &data;
+		return data;
 	}
 
 	/**
@@ -78,7 +80,7 @@ public:
 	 * @param b byte
 	 */
 	inline void writeByte(int8_t b) {
-		data.push_back(b);
+		data->push_back(b);
 	}
 
 	/**
@@ -217,6 +219,13 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void write(Model* model, const string& pathName, const string& fileName);
+
+	/**
+	 * TDME model format writer
+	 * @param model model
+	 * @param data data to write TM to
+	 */
+	static void write(Model* model, vector<uint8_t>& data);
 
 private:
 

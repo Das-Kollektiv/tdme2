@@ -422,7 +422,6 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_GenerateConvexMeshes.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.cpp \

@@ -65,10 +65,10 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 			if (StringTools::endsWith(StringTools::toLowerCase(canonicalFileName), ".png") == true) {
 
 				// create PNG input stream
-				vector<uint8_t> pngData;
-				FileSystem::getInstance()->getContent(pathName, fileName, pngData);
+				vector<uint8_t> data;
+				FileSystem::getInstance()->getContent(pathName, fileName, data);
 
-				texture = TextureReader::readPNG(canonicalFilePath, pngData, powerOfTwo);
+				texture = TextureReader::readPNG(canonicalFilePath, data, powerOfTwo);
 				if (texture != nullptr && useCache == true) {
 					(*textureCache)[texture->getId()] = texture;
 				}
@@ -177,11 +177,11 @@ void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo) {
+Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// create PNG input stream
-	PNGInputStream pngInputStream(&pngData);
+	PNGInputStream pngInputStream(&data);
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];

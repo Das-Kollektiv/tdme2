@@ -34,6 +34,7 @@
 using std::array;
 using std::map;
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::fileio::models::TMWriter;
@@ -66,7 +67,13 @@ using tdme::utilities::Exception;
 
 void TMWriter::write(Model* model, const string& pathName, const string& fileName)
 {
-	TMWriterOutputStream os;
+	vector<uint8_t> data;
+	write(model, data);
+	FileSystem::getInstance()->setContent(pathName, fileName, data);
+}
+
+void TMWriter::write(Model* model, vector<uint8_t>& data) {
+	TMWriterOutputStream os(&data);
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
@@ -90,7 +97,6 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 		AnimationSetup* animationSetup = it.second;
 		writeAnimationSetup(&os, animationSetup);
 	}
-	FileSystem::getInstance()->setContent(pathName, fileName, *os.getData());
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)

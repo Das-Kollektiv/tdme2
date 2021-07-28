@@ -462,11 +462,18 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			string fileName = jBv["file"].GetString();
-			prototypeBoundingVolume->setupConvexMesh(
-				getResourcePathName(pathName, fileName),
-				Tools::getFileName(fileName)
-			);
+			string data = jBv.FindMember("data") != jBv.MemberEnd()?jBv["data"].GetString():string();
+			if (data.empty() == false) {
+				vector<uint8_t> tmData;
+				Base64EncDec::decode(data, tmData);
+				prototypeBoundingVolume->setupConvexMesh(tmData);
+			} else {
+				string fileName = jBv["file"].GetString();
+				prototypeBoundingVolume->setupConvexMesh(
+					getResourcePathName(pathName, fileName),
+					Tools::getFileName(fileName)
+				);
+			}
 		} catch (Exception& exception) {
 			Console::print(string("PrototypeReader::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));

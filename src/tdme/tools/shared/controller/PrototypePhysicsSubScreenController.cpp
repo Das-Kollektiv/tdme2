@@ -495,7 +495,7 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshFile(Prototy
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		prototype->getBoundingVolume(idx)->getModelMeshFile().length() > 0 ? prototype->getBoundingVolume(idx)->getModelMeshFile() : prototype->getModelFileName(),
+		prototype->getBoundingVolume(idx)->getConvexMeshFile().length() > 0 ? prototype->getBoundingVolume(idx)->getConvexMeshFile() : prototype->getModelFileName(),
 		true,
 		new OnBoundingVolumeConvexMeshFileAction(this, idxFinal, prototypeFinal)
 	);

@@ -529,7 +529,13 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getModelMeshFile(), jAllocator), jAllocator);
+			if (prototypeBoundingVolume->getConvexMeshData().empty() == false) {
+				string base64TMData;
+				Base64EncDec::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
+				jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
+			} else {
+				jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
+			}
 		}
 		jBoundingVolume.AddMember("g", Value(prototypeBoundingVolume->isGenerated()), jAllocator);
 		jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
