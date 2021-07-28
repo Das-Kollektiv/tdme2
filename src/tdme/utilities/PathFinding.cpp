@@ -309,7 +309,7 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 	openNodes.erase(nodeId);
 }
 
-bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
+bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, int maxTriesOverride, PathFindingCustomTest* customTest) {
 	// clear path
 	path.clear();
 
@@ -330,6 +330,9 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 
 	//
 	auto now = Time::getCurrentMillis();
+
+	//
+	auto currentMaxTries = maxTriesOverride == -1?this->maxTries:maxTriesOverride;
 
 	// set up custom test
 	this->customTest = customTest;
@@ -408,7 +411,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 			}
-			if (maxTries == 0) {
+			if (currentMaxTries == 0) {
 				forcedAlternativeEndSteps = 27 * 2;
 				auto forwardDistance = 0.0f;
 				auto i = 0;
@@ -629,7 +632,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		tries++;
 
 		//
-		if (success == true || tries >= maxTries + forcedAlternativeEndSteps) break;
+		if (success == true || tries >= currentMaxTries + forcedAlternativeEndSteps) break;
 	}
 
 	//
@@ -1007,4 +1010,18 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	//
 	return flowMap;
+}
+
+const vector<Vector3> PathFinding::generateDirectPath(const Vector3& start, const Vector3& end) {
+	vector<Vector3> path;
+	Vector3 axis;
+	axis.set(end).sub(start);
+	auto length = axis.computeLength();
+	auto step = axis.clone().normalize() * stepSize;
+	Vector3 current = start;
+	for (auto i = stepSize; i < length; i+= stepSize) {
+		path.push_back(current.add(step));
+	}
+	path.push_back(end);
+	return path;
 }
