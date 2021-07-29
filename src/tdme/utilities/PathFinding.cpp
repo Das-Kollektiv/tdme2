@@ -962,14 +962,20 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 				if (cell == nullptr) continue;
 
 				// check if we have missing neighbour cells
-				for (auto nZ = -1; nZ < 2; nZ++) {
-					for (auto nX = -1; nX < 2; nX++) {
+				auto hadMissingNeighborCell = false;
+				for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
+					for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
+						if (nZ == 0 && nX == 0) continue;
 						auto neighbourCellId = FlowMap::toIdInt(
 							centerPathNodeX + x + nX,
 							centerPathNodeZ + z + nZ
 						);
 						auto neighbourCell = flowMap->getCell(neighbourCellId);
-						if (neighbourCell == nullptr) cell->setMissingNeighborCell(true);
+						if (neighbourCell == nullptr) {
+							cell->setMissingNeighborCell(true);
+							hadMissingNeighborCell = true;
+							break;
+						}
 					}
 				}
 

@@ -300,11 +300,32 @@ public:
 			path.push_back(pathNode);
 		}
 		// add cells
-		// TODO: check again cell misssing neighbour cells
 		for (auto& cellIt: flowMap->cells) {
-			auto cellExists = cells.find(cellIt.first) != cells.end();
 			cells[cellIt.first] = cellIt.second;
 			cells[cellIt.first].pathNodeIdx+= pathSize;
+		}
+		// check if we have missing neighbour cells
+		for (auto& cellIt: cells) {
+			auto& cell = cellIt.second;
+			cell.setMissingNeighborCell(false);
+			auto cellX = getIntegerPositionComponent(cell.position.getX());
+			auto cellZ = getIntegerPositionComponent(cell.position.getZ());
+			auto hadMissingNeighborCell = false;
+			for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
+				for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
+					if (nZ == 0 && nX == 0) continue;
+					auto neighbourCellId = FlowMap::toIdInt(
+						cellX + nX,
+						cellZ + nZ
+					);
+					auto neighbourCell = getCell(neighbourCellId);
+					if (neighbourCell == nullptr) {
+						cell.setMissingNeighborCell(true);
+						hadMissingNeighborCell = true;
+						break;
+					}
+				}
+			}
 		}
 		// end positions
 		endPositions = flowMap->endPositions;

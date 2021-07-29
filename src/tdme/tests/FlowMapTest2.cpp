@@ -412,7 +412,7 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 0;
-		combatUnit.formationIdx = 2;
+		combatUnit.formationIdx = 3; // check for other formation size
 		combatUnit.pathFindingNodeIdx = -1;
 		combatUnit.speed = 1.0f;
 		combatUnit.movementDirectionRing.fill(Vector3());
@@ -481,7 +481,7 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 3;
-		combatUnit.formationIdx = 3;
+		combatUnit.formationIdx = 2;
 		combatUnit.pathFindingNodeIdx = -1;
 		combatUnit.speed = 1.0f;
 		combatUnit.movementDirectionRing.fill(Vector3());
@@ -847,6 +847,9 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 				cellObject->setDisableDepthTest(true);
 				cellObject->setEffectColorMul(Color4(0.25f, 0.25f, 0.25f, 1.0f));
 				cellObject->update();
+				if (cell->hasMissingNeighborCell() == true) {
+					cellObject->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
+				}
 				engine->addEntity(cellObject);
 				i++;
 			}
@@ -891,8 +894,10 @@ void FlowMapTest2::onMouseMoved(int x, int y) {
 }
 
 void FlowMapTest2::onMouseButton(int button, int state, int x, int y) {
-	mouseClicked = true;
-	mouseClickPosition = { x, y };
+	if (state == MOUSE_BUTTON_UP) {
+		mouseClicked = true;
+		mouseClickPosition = { x, y };
+	}
 }
 
 void FlowMapTest2::onMouseWheel(int button, int direction, int x, int y) {
