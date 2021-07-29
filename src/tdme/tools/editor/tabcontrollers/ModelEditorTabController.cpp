@@ -328,7 +328,7 @@ void ModelEditorTabController::setOutlinerContent() {
 				for (auto it: model->getAnimationSetups()) {
 					auto animationSetupId = it.second->getId();
 					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
-					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
+					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}
