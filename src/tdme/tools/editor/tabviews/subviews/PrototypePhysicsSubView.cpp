@@ -451,10 +451,12 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 void PrototypePhysicsSubView::startEditingBoundingVolume(Prototype* prototype) {
 	engine->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
 	setupModelBoundingVolume(prototype, displayBoundingVolumeIdx);
+	prototypePhysicsSubController->enableTools();
 }
 
 void PrototypePhysicsSubView::endEditingBoundingVolume(Prototype* prototype) {
 	engine->removeEntity(Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID);
+	prototypePhysicsSubController->disableTools();
 }
 
 bool PrototypePhysicsSubView::isEditingBoundingVolume(Prototype* prototype) {

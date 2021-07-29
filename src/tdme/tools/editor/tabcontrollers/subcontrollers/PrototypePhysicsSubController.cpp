@@ -89,11 +89,12 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, Engine* engine, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
+PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
 {
 	this->editorView = editorView;
+	this->tabView = tabView;
 	this->modelPath = modelPath;
-	this->view = new PrototypePhysicsSubView(engine, this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->view = new PrototypePhysicsSubView(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->popUps = editorView->getPopUps();
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount == -1?Prototype::MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
@@ -206,6 +207,7 @@ void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const st
 		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->startEditingBoundingVolume(prototype);
 		view->setDisplayBoundingVolume(true);
+		view->updateGizmo(prototype);
 	} else {
 		if (outlinerNode == "physics") {
 			setPhysicsDetails(prototype);
@@ -568,6 +570,25 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 			}
 		}
 	}
+	if (node->getId() == tabView->getTabId() + "_tab_button_select") {
+		// not yet
+	} else
+	if (node->getId() == tabView->getTabId() + "_tab_button_translate") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_TRANSLATE);
+		view->updateGizmo(prototype);
+	} else
+	if (node->getId() == tabView->getTabId() + "_tab_button_rotate") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_ROTATE);
+		view->updateGizmo(prototype);
+	} else
+	if (node->getId() == tabView->getTabId() + "_tab_button_scale") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_SCALE);
+		view->updateGizmo(prototype);
+	} else
+	if (node->getId() == tabView->getTabId() + "_tab_button_gizmo") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_ALL);
+		view->updateGizmo(prototype);
+	}
 }
 
 void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
@@ -890,4 +911,12 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
+}
+
+void PrototypePhysicsSubController::enableTools() {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_viewport"))->getActiveConditions().add("tools");
+}
+
+void PrototypePhysicsSubController::disableTools() {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_viewport"))->getActiveConditions().remove("tools");
 }

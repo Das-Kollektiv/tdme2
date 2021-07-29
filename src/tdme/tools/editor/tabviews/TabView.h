@@ -2,12 +2,14 @@
 
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 
+#include <string>
 #include <vector>
 
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::string;
 using std::vector;
 
 using tdme::engine::Engine;
@@ -27,6 +29,11 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 		float renderOffsetX { 0.0f };
 		float renderOffsetY { 0.0f };
 	};
+
+	/**
+	 * @return tab id
+	 */
+	virtual const string& getTabId() = 0;
 
 	/**
 	 * Initiates the view

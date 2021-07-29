@@ -69,10 +69,9 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param tabView tab view
-	 * @param engine engine
 	 * @param physicsView physics view
 	 */
-	PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, Engine* engine, PrototypePhysicsSubView* physicsView);
+	PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, PrototypePhysicsSubView* physicsView);
 
 	/**
 	 * Destructor

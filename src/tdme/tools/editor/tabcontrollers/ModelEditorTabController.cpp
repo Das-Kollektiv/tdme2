@@ -137,9 +137,9 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	auto const finalView = view;
 	this->popUps = view->getPopUps();
 	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), new OnSetPrototypeDataAction(this, finalView));
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), &modelPath, true);
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, view->getEngine(), this->prototypePhysicsSubController->getView());
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
