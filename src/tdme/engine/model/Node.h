@@ -94,6 +94,13 @@ public:
 	}
 
 	/**
+	 * @return if this node is empty
+	 */
+	inline bool isEmpty() const {
+		return vertices.empty() == true;
+	}
+
+	/**
 	 * @return if this node is a joint/bone
 	 */
 	inline bool isJoint() const {

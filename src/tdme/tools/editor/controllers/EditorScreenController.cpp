@@ -467,7 +467,49 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				}
 				// TODO: how to associate button with file name
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+
+				//
 				string icon = "resources/engine/images/folder.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) icon = "resources/engine/images/sound.png";
+				// code
+				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) icon = "resources/engine/images/script.png";
+				// fonts
+				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) icon = "resources/engine/images/font.png";
+				// images
+				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) icon = "resources/engine/images/texture.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) icon = "resources/engine/images/texture.png";
+				// models
+				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) icon = "resources/engine/images/mesh.png";
+				// property files
+				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) icon = "resources/engine/images/mesh.png";
+				// shader
+				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) icon = "resources/engine/images/script.png";
+				// tdme model
+				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) icon = "resources/engine/images/mesh.png";
+				// tdme scene
+				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) icon = "resources/engine/images/scene.png";
+				// tdme particle system
+				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) icon = "resources/engine/images/particle.png";
+				// tdme terrain
+				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) icon = "resources/engine/images/terrain.png";
+				// tdme script
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) icon = "resources/engine/images/script.png";
+				// xml
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) icon = "resources/engine/images/script.png";
+				// files without ending
+				if (fileName.rfind(".") == string::npos ||
+					(fileName.rfind("/") != string::npos &&
+					fileName.rfind(".") < fileName.rfind("/"))) {
+					icon = "resources/engine/images/script.png";
+				}
+
 				string thumbNail = "resources/engine/textures/terrain_dirt.png";
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
 				string templateSource = StringTools::endsWith(fileNameLowerCase, ".tmodel") == true?"button_template_thumbnail_texture.xml":"button_template_thumbnail.xml";

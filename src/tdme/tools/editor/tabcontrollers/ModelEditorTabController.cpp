@@ -263,12 +263,21 @@ void ModelEditorTabController::saveAs()
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
 	for (auto nodeIt: subNodes) {
 		auto node = nodeIt.second;
+		string image;
+		if (node->isJoint() == true) {
+			image = "bone.png";
+		} else
+		if (node->isEmpty() == true) {
+			image = "empty.png";
+		} else {
+			image = "mesh.png";
+		}
 		if (node->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\">\n";
 			createOutlinerModelNodesXML(prefix, node->getSubNodes(), xml);
 			xml+= "</selectbox-parent-option>\n";
 		} else {
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\" />\n";
 		}
 	}
 }
@@ -304,7 +313,7 @@ void ModelEditorTabController::setOutlinerContent() {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
 				for (auto it: model->getMaterials()) {
 					auto materialId = it.second->getId();
-					xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials." + materialId) + "\" />\n";
+					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}

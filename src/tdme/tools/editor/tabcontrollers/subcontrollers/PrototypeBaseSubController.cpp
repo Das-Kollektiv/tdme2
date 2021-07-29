@@ -79,7 +79,7 @@ void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototy
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
 		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
 			auto property = prototype->getPropertyByIndex(i);
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}

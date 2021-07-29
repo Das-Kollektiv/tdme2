@@ -149,7 +149,7 @@ void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype,
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
 		for (auto sound: prototype->getSounds()) {
 			auto soundId = sound->getId();
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" id=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escapeQuotes(soundId) + "\" id=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
