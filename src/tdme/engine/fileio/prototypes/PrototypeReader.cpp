@@ -379,7 +379,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	);
 	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":(pathName.empty() == true?"":pathName + "/")) + Tools::getPathName(modelRelativeFileName);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(modelRelativeFileName);
 	return resourcePathName;
 }
 

@@ -185,11 +185,11 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 		return nullptr;
 	}
 
-	auto imageIt = imageCache->find(canonicalFile);
+	auto imageIt = imageCache->find("tdme.gui." + canonicalFile);
 	auto image = imageIt != imageCache->end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureReader::read(path, file, false, false);
+			image = TextureReader::read(path, file, false, false, "tdme.gui.");
 			if (image != nullptr) {
 				image->setUseMipMap(false);
 				image->setRepeat(false);

@@ -43,9 +43,10 @@ public:
 	 * @param fileName file name
 	 * @param useCache use cache
 	 * @param powerOfTwo scale image to fit power of two dimensions
+	 * @param idPrefix id prefix
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true);
+	static Texture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
 	 * Reads a texture with additional transparency texture
@@ -55,17 +56,19 @@ public:
 	 * @param transparencyTextureFileName transparency texture file name
 	 * @param useCache use cache
 	 * @param powerOfTwo scale image to fit power of two dimensions
+	 * @param idPrefix id prefix
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true);
+	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
 	 * Read PNG
 	 * @param textureId texture id
 	 * @param data vector data to write PNG to
 	 * @param powerOfTwo scale image to fit power of two dimensions
+	 * @param idPrefix id prefix
 	 */
-	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true);
+	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
 
 private:
 	/**
