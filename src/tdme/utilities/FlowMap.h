@@ -305,11 +305,11 @@ public:
 			cells[cellIt.first].pathNodeIdx+= pathSize;
 		}
 		// check if we have missing neighbour cells
-		for (auto& cellIt: cells) {
-			auto& cell = cellIt.second;
-			cell.setMissingNeighborCell(false);
-			auto cellX = getIntegerPositionComponent(cell.position.getX());
-			auto cellZ = getIntegerPositionComponent(cell.position.getZ());
+		for (auto& cellIt: flowMap->cells) {
+			auto cell = getCell(cellIt.first);
+			cell->setMissingNeighborCell(false);
+			auto cellX = getIntegerPositionComponent(cell->position.getX());
+			auto cellZ = getIntegerPositionComponent(cell->position.getZ());
 			auto hadMissingNeighborCell = false;
 			for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
 				for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
@@ -320,7 +320,7 @@ public:
 					);
 					auto neighbourCell = getCell(neighbourCellId);
 					if (neighbourCell == nullptr) {
-						cell.setMissingNeighborCell(true);
+						cell->setMissingNeighborCell(true);
 						hadMissingNeighborCell = true;
 						break;
 					}
