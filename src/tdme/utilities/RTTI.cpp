@@ -6,7 +6,7 @@
 	#include <cxxabi.h>
 	#include <stdlib.h>
 
-	#if !defined(_WIN32)
+	#if !defined(_WIN32) && !defined(__HAIKU__)
 		#include <stdio.h>
 		#include <execinfo.h>
 		#include <signal.h>
@@ -35,7 +35,7 @@ const string RTTI::demangle(const string& name) {
 }
 
 const string RTTI::backtrace() {
-	#if defined(_WIN32)
+	#if defined(_WIN32) || defined(__HAIKU__)
 		return "No backtrace available";
 	#else
 		// Note: This is *nix only and requires to compile with -rdynamic flag
