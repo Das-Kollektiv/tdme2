@@ -331,4 +331,35 @@ public:
 		endPositions = flowMap->endPositions;
 	}
 
+	/**
+	 * Find nearest cell, which can be used if outside of flow map to find back in
+	 * @param x x
+	 * @param z z
+	 * @param steps steps
+	 */
+	inline FlowMapCell* findNearestCell(float x, float z, int steps = 8) {
+		Vector3 position = Vector3(x, 0.0f, z);
+		auto cellX = getIntegerPositionComponent(x);
+		auto cellZ = getIntegerPositionComponent(z);
+		auto halfSteps = steps / 2;
+		FlowMapCell* cellBestFit = nullptr;
+		float cellBestFitDistanceSquared = Float::MAX_VALUE;
+		for (auto nZ = -halfSteps; nZ < halfSteps; nZ++) {
+			for (auto nX = -halfSteps; nX < halfSteps; nX++) {
+				auto cellId = FlowMap::toIdInt(
+					cellX + nX,
+					cellZ + nZ
+				);
+				auto cellCandidate = getCell(cellId);
+				if (cellCandidate == nullptr) continue;
+				auto cellCandidateDistanceSquared = cellCandidate->getPosition().clone().sub(position).computeLengthSquared();
+				if (cellBestFit == nullptr || cellCandidateDistanceSquared < cellBestFitDistanceSquared) {
+					cellBestFit = cellCandidate;
+					cellBestFitDistanceSquared = cellCandidateDistanceSquared;
+				}
+			}
+		}
+		return cellBestFit;
+	}
+
 };

@@ -269,28 +269,35 @@ void FlowMapTest2::display()
 				if (flowMap != nullptr) {
 					auto combatUnitTranslation = combatUnit.object->getTranslation();
 					float minDistance = Float::MAX_VALUE;
-					Vector3 minDistancePathFindingNode;
-					for (auto& flowMapPathFindingNode: flowMap->getPath()) {
-						auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
-						auto pathCell = flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ());
-						if (candidateDistance < minDistance && pathCell != nullptr) {
-							minDistance = candidateDistance;
-							minDistancePathFindingNode = pathCell->getPosition() + pathCell->getDirection() * (flowMap->getStepSize() * 0.5f);
+					Vector3 flowMapPosition;
+					// 1. try: find nearest cell from current position
+					auto nearestCell = flowMap->findNearestCell(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ());
+					if (nearestCell != nullptr) {
+						flowMapPosition = nearestCell->getPosition() + Vector3(flowMap->getStepSize() / 2.0f, 0.0f, flowMap->getStepSize() / 2.0f);
+					} else {
+						// otherwise find path to closed path finding node of flowmap path
+						Vector3 minDistancePathFindingNode;
+						for (auto& flowMapPathFindingNode: flowMap->getPath()) {
+							auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
+							auto pathCell = flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ());
+							if (candidateDistance < minDistance && pathCell != nullptr) {
+								minDistance = candidateDistance;
+								minDistancePathFindingNode = pathCell->getPosition() + pathCell->getDirection() * (flowMap->getStepSize() * 0.5f);
+							}
 						}
 					}
 
-					//
 					//	line of sight check, then compute direct path
 					bool foundPath = false;
-					if (combatUnitTranslation.equals(minDistancePathFindingNode, 0.1f) == false) {
+					if (combatUnitTranslation.clone().sub(flowMapPosition).computeLengthSquared() < Math::square(0.1f)) {
 						for (auto i = 0; i < 3; i++) {
 							if (pathFinding->findPath(
 								combatUnitTranslation,
-								minDistancePathFindingNode,
+								flowMapPosition,
 								SceneConnector::RIGIDBODY_TYPEID_STATIC,
 								combatUnit.path,
 								3,
-								minDistance * 6
+								static_cast<int>(minDistance * 6.0f)
 							) == true) {
 								foundPath = true;
 								break;
@@ -299,7 +306,7 @@ void FlowMapTest2::display()
 					}
 
 					// try to do direct path
-					if (foundPath == false) combatUnit.path = pathFinding->generateDirectPath(combatUnitTranslation, minDistancePathFindingNode);
+					if (foundPath == false) combatUnit.path = pathFinding->generateDirectPath(combatUnitTranslation, flowMapPosition);
 					combatUnit.pathIdx = 0;
 				}
 			}
