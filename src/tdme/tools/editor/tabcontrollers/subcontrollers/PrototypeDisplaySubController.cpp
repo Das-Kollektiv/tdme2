@@ -62,11 +62,11 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, Engine* engine, PrototypePhysicsSubView* physicsView)
+PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorView, TabView* tabView, PrototypePhysicsSubView* physicsView)
 {
 	this->editorView = editorView;
 	this->tabView = tabView;
-	view = new PrototypeDisplaySubView(engine, this);
+	view = new PrototypeDisplaySubView(tabView->getEngine(), this);
 	this->physicsView = physicsView;
 	this->popUps = editorView->getPopUps();
 }
@@ -339,6 +339,7 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 		prototype->setDistanceShaderParameters(distanceShaderParameters);
 		view->updateShaderParameters(prototype);
 	}
+	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));
 }
 
 void PrototypeDisplaySubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)

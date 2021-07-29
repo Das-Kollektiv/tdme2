@@ -14,6 +14,7 @@
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -32,6 +33,7 @@ using tdme::math::Vector3;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
@@ -52,6 +54,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* modelPath { nullptr };
 	EditorView* editorView { nullptr };
+	TabView* tabView { nullptr };
 	PrototypePhysicsSubView* view { nullptr };
 	PopUps* popUps { nullptr };
 	bool isModelBoundingVolumes;
@@ -113,13 +116,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
-	 * @param engine engine
+	 * @param tabView tabView
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	PrototypePhysicsSubController(EditorView* editorView, Engine* engine, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor
@@ -141,18 +144,6 @@ public:
 	 * @param screenNode screen node
 	 */
 	void initialize(GUIScreenNode* screenNode);
-
-	/**
-	 * On bounding volume convex meshes remove
-	 * @param prototype prototype
-	 */
-	void onBoundingVolumeConvexMeshesRemove(Prototype* prototype);
-
-	/**
-	 * On bounding volume convex meshes generate
-	 * @param prototype prototype
-	 */
-	void onBoundingVolumeConvexMeshesGenerate(Prototype* prototype);
 
 	/**
 	 * Shows the error pop up
@@ -286,4 +277,14 @@ public:
 	 * @param prototype prototype
 	 */
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+
+	/**
+	 * Enable tool bar
+	 */
+	void enableTools();
+
+	/*
+	 * Disable tool bar
+	 */
+	void disableTools();
 };

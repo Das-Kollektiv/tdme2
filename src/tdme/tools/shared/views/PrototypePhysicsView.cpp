@@ -211,7 +211,7 @@ void PrototypePhysicsView::setBoundingVolumes(Prototype* prototype)
 			}
 		} else
 		if (dynamic_cast<ConvexMesh*>(bv->getBoundingVolume()) != nullptr) {
-			prototypePhysicsSubScreenController->setupConvexMesh(i, bv->getModelMeshFile());
+			prototypePhysicsSubScreenController->setupConvexMesh(i, bv->getConvexMeshFile());
 			prototypePhysicsSubScreenController->selectBoundingVolume(i, PrototypePhysicsSubScreenController_BoundingVolumeType::CONVEXMESH);
 			prototypePhysicsSubScreenController->setupModelBoundingVolumeType(prototype, i);
 		}

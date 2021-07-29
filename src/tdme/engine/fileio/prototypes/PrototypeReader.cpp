@@ -35,7 +35,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -82,7 +82,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Base64EncDec;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -171,7 +171,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		prototypeType,
 		name,
 		description,
-		"",
+		string(),
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
 		thumbnail,
 		model,
@@ -372,16 +372,15 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
-		(
-			StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
-				FileSystem::getInstance()->getPathName(fileName):
-				pathName + "/" +  FileSystem::getInstance()->getPathName(fileName)
-		 ),
+		StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
+			FileSystem::getInstance()->getPathName(fileName):
+			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
 	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(modelRelativeFileName);
+	return resourcePathName;
 }
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)
@@ -462,11 +461,18 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			string fileName = jBv["file"].GetString();
-			prototypeBoundingVolume->setupConvexMesh(
-				getResourcePathName(pathName, fileName),
-				Tools::getFileName(fileName)
-			);
+			string data = jBv.FindMember("data") != jBv.MemberEnd()?jBv["data"].GetString():string();
+			if (data.empty() == false) {
+				vector<uint8_t> tmData;
+				Base64EncDec::decode(data, tmData);
+				prototypeBoundingVolume->setupConvexMesh(tmData);
+			} else {
+				string fileName = jBv["file"].GetString();
+				prototypeBoundingVolume->setupConvexMesh(
+					getResourcePathName(pathName, fileName),
+					Tools::getFileName(fileName)
+				);
+			}
 		} catch (Exception& exception) {
 			Console::print(string("PrototypeReader::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));

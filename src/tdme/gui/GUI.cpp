@@ -171,7 +171,12 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 	string path;
 	string file;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		// TODO: improve me!
+		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+			canonicalFile = fileName;
+		} else {
+			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		}
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
@@ -180,11 +185,11 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 		return nullptr;
 	}
 
-	auto imageIt = imageCache->find(canonicalFile);
+	auto imageIt = imageCache->find("tdme.gui." + canonicalFile);
 	auto image = imageIt != imageCache->end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureReader::read(path, file, false, false);
+			image = TextureReader::read(path, file, false, false, "tdme.gui.");
 			if (image != nullptr) {
 				image->setUseMipMap(false);
 				image->setRepeat(false);

@@ -65,9 +65,13 @@ using tdme::utilities::ModelTools;
 
 Model* TMReader::read(const string& pathName, const string& fileName)
 {
-	vector<uint8_t> content;
-	FileSystem::getInstance()->getContent(pathName, fileName, content);
-	TMReaderInputStream is(&content);
+	vector<uint8_t> data;
+	FileSystem::getInstance()->getContent(pathName, fileName, data);
+	return read(data, pathName, fileName);
+}
+
+Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName) {
+	TMReaderInputStream is(&data);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
 		throw ModelFileIOException(
@@ -113,8 +117,8 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	is.readFloatArray(boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
-		pathName + "/" + fileName,
-		fileName,
+		pathName.empty() == true && fileName.empty() == true?name:pathName + "/" + fileName,
+		fileName.empty() == true?name:fileName,
 		upVector,
 		rotationOrder,
 		boundingBox

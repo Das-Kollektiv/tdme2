@@ -103,6 +103,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	engine = Engine::createOffScreenInstance(512, 512, true);
 	engine->setPartition(new PartitionNone());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
+	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	audio = Audio::getInstance();
 	modelEditorTabController = nullptr;
 	prototypeDisplayView = nullptr;

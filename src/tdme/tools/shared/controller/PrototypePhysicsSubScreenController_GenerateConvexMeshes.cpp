@@ -96,7 +96,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshe
 		if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
 			break;
 		} else {
-			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolume(i)->getModelMeshFile()) == convexHullFileName) {
+			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolume(i)->getConvexMeshFile()) == convexHullFileName) {
 				prototypePhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 			}
 			FileSystem::getInstance()->removeFile(

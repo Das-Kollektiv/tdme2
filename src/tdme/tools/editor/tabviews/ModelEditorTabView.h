@@ -239,6 +239,9 @@ public:
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
+	inline const string& getTabId() override {
+		return tabId;
+	}
 	void initialize() override;
 	void dispose() override;
 	Engine* getEngine() override;

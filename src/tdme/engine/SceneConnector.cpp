@@ -72,7 +72,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/MutableString.h>
@@ -149,7 +149,7 @@ using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::MutableString;

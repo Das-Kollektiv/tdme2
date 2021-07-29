@@ -28,7 +28,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/ModelTools.h>
@@ -66,7 +66,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::ModelTools;

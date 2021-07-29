@@ -37,17 +37,20 @@ public:
 	 * Generateconvex meshes
 	 * @param prototype prototype
 	 * @param mode mode
-	 * @param popUps pop ups
+	 * @param popUps pop ups which is optional
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param convexMeshTMsData convex mesh TM data vectors
 	 * @param parameters parameters
+	 * @return success
 	 */
-	static vector<string> generateConvexMeshes(
+	static bool generateConvexMeshes(
 		Prototype* prototype,
 		Mode mode,
 		PopUps* popUps,
 		const string& pathName,
 		const string& fileName,
+		vector<vector<uint8_t>>& convexMeshTMsData,
 		VHACD::IVHACD::Parameters parameters = VHACD::IVHACD::Parameters()
 	);
 

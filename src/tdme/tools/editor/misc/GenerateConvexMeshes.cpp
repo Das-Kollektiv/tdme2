@@ -88,24 +88,29 @@ void GenerateConvexMeshes::removeConvexMeshes(Prototype* prototype)
 	// delete old convex meshes
 	for (int i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 		auto boundingVolume = prototype->getBoundingVolume(i);
-		if (boundingVolume->getModelMeshFile().empty() == true ||
-			FileSystem::getInstance()->fileExists(boundingVolume->getModelMeshFile()) == false ||
-			boundingVolume->isGenerated() == false) {
+		if (boundingVolume->isGenerated() == false) {
 			continue;
 		} else {
-			FileSystem::getInstance()->removeFile(
-				FileSystem::getInstance()->getPathName(boundingVolume->getModelMeshFile()),
-				FileSystem::getInstance()->getFileName(boundingVolume->getModelMeshFile())
-			);
-			prototype->removeBoundingVolume(i);
-			i--;
+			if (boundingVolume->getConvexMeshFile().empty() == false &&
+				FileSystem::getInstance()->fileExists(boundingVolume->getConvexMeshFile()) == true) {
+				FileSystem::getInstance()->removeFile(
+					FileSystem::getInstance()->getPathName(boundingVolume->getConvexMeshFile()),
+					FileSystem::getInstance()->getFileName(boundingVolume->getConvexMeshFile())
+				);
+				prototype->removeBoundingVolume(i);
+				i--;
+			} else
+			if (boundingVolume->getConvexMeshData().empty() == false) {
+				prototype->removeBoundingVolume(i);
+				i--;
+			}
 		}
 	}
 }
 
-vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode, PopUps* popUps, const string& pathName, const string& fileName, VHACD::IVHACD::Parameters parameters)
+bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode, PopUps* popUps, const string& pathName, const string& fileName, vector<vector<uint8_t>>& convexMeshTMsData, VHACD::IVHACD::Parameters parameters)
 {
-	vector<string> convexMeshFileNames;
+	auto success = true;
 	if (mode == MODE_GENERATE) {
 		class VHACDCallback : public IVHACD::IUserCallback {
 			private:
@@ -135,7 +140,7 @@ vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, 
 		};
 
 		//
-		popUps->getProgressBarScreenController()->show();
+		if (popUps != nullptr) popUps->getProgressBarScreenController()->show();
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			if (parameters.m_resolution < 10000 || parameters.m_resolution > 64000000) {
@@ -165,10 +170,12 @@ vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, 
 			if (parameters.m_pca > 1) {
 				throw ExceptionBase("PCA must be between 0 and 1");
 			}
-			VHACDCallback vhacdCallback(popUps->getProgressBarScreenController());
 			VHACDLogger vhacdLogger;
 			parameters.m_logger = &vhacdLogger;
-			parameters.m_callback = &vhacdCallback;
+			if (popUps != nullptr) {
+				VHACDCallback vhacdCallback(popUps->getProgressBarScreenController());
+				parameters.m_callback = &vhacdCallback;
+			}
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
 			auto meshModel = ModelReader::read(
@@ -208,18 +215,6 @@ vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, 
 						" convex hulls: " + to_string(convexHulls)
 					);
 				}
-				// delete old convex meshes
-				for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-					auto convexHullFileName = fileName + ".cm." + to_string(i) + ".tm";
-					if (FileSystem::getInstance()->fileExists(pathName + "/" + convexHullFileName) == false) {
-						break;
-					} else {
-						FileSystem::getInstance()->removeFile(
-							pathName,
-							convexHullFileName
-						);
-					}
-				}
 				IVHACD::ConvexHull convexHull;
 				for (auto i = 0; i < convexHulls; i++) {
 					vhacd->GetConvexHull(i, convexHull);
@@ -238,22 +233,25 @@ vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, 
 						convexHull.m_nPoints,
 						convexHull.m_nTriangles
 					);
-					TMWriter::write(convexHullModel, pathName, convexHullFileName);
+					convexMeshTMsData.push_back(vector<uint8_t>());
+					TMWriter::write(convexHullModel, convexMeshTMsData[convexMeshTMsData.size() - 1]);
 					delete convexHullModel;
-					convexMeshFileNames.push_back(pathName + "/" + convexHullFileName);
 				}
 			}
 		} catch (Exception &exception) {
-			convexMeshFileNames.clear();
-			popUps->getInfoDialogScreenController()->show(
-				"Warning: Could not create convex hulls",
-				exception.what()
-			);
+			if (popUps != nullptr) {
+				popUps->getInfoDialogScreenController()->show(
+					"Warning: Could not create convex hulls",
+					exception.what()
+				);
+			}
 			Console::println(string("Could not create convex hulls: ") + exception.what());
+			convexMeshTMsData.clear();
+			success = false;
 		}
 		vhacd->Clean();
 		vhacd->Release();
-		popUps->getProgressBarScreenController()->close();
+		if (popUps != nullptr) popUps->getProgressBarScreenController()->close();
 	} else
 	if (mode == MODE_IMPORT) {
 		try {
@@ -277,23 +275,25 @@ vector<string> GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, 
 						pathName + "/" + convexHullFileName,
 						nodeTriangles
 					);
-					TMWriter::write(convexHullModel, pathName, convexHullFileName);
+					convexMeshTMsData.push_back(vector<uint8_t>());
+					TMWriter::write(convexHullModel, convexMeshTMsData[convexMeshTMsData.size() - 1]);
 					delete convexHullModel;
-					convexMeshFileNames.push_back(pathName + "/" + convexHullFileName);
-
 				}
 			}
 			delete meshModel;
 		} catch (Exception &exception) {
-			convexMeshFileNames.clear();
-			popUps->getInfoDialogScreenController()->show(
-				"Warning: Could not create convex hulls",
-				exception.what()
-			);
+			if (popUps != nullptr) {
+				popUps->getInfoDialogScreenController()->show(
+					"Warning: Could not create convex hulls",
+					exception.what()
+				);
+			}
 			Console::println(string("Could not create convex hulls: ") + exception.what());
+			convexMeshTMsData.clear();
+			success = false;
 		}
 	}
-	return convexMeshFileNames;
+	return success;
 }
 
 Model* GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {

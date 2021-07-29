@@ -114,10 +114,14 @@ void GUIScreenNode::setGUI(GUI* gui)
 
 void GUIScreenNode::setVisible(bool visible)
 {
+	if (this->visible == visible) return;
 	this->visible = visible;
-	if (gui != nullptr)
+	if (gui != nullptr &&
+		((visible == false && gui->getFocussedNode() != nullptr && gui->getFocussedNode()->getScreenNode() == this) ||
+		visible == true)) {
+		//
 		gui->invalidateFocussedNode();
-
+	}
 }
 
 void GUIScreenNode::setPopUp(bool popUp)
