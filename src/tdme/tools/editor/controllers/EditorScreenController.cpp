@@ -286,6 +286,7 @@ void EditorScreenController::onOpenProject() {
 				editorScreenController->projectPath = StringTools::substring(editorScreenController->projectPath, 0, editorScreenController->projectPath.size() - 1);
 			}
 			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
+			editorScreenController->closeTabs();
 			editorScreenController->clearProjectPathFiles();
 			editorScreenController->scanProjectPaths();
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -377,6 +378,19 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 			}
 		}
 	}
+}
+
+void EditorScreenController::closeTabs() {
+	for (auto& tabsIt: tabViews) {
+		auto& tab = tabsIt.second;
+		screenNode->removeNodeById(tab.getId(), false);
+		screenNode->removeNodeById(tab.getId() + "-content", false);
+		tab.getTabView()->dispose();
+		delete tab.getTabView();
+	}
+	tabViews.clear();
+	setDetailsContent(string());
+	setOutlinerContent(string());
 }
 
 void EditorScreenController::clearProjectPathFiles() {

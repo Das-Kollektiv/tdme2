@@ -200,6 +200,11 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Close tabs
+	 */
+	void closeTabs();
+
+	/**
 	 * Clear project path files
 	 */
 	void clearProjectPathFiles();

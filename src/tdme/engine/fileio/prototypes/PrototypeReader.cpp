@@ -372,16 +372,15 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
-		(
-			StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
-				FileSystem::getInstance()->getPathName(fileName):
-				pathName + "/" +  FileSystem::getInstance()->getPathName(fileName)
-		 ),
+		StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
+			FileSystem::getInstance()->getPathName(fileName):
+			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
 	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":(pathName.empty() == true?"":pathName + "/")) + Tools::getPathName(modelRelativeFileName);
+	return resourcePathName;
 }
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)

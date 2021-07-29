@@ -394,15 +394,18 @@ const string Tools::getRelativeResourcesFileName(const string& applicationRoot, 
 
 const string Tools::getApplicationRootPathName(const string& fileName)
 {
+	Console::println("Tools::getApplicationRootPathName(): " + fileName);
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
-	auto applicationRootPathNameIdx = -1;
-	if (applicationRootPathNameIdx == -1) {
+	auto applicationRootPathNameIdx = string::npos;
+	if (applicationRootPathNameIdx == string::npos) {
 		applicationRootPathNameIdx = fileName.rfind("/resources/");
-		if (applicationRootPathNameIdx != -1) return StringTools::substring(fileName, 0, applicationRootPathNameIdx);
+		if (applicationRootPathNameIdx != string::npos) return StringTools::substring(fileName, 0, applicationRootPathNameIdx);
 	}
-	if (applicationRootPathNameIdx == -1) {
-		applicationRootPathNameIdx = fileName.rfind("resources/");
-		if (applicationRootPathNameIdx != -1) return StringTools::substring(fileName, 0, applicationRootPathNameIdx);
+	if (StringTools::startsWith(fileName, "resources/") == true) {
+		return "";
+	}
+	if (StringTools::endsWith(fileName, "/resources") == true) {
+		return StringTools::substring(fileName, 0, fileName.size() - string("/resources").size());
 	}
 	return "";
 }

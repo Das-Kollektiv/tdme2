@@ -67,7 +67,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 {
 	vector<uint8_t> data;
 	FileSystem::getInstance()->getContent(pathName, fileName, data);
-	return read(data);
+	return read(data, pathName, fileName);
 }
 
 Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName) {

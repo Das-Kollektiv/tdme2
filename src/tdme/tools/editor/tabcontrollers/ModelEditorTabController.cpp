@@ -656,7 +656,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 	try {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
 			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath(),
+				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
 				specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
 			) +
 			"/" +
@@ -664,7 +664,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 		);
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
 			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath(),
+				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
 				specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 			) +
 			"/" +
