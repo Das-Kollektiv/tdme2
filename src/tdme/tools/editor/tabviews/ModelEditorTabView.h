@@ -64,7 +64,7 @@ private:
 	bool loadModelRequested;
 	bool initModelRequested;
 	bool initModelRequestedReset;
-	string modelFile;
+	string prototypeFileName;
 	int lodLevel;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	int64_t audioStarted;
@@ -250,16 +250,6 @@ public:
 	void reloadOutliner() override;
 	void playSound(const string& soundId) override;
 	void stopSound() override;
-
-	/**
-	 * On init additional screens
-	 */
-	virtual void onInitAdditionalScreens();
-
-	/**
-	 * On set prototype data hook
-	 */
-	virtual void onSetPrototypeData();
 
 	/**
 	 * Play animation

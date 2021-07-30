@@ -114,7 +114,6 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	public:
 		void performAction() override {
 			finalView->reloadOutliner();
-			finalView->onSetPrototypeData();
 		}
 
 		/**
