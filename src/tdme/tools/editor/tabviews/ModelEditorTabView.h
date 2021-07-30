@@ -39,7 +39,7 @@ using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 
 /**
- * TDME model editor tab view
+ * Model editor tab view
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -134,11 +134,6 @@ public:
 	 * @return editor view
 	 */
 	EditorView* getEditorView();
-
-	/**
-	 * @return associated tab controller
-	 */
-	TabController* getTabController();
 
 	/**
 	 * @return pop up views
@@ -244,9 +239,10 @@ public:
 	}
 	void initialize() override;
 	void dispose() override;
-	Engine* getEngine() override;
 	void activate() override;
 	void deactivate() override;
+	Engine* getEngine() override;
+	TabController* getTabController() override;
 	void reloadOutliner() override;
 	void playSound(const string& soundId) override;
 	void stopSound() override;

@@ -36,6 +36,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -80,6 +81,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -566,12 +568,21 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 	auto isModel = false;
-	auto isPrototype = false;
-	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) isPrototype = true;
-	for (auto& extension: ModelReader::getModelExtensions()) {
-		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+	auto isModelPrototype = false;
+	auto isScene = false;
+	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+		isScene = true;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+		isModelPrototype = true;
+	} else {
+		for (auto& extension: ModelReader::getModelExtensions()) {
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+		}
 	}
-	if (isModel == false && isPrototype == false) {
+	if (isScene == false &&
+		isModel == false &&
+		isModelPrototype == false) {
 		showErrorPopUp("Error", "File format not yet supported");
 		return;
 	}
@@ -619,7 +630,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	}
 	try {
 		Prototype* prototype = nullptr;
-		if (isPrototype == true) {
+		if (isModelPrototype == true) {
 			prototype = PrototypeReader::read(
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
@@ -638,7 +649,13 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
 		}
-		auto tabView = new ModelEditorTabView(view, tabId, prototype);
+		TabView* tabView = nullptr;
+		if (isModelPrototype == true || isModel == true) {
+			tabView = new ModelEditorTabView(view, tabId, prototype);
+		} else
+		if (isScene == true) {
+			tabView = new SceneEditorTabView(view, tabId, fileName);
+		}
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));

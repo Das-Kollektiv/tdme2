@@ -49,7 +49,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
-using tdme::utilities::MutableString;
 
 /**
  * Model editor screen controller
@@ -465,10 +464,5 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
-
-	/**
-	 * On quit
-	 */
-	void onQuit();
 
 };

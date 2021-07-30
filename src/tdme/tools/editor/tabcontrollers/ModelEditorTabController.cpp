@@ -454,10 +454,6 @@ void ModelEditorTabController::onToolsOptimizeModel() {
 	view->optimizeModel();
 }
 
-void ModelEditorTabController::onQuit()
-{
-}
-
 void ModelEditorTabController::onModelReload()
 {
 	view->reloadFile();

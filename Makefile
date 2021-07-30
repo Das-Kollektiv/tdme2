@@ -598,12 +598,14 @@ SRCS = \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
