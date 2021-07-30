@@ -10,7 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -99,7 +99,7 @@ private:
 
 private:
 	Model* levelEditorGround { nullptr };
-	Scene scene;
+	Scene* scene { nullptr };
 	vector<string> selectedEntityIds;
 	set<string> selectedEntityIdsById;
 	vector<SceneEntity*> copiedEntities;

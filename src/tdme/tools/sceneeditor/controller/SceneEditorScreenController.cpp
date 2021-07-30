@@ -260,7 +260,7 @@ void SceneEditorScreenController::onEntityDataApply()
 	}
 }
 
-void SceneEditorScreenController::setEntityListbox(Scene& scene)
+void SceneEditorScreenController::setEntityListbox(Scene* scene)
 {
 	auto selectedObjects = entitiesListBox->getController()->getValue();
 	auto entitiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entitiesListBox->getScreenNode()->getNodeById(entitiesListBox->getId() + "_inner")));
@@ -272,7 +272,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 		entitiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto entityIdx = 0;
-	for (int i = 0; i < scene.getEntityCount(); i++) {
+	for (int i = 0; i < scene->getEntityCount(); i++) {
 		if (entityIdx > 25000) {
 			entitiesListBoxSubNodesXML =
 				"<scrollarea id=\"" +
@@ -280,7 +280,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto entity = scene.getEntityAt(i);
+		auto entity = scene->getEntityAt(i);
 		if (entity->getPrototype()->isRenderGroups() == true) continue;
 		auto entityId = entity->getId();
 		entitiesListBoxSubNodesXML =
@@ -421,7 +421,7 @@ void SceneEditorScreenController::onScenePropertiesSelectionChanged()
 	}
 }
 
-void SceneEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
+void SceneEditorScreenController::setSceneProperties(Scene* scene, const string& selectedName)
 {
 	scenePropertyName->getController()->setDisabled(true);
 	scenePropertyValue->getController()->setDisabled(true);
@@ -434,8 +434,8 @@ void SceneEditorScreenController::setSceneProperties(Scene& scene, const string&
 		"<scrollarea id=\"" +
 		scenePropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < scene.getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
+	for (auto i = 0; i < scene->getPropertyCount(); i++) {
+		PrototypeProperty* mapProperty = scene->getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -983,9 +983,9 @@ void SceneEditorScreenController::loadScene(const string& pathName, const string
 	view->loadScene(pathName, fileName);
 }
 
-void SceneEditorScreenController::setSky(Scene& scene) {
-	sceneSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
-	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
+void SceneEditorScreenController::setSky(Scene* scene) {
+	sceneSkyModel->getController()->setValue(MutableString(scene->getSkyModelFileName()));
+	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene->getSkyModelScale())));
 }
 
 void SceneEditorScreenController::onMapSkyModelLoad() {
@@ -1053,14 +1053,14 @@ void SceneEditorScreenController::onMapSkyApply() {
 					Tools::getFileName(sceneSkyModel->getController()->getValue().getString())
 				);
 		view->getScene()->setSkyModel(model);
-		setSky(*view->getScene());
+		setSky(view->getScene());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
 	view->updateSky();
 }
 
-void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
+void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene* scene, const string& selectedEnvironmentMappingId) {
 	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
 	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
@@ -1078,7 +1078,7 @@ void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene&
 		"\" value=\"\" " +
 		(selectedEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") +
 		" />\n";
-	for (auto& environmentMappingId: scene.getEnvironmentMappingIds()) {
+	for (auto& environmentMappingId: scene->getEnvironmentMappingIds()) {
 		environmentMappingIdsInnerNodeSubNodesXML =
 			environmentMappingIdsInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +

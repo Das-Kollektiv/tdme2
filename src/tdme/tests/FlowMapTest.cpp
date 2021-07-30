@@ -7,8 +7,6 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -123,20 +121,21 @@ void FlowMapTest::display()
 void FlowMapTest::dispose()
 {
 	engine->dispose();
+	delete scene;
 }
 
 void FlowMapTest::initialize()
 {
 	engine->initialize();
-	SceneReader::read("resources/tests/levels/pathfinding", "test.tscene", scene);
+	scene = SceneReader::read("resources/tests/levels/pathfinding", "test.tscene");
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
-	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
-	cam->setLookAt(scene.getCenter());
+	cam->setLookFrom(scene->getCenter() + Vector3(0.0f, 10.0f, 0.0f));
+	cam->setLookAt(scene->getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel");
@@ -206,9 +205,9 @@ void FlowMapTest::doPathFinding() {
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
-	auto center = scene.getBoundingBox()->getCenter();
-	auto depth = Math::ceil(scene.getBoundingBox()->getDimensions().getZ());
-	auto width = Math::ceil(scene.getBoundingBox()->getDimensions().getX());
+	auto center = scene->getBoundingBox()->getCenter();
+	auto depth = Math::ceil(scene->getBoundingBox()->getDimensions().getZ());
+	auto width = Math::ceil(scene->getBoundingBox()->getDimensions().getX());
 	flowMap = pathFinding->createFlowMap(
 		{
 			endPlayerObject1->getTransformations().getTranslation(),

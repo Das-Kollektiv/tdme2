@@ -141,13 +141,14 @@ void WaterTest::display()
 void WaterTest::dispose()
 {
 	engine->dispose();
+	delete scene;
 }
 
 void WaterTest::initialize()
 {
 	engine->initialize();
 
-	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene", scene);
+	scene = SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene");
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 

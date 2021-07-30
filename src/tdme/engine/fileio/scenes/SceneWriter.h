@@ -33,6 +33,6 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void write(const string& pathName, const string& fileName, Scene& scene);
+	static void write(const string& pathName, const string& fileName, Scene* scene);
 
 };

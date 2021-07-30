@@ -169,25 +169,25 @@ int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 bool SceneConnector::enableEarlyZRejection = false;
 
-void SceneConnector::setLights(Engine* engine, Scene& scene, const Vector3& translation)
+void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX && i < scene.getLightCount(); i++) {
-		engine->getLightAt(i)->setAmbient(Color4(scene.getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(scene.getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(scene.getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(scene.getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(scene.getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(scene.getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(scene.getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(scene.getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(scene.getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(scene.getLightAt(i)->isEnabled());
+	for (auto i = 0; i < Engine::LIGHTS_MAX && i < scene->getLightCount(); i++) {
+		engine->getLightAt(i)->setAmbient(Color4(scene->getLightAt(i)->getAmbient()));
+		engine->getLightAt(i)->setDiffuse(Color4(scene->getLightAt(i)->getDiffuse()));
+		engine->getLightAt(i)->setSpecular(Color4(scene->getLightAt(i)->getSpecular()));
+		engine->getLightAt(i)->setSpotDirection(scene->getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->setSpotExponent(scene->getLightAt(i)->getSpotExponent());
+		engine->getLightAt(i)->setSpotCutOff(scene->getLightAt(i)->getSpotCutOff());
+		engine->getLightAt(i)->setConstantAttenuation(scene->getLightAt(i)->getConstantAttenuation());
+		engine->getLightAt(i)->setLinearAttenuation(scene->getLightAt(i)->getLinearAttenuation());
+		engine->getLightAt(i)->setQuadraticAttenuation(scene->getLightAt(i)->getQuadraticAttenuation());
+		engine->getLightAt(i)->setEnabled(scene->getLightAt(i)->isEnabled());
 		engine->getLightAt(i)->setPosition(
 			Vector4(
-				scene.getLightAt(i)->getPosition().getX() + translation.getX(),
-				scene.getLightAt(i)->getPosition().getY() + translation.getY(),
-				scene.getLightAt(i)->getPosition().getZ() + translation.getZ(),
-				scene.getLightAt(i)->getPosition().getW()
+				scene->getLightAt(i)->getPosition().getX() + translation.getX(),
+				scene->getLightAt(i)->getPosition().getY() + translation.getY(),
+				scene->getLightAt(i)->getPosition().getZ() + translation.getZ(),
+				scene->getLightAt(i)->getPosition().getW()
 			)
 		);
 	}
@@ -463,13 +463,13 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
 }
 
-void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	// TODO: progress callbacks for terrain
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// terrain
 	{
@@ -631,10 +631,10 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
@@ -871,13 +871,13 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
-void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// terrain + foliage
 	{
@@ -950,11 +950,11 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	}
 
 	//
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 1.0f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -976,7 +976,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	}
 }
 
-void SceneConnector::disableScene(Engine* engine, Scene& scene)
+void SceneConnector::disableScene(Engine* engine, Scene* scene)
 {
 	// terrain + water + foliage render groups + render groups
 	{
@@ -1009,7 +1009,7 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1030,8 +1030,8 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1040,7 +1040,7 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 }
 
-void SceneConnector::disableScene(World* world, Scene& scene)
+void SceneConnector::disableScene(World* world, Scene* scene)
 {
 	// terrain
 	{
@@ -1049,7 +1049,7 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1070,15 +1070,15 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto body = world->getBody(sceneEntity->getId());
 		if (body == nullptr) continue;
 		body->setEnabled(false);
 	}
 }
 
-void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
+void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& translation)
 {
 	// terrain + water + foliage render groups + render groups
 	{
@@ -1111,7 +1111,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1132,8 +1132,8 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1148,7 +1148,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 }
 
-void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
+void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& translation)
 {
 	// terrain
 	{
@@ -1160,7 +1160,7 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1182,8 +1182,8 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 
 	// scene entities
 	Transformations transformations;
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(sceneEntity->getTransformations());
@@ -1194,7 +1194,7 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 	}
 }
 
-void SceneConnector::resetEngine(Engine* engine, Scene& scene) {
+void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;

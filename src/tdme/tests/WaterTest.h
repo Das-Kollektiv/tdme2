@@ -5,7 +5,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
 
@@ -32,7 +32,7 @@ private:
 	Prototype* skyPanoramaPrototype { nullptr };
 	Prototype* spherePrototype { nullptr };
 
-	Scene scene;
+	Scene* scene { nullptr };
 
 	float skyDomeTranslation { 0.0f };
 
