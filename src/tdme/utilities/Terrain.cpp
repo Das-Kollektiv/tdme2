@@ -26,6 +26,7 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -61,14 +62,19 @@ using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
 using tdme::math::Vector2;
+using tdme::os::threading::AtomicOperations;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 
+uint32_t Terrain::terrainModelId = 0;
+uint32_t Terrain::waterModelId = 0;
+
 void Terrain::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels)
 {
+	auto terrainModelId = AtomicOperations::increment(Terrain::terrainModelId);
 	vector<vector<Vector3>> partitionTerrainVertices;
 	vector<vector<Vector3>> partitionTerrainNormals;
 	vector<vector<array<int, 6>>> partitionTerrainFaces;
@@ -154,7 +160,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 	auto partitionIdx = 0;
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionTerrainFaces[partitionIdx].empty() == true) continue;
-		auto modelId = "terrain." + to_string(partitionIdx);
+		auto modelId = "terrain." + to_string(terrainModelId) + "." + to_string(partitionIdx);
 		auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto terrainMaterial = new Material("terrain");
 		terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
@@ -1087,6 +1093,7 @@ void Terrain::createWaterModels(
 	int waterModelIdx,
 	vector<Model*>& waterModels
 ) {
+	auto waterModelId = AtomicOperations::increment(Terrain::waterModelId);
 	//
 	for (auto& mIt: waterPositionMap) {
 		Console::print(to_string(mIt.first) + ": ");
@@ -1198,7 +1205,7 @@ void Terrain::createWaterModels(
 	}
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionWaterFaces[partitionIdx].empty() == true) continue;
-		auto modelId = "water." + to_string(waterModelIdx) + "." + to_string(partitionIdx);
+		auto modelId = "water." + to_string(waterModelId) + "." + to_string(waterModelIdx) + "." + to_string(partitionIdx);
 		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 		auto waterMaterial = new Material("water");
 		waterMaterial->setDoubleSided(true);

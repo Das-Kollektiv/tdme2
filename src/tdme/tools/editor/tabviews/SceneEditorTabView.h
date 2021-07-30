@@ -4,8 +4,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -17,6 +19,8 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::scene::Scene;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::CameraInputHandler;
+using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
@@ -27,29 +31,27 @@ using tdme::tools::editor::views::EditorView;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::SceneEditorTabView final
-	: public TabView
+class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, protected CameraInputHandlerEventHandler
 {
-protected:
-	Engine* engine { nullptr };
-
 private:
+	Engine* engine { nullptr };
+	CameraInputHandler* cameraInputHandler { nullptr };
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
 	SceneEditorTabController* sceneEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	string sceneFileName;
-	Scene scene;
+	Scene* scene { nullptr };
 
 public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param tabId tab id
-	 * @param fileName scene file name
+	 * @param scene scene
 	 */
-	SceneEditorTabView(EditorView* editorView, const string& tabId, const string& fileName);
+	SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene);
 
 	/**
 	 * Destructor
@@ -84,8 +86,19 @@ public:
 	Engine* getEngine() override;
 	TabController* getTabController() override;
 	void reloadOutliner() override;
-
-	// overridden methods
+	void onCameraTranslation() override;
+	void onCameraRotation() override;
+	void onCameraScale() override;
 	void updateRendering() override;
+
+	/**
+	 * Update sky
+	 */
+	void updateSky();
+
+	/**
+	 * Update sky position
+	 */
+	void updateSkyPosition();
 
 };

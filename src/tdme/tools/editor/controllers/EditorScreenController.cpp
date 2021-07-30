@@ -8,6 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -54,6 +55,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
@@ -565,6 +567,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 
 void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 	auto isModel = false;
@@ -654,7 +657,11 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			tabView = new ModelEditorTabView(view, tabId, prototype);
 		} else
 		if (isScene == true) {
-			tabView = new SceneEditorTabView(view, tabId, fileName);
+			auto scene = SceneReader::read(
+				FileSystem::getInstance()->getPathName(absoluteFileName),
+				FileSystem::getInstance()->getFileName(absoluteFileName)
+			);
+			tabView = new SceneEditorTabView(view, tabId, scene);
 		}
 		tabView->initialize();
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
