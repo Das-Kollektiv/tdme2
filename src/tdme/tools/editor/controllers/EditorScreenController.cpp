@@ -609,28 +609,8 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
+
 	//
-	{
-		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-	{
-		string tabsContentXML =
-			"<tab-content tab-id=\"" + tabId + "\">\n" +
-			"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
-			"</tab-content>\n";
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
 	try {
 		Prototype* prototype = nullptr;
 		if (isModelPrototype == true) {
@@ -664,11 +644,35 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			tabView = new SceneEditorTabView(view, tabId, scene);
 		}
 		tabView->initialize();
+		//
+		{
+			string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		{
+			string tabsContentXML =
+				"<tab-content tab-id=\"" + tabId + "\">\n" +
+				"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+				"</tab-content>\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		//
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
+		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 
