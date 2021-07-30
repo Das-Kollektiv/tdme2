@@ -97,8 +97,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	auto scene = new Scene();
 	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
-	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
-	scene->clearProperties();
+	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
 		auto& jSceneProperty = jRoot["properties"].GetArray()[i];
 		scene->addProperty(
@@ -152,7 +151,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			light->setEnabled(jLight["e"].GetBool());
 		}
 	}
-	scene->getLibrary()->clear();
 
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
@@ -187,7 +185,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	scene->clearEntities();
 
 	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
 		auto& jSceneEntity = jRoot["objects"].GetArray()[i];
