@@ -64,7 +64,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene): Gizmo(Engine::getInstance(), "le")
+SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene): Gizmo(engine, "le")
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -89,6 +89,9 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->placeEntityValid = false;
 
 	//
+	setEngine(engine);
+
+	//
 	entityColors["red"] = EntityColor(1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
 	entityColors["green"] = EntityColor(0.8f, 1.5f, 0.8f, 0.0f, 0.5f, 0.0f);
 	entityColors["blue"] = EntityColor(0.8f, 0.8f, 1.5f, 0.0f, 0.0f, 0.5f);
@@ -96,6 +99,55 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	entityColors["magenta"] = EntityColor(1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
 	entityColors["cyan"] = EntityColor(0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
 	entityColors["none"] = EntityColor(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+
+	//
+	{
+		// entity picking filter for no grid
+		class PrototypePickingFilterNoGrid: public virtual EntityPickingFilter
+		{
+		public:
+			bool filterEntity(Entity* entity) override {
+				return entity->getId() != "tdme.sceneeditor.grid";
+			}
+
+			/**
+			 * Public constructor
+			 * @param SceneEditorTabView scene editor tab view
+			 */
+			PrototypePickingFilterNoGrid(SceneEditorTabView* sceneEditorTabView): sceneEditorTabView(sceneEditorTabView) {
+			}
+
+		private:
+			SceneEditorTabView* sceneEditorTabView;
+		};
+		entityPickingFilterNoGrid = new PrototypePickingFilterNoGrid(this);
+	}
+
+	//
+	{
+		// entity picking filter for no placing object
+		class PrototypePickingFilterPlacing: public virtual EntityPickingFilter
+		{
+		public:
+			bool filterEntity(Entity* entity) override {
+				return
+					entity->getId() != "tdme.sceneeditor.placeentity" &&
+					StringTools::startsWith(entity->getId(), "tdme.sceneeditor.paste.") == false &&
+					StringTools::startsWith(entity->getId(), "le.tdme.gizmo.") == false;
+			}
+
+			/**
+			 * Public constructor
+			 * @param sceneEditorTabView scene editor tab view
+			 */
+			PrototypePickingFilterPlacing(SceneEditorTabView* sceneEditorTabView): sceneEditorTabView(sceneEditorTabView) {
+			}
+
+		private:
+			SceneEditorTabView* sceneEditorTabView;
+		};
+		entityPickingFilterPlacing = new PrototypePickingFilterPlacing(this);
+	}
 }
 
 SceneEditorTabView::~SceneEditorTabView() {
@@ -396,22 +448,22 @@ void SceneEditorTabView::handleInputEvents()
 		}
 	}
 	if (keyDelete == true) {
-		Console::println("SceneEditorView::handleInputEvents(): Backspace");
+		Console::println("SceneEditorTabView::handleInputEvents(): Backspace");
 		removeGizmo();
 		removeEntities();
 	}
 	if (keyControlX == true) {
-		Console::println("SceneEditorView::handleInputEvents(): CTRL-X");
+		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-X");
 		removeGizmo();
 		copyEntities();
 		removeEntities();
 	}
 	if (keyControlC == true) {
-		Console::println("SceneEditorView::handleInputEvents(): CTRL-C");
+		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-C");
 		copyEntities();
 	}
 	if (keyControlV == true) {
-		Console::println("SceneEditorView::handleInputEvents(): CTRL-V");
+		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-V");
 		removeGizmo();
 		setPasteMode();
 	}
@@ -770,7 +822,7 @@ void SceneEditorTabView::updateGizmo() {
 		removeGizmo();
 		return;
 	} else
-	if (entityCount == 1 && selectedPrototype != nullptr) {
+	if (entityCount == 1) {
 		auto selectedSceneEntity = scene->getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
