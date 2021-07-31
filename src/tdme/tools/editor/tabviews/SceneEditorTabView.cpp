@@ -108,14 +108,13 @@ void SceneEditorTabView::initialize()
 	SceneConnector::setLights(engine, scene, Vector3());
 	SceneConnector::addScene(engine, scene, true, true, true, true);
 	updateSky();
-	engine->getCamera()->setLookAt(scene->getCenter());
+	cameraInputHandler->setSceneCenter(scene->getCenter());
 	// TODO: load settings
 	// TODO: reloadTabOutliner
 }
 
 void SceneEditorTabView::dispose()
 {
-	engine->reset();
 	delete sceneEditorTabController;
 }
 
