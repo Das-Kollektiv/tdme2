@@ -2,13 +2,16 @@
 
 #include <string>
 
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/utilities/Console.h>
@@ -19,12 +22,15 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
+using tdme::engine::scene::Scene;
 using tdme::utilities::Action;
+using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
@@ -35,9 +41,11 @@ SceneEditorTabController::SceneEditorTabController(SceneEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
+	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "scene");
 }
 
 SceneEditorTabController::~SceneEditorTabController() {
+	delete basePropertiesSubController;
 }
 
 SceneEditorTabView* SceneEditorTabController::getView() {
@@ -52,6 +60,7 @@ GUIScreenNode* SceneEditorTabController::getScreenNode()
 void SceneEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
+	basePropertiesSubController->initialize(screenNode);
 }
 
 void SceneEditorTabController::dispose()
@@ -73,17 +82,48 @@ void SceneEditorTabController::showErrorPopUp(const string& caption, const strin
 
 void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	basePropertiesSubController->onValueChanged(node, view->getScene());
 }
 
 void SceneEditorTabController::onFocus(GUIElementNode* node) {
+	basePropertiesSubController->onFocus(node, view->getScene());
 }
 
 void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
+	basePropertiesSubController->onUnfocus(node, view->getScene());
 }
 
 void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getScene());
 }
 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
+	basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+}
+
+void SceneEditorTabController::setOutlinerContent() {
+
+	string xml;
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Scene") + "\" value=\"" + GUIParser::escapeQuotes("scene") + "\">\n";
+	auto scene = view->getScene();
+	if (scene != nullptr) {
+		basePropertiesSubController->createBasePropertiesXML(scene, xml);
+	}
+	xml+= "</selectbox-parent-option>\n";
+	view->getEditorView()->setOutlinerContent(xml);
+}
+
+void SceneEditorTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(
+		string("<dropdown-option text=\"Property\" value=\"property\" />\n")
+	);
+}
+
+void SceneEditorTabController::setDetailsContent() {
+	view->getEditorView()->setDetailsContent(string());
+}
+
+void SceneEditorTabController::updateDetails(const string& outlinerNode) {
+	basePropertiesSubController->updateDetails(view->getScene(), outlinerNode);
 }

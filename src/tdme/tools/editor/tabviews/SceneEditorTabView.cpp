@@ -153,24 +153,6 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 SceneEditorTabView::~SceneEditorTabView() {
 }
 
-EditorView* SceneEditorTabView::getEditorView() {
-	return editorView;
-}
-
-TabController* SceneEditorTabView::getTabController() {
-	return sceneEditorTabController;
-}
-
-PopUps* SceneEditorTabView::getPopUps()
-{
-	return popUps;
-}
-
-const string& SceneEditorTabView::getFileName()
-{
-	return sceneFileName;
-}
-
 void SceneEditorTabView::handleInputEvents()
 {
 	#if !defined(GLFW3) && !defined(VUKAN)
@@ -482,6 +464,7 @@ void SceneEditorTabView::initialize()
 {
 	try {
 		sceneEditorTabController = new SceneEditorTabController(this);
+		sceneEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::print(string("SceneEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -508,7 +491,7 @@ void SceneEditorTabView::initialize()
 	updateSky();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	// TODO: load settings
-	// TODO: reloadTabOutliner
+	sceneEditorTabController->setOutlinerContent();
 }
 
 void SceneEditorTabView::dispose()
@@ -524,7 +507,10 @@ Engine* SceneEditorTabView::getEngine() {
 }
 
 void SceneEditorTabView::activate() {
+	sceneEditorTabController->setOutlinerAddDropDownContent();
+	sceneEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
+	sceneEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void SceneEditorTabView::deactivate() {
@@ -532,6 +518,8 @@ void SceneEditorTabView::deactivate() {
 }
 
 void SceneEditorTabView::reloadOutliner() {
+	sceneEditorTabController->setOutlinerContent();
+	sceneEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void SceneEditorTabView::onCameraTranslation() {

@@ -14,6 +14,7 @@
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/Gizmo.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabcontrollers/SceneEditorTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
@@ -147,17 +148,30 @@ public:
 	/**
 	 * @return editor view
 	 */
-	EditorView* getEditorView();
+	inline EditorView* getEditorView() {
+		return editorView;
+	}
 
 	/**
 	 * @return pop up views
 	 */
-	PopUps* getPopUps();
+	inline PopUps* getPopUps() {
+		return popUps;
+	}
 
 	/**
 	 * @return current scene file name
 	 */
-	const string& getFileName();
+	inline const string& getFileName() {
+		return sceneFileName;
+	}
+
+	/**
+	 * @return scene
+	 */
+	Scene* getScene() {
+		return scene;
+	}
 
 	// overridden methods
 	void handleInputEvents() override;
@@ -170,7 +184,9 @@ public:
 	void activate() override;
 	void deactivate() override;
 	Engine* getEngine() override;
-	TabController* getTabController() override;
+	inline TabController* getTabController() override {
+		return sceneEditorTabController;
+	}
 	void reloadOutliner() override;
 	void onCameraTranslation() override;
 	void onCameraRotation() override;
