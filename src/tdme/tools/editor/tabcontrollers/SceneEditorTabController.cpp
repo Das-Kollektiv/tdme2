@@ -112,6 +112,13 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 	} else
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(view->getEditorView()->getScreenController()->getOutlinerSelection());
+		vector<string> selectedEntityIds;
+		auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+		for (auto& selectedEntityId: outlinerSelection) {
+			if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
+			selectedEntityIds.push_back(StringTools::substring(selectedEntityId, string("scene.entities.").size()));
+		}
+		view->selectEntities(selectedEntityIds);
 	} else {
 		basePropertiesSubController->onValueChanged(node, view->getScene());
 	}
@@ -150,31 +157,23 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(transformations->getTranslation().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
 
 		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
 		}
-
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(transformations->getScale().getX());
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+
+	//
+	updateEntityDetails(entityId);
 }
+
 
 void SceneEditorTabController::updateEntityDetails(const string& entityId) {
 	Console::println("SceneEditorTabController::updateEntityDetails(): " + entityId);
@@ -186,11 +185,9 @@ void SceneEditorTabController::updateEntityDetails(const string& entityId) {
 
 	//
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(transformations->getTranslation().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
@@ -204,8 +201,6 @@ void SceneEditorTabController::updateEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(transformations->getScale().getX());
-
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -272,10 +267,47 @@ void SceneEditorTabController::unselectEntities() {
 }
 
 void SceneEditorTabController::unselectEntity(const string& entityId) {
-	unselectEntities();
+	auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+	vector<string> selectedEntityIds;
+	auto entityIdToRemove = "scene.entities." + entityId;
+	for (auto& selectedEntityId: outlinerSelection) {
+		if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
+		if (selectedEntityId == entityIdToRemove) continue;
+		selectedEntityIds.push_back(selectedEntityId);
+	}
+	selectEntities(selectedEntityIds);
 }
 
 void SceneEditorTabController::selectEntity(const string& entityId) {
-	view->getEditorView()->getScreenController()->setOutlinerSelection(string("scene.entities.") + entityId);
-	setEntityDetails(entityId);
+	auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+	vector<string> selectedEntityIds;
+	auto entityIdToAdd = "scene.entities." + entityId;
+	for (auto& selectedEntityId: outlinerSelection) {
+		if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
+		if (selectedEntityId == entityIdToAdd) continue;
+		selectedEntityIds.push_back(selectedEntityId);
+	}
+	selectedEntityIds.push_back(entityIdToAdd);
+	selectEntities(selectedEntityIds);
+}
+
+void SceneEditorTabController::selectEntities(const vector<string>& selectedOutlinerEntityIds) {
+	if (selectedOutlinerEntityIds.empty() == true) {
+		auto newOutlinerSelection = string("scene.entities");
+		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);
+		updateDetails(newOutlinerSelection);
+	} else
+	if (selectedOutlinerEntityIds.size() == 1) {
+		auto newOutlinerSelection = string(selectedOutlinerEntityIds[0]);
+		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);
+		updateDetails(StringTools::substring(newOutlinerSelection, string("scene.entities.").size()));
+	} else {
+		auto newOutlinerSelection = string("|");
+		for (auto& entityId: selectedOutlinerEntityIds) {
+			newOutlinerSelection+= entityId + "|";
+		}
+		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);
+		updateDetails("scene.entities");
+	}
+
 }

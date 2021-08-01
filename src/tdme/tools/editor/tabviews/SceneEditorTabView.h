@@ -222,6 +222,17 @@ public:
 	void resetEntity(Entity* object);
 
 	/**
+	 * Select entities
+	 * @param entityIds entity ids
+	 */
+	void selectEntities(const vector<string>& entityIds);
+
+	/**
+	 * Unselect entities
+	 */
+	void unselectEntities();
+
+	/**
 	 * Copy current selected entities
 	 */
 	void copyEntities();

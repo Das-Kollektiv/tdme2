@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -18,6 +19,7 @@
 using std::string;
 
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::Transformations;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -90,6 +92,7 @@ public:
 
 	/**
 	 * Set entity details
+	 * @param entity id
 	 */
 	void setEntityDetails(const string& entityId);
 
@@ -97,6 +100,17 @@ public:
 	 * Update entity details
 	 */
 	void updateEntityDetails(const string& entityId);
+
+	/**
+	 * Set entity details for multiple entity selection
+	 */
+	void setEntityDetailsMultiple(const Transformations& transformations);
+
+	/**
+	 * Update entity details for multiple selection
+	 * @param transformations transformations
+	 */
+	void updateEntityDetailsMultiple(const Transformations& transformations);
 
 	/**
 	 * Get prototype icon
@@ -148,6 +162,12 @@ public:
 	 * @param entityId entity id
 	 */
 	void selectEntity(const string& entityId);
+
+	/**
+	 * Select exactly given entities
+	 * @param selectedOutlinerEntityIds selected entity outliner ids
+	 */
+	void selectEntities(const vector<string>& selectedOutlinerEntityIds);
 
 	/**
 	 * Shows the error pop up

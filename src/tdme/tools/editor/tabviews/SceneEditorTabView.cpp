@@ -587,6 +587,42 @@ void SceneEditorTabView::resetEntity(Entity* entity) {
 	entity->update();
 }
 
+void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
+{
+	removeGizmo();
+	for (auto entityIdToRemove: selectedEntityIds) {
+		auto entityToRemove = engine->getEntity(entityIdToRemove);
+		if (entityToRemove != nullptr) setStandardEntityColorEffect(entityToRemove);
+	}
+	selectedEntityIds.clear();
+	selectedEntityIdsById.clear();
+	for (auto entityId: entityIds) {
+		auto selectedEntity = engine->getEntity(entityId);
+		if (selectedEntity == nullptr) continue;
+		setStandardEntityColorEffect(selectedEntity);
+		setHighlightEntityColorEffect(selectedEntity);
+		selectedEntityIds.push_back(entityId);
+		selectedEntityIdsById.insert(entityId);
+	}
+	//updateGUIElements();
+	updateGizmo();
+}
+
+void SceneEditorTabView::unselectEntities()
+{
+	removeGizmo();
+	for (auto entityIdToRemove: selectedEntityIds) {
+		auto entityToRemove = engine->getEntity(entityIdToRemove);
+		if (entityToRemove == nullptr) continue;
+		resetEntity(entityToRemove);
+	}
+	selectedEntityIds.clear();
+	selectedEntityIdsById.clear();
+	// TODO: sceneEditorScreenController->unselectEntitiesInEntityListBox();
+	// TODO: updateGUIElements();
+	removeGizmo();
+}
+
 void SceneEditorTabView::copyEntities()
 {
 	copiedEntities.clear();
