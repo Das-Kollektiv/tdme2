@@ -1,5 +1,7 @@
 #include <tdme/gui/elements/GUISelectBoxController.h>
 
+#include <algorithm>
+
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -13,6 +15,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::count;
 
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::elements::GUISelectBoxOptionController;
@@ -435,6 +439,13 @@ bool GUISelectBoxController::hasValue()
 
 const MutableString& GUISelectBoxController::getValue()
 {
+	// check if single value
+	if (multipleSelection == true &&
+		count(value.getString().begin(), value.getString().end(), '|') == 2) {
+		singleValue.set(StringTools::substring(value.getString(), 1, value.getString().size() - 1));
+		return singleValue;
+	}
+	// nope, take multiple value
 	return value;
 }
 
