@@ -330,17 +330,7 @@ void SceneEditorTabView::handleInputEvents()
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
-								auto sceneEntity = scene->getEntity(_selectedEntity->getId());
-								/*
-								// TODO: sceneEditorScreenController->setEntityTransformations(
-									_selectedEntity->getTranslation(),
-									_selectedEntity->getScale(),
-									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
-									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
-									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()),
-									(sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
-								);
-								*/
+								if (_selectedEntity != nullptr) sceneEditorTabController->updateEntityDetails(_selectedEntity->getId());
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
 						}
@@ -349,7 +339,6 @@ void SceneEditorTabView::handleInputEvents()
 							Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
 							updateGizmo();
 						}
-						// TODO: updateGUITransformationsElements();
 					}
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
@@ -359,13 +348,14 @@ void SceneEditorTabView::handleInputEvents()
 							auto _selectedEntity = engine->getEntity(selectedEntityId);
 							if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 								setGizmoRotation(_selectedEntity->getTransformations());
+								sceneEditorTabController->updateEntityDetails(_selectedEntity->getId());
 							}
 						}
 					} else
 					if (selectedEntityIds.size() > 1) {
 						setGizmoRotation(Transformations());
+						// TODO: updateGUITransformationsElements();
 					}
-					// TODO: updateGUITransformationsElements();
 				} else {
 					if (selectedEntity != nullptr && scene->getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
@@ -384,7 +374,7 @@ void SceneEditorTabView::handleInputEvents()
 							if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
 								selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
 							}
-							// TODO: sceneEditorScreenController->unselectEntitiesInEntityListBox(entityToRemove->getId());
+							sceneEditorTabController->unselectEntity(entityToRemove->getId());
 							resetEntity(entityToRemove);
 						}
 					}
@@ -394,11 +384,7 @@ void SceneEditorTabView::handleInputEvents()
 							setHighlightEntityColorEffect(selectedEntity);
 							selectedEntityIds.push_back(selectedEntity->getId());
 							selectedEntityIdsById.insert(selectedEntity->getId());
-							// TODO: sceneEditorScreenController->selectEntityInEntityListbox(selectedEntity->getId());
-							auto sceneEntity = scene->getEntity(selectedEntity->getId());
-							if (sceneEntity != nullptr) {
-								// TODO: TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->selectPrototype(sceneEntity->getPrototype()->getId());
-							}
+							sceneEditorTabController->selectEntity(selectedEntity->getId());
 						} else {
 							resetEntity(selectedEntity);
 							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), selectedEntity->getId()), selectedEntityIds.end());
@@ -406,7 +392,7 @@ void SceneEditorTabView::handleInputEvents()
 							if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
 								selectedEntityIdsById.erase(selectedEntityIdsByIdIt);
 							}
-							// TODO: sceneEditorScreenController->unselectEntitiesInEntityListBox(selectedEntity->getId());
+							sceneEditorTabController->unselectEntity(selectedEntity->getId());
 						}
 						if (selectedEntityIds.size() == 1) {
 							auto sceneEntity = scene->getEntity(selectedEntity->getId());

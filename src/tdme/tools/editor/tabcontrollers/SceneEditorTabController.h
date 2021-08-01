@@ -94,6 +94,11 @@ public:
 	void setEntityDetails(const string& entityId);
 
 	/**
+	 * Update entity details
+	 */
+	void updateEntityDetails(const string& entityId);
+
+	/**
 	 * Get prototype icon
 	 * @param prototypeType prototype type
 	 */
@@ -126,6 +131,23 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * Unselect entities
+	 */
+	void unselectEntities();
+
+	/**
+	 * Unselect entity
+	 * @param entityId entity id
+	 */
+	void unselectEntity(const string& entityId);
+
+	/**
+	 * Select entity
+	 * @param entityId entity id
+	 */
+	void selectEntity(const string& entityId);
 
 	/**
 	 * Shows the error pop up

@@ -148,6 +148,43 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		//template_details_reflection.xml
 	);
 
+	// TODO: no rotation: (sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(transformations->getTranslation().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(transformations->getScale().getX());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void SceneEditorTabController::updateEntityDetails(const string& entityId) {
+	Console::println("SceneEditorTabController::updateEntityDetails(): " + entityId);
+
+	auto scene = view->getScene();
+	auto entity = scene->getEntity(entityId);
+	auto transformations = entity != nullptr?&entity->getTransformations():nullptr;
+	if (transformations == nullptr) return;
+
+	// TODO: no rotation: (sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
+
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
@@ -225,4 +262,18 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	} else {
 		basePropertiesSubController->updateDetails(view->getScene(), outlinerNode);
 	}
+}
+
+void SceneEditorTabController::unselectEntities() {
+	view->getEditorView()->getScreenController()->setOutlinerSelection("scene.entities");
+	updateDetails("scene.entities");
+}
+
+void SceneEditorTabController::unselectEntity(const string& entityId) {
+	unselectEntities();
+}
+
+void SceneEditorTabController::selectEntity(const string& entityId) {
+	view->getEditorView()->getScreenController()->setOutlinerSelection(string("scene.entities.") + entityId);
+	setEntityDetails(entityId);
 }
