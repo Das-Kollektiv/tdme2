@@ -2,7 +2,11 @@
 
 #include <string>
 
+#include <tdme/engine/prototype/BaseProperty.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Action.h>
@@ -22,7 +26,11 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
+using tdme::engine::prototype::BaseProperty;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLibrary;
 using tdme::utilities::Action;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
@@ -109,6 +117,23 @@ void SceneEditorTabController::setOutlinerContent() {
 	auto scene = view->getScene();
 	if (scene != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
+		{
+			auto sceneLibrary = scene->getLibrary();
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes") + "\">\n";
+			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+				auto prototypeName = sceneLibrary->getPrototypeAt(i)->getName();
+				xml+= "	<selectbox-option image=\"resources/engine/images/tdme.png\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + prototypeName) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
+		}
+		{
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Entities") + "\" value=\"" + GUIParser::escapeQuotes("scene.entities") + "\">\n";
+			for (auto i = 0; i < scene->getEntityCount(); i++) {
+				auto entityName = scene->getEntityAt(i)->getName();
+				xml+= "	<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
+		}
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
