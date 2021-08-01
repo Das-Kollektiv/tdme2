@@ -43,7 +43,6 @@ private:
 	BasePropertiesSubView* view { nullptr };
 	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
-	Action* onSetPrototypeDataAction { nullptr };
 	string rootNodeId;
 
 	array<string, 1> applyPropertyNodes = {
@@ -62,9 +61,8 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param rootNode root node
-	 * @param onSetEntityDataAction on set entity data action
 	 */
-	BasePropertiesSubController(EditorView* editorView, const string& rootNode, Action* onSetEntityDataAction);
+	BasePropertiesSubController(EditorView* editorView, const string& rootNode);
 
 	/**
 	 * Destructor

@@ -109,33 +109,9 @@ using tdme::utilities::StringTools;
 
 ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 {
-	class OnSetPrototypeDataAction: public virtual Action
-	{
-	public:
-		void performAction() override {
-			finalView->reloadOutliner();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param finalView final view
-		 */
-		OnSetPrototypeDataAction(ModelEditorTabController* modelEditorTabController, ModelEditorTabView* finalView)
-			: modelEditorTabController(modelEditorTabController)
-			, finalView(finalView) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		ModelEditorTabView* finalView;
-	};
-
 	this->view = view;
-	auto const finalView = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype", new OnSetPrototypeDataAction(this, finalView));
+	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());

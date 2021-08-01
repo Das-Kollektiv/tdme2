@@ -57,18 +57,16 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-BasePropertiesSubController::BasePropertiesSubController(EditorView* editorView, const string& rootNode, Action* onSetEntityDataAction)
+BasePropertiesSubController::BasePropertiesSubController(EditorView* editorView, const string& rootNode)
 {
 	this->editorView = editorView;
 	this->view = new BasePropertiesSubView(this);
 	this->popUps = editorView->getPopUps();
-	this->onSetPrototypeDataAction = onSetEntityDataAction;
 	this->rootNodeId = rootNode;
 }
 
 BasePropertiesSubController::~BasePropertiesSubController() {
 	delete view;
-	delete onSetPrototypeDataAction;
 }
 
 void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
