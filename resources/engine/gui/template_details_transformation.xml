@@ -30,34 +30,38 @@
 			</layout>
 			
 			<space height="5" />
-			<menu-separator />
-			<space height="5" />
 			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<layout width="5" height="25" background-color="{$color.xaxis}" />
-					<input id="transformation_rotation_x" width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<layout width="5" height="25" background-color="{$color.yaxis}" />
-					<input id="transformation_rotation_y"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<layout width="5" height="25" background-color="{$color.zaxis}" />
-					<input id="transformation_rotation_z"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-				</layout>
-			</layout>
+			<layout show-on="rotation" width="100%" height="auto" alignment="vertical" vertical-align="top" horizontal-align="left">
+				<menu-separator />
+				<space height="5" />
 			
-			<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" horizontal-align="left" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<layout width="5" height="25" background-color="{$color.xaxis}" />
+						<input id="transformation_rotation_x" width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<layout width="5" height="25" background-color="{$color.yaxis}" />
+						<input id="transformation_rotation_y"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<layout width="5" height="25" background-color="{$color.zaxis}" />
+						<input id="transformation_rotation_z"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+					</layout>
+				</layout>
+			
+				<space height="5" />
+			</layout>
+
 			<menu-separator />
 			<space height="5" />
 			

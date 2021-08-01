@@ -145,11 +145,9 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		string("<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />") +
 		string("<template id=\"details_transformations\" src=\"resources/engine/gui/template_details_transformation.xml\" />") +
 		string("<template id=\"details_reflections\" src=\"resources/engine/gui/template_details_reflection.xml\" />")
-		//template_details_reflection.xml
 	);
 
-	// TODO: no rotation: (sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
-
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
@@ -160,9 +158,12 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
 
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+		}
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
@@ -183,8 +184,7 @@ void SceneEditorTabController::updateEntityDetails(const string& entityId) {
 	auto transformations = entity != nullptr?&entity->getTransformations():nullptr;
 	if (transformations == nullptr) return;
 
-	// TODO: no rotation: (sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
-
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
@@ -195,9 +195,11 @@ void SceneEditorTabController::updateEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
 
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+		}
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
