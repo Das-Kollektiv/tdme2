@@ -2,11 +2,13 @@
 
 #include <string>
 
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Action.h>
@@ -26,11 +28,14 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
+using tdme::engine::Transformations;
+using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -54,6 +59,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 SceneEditorTabController::SceneEditorTabController(SceneEditorTabView* view)
 {
@@ -128,6 +134,45 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	basePropertiesSubController->onActionPerformed(type, node, view->getScene());
 }
 
+void SceneEditorTabController::setEntityDetails(const string& entityId) {
+	Console::println("SceneEditorTabController::setEntityDetails(): " + entityId);
+
+	auto scene = view->getScene();
+	auto entity = scene->getEntity(entityId);
+	auto transformations = entity != nullptr?&entity->getTransformations():nullptr;
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />") +
+		string("<template id=\"details_transformations\" src=\"resources/engine/gui/template_details_transformation.xml\" />") +
+		string("<template id=\"details_reflections\" src=\"resources/engine/gui/template_details_reflection.xml\" />")
+		//template_details_reflection.xml
+	);
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(transformations->getTranslation().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(transformations->getScale().getX());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void SceneEditorTabController::setOutlinerContent() {
 
 	string xml;
@@ -174,5 +219,10 @@ void SceneEditorTabController::setDetailsContent() {
 
 void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
-	basePropertiesSubController->updateDetails(view->getScene(), outlinerNode);
+	if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
+		auto entityId = StringTools::substring(outlinerNode, string("scene.entities.").size());
+		setEntityDetails(entityId);
+	} else {
+		basePropertiesSubController->updateDetails(view->getScene(), outlinerNode);
+	}
 }

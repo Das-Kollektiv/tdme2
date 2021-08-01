@@ -89,6 +89,11 @@ public:
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
+	 * Set entity details
+	 */
+	void setEntityDetails(const string& entityId);
+
+	/**
 	 * Get prototype icon
 	 * @param prototypeType prototype type
 	 */
