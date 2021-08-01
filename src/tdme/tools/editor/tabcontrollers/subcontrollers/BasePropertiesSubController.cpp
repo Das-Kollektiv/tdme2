@@ -128,7 +128,7 @@ void BasePropertiesSubController::setPropertyDetails(BaseProperties* basePropert
 }
 
 void BasePropertiesSubController::updateDetails(BaseProperties* baseProperties, const string& outlinerNode) {
-	if (StringTools::startsWith(outlinerNode, rootNodeId) == true) {
+	if (outlinerNode == rootNodeId) {
 		setBasePropertiesDetails(baseProperties);
 	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {

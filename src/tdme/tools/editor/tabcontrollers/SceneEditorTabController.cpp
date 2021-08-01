@@ -12,7 +12,11 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINodeConditions.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -21,6 +25,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -34,8 +39,12 @@ using tdme::engine::scene::SceneLibrary;
 using tdme::utilities::Action;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINodeConditions;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -44,6 +53,7 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::MutableString;
 
 SceneEditorTabController::SceneEditorTabController(SceneEditorTabView* view)
 {
@@ -90,7 +100,15 @@ void SceneEditorTabController::showErrorPopUp(const string& caption, const strin
 
 void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	basePropertiesSubController->onValueChanged(node, view->getScene());
+	if (node->getId() == "dropdown_outliner_add") {
+		auto addOutlinerType = node->getController()->getValue().getString();
+		// TODO
+	} else
+	if (node->getId() == "selectbox_outliner") {
+		updateDetails(view->getEditorView()->getScreenController()->getOutlinerSelection());
+	} else {
+		basePropertiesSubController->onValueChanged(node, view->getScene());
+	}
 }
 
 void SceneEditorTabController::onFocus(GUIElementNode* node) {
@@ -155,5 +173,6 @@ void SceneEditorTabController::setDetailsContent() {
 }
 
 void SceneEditorTabController::updateDetails(const string& outlinerNode) {
+	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getScene(), outlinerNode);
 }
