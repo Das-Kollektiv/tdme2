@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -16,6 +17,7 @@
 
 using std::string;
 
+using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -85,6 +87,19 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Get prototype icon
+	 * @param prototypeType prototype type
+	 */
+	inline const string getPrototypeIcon(Prototype_Type* prototypeType) {
+		if (prototypeType == Prototype_Type::EMPTY) return "empty.png"; else
+		if (prototypeType == Prototype_Type::ENVIRONMENTMAPPING) return "tdme.png"; else // TODO: tepilogic
+		if (prototypeType == Prototype_Type::MODEL) return "mesh.png"; else
+		if (prototypeType == Prototype_Type::PARTICLESYSTEM) return "particle.png"; else
+		if (prototypeType == Prototype_Type::TERRAIN) return "terrain.png"; else
+		if (prototypeType == Prototype_Type::TRIGGER) return "tdme.png"; else return ""; // TODO: tepilogic
+	}
 
 	/**
 	 * Set outliner content

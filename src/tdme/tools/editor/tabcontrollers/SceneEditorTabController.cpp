@@ -121,16 +121,21 @@ void SceneEditorTabController::setOutlinerContent() {
 			auto sceneLibrary = scene->getLibrary();
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes") + "\">\n";
 			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-				auto prototypeName = sceneLibrary->getPrototypeAt(i)->getName();
-				xml+= "	<selectbox-option image=\"resources/engine/images/tdme.png\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + prototypeName) + "\" />\n";
+				auto prototype = sceneLibrary->getPrototypeAt(i);
+				auto icon = getPrototypeIcon(prototype->getType());
+				auto prototypeName = prototype->getName();
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon +"\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + prototypeName) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Entities") + "\" value=\"" + GUIParser::escapeQuotes("scene.entities") + "\">\n";
 			for (auto i = 0; i < scene->getEntityCount(); i++) {
-				auto entityName = scene->getEntityAt(i)->getName();
-				xml+= "	<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
+				auto entity = scene->getEntityAt(i);
+				auto entityName = entity->getName();
+				auto prototype = entity->getPrototype();
+				auto icon = getPrototypeIcon(prototype->getType());
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
