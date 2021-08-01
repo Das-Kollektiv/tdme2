@@ -13,9 +13,9 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -38,7 +38,6 @@
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
@@ -52,6 +51,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+#include "subcontrollers/BasePropertiesSubController.h"
 
 using std::string;
 using std::vector;
@@ -70,7 +70,7 @@ using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -92,7 +92,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
@@ -135,14 +135,14 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	this->view = view;
 	auto const finalView = view;
 	this->popUps = view->getPopUps();
-	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), new OnSetPrototypeDataAction(this, finalView));
+	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype", new OnSetPrototypeDataAction(this, finalView));
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
-	delete prototypeBaseSubController;
+	delete basePropertiesSubController;
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 }
@@ -184,7 +184,7 @@ FileDialogPath* ModelEditorTabController::getAudioPath()
 void ModelEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
-	prototypeBaseSubController->initialize(screenNode);
+	basePropertiesSubController->initialize(screenNode);
 	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
 	prototypeSoundsSubController->initialize(screenNode);
@@ -287,7 +287,7 @@ void ModelEditorTabController::setOutlinerContent() {
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
-		prototypeBaseSubController->createPrototypePropertiesXML(prototype, xml);
+		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
 		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
@@ -1011,7 +1011,7 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		view->playAnimation(animationSetup == nullptr?Model::ANIMATIONSETUP_DEFAULT:animationSetup->getId());
 		setAnimationDetails();
 	} else {
-		prototypeBaseSubController->updateDetails(view->getPrototype(), outlinerNode);
+		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
@@ -1839,7 +1839,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 			}
 		}
 	}
-	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	{
@@ -1849,12 +1849,12 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 }
 
 void ModelEditorTabController::onFocus(GUIElementNode* node) {
-	prototypeBaseSubController->onFocus(node, view->getPrototype());
+	basePropertiesSubController->onFocus(node, view->getPrototype());
 	prototypeSoundsSubController->onFocus(node, view->getPrototype());
 }
 
 void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
-	prototypeBaseSubController->onUnfocus(node, view->getPrototype());
+	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
 	if (node->getId() == "tdme.animations.rename_input") {
 		renameAnimation();
@@ -1862,7 +1862,7 @@ void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	prototypeBaseSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	if (node->getId() == "selectbox_outliner") {
@@ -2065,7 +2065,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	prototypeBaseSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onActionPerformed(type, node, prototype);
 	prototypeDisplaySubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);

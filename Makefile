@@ -322,6 +322,8 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/prototype/BaseProperties.cpp \
+	src/tdme/engine/prototype/BaseProperty.cpp \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
@@ -339,8 +341,6 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
 	src/tdme/engine/prototype/PrototypePhysics.cpp \
 	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
-	src/tdme/engine/prototype/PrototypeProperties.cpp \
-	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/engine/prototype/Prototype_Type.cpp \
 	src/tdme/engine/scene/Scene.cpp \
 	src/tdme/engine/scene/SceneEntity.cpp \
@@ -599,14 +599,14 @@ SRCS = \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
-	src/tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \

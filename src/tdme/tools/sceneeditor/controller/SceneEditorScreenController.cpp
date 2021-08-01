@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -49,7 +49,7 @@ using tdme::tools::sceneeditor::controller::SceneEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLight;
@@ -435,7 +435,7 @@ void SceneEditorScreenController::setSceneProperties(Scene* scene, const string&
 		scenePropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < scene->getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = scene->getPropertyByIndex(i);
+		BaseProperty* mapProperty = scene->getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -484,7 +484,7 @@ void SceneEditorScreenController::onScenePropertyRemove()
 	}
 }
 
-void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
+void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<BaseProperty*>>& entityPresetIds)
 {
 	auto entitityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -561,7 +561,7 @@ void SceneEditorScreenController::setEntityProperties(const string& presetId, Sc
 		entityPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = entity->getPropertyByIndex(i);
+		BaseProperty* entityProperty = entity->getPropertyByIndex(i);
 		entityPropertiesListBoxSubNodesXML =
 			entityPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +

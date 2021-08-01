@@ -11,10 +11,10 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
@@ -61,7 +61,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;

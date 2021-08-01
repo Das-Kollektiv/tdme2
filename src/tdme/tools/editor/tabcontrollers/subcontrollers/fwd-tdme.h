@@ -6,7 +6,7 @@ namespace tools {
 namespace editor {
 namespace tabcontrollers {
 namespace subcontrollers {
-	class PrototypeBaseSubController;
+	class BasePropertiesSubController;
 	class PrototypeDisplaySubController;
 	class PrototypePhysicsSubController_BoundingVolumeType;
 	class PrototypePhysicsSubController;

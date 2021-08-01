@@ -19,8 +19,8 @@ using std::vector;
 
 using tinyxml::TiXmlElement;
 
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::scene::ScenePropertyPresets;
@@ -34,8 +34,8 @@ class tdme::engine::scene::ScenePropertyPresets final
 {
 
 private:
-	vector<PrototypeProperty*> scenePropertiesPreset;
-	map<string, vector<PrototypeProperty*>> entityPropertiesPresets;
+	vector<BaseProperty*> scenePropertiesPreset;
+	map<string, vector<BaseProperty*>> entityPropertiesPresets;
 	map<string, SceneLight*> lightPresets;
 	static ScenePropertyPresets* instance;
 
@@ -66,14 +66,14 @@ public:
 	/**
 	 * @return scene properties preset
 	 */
-	inline const vector<PrototypeProperty*>& getScenePropertiesPreset() const {
+	inline const vector<BaseProperty*>& getScenePropertiesPreset() const {
 		return scenePropertiesPreset;
 	}
 
 	/**
 	 * @return entity property presets
 	 */
-	inline const map<string, vector<PrototypeProperty*>>& getEntityPropertiesPresets() const {
+	inline const map<string, vector<BaseProperty*>>& getEntityPropertiesPresets() const {
 		return entityPropertiesPresets;
 	}
 

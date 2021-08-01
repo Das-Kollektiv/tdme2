@@ -23,8 +23,8 @@ namespace prototype {
 		class PrototypePhysics;
 		class PrototypePhysics_BodyType;
 		class Prototype_Type;
-		class PrototypeProperties;
-		class PrototypeProperty;
+		class BaseProperties;
+		class BaseProperty;
 		class PrototypeTerrain;
 }  // namespace prototype
 }  // namespace engine

@@ -42,8 +42,8 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
@@ -119,8 +119,8 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;

@@ -2,8 +2,8 @@
 
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Camera.h>
@@ -31,7 +31,7 @@
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Camera;

@@ -43,7 +43,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 
-Scene::Scene()
+Scene::Scene(const string& name, const string& description): BaseProperties(name, description)
 {
 	applicationRootPathName = "";
 	pathName = ".";

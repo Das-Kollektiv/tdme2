@@ -10,7 +10,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -24,7 +24,7 @@ using std::vector;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::prototype::BaseProperties;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
@@ -36,7 +36,7 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::scene::Scene final
-	: public PrototypeProperties
+	: public BaseProperties
 {
 private:
 	string applicationRootPathName;
@@ -70,8 +70,10 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param name name
+	 * @param description description
 	 */
-	Scene();
+	Scene(const string& name, const string& description);
 
 	/**
 	 * Destructor

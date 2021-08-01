@@ -7,11 +7,11 @@
 using std::string;
 
 /**
- * Prototype property model class
+ * Base property model class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::prototype::PrototypeProperty final
+class tdme::engine::prototype::BaseProperty final
 {
 private:
 	string name;
@@ -23,12 +23,12 @@ public:
 	 * @param name name
 	 * @param value value
 	 */
-	inline PrototypeProperty(const string& name, const string& value): name(name), value(value) {}
+	inline BaseProperty(const string& name, const string& value): name(name), value(value) {}
 
 	/**
 	 * Destructor
 	 */
-	~PrototypeProperty();
+	~BaseProperty();
 
 	/**
 	 * @return name
@@ -63,8 +63,8 @@ public:
 	/**
 	 * Clones this property model entity
 	 */
-	inline PrototypeProperty* clone() {
-		return new PrototypeProperty(name, value);
+	inline BaseProperty* clone() {
+		return new BaseProperty(name, value);
 	}
 
 };

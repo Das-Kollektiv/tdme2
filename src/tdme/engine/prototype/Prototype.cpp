@@ -99,7 +99,8 @@ char Prototype::MODEL_BOUNDINGVOLUME_IDS[][Prototype::MODEL_BOUNDINGVOLUME_COUNT
 	"model_bv.63"
 };
 
-Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot)
+Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot):
+	BaseProperties(name, description)
 {
 	this->id = id;
 	this->type = entityType;

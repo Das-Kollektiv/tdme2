@@ -15,6 +15,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -33,7 +34,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
@@ -67,6 +67,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -84,7 +85,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -557,7 +557,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	Value jPrototypeProperties;
 	jPrototypeProperties.SetArray();
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-		PrototypeProperty* modelProperty = prototype->getPropertyByIndex(i);
+		BaseProperty* modelProperty = prototype->getPropertyByIndex(i);
 		Value jObjectProperty;
 		jObjectProperty.SetObject();
 		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);

@@ -94,7 +94,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	//
-	auto scene = new Scene();
+	auto scene = new Scene(fileName, "");
 	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
@@ -372,7 +372,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
 	//
-	auto scene = new Scene();
+	auto scene = new Scene(fileName, "");
 	scene->setRotationOrder(rotationOrder);
 
 	auto sceneLibrary = scene->getLibrary();

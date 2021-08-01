@@ -7,6 +7,8 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
@@ -19,8 +21,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Camera.h>
@@ -58,10 +58,10 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Camera;

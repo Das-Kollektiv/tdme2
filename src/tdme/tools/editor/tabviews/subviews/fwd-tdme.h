@@ -6,7 +6,7 @@ namespace tools {
 namespace editor {
 namespace tabviews {
 namespace subviews {
-	class PrototypeBaseSubView;
+	class BasePropertiesSubView;
 	class PrototypeDisplaySubView;
 	class PrototypePhysicsSubView;
 	class PrototypeSoundsSubView;

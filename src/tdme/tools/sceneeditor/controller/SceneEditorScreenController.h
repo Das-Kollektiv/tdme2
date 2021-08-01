@@ -30,7 +30,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::model::Color4;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLight;
@@ -286,7 +286,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param objectPresetIds object property preset ids
 	 */
-	void setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds);
+	void setEntityPresetIds(const map<string, vector<BaseProperty*>>& entityPresetIds);
 
 	/**
 	 * Event callback for entity properties selection

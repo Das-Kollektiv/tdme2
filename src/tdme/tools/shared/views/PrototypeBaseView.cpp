@@ -2,15 +2,15 @@
 
 #include <string>
 
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 
 using std::string;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::views::PrototypeBaseView;
@@ -32,7 +32,7 @@ void PrototypeBaseView::prototypePropertiesPreset(Prototype* prototype, const st
 
 	prototype->clearProperties();
 	auto& entityPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
-	const vector<PrototypeProperty*>* entityPropertyPresetArrayList = nullptr;
+	const vector<BaseProperty*>* entityPropertyPresetArrayList = nullptr;
 	auto entityPropertyPresetArrayListIt = entityPropertiesPresets.find(presetId);
 	if (entityPropertyPresetArrayListIt != entityPropertiesPresets.end()) {
 		entityPropertyPresetArrayList = &entityPropertyPresetArrayListIt->second;

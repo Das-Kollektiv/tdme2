@@ -10,9 +10,9 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/gui/GUI.h>
@@ -46,7 +46,7 @@ using tdme::engine::SceneConnector;
 using tdme::engine::model::Color4;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::gui::GUI;
@@ -765,7 +765,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 				sceneEntityTransformations,
 				pastePrototype
 			 );
-			PrototypeProperties* properties = copiedEntity;
+			BaseProperties* properties = copiedEntity;
 			for (int i = 0; i < properties->getPropertyCount(); i++) {
 				auto property = properties->getPropertyByIndex(i);
 				sceneEntity->addProperty(property->getName(), property->getValue());

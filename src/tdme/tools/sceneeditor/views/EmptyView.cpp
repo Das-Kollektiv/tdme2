@@ -5,7 +5,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -29,7 +29,7 @@ using std::string;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;

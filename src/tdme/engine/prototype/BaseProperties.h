@@ -12,29 +12,65 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 
 /**
- * Prototype properties
+ * Base properties
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::prototype::PrototypeProperties
+class tdme::engine::prototype::BaseProperties
 {
 private:
-	map<string, PrototypeProperty*> propertiesByName;
-	vector<PrototypeProperty*> properties;
+	map<string, BaseProperty*> propertiesByName;
+	vector<BaseProperty*> properties;
+
+protected:
+	string name;
+	string description;
 
 public:
 	/**
 	 * Public constructor
+	 * @param name name
+	 * @param description description
 	 */
-	PrototypeProperties();
+	BaseProperties(const string& name, const string& description);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~PrototypeProperties();
+	virtual ~BaseProperties();
+
+	/**
+	 * @return name
+	 */
+	inline const string& getName() {
+		return name;
+	}
+
+	/**
+	 * Set up name
+	 * @param name name
+	 */
+	inline void setName(const string& name) {
+		this->name = name;
+	}
+
+	/**
+	 * @return description
+	 */
+	inline const string& getDescription() {
+		return description;
+	}
+
+	/**
+	 * Set up description
+	 * @param description description
+	 */
+	inline void setDescription(const string& description) {
+		this->description = description;
+	}
 
 	/**
 	 * Clears properties
@@ -46,7 +82,7 @@ public:
 	 * @param name name
 	 * @return property or null
 	 */
-	PrototypeProperty* getProperty(const string& name);
+	BaseProperty* getProperty(const string& name);
 
 	/**
 	 * @return property count
@@ -67,7 +103,7 @@ public:
 	 * @param idx idx
 	 * @return property or null
 	 */
-	inline PrototypeProperty* getPropertyByIndex(int idx) {
+	inline BaseProperty* getPropertyByIndex(int idx) {
 		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
 	}
 

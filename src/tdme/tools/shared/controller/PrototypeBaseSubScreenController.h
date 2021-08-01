@@ -17,7 +17,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -90,7 +90,7 @@ public:
 	 * Set up prototype property preset ids
 	 * @param prototypePresetIds prototype property preset ids
 	 */
-	void setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds);
+	void setPrototypePresetIds(const map<string, vector<BaseProperty*>>& prototypePresetIds);
 
 	/**
 	 * Set up prototype properties

@@ -22,7 +22,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -97,7 +97,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -1433,7 +1433,7 @@ void SceneEditorView::entityPropertiesPreset(const string& presetId)
 
 	sceneEntity->clearProperties();
 	auto& entityPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
-	const vector<PrototypeProperty*>* entityPropertyPresetVector = nullptr;
+	const vector<BaseProperty*>* entityPropertyPresetVector = nullptr;
 	auto entityPropertyPresetVectorIt = entityPropertiesPresets.find(presetId);
 	if (entityPropertyPresetVectorIt != entityPropertiesPresets.end()) {
 		entityPropertyPresetVector = &entityPropertyPresetVectorIt->second;
@@ -1627,9 +1627,9 @@ void SceneEditorView::pasteEntities(bool displayOnly)
 				sceneEntityTransformations,
 				pastePrototype
 			 );
-			PrototypeProperties* properties = copiedEntity;
+			BaseProperties* properties = copiedEntity;
 			for (int i = 0; i < properties->getPropertyCount(); i++) {
-				PrototypeProperty* property = properties->getPropertyByIndex(i);
+				BaseProperty* property = properties->getPropertyByIndex(i);
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene->addEntity(sceneEntity);

@@ -8,9 +8,9 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -33,9 +33,10 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -119,7 +120,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	Value jSceneProperties;
 	jSceneProperties.SetArray();
 	for (auto i = 0; i < scene->getPropertyCount(); i++) {
-		PrototypeProperty* sceneProperty = scene->getPropertyByIndex(i);
+		auto sceneProperty = scene->getPropertyByIndex(i);
 		Value jSceneProperty;
 		jSceneProperty.SetObject();
 		jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
@@ -155,7 +156,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		Value jEntityProperties;
 		jEntityProperties.SetArray();
 		for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-			PrototypeProperty* sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
+			auto sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
 			Value jSceneEntityProperty;
 			jSceneEntityProperty.SetObject();
 			jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);
