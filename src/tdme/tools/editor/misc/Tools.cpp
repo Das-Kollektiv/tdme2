@@ -441,7 +441,6 @@ const string Tools::getRelativeResourcesFileName(const string& applicationRoot, 
 
 const string Tools::getApplicationRootPathName(const string& fileName)
 {
-	Console::println("Tools::getApplicationRootPathName(): " + fileName);
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto applicationRootPathNameIdx = string::npos;
 	if (applicationRootPathNameIdx == string::npos) {
