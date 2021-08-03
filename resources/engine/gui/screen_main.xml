@@ -260,7 +260,7 @@
 									<template id="reflection" src="resources/engine/gui/template_details_reflection.xml"/>
 									<template id="rendering" src="resources/engine/gui/template_details_rendering.xml"/>
 									<template id="sky" src="resources/engine/gui/template_details_sky.xml"/>
-									<template id="sound" src="resources/engine/gui/template_details_sound.xml"/>
+									<template id="sounds" src="resources/engine/gui/template_details_sound.xml"/>
 									<template id="specular_material" src="resources/engine/gui/template_details_specularmaterial.xml"/>
 									<template id="terrain" src="resources/engine/gui/template_details_terrain.xml"/>
 									<template id="terrainbrush" src="resources/engine/gui/template_details_terrainbrush.xml"/>
