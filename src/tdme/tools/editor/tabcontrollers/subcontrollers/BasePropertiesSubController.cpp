@@ -1,12 +1,12 @@
-#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.h>
+#include "BasePropertiesSubController.h"
 
 #include <map>
 #include <string>
 #include <vector>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -20,7 +20,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
-#include <tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.h>
+#include <tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
@@ -28,13 +28,14 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+
 using std::map;
 using std::string;
 using std::vector;
 
 using tdme::engine::Engine;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -47,8 +48,8 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
-using tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
@@ -56,25 +57,24 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeBaseSubController::PrototypeBaseSubController(EditorView* editorView, Action* onSetEntityDataAction)
+BasePropertiesSubController::BasePropertiesSubController(EditorView* editorView, const string& rootNode)
 {
 	this->editorView = editorView;
-	this->view = new PrototypeBaseSubView(this);
+	this->view = new BasePropertiesSubView(this);
 	this->popUps = editorView->getPopUps();
-	this->onSetPrototypeDataAction = onSetEntityDataAction;
+	this->rootNodeId = rootNode;
 }
 
-PrototypeBaseSubController::~PrototypeBaseSubController() {
+BasePropertiesSubController::~BasePropertiesSubController() {
 	delete view;
-	delete onSetPrototypeDataAction;
 }
 
-void PrototypeBaseSubController::initialize(GUIScreenNode* screenNode)
+void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 }
 
-void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototype, string& xml) {
+void BasePropertiesSubController::createBasePropertiesXML(BaseProperties* prototype, string& xml) {
 	if (prototype->getPropertyCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
 		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
@@ -85,33 +85,33 @@ void PrototypeBaseSubController::createPrototypePropertiesXML(Prototype* prototy
 	}
 }
 
-void PrototypeBaseSubController::setPrototypeBaseDetails(Prototype* prototype) {
+void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseProperties) {
 	editorView->setDetailsContent(
-		"<template id=\"details_prototype_base\" src=\"resources/engine/gui/template_details_base.xml\" />\n"
+		"<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />\n"
 	);
 
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_prototype_base"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_name"))->getController()->setValue(MutableString(prototype->getName()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_description"))->getController()->setValue(MutableString(prototype->getDescription()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(MutableString(baseProperties->getName()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(MutableString(baseProperties->getDescription()));
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void PrototypeBaseSubController::applyPrototypeBaseDetails(Prototype* prototype) {
+void BasePropertiesSubController::applyPropertyDetails(BaseProperties* baseProperties) {
 	try {
-		prototype->setName(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_name"))->getController()->getValue().getString());
-		prototype->setDescription(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("prototype_description"))->getController()->getValue().getString());
+		baseProperties->setName(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->getValue().getString());
+		baseProperties->setDescription(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::applyPrototypeBaseDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const string& propertyName) {
-	auto property = prototype->getProperty(propertyName);
+void BasePropertiesSubController::setPropertyDetails(BaseProperties* baseProperties, const string& propertyName) {
+	auto property = baseProperties->getProperty(propertyName);
 	if (property == nullptr) return;
 
 	editorView->setDetailsContent(
@@ -127,19 +127,19 @@ void PrototypeBaseSubController::setPropertyDetails(Prototype* prototype, const 
 	}
 }
 
-void PrototypeBaseSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
-	if (StringTools::startsWith(outlinerNode, "prototype") == true) {
-		setPrototypeBaseDetails(prototype);
+void BasePropertiesSubController::updateDetails(BaseProperties* baseProperties, const string& outlinerNode) {
+	if (outlinerNode == rootNodeId) {
+		setBasePropertiesDetails(baseProperties);
 	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 		auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-		setPropertyDetails(prototype, selectedPropertyName);
+		setPropertyDetails(baseProperties, selectedPropertyName);
 	}
 }
 
-void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, const string& propertyName) {
+void BasePropertiesSubController::applyPropertyDetails(BaseProperties* baseProperties, const string& propertyName) {
 	try {
-		if (prototype->updateProperty(
+		if (baseProperties->updateProperty(
 			propertyName,
 			propertyName,
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->getValue().getString()) == false) {
@@ -151,10 +151,10 @@ void PrototypeBaseSubController::applyPropertyDetails(Prototype* prototype, cons
 	}
 }
 
-void PrototypeBaseSubController::createProperty(Prototype* prototype) {
+void BasePropertiesSubController::createProperty(BaseProperties* baseProperties) {
 	auto propertyCreated = false;
 	auto propertyName = string() + "New property";
-	if (prototype->addProperty(
+	if (baseProperties->addProperty(
 		propertyName,
 		"No value"
 		) == true) {
@@ -163,7 +163,7 @@ void PrototypeBaseSubController::createProperty(Prototype* prototype) {
 		//
 		for (auto i = 1; i < 10001; i++) {
 			propertyName = string() + "New property " + to_string(i);
-			if (prototype->addProperty(
+			if (baseProperties->addProperty(
 				propertyName,
 				"No value"
 				) == true) {
@@ -185,14 +185,14 @@ void PrototypeBaseSubController::createProperty(Prototype* prototype) {
 	if (propertyCreated == true) {
 		editorView->reloadTabOutliner(string() + "properties." + propertyName);
 		startRenameProperty(
-			prototype,
+			baseProperties,
 			propertyName
 		);
 	}
 }
 
-void PrototypeBaseSubController::startRenameProperty(Prototype* prototype, const string& propertyName) {
-	auto property = prototype->getProperty(propertyName);
+void BasePropertiesSubController::startRenameProperty(BaseProperties* baseProperties, const string& propertyName) {
+	auto property = baseProperties->getProperty(propertyName);
 	if (property == nullptr) return;
 	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("properties." + propertyName));
 	if (selectBoxOptionParentNode == nullptr) return;
@@ -205,12 +205,12 @@ void PrototypeBaseSubController::startRenameProperty(Prototype* prototype, const
 	editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
-void PrototypeBaseSubController::renameProperty(Prototype* prototype) {
-	auto property = prototype->getProperty(renamePropertyName);
+void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties) {
+	auto property = baseProperties->getProperty(renamePropertyName);
 	renamePropertyName.clear();
 	if (property != nullptr) {
 		try {
-			if (prototype->renameProperty(
+			if (baseProperties->renameProperty(
 				property->getName(),
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("tdme.properties.rename_input"))->getController()->getValue().getString()
 				) == false) {
@@ -238,55 +238,55 @@ void PrototypeBaseSubController::renameProperty(Prototype* prototype) {
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
 }
 
-void PrototypeBaseSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
+void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BaseProperties* baseProperties)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "property") {
-			createProperty(prototype);
+			createProperty(baseProperties);
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-			setPropertyDetails(prototype, selectedPropertyName);
+			setPropertyDetails(baseProperties, selectedPropertyName);
 		}
 	}
 }
 
-void PrototypeBaseSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+void BasePropertiesSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "tdme.properties.rename_input") {
-			renameProperty(prototype);
+			renameProperty(baseProperties);
 		}
 	}
 }
 
-void PrototypeBaseSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
+void BasePropertiesSubController::onFocus(GUIElementNode* node, BaseProperties* baseProperties) {
 }
 
-void PrototypeBaseSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
+void BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties* baseProperties) {
 	if (node->getId() == "tdme.properties.rename_input") {
-		renameProperty(prototype);
+		renameProperty(baseProperties);
 	} else {
 		for (auto& applyPropertyNode: applyPropertyNodes) {
 			if (node->getId() == applyPropertyNode) {
-				applyPropertyValue(prototype);
+				applyPropertyValue(baseProperties);
 				break;
 			}
 		}
 		for (auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
-				applyPrototypeBaseDetails(prototype);
+				applyPropertyDetails(baseProperties);
 				break;
 			}
 		}
 	}
 }
 
-void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+void BasePropertiesSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
@@ -300,18 +300,18 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 					auto outlinerNode = prototypeBaseSubController->editorView->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 						prototypeBaseSubController->startRenameProperty(
-							prototype,
+							baseProperties,
 							StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size())
 						);
 					}
 				}
-				OnRenameAction(PrototypeBaseSubController* prototypeBaseSubController, Prototype* prototype): prototypeBaseSubController(prototypeBaseSubController), prototype(prototype) {
+				OnRenameAction(BasePropertiesSubController* prototypeBaseSubController, BaseProperties* baseProperties): prototypeBaseSubController(prototypeBaseSubController), baseProperties(baseProperties) {
 				}
 			private:
-				PrototypeBaseSubController* prototypeBaseSubController;
-				Prototype* prototype;
+				BasePropertiesSubController* prototypeBaseSubController;
+				BaseProperties* baseProperties;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnRenameAction(this, prototype));
+			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnRenameAction(this, baseProperties));
 
 			// separator
 			popUps->getContextMenuScreenController()->addMenuSeparator();
@@ -324,17 +324,17 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 					auto outlinerNode = prototypeBaseSubController->editorView->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 						auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-						prototype->removeProperty(selectedPropertyName);
+						baseProperties->removeProperty(selectedPropertyName);
 						prototypeBaseSubController->editorView->reloadTabOutliner("properties");
 					}
 				}
-				OnDeleteAction(PrototypeBaseSubController* prototypeBaseSubController, Prototype* prototype): prototypeBaseSubController(prototypeBaseSubController), prototype(prototype) {
+				OnDeleteAction(BasePropertiesSubController* prototypeBaseSubController, BaseProperties* baseProperties): prototypeBaseSubController(prototypeBaseSubController), baseProperties(baseProperties) {
 				}
 			private:
-				PrototypeBaseSubController* prototypeBaseSubController;
-				Prototype* prototype;
+				BasePropertiesSubController* prototypeBaseSubController;
+				BaseProperties* baseProperties;
 			};
-			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, prototype));
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, baseProperties));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
@@ -342,10 +342,10 @@ void PrototypeBaseSubController::onContextMenuRequested(GUIElementNode* node, in
 	}
 }
 
-void PrototypeBaseSubController::applyPropertyValue(Prototype* prototype) {
+void BasePropertiesSubController::applyPropertyValue(BaseProperties* baseProperties) {
 	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 	auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
-	applyPropertyDetails(prototype, selectedPropertyName);
+	applyPropertyDetails(baseProperties, selectedPropertyName);
 	//
 	class ReloadTabOutlinerAction: public Action {
 	private:
@@ -360,7 +360,7 @@ void PrototypeBaseSubController::applyPropertyValue(Prototype* prototype) {
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
 }
 
-void PrototypeBaseSubController::showErrorPopUp(const string& caption, const string& message)
+void BasePropertiesSubController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

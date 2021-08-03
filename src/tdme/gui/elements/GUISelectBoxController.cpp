@@ -1,5 +1,7 @@
 #include <tdme/gui/elements/GUISelectBoxController.h>
 
+#include <algorithm>
+
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -13,6 +15,8 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::count;
 
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::elements::GUISelectBoxOptionController;
@@ -435,6 +439,13 @@ bool GUISelectBoxController::hasValue()
 
 const MutableString& GUISelectBoxController::getValue()
 {
+	// check if single value
+	if (multipleSelection == true &&
+		count(value.getString().begin(), value.getString().end(), '|') == 2) {
+		singleValue.set(StringTools::substring(value.getString(), 1, value.getString().size() - 1));
+		return singleValue;
+	}
+	// nope, take multiple value
 	return value;
 }
 
@@ -446,6 +457,10 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		selectBoxOptionController->unselect();
 		selectBoxOptionController->unfocus();
 	}
+	auto _value = value;
+	if (count(value.getString().begin(), value.getString().end(), '|') == 0) {
+		_value = "|" + value.getString() + "|";
+	}
 	MutableString searchValue;
 	GUISelectBoxOptionController* selectBoxOptionNodeControllerLast = nullptr;
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
@@ -455,10 +470,12 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		if (multipleSelection == true) searchValue.append(VALUE_DELIMITER);
 		searchValue.append(selectBoxOptionNode->getValue());
 		if (multipleSelection == true) searchValue.append(VALUE_DELIMITER);
-		if ((multipleSelection == true && value.indexOf(searchValue) != -1) || (multipleSelection == false && value.equals(searchValue) == true)) {
-			selectBoxOptionController->expandHierarchy();
-			if (multipleSelection == true) toggle(i);
-			selectBoxOptionNodeControllerLast = selectBoxOptionController;
+		if (multipleSelection == true) {
+			if (_value.indexOf(searchValue) != -1 || (multipleSelection == false && _value.equals(searchValue) == true)) {
+				selectBoxOptionController->expandHierarchy();
+				if (multipleSelection == true) toggle(i);
+				selectBoxOptionNodeControllerLast = selectBoxOptionController;
+			}
 		}
 	}
 	determineExpandedOptions();
@@ -478,6 +495,8 @@ void GUISelectBoxController::setValue(const MutableString& value)
 	}
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
 	node->getScreenNode()->layout(node);
+	//
+	this->value = _value;
 }
 
 void GUISelectBoxController::onSubTreeChange() {

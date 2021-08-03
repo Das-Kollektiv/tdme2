@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 
 using std::string;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::prototype::BaseProperties;
 using tdme::engine::Transformations;
 
 /**
@@ -19,11 +19,9 @@ using tdme::engine::Transformations;
  * @version $Id$
  */
 class tdme::engine::scene::SceneEntity final
-	: public PrototypeProperties
+	: public BaseProperties
 {
 private:
-	string id;
-	string description;
 	Transformations transformations;
 	Prototype* prototype { nullptr };
 	string reflectionEnvironmentMappingId;
@@ -47,7 +45,7 @@ public:
 	 * @return id
 	 */
 	inline const string& getId() {
-		return id;
+		return name;
 	}
 
 	/**
@@ -55,7 +53,7 @@ public:
 	 * @param id id
 	 */
 	inline void setId(const string& id) {
-		this->id = id;
+		this->name = name;
 	}
 
 	/**
@@ -112,6 +110,6 @@ public:
 	/**
 	 * @return merged properties from entity and object
 	 */
-	const PrototypeProperties getTotalProperties();
+	const BaseProperties getTotalProperties();
 
 };

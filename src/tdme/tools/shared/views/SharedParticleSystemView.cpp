@@ -8,6 +8,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -17,7 +18,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ParticleSystemEntity.h>
@@ -73,7 +73,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::ParticleSystemEntity;

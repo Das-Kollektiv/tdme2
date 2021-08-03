@@ -41,6 +41,7 @@ private:
 	bool multipleSelection;
 	int focussedOptionIdx;
 	MutableString value;
+	MutableString singleValue;
 
 	bool keyControl;
 

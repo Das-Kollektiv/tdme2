@@ -43,7 +43,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 
-Scene::Scene()
+Scene::Scene(const string& name, const string& description): BaseProperties(name, description)
 {
 	applicationRootPathName = "";
 	pathName = ".";
@@ -222,7 +222,7 @@ void Scene::addEntity(SceneEntity* entity)
 	if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
 }
 
-void Scene::removeEntity(const string& id)
+bool Scene::removeEntity(const string& id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
@@ -231,6 +231,25 @@ void Scene::removeEntity(const string& id)
 		entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
 		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
 		delete entity;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Scene::renameEntity(const string& id, const string& newId) {
+	if (getEntity(newId) != nullptr) return false;
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		auto entity = entityByIdIt->second;
+		entitiesById.erase(entityByIdIt);
+		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
+		entity->setName(newId);
+		entitiesById[entity->getId()] = entity;
+		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
+		return true;
+	} else {
+		return false;
 	}
 }
 

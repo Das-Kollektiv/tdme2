@@ -74,6 +74,14 @@ public:
 	virtual ~Gizmo();
 
 	/**
+	 * Set engine
+	 * @param engine engine
+	 */
+	inline void setEngine(Engine* engine) {
+		this->engine = engine;
+	}
+
+	/**
 	 * @return GIZMO type mask
 	 */
 	inline int32_t getGizmoTypeMask() const {

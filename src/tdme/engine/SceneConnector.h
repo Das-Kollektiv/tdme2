@@ -211,7 +211,7 @@ public:
 	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void setLights(Engine* engine, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void setLights(Engine* engine, Scene* scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Create particle system
@@ -263,7 +263,7 @@ public:
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body
@@ -298,21 +298,21 @@ public:
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addScene(World* world, Scene& scene, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addScene(World* world, Scene* scene, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Disable scene in engine
 	 * @param engine engine
 	 * @param scene scene
 	 */
-	static void disableScene(Engine* engine, Scene& scene);
+	static void disableScene(Engine* engine, Scene* scene);
 
 	/**
 	 * Disable scene in physics world
 	 * @param world world
 	 * @param scene scene
 	 */
-	static void disableScene(World* world, Scene& scene);
+	static void disableScene(World* world, Scene* scene);
 
 	/**
 	 * Enable disabled scene in engine
@@ -320,7 +320,7 @@ public:
 	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void enableScene(Engine* engine, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableScene(Engine* engine, Scene* scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Enable disabled scene in physics world
@@ -328,14 +328,14 @@ public:
 	 * @param scene scene
 	 * @param translation translation
 	 */
-	static void enableScene(World* world, Scene& scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableScene(World* world, Scene* scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Reset engine regarding given scene
 	 * @param engine engine
 	 * @param scene scene
 	 */
-	static void resetEngine(Engine* engine, Scene& scene);
+	static void resetEngine(Engine* engine, Scene* scene);
 
 	/**
 	 * Add scene entity sounds into given audio instance associated with given id

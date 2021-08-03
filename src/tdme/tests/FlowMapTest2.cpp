@@ -7,6 +7,8 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
@@ -19,8 +21,6 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Camera.h>
@@ -58,10 +58,10 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Camera;
@@ -269,28 +269,35 @@ void FlowMapTest2::display()
 				if (flowMap != nullptr) {
 					auto combatUnitTranslation = combatUnit.object->getTranslation();
 					float minDistance = Float::MAX_VALUE;
-					Vector3 minDistancePathFindingNode;
-					for (auto& flowMapPathFindingNode: flowMap->getPath()) {
-						auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
-						auto pathCell = flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ());
-						if (candidateDistance < minDistance && pathCell != nullptr) {
-							minDistance = candidateDistance;
-							minDistancePathFindingNode = pathCell->getPosition() + pathCell->getDirection() * (flowMap->getStepSize() * 0.5f);
+					Vector3 flowMapPosition;
+					// 1. try: find nearest cell from current position
+					auto nearestCell = flowMap->findNearestCell(combatUnit.object->getTranslation().getX(), combatUnit.object->getTranslation().getZ());
+					if (nearestCell != nullptr) {
+						flowMapPosition = nearestCell->getPosition() + Vector3(flowMap->getStepSize() / 2.0f, 0.0f, flowMap->getStepSize() / 2.0f);
+					} else {
+						// otherwise find path to closed path finding node of flowmap path
+						Vector3 minDistancePathFindingNode;
+						for (auto& flowMapPathFindingNode: flowMap->getPath()) {
+							auto candidateDistance = combatUnitTranslation.clone().sub(flowMapPathFindingNode).computeLength();
+							auto pathCell = flowMap->getCell(flowMapPathFindingNode.getX(), flowMapPathFindingNode.getZ());
+							if (candidateDistance < minDistance && pathCell != nullptr) {
+								minDistance = candidateDistance;
+								minDistancePathFindingNode = pathCell->getPosition() + pathCell->getDirection() * (flowMap->getStepSize() * 0.5f);
+							}
 						}
 					}
 
-					//
 					//	line of sight check, then compute direct path
 					bool foundPath = false;
-					if (combatUnitTranslation.equals(minDistancePathFindingNode, 0.1f) == false) {
+					if (combatUnitTranslation.clone().sub(flowMapPosition).computeLengthSquared() < Math::square(0.1f)) {
 						for (auto i = 0; i < 3; i++) {
 							if (pathFinding->findPath(
 								combatUnitTranslation,
-								minDistancePathFindingNode,
+								flowMapPosition,
 								SceneConnector::RIGIDBODY_TYPEID_STATIC,
 								combatUnit.path,
 								3,
-								minDistance * 6
+								static_cast<int>(minDistance * 6.0f)
 							) == true) {
 								foundPath = true;
 								break;
@@ -299,7 +306,7 @@ void FlowMapTest2::display()
 					}
 
 					// try to do direct path
-					if (foundPath == false) combatUnit.path = pathFinding->generateDirectPath(combatUnitTranslation, minDistancePathFindingNode);
+					if (foundPath == false) combatUnit.path = pathFinding->generateDirectPath(combatUnitTranslation, flowMapPosition);
 					combatUnit.pathIdx = 0;
 				}
 			}
@@ -368,20 +375,21 @@ void FlowMapTest2::display()
 void FlowMapTest2::dispose()
 {
 	engine->dispose();
+	delete scene;
 }
 
 void FlowMapTest2::initialize()
 {
 	engine->initialize();
-	SceneReader::read("../MedievalSurvivors/resources/project/models", "TEST_SquadMovement.tscene", scene);
+	scene = SceneReader::read("../MedievalSurvivors/resources/project/models", "TEST_SquadMovement.tscene");
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
-	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 20.0f, 0.0f));
-	cam->setLookAt(scene.getCenter());
+	cam->setLookFrom(scene->getCenter() + Vector3(0.0f, 20.0f, 0.0f));
+	cam->setLookAt(scene->getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	formationLinePrototype = ModelReader::read("resources/tests/levels/pathfinding", "Formation_Line.tm");
@@ -392,8 +400,8 @@ void FlowMapTest2::initialize()
 	//
 	startPosition = Vector3(0.0f, 0.25f, 4.5f);
 	endPosition = Vector3(0.0f, 0.25f, 4.5f);
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto entity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto entity = scene->getEntityAt(i);
 		auto properties = entity->getTotalProperties();
 		{
 			auto spawnPointProperty = properties.getProperty("spawnpoint");
@@ -412,7 +420,7 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 0;
-		combatUnit.formationIdx = 2;
+		combatUnit.formationIdx = 3; // check for other formation size
 		combatUnit.pathFindingNodeIdx = -1;
 		combatUnit.speed = 1.0f;
 		combatUnit.movementDirectionRing.fill(Vector3());
@@ -481,7 +489,7 @@ void FlowMapTest2::initialize()
 	{
 		CombatUnit combatUnit;
 		combatUnit.idx = 3;
-		combatUnit.formationIdx = 3;
+		combatUnit.formationIdx = 2;
 		combatUnit.pathFindingNodeIdx = -1;
 		combatUnit.speed = 1.0f;
 		combatUnit.movementDirectionRing.fill(Vector3());
@@ -727,9 +735,9 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
-	auto center = scene.getBoundingBox()->getCenter();
-	auto depth = Math::ceil(scene.getBoundingBox()->getDimensions().getZ());
-	auto width = Math::ceil(scene.getBoundingBox()->getDimensions().getX());
+	auto center = scene->getBoundingBox()->getCenter();
+	auto depth = Math::ceil(scene->getBoundingBox()->getDimensions().getZ());
+	auto width = Math::ceil(scene->getBoundingBox()->getDimensions().getX());
 
 	if (path.size() > 12) {
 		vector<Vector3> pathA;
@@ -847,6 +855,9 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 				cellObject->setDisableDepthTest(true);
 				cellObject->setEffectColorMul(Color4(0.25f, 0.25f, 0.25f, 1.0f));
 				cellObject->update();
+				if (cell->hasMissingNeighborCell() == true) {
+					cellObject->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
+				}
 				engine->addEntity(cellObject);
 				i++;
 			}
@@ -891,8 +902,10 @@ void FlowMapTest2::onMouseMoved(int x, int y) {
 }
 
 void FlowMapTest2::onMouseButton(int button, int state, int x, int y) {
-	mouseClicked = true;
-	mouseClickPosition = { x, y };
+	if (state == MOUSE_BUTTON_UP) {
+		mouseClicked = true;
+		mouseClickPosition = { x, y };
+	}
 }
 
 void FlowMapTest2::onMouseWheel(int button, int direction, int x, int y) {

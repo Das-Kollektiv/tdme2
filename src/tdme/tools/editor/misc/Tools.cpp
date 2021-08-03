@@ -175,7 +175,7 @@ float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
-	auto modelId = "ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
+	auto modelId = "tdme.ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
 	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
@@ -211,6 +211,53 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	ground->getSubNodes()["ground"] = groundNode;
 	ModelTools::prepareForIndexedRendering(ground);
 	return ground;
+}
+
+Model* Tools::createGridModel()
+{
+	auto groundPlate = new Model("tdme.grid", "tdme.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
+	auto groundPlateMaterial = new Material("ground");
+	groundPlateMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseColor(
+		Color4(
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getRed(),
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getGreen(),
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getBlue(),
+			0.75f
+		)
+	);
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
+	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	groundPlate->getMaterials()["grid"] = groundPlateMaterial;
+	auto groundNode = new Node(groundPlate, nullptr, "grid", "grid");
+	vector<Vector3> groundVertices;
+	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
+	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 0.0f));
+	vector<Vector3> groundNormals;
+	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	vector<TextureCoordinate> groundTextureCoordinates;
+	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 10000.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
+	vector<Face> groundFacesGround;
+	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityGround(groundNode, "tdme.sceneeditor.grid.facesentity");
+	nodeFacesEntityGround.setMaterial(groundPlateMaterial);
+	nodeFacesEntityGround.setFaces(groundFacesGround);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntityGround);
+	groundNode->setVertices(groundVertices);
+	groundNode->setNormals(groundNormals);
+	groundNode->setTextureCoordinates(groundTextureCoordinates);
+	groundNode->setFacesEntities(nodeFacesEntities);
+	groundPlate->getNodes()[groundNode->getId()] = groundNode;
+	groundPlate->getSubNodes()[groundNode->getId()] = groundNode;
+	ModelTools::prepareForIndexedRendering(groundPlate);
+	return groundPlate;
 }
 
 void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
@@ -394,7 +441,6 @@ const string Tools::getRelativeResourcesFileName(const string& applicationRoot, 
 
 const string Tools::getApplicationRootPathName(const string& fileName)
 {
-	Console::println("Tools::getApplicationRootPathName(): " + fileName);
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto applicationRootPathNameIdx = string::npos;
 	if (applicationRootPathNameIdx == string::npos) {

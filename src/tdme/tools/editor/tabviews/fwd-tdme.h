@@ -7,6 +7,7 @@ namespace editor {
 namespace tabviews {
 	struct TabView;
 	class ModelEditorTabView;
+	class SceneEditorTabView;
 }  // namespace tabviews
 }  // namespace editor
 }  // namespace tools

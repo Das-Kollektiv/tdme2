@@ -22,7 +22,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -97,7 +97,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -256,12 +256,12 @@ PopUps* SceneEditorView::getPopUps()
 
 const string SceneEditorView::getFileName()
 {
-	return FileSystem::getInstance()->getFileName(scene.getFileName());
+	return FileSystem::getInstance()->getFileName(scene->getFileName());
 }
 
 Scene* SceneEditorView::getScene()
 {
-	return &scene;
+	return scene;
 }
 
 Prototype* SceneEditorView::getSelectedPrototype()
@@ -273,8 +273,8 @@ SceneEntity* SceneEditorView::getSelectedSceneEntity()
 {
 	if (selectedEntityIds.size() != 1) return nullptr;
 
-	auto selectedEntity = scene.getEntity(selectedEntityIds[0]);
-	return selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false ? scene.getEntity(selectedEntity->getId()) : static_cast< SceneEntity* >(nullptr);
+	auto selectedEntity = scene->getEntity(selectedEntityIds[0]);
+	return selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false ? scene->getEntity(selectedEntity->getId()) : static_cast< SceneEntity* >(nullptr);
 }
 
 bool SceneEditorView::isGridEnabled()
@@ -471,14 +471,14 @@ void SceneEditorView::handleInputEvents()
 						auto gizmoEntity = getGizmoObject3D();
 						if (gizmoEntity != nullptr) {
 							Transformations rotations;
-							rotations.addRotation(scene.getRotationOrder()->getAxis0(), deltaRotation[scene.getRotationOrder()->getAxis0VectorIndex()]);
-							rotations.addRotation(scene.getRotationOrder()->getAxis1(), deltaRotation[scene.getRotationOrder()->getAxis1VectorIndex()]);
-							rotations.addRotation(scene.getRotationOrder()->getAxis2(), deltaRotation[scene.getRotationOrder()->getAxis2VectorIndex()]);
+							rotations.addRotation(scene->getRotationOrder()->getAxis0(), deltaRotation[scene->getRotationOrder()->getAxis0VectorIndex()]);
+							rotations.addRotation(scene->getRotationOrder()->getAxis1(), deltaRotation[scene->getRotationOrder()->getAxis1VectorIndex()]);
+							rotations.addRotation(scene->getRotationOrder()->getAxis2(), deltaRotation[scene->getRotationOrder()->getAxis2VectorIndex()]);
 							rotations.update();
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
 								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-									auto sceneEntity = scene.getEntity(_selectedEntity->getId());
+									auto sceneEntity = scene->getEntity(_selectedEntity->getId());
 									if (sceneEntity == nullptr) continue;
 									auto translation = sceneEntity->getTransformations().getTranslation();
 									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translation.clone().sub(gizmoEntity->getTranslation())));
@@ -492,9 +492,9 @@ void SceneEditorView::handleInputEvents()
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
 									sceneEntity->getTransformations().setScale(scale);
 									if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-										sceneEntity->getTransformations().setRotationAngle(scene.getRotationOrder()->getAxisXIndex(), sceneEntity->getTransformations().getRotationAngle(scene.getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
-										sceneEntity->getTransformations().setRotationAngle(scene.getRotationOrder()->getAxisYIndex(), sceneEntity->getTransformations().getRotationAngle(scene.getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
-										sceneEntity->getTransformations().setRotationAngle(scene.getRotationOrder()->getAxisZIndex(), sceneEntity->getTransformations().getRotationAngle(scene.getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
+										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
+										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
+										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
 									}
 									sceneEntity->getTransformations().update();
 									_selectedEntity->fromTransformations(sceneEntity->getTransformations());
@@ -502,13 +502,13 @@ void SceneEditorView::handleInputEvents()
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
-								auto sceneEntity = scene.getEntity(_selectedEntity->getId());
+								auto sceneEntity = scene->getEntity(_selectedEntity->getId());
 								sceneEditorScreenController->setEntityTransformations(
 									_selectedEntity->getTranslation(),
 									_selectedEntity->getScale(),
-									_selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisXIndex()),
-									_selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisYIndex()),
-									_selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisZIndex()),
+									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
+									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
+									_selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()),
 									(sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 								);
 								setGizmoRotation(_selectedEntity->getTransformations());
@@ -537,7 +537,7 @@ void SceneEditorView::handleInputEvents()
 					}
 					updateGUITransformationsElements();
 				} else {
-					if (selectedEntity != nullptr && scene.getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
+					if (selectedEntity != nullptr && scene->getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
 						for (auto selectedEntityId: selectedEntityIds) {
@@ -565,7 +565,7 @@ void SceneEditorView::handleInputEvents()
 							selectedEntityIds.push_back(selectedEntity->getId());
 							selectedEntityIdsById.insert(selectedEntity->getId());
 							sceneEditorScreenController->selectEntityInEntityListbox(selectedEntity->getId());
-							auto sceneEntity = scene.getEntity(selectedEntity->getId());
+							auto sceneEntity = scene->getEntity(selectedEntity->getId());
 							if (sceneEntity != nullptr) {
 								TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->selectPrototype(sceneEntity->getPrototype()->getId());
 							}
@@ -579,7 +579,7 @@ void SceneEditorView::handleInputEvents()
 							sceneEditorScreenController->unselectEntitiesInEntityListBox(selectedEntity->getId());
 						}
 						if (selectedEntityIds.size() == 1) {
-							auto sceneEntity = scene.getEntity(selectedEntity->getId());
+							auto sceneEntity = scene->getEntity(selectedEntity->getId());
 							if (sceneEntity != nullptr && sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
 								selectedEntity->fromTransformations(sceneEntity->getTransformations());
 							}
@@ -655,9 +655,9 @@ void SceneEditorView::display()
 			if (placeEntityMode == true) {
 				Transformations transformations;
 				transformations.setTranslation(worldCoordinate);
-				transformations.addRotation(scene.getRotationOrder()->getAxis0(), 0.0f);
-				transformations.addRotation(scene.getRotationOrder()->getAxis1(), 0.0f);
-				transformations.addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
+				transformations.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+				transformations.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+				transformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
 				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
 					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
@@ -673,7 +673,7 @@ void SceneEditorView::display()
 						}
 					}
 					transformations.setTranslation(worldCoordinate);
-					transformations.setRotationAngle(scene.getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
+					transformations.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
 					transformations.update();
 					selectedEngineEntity->fromTransformations(transformations);
 					placeEntityTranslation = transformations.getTranslation();
@@ -755,12 +755,12 @@ void SceneEditorView::unselectEntities()
 
 void SceneEditorView::updateGUIElements()
 {
-	sceneEditorScreenController->setScreenCaption("Scene Editor - " + Tools::getFileName(scene.getFileName()));
-	sceneEditorScreenController->setSceneSize(scene.getDimension().getX(), scene.getDimension().getZ(), scene.getDimension().getY());
+	sceneEditorScreenController->setScreenCaption("Scene Editor - " + Tools::getFileName(scene->getFileName()));
+	sceneEditorScreenController->setSceneSize(scene->getDimension().getX(), scene->getDimension().getZ(), scene->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			auto preset = sceneEntity->getProperty("preset");
 			sceneEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", sceneEntity, "");
 			sceneEditorScreenController->setEntityReflectionsEnvironmentMappings(scene, sceneEntity->getReflectionEnvironmentMappingId());
@@ -783,7 +783,7 @@ void SceneEditorView::updateGUIElements()
 		sceneEditorScreenController->unsetEntityReflectionsEnvironmentMappings();
 	}
 	for (auto i = 0; i < 4; i++) {
-		sceneEditorScreenController->setLight(i, scene.getLightAt(i)->getAmbient(), scene.getLightAt(i)->getDiffuse(), scene.getLightAt(i)->getSpecular(), scene.getLightAt(i)->getPosition(), scene.getLightAt(i)->getConstantAttenuation(), scene.getLightAt(i)->getLinearAttenuation(), scene.getLightAt(i)->getQuadraticAttenuation(), scene.getLightAt(i)->getSpotTo(), scene.getLightAt(i)->getSpotDirection(), scene.getLightAt(i)->getSpotExponent(), scene.getLightAt(i)->getSpotCutOff(), scene.getLightAt(i)->isEnabled());
+		sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 	}
 	updateGUITransformationsElements();
 }
@@ -792,13 +792,13 @@ void SceneEditorView::updateGUITransformationsElements() {
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			sceneEditorScreenController->setEntityTransformations(
 				selectedEntity->getTranslation(),
 				selectedEntity->getScale(),
-				selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisXIndex()),
-				selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisYIndex()),
-				selectedEntity->getRotationAngle(scene.getRotationOrder()->getAxisZIndex()),
+				selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
+				selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
+				selectedEntity->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()),
 				(sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == 0
 			);
 			Vector3 entityCenter;
@@ -879,7 +879,7 @@ void SceneEditorView::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookAt(scene.getCenter());
+	cam->setLookAt(scene->getCenter());
 	gridCenter.set(cam->getLookAt());
 	camLookAt.set(engine->getCamera()->getLookAt());
 }
@@ -957,7 +957,7 @@ void SceneEditorView::setStandardEntityColorEffect(Entity* entity)
 	auto color = entityColors["none"];
 	entity->setEffectColorAdd(Color4(color->colorAddR, color->colorAddG, color->colorAddB, 0.0f));
 	entity->setEffectColorMul(Color4(color->colorMulR, color->colorMulG, color->colorMulB, 1.0f));
-	auto sceneEntity = scene.getEntity(entity->getId());
+	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	auto colorProperty = sceneEntity->getProperty("object.color");
 	if (colorProperty == nullptr) colorProperty = sceneEntity->getPrototype()->getProperty("object.color");
@@ -974,7 +974,7 @@ void SceneEditorView::setStandardEntityColorEffect(Entity* entity)
 void SceneEditorView::resetEntity(Entity* entity) {
 	if (entity == nullptr) return;
 	setStandardEntityColorEffect(entity);
-	auto sceneEntity = scene.getEntity(entity->getId());
+	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	if (sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == false) return;
 	entity->fromTransformations(sceneEntity->getTransformations());
@@ -1006,8 +1006,8 @@ void SceneEditorView::loadScene()
 	updateGrid();
 	updateSky();
 	// center scene
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
-	engine->getCamera()->setLookAt(scene.getCenter());
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
+	engine->getCamera()->setLookAt(scene->getCenter());
 	cameraInputHandler->reset();
 	gridCenter.set(engine->getCamera()->getLookAt());
 }
@@ -1021,9 +1021,9 @@ void SceneEditorView::updateGrid()
 	if (entity == nullptr) {
 		entity = new Object3D(entityId, levelEditorGround);
 		entity->setFrustumCulling(false);
-		entity->addRotation(scene.getRotationOrder()->getAxis0(), 0.0f);
-		entity->addRotation(scene.getRotationOrder()->getAxis1(), 0.0f);
-		entity->addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
+		entity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+		entity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+		entity->addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
 		entity->setTranslation(
 			Vector3(
 				-5000.0f,
@@ -1103,19 +1103,19 @@ bool SceneEditorView::entityDataApply(const string& name, const string& descript
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.")) return false;
 
-	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return false;
 
 	sceneEntity->setDescription(description);
 	if (sceneEntity->getId() != name) {
 		if (engine->getEntity(name) != nullptr) return false;
 		auto oldId = sceneEntity->getId();
-		scene.removeEntity(sceneEntity->getId());
+		scene->removeEntity(sceneEntity->getId());
 		engine->removeEntity(sceneEntity->getId());
 		selectedEntityIds.clear();
 		selectedEntityIdsById.clear();
 		sceneEntity->setId(name);
-		scene.addEntity(sceneEntity);
+		scene->addEntity(sceneEntity);
 		auto entity = SceneConnector::createEntity(sceneEntity);
 		if (entity != nullptr) {
 			setHighlightEntityColorEffect(entity);
@@ -1147,24 +1147,24 @@ void SceneEditorView::placeEntity()
 	sceneEntityTransformations.setTranslation(placeEntityTranslation);
 	sceneEntityTransformations.setScale(Vector3(1.0f, 1.0f, 1.0f));
 	sceneEntityTransformations.setPivot(selectedPrototype->getPivot());
-	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis0(), 0.0f);
-	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis1(), 0.0f);
-	sceneEntityTransformations.addRotation(scene.getRotationOrder()->getAxis2(), 0.0f);
-	sceneEntityTransformations.setRotationAngle(scene.getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
+	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+	sceneEntityTransformations.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
 	sceneEntityTransformations.update();
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		if (sceneEntity->getPrototype() == selectedPrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
 			return;
 		}
 	}
 	auto sceneEntity = new SceneEntity(
-		selectedPrototype->getName() + "_" + to_string(scene.allocateEntityId()),
+		selectedPrototype->getName() + "_" + to_string(scene->allocateEntityId()),
 		"",
 		sceneEntityTransformations,
 		selectedPrototype
 	);
-	scene.addEntity(sceneEntity);
+	scene->addEntity(sceneEntity);
 	auto entity = SceneConnector::createEntity(sceneEntity);
 	if (entity != nullptr) {
 		resetEntity(entity);
@@ -1172,8 +1172,8 @@ void SceneEditorView::placeEntity()
 		engine->addEntity(entity);
 	}
 	sceneEditorScreenController->setEntityListbox(scene);
-	scene.update();
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	updateGUIElements();
 }
 
@@ -1184,7 +1184,7 @@ void SceneEditorView::removeEntities()
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			scene.removeEntity(selectedEntity->getId());
+			scene->removeEntity(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
 		}
@@ -1196,8 +1196,8 @@ void SceneEditorView::removeEntities()
 			selectedEntityIdsById.erase(selectedEntityIdsByIdIt);
 		}
 	}
-	scene.update();
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	sceneEditorScreenController->setEntityListbox(scene);
 	updateGUIElements();
 }
@@ -1209,7 +1209,7 @@ void SceneEditorView::colorEntities()
 
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		auto sceneEntity = scene.getEntity(selectedEntityId);
+		auto sceneEntity = scene->getEntity(selectedEntityId);
 		if (sceneEntity == nullptr) continue;
 		auto color = ENTITYCOLOR_NAMES[0];
 		auto colorProperty = sceneEntity->getProperty("object.color");
@@ -1236,7 +1236,7 @@ void SceneEditorView::colorEntities()
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			auto preset = sceneEntity->getProperty("preset");
 			sceneEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", sceneEntity, "");
 		} else {
@@ -1270,7 +1270,7 @@ void SceneEditorView::entityTranslationApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
 
 		sceneEntity->getTransformations().setTranslation(Vector3(x, y, z));
@@ -1281,7 +1281,7 @@ void SceneEditorView::entityTranslationApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			sceneEntity->getTransformations().setTranslation(
 				sceneEntity->getTransformations().getTranslation().clone().add(Vector3(x, y, z))
@@ -1291,8 +1291,8 @@ void SceneEditorView::entityTranslationApply(float x, float y, float z)
 		}
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
-	scene.update();
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
@@ -1305,7 +1305,7 @@ void SceneEditorView::entityScaleApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
 
 		sceneEntity->getTransformations().setScale(Vector3(x, y, z));
@@ -1316,7 +1316,7 @@ void SceneEditorView::entityScaleApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 
 			sceneEntity->getTransformations().setScale(sceneEntity->getTransformations().getScale().clone().scale(Vector3(x, y, z)));
@@ -1325,8 +1325,8 @@ void SceneEditorView::entityScaleApply(float x, float y, float z)
 		}
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
-	scene.update();
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
@@ -1339,11 +1339,11 @@ void SceneEditorView::entityRotationsApply(float x, float y, float z)
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 		if (selectedEntity == nullptr) return;
-		auto sceneEntity = scene.getEntity(selectedEntity->getId());
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
-		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(x);
-		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(y);
-		sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(z);
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(x);
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(y);
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(z);
 		sceneEntity->getTransformations().update();
 		selectedEntity->fromTransformations(sceneEntity->getTransformations());
 	} else
@@ -1351,27 +1351,27 @@ void SceneEditorView::entityRotationsApply(float x, float y, float z)
 		for (auto selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisXIndex()).getAngle() + x);
-				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisYIndex()).getAngle() + y);
-				sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene.getRotationOrder()->getAxisZIndex()).getAngle() + z);
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).getAngle() + x);
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).getAngle() + y);
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).getAngle() + z);
 			}
 			sceneEntity->getTransformations().update();
 			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
-	scene.update();
-	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
 
 bool SceneEditorView::scenePropertySave(const string& oldName, const string& name, const string& value)
 {
-	if (scene.updateProperty(oldName, name, value) == true) {
+	if (scene->updateProperty(oldName, name, value) == true) {
 		sceneEditorScreenController->setSceneProperties(scene, name);
 		return true;
 	}
@@ -1380,7 +1380,7 @@ bool SceneEditorView::scenePropertySave(const string& oldName, const string& nam
 
 bool SceneEditorView::scenePropertyAdd()
 {
-	if (scene.addProperty("new.property", "new.value")) {
+	if (scene->addProperty("new.property", "new.value")) {
 		sceneEditorScreenController->setSceneProperties(scene, "new.property");
 		return true;
 	}
@@ -1389,11 +1389,11 @@ bool SceneEditorView::scenePropertyAdd()
 
 bool SceneEditorView::scenePropertyRemove(const string& name)
 {
-	auto idx = scene.getPropertyIndex(name);
-	if (idx != -1 && scene.removeProperty(name) == true) {
-		auto property = scene.getPropertyByIndex(idx);
+	auto idx = scene->getPropertyIndex(name);
+	if (idx != -1 && scene->removeProperty(name) == true) {
+		auto property = scene->getPropertyByIndex(idx);
 		if (property == nullptr) {
-			property = scene.getPropertyByIndex(idx - 1);
+			property = scene->getPropertyByIndex(idx - 1);
 		}
 		sceneEditorScreenController->setSceneProperties(scene, property == nullptr ? "" : property->getName());
 		return true;
@@ -1407,7 +1407,7 @@ bool SceneEditorView::entityPropertyRemove(const string& name)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return false;
 
 	auto idx = sceneEntity->getPropertyIndex(name);
@@ -1428,12 +1428,12 @@ void SceneEditorView::entityPropertiesPreset(const string& presetId)
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return;
-	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return;
 
 	sceneEntity->clearProperties();
 	auto& entityPropertiesPresets = ScenePropertyPresets::getInstance()->getEntityPropertiesPresets();
-	const vector<PrototypeProperty*>* entityPropertyPresetVector = nullptr;
+	const vector<BaseProperty*>* entityPropertyPresetVector = nullptr;
 	auto entityPropertyPresetVectorIt = entityPropertiesPresets.find(presetId);
 	if (entityPropertyPresetVectorIt != entityPropertiesPresets.end()) {
 		entityPropertyPresetVector = &entityPropertyPresetVectorIt->second;
@@ -1452,7 +1452,7 @@ bool SceneEditorView::entityPropertySave(const string& oldName, const string& na
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return false;
 
 	if (sceneEntity->updateProperty(oldName, name, value) == true) {
@@ -1468,7 +1468,7 @@ bool SceneEditorView::entityPropertyAdd()
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 	if (selectedEntity == nullptr) return false;
-	auto sceneEntity = scene.getEntity(selectedEntity->getId());
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
 	if (sceneEntity == nullptr) return false;
 
 	if (sceneEntity->addProperty("new.property", "new.value")) {
@@ -1504,13 +1504,21 @@ void SceneEditorView::loadScene(const string& path, const string& file)
 		};
 		popUps->getProgressBarScreenController()->show();
 		if (haveModelFile == true) {
-			SceneReader::readFromModel(path, file, scene, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			if (scene != nullptr) {
+				delete scene;
+				scene = nullptr;
+			}
+			scene = SceneReader::readFromModel(path, file, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		} else {
-			SceneReader::read(path, file, scene, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			if (scene != nullptr) {
+				delete scene;
+				scene = nullptr;
+			}
+			scene = SceneReader::read(path, file, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		}
 		popUps->getProgressBarScreenController()->close();
-		for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
-			auto prototype = scene.getLibrary()->getPrototypeAt(i);
+		for (auto i = 0; i < scene->getLibrary()->getPrototypeCount(); i++) {
+			auto prototype = scene->getLibrary()->getPrototypeAt(i);
 			if (prototype->getType()->getBoundingVolumeCount() != 0) prototype->setDefaultBoundingVolumes(prototype->getType()->getBoundingVolumeCount());
 		}
 		sceneEditorScreenController->setSky(scene);
@@ -1547,7 +1555,7 @@ void SceneEditorView::copyEntities()
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			copiedEntities.push_back(sceneEntity);
 		}
@@ -1603,8 +1611,8 @@ void SceneEditorView::pasteEntities(bool displayOnly)
 		);
 		sceneEntityTransformations.update();
 		if (displayOnly == false) {
-			for (auto i = 0; i < scene.getEntityCount(); i++) {
-				auto sceneEntity = scene.getEntityAt(i);
+			for (auto i = 0; i < scene->getEntityCount(); i++) {
+				auto sceneEntity = scene->getEntityAt(i);
 				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
 					continue;
 				}
@@ -1612,19 +1620,19 @@ void SceneEditorView::pasteEntities(bool displayOnly)
 		}
 		if (displayOnly == false) {
 			//
-			auto sceneEntityId = pastePrototype->getName() + "_" + to_string(scene.allocateEntityId());
+			auto sceneEntityId = pastePrototype->getName() + "_" + to_string(scene->allocateEntityId());
 			auto sceneEntity = new SceneEntity(
 				sceneEntityId,
 				"",
 				sceneEntityTransformations,
 				pastePrototype
 			 );
-			PrototypeProperties* properties = copiedEntity;
+			BaseProperties* properties = copiedEntity;
 			for (int i = 0; i < properties->getPropertyCount(); i++) {
-				PrototypeProperty* property = properties->getPropertyByIndex(i);
+				BaseProperty* property = properties->getPropertyByIndex(i);
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
-			scene.addEntity(sceneEntity);
+			scene->addEntity(sceneEntity);
 			auto entity = SceneConnector::createEntity(pastePrototype, sceneEntityId, sceneEntityTransformations);
 			if (entity != nullptr) {
 				resetEntity(entity);
@@ -1654,28 +1662,28 @@ void SceneEditorView::computeSpotDirection(int i, const Vector4& position, const
 {
 	auto _from = Vector3(position.getX(), position.getY(), position.getZ());
 	auto spotDirection = spotTo.clone().sub(_from);
-	scene.getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
-	scene.getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
-	scene.getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
+	scene->getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
+	scene->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
+	scene->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
 	engine->getLightAt(i)->setPosition(Vector4(position.getX(), position.getY(), position.getZ(), position.getW()));
 	engine->getLightAt(i)->setSpotDirection(Vector3(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ()));
-	sceneEditorScreenController->setLight(i, scene.getLightAt(i)->getAmbient(), scene.getLightAt(i)->getDiffuse(), scene.getLightAt(i)->getSpecular(), scene.getLightAt(i)->getPosition(), scene.getLightAt(i)->getConstantAttenuation(), scene.getLightAt(i)->getLinearAttenuation(), scene.getLightAt(i)->getQuadraticAttenuation(), scene.getLightAt(i)->getSpotTo(), scene.getLightAt(i)->getSpotDirection(), scene.getLightAt(i)->getSpotExponent(), scene.getLightAt(i)->getSpotCutOff(), scene.getLightAt(i)->isEnabled());
+	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 }
 
 void SceneEditorView::applyLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
-	scene.getLightAt(i)->getAmbient().set(ambient);
-	scene.getLightAt(i)->getDiffuse().set(diffuse);
-	scene.getLightAt(i)->getSpecular().set(specular);
-	scene.getLightAt(i)->getPosition().set(position);
-	scene.getLightAt(i)->setConstantAttenuation(constantAttenuation);
-	scene.getLightAt(i)->setLinearAttenuation(linearAttenuation);
-	scene.getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
-	scene.getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
-	scene.getLightAt(i)->getSpotDirection().set(spotDirection);
-	scene.getLightAt(i)->setSpotExponent(spotExponent);
-	scene.getLightAt(i)->setSpotCutOff(spotCutoff);
-	scene.getLightAt(i)->setEnabled(enabled);
+	scene->getLightAt(i)->getAmbient().set(ambient);
+	scene->getLightAt(i)->getDiffuse().set(diffuse);
+	scene->getLightAt(i)->getSpecular().set(specular);
+	scene->getLightAt(i)->getPosition().set(position);
+	scene->getLightAt(i)->setConstantAttenuation(constantAttenuation);
+	scene->getLightAt(i)->setLinearAttenuation(linearAttenuation);
+	scene->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
+	scene->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
+	scene->getLightAt(i)->getSpotDirection().set(spotDirection);
+	scene->getLightAt(i)->setSpotExponent(spotExponent);
+	scene->getLightAt(i)->setSpotCutOff(spotCutoff);
+	scene->getLightAt(i)->setEnabled(enabled);
 	engine->getLightAt(i)->setAmbient(Color4(ambient));
 	engine->getLightAt(i)->setDiffuse(Color4(diffuse));
 	engine->getLightAt(i)->setSpecular(Color4(specular));
@@ -1687,18 +1695,18 @@ void SceneEditorView::applyLight(int i, const Color4& ambient, const Color4& dif
 	engine->getLightAt(i)->setSpotExponent(spotExponent);
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);
-	sceneEditorScreenController->setLight(i, scene.getLightAt(i)->getAmbient(), scene.getLightAt(i)->getDiffuse(), scene.getLightAt(i)->getSpecular(), scene.getLightAt(i)->getPosition(), scene.getLightAt(i)->getConstantAttenuation(), scene.getLightAt(i)->getLinearAttenuation(), scene.getLightAt(i)->getQuadraticAttenuation(), scene.getLightAt(i)->getSpotTo(), scene.getLightAt(i)->getSpotDirection(), scene.getLightAt(i)->getSpotExponent(), scene.getLightAt(i)->getSpotCutOff(), scene.getLightAt(i)->isEnabled());
+	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 }
 
 void SceneEditorView::updateSky() {
 	engine->removeEntity("tdme.sky");
-	if (scene.getSkyModel() == nullptr) return;
-	auto sky = new Object3D("tdme.sky", scene.getSkyModel());
+	if (scene->getSkyModel() == nullptr) return;
+	auto sky = new Object3D("tdme.sky", scene->getSkyModel());
 	sky->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	sky->setShader("sky");
 	sky->setFrustumCulling(false);
 	sky->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-	sky->setScale(scene.getSkyModelScale());
+	sky->setScale(scene->getSkyModelScale());
 	sky->update();
 	sky->setContributesShadows(false);
 	sky->setReceivesShadows(false);
@@ -1715,7 +1723,7 @@ void SceneEditorView::updateSkyPosition() {
 
 void SceneEditorView::applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 	for (auto& selectedEntityId: selectedEntityIds) {
-		auto sceneEntity = scene.getEntity(selectedEntityId);
+		auto sceneEntity = scene->getEntity(selectedEntityId);
 		if (sceneEntity == nullptr) continue;
 		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
@@ -1736,7 +1744,7 @@ void SceneEditorView::updateGizmo() {
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-			auto sceneEntity = scene.getEntity(selectedEntity->getId());
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			gizmoCenter.add(sceneEntity->getTransformations().getTranslation());
 			entityCount++;
@@ -1747,7 +1755,7 @@ void SceneEditorView::updateGizmo() {
 		return;
 	} else
 	if (entityCount == 1) {
-		auto selectedSceneEntity = scene.getEntity(selectedEntityIds[0]);
+		auto selectedSceneEntity = scene->getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
 		if (selectedPrototype != nullptr) setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());

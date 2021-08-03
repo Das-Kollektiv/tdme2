@@ -117,7 +117,7 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	is.readFloatArray(boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
-		pathName.empty() == true && fileName.empty() == true?name:pathName + "/" + fileName,
+		FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
 		fileName.empty() == true?name:fileName,
 		upVector,
 		rotationOrder,

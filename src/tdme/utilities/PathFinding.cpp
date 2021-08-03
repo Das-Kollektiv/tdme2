@@ -316,14 +316,12 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	// equal start and end position?
 	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
-		path.push_back(startPosition);
 		path.push_back(endPosition);
 		return true;
 	} else
 	// equal start and end position?
 	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
-		path.push_back(startPosition);
 		path.push_back(endPosition);
 		return true;
 	}
@@ -962,14 +960,20 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 				if (cell == nullptr) continue;
 
 				// check if we have missing neighbour cells
-				for (auto nZ = -1; nZ < 2; nZ++) {
-					for (auto nX = -1; nX < 2; nX++) {
+				auto hadMissingNeighborCell = false;
+				for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
+					for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
+						if (nZ == 0 && nX == 0) continue;
 						auto neighbourCellId = FlowMap::toIdInt(
 							centerPathNodeX + x + nX,
 							centerPathNodeZ + z + nZ
 						);
 						auto neighbourCell = flowMap->getCell(neighbourCellId);
-						if (neighbourCell == nullptr) cell->setMissingNeighborCell(true);
+						if (neighbourCell == nullptr) {
+							cell->setMissingNeighborCell(true);
+							hadMissingNeighborCell = true;
+							break;
+						}
 					}
 				}
 

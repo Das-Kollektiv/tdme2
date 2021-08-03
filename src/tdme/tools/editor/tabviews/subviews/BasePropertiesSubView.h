@@ -10,24 +10,24 @@
 using std::string;
 
 using tdme::engine::prototype::Prototype;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 
 /**
  * Model base view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView final
+class tdme::tools::editor::tabviews::subviews::BasePropertiesSubView final
 {
 private:
-	PrototypeBaseSubController* prototypeBaseSubController { nullptr };
+	BasePropertiesSubController* prototypeBaseSubController { nullptr };
 
 public:
 	/**
 	 * Public constructor
 	 * @param prototypeBaseSubController model base sub screen controller
 	 */
-	PrototypeBaseSubView(PrototypeBaseSubController* prototypeBaseSubController);
+	BasePropertiesSubView(BasePropertiesSubController* prototypeBaseSubController);
 
 	/**
 	 * Update current model data

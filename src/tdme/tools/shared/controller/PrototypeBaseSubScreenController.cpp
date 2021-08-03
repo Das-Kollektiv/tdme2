@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -27,7 +27,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
@@ -105,7 +105,7 @@ void PrototypeBaseSubScreenController::onPrototypeDataApply(Prototype* prototype
 	onSetPrototypeDataAction->performAction();
 }
 
-void PrototypeBaseSubScreenController::setPrototypePresetIds(const map<string, vector<PrototypeProperty*>>& prototypePresetIds)
+void PrototypeBaseSubScreenController::setPrototypePresetIds(const map<string, vector<BaseProperty*>>& prototypePresetIds)
 {
 	auto prototypePropertiesPresetsInnerNode = dynamic_cast<GUIParentNode*>((prototypePropertiesPresets->getScreenNode()->getNodeById(prototypePropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -156,7 +156,7 @@ void PrototypeBaseSubScreenController::setPrototypeProperties(Prototype* prototy
 		prototypePropertiesList->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = prototype->getPropertyByIndex(i);
+		BaseProperty* entityProperty = prototype->getPropertyByIndex(i);
 		prototypePropertiesListBoxSubNodesXML =
 			prototypePropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +

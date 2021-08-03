@@ -8,6 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -36,6 +37,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -53,6 +55,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
@@ -78,8 +81,9 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -563,15 +567,25 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 
 void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 	auto isModel = false;
-	auto isPrototype = false;
-	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) isPrototype = true;
-	for (auto& extension: ModelReader::getModelExtensions()) {
-		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+	auto isModelPrototype = false;
+	auto isScene = false;
+	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+		isScene = true;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+		isModelPrototype = true;
+	} else {
+		for (auto& extension: ModelReader::getModelExtensions()) {
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+		}
 	}
-	if (isModel == false && isPrototype == false) {
+	if (isScene == false &&
+		isModel == false &&
+		isModelPrototype == false) {
 		showErrorPopUp("Error", "File format not yet supported");
 		return;
 	}
@@ -595,31 +609,11 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
 	tabId = GUIParser::escapeQuotes(tabId);
+
 	//
-	{
-		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-	{
-		string tabsContentXML =
-			"<tab-content tab-id=\"" + tabId + "\">\n" +
-			"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
-			"</tab-content>\n";
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
 	try {
 		Prototype* prototype = nullptr;
-		if (isPrototype == true) {
+		if (isModelPrototype == true) {
 			prototype = PrototypeReader::read(
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
@@ -638,13 +632,48 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
 		}
-		auto tabView = new ModelEditorTabView(view, tabId, prototype);
+		TabView* tabView = nullptr;
+		if (isModelPrototype == true || isModel == true) {
+			tabView = new ModelEditorTabView(view, tabId, prototype);
+		} else
+		if (isScene == true) {
+			auto scene = SceneReader::read(
+				FileSystem::getInstance()->getPathName(absoluteFileName),
+				FileSystem::getInstance()->getFileName(absoluteFileName)
+			);
+			tabView = new SceneEditorTabView(view, tabId, scene);
+		}
+		//
+		{
+			string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		{
+			string tabsContentXML =
+				"<tab-content tab-id=\"" + tabId + "\">\n" +
+				"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+				"</tab-content>\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		//
 		tabView->initialize();
+		//
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
+		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 

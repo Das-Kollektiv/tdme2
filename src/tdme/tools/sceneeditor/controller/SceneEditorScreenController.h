@@ -30,7 +30,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::model::Color4;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLight;
@@ -211,7 +211,7 @@ public:
 	 * Set up entity list box
 	 * @param scene scene
 	 */
-	void setEntityListbox(Scene& scene);
+	void setEntityListbox(Scene* scene);
 
 	/**
 	 * Unselect entities in object list box
@@ -265,7 +265,7 @@ public:
 	 * @param scene map properties
 	 * @param selectedName selected name
 	 */
-	void setSceneProperties(Scene& scene, const string& selectedName);
+	void setSceneProperties(Scene* scene, const string& selectedName);
 
 	/**
 	 * On scene property save
@@ -286,7 +286,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param objectPresetIds object property preset ids
 	 */
-	void setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds);
+	void setEntityPresetIds(const map<string, vector<BaseProperty*>>& entityPresetIds);
 
 	/**
 	 * Event callback for entity properties selection
@@ -500,7 +500,7 @@ public:
 	 * Set sky
 	 * @param scene scene
 	 */
-	void setSky(Scene& scene);
+	void setSky(Scene* scene);
 
 	/**
 	 * On map sky model load
@@ -522,7 +522,7 @@ public:
 	 * @param scene scene
 	 * @param selectedEnvironmentMappingId selected environment mapping id
 	 */
-	void setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId);
+	void setEntityReflectionsEnvironmentMappings(Scene* scene, const string& selectedEnvironmentMappingId);
 
 	/**
 	 * Unset object reflections environment mappings

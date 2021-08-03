@@ -11,10 +11,10 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
@@ -61,7 +61,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
@@ -112,7 +112,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	loadModelRequested = false;
 	initModelRequested = false;
 	initModelRequestedReset = false;
-	modelFile = "";
+	prototypeFileName = "";
 	lodLevel = 1;
 	audioStarted = -1LL;
 	audioOffset = -1LL;
@@ -184,7 +184,7 @@ void ModelEditorTabView::initModel()
 		delete attachment1Model;
 		attachment1Model = nullptr;
 	}
-	modelFile = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
+	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
@@ -201,7 +201,7 @@ void ModelEditorTabView::initModel()
 
 const string& ModelEditorTabView::getFileName()
 {
-	return modelFile;
+	return prototypeFileName;
 }
 
 int ModelEditorTabView::getLODLevel() const {
@@ -224,7 +224,7 @@ void ModelEditorTabView::updateLODLevel() {
 void ModelEditorTabView::loadModel(const string& pathName, const string& fileName)
 {
 	// new model file
-	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
+	prototypeFileName = FileSystem::getInstance()->getFileName(pathName, fileName);
 	try {
 		// set model in entity
 		prototype->setModel(
@@ -264,7 +264,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		};
 	}
 	// new model file
-	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
+	prototypeFileName = FileSystem::getInstance()->getFileName(pathName, fileName);
 	string log;
 	try {
 		// load model
@@ -403,10 +403,6 @@ void ModelEditorTabView::display()
 	audio->update();
 }
 
-void ModelEditorTabView::onInitAdditionalScreens()
-{
-}
-
 void ModelEditorTabView::loadSettings()
 {
 	try {
@@ -465,14 +461,14 @@ void ModelEditorTabView::dispose()
 
 void ModelEditorTabView::loadModel()
 {
-	Console::println(string("Model file: " + modelFile));
+	Console::println(string("Model file: " + prototypeFileName));
 	try {
 		setPrototype(
 			loadModelPrototype(
-				FileSystem::getInstance()->getFileName(modelFile),
+				FileSystem::getInstance()->getFileName(prototypeFileName),
 				"",
-				FileSystem::getInstance()->getPathName(modelFile),
-				FileSystem::getInstance()->getFileName(modelFile),
+				FileSystem::getInstance()->getPathName(prototypeFileName),
+				FileSystem::getInstance()->getFileName(prototypeFileName),
 				Vector3()
 			)
 		);
@@ -603,9 +599,6 @@ void ModelEditorTabView::updateShaderParemeters() {
 		auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
 		object->setDistanceShaderParameter(parameterName, parameterValue);
 	}
-}
-
-void ModelEditorTabView::onSetPrototypeData() {
 }
 
 void ModelEditorTabView::onCameraRotation() {

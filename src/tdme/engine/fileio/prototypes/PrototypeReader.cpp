@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -25,7 +26,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
@@ -55,6 +55,7 @@ using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -72,7 +73,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -143,7 +143,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	if (jPrototypeRoot.FindMember("file") != jPrototypeRoot.MemberEnd()) {
 		modelFileName = (jPrototypeRoot["file"].GetString());
 	}
-	PrototypeProperties properties;
+	BaseProperties properties(name, description);
 	auto jProperties = jPrototypeRoot["properties"].GetArray();
 	for (auto i = 0; i < jProperties.Size(); i++) {
 		auto& jProperty = jProperties[i];

@@ -8,9 +8,9 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -33,9 +33,10 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -52,19 +53,19 @@ using rapidjson::StringBuffer;
 using rapidjson::Value;
 using rapidjson::Writer;
 
-void SceneWriter::write(const string& pathName, const string& fileName, Scene& scene)
+void SceneWriter::write(const string& pathName, const string& fileName, Scene* scene)
 {
-	scene.setFileName(pathName + '/' + fileName);
-	auto sceneLibrary = scene.getLibrary();
+	scene->setFileName(pathName + '/' + fileName);
+	auto sceneLibrary = scene->getLibrary();
 	Document jDocument;
 	jDocument.SetObject();
 	auto& jAllocator = jDocument.GetAllocator();
 	jDocument.AddMember("version", Value("1.99", jAllocator), jAllocator);
-	jDocument.AddMember("ro", Value(scene.getRotationOrder()->getName(), jAllocator), jAllocator);
+	jDocument.AddMember("ro", Value(scene->getRotationOrder()->getName(), jAllocator), jAllocator);
 	Value jLights;
 	jLights.SetArray();
-	for (auto i = 0; i < scene.getLightCount(); i++) {
-		auto light = scene.getLightAt(i);
+	for (auto i = 0; i < scene->getLightCount(); i++) {
+		auto light = scene->getLightAt(i);
 		Value jLight;
 		jLight.SetObject();
 		jLight.AddMember("id", Value(i), jAllocator);
@@ -118,8 +119,8 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 	jDocument.AddMember("models", jSceneLibrary, jAllocator);
 	Value jSceneProperties;
 	jSceneProperties.SetArray();
-	for (auto i = 0; i < scene.getPropertyCount(); i++) {
-		PrototypeProperty* sceneProperty = scene.getPropertyByIndex(i);
+	for (auto i = 0; i < scene->getPropertyCount(); i++) {
+		auto sceneProperty = scene->getPropertyByIndex(i);
 		Value jSceneProperty;
 		jSceneProperty.SetObject();
 		jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
@@ -129,16 +130,16 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 	jDocument.AddMember("properties", jSceneProperties, jAllocator);
 	Value jObjects;
 	jObjects.SetArray();
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		Value jObject;
 		jObject.SetObject();
 		auto& transformations = sceneEntity->getTransformations();
 		auto& translation = transformations.getTranslation();
 		auto& scale = transformations.getScale();
-		auto& rotationAroundXAxis = transformations.getRotation(scene.getRotationOrder()->getAxisXIndex());
-		auto& rotationAroundYAxis = transformations.getRotation(scene.getRotationOrder()->getAxisYIndex());
-		auto& rotationAroundZAxis = transformations.getRotation(scene.getRotationOrder()->getAxisZIndex());
+		auto& rotationAroundXAxis = transformations.getRotation(scene->getRotationOrder()->getAxisXIndex());
+		auto& rotationAroundYAxis = transformations.getRotation(scene->getRotationOrder()->getAxisYIndex());
+		auto& rotationAroundZAxis = transformations.getRotation(scene->getRotationOrder()->getAxisZIndex());
 		jObject.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
 		jObject.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
 		jObject.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);
@@ -155,7 +156,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		Value jEntityProperties;
 		jEntityProperties.SetArray();
 		for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-			PrototypeProperty* sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
+			auto sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
 			Value jSceneEntityProperty;
 			jSceneEntityProperty.SetObject();
 			jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);
@@ -166,14 +167,14 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene& s
 		jObjects.PushBack(jObject, jAllocator);
 	}
 	jDocument.AddMember("objects", jObjects, jAllocator);
-	jDocument.AddMember("objects_eidx", Value(scene.getEntityIdx()), jAllocator);
+	jDocument.AddMember("objects_eidx", Value(scene->getEntityIdx()), jAllocator);
 
 	Value jSky;
 	jSky.SetObject();
-	jSky.AddMember("file", Value(scene.getSkyModelFileName(), jAllocator), jAllocator);
-	jSky.AddMember("sx", Value(scene.getSkyModelScale().getX()), jAllocator);
-	jSky.AddMember("sy", Value(scene.getSkyModelScale().getY()), jAllocator);
-	jSky.AddMember("sz", Value(scene.getSkyModelScale().getZ()), jAllocator);
+	jSky.AddMember("file", Value(scene->getSkyModelFileName(), jAllocator), jAllocator);
+	jSky.AddMember("sx", Value(scene->getSkyModelScale().getX()), jAllocator);
+	jSky.AddMember("sy", Value(scene->getSkyModelScale().getY()), jAllocator);
+	jSky.AddMember("sz", Value(scene->getSkyModelScale().getZ()), jAllocator);
 	jDocument.AddMember("sky", jSky, jAllocator);
 
 	StringBuffer strbuf;

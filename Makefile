@@ -322,6 +322,8 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/prototype/BaseProperties.cpp \
+	src/tdme/engine/prototype/BaseProperty.cpp \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
@@ -339,8 +341,6 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
 	src/tdme/engine/prototype/PrototypePhysics.cpp \
 	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
-	src/tdme/engine/prototype/PrototypeProperties.cpp \
-	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/engine/prototype/Prototype_Type.cpp \
 	src/tdme/engine/scene/Scene.cpp \
 	src/tdme/engine/scene/SceneEntity.cpp \
@@ -598,13 +598,15 @@ SRCS = \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
-	src/tdme/tools/editor/tabviews/subviews/PrototypeBaseSubView.cpp \
+	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
@@ -882,6 +884,52 @@ else
 	EXT_GLSLANG_SRCS =
 	EXT_GLSLANG_SRCS =
 endif
+
+#	src/tdme/tests/AngleTest-main.cpp \
+#	src/tdme/tests/AudioTest-main.cpp \
+#	src/tdme/tests/CrashTest-main.cpp \
+#	src/tdme/tests/EngineTest-main.cpp \
+#	src/tdme/tests/EntityHierarchyTest-main.cpp \
+#	src/tdme/tests/HashLinkTest-main.cpp \
+#	src/tdme/tests/HTTPClientTest-main.cpp \
+#	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
+#	src/tdme/tests/LODTest-main.cpp \
+#	src/tdme/tests/FlowMapTest-main.cpp \
+#	src/tdme/tests/FlowMapTest2-main.cpp \
+#	src/tdme/tests/FoliageTest-main.cpp \
+#	src/tdme/tests/MathOperatorTest-main.cpp \
+#	src/tdme/tests/MiniScriptTest-main.cpp \
+#	src/tdme/tests/PathFindingTest-main.cpp \
+#	src/tdme/tests/PivotTest-main.cpp \
+#	src/tdme/tests/PhysicsTest1-main.cpp \
+#	src/tdme/tests/PhysicsTest2-main.cpp \
+#	src/tdme/tests/PhysicsTest3-main.cpp \
+#	src/tdme/tests/PhysicsTest4-main.cpp \
+#	src/tdme/tests/RayTracingTest-main.cpp \
+#	src/tdme/tests/SkinningTest-main.cpp \
+#	src/tdme/tests/ThreadingTest-main.cpp \
+#	src/tdme/tests/TreeTest-main.cpp \
+#	src/tdme/tests/UDPClientTest-main.cpp \
+#	src/tdme/tests/UDPServerTest-main.cpp \
+#	src/tdme/tests/WaterTest-main.cpp \
+#	src/tdme/tools/editor/TDMEEditor-main.cpp \
+#	src/tdme/tools/gui/GUITest-main.cpp \
+#	src/tdme/tools/installer/Installer-main.cpp \
+#	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
+#	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
+#	src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp \
+#	src/tdme/tools/terraineditor/TDMETerrainEditor-main.cpp \
+#	src/tdme/tools/cli/archive-main.cpp \
+#	src/tdme/tools/cli/converttotm-main.cpp \
+#	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+#	src/tdme/tools/cli/create-installer-main.cpp \
+#	src/tdme/tools/cli/fixdoxygen-main.cpp \
+#	src/tdme/tools/cli/generatelicenses-main.cpp \
+#	src/tdme/tools/cli/importtmodel-main.cpp \
+#	src/tdme/tools/cli/makefilegenerator-main.cpp \
+#	src/tdme/tools/cli/optimizemodel-main.cpp \
+#	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
+#	src/tdme/tools/cli/sortincludes-main.cpp
 
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \

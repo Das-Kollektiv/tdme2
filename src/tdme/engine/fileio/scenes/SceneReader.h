@@ -41,37 +41,37 @@ public:
 	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param scene scene
 	 * @param progressCallback progress callback
 	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return scene
 	 */
-	static void read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
+	static Scene* read(const string& pathName, const string& fileName, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
 	/**
 	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param scene scene
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
 	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return scene
 	 */
-	static void read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
+	static Scene* read(const string& pathName, const string& fileName, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
 	/**
 	 * Reads a scene
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param scene scene
 	 * @param progressCallback progress callback
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return scene
 	 */
-	static void readFromModel(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr);
+	static Scene* readFromModel(const string& pathName, const string& fileName, ProgressCallback* progressCallback = nullptr);
 
 private:
 	struct PrototypeMeshNode {
@@ -89,5 +89,5 @@ private:
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshNodes(Scene& scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
+	static void determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
 };

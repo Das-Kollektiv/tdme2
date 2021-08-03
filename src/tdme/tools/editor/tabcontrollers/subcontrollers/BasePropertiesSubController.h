@@ -20,14 +20,14 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
+using tdme::engine::prototype::BaseProperties;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
-using tdme::tools::editor::tabviews::subviews::PrototypeBaseSubView;
+using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 
@@ -36,14 +36,14 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController final
+class tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController final
 {
 private:
 	EditorView* editorView { nullptr };
-	PrototypeBaseSubView* view { nullptr };
+	BasePropertiesSubView* view { nullptr };
 	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
-	Action* onSetPrototypeDataAction { nullptr };
+	string rootNodeId;
 
 	array<string, 1> applyPropertyNodes = {
 		"property_value"
@@ -60,14 +60,14 @@ public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
-	 * @param onSetEntityDataAction on set entity data action
+	 * @param rootNode root node
 	 */
-	PrototypeBaseSubController(EditorView* editorView, Action* onSetEntityDataAction);
+	BasePropertiesSubController(EditorView* editorView, const string& rootNode);
 
 	/**
 	 * Destructor
 	 */
-	~PrototypeBaseSubController();
+	~BasePropertiesSubController();
 
 	/**
 	 * Init
@@ -76,70 +76,70 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * Create prototype properties XML for outliner
-	 * @param prototype prototype
+	 * Create base properties XML for outliner
+	 * @param baseProperties base properties
 	 * @param xml xml
 	 */
-	void createPrototypePropertiesXML(Prototype* prototype, string& xml);
+	void createBasePropertiesXML(BaseProperties* baseProperties, string& xml);
 
 	/**
 	 * Set property base details
 	 * @param prototype prototype
 	 */
-	void setPrototypeBaseDetails(Prototype* prototype);
+	void setBasePropertiesDetails(BaseProperties* baseProperties);
 
 	/**
 	 * Apply property base details
 	 * @param prototype prototype
 	 */
-	void applyPrototypeBaseDetails(Prototype* prototype);
+	void applyPropertyDetails(BaseProperties* baseProperties);
 
 	/**
 	 * Set property details
 	 * @param prototype prototype
 	 * @param propertyName property name
 	 */
-	void setPropertyDetails(Prototype* prototype, const string& propertyName);
+	void setPropertyDetails(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Update details panel
 	 * @param prototype prototype
 	 * @param outlinerNode outliner node
 	 */
-	void updateDetails(Prototype* prototype, const string& outlinerNode);
+	void updateDetails(BaseProperties* baseProperties, const string& outlinerNode);
 
 	/**
 	 * Apply property details
 	 * @param prototype prototype
 	 * @param propertyName property name
 	 */
-	void applyPropertyDetails(Prototype* prototype, const string& propertyName);
+	void applyPropertyDetails(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Create property
 	 * @param prototype prototype
 	 */
-	void createProperty(Prototype* prototype);
+	void createProperty(BaseProperties* baseProperties);
 
 	/**
 	 * Start rename property
 	 * @param property property
 	 * @param propertyName property name
 	 */
-	void startRenameProperty(Prototype* prototype, const string& propertyName);
+	void startRenameProperty(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Rename property
 	 * @param prototype prototype
 	 */
-	void renameProperty(Prototype* prototype);
+	void renameProperty(BaseProperties* baseProperties);
 
 	/**
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype);
+	void onValueChanged(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On action performed
@@ -147,21 +147,21 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On focus
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onFocus(GUIElementNode* node, Prototype* prototype);
+	void onFocus(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On unfocus
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onUnfocus(GUIElementNode* node, Prototype* prototype);
+	void onUnfocus(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On context menu requested
@@ -170,13 +170,13 @@ public:
 	 * @param mouseY unscaled mouse Y position
 	 * @param prototype prototype
 	 */
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties);
 
 	/**
 	 * Apply property value
 	 * @param prototype prototype
 	 */
-	void applyPropertyValue(Prototype* prototype);
+	void applyPropertyValue(BaseProperties* baseProperties);
 
 	/**
 	 * Shows the error pop up

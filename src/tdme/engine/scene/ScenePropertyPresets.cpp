@@ -9,7 +9,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/Vector3.h>
@@ -29,7 +29,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::scene::ScenePropertyPresets;

@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -49,7 +49,7 @@ using tdme::tools::sceneeditor::controller::SceneEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLight;
@@ -260,7 +260,7 @@ void SceneEditorScreenController::onEntityDataApply()
 	}
 }
 
-void SceneEditorScreenController::setEntityListbox(Scene& scene)
+void SceneEditorScreenController::setEntityListbox(Scene* scene)
 {
 	auto selectedObjects = entitiesListBox->getController()->getValue();
 	auto entitiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entitiesListBox->getScreenNode()->getNodeById(entitiesListBox->getId() + "_inner")));
@@ -272,7 +272,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 		entitiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto entityIdx = 0;
-	for (int i = 0; i < scene.getEntityCount(); i++) {
+	for (int i = 0; i < scene->getEntityCount(); i++) {
 		if (entityIdx > 25000) {
 			entitiesListBoxSubNodesXML =
 				"<scrollarea id=\"" +
@@ -280,7 +280,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto entity = scene.getEntityAt(i);
+		auto entity = scene->getEntityAt(i);
 		if (entity->getPrototype()->isRenderGroups() == true) continue;
 		auto entityId = entity->getId();
 		entitiesListBoxSubNodesXML =
@@ -421,7 +421,7 @@ void SceneEditorScreenController::onScenePropertiesSelectionChanged()
 	}
 }
 
-void SceneEditorScreenController::setSceneProperties(Scene& scene, const string& selectedName)
+void SceneEditorScreenController::setSceneProperties(Scene* scene, const string& selectedName)
 {
 	scenePropertyName->getController()->setDisabled(true);
 	scenePropertyValue->getController()->setDisabled(true);
@@ -434,8 +434,8 @@ void SceneEditorScreenController::setSceneProperties(Scene& scene, const string&
 		"<scrollarea id=\"" +
 		scenePropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < scene.getPropertyCount(); i++) {
-		PrototypeProperty* mapProperty = scene.getPropertyByIndex(i);
+	for (auto i = 0; i < scene->getPropertyCount(); i++) {
+		BaseProperty* mapProperty = scene->getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -484,7 +484,7 @@ void SceneEditorScreenController::onScenePropertyRemove()
 	}
 }
 
-void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<PrototypeProperty*>>& entityPresetIds)
+void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<BaseProperty*>>& entityPresetIds)
 {
 	auto entitityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -561,7 +561,7 @@ void SceneEditorScreenController::setEntityProperties(const string& presetId, Sc
 		entityPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
-		PrototypeProperty* entityProperty = entity->getPropertyByIndex(i);
+		BaseProperty* entityProperty = entity->getPropertyByIndex(i);
 		entityPropertiesListBoxSubNodesXML =
 			entityPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -983,9 +983,9 @@ void SceneEditorScreenController::loadScene(const string& pathName, const string
 	view->loadScene(pathName, fileName);
 }
 
-void SceneEditorScreenController::setSky(Scene& scene) {
-	sceneSkyModel->getController()->setValue(MutableString(scene.getSkyModelFileName()));
-	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene.getSkyModelScale())));
+void SceneEditorScreenController::setSky(Scene* scene) {
+	sceneSkyModel->getController()->setValue(MutableString(scene->getSkyModelFileName()));
+	sceneSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(scene->getSkyModelScale())));
 }
 
 void SceneEditorScreenController::onMapSkyModelLoad() {
@@ -1053,14 +1053,14 @@ void SceneEditorScreenController::onMapSkyApply() {
 					Tools::getFileName(sceneSkyModel->getController()->getValue().getString())
 				);
 		view->getScene()->setSkyModel(model);
-		setSky(*view->getScene());
+		setSky(view->getScene());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
 	view->updateSky();
 }
 
-void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene& scene, const string& selectedEnvironmentMappingId) {
+void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene* scene, const string& selectedEnvironmentMappingId) {
 	entityReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
 	entityReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
 	btnEntityReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
@@ -1078,7 +1078,7 @@ void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene&
 		"\" value=\"\" " +
 		(selectedEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") +
 		" />\n";
-	for (auto& environmentMappingId: scene.getEnvironmentMappingIds()) {
+	for (auto& environmentMappingId: scene->getEnvironmentMappingIds()) {
 		environmentMappingIdsInnerNodeSubNodesXML =
 			environmentMappingIdsInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +

@@ -11,8 +11,8 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Camera.h>
@@ -54,7 +54,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Camera;

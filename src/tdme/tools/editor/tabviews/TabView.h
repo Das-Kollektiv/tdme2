@@ -7,6 +7,7 @@
 
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -14,6 +15,7 @@ using std::vector;
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::utilities::MutableString;
 
 /**
@@ -51,11 +53,6 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void dispose() = 0;
 
 	/**
-	 * @return engine
-	 */
-	virtual Engine* getEngine() = 0;
-
-	/**
 	 * Activate
 	 */
 	virtual void activate() = 0;
@@ -66,7 +63,18 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void deactivate() = 0;
 
 	/**
+	 * @return engine
+	 */
+	virtual Engine* getEngine() = 0;
+
+	/**
+	 * @return associated tab controller
+	 */
+	virtual TabController* getTabController() = 0;
+
+	/**
 	 * Update rendering
+	 * @deprecated This should be removed
 	 */
 	virtual void updateRendering() = 0;
 

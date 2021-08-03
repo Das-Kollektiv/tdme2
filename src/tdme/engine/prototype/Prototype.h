@@ -7,10 +7,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
@@ -23,13 +23,13 @@ using std::string;
 using std::vector;
 
 using tdme::engine::model::Model;
+using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics;
-using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
@@ -41,7 +41,7 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::prototype::Prototype final
-	: public PrototypeProperties
+	: public BaseProperties
 {
 	friend class Prototype_Type;
 
@@ -56,8 +56,6 @@ public:
 private:
 	int id;
 	Prototype_Type* type { nullptr };
-	string name;
-	string description;
 	string fileName;
 	string modelFileName;
 	string thumbnail;
@@ -116,36 +114,6 @@ public:
 	 */
 	inline Prototype_Type* getType() {
 		return type;
-	}
-
-	/**
-	 * @return name
-	 */
-	inline const string& getName() {
-		return name;
-	}
-
-	/**
-	 * Set up name
-	 * @param name name
-	 */
-	inline void setName(const string& name) {
-		this->name = name;
-	}
-
-	/**
-	 * @return description
-	 */
-	inline const string& getDescription() {
-		return description;
-	}
-
-	/**
-	 * Set up description
-	 * @param description description
-	 */
-	inline void setDescription(const string& description) {
-		this->description = description;
 	}
 
 	/**

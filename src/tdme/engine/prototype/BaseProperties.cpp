@@ -1,27 +1,29 @@
-#include <tdme/engine/prototype/PrototypeProperties.h>
+#include "BaseProperties.h"
 
 #include <algorithm>
 #include <string>
 
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include "BaseProperty.h"
 
 using std::remove;
 using std::string;
 
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 
-PrototypeProperties::PrototypeProperties()
+BaseProperties::BaseProperties(const string& name, const string& description)
 {
+	this->name = name;
+	this->description = description;
 }
 
-PrototypeProperties::~PrototypeProperties() {
+BaseProperties::~BaseProperties() {
 	for (auto property: properties) {
 		delete property;
 	}
 }
 
-void PrototypeProperties::clearProperties()
+void BaseProperties::clearProperties()
 {
 	for (auto property: properties) {
 		delete property;
@@ -30,7 +32,7 @@ void PrototypeProperties::clearProperties()
 	propertiesByName.clear();
 }
 
-PrototypeProperty* PrototypeProperties::getProperty(const string& name)
+BaseProperty* BaseProperties::getProperty(const string& name)
 {
 	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {
@@ -39,7 +41,7 @@ PrototypeProperty* PrototypeProperties::getProperty(const string& name)
 	return nullptr;
 }
 
-int PrototypeProperties::getPropertyIndex(const string& name)
+int BaseProperties::getPropertyIndex(const string& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
 		if (properties[i]->getName() == name) {
@@ -49,18 +51,18 @@ int PrototypeProperties::getPropertyIndex(const string& name)
 	return -1;
 }
 
-bool PrototypeProperties::addProperty(const string& name, const string& value)
+bool BaseProperties::addProperty(const string& name, const string& value)
 {
 	if (getProperty(name) != nullptr)
 		return false;
 
-	auto property = new PrototypeProperty(name, value);
+	auto property = new BaseProperty(name, value);
 	propertiesByName[name] = property;
 	properties.push_back(property);
 	return true;
 }
 
-bool PrototypeProperties::renameProperty(const string& oldName, const string& name) {
+bool BaseProperties::renameProperty(const string& oldName, const string& name) {
 	auto propertyByNameIt = propertiesByName.find(oldName);
 	if (propertyByNameIt == propertiesByName.end())
 		return false;
@@ -71,7 +73,7 @@ bool PrototypeProperties::renameProperty(const string& oldName, const string& na
 
 	propertiesByName.erase(propertyByNameIt);
 
-	PrototypeProperty* property = propertyByNameIt->second;
+	BaseProperty* property = propertyByNameIt->second;
 	property->setName(name);
 
 	propertiesByName[property->getName()] = property;
@@ -79,7 +81,7 @@ bool PrototypeProperties::renameProperty(const string& oldName, const string& na
 	return true;
 }
 
-bool PrototypeProperties::updateProperty(const string& oldName, const string& name, const string& value)
+bool BaseProperties::updateProperty(const string& oldName, const string& name, const string& value)
 {
 	auto propertyByNameIt = propertiesByName.find(oldName);
 	if (propertyByNameIt == propertiesByName.end())
@@ -91,7 +93,7 @@ bool PrototypeProperties::updateProperty(const string& oldName, const string& na
 
 	propertiesByName.erase(propertyByNameIt);
 
-	PrototypeProperty* property = propertyByNameIt->second;
+	BaseProperty* property = propertyByNameIt->second;
 	property->setName(name);
 	property->setValue(value);
 
@@ -100,7 +102,7 @@ bool PrototypeProperties::updateProperty(const string& oldName, const string& na
 	return true;
 }
 
-bool PrototypeProperties::removeProperty(const string& name)
+bool BaseProperties::removeProperty(const string& name)
 {
 	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {

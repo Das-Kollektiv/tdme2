@@ -43,13 +43,12 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
-using tdme::utilities::MutableString;
 
 /**
  * Model editor screen controller
@@ -61,7 +60,7 @@ class tdme::tools::editor::tabcontrollers::ModelEditorTabController final
 {
 
 private:
-	PrototypeBaseSubController* prototypeBaseSubController { nullptr };
+	BasePropertiesSubController* basePropertiesSubController { nullptr };
 	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
 	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
@@ -465,10 +464,5 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
-
-	/**
-	 * On quit
-	 */
-	void onQuit();
 
 };
