@@ -176,7 +176,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.1f:height + 0.1f, z));
+	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.1f:height + actorStepUpMax, z));
 	actorTransformations.update();
 
 	// update rigid body
