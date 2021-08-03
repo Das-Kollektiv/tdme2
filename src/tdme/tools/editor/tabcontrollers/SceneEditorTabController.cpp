@@ -87,6 +87,8 @@ void SceneEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().add("tools");
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().add("snapping");
 }
 
 void SceneEditorTabController::dispose()
@@ -121,6 +123,28 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 			selectedEntityIds.push_back(StringTools::substring(selectedEntityId, string("scene.entities.").size()));
 		}
 		view->selectEntities(selectedEntityIds);
+	} else
+	if (node->getId() == view->getTabId() + "_tab_button_rotate") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_ROTATE);
+		view->updateGizmo();
+	} else
+	if (node->getId() == view->getTabId() + "_tab_button_scale") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_SCALE);
+		view->updateGizmo();
+	} else
+	if (node->getId() == view->getTabId() + "_tab_button_gizmo") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_ALL);
+		view->updateGizmo();
+	} else
+	if (node->getId() == view->getTabId() + "_tab_checkbox_grid") {
+		view->setGridEnabled(node->getController()->getValue().equals("1"));
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_checkbox_snapping") == true) {
+		view->setSnapping(
+			node->getController()->getValue().equals("1"),
+			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_x"))->getController()->getValue().getString()),
+			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
+		);
 	} else {
 		for (auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
@@ -417,5 +441,4 @@ void SceneEditorTabController::selectEntities(const vector<string>& selectedOutl
 		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);
 		updateDetails("scene.entities");
 	}
-
 }

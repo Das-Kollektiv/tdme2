@@ -46,7 +46,7 @@ using tdme::tools::editor::views::EditorView;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, protected CameraInputHandlerEventHandler, protected Gizmo
+class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, protected CameraInputHandlerEventHandler, public Gizmo
 {
 private:
 	/**

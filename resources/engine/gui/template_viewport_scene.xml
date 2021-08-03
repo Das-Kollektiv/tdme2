@@ -23,8 +23,10 @@
 			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
 				<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 					<checkbox id="{$id}_checkbox_grid" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
-					<layout show-on="bvs_plus_napping" width="100%" height="auto" alignment="vertical">
+					<layout show-on="bvs" width="auto" height="auto" alignment="vertical">
 						<checkbox id="{$id}_checkbox_bvs" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
+					</layout>
+					<layout show-on="snapping" width="auto" height="auto" alignment="vertical">
 						<checkbox id="{$id}_checkbox_snapping" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
 						<element id="{$id}_snapping_details">
 							<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
@@ -32,9 +34,9 @@
 								<space width="5"/>
 								<input width="100" id="{$id}_snapping_x" text="10.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
 								<space width="10"/>
-								<text font="{$font.default}" text="Y" color="{$color.font_normal}" />
+								<text font="{$font.default}" text="Z" color="{$color.font_normal}" />
 								<space width="5"/>
-								<input width="100" id="{$id}_snapping_y" text="10.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input width="100" id="{$id}_snapping_z" text="10.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</element>
 					</layout>

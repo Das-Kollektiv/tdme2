@@ -643,7 +643,6 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			);
 			tabView = new SceneEditorTabView(view, tabId, scene);
 		}
-		tabView->initialize();
 		//
 		{
 			string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
@@ -666,6 +665,8 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 				Console::println(string(exception.what()));
 			}
 		}
+		//
+		tabView->initialize();
 		//
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));

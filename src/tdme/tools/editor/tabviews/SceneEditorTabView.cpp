@@ -417,7 +417,6 @@ void SceneEditorTabView::handleInputEvents()
 					}
 					mouseDraggingLastEntity = selectedEntity;
 					updateGizmo();
-					// TODO: updateGUIElements();
 				}
 				event.setProcessed(true);
 			}
@@ -774,10 +773,22 @@ void SceneEditorTabView::placeEntity()
 		entity->setPickable(true);
 		engine->addEntity(entity);
 	}
-	// TODO: sceneEditorScreenController->setEntityListbox(scene);
 	scene->update();
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
-	// TODO: updateGUIElements();
+	//
+	class ReloadOutlinerAction: public Action {
+	public:
+		void performAction() override {
+			sceneEditorTabView->reloadOutliner(outlinerNode);
+		}
+		ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
+
+		}
+	private:
+		SceneEditorTabView* sceneEditorTabView;
+		string outlinerNode;
+	};
+	Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities"));
 }
 
 void SceneEditorTabView::removeEntities()
@@ -801,8 +812,21 @@ void SceneEditorTabView::removeEntities()
 	}
 	scene->update();
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
-	// TODO: sceneEditorScreenController->setEntityListbox(scene);
-	// TODO: updateGUIElements();
+
+	//
+	class ReloadOutlinerAction: public Action {
+	public:
+		void performAction() override {
+			sceneEditorTabView->reloadOutliner(outlinerNode);
+		}
+		ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
+
+		}
+	private:
+		SceneEditorTabView* sceneEditorTabView;
+		string outlinerNode;
+	};
+	Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities"));
 }
 
 void SceneEditorTabView::setPasteMode() {
@@ -898,8 +922,23 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		}
 		pasteEntitiesIdx++;
 	}
-	// TODO
-	// if (displayOnly == false) sceneEditorScreenController->setEntityListbox(scene);
+
+	//
+	if (displayOnly == false) {
+		class ReloadOutlinerAction: public Action {
+		public:
+			void performAction() override {
+				sceneEditorTabView->reloadOutliner(outlinerNode);
+			}
+			ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
+
+			}
+		private:
+			SceneEditorTabView* sceneEditorTabView;
+			string outlinerNode;
+		};
+		Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities"));
+	}
 }
 
 void SceneEditorTabView::updateGizmo() {
@@ -1011,9 +1050,8 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 			if (selectedEntity == nullptr) continue;
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			sceneEntity->getTransformations().setTranslation(
-				sceneEntity->getTransformations().getTranslation().clone().add(Vector3(translation))
-			);
+
+			sceneEntity->getTransformations().setTranslation(sceneEntity->getTransformations().getTranslation().clone().add(Vector3(translation)));
 			sceneEntity->getTransformations().update();
 			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
