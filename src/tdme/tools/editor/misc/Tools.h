@@ -83,13 +83,19 @@ public:
 	static float computeMaxAxisDimension(BoundingBox* boundingBox);
 
 	/**
-	 * Creates a ground plate
+	 * Creates ground plate with 1m x 1m texture
 	 * @param width width
 	 * @param depth depth
 	 * @param y float y
 	 * @return ground model
 	 */
 	static Model* createGroundModel(float width, float depth, float y);
+
+	/**
+	 * Creates grid plate with 1m x 1m texture
+	 * @return grid model
+	 */
+	static Model* createGridModel();
 
 	/**
 	 * Set up entity in given engine with look from rotations and scale

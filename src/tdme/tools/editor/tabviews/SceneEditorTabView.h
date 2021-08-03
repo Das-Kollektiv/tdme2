@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -28,6 +29,7 @@ using tdme::engine::Engine;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::model::Model;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::tools::editor::misc::PopUps;
@@ -135,6 +137,15 @@ private:
 	Vector3 multipleSelectionTranslation;
 	Vector3 multipleSelectionRotation;
 	Vector3 multipleSelectionScale;
+
+	float snappingX;
+	float snappingZ;
+	bool snappingEnabled;
+
+	bool gridEnabled;
+	float gridY;
+	Model* gridModel { nullptr };
+
 public:
 	/**
 	 * Public constructor
@@ -196,6 +207,12 @@ public:
 	void onCameraRotation() override;
 	void onCameraScale() override;
 	void updateRendering() override;
+
+	/**
+	 * Reload outliner
+	 * @param outlinerNode selected outliner node
+	 */
+	void reloadOutliner(const string& outlinerNode);
 
 	/**
 	 * Update sky
@@ -282,4 +299,76 @@ public:
 	 */
 	void updateGizmo();
 
+	/**
+	 * Apply base information
+	 * @param name name
+	 * @param description description
+	 * @return success
+	 */
+	bool applyBase(const string& name, const string& description);
+
+	/**
+	 * Apply translation
+	 * @param translation translation
+	 */
+	void applyTranslation(const Vector3& translation);
+
+	/**
+	 * Apply rotation
+	 * @param rotation rotation
+	 */
+	void applyRotation(const Vector3& rotation);
+
+	/**
+	 * Apply scale
+	 * @param rotation rotation
+	 */
+	void applyScale(const Vector3& scale);
+
+	/**
+	 * Update grid
+	 */
+	void updateGrid();
+
+	/**
+	 * Remove grid
+	 */
+	void removeGrid();
+
+	/**
+	 * @return grid enabled
+	 */
+	bool isGridEnabled();
+
+	/**
+	 * @param gridEnabled grid enabled
+	 */
+	void setGridEnabled(bool gridEnabled);
+
+	/**
+	 * @return grid y
+	 */
+	float getGridY();
+
+	/**
+	 * Set grid y position
+	 * @param gridY grid y
+	 */
+	void setGridY(float gridY);
+
+	/**
+	 * Get snapping
+	 * @param snappingEnabled snapping enabled
+	 * @param snappingX snapping along X axis
+	 * @param snappingZ snapping along Z axis
+	 */
+	void getSnapping(bool& snappingEnabled, float& snappingX, float& snappingZ);
+
+	/**
+	 * Set snapping
+	 * @param snappingEnabled snapping enabled
+	 * @param snappingX snapping along X axis
+	 * @param snappingZ snapping along Z axis
+	 */
+	void setSnapping(bool snappingEnabled, float snappingX, float snappingZ);
 };

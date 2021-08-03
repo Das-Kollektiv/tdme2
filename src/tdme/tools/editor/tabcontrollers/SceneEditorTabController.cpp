@@ -26,6 +26,7 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -58,6 +59,7 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
@@ -120,6 +122,63 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 		}
 		view->selectEntities(selectedEntityIds);
 	} else {
+		for (auto& applyTranslationNode: applyTranslationNodes) {
+			if (node->getId() == applyTranslationNode) {
+				//
+				try {
+					view->applyTranslation(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->getValue().getString())
+						)
+					);
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				//
+				break;
+			}
+		}
+		for (auto& applyRotationNode: applyRotationNodes) {
+			if (node->getId() == applyRotationNode) {
+				//
+				try {
+					view->applyRotation(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->getValue().getString())
+						)
+					);
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				//
+				break;
+			}
+		}
+		for (auto& applyScaleNode: applyScaleNodes) {
+			if (node->getId() == applyScaleNode) {
+				//
+				try {
+					view->applyScale(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->getValue().getString())
+						)
+					);
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				//
+				break;
+			}
+		}
 		basePropertiesSubController->onValueChanged(node, view->getScene());
 	}
 }
@@ -129,6 +188,26 @@ void SceneEditorTabController::onFocus(GUIElementNode* node) {
 }
 
 void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
+	for (auto& applyBaseNode: applyBaseNodes) {
+		if (node->getId() == applyBaseNode) {
+			//
+			try {
+				auto name = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->getValue().getString();
+				if (name.empty() == true) throw ExceptionBase("Please enter a name");
+				if (view->applyBase(
+						name,
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString()
+					) == false) {
+					throw ExceptionBase("Could not rename entity");
+				}
+			} catch (Exception& exception) {
+				Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+				showErrorPopUp("Warning", (string(exception.what())));
+			}
+			//
+			break;
+		}
+	}
 	basePropertiesSubController->onUnfocus(node, view->getScene());
 }
 
@@ -220,8 +299,8 @@ void SceneEditorTabController::updateEntityDetails(const Vector3& translation, c
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(translation.getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(translation.getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(translation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(translation.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(translation.getZ());
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(rotation.getX());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(rotation.getY());

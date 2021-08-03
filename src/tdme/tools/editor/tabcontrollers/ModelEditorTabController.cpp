@@ -1105,7 +1105,6 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 			, specularMaterialProperties(specularMaterialProperties) {
 		}
 
-
 	private:
 		ModelEditorTabController* modelEditorTabController;
 		SpecularMaterialProperties* specularMaterialProperties;

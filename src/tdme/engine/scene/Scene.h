@@ -247,8 +247,17 @@ public:
 	/**
 	 * Removes an entity from scene
 	 * @param id id
+	 * @return success
 	 */
-	void removeEntity(const string& id);
+	bool removeEntity(const string& id);
+
+	/**
+	 * Rename an entity from scene
+	 * @param id id
+	 * @param newId new id
+	 * @return success
+	 */
+	bool renameEntity(const string& id, const string& newId);
 
 	/**
 	 * Returns scene entity by id

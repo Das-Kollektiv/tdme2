@@ -23,9 +23,11 @@
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/Gizmo.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/SceneEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -56,9 +58,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 using tdme::tools::editor::misc::Gizmo;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -87,6 +91,12 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->pasteModeValid = false;
 	this->placeEntityMode = false;
 	this->placeEntityValid = false;
+	this->snappingX = 0.0f;
+	this->snappingZ = 0.0f;
+	this->snappingEnabled = false;
+	this->gridEnabled = false;
+	this->gridY = 0.0f;
+	this->gridModel = Tools::createGridModel();
 
 	//
 	setEngine(engine);
@@ -151,6 +161,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 }
 
 SceneEditorTabView::~SceneEditorTabView() {
+	delete gridModel;
 }
 
 void SceneEditorTabView::handleInputEvents()
@@ -443,7 +454,72 @@ void SceneEditorTabView::handleInputEvents()
 
 void SceneEditorTabView::display()
 {
+	if (needGizmoUpdate == true) {
+		updateGizmo();
+		needGizmoUpdate = false;
+	}
+
 	updateSkyPosition();
+
+	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
+		unsetPlaceEntityMode();
+		unsetPasteMode();
+		keyEscape = false;
+	}
+
+	{
+		auto selectedEngineEntity = engine->getEntity("tdme.sceneeditor.placeentity");
+		Vector3 worldCoordinate;
+		placeEntityValid = false;
+		pasteModeValid = false;
+		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing) != nullptr) {
+			if (placeEntityMode == true) {
+				Transformations transformations;
+				transformations.setTranslation(worldCoordinate);
+				transformations.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+				transformations.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+				transformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+				transformations.update();
+				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
+					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
+					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
+				}
+				if (selectedEngineEntity != nullptr) {
+					if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
+						if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
+						if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+						Vector3 snappedWorldCoordinate;
+						if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+							worldCoordinate = snappedWorldCoordinate;
+						}
+					}
+					transformations.setTranslation(worldCoordinate);
+					transformations.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
+					transformations.update();
+					selectedEngineEntity->fromTransformations(transformations);
+					placeEntityTranslation = transformations.getTranslation();
+					placeEntityValid = true;
+				}
+			} else
+			if (pasteMode == true) {
+				if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
+					if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
+					if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+					Vector3 snappedWorldCoordinate;
+					if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+						worldCoordinate = snappedWorldCoordinate;
+					}
+				}
+				placeEntityTranslation = worldCoordinate;
+				pasteModeValid = true;
+				pasteEntities(true);
+			}
+		}
+	}
+
+	//
+	updateGrid();
+
 	engine->display();
 }
 
@@ -477,6 +553,7 @@ void SceneEditorTabView::initialize()
 	SceneConnector::addScene(engine, scene, true, true, true, true);
 	updateSky();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
+	updateGrid();
 	// TODO: load settings
 	sceneEditorTabController->setOutlinerContent();
 }
@@ -509,13 +586,22 @@ void SceneEditorTabView::reloadOutliner() {
 	sceneEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
+void SceneEditorTabView::reloadOutliner(const string& outlinerNode) {
+	sceneEditorTabController->setOutlinerContent();
+	editorView->getScreenController()->setOutlinerSelection(outlinerNode);
+	sceneEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+}
+
 void SceneEditorTabView::onCameraTranslation() {
+	needGizmoUpdate = true;
 }
 
 void SceneEditorTabView::onCameraRotation() {
+	needGizmoUpdate = true;
 }
 
 void SceneEditorTabView::onCameraScale() {
+	needGizmoUpdate = true;
 }
 
 void SceneEditorTabView::updateSky() {
@@ -855,4 +941,227 @@ void SceneEditorTabView::updateGizmo() {
 
 	//
 	Gizmo::updateGizmo(gizmoCenter, transformations);
+}
+
+bool SceneEditorTabView::applyBase(const string& name, const string& description) {
+	if (selectedEntityIds.size() != 1) return false;
+
+	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
+	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.")) return false;
+
+	auto sceneEntity = scene->getEntity(selectedEntity->getId());
+	if (sceneEntity == nullptr) return false;
+
+	sceneEntity->setDescription(description);
+	auto oldName = sceneEntity->getId();
+	if (oldName == name) return true;
+
+	if (engine->getEntity(name) != nullptr) return false;
+	if (scene->renameEntity(sceneEntity->getId(), name) == true) {
+		engine->removeEntity(oldName);
+		selectedEntityIds.clear();
+		selectedEntityIdsById.clear();
+		auto entity = SceneConnector::createEntity(sceneEntity);
+		if (entity == nullptr) {
+			return false;
+		} else {
+			setHighlightEntityColorEffect(entity);
+			selectedEntityIds.push_back(entity->getId());
+			selectedEntityIdsById.insert(entity->getId());
+			entity->setPickable(true);
+			engine->addEntity(entity);
+			//
+			class ReloadOutlinerAction: public Action {
+			public:
+				void performAction() override {
+					sceneEditorTabView->reloadOutliner(outlinerNode);
+				}
+				ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
+
+				}
+			private:
+				SceneEditorTabView* sceneEditorTabView;
+				string outlinerNode;
+			};
+			Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities." + entity->getId()));
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void SceneEditorTabView::applyTranslation(const Vector3& translation) {
+	if (selectedEntityIds.size() == 0)
+		return;
+
+	if (selectedEntityIds.size() == 1) {
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
+		if (selectedEntity == nullptr) return;
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
+
+		sceneEntity->getTransformations().setTranslation(translation);
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+	} else
+	if (selectedEntityIds.size() > 1) {
+		for (auto selectedEntityId: selectedEntityIds) {
+			auto selectedEntity = engine->getEntity(selectedEntityId);
+			if (selectedEntity == nullptr) continue;
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			sceneEntity->getTransformations().setTranslation(
+				sceneEntity->getTransformations().getTranslation().clone().add(Vector3(translation))
+			);
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		}
+	}
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
+	updateGizmo();
+}
+
+void SceneEditorTabView::applyRotation(const Vector3& rotation) {
+	if (selectedEntityIds.size() == 0)
+			return;
+
+	if (selectedEntityIds.size() == 1) {
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
+		if (selectedEntity == nullptr) return;
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(rotation.getX());
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(rotation.getY());
+		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(rotation.getZ());
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+	} else
+	if (selectedEntityIds.size() > 1) {
+		for (auto selectedEntityId: selectedEntityIds) {
+			auto selectedEntity = engine->getEntity(selectedEntityId);
+			if (selectedEntity == nullptr) continue;
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).getAngle() + rotation.getX());
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).getAngle() + rotation.getY());
+				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).getAngle() + rotation.getZ());
+			}
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		}
+	}
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
+	updateGizmo();
+}
+
+void SceneEditorTabView::applyScale(const Vector3& scale) {
+	if (selectedEntityIds.size() == 0)
+		return;
+
+	if (selectedEntityIds.size() == 1) {
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
+		if (selectedEntity == nullptr) return;
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) return;
+
+		sceneEntity->getTransformations().setScale(Vector3(scale));
+		sceneEntity->getTransformations().update();
+		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+	} else
+	if (selectedEntityIds.size() > 1) {
+		for (auto selectedEntityId: selectedEntityIds) {
+			auto selectedEntity = engine->getEntity(selectedEntityId);
+			if (selectedEntity == nullptr) continue;
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+
+			sceneEntity->getTransformations().setScale(sceneEntity->getTransformations().getScale().clone().scale(Vector3(scale)));
+			sceneEntity->getTransformations().update();
+			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		}
+	}
+	scene->update();
+	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
+	updateGizmo();
+}
+
+bool SceneEditorTabView::isGridEnabled()
+{
+	return gridEnabled;
+}
+
+void SceneEditorTabView::setGridEnabled(bool gridEnabled)
+{
+	this->gridEnabled = gridEnabled;
+	if (gridEnabled) {
+		updateGrid();
+	} else {
+		removeGrid();
+	}
+}
+
+float SceneEditorTabView::getGridY()
+{
+	return gridY;
+}
+
+void SceneEditorTabView::setGridY(float gridY)
+{
+	if (gridEnabled == true) removeGrid();
+	this->gridY = gridY;
+	if (gridEnabled == true) updateGrid();
+
+}
+
+void SceneEditorTabView::updateGrid()
+{
+	if (gridEnabled == false) return;
+
+	string entityId = "tdme.sceneeditor.grid";
+	auto entity = engine->getEntity(entityId);
+	if (entity == nullptr) {
+		entity = new Object3D(entityId, gridModel);
+		entity->setFrustumCulling(false);
+		entity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+		entity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+		entity->addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+		entity->setTranslation(
+			Vector3(
+				-5000.0f,
+				gridY - 0.05f,
+				-5000.0f
+			)
+		);
+		entity->setEnabled(true);
+		entity->setPickable(true);
+		entity->update();
+		auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
+		if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
+			setHighlightEntityColorEffect(entity);
+		} else {
+			setStandardEntityColorEffect(entity);
+		}
+		engine->addEntity(entity);
+	}
+}
+
+void SceneEditorTabView::removeGrid()
+{
+	engine->removeEntity("tdme.sceneeditor.grid");
+}
+
+void SceneEditorTabView::getSnapping(bool& snappingEnabled, float& snappingX, float& snappingZ) {
+	snappingEnabled = this->snappingEnabled;
+	snappingX = this->snappingX;
+	snappingZ = this->snappingZ;
+}
+
+void SceneEditorTabView::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
+	this->snappingEnabled = snappingEnabled;
+	this->snappingX = snappingX;
+	this->snappingZ = snappingZ;
 }

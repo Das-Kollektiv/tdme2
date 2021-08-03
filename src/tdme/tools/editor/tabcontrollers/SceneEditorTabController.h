@@ -49,6 +49,26 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
+	array<string, 3> applyBaseNodes = {
+		"base_name",
+		"base_description",
+	};
+	array<string, 3> applyTranslationNodes = {
+		"transformation_translation_x",
+		"transformation_translation_y",
+		"transformation_translation_z"
+	};
+	array<string, 3> applyRotationNodes = {
+		"transformation_rotation_x",
+		"transformation_rotation_y",
+		"transformation_rotation_z"
+	};
+	array<string, 3> applyScaleNodes = {
+		"transformation_scale_x",
+		"transformation_scale_y",
+		"transformation_scale_z"
+	};
+
 public:
 	/**
 	 * Public constructor
