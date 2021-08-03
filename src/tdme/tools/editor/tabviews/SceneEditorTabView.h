@@ -131,6 +131,10 @@ private:
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
 	bool needGizmoUpdate { false };
+
+	Vector3 multipleSelectionTranslation;
+	Vector3 multipleSelectionRotation;
+	Vector3 multipleSelectionScale;
 public:
 	/**
 	 * Public constructor

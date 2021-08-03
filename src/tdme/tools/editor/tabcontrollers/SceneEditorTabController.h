@@ -97,9 +97,23 @@ public:
 	void setEntityDetails(const string& entityId);
 
 	/**
-	 * Update entity details
+	 * Set entity details for multiple entity selection
 	 */
-	void updateEntityDetails(const string& entityId);
+	void setEntityDetailsMultiple();
+
+	/**
+	 * Update entity details
+	 * @param transformations transformations
+	 */
+	void updateEntityDetails(const Transformations& transformations);
+
+	/**
+	 * Update entity details
+	 * @param translation translation
+	 * @param rotation rotation
+	 * @param scale scale
+	 */
+	void updateEntityDetails(const Vector3& translation, const Vector3& rotation, const Vector3& scale);
 
 	/**
 	 * Set entity details for multiple entity selection

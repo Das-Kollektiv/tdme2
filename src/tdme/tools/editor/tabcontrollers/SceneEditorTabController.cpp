@@ -146,7 +146,7 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 
 	auto scene = view->getScene();
 	auto entity = scene->getEntity(entityId);
-	auto transformations = entity != nullptr?&entity->getTransformations():nullptr;
+	if (entity == nullptr) return;
 
 	view->getEditorView()->setDetailsContent(
 		string("<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />") +
@@ -157,52 +157,81 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
-
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
-
 		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
 		}
-
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 
 	//
-	updateEntityDetails(entityId);
+	updateEntityDetails(entity->getTransformations());
 }
 
-
-void SceneEditorTabController::updateEntityDetails(const string& entityId) {
-	Console::println("SceneEditorTabController::updateEntityDetails(): " + entityId);
+void SceneEditorTabController::setEntityDetailsMultiple() {
+	Console::println("SceneEditorTabController::setEntityDetailsMultiple(): ");
 
 	auto scene = view->getScene();
-	auto entity = scene->getEntity(entityId);
-	auto transformations = entity != nullptr?&entity->getTransformations():nullptr;
-	if (transformations == nullptr) return;
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_transformations\" src=\"resources/engine/gui/template_details_transformation.xml\" />") +
+		string("<template id=\"details_reflections\" src=\"resources/engine/gui/template_details_reflection.xml\" />")
+	);
 
 	//
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
-
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(transformations->getTranslation().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(transformations->getTranslation().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(transformations->getTranslation().getX());
-
-		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisXIndex()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisYIndex()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(transformations->getRotationAngle(scene->getRotationOrder()->getAxisZIndex()));
-		}
-
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(transformations->getScale().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(transformations->getScale().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(transformations->getScale().getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateEntityDetails(
+		Vector3(),
+		Vector3(),
+		Vector3(1.0f, 1.0f, 1.0f)
+	);
+}
+
+void SceneEditorTabController::updateEntityDetails(const Transformations& transformations) {
+	auto scene = view->getScene();
+	updateEntityDetails(
+		transformations.getTranslation(),
+		Vector3(
+			transformations.getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
+			transformations.getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
+			transformations.getRotationAngle(scene->getRotationOrder()->getAxisZIndex())
+		),
+		transformations.getScale()
+	);
+
+}
+
+void SceneEditorTabController::updateEntityDetails(const Vector3& translation, const Vector3& rotation, const Vector3& scale) {
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(translation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(translation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(translation.getX());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(rotation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(rotation.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(rotation.getZ());
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(scale.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(scale.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(scale.getZ());
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }

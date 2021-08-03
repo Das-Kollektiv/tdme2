@@ -294,8 +294,8 @@ void SceneEditorTabView::handleInputEvents()
 				if (mouseDragging == true) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
-					Vector3 deltaScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+					Vector3 absoluteScale;
+					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
 						auto gizmoEntity = getGizmoObject3D();
 						if (gizmoEntity != nullptr) {
 							Transformations rotations;
@@ -311,7 +311,7 @@ void SceneEditorTabView::handleInputEvents()
 									auto translation = sceneEntity->getTransformations().getTranslation();
 									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translation.clone().sub(gizmoEntity->getTranslation())));
 									sceneEntity->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
-									auto scale = sceneEntity->getTransformations().getScale().clone().scale(deltaScale);
+									auto scale = sceneEntity->getTransformations().getScale().clone().scale(absoluteScale);
 									if (Math::abs(scale.getX()) < 0.01f) scale.setX(Math::sign(scale.getX()) * 0.01f);
 									if (Math::abs(scale.getY()) < 0.01f) scale.setY(Math::sign(scale.getY()) * 0.01f);
 									if (Math::abs(scale.getZ()) < 0.01f) scale.setZ(Math::sign(scale.getZ()) * 0.01f);
@@ -330,8 +330,15 @@ void SceneEditorTabView::handleInputEvents()
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
-								if (_selectedEntity != nullptr) sceneEditorTabController->updateEntityDetails(_selectedEntity->getId());
-								setGizmoRotation(_selectedEntity->getTransformations());
+								if (_selectedEntity != nullptr) {
+									sceneEditorTabController->updateEntityDetails(_selectedEntity->getTransformations());
+									setGizmoRotation(_selectedEntity->getTransformations());
+								}
+							} else {
+								multipleSelectionTranslation+= deltaTranslation;
+								multipleSelectionRotation+= deltaRotation;
+								multipleSelectionScale = absoluteScale;
+								sceneEditorTabController->updateEntityDetails(multipleSelectionTranslation, multipleSelectionRotation, multipleSelectionScale);
 							}
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
@@ -343,19 +350,6 @@ void SceneEditorTabView::handleInputEvents()
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 					// no op
-					if (selectedEntityIds.size() == 1) {
-						for (auto selectedEntityId: selectedEntityIds) {
-							auto _selectedEntity = engine->getEntity(selectedEntityId);
-							if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
-								setGizmoRotation(_selectedEntity->getTransformations());
-								sceneEditorTabController->updateEntityDetails(_selectedEntity->getId());
-							}
-						}
-					} else
-					if (selectedEntityIds.size() > 1) {
-						setGizmoRotation(Transformations());
-						// TODO: updateGUITransformationsElements();
-					}
 				} else {
 					if (selectedEntity != nullptr && scene->getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
@@ -400,8 +394,15 @@ void SceneEditorTabView::handleInputEvents()
 								selectedEntity->fromTransformations(sceneEntity->getTransformations());
 							}
 							setGizmoRotation(selectedEntity->getTransformations());
+							sceneEditorTabController->setEntityDetails(selectedEntity->getId());
+						} else
+						if (selectedEntityIds.size() > 1) {
+							setGizmoRotation(Transformations());
+							sceneEditorTabController->setEntityDetailsMultiple();
+							multipleSelectionTranslation.set(0.0f, 0.0f, 0.0f);
+							multipleSelectionRotation.set(0.0f, 0.0f, 0.0f);
+							multipleSelectionScale.set(1.0f, 1.0f, 1.0f);
 						}
-						if (selectedEntityIds.size() > 1) setGizmoRotation(Transformations());
 					}
 					mouseDraggingLastEntity = selectedEntity;
 					updateGizmo();
@@ -604,7 +605,18 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 		selectedEntityIds.push_back(entityId);
 		selectedEntityIdsById.insert(entityId);
 	}
-	//updateGUIElements();
+
+	if (entityIds.size() == 1) {
+		auto selectedEntity = engine->getEntity(entityIds[0]);
+		if (selectedEntity != nullptr) {
+			setGizmoRotation(selectedEntity->getTransformations());
+			sceneEditorTabController->setEntityDetails(selectedEntity->getId());
+		}
+	} else
+	if (entityIds.size() > 1) {
+		setGizmoRotation(Transformations());
+		sceneEditorTabController->setEntityDetailsMultiple();
+	}
 	updateGizmo();
 }
 
@@ -618,9 +630,6 @@ void SceneEditorTabView::unselectEntities()
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
-	// TODO: sceneEditorScreenController->unselectEntitiesInEntityListBox();
-	// TODO: updateGUIElements();
-	removeGizmo();
 }
 
 void SceneEditorTabView::copyEntities()
