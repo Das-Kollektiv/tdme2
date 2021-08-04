@@ -163,7 +163,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition,
 				-10000.0f,
-				ignoreStepUpMax == true?10000.0f:y + actorStepUpMax + 0.1f
+				ignoreStepUpMax == true?10000.0f:y + actorStepUpMax + 0.2f
 			);
 			if (body == nullptr || ((body->getCollisionTypeId() & skipOnCollisionTypeIds) != 0)) {
 				return false;
@@ -176,7 +176,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.1f:height + actorStepUpMax, z));
+	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?height + 0.2f:Math::min(y + actorStepUpMax, height + 0.2f), z));
 	actorTransformations.update();
 
 	// update rigid body
@@ -400,14 +400,23 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 				forwardDistance+= stepSize;
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 				forwardDistance+= stepSize;
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 			}
 			if (currentMaxTries == 0) {
 				forcedAlternativeEndSteps = 27 * 2;
