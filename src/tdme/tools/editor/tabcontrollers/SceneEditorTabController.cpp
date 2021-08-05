@@ -237,6 +237,19 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				break;
 			}
 		}
+		for (auto& applyReflectionEnvironmentMappingNode: applyReflectionEnvironmentMappingNodes) {
+			if (node->getId() == applyReflectionEnvironmentMappingNode) {
+				//
+				try {
+					view->applyReflectionEnvironmentMappingId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("reflection_environmentmap"))->getController()->getValue().getString());
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				//
+				break;
+			}
+		}
 		basePropertiesSubController->onValueChanged(node, view->getScene());
 	}
 }
@@ -361,6 +374,31 @@ void SceneEditorTabController::setSkyDetails() {
 	}
 }
 
+void SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown(const string& selectedReflectionEnvironmentMappingId) {
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+
+	string reflectionEnvironmentMappingIdsXML =
+		string() + "<dropdown-option text=\"<None>\" value=\"\" " + (selectedReflectionEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") + " />\n";
+	for (auto& environmentMappingId: scene->getEnvironmentMappingIds()) {
+		reflectionEnvironmentMappingIdsXML+=
+			"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" " +
+			(selectedReflectionEnvironmentMappingId == environmentMappingId?"selected=\"true\" ":"") +
+			" />\n";
+	}
+
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("reflection_environmentmap"))->replaceSubNodes(reflectionEnvironmentMappingIdsXML, true);
+	} catch (Exception& exception) {
+		Console::print(string("SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
 void SceneEditorTabController::setEntityDetails(const string& entityId) {
 	Console::println("SceneEditorTabController::setEntityDetails(): " + entityId);
 
@@ -391,10 +429,11 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 	}
 
 	//
+	updateReflectionEnvironmentMappingDetailsDropDown(entity->getReflectionEnvironmentMappingId());
 	updateEntityDetails(entity->getTransformations());
 }
 
-void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot) {
+void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, const string& selectedReflectionEnvironmentMappingId) {
 	Console::println("SceneEditorTabController::setEntityDetailsMultiple(): ");
 
 	auto scene = view->getScene();
@@ -415,6 +454,7 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot) {
 	}
 
 	//
+	updateReflectionEnvironmentMappingDetailsDropDown(selectedReflectionEnvironmentMappingId);
 	updateEntityDetails(
 		pivot,
 		Vector3(),

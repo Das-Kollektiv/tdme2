@@ -31,6 +31,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -66,6 +67,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
 using tdme::utilities::StringTools;
 
 SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene): Gizmo(engine, "le")
@@ -412,7 +414,7 @@ void SceneEditorTabView::handleInputEvents()
 							multipleSelectionTranslation = computeMultipleSelectionPivot();
 							multipleSelectionRotation.set(0.0f, 0.0f, 0.0f);
 							multipleSelectionScale.set(1.0f, 1.0f, 1.0f);
-							sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionTranslation);
+							sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionTranslation, getSelectedReflectionEnvironmentMappingId());
 						}
 					}
 					mouseDraggingLastEntity = selectedEntity;
@@ -705,7 +707,7 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	if (entityIds.size() > 1) {
 		setGizmoRotation(Transformations());
 		multipleSelectionTranslation = computeMultipleSelectionPivot();
-		sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionTranslation);
+		sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionTranslation, getSelectedReflectionEnvironmentMappingId());
 	}
 	updateGizmo();
 }
@@ -962,6 +964,25 @@ const Vector3 SceneEditorTabView::computeMultipleSelectionPivot() {
 	return pivot;
 }
 
+const string SceneEditorTabView::getSelectedReflectionEnvironmentMappingId() {
+	string selectedEnvironmentMappingId;
+	for (auto selectedEntityId: selectedEntityIds) {
+		auto selectedEntity = engine->getEntity(selectedEntityId);
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			if (selectedEnvironmentMappingId.empty() == true) {
+				selectedEnvironmentMappingId = sceneEntity->getReflectionEnvironmentMappingId();
+			} else
+			if (selectedEnvironmentMappingId != sceneEntity->getReflectionEnvironmentMappingId()) {
+				selectedEnvironmentMappingId.clear();
+				return selectedEnvironmentMappingId;
+			}
+		}
+	}
+	return selectedEnvironmentMappingId;
+}
+
 void SceneEditorTabView::updateGizmo() {
 	if (selectedEntityIds.size() == 0) {
 		removeGizmo();
@@ -1151,6 +1172,22 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 	scene->update();
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 	updateGizmo();
+}
+
+void SceneEditorTabView::applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
+	if (selectedEntityIds.size() == 0)
+		return;
+
+	for (auto selectedEntityId: selectedEntityIds) {
+		auto selectedEntity = engine->getEntity(selectedEntityId);
+		if (selectedEntity == nullptr) continue;
+		auto sceneEntity = scene->getEntity(selectedEntity->getId());
+		if (sceneEntity == nullptr) continue;
+
+		auto object3D = dynamic_cast<Object3D*>(selectedEntity);
+		if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+	}
 }
 
 bool SceneEditorTabView::isGridEnabled()

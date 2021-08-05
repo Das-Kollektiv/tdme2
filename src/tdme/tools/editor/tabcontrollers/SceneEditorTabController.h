@@ -50,7 +50,7 @@ private:
 	PopUps* popUps { nullptr };
 	FileDialogPath modelPath;
 
-	array<string, 3> applyBaseNodes = {
+	array<string, 2> applyBaseNodes = {
 		"base_name",
 		"base_description",
 	};
@@ -69,10 +69,12 @@ private:
 		"transformation_scale_y",
 		"transformation_scale_z"
 	};
-	array<string, 3> applySkyNodes = {
+	array<string, 1> applySkyNodes = {
 		"sky_model_scale"
 	};
-
+	array<string, 1> applyReflectionEnvironmentMappingNodes = {
+		"reflection_environmentmap"
+	};
 public:
 	/**
 	 * Public constructor
@@ -115,6 +117,13 @@ public:
 	void setSkyDetails();
 
 	/**
+	 * Update reflection details drop down
+	 * @param selectedReflectionEnvironmentMappingId selected reflection environment mapping id
+	 * @param mixed mixed
+	 */
+	void updateReflectionEnvironmentMappingDetailsDropDown(const string& selectedReflectionEnvironmentMappingId);
+
+	/**
 	 * Set entity details
 	 * @param entity id
 	 */
@@ -123,8 +132,9 @@ public:
 	/**
 	 * Set entity details for multiple entity selection
 	 * @param pivot pivot
+	 * @param selectedReflectionEnvironmentMappingId selected reflection environment mapping id
 	 */
-	void setEntityDetailsMultiple(const Vector3& pivot);
+	void setEntityDetailsMultiple(const Vector3& pivot, const string& selectedReflectionEnvironmentMappingId);
 
 	/**
 	 * Update entity details

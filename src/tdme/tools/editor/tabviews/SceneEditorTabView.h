@@ -305,6 +305,11 @@ public:
 	const Vector3 computeMultipleSelectionPivot();
 
 	/**
+	 * Get selected reflection environment mapping id
+	 */
+	const string getSelectedReflectionEnvironmentMappingId();
+
+	/**
 	 * Update gizmo
 	 */
 	void updateGizmo();
@@ -334,6 +339,12 @@ public:
 	 * @param rotation rotation
 	 */
 	void applyScale(const Vector3& scale);
+
+	/**
+	 * Apply reflection environment mapping id
+	 * @param environmentMappingId environment mapping id
+	 */
+	void applyReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId);
 
 	/**
 	 * Update grid
