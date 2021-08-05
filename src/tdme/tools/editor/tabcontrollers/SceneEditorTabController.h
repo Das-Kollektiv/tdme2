@@ -48,6 +48,7 @@ private:
 	SceneEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	FileDialogPath modelPath;
 
 	array<string, 3> applyBaseNodes = {
 		"base_name",
@@ -67,6 +68,9 @@ private:
 		"transformation_scale_x",
 		"transformation_scale_y",
 		"transformation_scale_z"
+	};
+	array<string, 3> applySkyNodes = {
+		"sky_model_scale"
 	};
 
 public:
@@ -94,11 +98,6 @@ public:
 	 */
 	FileDialogPath* getModelPath();
 
-	/**
-	 * @return audio path
-	 */
-	FileDialogPath* getAudioPath();
-
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
@@ -109,6 +108,11 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Set sky details
+	 */
+	void setSkyDetails();
 
 	/**
 	 * Set entity details

@@ -14,7 +14,7 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<input id="sky_model_scale" width="100%" height="auto" text="10.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />	
+					<input id="sky_model_scale" width="100%" height="auto" text="10.00" options="type=float,min=0.1, max=300.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />	
 				</layout>
 			</layout>
 								

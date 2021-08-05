@@ -603,6 +603,10 @@ void SceneEditorTabView::onCameraScale() {
 	needGizmoUpdate = true;
 }
 
+void SceneEditorTabView::removeSky() {
+	engine->removeEntity("tdme.sky");
+}
+
 void SceneEditorTabView::updateSky() {
 	engine->removeEntity("tdme.sky");
 	if (scene->getSkyModel() == nullptr) return;

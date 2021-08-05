@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -11,6 +12,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -18,7 +20,9 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -35,6 +39,7 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::Transformations;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
@@ -49,7 +54,10 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::math::Math;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -81,6 +89,11 @@ SceneEditorTabView* SceneEditorTabController::getView() {
 GUIScreenNode* SceneEditorTabController::getScreenNode()
 {
 	return screenNode;
+}
+
+FileDialogPath* SceneEditorTabController::getModelPath()
+{
+	return &modelPath;
 }
 
 void SceneEditorTabController::initialize(GUIScreenNode* screenNode)
@@ -203,6 +216,27 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				break;
 			}
 		}
+		for (auto& applySkyNode: applySkyNodes) {
+			if (node->getId() == applySkyNode) {
+				//
+				try {
+					auto scene = view->getScene();
+					scene->setSkyModelScale(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
+						)
+					);
+					view->updateSky();
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				//
+				break;
+			}
+		}
 		basePropertiesSubController->onValueChanged(node, view->getScene());
 	}
 }
@@ -241,7 +275,90 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+	if (node->getId() == "sky_model_remove") {
+		view->removeSky();
+		auto scene = view->getScene();
+		scene->setSkyModel(nullptr);
+		scene->setSkyModelFileName(string());
+		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+	} else
+	if (node->getId() == "sky_model_open") {
+		class OnLoadSkyModel: public virtual Action
+		{
+		public:
+			void performAction() override {
+				try {
+					sceneEditorTabController->view->removeSky();
+					auto scene = sceneEditorTabController->view->getScene();
+					scene->setSkyModelFileName(
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
+						"/" +
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+					);
+					scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+					scene->setSkyModel(
+						ModelReader::read(
+							Tools::getPathName(scene->getSkyModelFileName()),
+							Tools::getFileName(scene->getSkyModelFileName()))
+					);
+					sceneEditorTabController->modelPath.setPath(
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+					);
+					sceneEditorTabController->view->updateSky();
+				} catch (Exception& exception) {
+					Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
+					sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				}
+				sceneEditorTabController->updateDetails("scene");
+				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			}
+
+			/**
+			 * Public constructor
+			 * @param sceneEditorTabController scene editor tab controller
+			 */
+			OnLoadSkyModel(SceneEditorTabController* sceneEditorTabController)
+				: sceneEditorTabController(sceneEditorTabController) {
+				//
+			}
+
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+		};
+
+		auto extensions = ModelReader::getModelExtensions();
+		popUps->getFileDialogScreenController()->show(
+			modelPath.getPath(),
+			"Load sky model from: ",
+			extensions,
+			string(),
+			true,
+			new OnLoadSkyModel(this)
+		);
+	} else {
+		basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+	}
+}
+
+void SceneEditorTabController::setSkyDetails() {
+	Console::println("SceneEditorTabController::setSkyDetails(): ");
+
+	auto scene = view->getScene();
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_sky\" src=\"resources/engine/gui/template_details_sky.xml\" />")
+	);
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sky"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
+			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void SceneEditorTabController::setEntityDetails(const string& entityId) {
@@ -385,6 +502,9 @@ void SceneEditorTabController::setDetailsContent() {
 
 void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
+	if (outlinerNode == "scene") {
+		setSkyDetails();
+	} else
 	if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
 		auto entityId = StringTools::substring(outlinerNode, string("scene.entities.").size());
 		setEntityDetails(entityId);
