@@ -115,8 +115,8 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			prototypeSoundsSubController->audioPath->setPath(prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName());
-			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
+			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 	private:
 		PrototypeSoundsSubController* prototypeSoundsSubController;

@@ -463,6 +463,7 @@ void GUISelectBoxController::setValue(const MutableString& value)
 	}
 	MutableString searchValue;
 	GUISelectBoxOptionController* selectBoxOptionNodeControllerLast = nullptr;
+	// TODO: actually we should rebuild value to remove options that have not been found
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxOptionControllers[i];
 		auto selectBoxOptionNode = required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode());
@@ -492,6 +493,7 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		focus(0);
 		selectBoxOptionNode->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
 		selectBoxOptionNode->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+		_value.set("|" + required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode())->getValue() + "|");
 	}
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
 	node->getScreenNode()->layout(node);
