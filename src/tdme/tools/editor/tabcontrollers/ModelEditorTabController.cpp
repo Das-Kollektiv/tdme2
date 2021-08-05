@@ -1976,6 +1976,31 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		} else
+		if (modelOutlinerNode == "model.animations") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnAddAnimationAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (modelOutlinerNode == "model.animations") modelEditorTabController->createAnimationSetup(lodLevel);
+				}
+				OnAddAnimationAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Animation", "contextmenu_add", new OnAddAnimationAction(this, view->getPrototype()));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();

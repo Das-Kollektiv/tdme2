@@ -399,6 +399,27 @@ void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* pr
 void PrototypeSoundsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "sounds") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnAddSoundAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeSoundsSubController->createSound(prototype);
+				}
+				OnAddSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeSoundsSubController* prototypeSoundsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Sound", "contextmenu_add", new OnAddSoundAction(this, prototype));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();

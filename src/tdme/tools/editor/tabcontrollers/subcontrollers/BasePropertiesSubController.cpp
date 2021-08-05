@@ -289,6 +289,26 @@ void BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties
 void BasePropertiesSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "properties") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnAddPropertyAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeBaseSubController->createProperty(baseProperties);
+				}
+				OnAddPropertyAction(BasePropertiesSubController* prototypeBaseSubController, BaseProperties* baseProperties): prototypeBaseSubController(prototypeBaseSubController), baseProperties(baseProperties) {
+				}
+			private:
+				BasePropertiesSubController* prototypeBaseSubController;
+				BaseProperties* baseProperties;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Property", "contextmenu_add", new OnAddPropertyAction(this, baseProperties));
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();

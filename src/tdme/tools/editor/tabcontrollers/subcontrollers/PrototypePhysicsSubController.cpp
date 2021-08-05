@@ -816,6 +816,28 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "physics") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// add
+			class OnAddBoundingVolumeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypePhysicsSubController->createBoundingVolume(prototype);
+				}
+				OnAddBoundingVolumeAction(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypePhysicsSubController* prototypePhysicsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Bounding Volume", "contextmenu_add", new OnAddBoundingVolumeAction(this, prototype));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
