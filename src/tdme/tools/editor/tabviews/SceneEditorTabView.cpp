@@ -409,7 +409,8 @@ void SceneEditorTabView::handleInputEvents()
 						} else
 						if (selectedEntityIds.size() > 1) {
 							setGizmoRotation(Transformations());
-							sceneEditorTabController->setEntityDetailsMultiple();
+							multipleSelectionPivot = computeMultipleSelectionPivot();
+							sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionPivot);
 							multipleSelectionTranslation.set(0.0f, 0.0f, 0.0f);
 							multipleSelectionRotation.set(0.0f, 0.0f, 0.0f);
 							multipleSelectionScale.set(1.0f, 1.0f, 1.0f);
@@ -700,7 +701,8 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	} else
 	if (entityIds.size() > 1) {
 		setGizmoRotation(Transformations());
-		sceneEditorTabController->setEntityDetailsMultiple();
+		multipleSelectionPivot = computeMultipleSelectionPivot();
+		sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionPivot);
 	}
 	updateGizmo();
 }
@@ -941,6 +943,22 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	}
 }
 
+const Vector3 SceneEditorTabView::computeMultipleSelectionPivot() {
+	Vector3 pivot;
+	auto entityCount = 0;
+	for (auto selectedEntityId: selectedEntityIds) {
+		auto selectedEntity = engine->getEntity(selectedEntityId);
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
+			auto sceneEntity = scene->getEntity(selectedEntity->getId());
+			if (sceneEntity == nullptr) continue;
+			pivot.add(sceneEntity->getTransformations().getTranslation());
+			entityCount++;
+		}
+	}
+	if (entityCount > 1) pivot.scale(1.0f / entityCount);
+	return pivot;
+}
+
 void SceneEditorTabView::updateGizmo() {
 	if (selectedEntityIds.size() == 0) {
 		removeGizmo();
@@ -1031,6 +1049,7 @@ bool SceneEditorTabView::applyBase(const string& name, const string& description
 }
 
 void SceneEditorTabView::applyTranslation(const Vector3& translation) {
+	Console::println("SceneEditorTabView::applyTranslation()");
 	if (selectedEntityIds.size() == 0)
 		return;
 
@@ -1051,10 +1070,13 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 
-			sceneEntity->getTransformations().setTranslation(sceneEntity->getTransformations().getTranslation().clone().add(Vector3(translation)));
+			sceneEntity->getTransformations().setTranslation(
+				sceneEntity->getTransformations().getTranslation().clone().add(translation.clone().sub(multipleSelectionPivot))
+			);
 			sceneEntity->getTransformations().update();
 			selectedEntity->fromTransformations(sceneEntity->getTransformations());
 		}
+		multipleSelectionPivot.add(translation.clone().sub(multipleSelectionPivot));
 	}
 	scene->update();
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));

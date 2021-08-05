@@ -277,7 +277,7 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 	updateEntityDetails(entity->getTransformations());
 }
 
-void SceneEditorTabController::setEntityDetailsMultiple() {
+void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot) {
 	Console::println("SceneEditorTabController::setEntityDetailsMultiple(): ");
 
 	auto scene = view->getScene();
@@ -299,7 +299,7 @@ void SceneEditorTabController::setEntityDetailsMultiple() {
 
 	//
 	updateEntityDetails(
-		Vector3(),
+		pivot,
 		Vector3(),
 		Vector3(1.0f, 1.0f, 1.0f)
 	);

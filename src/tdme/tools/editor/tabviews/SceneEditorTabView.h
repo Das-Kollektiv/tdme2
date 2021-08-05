@@ -134,6 +134,7 @@ private:
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
 	bool needGizmoUpdate { false };
 
+	Vector3 multipleSelectionPivot;
 	Vector3 multipleSelectionTranslation;
 	Vector3 multipleSelectionRotation;
 	Vector3 multipleSelectionScale;
@@ -293,6 +294,11 @@ public:
 	 * @param displayOnly display only
 	 */
 	void pasteEntities(bool displayOnly);
+
+	/**
+	 * Compute multiple selection pivot
+	 */
+	const Vector3 computeMultipleSelectionPivot();
 
 	/**
 	 * Update gizmo

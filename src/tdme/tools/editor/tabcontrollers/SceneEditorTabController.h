@@ -118,8 +118,9 @@ public:
 
 	/**
 	 * Set entity details for multiple entity selection
+	 * @param pivot pivot
 	 */
-	void setEntityDetailsMultiple();
+	void setEntityDetailsMultiple(const Vector3& pivot);
 
 	/**
 	 * Update entity details
@@ -134,17 +135,6 @@ public:
 	 * @param scale scale
 	 */
 	void updateEntityDetails(const Vector3& translation, const Vector3& rotation, const Vector3& scale);
-
-	/**
-	 * Set entity details for multiple entity selection
-	 */
-	void setEntityDetailsMultiple(const Transformations& transformations);
-
-	/**
-	 * Update entity details for multiple selection
-	 * @param transformations transformations
-	 */
-	void updateEntityDetailsMultiple(const Transformations& transformations);
 
 	/**
 	 * Get prototype icon
