@@ -198,10 +198,10 @@ void ModelEditorTabController::saveAs()
 				modelEditorTabController->modelPath.setPath(
 					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 				);
-				modelEditorTabController->popUps->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
 				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -552,8 +552,8 @@ void ModelEditorTabController::onLODLoad(int lodLevel) {
 			}
 
 			modelEditorTabController->view->setLODLevel(lodLevel);
-			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevel) + ".model");
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
 		/**
