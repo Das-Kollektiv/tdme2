@@ -716,9 +716,7 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	for (auto entityId: entityIds) {
 		Console::println(entityId);
 		auto selectedEntity = engine->getEntity(entityId);
-		Console::println("aaa");
 		if (selectedEntity == nullptr) continue;
-		Console::println("bbb");
 		setStandardEntityColorEffect(selectedEntity);
 		setHighlightEntityColorEffect(selectedEntity);
 		selectedEntityIds.push_back(entityId);

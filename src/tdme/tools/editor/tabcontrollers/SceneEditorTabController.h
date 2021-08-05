@@ -75,6 +75,9 @@ private:
 	array<string, 1> applyReflectionEnvironmentMappingNodes = {
 		"reflection_environmentmap"
 	};
+
+	string renameEntityName;
+
 public:
 	/**
 	 * Public constructor
@@ -211,6 +214,17 @@ public:
 	 * On replace prototype
 	 */
 	void onReplacePrototype();
+
+	/**
+	 * Rename entity
+	 * @param entityName entity name
+	 */
+	void startRenameEntity(const string& entityName);
+
+	/**
+	 * Rename entity
+	 */
+	void renameEntity();
 
 	/**
 	 * Shows the error pop up

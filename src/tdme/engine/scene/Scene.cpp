@@ -238,6 +238,7 @@ bool Scene::removeEntity(const string& id)
 }
 
 bool Scene::renameEntity(const string& id, const string& newId) {
+	if (id == newId) return true;
 	if (getEntity(newId) != nullptr) return false;
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {

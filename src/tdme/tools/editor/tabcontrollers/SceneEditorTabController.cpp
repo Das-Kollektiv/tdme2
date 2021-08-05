@@ -265,24 +265,28 @@ void SceneEditorTabController::onFocus(GUIElementNode* node) {
 }
 
 void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
-	for (auto& applyBaseNode: applyBaseNodes) {
-		if (node->getId() == applyBaseNode) {
-			//
-			try {
-				auto name = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->getValue().getString();
-				if (name.empty() == true) throw ExceptionBase("Please enter a name");
-				if (view->applyBase(
-						name,
-						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString()
-					) == false) {
-					throw ExceptionBase("Could not rename entity");
+	if (node->getId() == "tdme.entities.rename_input") {
+		renameEntity();
+	} else {
+		for (auto& applyBaseNode: applyBaseNodes) {
+			if (node->getId() == applyBaseNode) {
+				//
+				try {
+					auto name = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->getValue().getString();
+					if (name.empty() == true) throw ExceptionBase("Please enter a name");
+					if (view->applyBase(
+							name,
+							required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString()
+						) == false) {
+						throw ExceptionBase("Could not rename entity");
+					}
+				} catch (Exception& exception) {
+					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					showErrorPopUp("Warning", (string(exception.what())));
 				}
-			} catch (Exception& exception) {
-				Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
-				showErrorPopUp("Warning", (string(exception.what())));
+				//
+				break;
 			}
-			//
-			break;
 		}
 	}
 	basePropertiesSubController->onUnfocus(node, view->getScene());
@@ -294,6 +298,26 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 		if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
+			{
+				// rename
+				class OnCenterAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						auto outlinerSelection = StringTools::tokenize(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+						if (outlinerSelection.size() != 1) return;
+						string selectedEntityId;
+						if (StringTools::startsWith(outlinerSelection[0], "scene.entities.") == false) return;
+						selectedEntityId = StringTools::substring(outlinerSelection[0], string("scene.entities.").size());
+						sceneEditorTabController->startRenameEntity(selectedEntityId);
+					}
+					OnCenterAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnCenterAction(this));
+			}
 			{
 				// center
 				class OnCenterAction: public virtual Action
@@ -380,68 +404,73 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	if (node->getId() == "sky_model_remove") {
-		view->removeSky();
-		auto scene = view->getScene();
-		scene->setSkyModel(nullptr);
-		scene->setSkyModelFileName(string());
-		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	} else
-	if (node->getId() == "sky_model_open") {
-		class OnLoadSkyModelAction: public virtual Action
-		{
-		public:
-			void performAction() override {
-				try {
-					sceneEditorTabController->view->removeSky();
-					auto scene = sceneEditorTabController->view->getScene();
-					scene->setSkyModelFileName(
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
-						"/" +
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-					);
-					scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-					scene->setSkyModel(
-						ModelReader::read(
-							Tools::getPathName(scene->getSkyModelFileName()),
-							Tools::getFileName(scene->getSkyModelFileName()))
-					);
-					sceneEditorTabController->modelPath.setPath(
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-					);
-					sceneEditorTabController->view->updateSky();
-				} catch (Exception& exception) {
-					Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
-					sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "tdme.entities.rename_input") {
+			renameEntity();
+		} else
+		if (node->getId() == "sky_model_remove") {
+			view->removeSky();
+			auto scene = view->getScene();
+			scene->setSkyModel(nullptr);
+			scene->setSkyModelFileName(string());
+			scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+		} else
+		if (node->getId() == "sky_model_open") {
+			class OnLoadSkyModelAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					try {
+						sceneEditorTabController->view->removeSky();
+						auto scene = sceneEditorTabController->view->getScene();
+						scene->setSkyModelFileName(
+							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
+							"/" +
+							sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+						);
+						scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+						scene->setSkyModel(
+							ModelReader::read(
+								Tools::getPathName(scene->getSkyModelFileName()),
+								Tools::getFileName(scene->getSkyModelFileName()))
+						);
+						sceneEditorTabController->modelPath.setPath(
+							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+						);
+						sceneEditorTabController->view->updateSky();
+					} catch (Exception& exception) {
+						Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
+						sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+					}
+					sceneEditorTabController->updateDetails("scene");
+					sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
-				sceneEditorTabController->updateDetails("scene");
-				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-			}
 
-			/**
-			 * Public constructor
-			 * @param sceneEditorTabController scene editor tab controller
-			 */
-			OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
-				: sceneEditorTabController(sceneEditorTabController) {
-				//
-			}
+				/**
+				 * Public constructor
+				 * @param sceneEditorTabController scene editor tab controller
+				 */
+				OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
+					: sceneEditorTabController(sceneEditorTabController) {
+					//
+				}
 
-		private:
-			SceneEditorTabController* sceneEditorTabController;
-		};
+			private:
+				SceneEditorTabController* sceneEditorTabController;
+			};
 
-		auto extensions = ModelReader::getModelExtensions();
-		popUps->getFileDialogScreenController()->show(
-			modelPath.getPath(),
-			"Load sky model from: ",
-			extensions,
-			string(),
-			true,
-			new OnLoadSkyModelAction(this)
-		);
-	} else {
-		basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+			auto extensions = ModelReader::getModelExtensions();
+			popUps->getFileDialogScreenController()->show(
+				modelPath.getPath(),
+				"Load sky model from: ",
+				extensions,
+				string(),
+				true,
+				new OnLoadSkyModelAction(this)
+			);
+		} else {
+			basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+		}
 	}
 }
 
@@ -614,7 +643,7 @@ void SceneEditorTabController::setOutlinerContent() {
 				auto prototype = entity->getPrototype();
 				auto icon = getPrototypeIcon(prototype->getType());
 				if (prototype->isRenderGroups() == true) continue;
-				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" id=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
@@ -766,4 +795,55 @@ void SceneEditorTabController::onReplacePrototype() {
 		true,
 		new OnReplacePrototypeAction(this)
 	);
+}
+
+void SceneEditorTabController::startRenameEntity(const string& entityName) {
+	auto scene = view->getScene();
+	auto sceneEntity = scene->getEntity(entityName);
+	if (sceneEntity == nullptr) return;
+	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("scene.entities." + entityName));
+	if (selectBoxOptionParentNode == nullptr) return;
+	renameEntityName = entityName;
+	selectBoxOptionParentNode->replaceSubNodes(
+		"<template id=\"tdme.entities.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(sceneEntity->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		true
+	);
+	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.entities.rename_input")));
+	view->getEditorView()->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+}
+
+void SceneEditorTabController::renameEntity() {
+	auto scene = view->getScene();
+	auto sceneEntity = scene->getEntity(renameEntityName);
+	renameEntityName.clear();
+	if (sceneEntity != nullptr) {
+		try {
+			auto name = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("tdme.entities.rename_input"))->getController()->getValue().getString();
+			if (name.empty() == true) throw ExceptionBase("Please enter a name");
+			if (view->applyBase(
+					name,
+					sceneEntity->getDescription()
+				) == false) {
+				throw ExceptionBase("Could not rename entity");
+			}
+			view->reloadScene();
+		} catch (Exception& exception) {
+			Console::println(string("SceneEditorTabController::renameProperty(): An error occurred: ") + exception.what());;
+			showErrorPopUp("Warning", (string(exception.what())));
+		}
+	}
+
+	//
+	class ReloadTabOutlinerAction: public Action {
+	private:
+		EditorView* editorView;
+		string outlinerNode;
+	public:
+		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+		virtual void performAction() {
+			editorView->reloadTabOutliner(outlinerNode);
+			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+		}
+	};
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), "scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():"")));
 }
