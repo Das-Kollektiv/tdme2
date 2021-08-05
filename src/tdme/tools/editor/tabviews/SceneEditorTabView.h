@@ -134,7 +134,6 @@ private:
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
 	bool needGizmoUpdate { false };
 
-	Vector3 multipleSelectionPivot;
 	Vector3 multipleSelectionTranslation;
 	Vector3 multipleSelectionRotation;
 	Vector3 multipleSelectionScale;

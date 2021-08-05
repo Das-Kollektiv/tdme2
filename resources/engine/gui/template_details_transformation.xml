@@ -69,7 +69,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<layout width="5" height="25" background-color="{$color.xaxis}" />
-					<input id="transformation_scale_x" width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+					<input id="transformation_scale_x" width="*" height="auto" text="0.0" options="type=float,step=0.1,decimals=2,min=0.1,max=100.0" image="resources/engine/images/inputslider.png" />
 				</layout>
 			</layout>
 			<space height="5" />
@@ -77,7 +77,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<layout width="5" height="25" background-color="{$color.yaxis}" />
-					<input id="transformation_scale_y"  width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+					<input id="transformation_scale_y"  width="*" height="auto" text="0.0" options="type=float,step=0.1,decimals=2,min=0.1,max=100.0" image="resources/engine/images/inputslider.png" />
 				</layout>
 			</layout>
 			<space height="5" />
@@ -85,7 +85,7 @@
 				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<layout width="5" height="25" background-color="{$color.zaxis}" />
-					<input id="transformation_scale_z"  width="*" height="auto" text="0.0" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+					<input id="transformation_scale_z"  width="*" height="auto" text="0.0" options="type=float,step=0.1,decimals=2,min=0.1,max=100.0" image="resources/engine/images/inputslider.png" />
 				</layout>
 			</layout>
 						
