@@ -2,7 +2,9 @@
 
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -21,6 +23,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -40,6 +43,8 @@ using std::string;
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
@@ -56,9 +61,10 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::tools::editor::misc::Tools;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
-using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -283,7 +289,93 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getScene());
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			{
+				// center
+				class OnCenterAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->view->centerEntities();
+					}
+					OnCenterAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Center", "contextmenu_center", new OnCenterAction(this));
+			}
+			{
+				// select same
+				class OnSelectSameAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->view->selectSameEntities();
+					}
+					OnSelectSameAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Select same", "contextmenu_same", new OnSelectSameAction(this));
+			}
+			{
+				// open prototype
+				class OnOpenPrototype: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->view->openPrototype();
+					}
+					OnOpenPrototype(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Open prototype", "contextmenu_openprototype", new OnOpenPrototype(this));
+			}
+			{
+				// replace prototype
+				class OnReplacePrototype: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->onReplacePrototype();
+					}
+					OnReplacePrototype(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Replace prototype", "contextmenu_replaceprototype", new OnReplacePrototype(this));
+			}
+			{
+				// delete
+				class OnDeleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->view->removeEntities();
+					}
+					OnDeleteAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuSeparator();
+				popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this));
+			}
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	} else {
+		basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getScene());
+	}
 }
 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -296,7 +388,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
 	} else
 	if (node->getId() == "sky_model_open") {
-		class OnLoadSkyModel: public virtual Action
+		class OnLoadSkyModelAction: public virtual Action
 		{
 		public:
 			void performAction() override {
@@ -330,7 +422,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			 * Public constructor
 			 * @param sceneEditorTabController scene editor tab controller
 			 */
-			OnLoadSkyModel(SceneEditorTabController* sceneEditorTabController)
+			OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
 				: sceneEditorTabController(sceneEditorTabController) {
 				//
 			}
@@ -346,7 +438,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			extensions,
 			string(),
 			true,
-			new OnLoadSkyModel(this)
+			new OnLoadSkyModelAction(this)
 		);
 	} else {
 		basePropertiesSubController->onActionPerformed(type, node, view->getScene());
@@ -521,6 +613,7 @@ void SceneEditorTabController::setOutlinerContent() {
 				auto entityName = entity->getName();
 				auto prototype = entity->getPrototype();
 				auto icon = getPrototypeIcon(prototype->getType());
+				if (prototype->isRenderGroups() == true) continue;
 				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
@@ -601,4 +694,76 @@ void SceneEditorTabController::selectEntities(const vector<string>& selectedOutl
 		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);
 		updateDetails("scene.entities");
 	}
+}
+
+void SceneEditorTabController::onReplacePrototype() {
+	class OnReplacePrototypeAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				auto outlinerSelection = StringTools::tokenize(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+				if (outlinerSelection.size() != 1) return;
+				string selectedEntityId;
+				if (StringTools::startsWith(outlinerSelection[0], "scene.entities.") == false) return;
+				selectedEntityId = StringTools::substring(outlinerSelection[0], string("scene.entities.").size());
+				auto scene = sceneEditorTabController->view->getScene();
+				auto sceneLibrary = scene->getLibrary();
+				auto selectedSceneEntity = scene->getEntity(selectedEntityId);
+				auto prototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
+				if (prototype == nullptr) return;
+				auto newPrototype = PrototypeReader::read(
+					sceneLibrary->allocatePrototypeId(),
+					sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				sceneLibrary->addPrototype(newPrototype);
+				sceneEditorTabController->view->clearScene();
+				scene->replacePrototypeByIds(prototype->getId(), newPrototype->getId());
+				sceneEditorTabController->view->reloadScene();
+
+				sceneEditorTabController->modelPath.setPath(sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName());
+
+				//
+				class ReloadTabOutlinerAction: public Action {
+				private:
+					EditorView* editorView;
+					string outlinerNode;
+				public:
+					ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+					virtual void performAction() {
+						editorView->reloadTabOutliner(outlinerNode);
+						editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+					}
+				};
+				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
+			} catch (Exception& exception) {
+				Console::println(string("OnReplacePrototypeAction::performAction(): An error occurred: ") + exception.what());;
+				sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param sceneEditorTabController scene editor tab controller
+		 */
+		OnReplacePrototypeAction(SceneEditorTabController* sceneEditorTabController)
+			: sceneEditorTabController(sceneEditorTabController) {
+			//
+		}
+
+	private:
+		SceneEditorTabController* sceneEditorTabController;
+	};
+
+	auto extensions = PrototypeReader::getPrototypeExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Replace prototype with: ",
+		extensions,
+		string(),
+		true,
+		new OnReplacePrototypeAction(this)
+	);
 }

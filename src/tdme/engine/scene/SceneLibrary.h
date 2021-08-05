@@ -34,12 +34,6 @@ private:
 	vector<Prototype*> prototypes;
 	int prototypeIdx;
 
-	/**
-	 * Allocata a unique prototype index
-	 * @return index
-	 */
-	int allocatePrototypeId();
-
 public:
 	/**
 	 * Public constructor
@@ -51,6 +45,14 @@ public:
 	 * Destructor
 	 */
 	~SceneLibrary();
+
+	/**
+	 * Allocata a unique prototype index
+	 * @return index
+	 */
+	inline int allocatePrototypeId() {
+		return prototypeIdx++;
+	}
 
 	/**
 	 * Clears this scene prototype library

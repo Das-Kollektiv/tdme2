@@ -582,6 +582,31 @@ void SceneEditorTabView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
 }
 
+void SceneEditorTabView::clearScene() {
+	SceneConnector::resetEngine(engine, scene);
+	keyControl = false;
+	keyShift = false;
+	keyEscape = false;
+
+	placeEntityMode = false;
+	placeEntityValid = false;
+	mouseDragging = false;
+	mouseDraggingLastEntity = nullptr;
+
+	pasteMode = false;
+	pasteModeValid = false;
+
+	selectedPrototype = nullptr;
+	selectedEntityIds.clear();
+	selectedEntityIdsById.clear();
+	copiedEntities.clear();
+}
+
+void SceneEditorTabView::reloadScene() {
+	clearScene();
+	SceneConnector::addScene(engine, scene, true, true, true, true);
+}
+
 void SceneEditorTabView::reloadOutliner() {
 	sceneEditorTabController->setOutlinerContent();
 	sceneEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
@@ -689,8 +714,11 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	for (auto entityId: entityIds) {
+		Console::println(entityId);
 		auto selectedEntity = engine->getEntity(entityId);
+		Console::println("aaa");
 		if (selectedEntity == nullptr) continue;
+		Console::println("bbb");
 		setStandardEntityColorEffect(selectedEntity);
 		setHighlightEntityColorEffect(selectedEntity);
 		selectedEntityIds.push_back(entityId);
@@ -981,6 +1009,55 @@ const string SceneEditorTabView::getSelectedReflectionEnvironmentMappingId() {
 		}
 	}
 	return selectedEnvironmentMappingId;
+}
+
+void SceneEditorTabView::centerEntities()
+{
+	if (selectedEntityIds.size() == 0) {
+		return;
+	}
+	Vector3 center;
+	for (auto selectedEntityId: selectedEntityIds) {
+		auto selectedEntity = engine->getEntity(selectedEntityId);
+		if (selectedEntity == nullptr) continue;
+		center.add(selectedEntity->getBoundingBoxTransformed()->getMin().clone().add(selectedEntity->getBoundingBoxTransformed()->getMax()).scale(0.5f));
+	}
+	engine->getCamera()->setLookAt(center.scale(1.0f / selectedEntityIds.size()));
+}
+
+void SceneEditorTabView::selectSameEntities()
+{
+	if (selectedEntityIds.size() == 0) {
+		return;
+	}
+	sceneEditorTabController->unselectEntities();
+
+	auto sceneEntity = scene->getEntity(selectedEntityIds[0]);
+	auto prototype = sceneEntity != nullptr?sceneEntity->getPrototype():nullptr;
+	vector<string> entitiesToSelect;
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto _sceneEntity = scene->getEntityAt(i);
+		if (_sceneEntity->getPrototype() != prototype) continue;
+		sceneEditorTabController->selectEntity(_sceneEntity->getId());
+		entitiesToSelect.push_back(_sceneEntity->getId());
+	}
+	selectEntities(entitiesToSelect);
+}
+
+void SceneEditorTabView::openPrototype() {
+	if (selectedEntityIds.size() == 0) {
+		return;
+	}
+
+	sceneEditorTabController->unselectEntities();
+
+	auto sceneEntity = scene->getEntity(selectedEntityIds[0]);
+	auto prototype = sceneEntity != nullptr?sceneEntity->getPrototype():nullptr;
+	if (prototype == nullptr || prototype->getFileName().empty() == true) {
+		sceneEditorTabController->showErrorPopUp("Warning", "Prototype is embedded and can not be opened");
+	} else {
+		editorView->getScreenController()->openFile(prototype->getFileName());
+	}
 }
 
 void SceneEditorTabView::updateGizmo() {

@@ -224,6 +224,14 @@ public:
 	void onOpenFile(const string& absoluteFileName);
 
 	/**
+	 * Open file
+	 * @param absoluteProjectFileName absolute project file name
+	 */
+	inline void openFile(const string& absoluteFileName) {
+		onOpenFile(absoluteFileName);
+	}
+
+	/**
 	 * Store outliner state
 	 * @param outlinerState outliner state
 	 */

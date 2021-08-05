@@ -208,6 +208,11 @@ public:
 	void selectEntities(const vector<string>& selectedOutlinerEntityIds);
 
 	/**
+	 * On replace prototype
+	 */
+	void onReplacePrototype();
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

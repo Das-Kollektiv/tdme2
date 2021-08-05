@@ -34,7 +34,14 @@ class tdme::engine::fileio::prototypes::PrototypeReader final
 {
 	friend class tdme::engine::fileio::scenes::SceneReader;
 
+	static vector<string> extensions;
+
 public:
+	/**
+	 * Get supported model extensions
+	 */
+	static const vector<string>& getPrototypeExtensions();
+
 	/**
 	 * Read thumbnail from file
 	 * @param pathName path name

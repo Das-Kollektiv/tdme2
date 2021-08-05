@@ -35,7 +35,7 @@ void ModelEditorView::onSetPrototypeData()
 
 void ModelEditorView::onLoadModel(Prototype* oldEntity, Prototype* entity)
 {
-	TDMESceneEditor::getInstance()->getScene()->replacePrototype(oldEntity->getId(), entity->getId());
+	TDMESceneEditor::getInstance()->getScene()->replacePrototypeByIds(oldEntity->getId(), entity->getId());
 	TDMESceneEditor::getInstance()->getSceneLibrary()->removePrototype(oldEntity->getId());
 	TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
 }

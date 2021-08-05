@@ -193,7 +193,7 @@ void Scene::removeEntitiesByPrototypeId(int prototypeId)
 	}
 }
 
-void Scene::replacePrototype(int searchPrototypeId, int newEntityId)
+void Scene::replacePrototypeByIds(int searchPrototypeId, int newEntityId)
 {
 	auto replaceEntity = getLibrary()->getPrototype(newEntityId);
 	if (replaceEntity == nullptr)

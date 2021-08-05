@@ -209,6 +209,16 @@ public:
 	void updateRendering() override;
 
 	/**
+	 * Clear scene
+	 */
+	void clearScene();
+
+	/**
+	 * Reload scene
+	 */
+	void reloadScene();
+
+	/**
 	 * Reload outliner
 	 * @param outlinerNode selected outliner node
 	 */
@@ -308,6 +318,21 @@ public:
 	 * Get selected reflection environment mapping id
 	 */
 	const string getSelectedReflectionEnvironmentMappingId();
+
+	/**
+	 * Center entities
+	 */
+	void centerEntities();
+
+	/**
+	 * Select same entities
+	 */
+	void selectSameEntities();
+
+	/**
+	 * Open prototype
+	 */
+	void openPrototype();
 
 	/**
 	 * Update gizmo

@@ -95,6 +95,12 @@ using tdme::utilities::Terrain;
 using rapidjson::Document;
 using rapidjson::Value;
 
+vector<string> PrototypeReader::extensions = {"tenvmap", "tmodel", "tparticle", "tterrain", "ttrigger"};
+
+const vector<string>& PrototypeReader::getPrototypeExtensions() {
+	return extensions;
+}
+
 bool PrototypeReader::readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData) {
 	try {
 		auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);

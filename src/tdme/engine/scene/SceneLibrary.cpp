@@ -60,11 +60,6 @@ void SceneLibrary::clear()
 	this->prototypeIdx = 0;
 }
 
-int SceneLibrary::allocatePrototypeId()
-{
-	return prototypeIdx++;
-}
-
 Prototype* SceneLibrary::addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	Prototype* prototype = nullptr;
@@ -193,7 +188,6 @@ Prototype* SceneLibrary::addTerrain(int id, const string& name, const string& de
 
 void SceneLibrary::addPrototype(Prototype* prototype)
 {
-
 	auto prototypeByIdIt = prototypesById.find(prototype->getId());
 	if (prototypeByIdIt != prototypesById.end()) {
 		throw ExceptionBase("Prototype id already in use");

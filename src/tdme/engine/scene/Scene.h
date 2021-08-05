@@ -225,11 +225,11 @@ public:
 	void removeEntitiesByPrototypeId(int prototypeId);
 
 	/**
-	 * Replace entity
+	 * Replace prototype of given search prototype with new prototype
 	 * @param searchPrototypeId search prototype id
 	 * @param newPrototypeId new prototype id
 	 */
-	void replacePrototype(int searchPrototypeId, int newPrototypeId);
+	void replacePrototypeByIds(int searchPrototypeId, int newPrototypeId);
 
 	/**
 	 * @return environment mapping object ids
