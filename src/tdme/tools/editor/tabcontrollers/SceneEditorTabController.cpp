@@ -158,9 +158,11 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == view->getTabId() + "_tab_checkbox_grid") {
 		view->setGridEnabled(node->getController()->getValue().equals("1"));
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_checkbox_snapping") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_checkbox_snapping") == true ||
+		StringTools::startsWith(node->getId(), view->getTabId() + "_tab_snapping_x") == true ||
+		StringTools::startsWith(node->getId(), view->getTabId() + "_tab_snapping_z") == true) {
 		view->setSnapping(
-			node->getController()->getValue().equals("1"),
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_checkbox_snapping"))->getController()->getValue().equals("1") == true,
 			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_x"))->getController()->getValue().getString()),
 			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
@@ -365,18 +367,42 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			}
 			{
 				// replace prototype
-				class OnReplacePrototype: public virtual Action
+				class OnReplacePrototypeAction: public virtual Action
 				{
 				public:
 					void performAction() override {
 						sceneEditorTabController->onReplacePrototype();
 					}
-					OnReplacePrototype(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					OnReplacePrototypeAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
 					}
 				private:
 					SceneEditorTabController* sceneEditorTabController;
 				};
-				popUps->getContextMenuScreenController()->addMenuItem("Replace prototype", "contextmenu_replaceprototype", new OnReplacePrototype(this));
+				popUps->getContextMenuScreenController()->addMenuItem("Replace prototype", "contextmenu_replaceprototype", new OnReplacePrototypeAction(this));
+			}
+			{
+				// jump to prototype
+				class JumpToPrototypeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						auto outlinerSelection = StringTools::tokenize(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
+						if (outlinerSelection.size() != 1) return;
+						string selectedEntityId;
+						if (StringTools::startsWith(outlinerSelection[0], "scene.entities.") == false) return;
+						auto scene = sceneEditorTabController->view->getScene();
+						selectedEntityId = StringTools::substring(outlinerSelection[0], string("scene.entities.").size());
+						auto sceneEntity = scene->getEntity(selectedEntityId);
+						if (sceneEntity == nullptr) return;
+						sceneEditorTabController->view->getEditorView()->getScreenController()->setOutlinerSelection("scene.prototypes." + GUIParser::escapeQuotes(sceneEntity->getPrototype()->getName()));
+						sceneEditorTabController->updateDetails(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection());
+					}
+					JumpToPrototypeAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Jump to prototype", "contextmenu_jumptoprototype", new JumpToPrototypeAction(this));
 			}
 			{
 				// delete
@@ -468,6 +494,14 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				true,
 				new OnLoadSkyModelAction(this)
 			);
+		} else
+		if (node->getId() == "prototype_place") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
+			auto scene = view->getScene();
+			auto sceneLibrary = scene->getLibrary();
+			auto prototype = sceneLibrary->getPrototypeByName(prototypeId);
+			if (prototype != nullptr) view->setPlaceEntityMode(prototype);
 		} else {
 			basePropertiesSubController->onActionPerformed(type, node, view->getScene());
 		}
@@ -490,7 +524,23 @@ void SceneEditorTabController::setSkyDetails() {
 			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
 		);
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void SceneEditorTabController::setPrototypeDetails() {
+	auto scene = view->getScene();
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_prototype\" src=\"resources/engine/gui/template_details_prototype.xml\" />")
+	);
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_prototype"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -545,7 +595,7 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 
@@ -570,7 +620,7 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, co
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 
@@ -612,7 +662,7 @@ void SceneEditorTabController::updateEntityDetails(const Vector3& translation, c
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(scale.getY());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(scale.getZ());
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("SceneEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -666,6 +716,10 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "scene") {
 		setSkyDetails();
+	} else
+	if (StringTools::startsWith(outlinerNode, "scene.prototypes.") == true) {
+		auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
+		setPrototypeDetails();
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
 		auto entityId = StringTools::substring(outlinerNode, string("scene.entities.").size());

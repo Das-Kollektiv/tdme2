@@ -213,6 +213,13 @@ Prototype* SceneLibrary::getPrototype(int id)
 	return nullptr;
 }
 
+Prototype* SceneLibrary::getPrototypeByName(const string& name) {
+	for (auto prototype: prototypes) {
+		if (prototype->getName() == name) return prototype;
+	}
+	return nullptr;
+}
+
 Prototype* SceneLibrary::getTerrainPrototype()
 {
 	for (auto prototype: prototypes) {

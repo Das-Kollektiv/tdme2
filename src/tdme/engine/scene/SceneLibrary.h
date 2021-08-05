@@ -149,6 +149,13 @@ public:
 	Prototype* getPrototype(int id);
 
 	/**
+	 * Get a prototype by given name
+	 * @param name name
+	 * @return prototype
+	 */
+	Prototype* getPrototypeByName(const string& name);
+
+	/**
 	 * Get a terrain prototype
 	 * @return terrain prototype
 	 */

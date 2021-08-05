@@ -275,8 +275,9 @@ public:
 
 	/**
 	 * Initialize place entity mode
+	 * @param prototype prototype
 	 */
-	void setPlaceEntityMode();
+	void setPlaceEntityMode(Prototype* prototype);
 
 	/**
 	 * Finish place entity mode

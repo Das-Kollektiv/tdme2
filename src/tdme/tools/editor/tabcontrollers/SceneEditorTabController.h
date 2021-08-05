@@ -120,6 +120,11 @@ public:
 	void setSkyDetails();
 
 	/**
+	 * Set prototype details
+	 */
+	void setPrototypeDetails();
+
+	/**
 	 * Update reflection details drop down
 	 * @param selectedReflectionEnvironmentMappingId selected reflection environment mapping id
 	 * @param mixed mixed
