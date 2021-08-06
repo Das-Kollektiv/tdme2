@@ -643,6 +643,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				currentFoliageBrushTexture,
 				currentFoliageBrushScale,
 				currentFoliageBrushDensity,
+				currentFoliageBrushIds,
+				currentFoliageBrushPrototypeHeight,
 				Terrain::BRUSHOPERATION_DELETE,
 				prototype->getTerrain()->getFoliageMaps(),
 				recreateFoliagePartitions
@@ -675,6 +677,8 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				currentFoliageBrushTexture,
 				currentFoliageBrushScale,
 				currentFoliageBrushDensity,
+				currentFoliageBrushIds,
+				currentFoliageBrushPrototypeHeight,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
 				recreateFoliagePartitions
