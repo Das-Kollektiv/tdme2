@@ -649,14 +649,14 @@ void TerrainEditorScreenController::applyRampTerrainBrush(BoundingBox& terrainBo
 void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
-
 	// check if having brush prototypes (ids)
-	auto haveBrushPrototypeIds = false;
-	for (auto brushBrushId: currentFoliageBrushIds) {
-		if (brushBrushId != -1) haveBrushPrototypeIds = true;
+	if (currentFoliageBrushOperation == Terrain::BRUSHOPERATION_ADD) {
+		auto haveBrushPrototypeIds = false;
+		for (auto brushBrushId: currentFoliageBrushIds) {
+			if (brushBrushId != -1) haveBrushPrototypeIds = true;
+		}
+		if (haveBrushPrototypeIds == false) return;
 	}
-	if (haveBrushPrototypeIds == false) return;
-
 	//
 	switch(currentFoliageBrushOperation) {
 		case Terrain::BRUSHOPERATION_ADD:
