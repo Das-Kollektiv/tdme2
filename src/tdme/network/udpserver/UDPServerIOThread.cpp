@@ -9,6 +9,7 @@
 #include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
@@ -29,6 +30,7 @@ using tdme::os::network::NIO_INTEREST_NONE;
 using tdme::os::network::NIO_INTEREST_READ;
 using tdme::os::network::NIO_INTEREST_WRITE;
 using tdme::os::network::NIOInterest;
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
@@ -98,6 +100,9 @@ void UDPServerIOThread::run() {
 
 					// receive datagrams as long as its size > 0 and read would not block
 					while ((bytesReceived = socket.read(ip, port, (void*)message, sizeof(message))) > 0) {
+						//
+						AtomicOperations::increment(server->statistics.received);
+
 						// process event, catch and handle client related exceptions
 						UDPServerClient* client = NULL;
 						UDPServerClient* clientNew = NULL;
@@ -121,6 +126,9 @@ void UDPServerIOThread::run() {
 							switch(messageType) {
 								case(UDPServer::MESSAGETYPE_CONNECT):
 									{
+										//
+										AtomicOperations::increment(server->statistics.accepts);
+
 										// check if client is connected already
 										client = server->getClientByIp(ip, port);
 										if (client != NULL) {
@@ -215,6 +223,8 @@ void UDPServerIOThread::run() {
 								// otherwise shut down client
 								client->shutdown();
 							}
+							//
+							AtomicOperations::increment(server->statistics.errors);
 						}
 					}
 				}
@@ -225,21 +235,25 @@ void UDPServerIOThread::run() {
 					MessageQueue messageQueueBatch;
 					messageQueueMutex.lock();
 					for (int i = 0; i < MESSAGEQUEUE_SEND_BATCH_SIZE && messageQueue.empty() == false; i++) {
-						Message* message = &messageQueue.front();
-						messageQueueBatch.push(*message);
+						Message* message = messageQueue.front();
+						messageQueueBatch.push(message);
 						messageQueue.pop();
 					}
 					messageQueueMutex.unlock();
 
 					// try to send batch
 					while (messageQueueBatch.empty() == false) {
-						Message* message = &messageQueueBatch.front();
+						Message* message = messageQueueBatch.front();
 						if (socket.write(message->ip, message->port, (void*)message->message, message->bytes) == -1) {
 							// sending would block, stop trying to sendin
+							AtomicOperations::increment(server->statistics.errors);
 							break;
 						} else {
 							// success, remove message from message queue batch and continue
+							delete message;
 							messageQueueBatch.pop();
+							//
+							AtomicOperations::increment(server->statistics.sent);
 						}
 					}
 
@@ -261,8 +275,8 @@ void UDPServerIOThread::run() {
 					} else {
 						messageQueueMutex.lock();
 						do {
-							Message* message = &messageQueueBatch.front();
-							messageQueue.push(*message);
+							Message* message = messageQueueBatch.front();
+							messageQueue.push(message);
 							messageQueueBatch.pop();
 						} while (messageQueueBatch.empty() == false);
 						messageQueueMutex.unlock();
@@ -305,26 +319,22 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	frame->seekp(0, ios_base::end);
 
 	// create message
-	Message message;
-	message.ip = client->ip;
-	message.port = client->port;
-	message.time = Time::getCurrentMillis();
-	message.messageType = messageType;
-	message.clientId = client->clientId;
-	message.messageId = messageId;
-	message.retries = 0;
-	message.bytes = frame->tellp();
-	if (message.bytes > 512) message.bytes = 512;
-	frame->read(message.message, message.bytes);
+	Message* message = new Message();
+	message->ip = client->ip;
+	message->port = client->port;
+	message->time = Time::getCurrentMillis();
+	message->messageType = messageType;
+	message->clientId = client->clientId;
+	message->messageId = messageId;
+	message->retries = 0;
+	message->bytes = frame->tellp();
+	if (message->bytes > 512) message->bytes = 512;
+	frame->read(message->message, message->bytes);
 
 	if (deleteFrame == true) delete frame;
 
 	// requires ack and retransmission ?
 	if (safe == true) {
-		// 	create message ack
-		Message messageAck;
-		messageAck = message;
-
 		messageMapAckMutex.lock();
 		MessageMapAck::iterator it;
 		// 	check if message has already be pushed to ack
@@ -332,15 +342,20 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
+			delete message;
 			throw NetworkServerException("message already on message queue ack");
 		}
 		//	check if message queue is full
 		if (messageMapAck.size() > maxCCU * 20) {
 			messageMapAckMutex.unlock();
+			delete message;
 			throw NetworkServerException("message queue ack overflow");
 		}
 		// 	push to message queue ack
-		messageMapAck.insert(it, pair<uint32_t, Message>(messageId, messageAck));
+		// 	create message ack
+		Message* messageAck = new Message();
+		*messageAck = *message;
+		messageMapAck.insert(it, pair<uint32_t, Message*>(messageId, messageAck));
 		messageMapAckMutex.unlock();
 	}
 
@@ -350,6 +365,7 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	//	check if message queue is full
 	if (messageQueue.size() > maxCCU * 20) {
 		messageQueueMutex.unlock();
+		delete message;
 		throw NetworkServerException("message queue overflow");
 	}
 	messageQueue.push(message);
@@ -377,12 +393,13 @@ void UDPServerIOThread::processAckReceived(UDPServerClient* client, const uint32
 	iterator = messageMapAck.find(messageId);
 	if (iterator != messageMapAck.end()) {
 		// message exists
-		Message* messageAck = &iterator->second;
+		Message* messageAck = iterator->second;
 		// message ack valid?
 		messageAckValid = messageAck->ip == client->ip && messageAck->port == client->port;
 		// remove if valid
 		if (messageAckValid == true) {
 			// remove message from message queue ack
+			delete iterator->second;
 			messageMapAck.erase(iterator);
 		}
 	}
@@ -404,11 +421,12 @@ void UDPServerIOThread::processAckMessages() {
 	messageMapAckMutex.lock();
 	MessageMapAck::iterator it = messageMapAck.begin();
 	while (it != messageMapAck.end()) {
-		Message* messageAck = &it->second;
+		Message* messageAck = it->second;
 		// message ack timed out?
 		//	most likely the client is gone
 		if (messageAck->retries == MESSAGEACK_RESENDTIMES_TRIES) {
 			// delete from message map ack
+			delete it->second;
 			messageMapAck.erase(it++);
 			// skip
 			continue;
@@ -419,13 +437,14 @@ void UDPServerIOThread::processAckMessages() {
 			messageAck->retries++;
 
 			// construct message
-			Message message = *messageAck;
+			Message* message = new Message();
+			*message = *messageAck;
 
 			// recreate frame header with updated hash and retries
 			stringstream frame;
-			frame.write(message.message, message.bytes);
-			server->writeHeader(&frame, (UDPServer::MessageType)message.messageType, message.clientId, message.messageId, message.retries);
-			frame.read(message.message, message.bytes);
+			frame.write(message->message, message->bytes);
+			server->writeHeader(&frame, (UDPServer::MessageType)message->messageType, message->clientId, message->messageId, message->retries);
+			frame.read(message->message, message->bytes);
 
 			// and push to be resent
 			messageQueueResend.push(message);
@@ -438,8 +457,8 @@ void UDPServerIOThread::processAckMessages() {
 	if (messageQueueResend.empty() == false) {
 		messageQueueMutex.lock();
 		do {
-			Message* message = &messageQueueResend.front();
-			messageQueue.push(*message);
+			Message* message = messageQueueResend.front();
+			messageQueue.push(message);
 			messageQueueResend.pop();
 
 			// set nio interest

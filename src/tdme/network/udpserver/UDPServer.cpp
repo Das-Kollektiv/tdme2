@@ -279,12 +279,6 @@ void UDPServer::writeHeader(stringstream* frame, MessageType messageType, const 
 void UDPServer::addClient(UDPServerClient* client) {
 	uint32_t clientId = client->clientId;
 
-	// prepare client struct for map
-	Client _client;
-	_client.clientId = clientId;
-	_client.client = client;
-	_client.time = Time::getCurrentMillis();
-
 	//
 	clientIdMapReadWriteLock.writeLock();
 
@@ -306,8 +300,14 @@ void UDPServer::addClient(UDPServerClient* client) {
 		throw NetworkServerException("client id is already mapped");
 	}
 
+	// prepare client struct for map
+	ClientId* _clientId = new ClientId();
+	_clientId->clientId = clientId;
+	_clientId->client = client;
+	_clientId->time = Time::getCurrentMillis();
+
 	// put to map
-	clientIdMap[clientId] = _client;
+	clientIdMap[clientId] = _clientId;
 
 	// put to client ip set
 	clientIpMapReadWriteLock.writeLock();
@@ -353,7 +353,8 @@ void UDPServer::removeClient(UDPServerClient* client) {
 		throw NetworkServerException("client id is not mapped");
 	}
 
-	// remove from map
+	// remove from client id map
+	delete clientIdMapit->second;
 	clientIdMap.erase(clientIdMapit);
 
 	// remove from client ip set
@@ -371,7 +372,7 @@ void UDPServer::removeClient(UDPServerClient* client) {
 		throw NetworkServerException("client ip is not registered");
 	}
 
-	// put to map
+	// remove from ip map
 	clientIpMap.erase(clientIpMapIt);
 
 	//
@@ -402,7 +403,7 @@ UDPServerClient* UDPServer::lookupClient(const uint32_t clientId) {
 	}
 
 	// get client
-	Client* _client = &it->second;
+	ClientId* _client = it->second;
 	//	update last access time
 	_client->time = Time::getCurrentMillis();
 	//	get client
@@ -439,7 +440,7 @@ void UDPServer::cleanUpClients() {
 
 	uint64_t now = Time::getCurrentMillis();
 	for(ClientIdMap::iterator it = clientIdMap.begin(); it != clientIdMap.end(); ++it) {
-		Client *client = &it->second;
+		ClientId* client = it->second;
 		if (client->client->shutdownRequested == true ||
 			client->time < now - CLIENT_CLEANUP_IDLETIME) {
 
@@ -492,4 +493,18 @@ void UDPServer::processAckReceived(UDPServerClient* client, const uint32_t messa
 
 const uint32_t UDPServer::allocateClientId() {
 	return AtomicOperations::increment(clientCount);
+}
+
+const UDPServer::UDPServer_Statistics UDPServer::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.received = 0;
+	statistics.sent = 0;
+	statistics.accepts = 0;
+	statistics.errors = 0;
+	// determine clients that are idle or beeing flagged to be shut down
+	clientIdMapReadWriteLock.readLock();
+	stats.clients = clientIdMap.size();
+	clientIdMapReadWriteLock.unlock();
+	return stats;
 }
