@@ -128,7 +128,7 @@ void TerrainEditorScreenController::initialize()
 		foliageBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file_clear"));
 		btnFoliageBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_foliage_brush_apply"));
 
-		for (auto i = 0; i < 5; i++) {
+		for (auto i = 0; i < 10; i++) {
 			foliageBrushPrototypeFileCount[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_count"));
 			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
 			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
@@ -160,7 +160,7 @@ void TerrainEditorScreenController::initialize()
 	prototypeBaseSubScreenController->initialize(screenNode);
 	btnTerrainDimensionSave->getController()->setDisabled(true);
 	onApplyTerrainBrush();
-	for (auto i = 0; i < 5; i++) {
+	for (auto i = 0; i < 10; i++) {
 		foliageBrushPrototypeScaleMin[i]->getController()->setValue(MutableString(1.0f));
 		foliageBrushPrototypeScaleMax[i]->getController()->setValue(MutableString(1.0f));
 		foliageBrushPrototypeRangeXMin[i]->getController()->setValue(MutableString(0.0f));
@@ -929,7 +929,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		currentFoliageBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		// prototypes
-		array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
+		array<Prototype*, 10> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
 			auto foliagePrototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (foliagePrototypeFileName.empty() == false) {

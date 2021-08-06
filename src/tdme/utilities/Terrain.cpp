@@ -1198,13 +1198,6 @@ void Terrain::createWaterModels(
 	vector<Model*>& waterModels
 ) {
 	auto waterModelId = AtomicOperations::increment(Terrain::waterModelId);
-	//
-	for (auto& mIt: waterPositionMap) {
-		Console::print(to_string(mIt.first) + ": ");
-		for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
-		Console::println();
-	}
-
 	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
 	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
 	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
@@ -1410,13 +1403,13 @@ void Terrain::applyFoliageBrush(
 	Texture* brushTexture,
 	float brushScale,
 	float brushDensity,
-	array<int, 5> brushPrototypeIds,
-	array<float, 5> brushPrototypeCount,
-	array<array<float, 2>, 5> brushPrototypeScale,
-	array<array<float, 6>, 5> brushPrototypeRotation,
-	array<array<float, 2>, 5> brushPrototypeSlope,
-	array<array<float, 2>, 5> brushPrototypeHeight,
-	array<bool, 5> brushPrototypeNormalAlign,
+	array<int, 10> brushPrototypeIds,
+	array<float, 10> brushPrototypeCount,
+	array<array<float, 2>, 10> brushPrototypeScale,
+	array<array<float, 6>, 10> brushPrototypeRotation,
+	array<array<float, 2>, 10> brushPrototypeSlope,
+	array<array<float, 2>, 10> brushPrototypeHeight,
+	array<bool, 10> brushPrototypeNormalAlign,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
@@ -1522,7 +1515,17 @@ void Terrain::applyFoliageBrush(
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
-				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
+				//
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+				continue;
+			}
 
 			//
 			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
@@ -1715,8 +1718,20 @@ void Terrain::applyFoliageDeleteBrush(
 			//
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+
+			//
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
-				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
+				//
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+				continue;
+			}
 
 			//
 			auto partitionX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / PARTITION_SIZE);
@@ -1820,7 +1835,17 @@ void Terrain::updateFoliageTerrainBrush(
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
-				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) continue;
+				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
+				//
+				brushPosition.add(
+					Vector3(
+						STEP_SIZE,
+						0.0f,
+						0.0f
+					)
+				);
+				continue;
+			}
 
 			//
 			auto textureX = static_cast<int>(x / brushScale);
