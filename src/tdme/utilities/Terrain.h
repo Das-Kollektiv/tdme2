@@ -431,6 +431,8 @@ public:
 	 * @param brushTexture brush texture
 	 * @param brushScale brush scale
 	 * @param brushDensity brush density
+	 * @param brushPrototypeIds brush prototype ids
+	 * @param brushPrototypeHeight brush prototype height min, max
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param recreateFoliagePartitions recreate foliage partitions
@@ -441,6 +443,8 @@ public:
 		Texture* brushTexture,
 		float brushScale,
 		float brushDensity,
+		array<int, 10> brushPrototypeIds,
+		array<array<float, 2>, 10> brushPrototypeHeight,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& recreateFoliagePartitions

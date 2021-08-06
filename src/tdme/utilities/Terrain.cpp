@@ -1655,6 +1655,8 @@ void Terrain::applyFoliageDeleteBrush(
 	Texture* brushTexture,
 	float brushScale,
 	float brushDensity,
+	array<int, 10> brushPrototypeIds,
+	array<array<float, 2>, 10> brushPrototypeHeight,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	unordered_set<int>& recreateFoliagePartitions
@@ -1673,6 +1675,15 @@ void Terrain::applyFoliageDeleteBrush(
 	auto textureHeight = brushTexture->getTextureHeight();
 	auto textureBytePerPixel = brushTexture->getDepth() == 32?4:3;
 
+	auto heightMin = Float::MAX_VALUE;
+	auto heightMax = Float::MIN_VALUE;
+	auto prototypeCount = 0;
+	for (auto i = 0; i < brushPrototypeIds.size(); i++) {
+		if (brushPrototypeIds[i] == -1) continue;
+		heightMin = Math::min(heightMin, brushPrototypeHeight[i][0]);
+		heightMax = Math::max(heightMax, brushPrototypeHeight[i][1]);
+		prototypeCount++;
+	}
 	//
 	for (auto z = 0.0f; z < textureHeight * brushScale; z+= 1.0f) {
 		auto brushPosition =
@@ -1734,7 +1745,10 @@ void Terrain::applyFoliageDeleteBrush(
 									translation.getX() >= leftVertex.getX() &&
 									translation.getX() <= vertex.getX() &&
 									translation.getZ() >= topVertex.getZ() &&
-									translation.getZ() <= vertex.getZ()) {
+									translation.getZ() <= vertex.getZ() &&
+									(prototypeCount == 0 ||
+									(translation.getY() >= heightMin &&
+									translation.getY() <= heightMax))) {
 									//
 									foliageMapPartitionPrototypeTransformations.erase(foliageMapPartitionPrototypeTransformations.begin() + i);
 									recreateFoliagePartitions.insert(partitionIdx);
