@@ -51,8 +51,8 @@ private:
 		char message[512];
 		size_t bytes;
 	};
-	typedef queue<Message> MessageQueue;
-	typedef map<uint32_t, Message> MessageMapAck;
+	typedef queue<Message*> MessageQueue;
+	typedef map<uint32_t, Message*> MessageMapAck;
 
 	/**
 	 * @brief public constructor should be called in TCPServer

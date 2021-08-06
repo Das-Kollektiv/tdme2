@@ -149,6 +149,9 @@ void UDPClient::run() {
 
 					// receive datagrams as long as its size > 0 and read would not block
 					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
+						//
+						statistics.received++;
+						//
 						UDPClientMessage* clientMessage = UDPClientMessage::parse(message, bytesReceived);
 						try {
 							if (clientMessage == nullptr) {
@@ -217,6 +220,9 @@ void UDPClient::run() {
 								(exception.what())
 							);
 
+							//
+							statistics.errors++;
+
 							// rethrow to quit communication for now
 							// TODO: maybe find a better way to handle errors
 							//	one layer up should be informed about network client problems somehow
@@ -231,21 +237,27 @@ void UDPClient::run() {
 					MessageQueue messageQueueBatch;
 					messageQueueMutex.lock();
 					for (int i = 0; i < MESSAGEQUEUE_SEND_BATCH_SIZE && messageQueue.empty() == false; i++) {
-						Message* message = &messageQueue.front();
-						messageQueueBatch.push(*message);
+						Message* message = messageQueue.front();
+						messageQueueBatch.push(message);
 						messageQueue.pop();
 					}
 					messageQueueMutex.unlock();
 
 					// try to send batch
 					while (messageQueueBatch.empty() == false) {
-						Message* message = &messageQueueBatch.front();
+						Message* message = messageQueueBatch.front();
 						if (socket.write(ip, port, (void*)message->message, message->bytes) == -1) {
 							// sending would block, stop trying to sendin
+							statistics.errors++;
+							//
 							break;
 						} else {
 							// success, remove message from message queue batch and continue
+							Message* message = messageQueueBatch.front();
+							delete message;
 							messageQueueBatch.pop();
+							//
+							statistics.sent++;
 						}
 					}
 
@@ -267,8 +279,8 @@ void UDPClient::run() {
 					} else {
 						messageQueueMutex.lock();
 						do {
-							Message* message = &messageQueueBatch.front();
-							messageQueue.push(*message);
+							Message* message = messageQueueBatch.front();
+							messageQueue.push(message);
 							messageQueueBatch.pop();
 						} while (messageQueueBatch.empty() == false);
 						messageQueueMutex.unlock();
@@ -301,36 +313,37 @@ void UDPClient::run() {
 
 void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	// create message
-	Message message;
-	message.time = clientMessage->getTime();
-	message.messageType = clientMessage->getMessageType();
-	message.messageId = clientMessage->getMessageId();
-	message.retries = 0;
-	clientMessage->generate(message.message, message.bytes);
+	Message* message = new Message();
+	message->time = clientMessage->getTime();
+	message->messageType = clientMessage->getMessageType();
+	message->messageId = clientMessage->getMessageId();
+	message->retries = 0;
+	clientMessage->generate(message->message, message->bytes);
 	delete clientMessage;
 
 	// requires ack and retransmission ?
 	if (safe == true) {
-		// 	create message ack
-		Message messageAck;
-		messageAck = message;
-
 		messageMapAckMutex.lock();
 		MessageMapAck::iterator it;
 		// 	check if message has already be pushed to ack
-		it = messageMapAck.find(message.messageId);
+		it = messageMapAck.find(message->messageId);
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
+			delete message;
 			throw NetworkClientException("message already on message queue ack");
 		}
 		//	check if message queue is full
 		if (messageMapAck.size() > 1000) {
 			messageMapAckMutex.unlock();
+			delete message;
 			throw NetworkClientException("message queue ack overflow");
 		}
 		// 	push to message queue ack
-		messageMapAck.insert(it, pair<uint32_t, Message>(message.messageId, messageAck));
+		// 	create message ack
+		Message* messageAck = new Message();
+		*messageAck = *message;
+		messageMapAck.insert(it, pair<uint32_t, Message*>(message->messageId, messageAck));
 		messageMapAckMutex.unlock();
 	}
 
@@ -340,6 +353,7 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	//	check if message queue is full
 	if (messageQueue.size() > 1000) {
 		messageQueueMutex.unlock();
+		delete message;
 		throw NetworkClientException("message queue overflow");
 	}
 	messageQueue.push(message);
@@ -371,6 +385,7 @@ void UDPClient::processAckReceived(const uint32_t messageId) {
 		// remove if valid
 		if (messageAckValid == true) {
 			// remove message from message queue ack
+			delete iterator->second;
 			messageMapAck.erase(iterator);
 		}
 	}
@@ -389,11 +404,12 @@ void UDPClient::processAckMessages() {
 	messageMapAckMutex.lock();
 	MessageMapAck::iterator it = messageMapAck.begin();
 	while (it != messageMapAck.end()) {
-		Message* messageAck = &it->second;
+		Message* messageAck = it->second;
 		// message ack timed out?
 		//	most likely the client is gone
 		if (messageAck->retries == MESSAGEACK_RESENDTIMES_TRIES) {
 			// delete from message map ack
+			delete it->second;
 			messageMapAck.erase(it++);
 			// skip
 			continue;
@@ -404,16 +420,17 @@ void UDPClient::processAckMessages() {
 			messageAck->retries++;
 
 			// construct message
-			Message message = *messageAck;
+			Message* message = new Message();
+			*message = *messageAck;
 
 			// parse client message from message raw data
-			UDPClientMessage* clientMessage = UDPClientMessage::parse(message.message, message.bytes);
+			UDPClientMessage* clientMessage = UDPClientMessage::parse(message->message, message->bytes);
 
 			// increase/set retry
 			clientMessage->retry();
 
 			// recreate message
-			clientMessage->generate(message.message, message.bytes);
+			clientMessage->generate(message->message, message->bytes);
 
 			// delete client message
 			delete clientMessage;
@@ -429,8 +446,8 @@ void UDPClient::processAckMessages() {
 	if (messageQueueResend.empty() == false) {
 		messageQueueMutex.lock();
 		do {
-			Message* message = &messageQueueResend.front();
-			messageQueue.push(*message);
+			Message* message = messageQueueResend.front();
+			messageQueue.push(message);
 			messageQueueResend.pop();
 
 			// set nio interest
@@ -460,16 +477,16 @@ bool UDPClient::processSafeMessage(UDPClientMessage* clientMessage) {
 	if (it != messageMapSafe.end()) {
 		// yep, we did
 		messageProcessed = true;
-		SafeMessage& message = it->second;
-		message.receptions++;
+		SafeMessage* message = it->second;
+		message->receptions++;
 	} else {
 		// nope, just remember message
-		SafeMessage message;
-		message.messageId = messageId;
-		message.receptions = 1;
-		message.time = Time::getCurrentMillis();
+		SafeMessage* message = new SafeMessage();
+		message->messageId = messageId;
+		message->receptions = 1;
+		message->time = Time::getCurrentMillis();
 		// TODO: check for overflow
-		messageMapSafe.insert(it, pair<uint32_t, SafeMessage>(messageId, message));
+		messageMapSafe.insert(it, pair<uint32_t, SafeMessage*>(messageId, message));
 	}
 
 	//
@@ -500,8 +517,9 @@ void UDPClient::cleanUpSafeMessages() {
 	uint64_t now = Time::getCurrentMillis();
 	MessageMapSafe::iterator it = messageMapSafe.begin();
 	while (it != messageMapSafe.end()) {
-		SafeMessage& message = it->second;
-		if (message.time < now - MESSAGESSAFE_KEEPTIME) {
+		SafeMessage* message = it->second;
+		if (message->time < now - MESSAGESSAFE_KEEPTIME) {
+			delete it->second;
 			messageMapSafe.erase(it++);
 			continue;
 		}
@@ -537,4 +555,13 @@ UDPClientMessage* UDPClient::createMessage(stringstream* frame) {
 		0,
 		frame
 	);
+}
+
+const UDPClient::UDPClient_Statistics UDPClient::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.received = 0;
+	statistics.sent = 0;
+	statistics.errors = 0;
+	return stats;
 }

@@ -42,6 +42,15 @@ class tdme::network::udpserver::UDPServer: public Thread, public Server<UDPServe
 	friend class ServerGroup<UDPServer, UDPServerClient, UDPServerGroup>;
 
 public:
+	struct UDPServer_Statistics {
+		int64_t time { -1LL };
+		uint32_t received { 0 };
+		uint32_t sent { 0 };
+		uint32_t clients { 0 };
+		uint32_t accepts { 0 };
+		uint32_t errors { 0 };
+	};
+
 	/**
 	 * @brief Public constructor
 	 * @param name server name
@@ -60,6 +69,11 @@ public:
 	 * main event loop
 	 */
 	virtual void run();
+
+	/**
+	 * @returns UDP client statistics
+	 */
+	const UDPServer_Statistics getStatistics();
 
 protected:
 	enum MessageType {MESSAGETYPE_CONNECT = 0, MESSAGETYPE_MESSAGE = 1, MESSAGETYPE_ACKNOWLEDGEMENT = 2};
@@ -111,12 +125,12 @@ protected:
 	virtual void writeHeader(stringstream* frame, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries);
 private:
 	static const uint64_t CLIENT_CLEANUP_IDLETIME = 120000L;
-	struct Client {
+	struct ClientId {
 		uint32_t clientId;
 		UDPServerClient* client;
 		uint64_t time;
 	};
-	typedef std::map<uint32_t, Client> ClientIdMap;
+	typedef std::map<uint32_t, ClientId*> ClientIdMap;
 	typedef std::map<string, UDPServerClient*> ClientIpMap;
 	typedef std::set<UDPServerClient*> ClientSet;
 	static const uint32_t MESSAGE_ID_NONE = 0;
@@ -195,5 +209,7 @@ private:
 
 	uint32_t clientCount;
 	uint32_t messageCount;
+
+	UDPServer_Statistics statistics;
 };
 

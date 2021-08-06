@@ -37,6 +37,13 @@ using tdme::network::udpclient::UDPClientMessage;
  */
 class tdme::network::udpclient::UDPClient : public Thread {
 public:
+	struct UDPClient_Statistics {
+		int64_t time { -1LL };
+		uint32_t received { 0 };
+		uint32_t sent { 0 };
+		uint32_t errors { 0 };
+	};
+
 	/**
 	 * Get retry time for given retry count
 	 * @param retries retry count
@@ -114,6 +121,12 @@ public:
 	 * @param frame frame content
 	 */
 	UDPClientMessage* createMessage(stringstream* frame);
+
+	/**
+	 * @returns UDP client statistics
+	 */
+	const UDPClient_Statistics getStatistics();
+
 private:
 	/**
 	 * Processes ack reveived
@@ -153,8 +166,8 @@ private:
 		char message[512];
 		size_t bytes;
 	};
-	typedef queue<Message> MessageQueue;
-	typedef map<uint32_t, Message> MessageMapAck;
+	typedef queue<Message*> MessageQueue;
+	typedef map<uint32_t, Message*> MessageMapAck;
 	typedef queue<UDPClientMessage*> RecvMessageQueue;
 
 	static const uint64_t MESSAGESSAFE_KEEPTIME = 5000L;
@@ -163,7 +176,7 @@ private:
 		uint64_t time;
 		uint8_t receptions;
 	};
-	typedef map<uint32_t, SafeMessage> MessageMapSafe;
+	typedef map<uint32_t, SafeMessage*> MessageMapSafe;
 
 
 	KernelEventMechanism kem;
@@ -181,5 +194,7 @@ private:
 	MessageMapSafe messageMapSafe;
 
 	UDPSocket socket;
+
+	UDPClient_Statistics statistics;
 };
 
