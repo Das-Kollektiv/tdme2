@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -40,6 +41,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::fileio::textures::PNGTextureWriter;
@@ -103,7 +105,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 		AnimationSetup* animationSetup = it.second;
 		writeAnimationSetup(&os, animationSetup);
 	}
-	if (os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
+	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
