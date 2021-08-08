@@ -196,4 +196,13 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return success
 	 */
 	virtual void removeFile(const string& pathName, const string& fileName) = 0;
+
+	/**
+	 * Reads a thumbnail attachment from binary file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return attachment available
+	 */
+	virtual bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) = 0;
+
 };

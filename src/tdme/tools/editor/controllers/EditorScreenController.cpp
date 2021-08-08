@@ -530,9 +530,14 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 
 				string thumbNail = "resources/engine/textures/terrain_dirt.png";
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
-				string templateSource = StringTools::endsWith(fileNameLowerCase, ".tmodel") == true?"button_template_thumbnail_texture.xml":"button_template_thumbnail.xml";
+				string templateSource =
+					StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tm") == true?
+						"button_template_thumbnail_texture.xml":
+						"button_template_thumbnail.xml";
 				vector<uint8_t> thumbnailPNGData;
-				if (PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) {
+				if ((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) {
+					Console::println(fileNameLowerCase + ": " + to_string(thumbnailPNGData.size()));
 					auto thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(idx), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();

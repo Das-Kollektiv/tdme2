@@ -413,6 +413,10 @@ void ArchiveFileSystem::removeFile(const string& pathName, const string& fileNam
 	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
 }
 
+bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) {
+	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+}
+
 const string ArchiveFileSystem::computeSHA256Hash() {
 	ifs.seekg(0, ios::end);
 	auto bytesTotal = ifs.tellg();
@@ -438,3 +442,4 @@ const string ArchiveFileSystem::computeSHA256Hash() {
 	for (int i = 0; i < SHA256::DIGEST_SIZE; i++) sprintf(buf + i * 2, "%02x", digest[i]);
 	return std::string(buf);
 }
+
