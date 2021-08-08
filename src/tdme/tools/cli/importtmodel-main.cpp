@@ -87,7 +87,7 @@ public:
 
 	// overriden methods
 	void display() override {
-		//try {
+		try {
 			Prototype* prototype = nullptr;
 			// load model
 			Console::println("Loading model: " + modelFileName);
@@ -152,9 +152,9 @@ public:
 				FileSystem::getInstance()->getFileName(tModelFileName),
 				prototype
 			);
-		//} catch (Exception& exception) {
-			//Console::println("An error occurred: " + string(exception.what()));
-		//}
+		} catch (Exception& exception) {
+			Console::println("An error occurred: " + string(exception.what()));
+		}
 		Application::exit(0);
 	}
 
