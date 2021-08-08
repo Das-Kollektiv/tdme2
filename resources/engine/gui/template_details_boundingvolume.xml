@@ -24,7 +24,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_sphere_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_sphere_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -32,7 +32,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="boundingvolume_sphere_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_sphere_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -40,7 +40,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="boundingvolume_sphere_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_sphere_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -51,7 +51,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_sphere_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_sphere_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 				</layout>
@@ -62,7 +62,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Point A" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_capsule_a_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_a_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -70,7 +70,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="boundingvolume_capsule_a_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_a_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -78,7 +78,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="boundingvolume_capsule_a_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_a_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -90,7 +90,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Point B" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_capsule_b_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_b_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -98,7 +98,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="boundingvolume_capsule_b_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_b_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -106,7 +106,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="boundingvolume_capsule_b_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_b_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -117,7 +117,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_capsule_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_capsule_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -129,7 +129,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_obb_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -137,7 +137,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="boundingvolume_obb_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -145,7 +145,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="boundingvolume_obb_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -185,7 +185,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Width" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="boundingvolume_obb_width" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_width" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -193,7 +193,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="boundingvolume_obb_height"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_height"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -201,7 +201,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Depth" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="boundingvolume_obb_depth"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_obb_depth"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					
@@ -219,7 +219,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Resolution" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_resolution" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_resolution" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -228,7 +228,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Depth" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_depth" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_depth" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -237,7 +237,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Concavity" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_concavity" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_concavity" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -246,7 +246,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="P down sampling" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_planedownsampling" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_planedownsampling" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -255,7 +255,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="CH down sampling" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_convexhullownsampling" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_convexhullownsampling" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -264,7 +264,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Alpha" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_alpha" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_alpha" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -273,7 +273,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Beta" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_beta" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_beta" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -282,7 +282,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Max vertices / CH" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_maxverticesperch" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_maxverticesperch" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -291,7 +291,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Min volume / CH" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_minvolumeperch" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_minvolumeperch" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -300,7 +300,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="PCA" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="boundingvolume_generated_pca" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="boundingvolume_generated_pca" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="10" />
