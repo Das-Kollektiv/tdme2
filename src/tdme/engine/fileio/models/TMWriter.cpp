@@ -296,24 +296,26 @@ void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 }
 
 void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
-	{
-		auto prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::MODEL,
-			model->getId(),
-			model->getId(),
-			"",
-			model->getId(),
-			string(),
-			model,
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-		vector<uint8_t> pngData;
-		string base64PNGData;
-		Tools::oseThumbnail(prototype, pngData);
-		os->writeUInt8tArray(pngData);
-		os->writeInt(pngData.size()); // png size
-		os->writeUInt8tArray({'T', 'M', 'B', 'N'}); // attachment type id
-		os->writeUInt8tArray({'A', 'T', 'M', 'T'}); // attachment id
-	}
+	// generate thumbnail
+	auto prototype = new Prototype(
+		Prototype::ID_NONE,
+		Prototype_Type::MODEL,
+		model->getId(),
+		model->getId(),
+		"",
+		model->getId(),
+		string(),
+		model,
+		Vector3(0.0f, 0.0f, 0.0f)
+	);
+	vector<uint8_t> pngData;
+	string base64PNGData;
+	Tools::oseThumbnail(prototype, pngData);
+	delete prototype;
+
+	// write as attachment
+	os->writeUInt8tArray(pngData);
+	os->writeInt(pngData.size()); // png size
+	os->writeUInt8tArray({'T', 'M', 'B', 'N'}); // attachment type id
+	os->writeUInt8tArray({'A', 'T', 'M', 'T'}); // attachment id
 }
