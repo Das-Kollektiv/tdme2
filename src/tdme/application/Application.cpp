@@ -116,12 +116,16 @@ void Application::cancelExit() {
 }
 
 void Application::exit(int exitCode) {
-	Application::application->exitCode = exitCode;
-	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
-	#else
+	if (Application::application == nullptr) {
 		::exit(exitCode);
-	#endif
+	} else {
+		Application::application->exitCode = exitCode;
+		#if defined(VULKAN) || defined(GLFW3)
+			glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
+		#else
+			::exit(exitCode);
+		#endif
+	}
 }
 
 #if defined(_WIN32)

@@ -932,7 +932,51 @@ endif
 #	src/tdme/tools/cli/sortincludes-main.cpp
 
 MAIN_SRCS = \
+	src/tdme/tests/AngleTest-main.cpp \
+	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/CrashTest-main.cpp \
+	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/EntityHierarchyTest-main.cpp \
+	src/tdme/tests/HashLinkTest-main.cpp \
+	src/tdme/tests/HTTPClientTest-main.cpp \
+	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
+	src/tdme/tests/LODTest-main.cpp \
+	src/tdme/tests/FlowMapTest-main.cpp \
+	src/tdme/tests/FlowMapTest2-main.cpp \
+	src/tdme/tests/FoliageTest-main.cpp \
+	src/tdme/tests/MathOperatorTest-main.cpp \
+	src/tdme/tests/MiniScriptTest-main.cpp \
+	src/tdme/tests/PathFindingTest-main.cpp \
+	src/tdme/tests/PivotTest-main.cpp \
+	src/tdme/tests/PhysicsTest1-main.cpp \
+	src/tdme/tests/PhysicsTest2-main.cpp \
+	src/tdme/tests/PhysicsTest3-main.cpp \
+	src/tdme/tests/PhysicsTest4-main.cpp \
+	src/tdme/tests/RayTracingTest-main.cpp \
+	src/tdme/tests/SkinningTest-main.cpp \
+	src/tdme/tests/ThreadingTest-main.cpp \
+	src/tdme/tests/TreeTest-main.cpp \
+	src/tdme/tests/UDPClientTest-main.cpp \
+	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
+	src/tdme/tools/gui/GUITest-main.cpp \
+	src/tdme/tools/installer/Installer-main.cpp \
+	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
+	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
+	src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp \
+	src/tdme/tools/terraineditor/TDMETerrainEditor-main.cpp \
+	src/tdme/tools/cli/archive-main.cpp \
+	src/tdme/tools/cli/converttotm-main.cpp \
+	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+	src/tdme/tools/cli/create-installer-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
+	src/tdme/tools/cli/generatelicenses-main.cpp \
+	src/tdme/tools/cli/importtmodel-main.cpp \
+	src/tdme/tools/cli/makefilegenerator-main.cpp \
+	src/tdme/tools/cli/optimizemodel-main.cpp \
+	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
+	src/tdme/tools/cli/sortincludes-main.cpp
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)

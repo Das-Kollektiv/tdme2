@@ -585,6 +585,5 @@ Model* Tools::getDefaultObb() {
 }
 
 Tools::ToolsShutdown::~ToolsShutdown() {
-	Console::println("Tools::ToolsShutdown::~ToolsShutdown(): Disposing offscreen engine");
-	Tools::oseDispose();
+	if (Application::hasApplication() == true) Tools::oseDispose();
 };

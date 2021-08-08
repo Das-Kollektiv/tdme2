@@ -313,6 +313,7 @@ void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	vector<uint8_t> pngData;
 	string base64PNGData;
 	Tools::oseThumbnail(prototype, pngData);
+	prototype->unsetModel();
 	delete prototype;
 
 	// write as attachment

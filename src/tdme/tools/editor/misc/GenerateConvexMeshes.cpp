@@ -88,9 +88,9 @@ void GenerateConvexMeshes::removeConvexMeshes(Prototype* prototype)
 	// delete old convex meshes
 	for (int i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 		auto boundingVolume = prototype->getBoundingVolume(i);
-		//if (boundingVolume->isGenerated() == false) {
-		//	continue;
-		/*} else*/ {
+		if (boundingVolume->isGenerated() == false) {
+			continue;
+		} else {
 			if (boundingVolume->getConvexMeshFile().empty() == false &&
 				FileSystem::getInstance()->fileExists(boundingVolume->getConvexMeshFile()) == true) {
 				FileSystem::getInstance()->removeFile(
