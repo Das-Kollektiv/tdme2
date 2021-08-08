@@ -77,7 +77,7 @@ Prototype* SceneLibrary::addModel(int id, const string& name, const string& desc
 			description,
 			"",
 			pathName + "/" + fileName,
-			StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+			string(), // TODO: thumbnail
 			model,
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
@@ -99,7 +99,7 @@ Prototype* SceneLibrary::addTrigger(int id, const string& name, const string& de
 		description,
 		"",
 		cacheId,
-		StringTools::replace(StringTools::replace(StringTools::replace(modelId, "\\", "_"), "/", "_"), ":", "_") + ".png",
+		string(), // TODO: thumbnail
 		nullptr,
 		Vector3()
 	);
@@ -120,9 +120,9 @@ Prototype* SceneLibrary::addEnvironmentMapping(int id, const string& name, const
 		Prototype_Type::ENVIRONMENTMAPPING,
 		name,
 		description,
-		"",
+		string(),
 		cacheId,
-		StringTools::replace(StringTools::replace(StringTools::replace(cacheId, "\\", "_"), "/", "_"), ":", "_") + ".png",
+		string(), // TODO: thumbnail
 		nullptr,
 		Vector3()
 	);
@@ -144,7 +144,7 @@ Prototype* SceneLibrary::addEmpty(int id, const string& name, const string& desc
 		description,
 		"",
 		cacheId,
-		StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+		string(), // TODO: thumbnail
 		model,
 		Vector3()
 	);
@@ -159,9 +159,9 @@ Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const str
 		Prototype_Type::PARTICLESYSTEM,
 		name,
 		description,
-		"",
-		"",
-		"",
+		string(),
+		string(),
+		string(), // TODO: thumbnail
 		nullptr,
 		Vector3()
 	);
@@ -176,9 +176,9 @@ Prototype* SceneLibrary::addTerrain(int id, const string& name, const string& de
 		Prototype_Type::TERRAIN,
 		name,
 		description,
-		"",
-		"",
-		"",
+		string(),
+		string(),
+		string(), // TODO: thumbnail
 		nullptr,
 		Vector3()
 	);

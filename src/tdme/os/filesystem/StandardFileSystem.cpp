@@ -7,6 +7,7 @@
 #endif
 
 #include <algorithm>
+#include <array>
 #include <dirent.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -25,6 +26,7 @@
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::array;
 using std::getline;
 using std::ifstream;
 using std::ios;
@@ -344,4 +346,45 @@ void StandardFileSystem::removeFile(const string& pathName, const string& fileNa
 	if (status == -1) {
 		throw FileSystemException("Unable to delete file(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
+}
+
+bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) {
+	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
+	if (ifs.is_open() == false) {
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
+	}
+
+	// check size
+	ifs.seekg( 0, ios::end );
+	size_t size = ifs.tellg();
+	if (size < 12) return false;
+
+	array<uint8_t, 12> id;
+
+	ifs.seekg(size - 12, ios::beg);
+	ifs.read((char*)id.data(), 12);
+
+	// attachment
+	if (id[8] != 'A' || id[9] != 'T' || id[10] != 'M' || id[11] != 'T') {
+		return false;
+	}
+	// thumbnail
+	if (id[4] != 'T' || id[5] != 'M' || id[6] != 'B' || id[7] != 'N') {
+		return false;
+	}
+	// attachment size
+	int32_t attachmentSize =
+		((static_cast<int32_t>(id[0]) & 0xFF) << 24) +
+		((static_cast<int32_t>(id[1]) & 0xFF) << 16) +
+		((static_cast<int32_t>(id[2]) & 0xFF) << 8) +
+		((static_cast<int32_t>(id[3]) & 0xFF) << 0);
+
+	// do read the attachment
+	content.resize(attachmentSize);
+	ifs.seekg(size - 12 - attachmentSize, ios::beg);
+	ifs.read((char*)content.data(), attachmentSize);
+	ifs.close();
+
+	//
+	return content.empty() == false;
 }

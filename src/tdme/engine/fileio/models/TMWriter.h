@@ -79,7 +79,7 @@ public:
 	 * @throws model file IO exception
 	 * @param b byte
 	 */
-	inline void writeByte(int8_t b) {
+	inline void writeByte(uint8_t b) {
 		data->push_back(b);
 	}
 
@@ -191,6 +191,17 @@ public:
 		writeInt(f.size());
 		for (auto i = 0; i < f.size(); i++) {
 			writeFloat(f[i]);
+		}
+	}
+
+	/**
+	 * Writes a uint8_t array to output stream, note that no size information is given in this case
+	 * @param d uint8_t array
+	 * @throws model file IO exception
+	 */
+	inline void writeUInt8tArray(const vector<uint8_t>& d) {
+		for (auto i = 0; i < d.size(); i++) {
+			writeByte(d[i]);
 		}
 	}
 
@@ -324,4 +335,13 @@ private:
 	 * @throws model file IO exception
 	 */
 	static void writeNode(TMWriterOutputStream* os, Node* g);
+
+	/**
+	 * Write thumbnail to output stream
+	 * @param os output stream
+	 * @param model model
+	 * @throws model file IO exception
+	 */
+	static void writeThumbnail(TMWriterOutputStream* os, Model* model);
+
 };
