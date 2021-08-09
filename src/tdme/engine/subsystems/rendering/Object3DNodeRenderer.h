@@ -36,9 +36,11 @@ private:
 	VBOManager_VBOManaged* vboManagedBase { nullptr };
 	VBOManager_VBOManaged* vboManagedNormalMapping { nullptr };
 	VBOManager_VBOManaged* vboManagedOrigins { nullptr };
+	VBOManager_VBOManaged* vboManagedLods { nullptr };
 	vector<int32_t>* vboBaseIds { nullptr };
 	vector<int32_t>* vboNormalMappingIds { nullptr  };
 	vector<int32_t>* vboOrigins { nullptr };
+	vector<int32_t>* vboLods { nullptr };
 	bool haveVBOs { false };
 public:
 	/**

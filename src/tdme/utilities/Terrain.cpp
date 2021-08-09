@@ -81,6 +81,9 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 	vector<vector<Vector3>> partitionTerrainVertices;
 	vector<vector<Vector3>> partitionTerrainNormals;
 	vector<vector<array<int, 6>>> partitionTerrainFaces;
+	vector<vector<int32_t>> partitionLod1Indices;
+	vector<vector<int32_t>> partitionLod2Indices;
+	vector<vector<int32_t>> partitionLod3Indices;
 	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
 	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
 	auto partitionCount = partitionsX * partitionsZ;
@@ -182,10 +185,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		vector<Face> nodeFaces;
 		auto trianglesPerX = partitionTerrainTriangles[partitionIdx].begin()->second;
 		auto trianglesPerZ = partitionTerrainTriangles[partitionIdx].size();
-		vector<int> lodIndices1;
-		vector<int> lodIndices2;
-		vector<int> lodIndices3;
-		for (auto faceIndices: partitionTerrainFaces[partitionIdx]) {
+		for (auto& faceIndices: partitionTerrainFaces[partitionIdx]) {
 			nodeFaces.push_back(
 				Face(
 					terrainNode,
@@ -200,8 +200,8 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		};
 
 		// lod1
-		/*
 		{
+			vector<int32_t> lod1Indices;
 			auto& facesIndices = partitionTerrainFaces[partitionIdx];
 			auto finishedZ = false;
 			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 4) {
@@ -215,36 +215,21 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 						x = trianglesPerX - 8;
 						finishedX = true;
 					}
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[z * trianglesPerX + x + 6][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 3) * trianglesPerX + x][2],		// left
-							facesIndices[z * trianglesPerX + x + 6][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 3) * trianglesPerX + x][2]		// left
-						)
-					);
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[(z + 3) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 6][0], 			// top
-							facesIndices[(z + 3) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 6][0] 				// top
-						)
-					);
+					lod1Indices.push_back(facesIndices[z * trianglesPerX + x + 6][0]); 			// top
+					lod1Indices.push_back(facesIndices[z * trianglesPerX + x][1]);				// top left
+					lod1Indices.push_back(facesIndices[(z + 3) * trianglesPerX + x][2]);		// left
+					lod1Indices.push_back(facesIndices[(z + 3) * trianglesPerX + x][2]);		// left
+					lod1Indices.push_back(facesIndices[(z + 3) * trianglesPerX + x + 7][1]);	// vertex
+					lod1Indices.push_back(facesIndices[z * trianglesPerX + x + 6][0]); 			// top
 				}
 			}
+			nodeFacesEntityTerrain.setLOD1Indices(lod1Indices);
+			nodeFacesEntityTerrain.setLOD1Distance(64.0f);
 		}
-		*/
 
 		// lod2
-		/*
 		{
+			vector<int32_t> lod2Indices;
 			auto& facesIndices = partitionTerrainFaces[partitionIdx];
 			auto finishedZ = false;
 			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 8) {
@@ -258,36 +243,21 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 						x = trianglesPerX - 16;
 						finishedX = true;
 					}
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[z * trianglesPerX + x + 14][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 7) * trianglesPerX + x][2],		// left
-							facesIndices[z * trianglesPerX + x + 14][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 7) * trianglesPerX + x][2]		// left
-						)
-					);
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[(z + 7) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 14][0], 			// top
-							facesIndices[(z + 7) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 14][0] 				// top
-						)
-					);
+					lod2Indices.push_back(facesIndices[z * trianglesPerX + x + 14][0]);			// top
+					lod2Indices.push_back(facesIndices[z * trianglesPerX + x][1]);				// top left
+					lod2Indices.push_back(facesIndices[(z + 7) * trianglesPerX + x][2]);		// left
+					lod2Indices.push_back(facesIndices[(z + 7) * trianglesPerX + x][2]);		// left
+					lod2Indices.push_back(facesIndices[(z + 7) * trianglesPerX + x + 15][1]);	// vertex
+					lod2Indices.push_back(facesIndices[z * trianglesPerX + x + 14][0]); 		// top
 				}
 			}
+			nodeFacesEntityTerrain.setLOD2Indices(lod2Indices);
+			nodeFacesEntityTerrain.setLOD2Distance(128.0f);
 		}
-		*/
 
 		// lod3
-		/*
 		{
+			vector<int32_t> lod3Indices;
 			auto& facesIndices = partitionTerrainFaces[partitionIdx];
 			auto finishedZ = false;
 			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 16) {
@@ -301,32 +271,17 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 						x = trianglesPerX - 32;
 						finishedX = true;
 					}
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[z * trianglesPerX + x + 30][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 15) * trianglesPerX + x][2],		// left
-							facesIndices[z * trianglesPerX + x + 30][0], 		// top
-							facesIndices[z * trianglesPerX + x][1],				// top left
-							facesIndices[(z + 15) * trianglesPerX + x][2]		// left
-						)
-					);
-					nodeFaces.push_back(
-						Face(
-							terrainNode,
-							facesIndices[(z + 15) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 30][0], 			// top
-							facesIndices[(z + 15) * trianglesPerX + x][2],			// left
-							facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
-							facesIndices[z * trianglesPerX + x + 30][0]				// top
-						)
-					);
+					lod3Indices.push_back(facesIndices[z * trianglesPerX + x + 30][0]); 		// top
+					lod3Indices.push_back(facesIndices[z * trianglesPerX + x][1]);				// top left
+					lod3Indices.push_back(facesIndices[(z + 15) * trianglesPerX + x][2]);		// left
+					lod3Indices.push_back(facesIndices[(z + 15) * trianglesPerX + x][2]);		// left
+					lod3Indices.push_back(facesIndices[(z + 15) * trianglesPerX + x + 31][1]);	// vertex
+					lod3Indices.push_back(facesIndices[z * trianglesPerX + x + 30][0]); 		// top
 				}
 			}
+			nodeFacesEntityTerrain.setLOD3Indices(lod3Indices);
+			nodeFacesEntityTerrain.setLOD3Distance(192.0f);
 		}
-		*/
 
 		nodeFacesEntityTerrain.setFaces(nodeFaces);
 		nodeFacesEntities.push_back(nodeFacesEntityTerrain);

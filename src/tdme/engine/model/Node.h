@@ -273,7 +273,7 @@ public:
 	/**
 	 * @return origins
 	 */
-	const vector<Vector3>& getOrigins() const {
+	inline const vector<Vector3>& getOrigins() const {
 		return origins;
 	}
 

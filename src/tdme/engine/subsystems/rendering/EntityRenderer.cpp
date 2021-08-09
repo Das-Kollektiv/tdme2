@@ -795,6 +795,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				vector<int32_t>* boundVBOOrigins = nullptr;
+				auto currentLODLevel = -1;
 				int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 				Vector3 boundEnvironmentMappingCubeMapPosition;
 				auto objectCount = object3DRenderContext.objectsToRender.size();
@@ -840,7 +841,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// check if shader did change
 					// shader
-					auto distanceShader = object->getDistanceShader().empty() == true?false:objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() >= Math::square(object->getDistanceShaderDistance());
+					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
+					auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
 					auto objectShader =
 						distanceShader == false?
 							object->getShader():
@@ -912,6 +914,46 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if (boundVBOBaseIds != currentVBOBaseIds) {
 						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
+					}
+					auto currentVBOLods = _object3DNode->renderer->vboLods;
+					if (currentVBOLods != nullptr) {
+						// index buffer
+						auto lodLevel = 0;
+						if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {
+							lodLevel = 3;
+						} else
+						if (currentVBOLods->size() >= 2 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Distance())) {
+							lodLevel = 2;
+						} else
+						if (currentVBOLods->size() >= 1 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Distance())) {
+							lodLevel = 1;
+						}
+						if (currentLODLevel != -1 && lodLevel != currentLODLevel) {
+							object3DRenderContext.objectsNotRendered.push_back(object);
+							continue;
+						}
+						if (lodLevel > 0) {
+							renderer->bindIndicesBufferObject(context, (*currentVBOLods)[lodLevel - 1]);
+							switch(lodLevel) {
+								case 3:
+									faceIdx = 0;
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								case 2:
+									faceIdx = 0;
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								case 1:
+									faceIdx = 0;
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								default: break;
+							}
+						}
+						currentLODLevel = lodLevel;
 					}
 					// bind tangent, bitangend buffers
 					auto currentVBONormalMappingIds = _object3DNode->renderer->vboNormalMappingIds;
