@@ -520,7 +520,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				// tdme script
 				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) icon = "resources/engine/images/script.png";
 				// xml
-				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) icon = "resources/engine/images/gui.png"; // TODO: maybe check for UI or something else
 				// files without ending
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&
