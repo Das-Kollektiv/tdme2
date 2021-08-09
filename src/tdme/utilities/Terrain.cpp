@@ -198,95 +198,132 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 				)
 			);
 		};
-		/*
+
 		// lod1
-		auto& facesIndices = partitionTerrainFaces[partitionIdx];
-		for (auto z = 0; z < trianglesPerZ - 4; z+= 4) {
-			for (auto x = 0; x < trianglesPerX - 8; x+= 8) {
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[z * trianglesPerX + x + 6][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 3) * trianglesPerX + x][2],		// left
-						facesIndices[z * trianglesPerX + x + 6][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 3) * trianglesPerX + x][2]		// left
-					)
-				);
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[(z + 3) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 6][0], 			// top
-						facesIndices[(z + 3) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 6][0] 				// top
-					)
-				);
+		/*
+		{
+			auto& facesIndices = partitionTerrainFaces[partitionIdx];
+			auto finishedZ = false;
+			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 4) {
+				if (z > trianglesPerZ - 4) {
+					z = trianglesPerZ - 4;
+					finishedZ = true;
+				}
+				auto finishedX = false;
+				for (auto x = 0; finishedX == false && x < trianglesPerX; x+= 8) {
+					if (x > trianglesPerX - 8) {
+						x = trianglesPerX - 8;
+						finishedX = true;
+					}
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[z * trianglesPerX + x + 6][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 3) * trianglesPerX + x][2],		// left
+							facesIndices[z * trianglesPerX + x + 6][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 3) * trianglesPerX + x][2]		// left
+						)
+					);
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[(z + 3) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 6][0], 			// top
+							facesIndices[(z + 3) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 3) * trianglesPerX + x + 7][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 6][0] 				// top
+						)
+					);
+				}
 			}
 		}
 		*/
 
 		// lod2
 		/*
-		auto& facesIndices = partitionTerrainFaces[partitionIdx];
-		for (auto z = 0; z < trianglesPerZ - 7; z+= 8) {
-			for (auto x = 0; x < trianglesPerX - 15; x+= 16) {
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[z * trianglesPerX + x + 14][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 7) * trianglesPerX + x][2],		// left
-						facesIndices[z * trianglesPerX + x + 14][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 7) * trianglesPerX + x][2]		// left
-					)
-				);
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[(z + 7) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 14][0], 			// top
-						facesIndices[(z + 7) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 14][0] 				// top
-					)
-				);
+		{
+			auto& facesIndices = partitionTerrainFaces[partitionIdx];
+			auto finishedZ = false;
+			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 8) {
+				if (z > trianglesPerZ - 8) {
+					z = trianglesPerZ - 8;
+					finishedZ = true;
+				}
+				auto finishedX = false;
+				for (auto x = 0; finishedX == false && x < trianglesPerX; x+= 16) {
+					if (x > trianglesPerX - 16) {
+						x = trianglesPerX - 16;
+						finishedX = true;
+					}
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[z * trianglesPerX + x + 14][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 7) * trianglesPerX + x][2],		// left
+							facesIndices[z * trianglesPerX + x + 14][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 7) * trianglesPerX + x][2]		// left
+						)
+					);
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[(z + 7) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 14][0], 			// top
+							facesIndices[(z + 7) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 7) * trianglesPerX + x + 15][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 14][0] 				// top
+						)
+					);
+				}
 			}
 		}
 		*/
 
-		/*
 		// lod3
-		auto& facesIndices = partitionTerrainFaces[partitionIdx];
-		for (auto z = 0; z < trianglesPerZ - 16; z+= 16) {
-			for (auto x = 0; x < trianglesPerX - 32; x+= 32) {
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[z * trianglesPerX + x + 30][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 15) * trianglesPerX + x][2],		// left
-						facesIndices[z * trianglesPerX + x + 30][0], 		// top
-						facesIndices[z * trianglesPerX + x][1],				// top left
-						facesIndices[(z + 15) * trianglesPerX + x][2]		// left
-					)
-				);
-				nodeFaces.push_back(
-					Face(
-						terrainNode,
-						facesIndices[(z + 15) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 30][0], 			// top
-						facesIndices[(z + 15) * trianglesPerX + x][2],			// left
-						facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
-						facesIndices[z * trianglesPerX + x + 30][0]				// top
-					)
-				);
+		/*
+		{
+			auto& facesIndices = partitionTerrainFaces[partitionIdx];
+			auto finishedZ = false;
+			for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 16) {
+				if (z > trianglesPerZ - 16) {
+					z = trianglesPerZ - 16;
+					finishedZ = true;
+				}
+				auto finishedX = false;
+				for (auto x = 0; finishedX == false && x < trianglesPerX; x+= 32) {
+					if (x > trianglesPerX - 32) {
+						x = trianglesPerX - 32;
+						finishedX = true;
+					}
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[z * trianglesPerX + x + 30][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 15) * trianglesPerX + x][2],		// left
+							facesIndices[z * trianglesPerX + x + 30][0], 		// top
+							facesIndices[z * trianglesPerX + x][1],				// top left
+							facesIndices[(z + 15) * trianglesPerX + x][2]		// left
+						)
+					);
+					nodeFaces.push_back(
+						Face(
+							terrainNode,
+							facesIndices[(z + 15) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 30][0], 			// top
+							facesIndices[(z + 15) * trianglesPerX + x][2],			// left
+							facesIndices[(z + 15) * trianglesPerX + x + 31][1],		// vertex
+							facesIndices[z * trianglesPerX + x + 30][0]				// top
+						)
+					);
+				}
 			}
 		}
 		*/
