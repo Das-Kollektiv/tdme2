@@ -199,8 +199,9 @@ public:
 	 * @param terrainHeightVector terrain height vector
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models vector
+	 * @param createLODLevels create LOD Levels
 	 */
-	static void createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels);
+	static void createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, bool createLODLevels = false);
 
 	/**
 	 * Apply brush to given terrain models

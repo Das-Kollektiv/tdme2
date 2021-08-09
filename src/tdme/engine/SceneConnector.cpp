@@ -482,7 +482,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			// terrain
 			BoundingBox terrainBoundingBox;
 			vector<Model*> terrainModels;
-			Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels);
+			Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels, true);
 			if (terrainModels.empty() == false) {
 				auto idx = 0;
 				for (auto terrainModel: terrainModels) {
