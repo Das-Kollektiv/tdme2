@@ -19,6 +19,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -56,6 +57,7 @@ using tdme::utilities::Action;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
@@ -440,6 +442,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			scene->setSkyModel(nullptr);
 			scene->setSkyModelFileName(string());
 			scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+			setSkyDetails();
 		} else
 		if (node->getId() == "sky_model_open") {
 			class OnLoadSkyModelAction: public virtual Action
@@ -464,6 +467,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 						);
 						sceneEditorTabController->view->updateSky();
+						sceneEditorTabController->setSkyDetails();
 					} catch (Exception& exception) {
 						Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
 						sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
@@ -523,6 +527,9 @@ void SceneEditorTabController::setSkyDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
 			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
 		);
+		if (scene->getSkyModelFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
+		}
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -674,6 +681,7 @@ void SceneEditorTabController::setOutlinerContent() {
 	auto scene = view->getScene();
 	if (scene != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
+		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
 			auto sceneLibrary = scene->getLibrary();
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes") + "\">\n";
@@ -714,7 +722,7 @@ void SceneEditorTabController::setDetailsContent() {
 
 void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
-	if (outlinerNode == "scene") {
+	if (outlinerNode == "scene.sky") {
 		setSkyDetails();
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.prototypes.") == true) {

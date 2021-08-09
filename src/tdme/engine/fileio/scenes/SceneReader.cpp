@@ -264,11 +264,13 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		);
 		if (scene->getSkyModelFileName().empty() == false) {
 			auto skyModelPathName = PrototypeReader::getResourcePathName(pathName, scene->getSkyModelFileName());
+			auto skyModelFileName = FileSystem::getInstance()->getFileName(scene->getSkyModelFileName());
+			scene->setSkyModelFileName(skyModelPathName + "/" + skyModelFileName);
 			try {
 				scene->setSkyModel(
 					ModelReader::read(
 						skyModelPathName,
-						FileSystem::getInstance()->getFileName(scene->getSkyModelFileName())
+						skyModelFileName
 					)
 				);
 			} catch (Exception& exception) {

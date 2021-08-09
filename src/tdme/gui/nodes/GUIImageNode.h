@@ -41,6 +41,7 @@ class tdme::gui::nodes::GUIImageNode final
 private:
 	Texture* texture { nullptr };
 	string source;
+	static int thumbnailTextureIdx;
 
 protected:
 	/**

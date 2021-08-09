@@ -537,7 +537,6 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				vector<uint8_t> thumbnailPNGData;
 				if ((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
 					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) {
-					Console::println(fileNameLowerCase + ": " + to_string(thumbnailPNGData.size()));
 					auto thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(idx), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();

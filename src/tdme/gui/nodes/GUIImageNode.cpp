@@ -1,6 +1,9 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 
+#include <string>
+
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -13,10 +16,18 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUIImageNode;
 
+using std::string;
+using std::to_string;
+
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
@@ -29,6 +40,12 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextureBaseNode;
 using tdme::gui::GUI;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
+
+int GUIImageNode::thumbnailTextureIdx = 0;
 
 GUIImageNode::GUIImageNode(
 	GUIScreenNode* screenNode,
@@ -101,7 +118,27 @@ void GUIImageNode::setSource(const string& source) {
 		texture = nullptr;
 	}
 	this->source = source;
-	this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
+	if (source.empty() == false) {
+		if (StringTools::endsWith(StringTools::toLowerCase(source), ".tm") == true) {
+			try {
+				vector<uint8_t> thumbnailPNGData;
+				if (FileSystem::getInstance()->getThumbnailAttachment(
+						FileSystem::getInstance()->getPathName(source),
+						FileSystem::getInstance()->getFileName(source), thumbnailPNGData) == true) {
+					//
+					auto thumbnailTexture = TextureReader::readPNG("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+					if (thumbnailTexture != nullptr) {
+						thumbnailTexture->acquireReference();
+						this->texture = thumbnailTexture;
+					}
+				}
+			} catch (Exception& exception) {
+				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+			}
+		} else {
+			this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
+		}
+	}
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
