@@ -153,6 +153,13 @@ public:
 	}
 
 	/**
+	 * @return has convex mesh data
+	 */
+	inline bool hasConvexMeshData() {
+		return convexMeshData.empty() == false;
+	}
+
+	/**
 	 * @return convex mesh data
 	 */
 	inline const vector<uint8_t>& getConvexMeshData() {

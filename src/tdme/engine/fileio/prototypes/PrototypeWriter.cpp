@@ -6,6 +6,7 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -58,6 +59,7 @@ using std::string;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 
 using tdme::application::Application;
+using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -535,6 +537,16 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
 			} else {
 				jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
+				auto convexMeshModel =
+					TMReader::read(
+						Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+						Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+					);
+				TMWriter::write(
+					convexMeshModel,
+					Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+					Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+				);
 			}
 		}
 		jBoundingVolume.AddMember("g", Value(prototypeBoundingVolume->isGenerated()), jAllocator);

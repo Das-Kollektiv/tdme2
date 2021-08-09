@@ -3,6 +3,8 @@
 #include <string>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -17,6 +19,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -25,6 +28,8 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -49,6 +54,8 @@ using std::to_string;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
@@ -63,6 +70,7 @@ using tdme::engine::Transformations;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
@@ -71,6 +79,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -415,6 +425,24 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("convexmesh");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));
+				Texture* thumbnailTexture = nullptr;
+				{
+					vector<uint8_t> thumbnailPNGData;
+					if (// extern
+						(boundingVolume->hasConvexMeshData() == false &&
+						StringTools::endsWith(StringTools::toLowerCase(boundingVolume->getConvexMeshFile()), ".tm") == true &&
+						FileSystem::getInstance()->getThumbnailAttachment(Tools::getPathName(boundingVolume->getConvexMeshFile()), Tools::getFileName(boundingVolume->getConvexMeshFile()), thumbnailPNGData) == true) ||
+						// embedded
+						(boundingVolume->hasConvexMeshData() == true &&
+						FileSystem::getInstance()->getThumbnailAttachment(boundingVolume->getConvexMeshData(), thumbnailPNGData) == true)
+						) {
+						thumbnailTexture = TextureReader::readPNG("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+						if (thumbnailTexture != nullptr) {
+							thumbnailTexture->acquireReference();
+						}
+					}
+				}
+				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
 			} else {
 				Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx)));
 			}
@@ -614,6 +642,7 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
 						}
 						prototypePhysicsSubController->view->removeGizmo();
+						prototypePhysicsSubController->setBoundingVolumeDetails(prototype, boundingVolumeIdx);
 						prototypePhysicsSubController->popUps->getFileDialogScreenController()->close();
 					}
 					OnConvexMeshFileOpen(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype, int boundingVolumeIdx):
@@ -649,6 +678,7 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 				if (boundingVolume != nullptr) {
 					view->applyBoundingVolumeConvexMeshClear(prototype, boundingVolumeIdxActivated);
 					view->removeGizmo();
+					setBoundingVolumeDetails(prototype, boundingVolumeIdxActivated);
 				}
 			}
 		} else
@@ -816,28 +846,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (outlinerNode == "physics") {
-			// clear
-			popUps->getContextMenuScreenController()->clear();
-
-			// add
-			class OnAddBoundingVolumeAction: public virtual Action
-			{
-			public:
-				void performAction() override {
-					prototypePhysicsSubController->createBoundingVolume(prototype);
-				}
-				OnAddBoundingVolumeAction(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
-				}
-			private:
-				PrototypePhysicsSubController* prototypePhysicsSubController;
-				Prototype* prototype;
-			};
-			popUps->getContextMenuScreenController()->addMenuItem("Add Bounding Volume", "contextmenu_add", new OnAddBoundingVolumeAction(this, prototype));
-
-			//
-			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
-		} else
 		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
@@ -876,6 +884,21 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 		if (outlinerNode == "physics") {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
+
+			// add
+			class OnAddBoundingVolumeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypePhysicsSubController->createBoundingVolume(prototype);
+				}
+				OnAddBoundingVolumeAction(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypePhysicsSubController* prototypePhysicsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Bounding Volume", "contextmenu_add", new OnAddBoundingVolumeAction(this, prototype));
 
 			// import convex meshes from model
 			class OnImportConvexMeshesFromModel: public virtual Action

@@ -413,7 +413,11 @@ void ArchiveFileSystem::removeFile(const string& pathName, const string& fileNam
 	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
 }
 
-bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) {
+bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
+	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+}
+
+bool ArchiveFileSystem::getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) {
 	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
 }
 

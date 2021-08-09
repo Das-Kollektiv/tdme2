@@ -201,8 +201,16 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Reads a thumbnail attachment from binary file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param thumbnailAttachmentContent thumbnail attachment content
 	 * @return attachment available
 	 */
-	virtual bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) = 0;
+	virtual bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) = 0;
 
+	/**
+	 * Reads a thumbnail attachment from data vector
+	 * @param content content
+	 * @param thumbnailAttachmentContent thumbnail attachment content
+	 * @return attachment available
+	 */
+	virtual bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) = 0;
 };

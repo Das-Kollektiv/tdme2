@@ -102,6 +102,8 @@ private:
 		"boundingvolume_obb_depth"
 	};
 
+	int thumbnailTextureIdx { 0 };
+
 public:
 	enum BoundingVolumeType {
 		BOUNDINGVOLUMETYPE_NONE = 1,

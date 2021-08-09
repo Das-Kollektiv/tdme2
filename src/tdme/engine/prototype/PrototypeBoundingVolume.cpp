@@ -205,7 +205,11 @@ void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
 	convexMeshFile = string();
 	generated = true;
 	try {
-		auto convexMeshModel = TMReader::read(convexMeshData);
+		auto convexMeshModel = TMReader::read(
+			convexMeshData,
+			FileSystem::getInstance()->getPathName(prototype->getFileName()),
+			FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(id)
+		);
 		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
 		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
 		delete convexMeshObject3DModel;

@@ -348,7 +348,7 @@ void StandardFileSystem::removeFile(const string& pathName, const string& fileNa
 	}
 }
 
-bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& content) {
+bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
 	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
@@ -380,11 +380,42 @@ bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const st
 		((static_cast<int32_t>(id[3]) & 0xFF) << 0);
 
 	// do read the attachment
-	content.resize(attachmentSize);
+	thumbnailAttachmentContent.resize(attachmentSize);
 	ifs.seekg(size - 12 - attachmentSize, ios::beg);
-	ifs.read((char*)content.data(), attachmentSize);
+	ifs.read((char*)thumbnailAttachmentContent.data(), attachmentSize);
 	ifs.close();
 
 	//
-	return content.empty() == false;
+	return thumbnailAttachmentContent.empty() == false;
+}
+
+bool StandardFileSystem::getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) {
+	if (content.size() < 12) return false;
+
+	array<uint8_t, 12> id;
+
+	//
+	for (auto i = 0; i < 12; i++) id[i] = content[content.size() - 12 + i];
+
+	// attachment
+	if (id[8] != 'A' || id[9] != 'T' || id[10] != 'M' || id[11] != 'T') {
+		return false;
+	}
+	// thumbnail
+	if (id[4] != 'T' || id[5] != 'M' || id[6] != 'B' || id[7] != 'N') {
+		return false;
+	}
+	// attachment size
+	int32_t attachmentSize =
+		((static_cast<int32_t>(id[0]) & 0xFF) << 24) +
+		((static_cast<int32_t>(id[1]) & 0xFF) << 16) +
+		((static_cast<int32_t>(id[2]) & 0xFF) << 8) +
+		((static_cast<int32_t>(id[3]) & 0xFF) << 0);
+
+	// do read the attachment
+	thumbnailAttachmentContent.resize(attachmentSize);
+	for (auto i = 0; i < attachmentSize; i++) thumbnailAttachmentContent[i] = content[content.size() - 12 - attachmentSize + i];
+
+	//
+	return thumbnailAttachmentContent.empty() == false;
 }
