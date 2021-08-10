@@ -1,0 +1,436 @@
+diff --git a/src/tdme/gui/GUIParser.cpp b/src/tdme/gui/GUIParser.cpp
+index 84ded1e4..5095763d 100644
+--- a/src/tdme/gui/GUIParser.cpp
++++ b/src/tdme/gui/GUIParser.cpp
+@@ -435,6 +435,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiPanelNode->setController(guiElementController);
+ 					}
++					guiPanelNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiPanelNode, string(), node, nullptr);
+@@ -497,6 +498,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiLayerNode->setController(guiElementController);
+ 					}
++					guiLayerNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiLayerNode, string(), node, nullptr);
+@@ -560,6 +562,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiLayoutNode->setController(guiElementController);
+ 					}
++					guiLayoutNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiLayoutNode, string(), node, nullptr);
+@@ -620,6 +623,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiSpaceNode->setController(guiElementController);
+ 					}
++					guiSpaceNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -695,6 +699,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiElementNode->setController(guiElementController);
+ 					}
++					guiElementNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiElementNode, guiElementNode->getId(), node, nullptr);
+@@ -774,6 +779,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiImageNode->setController(guiElementController);
+ 					}
++					guiImageNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -852,6 +858,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiFrameBufferNode->setController(guiElementController);
+ 					}
++					guiFrameBufferNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -930,6 +937,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTextureNode->setController(guiElementController);
+ 					}
++					guiTextureNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -992,6 +1000,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTextNode->setController(guiElementController);
+ 					}
++					guiTextNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -1054,6 +1063,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTextNode->setController(guiElementController);
+ 					}
++					guiTextNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -1115,6 +1125,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTableNode->setController(guiElementController);
+ 					}
++					guiTableNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiTableNode, string(), node, nullptr);
+@@ -1178,6 +1189,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTableCellNode->setController(guiElementController);
+ 					}
++					guiTableCellNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiTableCellNode, string(), node, nullptr);
+@@ -1240,6 +1252,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiTableRowNode->setController(guiElementController);
+ 					}
++					guiTableRowNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 				parseGUINode(guiTableRowNode, string(), node, nullptr);
+@@ -1305,6 +1318,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiInputInternalNode->setController(guiElementController);
+ 					}
++					guiInputInternalNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -1367,6 +1381,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiVerticalScrollbarInternalNode->setController(guiElementController);
+ 					}
++					guiVerticalScrollbarInternalNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+@@ -1429,6 +1444,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
+ 					if (guiElementController != nullptr) {
+ 						guiHorizontalScrollbarInternalNode->setController(guiElementController);
+ 					}
++					guiHorizontalScrollbarInternalNode->setElementName(guiElement->getName());
+ 					guiElementControllerInstalled = true;
+ 				}
+ 			} else
+diff --git a/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h b/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h
+index 9c1444cf..2369788e 100644
+--- a/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h
++++ b/src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h
+@@ -33,6 +33,7 @@ using tdme::gui::renderer::GUIRenderer;
+ class tdme::gui::nodes::GUIHorizontalScrollbarInternalNode
+ 	: public GUINode
+ {
++	friend class tdme::gui::GUIParser;
+ 
+ private:
+ 	GUIColor barColorNone;
+diff --git a/src/tdme/gui/nodes/GUINode.h b/src/tdme/gui/nodes/GUINode.h
+index de834574..cb2268e9 100644
+--- a/src/tdme/gui/nodes/GUINode.h
++++ b/src/tdme/gui/nodes/GUINode.h
+@@ -166,6 +166,7 @@ protected:
+ 	bool conditionsMet;
+ 	bool layouted;
+ 	bool haveOutEffect;
++	string elementName;
+ 
+ 	/**
+ 	 * Public constructor
+@@ -207,10 +208,6 @@ protected:
+ 	 * Destructor
+ 	 */
+ 	virtual ~GUINode();
+-	/**
+-	 * @return node type
+-	 */
+-	virtual const string getNodeType() = 0;
+ 
+ 	/**
+ 	 * @return is content node
+@@ -308,6 +305,13 @@ protected:
+ 		return conditionsMet == true || haveActiveOutEffect() == true;
+ 	}
+ 
++	/**
++	 * Set element name
++	 */
++	inline void setElementName(const string& elementName) {
++		this->elementName = elementName;
++	}
++
+ public:
+ 	/**
+ 	 * @return scren node
+@@ -324,6 +328,11 @@ public:
+ 	 */
+ 	virtual const string& getId();
+ 
++	/**
++	 * @return node type
++	 */
++	virtual const string getNodeType() = 0;
++
+ 	/**
+ 	 * @return content width including border, margin
+ 	 */
+@@ -617,4 +626,11 @@ public:
+ 	 */
+ 	static void dumpParentNodes(GUINode* node, int indent = 0);
+ 
++	/**
++	 * @return element name
++	 */
++	inline const string& getElementName() {
++		return elementName;
++	}
++
+ };
+diff --git a/src/tdme/gui/nodes/GUIParentNode.cpp b/src/tdme/gui/nodes/GUIParentNode.cpp
+index 7bf1a710..e607ed23 100644
+--- a/src/tdme/gui/nodes/GUIParentNode.cpp
++++ b/src/tdme/gui/nodes/GUIParentNode.cpp
+@@ -84,6 +84,10 @@ GUIParentNode::GUIParentNode(
+ 	this->computeViewportCache = true;
+ }
+ 
++vector<GUINode*> GUIParentNode::getSubNodes() {
++	return subNodes;
++}
++
+ void GUIParentNode::clearSubNodes()
+ {
+ 	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+diff --git a/src/tdme/gui/nodes/GUIParentNode.h b/src/tdme/gui/nodes/GUIParentNode.h
+index 3b0a3cc2..cf37bb65 100644
+--- a/src/tdme/gui/nodes/GUIParentNode.h
++++ b/src/tdme/gui/nodes/GUIParentNode.h
+@@ -128,6 +128,10 @@ protected:
+ 	virtual void computeVerticalChildrenAlignment();
+ 
+ public:
++	/**
++	 * @return sub nodes
++	 */
++	virtual vector<GUINode*> getSubNodes();
+ 
+ 	/**
+ 	 * Clear sub nodes
+diff --git a/src/tdme/gui/nodes/GUIScreenNode.h b/src/tdme/gui/nodes/GUIScreenNode.h
+index 1f508d5a..58b97dc8 100644
+--- a/src/tdme/gui/nodes/GUIScreenNode.h
++++ b/src/tdme/gui/nodes/GUIScreenNode.h
+@@ -329,7 +329,7 @@ public:
+ 	 * @return node id
+ 	 */
+ 	inline const string allocateNodeId() {
+-		return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
++		return "<" + to_string(nodeCounter++) + ">";
+ 	}
+ 
+ 	/**
+diff --git a/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h b/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h
+index c94c6397..5d01780d 100644
+--- a/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h
++++ b/src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h
+@@ -32,6 +32,7 @@ using tdme::gui::renderer::GUIRenderer;
+ class tdme::gui::nodes::GUIVerticalScrollbarInternalNode
+ 	: public GUINode
+ {
++	friend class tdme::gui::GUIParser;
+ 
+ private:
+ 	GUIColor barColorNone;
+diff --git a/src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp b/src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp
+index 82f70b1a..bad74d92 100644
+--- a/src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp
++++ b/src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp
+@@ -258,7 +258,6 @@ void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix,
+ }
+ 
+ void ModelEditorTabController::setOutlinerContent() {
+-
+ 	string xml;
+ 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
+ 	auto prototype = view->getPrototype();
+diff --git a/src/tdme/tools/editor/tabcontrollers/UITabController.cpp b/src/tdme/tools/editor/tabcontrollers/UITabController.cpp
+index 57737fef..cd43f145 100644
+--- a/src/tdme/tools/editor/tabcontrollers/UITabController.cpp
++++ b/src/tdme/tools/editor/tabcontrollers/UITabController.cpp
+@@ -6,6 +6,9 @@
+ #include <tdme/utilities/Action.h>
+ #include <tdme/gui/events/GUIActionListener.h>
+ #include <tdme/gui/events/GUIChangeListener.h>
++#include <tdme/gui/GUI.h>
++#include <tdme/gui/GUIParser.h>
++#include <tdme/gui/nodes/GUIParentNode.h>
+ #include <tdme/gui/nodes/GUIScreenNode.h>
+ #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+ #include <tdme/tools/editor/tabcontrollers/TabController.h>
+@@ -20,7 +23,10 @@ using std::string;
+ using tdme::tools::editor::tabcontrollers::UITabController;
+ 
+ using tdme::utilities::Action;
++using tdme::gui::GUI;
++using tdme::gui::GUIParser;
+ using tdme::gui::events::GUIActionListenerType;
++using tdme::gui::nodes::GUIParentNode;
+ using tdme::gui::nodes::GUIScreenNode;
+ using tdme::tools::editor::controllers::InfoDialogScreenController;
+ using tdme::tools::editor::misc::PopUps;
+@@ -84,6 +90,57 @@ void UITabController::onUnfocus(GUIElementNode* node) {
+ void UITabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+ }
+ 
++void UITabController::createOutlinerParentNodeNodesXML(GUIParentNode* parentNode, string& xml) {
++	{
++		auto isElementNode = parentNode->getElementName().empty() == false;
++		auto nodeType = isElementNode == true?parentNode->getElementName():parentNode->getNodeType();
++		auto innerParentNode = isElementNode == true?dynamic_cast<GUIParentNode*>(parentNode->getScreenNode()->getInnerNodeById(parentNode->getId())):nullptr;
++		if (innerParentNode != nullptr) innerParentNode = innerParentNode->getParentNode() != parentNode?innerParentNode->getParentNode():innerParentNode;
++		if (isElementNode == true && innerParentNode == nullptr) {
++			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(parentNode->getId() + " (" + nodeType + ")") + "\" value=\"" + GUIParser::escapeQuotes(parentNode->getId()) + "\" />\n";
++			return;
++		} else
++		if (isElementNode == true && innerParentNode != nullptr) {
++			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(parentNode->getId() + " (" + nodeType + ")") + "\" value=\"" + GUIParser::escapeQuotes(parentNode->getId()) + "\" >\n";
++			createOutlinerParentNodeNodesXML(innerParentNode, xml);
++			xml+= "</selectbox-parent-option>\n";
++			return;
++		} else {
++			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(parentNode->getId() + " (" + nodeType + ")") + "\" value=\"" + GUIParser::escapeQuotes(parentNode->getId()) + "\" >\n";
++		}
++	}
++	for (auto subNode: parentNode->getSubNodes()) {
++		auto isElementNode = subNode->getElementName().empty() == false;
++		auto subNodeType = isElementNode == true?subNode->getElementName():subNode->getNodeType();
++		auto subParentNode = dynamic_cast<GUIParentNode*>(subNode);
++		auto subInnerParentNode = isElementNode == true?dynamic_cast<GUIParentNode*>(parentNode->getScreenNode()->getInnerNodeById(subNode->getId())):nullptr;
++		if (subInnerParentNode != nullptr)
++			subInnerParentNode =
++				subInnerParentNode->getParentNode() != parentNode?
++					subInnerParentNode->getParentNode():
++					subInnerParentNode;
++		if (subParentNode != nullptr && isElementNode == false) {
++			createOutlinerParentNodeNodesXML(subParentNode, xml);
++		} else
++		if (subInnerParentNode != nullptr && isElementNode == true) {
++			createOutlinerParentNodeNodesXML(subInnerParentNode, xml);
++		} else {
++			xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(subNode->getId() + " (" + subNodeType + ")") + "\" value=\"" + GUIParser::escapeQuotes(subNode->getId()) + "\" />\n";
++		}
++	}
++	xml+= "</selectbox-parent-option>\n";
++}
++
++void UITabController::setOutlinerContent() {
++	string xml;
++	auto uiScreenNode = view->getUIScreenNode();
++	if (uiScreenNode != nullptr) {
++		createOutlinerParentNodeNodesXML(uiScreenNode, xml);
++		Console::println(xml);
++	}
++	view->getEditorView()->setOutlinerContent(xml);
++}
++
+ void UITabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+ {
+ }
+diff --git a/src/tdme/tools/editor/tabcontrollers/UITabController.h b/src/tdme/tools/editor/tabcontrollers/UITabController.h
+index aa9c431c..b4fedc79 100644
+--- a/src/tdme/tools/editor/tabcontrollers/UITabController.h
++++ b/src/tdme/tools/editor/tabcontrollers/UITabController.h
+@@ -85,6 +85,18 @@ public:
+ 	void onUnfocus(GUIElementNode* node) override;
+ 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+ 
++	/**
++	 * Create outliner GUI parent node nodes xml
++	 * @param parentNode parent node
++	 * @param xml xml
++	 */
++	void createOutlinerParentNodeNodesXML(GUIParentNode* parentNode, string& xml);
++
++	/**
++	 * Set outliner content
++	 */
++	void setOutlinerContent();
++
+ 	/**
+ 	 * Shows the error pop up
+ 	 * @param caption caption
+diff --git a/src/tdme/tools/editor/tabviews/UITabView.cpp b/src/tdme/tools/editor/tabviews/UITabView.cpp
+index b5a4acca..06d0e93c 100644
+--- a/src/tdme/tools/editor/tabviews/UITabView.cpp
++++ b/src/tdme/tools/editor/tabviews/UITabView.cpp
+@@ -30,7 +30,7 @@ UITabView::UITabView(EditorView* editorView, const string& tabId, GUIScreenNode*
+ 	this->editorView = editorView;
+ 	this->tabId = tabId;
+ 	this->popUps = editorView->getPopUps();
+-	this->screenNode = screenNode;
++	this->uiScreenNode = screenNode;
+ 	engine = Engine::createOffScreenInstance(512, 512, true);
+ 	engine->setShadowMapLightEyeDistanceScale(0.1f);
+ 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+@@ -78,7 +78,10 @@ Engine* UITabView::getEngine() {
+ }
+ 
+ void UITabView::activate() {
++	// uiTabController->setOutlinerAddDropDownContent();
++	uiTabController->setOutlinerContent();
+ 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
++	// uiTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+ }
+ 
+ void UITabView::deactivate() {
+@@ -86,4 +89,6 @@ void UITabView::deactivate() {
+ }
+ 
+ void UITabView::reloadOutliner() {
++	uiTabController->setOutlinerContent();
+ }
++
+diff --git a/src/tdme/tools/editor/tabviews/UITabView.h b/src/tdme/tools/editor/tabviews/UITabView.h
+index 16801957..515f204a 100644
+--- a/src/tdme/tools/editor/tabviews/UITabView.h
++++ b/src/tdme/tools/editor/tabviews/UITabView.h
+@@ -43,7 +43,7 @@ private:
+ 	PopUps* popUps { nullptr };
+ 	UITabController* uiTabController { nullptr };
+ 	TabView::OutlinerState outlinerState;
+-	GUIScreenNode* screenNode { nullptr };
++	GUIScreenNode* uiScreenNode { nullptr };
+ 
+ public:
+ 	/**
+@@ -80,6 +80,13 @@ public:
+ 		return popUps;
+ 	}
+ 
++	/**
++	 * @return UI screen node
++	 */
++	inline GUIScreenNode* getUIScreenNode() {
++		return uiScreenNode;
++	}
++
+ 	// overridden methods
+ 	void handleInputEvents() override;
+ 	void display() override;
