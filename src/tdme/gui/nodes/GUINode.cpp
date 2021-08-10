@@ -1251,6 +1251,9 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 	if (function == "empty") {
 		return cfEmpty(arguments);
 	} else
+	if (function == "notEmpty") {
+		return cfEmpty(arguments) == false;
+	} else
 	if (function == "hasCondition") {
 		return cfHasCondition(elementNode, arguments);
 	} else {
@@ -1261,6 +1264,9 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 
 void GUINode::cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies) {
 	if (function == "empty") {
+		// no op
+	} else
+	if (function == "notEmpty") {
 		// no op
 	} else
 	if (function == "hasCondition") {
