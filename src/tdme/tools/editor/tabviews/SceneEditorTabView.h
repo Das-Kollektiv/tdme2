@@ -101,7 +101,6 @@ private:
 	PopUps* popUps { nullptr };
 	SceneEditorTabController* sceneEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	string sceneFileName;
 	Scene* scene { nullptr };
 
 	static vector<string> ENTITYCOLOR_NAMES;
@@ -172,13 +171,6 @@ public:
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
-	}
-
-	/**
-	 * @return current scene file name
-	 */
-	inline const string& getFileName() {
-		return sceneFileName;
 	}
 
 	/**

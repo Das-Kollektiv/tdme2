@@ -51,7 +51,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 
 /**
- * Model editor screen controller
+ * Model editor tab controller
  * @author Andreas Drewke
  * @version $Id$
  */

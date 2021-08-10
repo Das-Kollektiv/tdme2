@@ -38,6 +38,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
+#include <tdme/tools/editor/tabviews/UITabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -84,6 +85,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
+using tdme::tools::editor::tabviews::UITabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -577,6 +579,10 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	auto isModel = false;
 	auto isModelPrototype = false;
 	auto isScene = false;
+	auto isScreen = false;
+	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
+		isScreen = true;
+	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		isScene = true;
 	} else
@@ -587,7 +593,8 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
 		}
 	}
-	if (isScene == false &&
+	if (isScreen == false &&
+		isScene == false &&
 		isModel == false &&
 		isModelPrototype == false) {
 		showErrorPopUp("Error", "File format not yet supported");
@@ -637,6 +644,13 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			);
 		}
 		TabView* tabView = nullptr;
+		if (isScreen == true) {
+			auto screenNode = GUIParser::parse(
+				FileSystem::getInstance()->getPathName(absoluteFileName),
+				FileSystem::getInstance()->getFileName(absoluteFileName)
+			);
+			tabView = new UITabView(view, tabId, screenNode);
+		} else
 		if (isModelPrototype == true || isModel == true) {
 			tabView = new ModelEditorTabView(view, tabId, prototype);
 		} else

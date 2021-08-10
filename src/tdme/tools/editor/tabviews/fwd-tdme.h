@@ -8,6 +8,7 @@ namespace tabviews {
 	struct TabView;
 	class ModelEditorTabView;
 	class SceneEditorTabView;
+	class UITabView;
 }  // namespace tabviews
 }  // namespace editor
 }  // namespace tools

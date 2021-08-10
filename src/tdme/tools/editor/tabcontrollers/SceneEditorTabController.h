@@ -35,7 +35,7 @@ using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::utilities::MutableString;
 
 /**
- * Scene editor screen controller
+ * Scene editor tab controller
  * @author Andreas Drewke
  * @version $Id$
  */
