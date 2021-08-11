@@ -3,11 +3,12 @@
 	<layout width="auto" height="auto" padding="10" hide-on="mouseover,click" alignment="vertical" horizontal-align="center" vertical-align="center">
 		<layer>
 			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<texture id="{$id}_texture_normal" show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#ffffff80"/>
 			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
 				<image src="{$icon-big}" />
 			</layout>
+			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -23,11 +24,12 @@
 	<layout width="auto" height="auto" padding="10" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
 		<layer>
 			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<texture id="{$id}_texture_normal" show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#ffffff80"/>
 			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
 				<image src="{$icon-big}" />
 			</layout>
+			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -43,11 +45,12 @@
 	<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
 		<layer>
 			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<texture id="{$id}_texture_normal" show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#ffffff80"/>
 			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
 				<image src="{$icon-big}" />
 			</layout>
+			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
