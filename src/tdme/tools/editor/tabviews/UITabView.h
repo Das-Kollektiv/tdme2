@@ -43,7 +43,7 @@ private:
 	PopUps* popUps { nullptr };
 	UITabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	GUIScreenNode* screenNode { nullptr };
+	GUIScreenNode* uiScreenNode { nullptr };
 
 public:
 	/**
@@ -78,6 +78,13 @@ public:
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
+	}
+
+	/**
+	 * @return UI screen node
+	 */
+	inline GUIScreenNode* getUIScreenNode() {
+		return uiScreenNode;
 	}
 
 	// overridden methods

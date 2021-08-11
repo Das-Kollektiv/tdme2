@@ -66,6 +66,7 @@ class tdme::gui::nodes::GUIScreenNode final
 private:
 	string applicationRootPathName;
 	string applicationSubPathName;
+	string fileName;
 	GUI* gui { nullptr };
 	int nodeCounter;
 	int screenWidth;
@@ -90,6 +91,12 @@ private:
 	unordered_map<int64_t, string> timedExpressions;
 
 public:
+	/**
+	 * @return screen filename or complete file path
+	 */
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/**
 	 * @return application root path name
@@ -164,6 +171,7 @@ public:
 protected:
 	/**
 	 * Constructor
+	 * @oaram fileName file name or complete file path
 	 * @param applicationRootPath application root path
 	 * @param applicationSubPathName application sub path name which is usually "engine" or "project"
 	 * @param flow flow
@@ -186,6 +194,7 @@ protected:
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
+		const string& fileName,
 		const string& applicationRootPathName,
 		const string& applicationSubPathName,
 		const string& id,
@@ -329,7 +338,7 @@ public:
 	 * @return node id
 	 */
 	inline const string allocateNodeId() {
-		return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
+		return "<" + to_string(nodeCounter++) + ">";
 	}
 
 	/**

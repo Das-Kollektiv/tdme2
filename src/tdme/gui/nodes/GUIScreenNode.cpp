@@ -54,6 +54,7 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
 GUIScreenNode::GUIScreenNode(
+	const string& fileName,
 	const string& applicationRootPathName,
 	const string& applicationSubPathName,
 	const string& id,
@@ -77,6 +78,7 @@ GUIScreenNode::GUIScreenNode(
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
+	this->fileName = fileName;
 	this->applicationRootPathName = applicationRootPathName;
 	this->applicationSubPathName = applicationSubPathName;
 	this->sizeConstraints = sizeConstraints;

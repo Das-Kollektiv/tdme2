@@ -258,7 +258,6 @@ void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix,
 }
 
 void ModelEditorTabController::setOutlinerContent() {
-
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
