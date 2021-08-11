@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabviews::UITabView;
+using tdme::tools::editor::tabviews::UITabEditorView;
 using tdme::utilities::MutableString;
 
 using tinyxml::TiXmlAttribute;
@@ -35,16 +35,16 @@ using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
 
 /**
- * UI tab controller
+ * UI tab editor controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabcontrollers::UITabController final
+class tdme::tools::editor::tabcontrollers::UITabEditorController final
 	: public TabController
 {
 
 private:
-	UITabView* view { nullptr };
+	UITabEditorView* view { nullptr };
 	string screenXML;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -54,17 +54,17 @@ public:
 	 * Public constructor
 	 * @param view view
 	 */
-	UITabController(UITabView* view);
+	UITabEditorController(UITabEditorView* view);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~UITabController();
+	virtual ~UITabEditorController();
 
 	/**
 	 * Get view
 	 */
-	UITabView* getView();
+	UITabEditorView* getView();
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
