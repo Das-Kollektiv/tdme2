@@ -8,7 +8,7 @@
 				<image src="{$icon-big}" />
 			</layout>
 			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -28,8 +28,8 @@
 			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
 				<image src="{$icon-big}" />
 			</layout>
-			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<texture id="{$id}_texture_mouseover" width="{$size}" height="{$size}" src="{$thumbnail}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
@@ -49,8 +49,8 @@
 			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
 				<image src="{$icon-big}" />
 			</layout>
-			<texture id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<texture id="{$id}_texture_clicked" width="{$size}" height="{$size}" src="{$thumbnail}" />
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>

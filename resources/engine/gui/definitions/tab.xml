@@ -15,7 +15,7 @@
 		border-right="1" 
 		border-color="{$color.element_background}"
 		border-top="1"
-		border-color-top="{$color.element_background}"
+		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
 		
