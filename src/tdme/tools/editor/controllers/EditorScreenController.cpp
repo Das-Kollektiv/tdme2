@@ -38,7 +38,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
-#include <tdme/tools/editor/tabviews/UITabView.h>
+#include <tdme/tools/editor/tabviews/UITabEditorView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -85,7 +85,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
-using tdme::tools::editor::tabviews::UITabView;
+using tdme::tools::editor::tabviews::UITabEditorView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -746,7 +746,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
 			);
-			tabView = new UITabView(view, tabId, screenNode);
+			tabView = new UITabEditorView(view, tabId, screenNode);
 		} else
 		if (isModelPrototype == true || isModel == true) {
 			tabView = new ModelEditorTabView(view, tabId, prototype);

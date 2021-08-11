@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/tabviews/UITabView.h>
+#include <tdme/tools/editor/tabviews/UITabEditorView.h>
 
 #include <string>
 
@@ -7,25 +7,25 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/tabcontrollers/UITabController.h>
+#include <tdme/tools/editor/tabcontrollers/UITabEditorController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
 using std::string;
 
-using tdme::tools::editor::tabviews::UITabView;
+using tdme::tools::editor::tabviews::UITabEditorView;
 
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::tabcontrollers::UITabController;
+using tdme::tools::editor::tabcontrollers::UITabEditorController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-UITabView::UITabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
+UITabEditorView::UITabEditorView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -38,58 +38,58 @@ UITabView::UITabView(EditorView* editorView, const string& tabId, GUIScreenNode*
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
-UITabView::~UITabView() {
+UITabEditorView::~UITabEditorView() {
 }
 
-void UITabView::handleInputEvents()
+void UITabEditorView::handleInputEvents()
 {
 	engine->getGUI()->handleEvents();
 }
 
-void UITabView::display()
+void UITabEditorView::display()
 {
 	engine->display();
 	engine->getGUI()->render();
 }
 
-void UITabView::initialize()
+void UITabEditorView::initialize()
 {
 	try {
-		uiTabController = new UITabController(this);
+		uiTabController = new UITabEditorController(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::print(string("UITabView::initialize(): An error occurred: "));
+		Console::print(string("UITabEditorView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
 	// TODO: reloadTabOutliner
 }
 
-void UITabView::dispose()
+void UITabEditorView::dispose()
 {
 	engine->reset();
 	delete uiTabController;
 }
 
-void UITabView::updateRendering() {
+void UITabEditorView::updateRendering() {
 }
 
-Engine* UITabView::getEngine() {
+Engine* UITabEditorView::getEngine() {
 	return engine;
 }
 
-void UITabView::activate() {
+void UITabEditorView::activate() {
 	// uiTabController->setOutlinerAddDropDownContent();
 	uiTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	// uiTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
-void UITabView::deactivate() {
+void UITabEditorView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
 }
 
-void UITabView::reloadOutliner() {
+void UITabEditorView::reloadOutliner() {
 	uiTabController->setOutlinerContent();
 }
 
