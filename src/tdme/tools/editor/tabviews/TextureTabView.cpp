@@ -82,7 +82,7 @@ void TextureTabView::activate() {
 	// uiTabController->setOutlinerAddDropDownContent();
 	uiTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
-	// uiTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+	editorView->getScreenController()->setDetailsContent(string());
 }
 
 void TextureTabView::deactivate() {
@@ -91,5 +91,6 @@ void TextureTabView::deactivate() {
 
 void TextureTabView::reloadOutliner() {
 	uiTabController->setOutlinerContent();
+	editorView->getScreenController()->setDetailsContent(string());
 }
 

@@ -115,7 +115,7 @@ void UITabEditorController::onContextMenuRequested(GUIElementNode* node, int mou
 void UITabEditorController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx) {
 	if (xmlParentNode->FirstChildElement() == nullptr) {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
-		xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(xmlParentNode->Value()) + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
+		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(xmlParentNode->Value()) + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
 	} else {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(xmlParentNode->Value()) + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" >\n";

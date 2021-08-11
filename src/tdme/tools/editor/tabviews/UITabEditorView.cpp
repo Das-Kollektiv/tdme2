@@ -82,7 +82,7 @@ void UITabEditorView::activate() {
 	// uiTabController->setOutlinerAddDropDownContent();
 	uiTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
-	// uiTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+	editorView->getScreenController()->setDetailsContent(string());
 }
 
 void UITabEditorView::deactivate() {
@@ -91,5 +91,6 @@ void UITabEditorView::deactivate() {
 
 void UITabEditorView::reloadOutliner() {
 	uiTabController->setOutlinerContent();
+	editorView->getScreenController()->setDetailsContent(string());
 }
 
