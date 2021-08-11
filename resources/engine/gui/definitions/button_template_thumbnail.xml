@@ -1,13 +1,17 @@
 <element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}">
 	<!-- normal -->
 	<layout width="auto" height="auto" padding="10" hide-on="mouseover,click" alignment="vertical" horizontal-align="center" vertical-align="center">
-		<element>
-			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+		<layer>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+			<image show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+				<image src="{$icon-big}" />
+			</layout>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
-		</element>
+		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
@@ -17,13 +21,17 @@
 	</layout>
 	<!-- mouse over -->
 	<layout width="auto" height="auto" padding="10" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
-		<element>
-			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+		<layer>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+			<image show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+				<image src="{$icon-big}" />
+			</layout>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
-		</element>
+		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
@@ -33,13 +41,17 @@
 	</layout>
 	<!-- clicked -->
 	<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
-		<element>
-			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+		<layer>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+			<image show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" src="{$thumbnail}" background-color="#ffffff80"/>
+			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="5" border-color-bottom="{$type-color}" />
+			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+				<image src="{$icon-big}" />
+			</layout>
 			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
-		</element>
+		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
 		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[

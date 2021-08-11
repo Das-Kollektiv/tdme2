@@ -92,18 +92,18 @@
 							<scrollarea border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
 							
 								<layout alignment="horizontal" >
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" no-type-color="true" icon-big="resources/engine/images/folder_big.png" filename=".."/>
+									<button template="button_template_thumbnail.xml" size="75" no-type-color="true" icon-big="resources/engine/images/folder_big.png" filename="folder"/>
 								</layout>
 								
 								<layout alignment="horizontal" >
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" no-type-color="true" icon-big="resources/engine/images/folder_big.png" filename="folder"/>
+									<button template="button_template_thumbnail.xml" size="75" no-type-color="true" icon-big="resources/engine/images/folder_big.png" filename="folder"/>
 								</layout>
 								
 								<layout alignment="horizontal" >
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
-									<button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" icon="resources/engine/images/folder.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="" icon-big="resources/engine/images/script_big.png" filename="terrain_dirt.png"/>
+									<button template="button_template_thumbnail.xml" size="75" thumbnail="" icon-big="resources/engine/images/reflection_big.png" filename="terrain_dirt.png"/>
 								</layout>
 								
 								<layout alignment="horizontal" >
