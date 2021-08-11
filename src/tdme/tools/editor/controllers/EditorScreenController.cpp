@@ -38,6 +38,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
+#include <tdme/tools/editor/tabviews/TextureTabView.h>
 #include <tdme/tools/editor/tabviews/UITabEditorView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -85,6 +86,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
+using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::tabviews::UITabEditorView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
@@ -677,6 +679,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	auto isModelPrototype = false;
 	auto isScene = false;
 	auto isScreen = false;
+	auto isTexture = false;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		isScreen = true;
 	} else
@@ -689,11 +692,15 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 		for (auto& extension: ModelReader::getModelExtensions()) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
 		}
+		for (auto& extension: TextureReader::getTextureExtensions()) {
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isTexture = true;
+		}
 	}
 	if (isScreen == false &&
 		isScene == false &&
 		isModel == false &&
-		isModelPrototype == false) {
+		isModelPrototype == false &&
+		isTexture == false) {
 		showErrorPopUp("Error", "File format not yet supported");
 		return;
 	}
@@ -720,14 +727,20 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 
 	//
 	try {
+		string icon;
+		string colorType;
 		Prototype* prototype = nullptr;
 		if (isModelPrototype == true) {
+			icon = "{$icon.type_prototype}";
+			colorType = "{$color.type_prototype}";
 			prototype = PrototypeReader::read(
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
 			);
 		} else
 		if (isModel == true) {
+			icon = "{$icon.type_mesh}";
+			colorType = "{$color.type_mesh}";
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::MODEL,
@@ -742,6 +755,8 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 		}
 		TabView* tabView = nullptr;
 		if (isScreen == true) {
+			icon = "{$icon.type_gui}";
+			colorType = "{$color.type_gui}";
 			auto screenNode = GUIParser::parse(
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
@@ -752,15 +767,28 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 			tabView = new ModelEditorTabView(view, tabId, prototype);
 		} else
 		if (isScene == true) {
+			icon = "{$icon.type_scene}";
+			colorType = "{$color.type_scene}";
 			auto scene = SceneReader::read(
 				FileSystem::getInstance()->getPathName(absoluteFileName),
 				FileSystem::getInstance()->getFileName(absoluteFileName)
 			);
 			tabView = new SceneEditorTabView(view, tabId, scene);
+		} else
+		if (isTexture == true) {
+			icon = "{$icon.type_texture}";
+			colorType = "{$color.type_texture}";
+			auto screenNode = GUIParser::parse(
+				"resources/engine/gui/",
+				"template_viewport_texture.xml",
+				{{ "texture", absoluteFileName}}
+
+			);
+			tabView = new TextureTabView(view, tabId, screenNode);
 		}
 		//
 		{
-			string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+			string tabsHeaderXML = "<tab id=\"" + tabId + "\" image=\"" + GUIParser::escapeQuotes(icon) + "\" type-color=\"" + GUIParser::escapeQuotes(colorType) + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
 			try {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
 			} catch (Exception& exception) {

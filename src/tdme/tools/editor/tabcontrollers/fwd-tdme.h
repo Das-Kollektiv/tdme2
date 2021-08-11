@@ -8,6 +8,7 @@ namespace tabcontrollers {
 	struct TabController;
 	class ModelEditorTabController;
 	class SceneEditorTabController;
+	class TextureTabController;
 	class UITabEditorController;
 }  // namespace tabcontrollers
 }  // namespace editor
