@@ -30,7 +30,7 @@ UITabView::UITabView(EditorView* editorView, const string& tabId, GUIScreenNode*
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->screenNode = screenNode;
+	this->uiScreenNode = screenNode;
 	engine = Engine::createOffScreenInstance(512, 512, true);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
@@ -56,6 +56,7 @@ void UITabView::initialize()
 {
 	try {
 		uiTabController = new UITabController(this);
+		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::print(string("UITabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -78,7 +79,10 @@ Engine* UITabView::getEngine() {
 }
 
 void UITabView::activate() {
+	// uiTabController->setOutlinerAddDropDownContent();
+	uiTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
+	// uiTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void UITabView::deactivate() {
@@ -86,4 +90,6 @@ void UITabView::deactivate() {
 }
 
 void UITabView::reloadOutliner() {
+	uiTabController->setOutlinerContent();
 }
+

@@ -151,10 +151,10 @@ Properties* GUIParser::themeProperties = new Properties();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName)
 {
 	// replace with parameters
 	auto newXML = xml;
@@ -183,6 +183,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
 	guiScreenNode = new GUIScreenNode(
+		(pathName.empty() == false?pathName + "/":"") + fileName,
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
 		applicationSubPathName,
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
@@ -288,7 +289,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 {
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
-	for (auto *node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
 			if (nodeTagName == "effect-in") {

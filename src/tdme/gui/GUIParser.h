@@ -58,11 +58,12 @@ public:
 	 * @param xml xml
 	 * @param parameters parameters aka key value paris for substitution
 	 * @param pathName path name
+	 * @param fileName file name
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = unordered_map<string, string>(), const string& pathName = string());
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = unordered_map<string, string>(), const string& pathName = string(), const string& fileName = string());
 
 	/**
 	 * Parses a GUI XML file into parent node

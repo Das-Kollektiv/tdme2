@@ -13,6 +13,8 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <ext/tinyxml/tinyxml.h>
+
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
@@ -28,6 +30,10 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::UITabView;
 using tdme::utilities::MutableString;
 
+using tinyxml::TiXmlAttribute;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
+
 /**
  * UI tab controller
  * @author Andreas Drewke
@@ -39,6 +45,7 @@ class tdme::tools::editor::tabcontrollers::UITabController final
 
 private:
 	UITabView* view { nullptr };
+	string screenXML;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
@@ -84,6 +91,19 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Create outliner GUI parent node nodes xml
+	 * @param xmlParentNode XML parent node
+	 * @param xml xml
+	 * @param nodeIdx node index
+	 */
+	void createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx);
+
+	/**
+	 * Set outliner content
+	 */
+	void setOutlinerContent();
 
 	/**
 	 * Shows the error pop up
