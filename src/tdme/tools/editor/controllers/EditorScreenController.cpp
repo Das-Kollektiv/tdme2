@@ -487,50 +487,142 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				}
 				// TODO: how to associate button with file name
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-
 				//
 				string icon = "resources/engine/images/folder.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) icon = "resources/engine/images/sound.png";
-				// code
-				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) icon = "resources/engine/images/script.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) icon = "resources/engine/images/script.png";
+				string iconBig;
+				string typeColor;
+				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
+					icon = "resources/engine/images/sound.png";
+					iconBig = "resources/engine/images/sound_big.png";
+					typeColor = "{$color.type_sound}";
+				}
+				// C++/C code
+				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".c") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
 				// fonts
-				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) icon = "resources/engine/images/font.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+					icon = "resources/engine/images/font.png";
+					iconBig = "resources/engine/images/font_big.png";
+					typeColor = "{$color.type_font}";
+				}
 				// images
-				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) icon = "resources/engine/images/texture.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) icon = "resources/engine/images/texture.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
+					icon = "resources/engine/images/texture.png";
+					iconBig = "resources/engine/images/texture_big.png";
+					typeColor = "{$color.type_texture}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+					icon = "resources/engine/images/texture.png";
+					iconBig = "resources/engine/images/texture_big.png";
+					typeColor = "{$color.type_texture}";
+				}
 				// models
-				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) icon = "resources/engine/images/mesh.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) icon = "resources/engine/images/mesh.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) icon = "resources/engine/images/mesh.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) {
+					icon = "resources/engine/images/mesh.png";
+					iconBig = "resources/engine/images/mesh_big.png";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) {
+					icon = "resources/engine/images/mesh.png";
+					iconBig = "resources/engine/images/mesh_big.png";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) {
+					icon = "resources/engine/images/mesh.png";
+					iconBig = "resources/engine/images/mesh_big.png";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) {
+					icon = "resources/engine/images/mesh.png";
+					iconBig = "resources/engine/images/mesh_big.png";
+					typeColor = "{$color.type_mesh}";
+				}
 				// property files
-				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
 				// shader
-				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) icon = "resources/engine/images/script.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) icon = "resources/engine/images/script.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) icon = "resources/engine/images/script.png";
-				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
 				// tdme model
-				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) icon = "resources/engine/images/mesh.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+					icon = "resources/engine/images/mesh.png";
+					iconBig = "resources/engine/images/mesh_big.png";
+					typeColor = "{$color.type_prototype}";
+				}
 				// tdme scene
-				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) icon = "resources/engine/images/scene.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+					icon = "resources/engine/images/scene.png";
+					iconBig = "resources/engine/images/scene_big.png";
+					typeColor = "{$color.type_scene}";
+				}
 				// tdme particle system
-				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) icon = "resources/engine/images/particle.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
+					icon = "resources/engine/images/particle.png";
+					iconBig = "resources/engine/images/particle_big.png";
+					typeColor = "{$color.type_particle}";
+				}
 				// tdme terrain
-				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) icon = "resources/engine/images/terrain.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
+					icon = "resources/engine/images/terrain.png";
+					iconBig = "resources/engine/images/terrain_big.png";
+					typeColor = "{$color.type_terrain}";
+				}
 				// tdme script
-				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) icon = "resources/engine/images/script.png";
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
+					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
+				}
 				// xml
-				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) icon = "resources/engine/images/gui.png"; // TODO: maybe check for UI or something else
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
+					icon = "resources/engine/images/gui.png"; // TODO: maybe check for UI or something else
+					iconBig = "resources/engine/images/gui_big.png";
+					typeColor = "{$color.type_gui}";
+				}
 				// files without ending
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&
 					fileName.rfind(".") < fileName.rfind("/"))) {
 					icon = "resources/engine/images/script.png";
+					iconBig = "resources/engine/images/script_big.png";
+					typeColor = "{$color.type_script}";
 				}
 
-				string thumbNail = "resources/engine/textures/terrain_dirt.png";
+				string thumbNail;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
 				string templateSource =
 					StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tm") == true?
@@ -543,6 +635,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						fileNameTextureMapping[fileName] = thumbnailTexture;
+						iconBig.clear();
 					} else {
 						// no valid thumbnail texture
 						templateSource = "button_template_thumbnail.xml";
@@ -551,6 +644,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					// no valid thumbnail texture
 					templateSource = "button_template_thumbnail.xml";
 				}
+				if (thumbNail.empty() == false) iconBig.clear();
+				if (iconBig.empty() == false) icon.clear();
 				xml+=
 					string() +
 					"<button " +
@@ -560,7 +655,9 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					"size=\"75\" " +
 					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
 					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
 					"/>\n";
 				idx++;
 			}
