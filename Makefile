@@ -597,6 +597,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
+	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/TextureTabController.cpp \
@@ -606,6 +607,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
+	src/tdme/tools/editor/tabviews/FontTabView.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/TextureTabView.cpp \

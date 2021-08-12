@@ -36,6 +36,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/FontTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
@@ -84,6 +85,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabviews::FontTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
@@ -675,49 +677,36 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	auto isModel = false;
-	auto isModelPrototype = false;
-	auto isScene = false;
-	auto isScreen = false;
-	auto isTexture = false;
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN, FILETYPE_TEXTURE, FILETYPE_FONT };
+	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
-		isScreen = true;
+		fileType = FILETYPE_SCREEN;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
-		isScene = true;
+		fileType = FILETYPE_SCENE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
-		isModelPrototype = true;
+		fileType = FILETYPE_MODELPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+		fileType = FILETYPE_FONT;
 	} else {
 		for (auto& extension: ModelReader::getModelExtensions()) {
-			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isModel = true;
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
+				fileType = FILETYPE_MODEL;
+				break;
+			}
 		}
 		for (auto& extension: TextureReader::getTextureExtensions()) {
-			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) isTexture = true;
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
+				fileType = FILETYPE_TEXTURE;
+				break;
+			}
 		}
 	}
-	if (isScreen == false &&
-		isScene == false &&
-		isModel == false &&
-		isModelPrototype == false &&
-		isTexture == false) {
+	if (fileType == FILETYPE_UNKNOWN) {
 		showErrorPopUp("Error", "File format not yet supported");
 		return;
-	}
-
-	//
-	Model* model = nullptr;
-	if (isModel == true) {
-		try {
-			model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		if (model == nullptr) {
-			showErrorPopUp("Error", "Could not read model file");
-			return;
-		}
 	}
 
 	//
@@ -729,62 +718,88 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	try {
 		string icon;
 		string colorType;
-		Prototype* prototype = nullptr;
-		if (isModelPrototype == true) {
-			icon = "{$icon.type_prototype}";
-			colorType = "{$color.type_prototype}";
-			prototype = PrototypeReader::read(
-				FileSystem::getInstance()->getPathName(absoluteFileName),
-				FileSystem::getInstance()->getFileName(absoluteFileName)
-			);
-		} else
-		if (isModel == true) {
-			icon = "{$icon.type_mesh}";
-			colorType = "{$color.type_mesh}";
-			prototype = new Prototype(
-				Prototype::ID_NONE,
-				Prototype_Type::MODEL,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
-				FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileEnding(fileName) + ".tmodel",
-				absoluteFileName,
-				string(),
-				model,
-				Vector3(0.0f, 0.0f, 0.0f)
-			);
-		}
 		TabView* tabView = nullptr;
-		if (isScreen == true) {
-			icon = "{$icon.type_gui}";
-			colorType = "{$color.type_gui}";
-			auto screenNode = GUIParser::parse(
-				FileSystem::getInstance()->getPathName(absoluteFileName),
-				FileSystem::getInstance()->getFileName(absoluteFileName)
-			);
-			tabView = new UITabEditorView(view, tabId, screenNode);
-		} else
-		if (isModelPrototype == true || isModel == true) {
-			tabView = new ModelEditorTabView(view, tabId, prototype);
-		} else
-		if (isScene == true) {
-			icon = "{$icon.type_scene}";
-			colorType = "{$color.type_scene}";
-			auto scene = SceneReader::read(
-				FileSystem::getInstance()->getPathName(absoluteFileName),
-				FileSystem::getInstance()->getFileName(absoluteFileName)
-			);
-			tabView = new SceneEditorTabView(view, tabId, scene);
-		} else
-		if (isTexture == true) {
-			icon = "{$icon.type_texture}";
-			colorType = "{$color.type_texture}";
-			auto screenNode = GUIParser::parse(
-				"resources/engine/gui/",
-				"template_viewport_texture.xml",
-				{{ "texture", absoluteFileName}}
+		switch (fileType) {
+			case FILETYPE_MODEL:
+				{
+					icon = "{$icon.type_mesh}";
+					colorType = "{$color.type_mesh}";
+					auto model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
+					auto prototype = new Prototype(
+						Prototype::ID_NONE,
+						Prototype_Type::MODEL,
+						Tools::removeFileEnding(fileName),
+						Tools::removeFileEnding(fileName),
+						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileEnding(fileName) + ".tmodel",
+						absoluteFileName,
+						string(),
+						model,
+						Vector3(0.0f, 0.0f, 0.0f)
+					);
+					tabView = new ModelEditorTabView(view, tabId, prototype);
+					break;
+				}
+			case FILETYPE_MODELPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabView = new ModelEditorTabView(view, tabId, prototype);
+					break;
+				}
+			case FILETYPE_SCENE:
+				{
+					icon = "{$icon.type_scene}";
+					colorType = "{$color.type_scene}";
+					auto scene = SceneReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabView = new SceneEditorTabView(view, tabId, scene);
+					break;
+				}
+			case FILETYPE_SCREEN:
+				{
+					icon = "{$icon.type_gui}";
+					colorType = "{$color.type_gui}";
+					auto screenNode = GUIParser::parse(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabView = new UITabEditorView(view, tabId, screenNode);
+					break;
+				}
+			case FILETYPE_TEXTURE:
+				{
+					icon = "{$icon.type_texture}";
+					colorType = "{$color.type_texture}";
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"viewport_texture.xml",
+						{{ "texture", absoluteFileName}}
 
-			);
-			tabView = new TextureTabView(view, tabId, screenNode);
+					);
+					tabView = new TextureTabView(view, tabId, screenNode);
+					break;
+				}
+			case FILETYPE_FONT:
+				{
+					icon = "{$icon.type_font}";
+					colorType = "{$color.type_font}";
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"viewport_font.xml",
+						{{ "font", absoluteFileName}}
+
+					);
+					tabView = new FontTabView(view, tabId, screenNode);
+					break;
+				}
+			default:
+				throw ExceptionBase("Unknown file type.");
 		}
 		//
 		{

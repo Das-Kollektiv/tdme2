@@ -139,7 +139,12 @@ GUIFont* GUI::getFont(const string& applicationRootPath, const string& fileName)
 	string file;
 	GUIFont* font = nullptr;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		// TODO: improve me!
+		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+			canonicalFile = fileName;
+		} else {
+			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		}
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {

@@ -6,6 +6,7 @@ namespace tools {
 namespace editor {
 namespace tabcontrollers {
 	struct TabController;
+	class FontTabController;
 	class ModelEditorTabController;
 	class SceneEditorTabController;
 	class TextureTabController;

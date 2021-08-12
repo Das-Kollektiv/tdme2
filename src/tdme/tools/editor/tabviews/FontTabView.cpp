@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/tabviews/TextureTabView.h>
+#include <tdme/tools/editor/tabviews/FontTabView.h>
 
 #include <string>
 
@@ -7,25 +7,25 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/tabcontrollers/TextureTabController.h>
+#include <tdme/tools/editor/tabcontrollers/FontTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
 using std::string;
 
-using tdme::tools::editor::tabviews::TextureTabView;
+using tdme::tools::editor::tabviews::FontTabView;
 
 using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::tabcontrollers::TextureTabController;
+using tdme::tools::editor::tabcontrollers::FontTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-TextureTabView::TextureTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
+FontTabView::FontTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -37,59 +37,59 @@ TextureTabView::TextureTabView(EditorView* editorView, const string& tabId, GUIS
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
-TextureTabView::~TextureTabView() {
+FontTabView::~FontTabView() {
 }
 
-void TextureTabView::handleInputEvents()
+void FontTabView::handleInputEvents()
 {
 	engine->getGUI()->handleEvents();
 }
 
-void TextureTabView::display()
+void FontTabView::display()
 {
 	engine->display();
 	engine->getGUI()->render();
 }
 
-void TextureTabView::initialize()
+void FontTabView::initialize()
 {
 	try {
-		textureTabController = new TextureTabController(this);
-		textureTabController->initialize(editorView->getScreenController()->getScreenNode());
+		fontTabController = new FontTabController(this);
+		fontTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::print(string("TextureTabView::initialize(): An error occurred: "));
+		Console::print(string("FontTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
 	// TODO: reloadTabOutliner
 }
 
-void TextureTabView::dispose()
+void FontTabView::dispose()
 {
 	engine->reset();
-	delete textureTabController;
+	delete fontTabController;
 }
 
-void TextureTabView::updateRendering() {
+void FontTabView::updateRendering() {
 }
 
-Engine* TextureTabView::getEngine() {
+Engine* FontTabView::getEngine() {
 	return engine;
 }
 
-void TextureTabView::activate() {
+void FontTabView::activate() {
 	// uiTabController->setOutlinerAddDropDownContent();
-	textureTabController->setOutlinerContent();
+	fontTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());
 }
 
-void TextureTabView::deactivate() {
+void FontTabView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
 }
 
-void TextureTabView::reloadOutliner() {
-	textureTabController->setOutlinerContent();
+void FontTabView::reloadOutliner() {
+	fontTabController->setOutlinerContent();
 	editorView->getScreenController()->setDetailsContent(string());
 }
 

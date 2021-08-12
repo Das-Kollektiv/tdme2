@@ -9,7 +9,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/tabcontrollers/TextureTabController.h>
+#include <tdme/tools/editor/tabcontrollers/FontTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
@@ -22,16 +22,16 @@ using tdme::engine::scene::Scene;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabcontrollers::TextureTabController;
+using tdme::tools::editor::tabcontrollers::FontTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 
 /**
- * Texture tab view
+ * Font tab view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::TextureTabView final
+class tdme::tools::editor::tabviews::FontTabView final
 	: public TabView
 {
 protected:
@@ -41,7 +41,7 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	TextureTabController* textureTabController { nullptr };
+	FontTabController* fontTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 
 public:
@@ -51,12 +51,12 @@ public:
 	 * @param tabId tab id
 	 * @param screenNode screenNode
 	 */
-	TextureTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
+	FontTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
 
 	/**
 	 * Destructor
 	 */
-	~TextureTabView();
+	~FontTabView();
 
 	/**
 	 * @return editor view
@@ -69,7 +69,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() {
-		return textureTabController;
+		return fontTabController;
 	}
 
 	/**
