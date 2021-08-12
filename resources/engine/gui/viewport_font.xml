@@ -1,0 +1,11 @@
+<screen id="template_viewport_texture">
+	<layout width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<scrollarea width="100%" height="100%" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<text font="{$font}" color="white" text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna" width="auto" height="auto" />
+			<text font="{$font}" color="white" text="aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata" width="auto" height="auto" />
+			<text font="{$font}" color="white" text="sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor" width="auto" height="auto" />
+			<text font="{$font}" color="white" text="invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet" width="auto" height="auto" />
+			<text font="{$font}" color="white" text="clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." width="auto" height="auto" />
+		</scrollarea>
+	</layout>
+</screen>
