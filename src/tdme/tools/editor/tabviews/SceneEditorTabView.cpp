@@ -15,6 +15,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -52,6 +53,7 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLibrary;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -1367,4 +1369,16 @@ void SceneEditorTabView::setSnapping(bool snappingEnabled, float snappingX, floa
 	this->snappingEnabled = snappingEnabled;
 	this->snappingX = snappingX;
 	this->snappingZ = snappingZ;
+}
+
+void SceneEditorTabView::addPrototype(Prototype* prototype) {
+	try {
+		prototype->setEmbedded(false);
+		auto sceneLibrary = scene->getLibrary();
+		sceneLibrary->addPrototype(prototype);
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabView::addPrototype(): An error occurred: ") + exception.what());;
+		sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	}
+	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
 }

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/scenes/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -15,7 +16,6 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
 using tdme::math::Vector3;
 
 /**

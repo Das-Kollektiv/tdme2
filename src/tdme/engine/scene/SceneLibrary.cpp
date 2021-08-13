@@ -188,6 +188,7 @@ Prototype* SceneLibrary::addTerrain(int id, const string& name, const string& de
 
 void SceneLibrary::addPrototype(Prototype* prototype)
 {
+	if (prototype->getId() == SceneLibrary::ID_ALLOCATE) prototype->setId(allocatePrototypeId());
 	auto prototypeByIdIt = prototypesById.find(prototype->getId());
 	if (prototypeByIdIt != prototypesById.end()) {
 		throw ExceptionBase("Prototype id already in use");

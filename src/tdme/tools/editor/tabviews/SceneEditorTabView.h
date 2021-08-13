@@ -415,4 +415,11 @@ public:
 	 * @param snappingZ snapping along Z axis
 	 */
 	void setSnapping(bool snappingEnabled, float snappingX, float snappingZ);
+
+	/**
+	 * Add prototype to scene
+	 * @param prototype prototype
+	 */
+	void addPrototype(Prototype* prototype);
+
 };

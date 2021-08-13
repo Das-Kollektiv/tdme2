@@ -41,7 +41,6 @@ class tdme::engine::scene::Scene final
 {
 private:
 	string applicationRootPathName;
-	string pathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
 	vector<SceneLight*> lights;
@@ -97,30 +96,15 @@ public:
 	}
 
 	/**
-	 * @return path name
-	 */
-	inline const string& getPathName() {
-		return pathName;
-	}
-
-	/**
-	 * Set up path name
-	 * @param pathName pathName
-	 */
-	inline void setPathName(const string& pathName) {
-		this->pathName = pathName;
-	}
-
-	/**
-	 * @return scene file name
+	 * @return scene file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set up scene file name
-	 * @param fileName file name
+	 * Set up scene file name including relative path
+	 * @param fileName scene file name including relative path
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;

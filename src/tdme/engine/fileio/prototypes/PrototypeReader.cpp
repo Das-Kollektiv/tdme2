@@ -128,12 +128,13 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	jPrototypeRoot.Parse(jsonContent.c_str());
 
 	auto prototype = read(id, pathName, jPrototypeRoot, transformFilter);
-	prototype->setFileName(pathName + "/" + fileName);
+	prototype->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 	return prototype;
 }
 
 Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter)
 {
+	//
 	Prototype* prototype;
 	auto pivot = Vector3(
 		static_cast<float>(jPrototypeRoot["px"].GetFloat()),
@@ -147,7 +148,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	string modelFileName = "";
 	string modelPathName = "";
 	if (jPrototypeRoot.FindMember("file") != jPrototypeRoot.MemberEnd()) {
-		modelFileName = (jPrototypeRoot["file"].GetString());
+		modelFileName = jPrototypeRoot["file"].GetString();
 	}
 	BaseProperties properties(name, description);
 	auto jProperties = jPrototypeRoot["properties"].GetArray();
@@ -183,6 +184,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		model,
 		pivot
 	);
+	//
 	for (auto i = 0; i < properties.getPropertyCount(); i++) {
 		auto property = properties.getPropertyByIndex(i);
 		prototype->addProperty(property->getName(), property->getValue());

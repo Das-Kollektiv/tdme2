@@ -5,6 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -47,6 +48,7 @@ using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::model::RotationOrder;
@@ -122,6 +124,20 @@ void SceneEditorTabController::dispose()
 
 void SceneEditorTabController::save()
 {
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+
+	//
+	try {
+		SceneWriter::write(
+			Tools::getPathName(scene->getFileName()),
+			Tools::getFileName(scene->getFileName()),
+			scene
+		);
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabController::save(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void SceneEditorTabController::saveAs()
@@ -494,7 +510,7 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 						selectedEntityId = StringTools::substring(outlinerSelection[0], string("scene.entities.").size());
 						auto sceneEntity = scene->getEntity(selectedEntityId);
 						if (sceneEntity == nullptr) return;
-						sceneEditorTabController->view->getEditorView()->getScreenController()->setOutlinerSelection("scene.prototypes." + GUIParser::escapeQuotes(sceneEntity->getPrototype()->getName()));
+						sceneEditorTabController->view->getEditorView()->getScreenController()->setOutlinerSelection("scene.prototypes." + GUIParser::escapeQuotes(to_string(sceneEntity->getPrototype()->getId())));
 						sceneEditorTabController->updateDetails(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection());
 					}
 					JumpToPrototypeAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
@@ -599,12 +615,12 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
+		auto prototypeId = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.prototypes.").size()));
 		auto scene = view->getScene();
 		auto sceneLibrary = scene->getLibrary();
-		auto prototype = sceneLibrary->getPrototypeByName(prototypeId);
+		auto prototype = sceneLibrary->getPrototype(prototypeId);
 		if (prototype != nullptr) view->setPlaceEntityMode(prototype);
-	}
+	} else
 	if (node->getId() == "light_ambient_ambient_edit" ||
 		node->getId() == "light_spot_ambient_edit" ||
 		node->getId() == "light_directional_ambient_edit") {
@@ -1081,8 +1097,9 @@ void SceneEditorTabController::setOutlinerContent() {
 			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
 				auto prototype = sceneLibrary->getPrototypeAt(i);
 				auto icon = getPrototypeIcon(prototype->getType());
+				auto prototypeId = prototype->getId();
 				auto prototypeName = prototype->getName();
-				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon +"\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + prototypeName) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon +"\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + to_string(prototypeId)) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
@@ -1123,7 +1140,6 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 		setLightDetails(lightIdx);
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.prototypes.") == true) {
-		auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
 		setPrototypeDetails();
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
@@ -1201,7 +1217,7 @@ void SceneEditorTabController::onReplacePrototype() {
 				auto prototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
 				if (prototype == nullptr) return;
 				auto newPrototype = PrototypeReader::read(
-					sceneLibrary->allocatePrototypeId(),
+					Prototype::ID_NONE,
 					sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);

@@ -165,12 +165,26 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		auto& jPrototype = jRoot["models"].GetArray()[i];
 		Prototype* prototype = nullptr;
 		try {
-			prototype = PrototypeReader::read(
-				jPrototype["id"].GetInt(),
-				pathName,
-				jPrototype["entity"],
-				prototypeTransformFilter
-			);
+			auto embedded = jPrototype.FindMember("e") != jPrototype.MemberEnd()?jPrototype["e"].GetBool():true;
+			if (embedded == true) {
+				prototype = PrototypeReader::read(
+					jPrototype["id"].GetInt(),
+					pathName,
+					jPrototype["entity"],
+					prototypeTransformFilter
+				);
+				prototype->setEmbedded(true);
+			} else {
+				auto externalPrototypePathName = PrototypeReader::getResourcePathName(pathName, jPrototype["pf"].GetString());
+				auto externalPrototypeFileName = FileSystem::getInstance()->getFileName(jPrototype["pf"].GetString());
+				prototype = PrototypeReader::read(
+					jPrototype["id"].GetInt(),
+					externalPrototypePathName,
+					externalPrototypeFileName,
+					prototypeTransformFilter
+				);
+				prototype->setEmbedded(false);
+			}
 		} catch (Exception& exception) {
 			delete scene;
 			throw exception;
@@ -184,8 +198,8 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			for (auto j = 0; j < jPrototype["properties"].GetArray().Size(); j++) {
 				auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
 				prototype->addProperty(
-					(jPrototypeProperty["name"].GetString()),
-					(jPrototypeProperty["value"].GetString())
+					jPrototypeProperty["name"].GetString(),
+					jPrototypeProperty["value"].GetString()
 				);
 			}
 		}
@@ -255,8 +269,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		progressStepCurrent++;
 	}
 	scene->setEntityIdx(jRoot["objects_eidx"].GetInt());
-	scene->setPathName(pathName);
-	scene->setFileName(fileName);
+	scene->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 	scene->update();
 
 	//

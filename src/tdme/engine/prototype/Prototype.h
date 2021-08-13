@@ -11,6 +11,7 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
@@ -31,6 +32,7 @@ using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
@@ -43,6 +45,7 @@ using tdme::math::Vector3;
 class tdme::engine::prototype::Prototype final
 	: public BaseProperties
 {
+	friend class tdme::engine::scene::SceneLibrary;
 	friend class Prototype_Type;
 
 public:
@@ -56,6 +59,7 @@ public:
 private:
 	int id;
 	Prototype_Type* type { nullptr };
+	bool embedded { true };
 	string fileName;
 	string modelFileName;
 	string thumbnail;
@@ -80,6 +84,14 @@ private:
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 	PrototypeTerrain* terrain { nullptr };
+
+	/**
+	 * Set Id
+	 * @param id id
+	 */
+	inline void setId(int id) {
+		this->id = id;
+	}
 
 public:
 
@@ -117,15 +129,30 @@ public:
 	}
 
 	/**
-	 * @return prototype file name
+	 * @return if this prototype is embedded into a tscene file
+	 */
+	inline bool isEmbedded() {
+		return embedded;
+	}
+
+	/**
+	 * Set embedded
+	 * @param embedded embedded
+	 */
+	inline void setEmbedded(bool embedded) {
+		this->embedded = embedded;
+	}
+
+	/**
+	 * @return prototype file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set prototype file name
-	 * @param fileName prototype file name
+	 * Set up prototype file name including relative path
+	 * @param fileName prototype file name including relative path
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;

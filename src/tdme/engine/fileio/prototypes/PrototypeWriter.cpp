@@ -111,7 +111,7 @@ void PrototypeWriter::copyFile(const string& source, const string& dest)
 
 void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
 {
-	prototype->setFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	prototype->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 
 	Document jRoot;
 	jRoot.SetObject();

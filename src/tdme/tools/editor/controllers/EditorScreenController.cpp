@@ -30,6 +30,7 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -78,6 +79,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -178,12 +180,8 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
 	}
 	// forward onValueChanged to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onValueChanged(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onValueChanged(node);
 }
 
 void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -247,42 +245,79 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		}
 	}
 	// forward onActionPerformed to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onActionPerformed(type, node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onActionPerformed(type, node);
 }
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onFocus(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onFocus(node);
 }
 
 void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onUnfocus(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onUnfocus(node);
 }
 
 void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	// forward onContextMenuRequested to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
+		auto selectedTab = getSelectedTab();
+		if (selectedTab == nullptr) return;
+		switch (selectedTab->getType()) {
+			case EditorTabView::TABTYPE_MODELEDITOR:
+				break;
+			case EditorTabView::TABTYPE_SCENEEDITOR:
+				{
+					// clear
+					view->getPopUps()->getContextMenuScreenController()->clear();
+
+					// load
+					class OnAddToSceneAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto currentTab = editorScreenController->getSelectedTab();
+							if (currentTab == nullptr) return;
+							SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
+							if (sceneEditorTabView == nullptr) return;
+							try {
+								auto prototype = PrototypeReader::read(
+									Tools::getPathName(absoluteFileName),
+									Tools::getFileName(absoluteFileName)
+								);
+								sceneEditorTabView->addPrototype(prototype);
+							} catch (Exception& exception) {
+								Console::println(string("OnAddToSceneAction::performAction(): An error occurred: ") + exception.what());;
+								editorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+						}
+						OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+						}
+					private:
+						EditorScreenController* editorScreenController;
+						string absoluteFileName;
+					};
+					view->getPopUps()->getContextMenuScreenController()->addMenuItem("Add to scene", "contextmenu_addtoscene", new OnAddToSceneAction(this, absoluteFileName));
+
+					//
+					view->getPopUps()->getContextMenuScreenController()->show(mouseX, mouseY);
+				}
+				break;
+			case EditorTabView::TABTYPE_TEXTURE:
+				break;
+			case EditorTabView::TABTYPE_FONT:
+				break;
+			case EditorTabView::TABTYPE_UIEDITOR:
+				break;
+			default: break;
+		}
 	}
+	// forward onContextMenuRequested to active tab tab controller
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
 }
 
 void EditorScreenController::onOpenProject() {
@@ -713,12 +748,14 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	//
 	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
+	if (screenNode->getNodeById(tabId) != nullptr) return;
 	tabId = GUIParser::escapeQuotes(tabId);
 
 	//
 	try {
 		string icon;
 		string colorType;
+		EditorTabView::TabType tabType = EditorTabView::TABTYPE_UNKNOWN;
 		TabView* tabView = nullptr;
 		switch (fileType) {
 			case FILETYPE_MODEL:
@@ -737,6 +774,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						model,
 						Vector3(0.0f, 0.0f, 0.0f)
 					);
+					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
 					break;
 				}
@@ -748,6 +786,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						FileSystem::getInstance()->getPathName(absoluteFileName),
 						FileSystem::getInstance()->getFileName(absoluteFileName)
 					);
+					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
 					break;
 				}
@@ -759,6 +798,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						FileSystem::getInstance()->getPathName(absoluteFileName),
 						FileSystem::getInstance()->getFileName(absoluteFileName)
 					);
+					tabType = EditorTabView::TABTYPE_SCENEEDITOR;
 					tabView = new SceneEditorTabView(view, tabId, scene);
 					break;
 				}
@@ -770,6 +810,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						FileSystem::getInstance()->getPathName(absoluteFileName),
 						FileSystem::getInstance()->getFileName(absoluteFileName)
 					);
+					tabType = EditorTabView::TABTYPE_UIEDITOR;
 					tabView = new UITabEditorView(view, tabId, screenNode);
 					break;
 				}
@@ -783,6 +824,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						{{ "texture", absoluteFileName}}
 
 					);
+					tabType = EditorTabView::TABTYPE_TEXTURE;
 					tabView = new TextureTabView(view, tabId, screenNode);
 					break;
 				}
@@ -796,6 +838,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						{{ "font", absoluteFileName}}
 
 					);
+					tabType = EditorTabView::TABTYPE_FONT;
 					tabView = new FontTabView(view, tabId, screenNode);
 					break;
 				}
@@ -828,7 +871,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 		tabView->initialize();
 		//
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
-		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -898,22 +941,14 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 
 void EditorScreenController::onSaveCurrentTab() {
 	// forward save to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->save();
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->save();
 }
 
 void EditorScreenController::onSaveAsCurrentTab() {
 	// forward saveAs to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->saveAs();
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->saveAs();
 }
 
 void EditorScreenController::onSaveAllTabs() {

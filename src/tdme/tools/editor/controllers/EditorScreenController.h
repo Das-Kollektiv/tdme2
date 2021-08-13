@@ -61,8 +61,12 @@ public:
 	 * Editor tab view
 	 */
 	class EditorTabView {
+	public:
+		enum TabType { TABTYPE_UNKNOWN, TABTYPE_MODELEDITOR, TABTYPE_SCENEEDITOR, TABTYPE_TEXTURE, TABTYPE_FONT, TABTYPE_UIEDITOR };
+
 	private:
 		string id;
+		TabType type { TABTYPE_UNKNOWN };
 		TabView* tabView { nullptr };
 		TabController* tabController { nullptr };
 		Engine* engine { nullptr };
@@ -77,6 +81,7 @@ public:
 		/**
 		 * Public constructor
 		 * @param id id
+		 * @param type type
 		 * @param tabView tab view
 		 * @param tabController tab controller
 		 * @param engine engine
@@ -84,12 +89,14 @@ public:
 		 */
 		EditorTabView(
 			string id,
+			TabType type,
 			TabView* tabView,
 			TabController* tabController,
 			Engine* engine,
 			GUIFrameBufferNode* frameBufferNode
 		):
 			id(id),
+			type(type),
 			tabView(tabView),
 			tabController(tabController),
 			engine(engine),
@@ -101,6 +108,13 @@ public:
 		 */
 		inline const string& getId() {
 			return id;
+		}
+
+		/**
+		 * @return tab type
+		 */
+		inline TabType getType() {
+			return type;
 		}
 
 		/**
@@ -314,6 +328,18 @@ public:
 	 */
 	inline unordered_map<string, EditorTabView>& getTabViews() {
 		return tabViews;
+	}
+
+	/**
+	 * @return selected tab
+	 */
+	inline EditorTabView* getSelectedTab() {
+		auto selectedTabId = getSelectedTabId();
+		auto tabViewIt = tabViews.find(selectedTabId);
+		if (tabViewIt != tabViews.end()){
+			return &tabViewIt->second;
+		}
+		return nullptr;
 	}
 
 	/**

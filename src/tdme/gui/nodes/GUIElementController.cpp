@@ -117,6 +117,12 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			}
 		}
 	} else
+	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_RIGHT) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+			node->getScreenNode()->delegateContextMenuRequest(elementNode, event->getXUnscaled(), event->getYUnscaled());
+		}
+		event->setProcessed(true);
+	} else
 	if (node == elementNode && event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED && event->getButton() == MOUSE_BUTTON_LEFT && elementNode->getActiveConditions().has(GUIElementNode::CONDITION_CLICK)) {
 		elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
 		event->setProcessed(true);

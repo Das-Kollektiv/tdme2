@@ -55,7 +55,7 @@ using rapidjson::Writer;
 
 void SceneWriter::write(const string& pathName, const string& fileName, Scene* scene)
 {
-	scene->setFileName(pathName + '/' + fileName);
+	scene->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 	auto sceneLibrary = scene->getLibrary();
 	Document jDocument;
 	jDocument.SetObject();
@@ -101,17 +101,23 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	jSceneLibrary.SetArray();
 	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
 		auto prototype = sceneLibrary->getPrototypeAt(i);
-		Value jEntity;
-		jEntity.SetObject();
-		PrototypeWriter::write(jDocument, jEntity, prototype);
-		Value jModel;
-		jModel.SetObject();
-		jModel.AddMember("id", Value().SetInt(prototype->getId()), jAllocator);
-		jModel.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
-		jModel.AddMember("name", Value(prototype->getName(), jAllocator), jAllocator);
-		jModel.AddMember("descr", Value(prototype->getDescription(), jAllocator), jAllocator);
-		jModel.AddMember("entity", jEntity, jAllocator);
-		jSceneLibrary.PushBack(jModel, jAllocator);
+		Value jPrototype;
+		jPrototype.SetObject();
+		if (prototype->isEmbedded() == true) {
+			Value jEmbeddedPrototype;
+			jEmbeddedPrototype.SetObject();
+			PrototypeWriter::write(
+				jDocument,
+				jEmbeddedPrototype,
+				prototype
+			);
+			jPrototype.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
+			jPrototype.AddMember("entity", jEmbeddedPrototype, jAllocator);
+		}
+		jPrototype.AddMember("id", Value().SetInt(prototype->getId()), jAllocator);
+		jPrototype.AddMember("e", Value(prototype->isEmbedded()), jAllocator);
+		jPrototype.AddMember("pf", Value(prototype->getFileName(), jAllocator), jAllocator);
+		jSceneLibrary.PushBack(jPrototype, jAllocator);
 	}
 	jDocument.AddMember("models", jSceneLibrary, jAllocator);
 	Value jSceneProperties;

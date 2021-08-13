@@ -46,7 +46,6 @@ using tdme::utilities::Console;
 Scene::Scene(const string& name, const string& description): BaseProperties(name, description)
 {
 	applicationRootPathName = "";
-	pathName = ".";
 	fileName = "untitled.tscene";
 	rotationOrder = RotationOrder::XYZ;
 	lights.push_back(new SceneLight(0));
