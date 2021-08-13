@@ -18,7 +18,7 @@
 		</layout>
 		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
 			<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-				<checkbox id="{$id}_checkbox_grid" template="checkbox_template_image.xml" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+				<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
 			</layout>
 		</layout>
 		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">

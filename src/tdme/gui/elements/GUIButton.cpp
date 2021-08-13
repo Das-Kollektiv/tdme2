@@ -41,6 +41,7 @@ unordered_map<string, string> GUIButton::getAttributes(GUIScreenNode* screenNode
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";
+	attributes["background-image"] = "resources/engine/images/button.png";
 	return attributes;
 }
 
