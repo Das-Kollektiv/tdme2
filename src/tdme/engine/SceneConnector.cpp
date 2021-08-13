@@ -171,7 +171,11 @@ bool SceneConnector::enableEarlyZRejection = false;
 
 void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX && i < scene->getLightCount(); i++) {
+	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
+		if (i >= scene->getLightCount()) {
+			engine->getLightAt(i)->setEnabled(false);
+			continue;
+		}
 		engine->getLightAt(i)->setAmbient(Color4(scene->getLightAt(i)->getAmbient()));
 		engine->getLightAt(i)->setDiffuse(Color4(scene->getLightAt(i)->getDiffuse()));
 		engine->getLightAt(i)->setSpecular(Color4(scene->getLightAt(i)->getSpecular()));

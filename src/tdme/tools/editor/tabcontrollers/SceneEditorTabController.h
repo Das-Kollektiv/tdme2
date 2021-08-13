@@ -75,6 +75,38 @@ private:
 	array<string, 1> applyReflectionEnvironmentMappingNodes = {
 		"reflection_environmentmap"
 	};
+	array<string, 30> applyLightNodes = {
+		"light_type",
+		"light_ambient_ambient",
+		"light_ambient_diffuse",
+		"light_ambient_specular",
+		"light_ambient_constant_attenuation",
+		"light_ambient_linear_attenuation",
+		"light_ambient_quadratic_attenuation",
+		"light_spot_ambient",
+		"light_spot_diffuse",
+		"light_spot_specular",
+		"light_spot_constant_attenuation",
+		"light_spot_linear_attenuation",
+		"light_spot_quadratic_attenuation",
+		"light_spot_position_x",
+		"light_spot_position_y",
+		"light_spot_position_z",
+		"light_spot_direction_x",
+		"light_spot_direction_y",
+		"light_spot_direction_z",
+		"light_spot_cutoff",
+		"light_spot_exponent",
+		"light_directional_ambient",
+		"light_directional_diffuse",
+		"light_directional_specular",
+		"light_directional_constant_attenuation",
+		"light_directional_linear_attenuation",
+		"light_directional_quadratic_attenuation",
+		"light_directional_direction_x",
+		"light_directional_direction_y",
+		"light_directional_direction_z"
+	};
 
 	string renameEntityName;
 
@@ -118,6 +150,24 @@ public:
 	 * Set sky details
 	 */
 	void setSkyDetails();
+
+	/**
+	 * Set light details
+	 * @param lightIdx light index
+	 */
+	void setLightDetails(int lightIdx);
+
+	/**
+	 * Update light details
+	 * @param lightIdx light index
+	 */
+	void updateLightDetails(int lightIdx);
+
+	/**
+	 * Apply light
+	 * @param lightIdx light index
+	 */
+	void applyLightDetails(int lightIdx);
 
 	/**
 	 * Set prototype details

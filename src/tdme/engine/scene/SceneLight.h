@@ -51,7 +51,7 @@ public:
 	/**
 	 * @return enabled
 	 */
-	inline bool isEnabled() {
+	inline bool isEnabled() const {
 		return enabled;
 	}
 
@@ -64,57 +64,89 @@ public:
 	}
 
 	/**
-	 * @return ambient light
+	 * @return ambient light component
 	 */
-	inline Color4& getAmbient() {
+	inline const Color4& getAmbient() const {
 		return ambient;
 	}
 
 	/**
-	 * Diffuse light
-	 * @return diffuse light
+	 * Set ambient light component
+	 * @param ambient ambient light component
 	 */
-	inline Color4& getDiffuse() {
+	inline void setAmbient(const Color4& ambient) {
+		this->ambient = ambient;
+	}
+
+	/**
+	 * @return diffuse light component
+	 */
+	inline const Color4& getDiffuse() const {
 		return diffuse;
 	}
 
 	/**
-	 * @return specular light
+	 * Set diffuse light component
+	 * @param diffuse diffuse light
 	 */
-	inline Color4& getSpecular() {
+	inline void setDiffuse(const Color4& diffuse) {
+		this->diffuse = diffuse;
+	}
+
+	/**
+	 * @return specular light component
+	 */
+	inline const Color4& getSpecular() const {
 		return specular;
+	}
+
+	/**
+	 * Set specular light component
+	 * @param specular specular light
+	 */
+	inline void setSpecular(const Color4& specular) {
+		this->specular = specular;
 	}
 
 	/**
 	 * @return position of light
 	 */
-	inline Vector4& getPosition() {
+	inline const Vector4& getPosition() const {
 		return position;
 	}
 
 	/**
-	 * @return spot to
+	 * Set light position
+	 * @param position position of light
 	 */
-	inline Vector3& getSpotTo() {
-		return spotTo;
+	inline void setPosition(const Vector4& position) {
+		this->position = position;
 	}
 
 	/**
 	 * @return spot direction
 	 */
-	inline Vector3& getSpotDirection() {
+	inline const Vector3& getSpotDirection() const {
 		return spotDirection;
+	}
+
+	/**
+	 * Set spot direction
+	 * @param spotDirection spot direction
+	 */
+	inline void setSpotDirection(const Vector3& spotDirection) {
+		this->spotDirection = spotDirection;
 	}
 
 	/**
 	 * @return spot exponent
 	 */
-	inline float getSpotExponent() {
+	inline float getSpotExponent() const {
 		return spotExponent;
 	}
 
 	/**
-	 * set up spot exponent
+	 * Set up spot exponent
 	 * @param spotExponent spot exponent
 	 */
 	inline void setSpotExponent(float spotExponent) {
@@ -124,12 +156,12 @@ public:
 	/**
 	 * @return spot cutoff
 	 */
-	inline float getSpotCutOff() {
+	inline float getSpotCutOff() const {
 		return spotCutOff;
 	}
 
 	/**
-	 * set spot cut off
+	 * Set spot cut off
 	 * @param spotCutOff spot cut off
 	 */
 	inline void setSpotCutOff(float spotCutOff) {
@@ -139,12 +171,12 @@ public:
 	/**
 	 * @return constant attenuation
 	 */
-	inline float getConstantAttenuation() {
+	inline float getConstantAttenuation() const {
 		return constantAttenuation;
 	}
 
 	/**
-	 * set up constant attenuation
+	 * Set up constant attenuation
 	 * @param constantAttenuation constant attenuation
 	 */
 	inline void setConstantAttenuation(float constantAttenuation) {
@@ -154,13 +186,13 @@ public:
 	/**
 	 * @return linear attenuation
 	 */
-	inline float getLinearAttenuation() {
+	inline float getLinearAttenuation() const {
 		return linearAttenuation;
 	}
 
 	/**
-	 * set up linear attenuation
-	 * @param linarAttenuation linarAttenuation
+	 * Set up linear attenuation
+	 * @param linearAttenuation linear attenuation
 	 */
 	inline void setLinearAttenuation(float linearAttenuation) {
 		this->linearAttenuation = linearAttenuation;
@@ -169,7 +201,7 @@ public:
 	/**
 	 * @return quadratic attenuation
 	 */
-	inline float getQuadraticAttenuation() {
+	inline float getQuadraticAttenuation() const {
 		return quadraticAttenuation;
 	}
 

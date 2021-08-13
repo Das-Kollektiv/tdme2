@@ -12,6 +12,7 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -153,7 +154,26 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* getLightAt(int i) {
+		if (i < 0 || i >= lights.size()) return nullptr;
 		return lights[i];
+	}
+
+	/**
+	 * Get light at given index
+	 * @param i index
+	 * @return light
+	 */
+	inline SceneLight* addLightAt() {
+		lights.push_back(new SceneLight(lights.size()));
+		return lights[lights.size() - 1];
+	}
+
+	/**
+	 * Remove light at given index i
+	 * @param i index
+	 */
+	inline void removeLightAt(int i) {
+		lights.erase(lights.begin() + i);
 	}
 
 	/**

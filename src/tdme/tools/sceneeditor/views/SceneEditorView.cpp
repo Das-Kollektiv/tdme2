@@ -783,7 +783,7 @@ void SceneEditorView::updateGUIElements()
 		sceneEditorScreenController->unsetEntityReflectionsEnvironmentMappings();
 	}
 	for (auto i = 0; i < 4; i++) {
-		sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
+		sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), Vector3(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 	}
 	updateGUITransformationsElements();
 }
@@ -1662,32 +1662,30 @@ void SceneEditorView::computeSpotDirection(int i, const Vector4& position, const
 {
 	auto _from = Vector3(position.getX(), position.getY(), position.getZ());
 	auto spotDirection = spotTo.clone().sub(_from);
-	scene->getLightAt(i)->getPosition().set(position.getX(), position.getY(), position.getZ(), position.getW());
-	scene->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
-	scene->getLightAt(i)->getSpotDirection().set(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ());
-	engine->getLightAt(i)->setPosition(Vector4(position.getX(), position.getY(), position.getZ(), position.getW()));
-	engine->getLightAt(i)->setSpotDirection(Vector3(spotDirection.getX(), spotDirection.getY(), spotDirection.getZ()));
-	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
+	scene->getLightAt(i)->setPosition(position);
+	scene->getLightAt(i)->setSpotDirection(spotDirection);
+	engine->getLightAt(i)->setPosition(position);
+	engine->getLightAt(i)->setSpotDirection(spotDirection);
+	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), Vector3(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 }
 
 void SceneEditorView::applyLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
-	scene->getLightAt(i)->getAmbient().set(ambient);
-	scene->getLightAt(i)->getDiffuse().set(diffuse);
-	scene->getLightAt(i)->getSpecular().set(specular);
-	scene->getLightAt(i)->getPosition().set(position);
+	scene->getLightAt(i)->setAmbient(ambient);
+	scene->getLightAt(i)->setDiffuse(diffuse);
+	scene->getLightAt(i)->setSpecular(specular);
+	scene->getLightAt(i)->setPosition(position);
 	scene->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	scene->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	scene->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
-	scene->getLightAt(i)->getSpotTo().set(spotTo.getX(), spotTo.getY(), spotTo.getZ());
-	scene->getLightAt(i)->getSpotDirection().set(spotDirection);
+	scene->getLightAt(i)->setSpotDirection(spotDirection);
 	scene->getLightAt(i)->setSpotExponent(spotExponent);
 	scene->getLightAt(i)->setSpotCutOff(spotCutoff);
 	scene->getLightAt(i)->setEnabled(enabled);
-	engine->getLightAt(i)->setAmbient(Color4(ambient));
-	engine->getLightAt(i)->setDiffuse(Color4(diffuse));
-	engine->getLightAt(i)->setSpecular(Color4(specular));
-	engine->getLightAt(i)->setPosition(Vector4(position));
+	engine->getLightAt(i)->setAmbient(ambient);
+	engine->getLightAt(i)->setDiffuse(diffuse);
+	engine->getLightAt(i)->setSpecular(specular);
+	engine->getLightAt(i)->setPosition(position);
 	engine->getLightAt(i)->setConstantAttenuation(constantAttenuation);
 	engine->getLightAt(i)->setLinearAttenuation(linearAttenuation);
 	engine->getLightAt(i)->setQuadraticAttenuation(quadraticAttenuation);
@@ -1695,7 +1693,7 @@ void SceneEditorView::applyLight(int i, const Color4& ambient, const Color4& dif
 	engine->getLightAt(i)->setSpotExponent(spotExponent);
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);
-	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), scene->getLightAt(i)->getSpotTo(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
+	sceneEditorScreenController->setLight(i, scene->getLightAt(i)->getAmbient(), scene->getLightAt(i)->getDiffuse(), scene->getLightAt(i)->getSpecular(), scene->getLightAt(i)->getPosition(), scene->getLightAt(i)->getConstantAttenuation(), scene->getLightAt(i)->getLinearAttenuation(), scene->getLightAt(i)->getQuadraticAttenuation(), Vector3(), scene->getLightAt(i)->getSpotDirection(), scene->getLightAt(i)->getSpotExponent(), scene->getLightAt(i)->getSpotCutOff(), scene->getLightAt(i)->isEnabled());
 }
 
 void SceneEditorView::updateSky() {

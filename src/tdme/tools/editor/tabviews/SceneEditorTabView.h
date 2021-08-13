@@ -232,6 +232,11 @@ public:
 	void updateSkyPosition();
 
 	/**
+	 * Update lights
+	 */
+	void updateLights();
+
+	/**
 	 * Set highlight entity color effect
 	 * @param object object
 	 */

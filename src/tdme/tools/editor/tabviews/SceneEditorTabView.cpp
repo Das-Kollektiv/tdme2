@@ -659,6 +659,10 @@ void SceneEditorTabView::updateSkyPosition() {
 	sky->update();
 }
 
+void SceneEditorTabView::updateLights() {
+	SceneConnector::setLights(engine, scene, Vector3());
+}
+
 void SceneEditorTabView::setHighlightEntityColorEffect(Entity* entity)
 {
 	auto& red = entityColors["red"];

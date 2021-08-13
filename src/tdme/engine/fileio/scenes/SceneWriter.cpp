@@ -85,9 +85,6 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		jLight.AddMember("py", Value(light->getPosition().getY()), jAllocator);
 		jLight.AddMember("pz", Value(light->getPosition().getZ()), jAllocator);
 		jLight.AddMember("pw", Value(light->getPosition().getW()), jAllocator);
-		jLight.AddMember("stx", Value(light->getSpotTo().getX()), jAllocator);
-		jLight.AddMember("sty", Value(light->getSpotTo().getY()), jAllocator);
-		jLight.AddMember("stz", Value(light->getSpotTo().getZ()), jAllocator);
 		jLight.AddMember("sdx", Value(light->getSpotDirection().getX()), jAllocator);
 		jLight.AddMember("sdy", Value(light->getSpotDirection().getY()), jAllocator);
 		jLight.AddMember("sdz", Value(light->getSpotDirection().getZ()), jAllocator);

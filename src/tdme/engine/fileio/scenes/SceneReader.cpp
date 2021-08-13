@@ -106,49 +106,57 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		);
 	}
 	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
+		auto lightIdx = 0;
 		for (auto i = 0; i < jRoot["lights"].GetArray().Size(); i++) {
 			auto& jLight = jRoot["lights"].GetArray()[i];
-			auto light = scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
-			light->getAmbient().set(
-				jLight["ar"].GetFloat(),
-				jLight["ag"].GetFloat(),
-				jLight["ab"].GetFloat(),
-				jLight["aa"].GetFloat()
+			if (jLight["e"].GetBool() == false) continue;
+			auto light = lightIdx < scene->getLightCount()?(scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()?jLight["id"].GetInt():lightIdx)):scene->addLightAt();
+			light->setAmbient(
+				Color4(
+					jLight["ar"].GetFloat(),
+					jLight["ag"].GetFloat(),
+					jLight["ab"].GetFloat(),
+					jLight["aa"].GetFloat()
+				)
 			);
-			light->getDiffuse().set(
-				jLight["dr"].GetFloat(),
-				jLight["dg"].GetFloat(),
-				jLight["db"].GetFloat(),
-				jLight["da"].GetFloat()
+			light->setDiffuse(
+				Color4(
+					jLight["dr"].GetFloat(),
+					jLight["dg"].GetFloat(),
+					jLight["db"].GetFloat(),
+					jLight["da"].GetFloat()
+				)
 			);
-			light->getSpecular().set(
-				jLight["sr"].GetFloat(),
-				jLight["sg"].GetFloat(),
-				jLight["sb"].GetFloat(),
-				jLight["sa"].GetFloat()
+			light->setSpecular(
+				Color4(
+					jLight["sr"].GetFloat(),
+					jLight["sg"].GetFloat(),
+					jLight["sb"].GetFloat(),
+					jLight["sa"].GetFloat()
+				)
 			);
-			light->getPosition().set(
-				jLight["px"].GetFloat(),
-				jLight["py"].GetFloat(),
-				jLight["pz"].GetFloat(),
-				jLight["pw"].GetFloat()
+			light->setPosition(
+				Vector4(
+					jLight["px"].GetFloat(),
+					jLight["py"].GetFloat(),
+					jLight["pz"].GetFloat(),
+					jLight["pw"].GetFloat()
+				)
 			);
 			light->setConstantAttenuation(jLight["ca"].GetFloat());
 			light->setLinearAttenuation(jLight["la"].GetFloat());
 			light->setQuadraticAttenuation(jLight["qa"].GetFloat());
-			light->getSpotTo().set(
-				jLight["stx"].GetFloat(),
-				jLight["sty"].GetFloat(),
-				jLight["stz"].GetFloat()
-			);
-			light->getSpotDirection().set(
-				jLight["sdx"].GetFloat(),
-				jLight["sdy"].GetFloat(),
-				jLight["sdz"].GetFloat()
+			light->setSpotDirection(
+				Vector3(
+					jLight["sdx"].GetFloat(),
+					jLight["sdy"].GetFloat(),
+					jLight["sdz"].GetFloat()
+				)
 			);
 			light->setSpotExponent(jLight["se"].GetFloat());
 			light->setSpotCutOff(jLight["sco"].GetFloat());
 			light->setEnabled(jLight["e"].GetBool());
+			lightIdx++;
 		}
 	}
 

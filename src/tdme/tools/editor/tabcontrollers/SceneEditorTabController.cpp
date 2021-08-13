@@ -25,6 +25,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
+#include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -35,6 +36,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -64,6 +66,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -76,6 +79,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
@@ -260,6 +264,16 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				break;
 			}
 		}
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			for (auto& applyLightNode: applyLightNodes) {
+				if (node->getId() == applyLightNode) {
+					applyLightDetails(lightIdx);
+					break;
+				}
+			}
+		}
 		basePropertiesSubController->onValueChanged(node, view->getScene());
 	}
 }
@@ -432,83 +446,172 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId() == "tdme.entities.rename_input") {
-			renameEntity();
-		} else
-		if (node->getId() == "sky_model_remove") {
-			view->removeSky();
-			auto scene = view->getScene();
-			scene->setSkyModel(nullptr);
-			scene->setSkyModelFileName(string());
-			scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-			setSkyDetails();
-		} else
-		if (node->getId() == "sky_model_open") {
-			class OnLoadSkyModelAction: public virtual Action
-			{
-			public:
-				void performAction() override {
-					try {
-						sceneEditorTabController->view->removeSky();
-						auto scene = sceneEditorTabController->view->getScene();
-						scene->setSkyModelFileName(
-							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
-							"/" +
-							sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-						);
-						scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-						scene->setSkyModel(
-							ModelReader::read(
-								Tools::getPathName(scene->getSkyModelFileName()),
-								Tools::getFileName(scene->getSkyModelFileName()))
-						);
-						sceneEditorTabController->modelPath.setPath(
-							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-						);
-						sceneEditorTabController->view->updateSky();
-						sceneEditorTabController->setSkyDetails();
-					} catch (Exception& exception) {
-						Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
-						sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-					}
-					sceneEditorTabController->updateDetails("scene");
-					sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+	if (type != GUIActionListenerType::PERFORMED) return;
+	if (node->getId() == "tdme.entities.rename_input") {
+		renameEntity();
+	} else
+	if (node->getId() == "sky_model_remove") {
+		view->removeSky();
+		auto scene = view->getScene();
+		scene->setSkyModel(nullptr);
+		scene->setSkyModelFileName(string());
+		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+		setSkyDetails();
+	} else
+	if (node->getId() == "sky_model_open") {
+		class OnLoadSkyModelAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				try {
+					sceneEditorTabController->view->removeSky();
+					auto scene = sceneEditorTabController->view->getScene();
+					scene->setSkyModelFileName(
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
+						"/" +
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+					);
+					scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+					scene->setSkyModel(
+						ModelReader::read(
+							Tools::getPathName(scene->getSkyModelFileName()),
+							Tools::getFileName(scene->getSkyModelFileName()))
+					);
+					sceneEditorTabController->modelPath.setPath(
+						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+					);
+					sceneEditorTabController->view->updateSky();
+					sceneEditorTabController->setSkyDetails();
+				} catch (Exception& exception) {
+					Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
+					sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 				}
+				sceneEditorTabController->updateDetails("scene");
+				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			}
 
-				/**
-				 * Public constructor
-				 * @param sceneEditorTabController scene editor tab controller
-				 */
-				OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
-					: sceneEditorTabController(sceneEditorTabController) {
-					//
-				}
+			/**
+			 * Public constructor
+			 * @param sceneEditorTabController scene editor tab controller
+			 */
+			OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
+				: sceneEditorTabController(sceneEditorTabController) {
+				//
+			}
 
-			private:
-				SceneEditorTabController* sceneEditorTabController;
-			};
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+		};
 
-			auto extensions = ModelReader::getModelExtensions();
-			popUps->getFileDialogScreenController()->show(
-				modelPath.getPath(),
-				"Load sky model from: ",
-				extensions,
-				string(),
-				true,
-				new OnLoadSkyModelAction(this)
-			);
-		} else
-		if (node->getId() == "prototype_place") {
-			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-			auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
+		auto extensions = ModelReader::getModelExtensions();
+		popUps->getFileDialogScreenController()->show(
+			modelPath.getPath(),
+			"Load sky model from: ",
+			extensions,
+			string(),
+			true,
+			new OnLoadSkyModelAction(this)
+		);
+	} else
+	if (node->getId() == "prototype_place") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
+		auto scene = view->getScene();
+		auto sceneLibrary = scene->getLibrary();
+		auto prototype = sceneLibrary->getPrototypeByName(prototypeId);
+		if (prototype != nullptr) view->setPlaceEntityMode(prototype);
+	}
+	if (node->getId() == "light_ambient_ambient_edit" ||
+		node->getId() == "light_spot_ambient_edit" ||
+		node->getId() == "light_directional_ambient_edit") {
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				auto scene = sceneEditorTabController->view->getScene();
+				if (scene == nullptr) return;
+				auto light = scene->getLightAt(lightIdx);
+				if (scene == nullptr) return;
+				light->setAmbient(sceneEditorTabController->popUps->getColorPickerScreenController()->getColor());
+				sceneEditorTabController->updateLightDetails(lightIdx);
+			}
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
+			}
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+			int lightIdx;
+		};
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 			auto scene = view->getScene();
-			auto sceneLibrary = scene->getLibrary();
-			auto prototype = sceneLibrary->getPrototypeByName(prototypeId);
-			if (prototype != nullptr) view->setPlaceEntityMode(prototype);
-		} else {
-			basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+			if (scene == nullptr) return;
+			auto light = scene->getLightAt(lightIdx);
+			if (light == nullptr) return;
+			popUps->getColorPickerScreenController()->show(light->getAmbient(), new OnColorChangeAction(this, lightIdx));
 		}
+	} else
+	if (node->getId() == "light_ambient_diffuse_edit" ||
+		node->getId() == "light_spot_diffuse_edit" ||
+		node->getId() == "light_directional_diffuse_edit") {
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				auto scene = sceneEditorTabController->view->getScene();
+				if (scene == nullptr) return;
+				auto light = scene->getLightAt(lightIdx);
+				if (scene == nullptr) return;
+				light->setDiffuse(sceneEditorTabController->popUps->getColorPickerScreenController()->getColor());
+				sceneEditorTabController->updateLightDetails(lightIdx);
+			}
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
+			}
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+			int lightIdx;
+		};
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto scene = view->getScene();
+			if (scene == nullptr) return;
+			auto light = scene->getLightAt(lightIdx);
+			if (light == nullptr) return;
+			popUps->getColorPickerScreenController()->show(light->getDiffuse(), new OnColorChangeAction(this, lightIdx));
+		}
+	} else
+	if (node->getId() == "light_ambient_specular_edit" ||
+		node->getId() == "light_spot_specular_edit" ||
+		node->getId() == "light_directional_specular_edit") {
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				auto scene = sceneEditorTabController->view->getScene();
+				if (scene == nullptr) return;
+				auto light = scene->getLightAt(lightIdx);
+				if (scene == nullptr) return;
+				light->setSpecular(sceneEditorTabController->popUps->getColorPickerScreenController()->getColor());
+				sceneEditorTabController->updateLightDetails(lightIdx);
+			}
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
+			}
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+			int lightIdx;
+		};
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto scene = view->getScene();
+			if (scene == nullptr) return;
+			auto light = scene->getLightAt(lightIdx);
+			if (light == nullptr) return;
+			popUps->getColorPickerScreenController()->show(light->getSpecular(), new OnColorChangeAction(this, lightIdx));
+		}
+	} else {
+		basePropertiesSubController->onActionPerformed(type, node, view->getScene());
 	}
 }
 
@@ -531,9 +634,201 @@ void SceneEditorTabController::setSkyDetails() {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
 		}
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("SceneEditorTabController::setSkyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void SceneEditorTabController::setLightDetails(int lightIdx) {
+	Console::println("SceneEditorTabController::setLightDetails(): " + to_string(lightIdx));
+
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+	auto light = scene->getLightAt(lightIdx);
+	if (light == nullptr) return;
+	enum LightType { LIGHTTYPE_AMBIENT, LIGHTTYPE_SPOTLIGHT, LIGHTTYPE_DIRECTIONAL };
+	LightType lightType;
+	if (Math::abs(light->getPosition().getW()) < Math::EPSILON) lightType = LIGHTTYPE_DIRECTIONAL; else
+	if (Math::abs(light->getSpotExponent()) > Math::EPSILON) lightType = LIGHTTYPE_SPOTLIGHT; else
+		lightType = LIGHTTYPE_AMBIENT;
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_light\" src=\"resources/engine/gui/template_details_light.xml\" />")
+	);
+
+	//
+	try {
+		//
+		auto spotDirection = light->getSpotDirection().computeLengthSquared() < Math::square(Math::EPSILON)?Vector3(0.0f, -1.0f, 1.0f):light->getSpotDirection().clone().normalize();
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_constant_attenuation"))->getController()->setValue(MutableString(light->getConstantAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_linear_attenuation"))->getController()->setValue(MutableString(light->getLinearAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_quadratic_attenuation"))->getController()->setValue(MutableString(light->getQuadraticAttenuation()));
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_constant_attenuation"))->getController()->setValue(MutableString(light->getConstantAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_linear_attenuation"))->getController()->setValue(MutableString(light->getLinearAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_quadratic_attenuation"))->getController()->setValue(MutableString(light->getQuadraticAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_x"))->getController()->setValue(MutableString(light->getPosition().getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_y"))->getController()->setValue(MutableString(light->getPosition().getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_z"))->getController()->setValue(MutableString(light->getPosition().getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_x"))->getController()->setValue(MutableString(spotDirection.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_y"))->getController()->setValue(MutableString(spotDirection.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_z"))->getController()->setValue(MutableString(spotDirection.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_cutoff"))->getController()->setValue(MutableString(light->getSpotCutOff()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_exponent"))->getController()->setValue(MutableString(light->getSpotExponent()));
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_constant_attenuation"))->getController()->setValue(MutableString(light->getConstantAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_linear_attenuation"))->getController()->setValue(MutableString(light->getLinearAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_quadratic_attenuation"))->getController()->setValue(MutableString(light->getQuadraticAttenuation()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_x"))->getController()->setValue(MutableString(spotDirection.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_y"))->getController()->setValue(MutableString(spotDirection.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_z"))->getController()->setValue(MutableString(spotDirection.getZ()));
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_light"))->getActiveConditions().add("open");
+		switch (lightType) {
+			case LIGHTTYPE_AMBIENT:
+				{
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->setValue(MutableString(4));
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type_details"))->getActiveConditions().set("ambient");
+					break;
+				}
+			case LIGHTTYPE_SPOTLIGHT:
+				{
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->setValue(MutableString(2));
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type_details"))->getActiveConditions().set("spot");
+					break;
+				}
+			case LIGHTTYPE_DIRECTIONAL:
+				{
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->setValue(MutableString(3));
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type_details"))->getActiveConditions().set("directional");
+					break;
+				}
+		}
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabController::setLightDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateLightDetails(lightIdx);
+}
+
+void SceneEditorTabController::updateLightDetails(int lightIdx) {
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+	auto light = scene->getLightAt(lightIdx);
+	if (light == nullptr) return;
+
+	try {
+		//
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_ambient"))->setEffectColorMul(Color4(light->getAmbient()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_ambient_specular"))->setEffectColorMul(Color4(light->getSpecular()));
+
+		//
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_ambient"))->setEffectColorMul(Color4(light->getAmbient()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_spot_specular"))->setEffectColorMul(Color4(light->getSpecular()));
+
+		//
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_ambient"))->setEffectColorMul(Color4(light->getAmbient()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_specular"))->setEffectColorMul(Color4(light->getSpecular()));
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabController::updateLightDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	view->updateLights();
+}
+
+void SceneEditorTabController::applyLightDetails(int lightIdx) {
+	Console::println("SceneEditorTabController::applyLightDetails(): " + to_string(lightIdx));
+
+	//
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+	auto light = scene->getLightAt(lightIdx);
+	if (light == nullptr) return;
+
+	//
+	try {
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_light"))->getActiveConditions().add("open");
+		switch (Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->getValue().getString())) {
+			case 4:
+				//ambient
+				{
+					//
+					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_quadratic_attenuation"))->getController()->getValue().getString()));
+					break;
+				}
+			case 2:
+				// spot light
+				{
+					//
+					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setPosition(
+						Vector4(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_z"))->getController()->getValue().getString()),
+							1.0f
+						)
+					);
+					light->setSpotDirection(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_z"))->getController()->getValue().getString())
+						).normalize()
+					);
+					light->setSpotCutOff(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_cutoff"))->getController()->getValue().getString()));
+					light->setSpotExponent(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_exponent"))->getController()->getValue().getString()));
+					break;
+				}
+			case 3:
+				// directional
+				{
+					//
+					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setPosition(
+						Vector4(
+							light->getPosition().getX(),
+							light->getPosition().getY(),
+							light->getPosition().getZ(),
+							0.0f
+						)
+					);
+					light->setSpotDirection(
+						Vector3(
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_x"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_y"))->getController()->getValue().getString()),
+							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_z"))->getController()->getValue().getString())
+						).normalize()
+					);
+					break;
+				}
+		}
+	} catch (Exception& exception) {
+		Console::println(string("SceneEditorTabController::applyLightDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	view->updateLights();
 }
 
 void SceneEditorTabController::setPrototypeDetails() {
@@ -683,6 +978,14 @@ void SceneEditorTabController::setOutlinerContent() {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Lights") + "\" value=\"" + GUIParser::escapeQuotes("scene.lights") + "\">\n";
+			for (auto i = 0; i < scene->getLightCount(); i++) {
+				auto light = scene->getLightAt(i);
+				xml+= "	<selectbox-option image=\"resources/engine/images/light.png\" text=\"" + GUIParser::escapeQuotes("Light " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("scene.lights.light" + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("scene.lights.light" + to_string(i)) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
+		}
+		{
 			auto sceneLibrary = scene->getLibrary();
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes") + "\">\n";
 			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
@@ -724,6 +1027,10 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "scene.sky") {
 		setSkyDetails();
+	} else
+	if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+		auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+		setLightDetails(lightIdx);
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.prototypes.") == true) {
 		auto prototypeId = StringTools::substring(outlinerNode, string("scene.prototypes.").size());
