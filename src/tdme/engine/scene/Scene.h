@@ -159,11 +159,10 @@ public:
 	}
 
 	/**
-	 * Get light at given index
-	 * @param i index
+	 * Add light
 	 * @return light
 	 */
-	inline SceneLight* addLightAt() {
+	inline SceneLight* addLight() {
 		lights.push_back(new SceneLight(lights.size()));
 		return lights[lights.size() - 1];
 	}
@@ -171,9 +170,12 @@ public:
 	/**
 	 * Remove light at given index i
 	 * @param i index
+	 * @return success
 	 */
-	inline void removeLightAt(int i) {
+	bool removeLightAt(int i) {
+		if (i < 0 || i >= lights.size()) return false;
 		lights.erase(lights.begin() + i);
+		return true;
 	}
 
 	/**
