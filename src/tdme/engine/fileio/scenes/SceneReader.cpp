@@ -110,7 +110,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		for (auto i = 0; i < jRoot["lights"].GetArray().Size(); i++) {
 			auto& jLight = jRoot["lights"].GetArray()[i];
 			if (jLight["e"].GetBool() == false) continue;
-			auto light = lightIdx < scene->getLightCount()?(scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()?jLight["id"].GetInt():lightIdx)):scene->addLightAt();
+			auto light = lightIdx < scene->getLightCount()?(scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()?jLight["id"].GetInt():lightIdx)):scene->addLight();
 			light->setAmbient(
 				Color4(
 					jLight["ar"].GetFloat(),

@@ -313,6 +313,90 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "scene.lights") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			{
+				// add light
+				class OnAddLightAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						auto scene = sceneEditorTabController->view->getScene();
+						if (scene == nullptr) return;
+						auto light = scene->addLight();
+						if (light == nullptr) return;
+						light->setEnabled(true);
+
+						//
+						class ReloadTabOutlinerAction: public Action {
+						private:
+							EditorView* editorView;
+							string outlinerNode;
+						public:
+							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+							virtual void performAction() {
+								editorView->reloadTabOutliner(outlinerNode);
+								editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+							}
+						};
+						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights.light" + to_string(light->getId())));
+					}
+					OnAddLightAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Add light", "contextmenu_add", new OnAddLightAction(this));
+			}
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			{
+				auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+				auto scene = view->getScene();
+				if (scene == nullptr) return;
+
+				//
+				if (scene->getLightCount() < 2) return;
+
+				// remove light
+				class OnDeleteLightAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						auto scene = sceneEditorTabController->view->getScene();
+						if (scene == nullptr) return;
+						scene->removeLightAt(lightIdx);
+
+						//
+						class ReloadTabOutlinerAction: public Action {
+						private:
+							EditorView* editorView;
+							string outlinerNode;
+						public:
+							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+							virtual void performAction() {
+								editorView->reloadTabOutliner(outlinerNode);
+								editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+							}
+						};
+						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights"));
+					}
+					OnDeleteLightAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
+					}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+					int lightIdx;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Delete light", "contextmenu_delete", new OnDeleteLightAction(this, lightIdx));
+			}
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
 		if (StringTools::startsWith(outlinerNode, "scene.entities.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
@@ -769,6 +853,10 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_constant_attenuation"))->getController()->getValue().getString()));
 					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_linear_attenuation"))->getController()->getValue().getString()));
 					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setPosition(Vector4());
+					light->setSpotDirection(Vector3());
+					light->setSpotCutOff(180.0f);
+					light->setSpotExponent(0.0f);
 					break;
 				}
 			case 2:
@@ -819,6 +907,8 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_z"))->getController()->getValue().getString())
 						).normalize()
 					);
+					light->setSpotCutOff(180.0f);
+					light->setSpotExponent(0.0f);
 					break;
 				}
 		}
