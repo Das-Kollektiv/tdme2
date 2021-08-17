@@ -398,9 +398,6 @@ void ModelEditorTabView::display()
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
 	engine->display();
-
-	// audio
-	audio->update();
 }
 
 void ModelEditorTabView::loadSettings()
