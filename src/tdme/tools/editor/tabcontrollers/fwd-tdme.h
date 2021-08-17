@@ -9,6 +9,7 @@ namespace tabcontrollers {
 	class FontTabController;
 	class ModelEditorTabController;
 	class SceneEditorTabController;
+	class SoundTabController;
 	class TextureTabController;
 	class UITabEditorController;
 }  // namespace tabcontrollers

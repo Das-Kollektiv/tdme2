@@ -9,6 +9,7 @@ namespace tabviews {
 	class FontTabView;
 	class ModelEditorTabView;
 	class SceneEditorTabView;
+	class SoundTabView;
 	class TextureTabView;
 	class UITabEditorView;
 }  // namespace tabviews

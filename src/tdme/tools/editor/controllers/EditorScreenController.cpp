@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/audio/VorbisAudioStream.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -40,6 +41,7 @@
 #include <tdme/tools/editor/tabviews/FontTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
+#include <tdme/tools/editor/tabviews/SoundTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
 #include <tdme/tools/editor/tabviews/UITabEditorView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -55,6 +57,7 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
+using tdme::audio::VorbisAudioStream;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::models::ModelReader;
@@ -90,6 +93,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubCont
 using tdme::tools::editor::tabviews::FontTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
+using tdme::tools::editor::tabviews::SoundTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::tabviews::UITabEditorView;
 using tdme::tools::editor::tabviews::TabView;
@@ -713,7 +717,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN, FILETYPE_TEXTURE, FILETYPE_FONT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN;
@@ -726,6 +730,9 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
 		fileType = FILETYPE_FONT;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
+		fileType = FILETYPE_SOUND;
 	} else {
 		for (auto& extension: ModelReader::getModelExtensions()) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
@@ -816,6 +823,24 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_UIEDITOR;
 					tabView = new UITabEditorView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_SOUND:
+				{
+					icon = "{$icon.type_texture}";
+					colorType = "{$color.type_texture}";
+					auto audioStream = new VorbisAudioStream(
+						tabId,
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_sound.xml"
+					);
+					tabType = EditorTabView::TABTYPE_SOUND;
+					tabView = new SoundTabView(view, tabId, screenNode, audioStream);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}

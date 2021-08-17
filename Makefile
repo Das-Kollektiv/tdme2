@@ -600,6 +600,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/SoundTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/TextureTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/UITabEditorController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
@@ -610,6 +611,7 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/FontTabView.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/SoundTabView.cpp \
 	src/tdme/tools/editor/tabviews/TextureTabView.cpp \
 	src/tdme/tools/editor/tabviews/UITabEditorView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
