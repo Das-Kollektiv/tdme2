@@ -828,8 +828,8 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 				}
 			case FILETYPE_SOUND:
 				{
-					icon = "{$icon.type_texture}";
-					colorType = "{$color.type_texture}";
+					icon = "{$icon.type_sound}";
+					colorType = "{$color.type_sound}";
 					auto audioStream = new VorbisAudioStream(
 						tabId,
 						FileSystem::getInstance()->getPathName(absoluteFileName),

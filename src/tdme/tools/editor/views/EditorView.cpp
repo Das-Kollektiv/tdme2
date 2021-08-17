@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/audio/Audio.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/PartitionNone.h>
@@ -24,6 +25,7 @@
 
 using std::string;
 
+using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::PartitionNone;
@@ -112,6 +114,8 @@ void EditorView::display()
 		tab.getTabView()->display();
 		tab.getFrameBufferNode()->setFrameBuffer(tab.getEngine()->getFrameBuffer());
 	}
+	//
+	Audio::getInstance()->update();
 }
 
 void EditorView::updateGUIElements()

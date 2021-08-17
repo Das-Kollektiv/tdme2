@@ -109,7 +109,7 @@ void SoundTabController::onContextMenuRequested(GUIElementNode* node, int mouseX
 
 void SoundTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Texture\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Sound\" value=\"texture\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 

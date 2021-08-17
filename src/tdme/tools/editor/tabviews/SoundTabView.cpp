@@ -57,7 +57,6 @@ void SoundTabView::display()
 {
 	engine->display();
 	engine->getGUI()->render();
-	audio->update();
 }
 
 void SoundTabView::initialize()
