@@ -15,7 +15,7 @@ using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Transformations;
 
-SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype): BaseProperties(id, name)
+SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype): BaseProperties(id, description)
 {
 	this->transformations.fromTransformations(transformations);
 	this->prototype = prototype;

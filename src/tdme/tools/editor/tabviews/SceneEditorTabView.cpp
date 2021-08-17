@@ -72,7 +72,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::StringTools;
 
-SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene): Gizmo(engine, "le")
+SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tabId, Scene* scene): Gizmo(nullptr, "le")
 {
 	this->editorView = editorView;
 	this->tabId = tabId;

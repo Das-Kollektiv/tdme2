@@ -68,7 +68,7 @@ public:
 	/**
 	 * @return associated tab controller
 	 */
-	inline TabController* getTabController() {
+	inline TabController* getTabController() override {
 		return fontTabController;
 	}
 

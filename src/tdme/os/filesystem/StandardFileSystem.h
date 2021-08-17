@@ -54,6 +54,6 @@ public:
 	void createPath(const string& pathName) override;
 	void removePath(const string& pathName, bool recursive) override;
 	void removeFile(const string& pathName, const string& fileName) override;
-	bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent);
-	bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent);
+	bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) override;
+	bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) override;
 };
