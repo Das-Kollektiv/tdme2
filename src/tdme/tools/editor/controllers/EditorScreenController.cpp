@@ -757,6 +757,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 		string colorType;
 		EditorTabView::TabType tabType = EditorTabView::TABTYPE_UNKNOWN;
 		TabView* tabView = nullptr;
+		string viewPortTemplate;
 		switch (fileType) {
 			case FILETYPE_MODEL:
 				{
@@ -776,6 +777,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
 			case FILETYPE_MODELPROTOTYPE:
@@ -788,6 +790,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
 			case FILETYPE_SCENE:
@@ -800,6 +803,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_SCENEEDITOR;
 					tabView = new SceneEditorTabView(view, tabId, scene);
+					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
 			case FILETYPE_SCREEN:
@@ -812,6 +816,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_UIEDITOR;
 					tabView = new UITabEditorView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
 			case FILETYPE_TEXTURE:
@@ -820,12 +825,13 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					colorType = "{$color.type_texture}";
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
-						"viewport_texture.xml",
+						"tab_texture.xml",
 						{{ "texture", absoluteFileName}}
 
 					);
 					tabType = EditorTabView::TABTYPE_TEXTURE;
 					tabView = new TextureTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
 			case FILETYPE_FONT:
@@ -834,12 +840,13 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					colorType = "{$color.type_font}";
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
-						"viewport_font.xml",
+						"tab_font.xml",
 						{{ "font", absoluteFileName}}
 
 					);
 					tabType = EditorTabView::TABTYPE_FONT;
 					tabView = new FontTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
 			default:
@@ -858,7 +865,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 		{
 			string tabsContentXML =
 				"<tab-content tab-id=\"" + tabId + "\">\n" +
-				"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
+				"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/" + viewPortTemplate + "\" />\n" +
 				"</tab-content>\n";
 			try {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
