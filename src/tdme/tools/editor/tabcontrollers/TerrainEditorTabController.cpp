@@ -35,6 +35,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -74,6 +75,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
+using tdme::utilities::StringTools;
 using tdme::utilities::Terrain;
 
 using tinyxml::TiXmlAttribute;
@@ -132,6 +134,36 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_add") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_substract") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_flatten") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_smooth") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_ramp") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_RAMP;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_delete") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
+		updateDetails("terrain.brush");
 	} else {
 		for (auto& textureBrushApplyNode: textureBrushApplyNodes) {
 			if (node->getId() == textureBrushApplyNode) {
