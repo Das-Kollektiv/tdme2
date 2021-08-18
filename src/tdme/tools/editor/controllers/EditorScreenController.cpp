@@ -43,6 +43,7 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
+#include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -95,6 +96,7 @@ using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::SoundTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
+using tdme::tools::editor::tabviews::TextEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
@@ -717,10 +719,10 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
-		fileType = FILETYPE_SCREEN;
+		fileType = FILETYPE_SCREEN_TEXT;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		fileType = FILETYPE_SCENE;
@@ -733,6 +735,18 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
 		fileType = FILETYPE_SOUND;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".h") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".properties") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".cl") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".frag") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".glsl") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".vert") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".xml") == true ||
+		(fileName.rfind(".") == string::npos || (fileName.rfind("/") != string::npos && fileName.rfind(".") < fileName.rfind("/")))) {
+		fileType = FILETYPE_TEXT;
 	} else {
 		for (auto& extension: ModelReader::getModelExtensions()) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
@@ -813,16 +827,36 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
-			case FILETYPE_SCREEN:
+			case FILETYPE_SCREEN_TEXT:
 				{
-					icon = "{$icon.type_gui}";
-					colorType = "{$color.type_gui}";
-					auto screenNode = GUIParser::parse(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
-					);
-					tabType = EditorTabView::TABTYPE_UIEDITOR;
-					tabView = new UIEditorTabView(view, tabId, screenNode);
+					try {
+						icon = "{$icon.type_gui}";
+						colorType = "{$color.type_gui}";
+						auto screenNode = GUIParser::parse(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						);
+						tabType = EditorTabView::TABTYPE_UIEDITOR;
+						tabView = new UIEditorTabView(view, tabId, screenNode);
+					} catch (Exception &exception) {
+						icon = "{$icon.type_script}";
+						colorType = "{$color.type_script}";
+						auto text = StringTools::replace(
+							FileSystem::getInstance()->getContentAsString(
+								FileSystem::getInstance()->getPathName(absoluteFileName),
+								FileSystem::getInstance()->getFileName(absoluteFileName)
+							),
+							"\t",
+							"    "
+						);
+						auto screenNode = GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_text.xml",
+							{{ "text", text }}
+						);
+						tabType = EditorTabView::TABTYPE_TEXT;
+						tabView = new TextEditorTabView(view, tabId, screenNode);
+					}
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -866,11 +900,32 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
 						"tab_font.xml",
-						{{ "font", absoluteFileName}}
-
+						{{ "font", absoluteFileName }}
 					);
 					tabType = EditorTabView::TABTYPE_FONT;
 					tabView = new FontTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_TEXT:
+				{
+					icon = "{$icon.type_script}";
+					colorType = "{$color.type_script}";
+					auto text = StringTools::replace(
+						FileSystem::getInstance()->getContentAsString(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						),
+						"\t",
+						"    "
+					);
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_text.xml",
+						{{ "text", text }}
+					);
+					tabType = EditorTabView::TABTYPE_TEXT;
+					tabView = new TextEditorTabView(view, tabId, screenNode);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}

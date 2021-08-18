@@ -1047,7 +1047,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
-					MutableString(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText())))
+					MutableString(unescapeQuotes(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText()))))
 				);
 				guiParentNode->addSubNode(guiTextNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

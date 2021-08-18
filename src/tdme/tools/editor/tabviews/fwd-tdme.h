@@ -11,6 +11,7 @@ namespace tabviews {
 	class SceneEditorTabView;
 	class SoundTabView;
 	class TextureTabView;
+	class TextEditorTabView;
 	class UIEditorTabView;
 }  // namespace tabviews
 }  // namespace editor
