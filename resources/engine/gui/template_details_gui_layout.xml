@@ -49,7 +49,7 @@
 				<space width="5" />
 				<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Align" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">	
-					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_halign_left" name="halign" width="35" height="35" value="1" image="resources/engine/images/horizontal_align_left.png" />
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_halign_left" name="halign" width="35" height="35" value="1" image="resources/engine/images/horizontal_align_left.png" selected="true" />
 					<space width="5" />
 					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_halign_center" name="halign" width="35" height="35" value="2" image="resources/engine/images/horizontal_align_center.png" />
 					<space width="5" />
@@ -63,7 +63,7 @@
 				<space width="5" />
 				<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Align" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">								
-					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_valign_left" name="valign" width="35" height="35" value="1" image="resources/engine/images/vertical_align_top.png" />
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_valign_left" name="valign" width="35" height="35" value="1" image="resources/engine/images/vertical_align_top.png" selected="true" />
 					<space width="5" />
 					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_valign_center" name="valign" width="35" height="35" value="2" image="resources/engine/images/vertical_align_center.png" />
 					<space width="5" />

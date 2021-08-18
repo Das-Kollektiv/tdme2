@@ -5,114 +5,11 @@
 
 			<space height="5" />
 			
-			
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<element id="{$id}_background_panel" width="100%" height="auto">
-			
-				<layout width="100%" height="auto" alignment="vertical" vertical-align="center">
-			
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<checkbox id="{$id}_background_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_background_panel.condition!=open"/>
-						<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="{$id}_background" type="Background" />
-					</layout>
-					
-					<layout show-on="open" width="100%" height="auto" alignment="vertical" vertical-align="center">
-
-						<space height="10" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<space width="30"/>
-							<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_background_colormul" name="Color Mul" />
-						</layout>
-						
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<space width="30"/>
-							<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_background_coloradd" name="Color Add" />
-						</layout>
-						
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<space width="25"/>
-							<element id="{$id}_background_scale9_panel" width="*" height="auto">
-							
-								<layout width="100%" height="auto" alignment="vertical" vertical-align="center">
-							
-									<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-										<checkbox id="{$id}_background_scale9_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_background_scale9_panel.condition!=open"/>
-										<text font="{$font.default}" color="{$color.font_normal}" text="Scale9" width="*" height="auto" />
-										<layout alignment="horizontal" width="47%" height="auto" horizontal-align="right" vertical-align="center">								
-											<input id="{$id}_background_scale9" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
-										</layout>
-									</layout>
-									
-									<layout show-on="open" width="100%" height="auto" alignment="vertical" vertical-align="center">
-
-										<space height="5" />
-										
-										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
-											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
-												<input id="{$id}_background_scale9_left" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
-											</layout>
-										</layout>
-										
-										<space height="5" />
-										
-										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
-											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
-												<input id="{$id}_background_scale9_right" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
-											</layout>
-										</layout>
-										
-										<space height="5" />
-										
-										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
-											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
-												<input id="{$id}_background_scale9_top" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
-											</layout>
-										</layout>
-										
-										<space height="5" />
-										
-										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
-											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
-												<input id="{$id}_background_scale9_bottom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
-											</layout>
-										</layout>
-									
-									</layout>
-								
-								</layout>
-							
-							</element>							
-						</layout>
-					
-					</layout>
-				
-				</layout>
-			
-			</element>
-			
+			<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_backgroundcolor" name="Color" />
 			
 			<space height="5" />
 			<menu-separator />
 			<space height="5" />
-			
-			
 			
 			<element id="{$id}_border_panel" width="100%" height="auto">
 			
@@ -213,6 +110,109 @@
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<space width="30"/>
 							<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_bordercolor_bottom" name="Bottom" />
+						</layout>
+					
+					</layout>
+				
+				</layout>
+			
+			</element>			
+			
+			
+		
+			
+			<space height="5" />
+			<menu-separator />
+			<space height="5" />
+			
+			<element id="{$id}_background_panel" width="100%" height="auto">
+			
+				<layout width="100%" height="auto" alignment="vertical" vertical-align="center">
+			
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<checkbox id="{$id}_background_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_background_panel.condition!=open"/>
+						<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="{$id}_background" type="Background" />
+					</layout>
+					
+					<layout show-on="open" width="100%" height="auto" alignment="vertical" vertical-align="center">
+
+						<space height="10" />
+						
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<space width="30"/>
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_background_colormul" name="Color Mul" />
+						</layout>
+						
+						<space height="5" />
+						
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<space width="30"/>
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_background_coloradd" name="Color Add" />
+						</layout>
+						
+						<space height="5" />
+						
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<space width="25"/>
+							<element id="{$id}_background_scale9_panel" width="*" height="auto">
+							
+								<layout width="100%" height="auto" alignment="vertical" vertical-align="center">
+							
+									<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+										<checkbox id="{$id}_background_scale9_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_background_scale9_panel.condition!=open"/>
+										<text font="{$font.default}" color="{$color.font_normal}" text="Scale9" width="*" height="auto" />
+										<layout alignment="horizontal" width="47%" height="auto" horizontal-align="right" vertical-align="center">								
+											<input id="{$id}_background_scale9" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+										</layout>
+									</layout>
+									
+									<layout show-on="open" width="100%" height="auto" alignment="vertical" vertical-align="center">
+
+										<space height="5" />
+										
+										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+											<space width="30"/>
+											<text font="{$font.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
+											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
+												<input id="{$id}_background_scale9_left" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+											</layout>
+										</layout>
+										
+										<space height="5" />
+										
+										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+											<space width="30"/>
+											<text font="{$font.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
+											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
+												<input id="{$id}_background_scale9_right" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+											</layout>
+										</layout>
+										
+										<space height="5" />
+										
+										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+											<space width="30"/>
+											<text font="{$font.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
+											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
+												<input id="{$id}_background_scale9_top" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+											</layout>
+										</layout>
+										
+										<space height="5" />
+										
+										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+											<space width="30"/>
+											<text font="{$font.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
+											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
+												<input id="{$id}_background_scale9_bottom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
+											</layout>
+										</layout>
+									
+									</layout>
+								
+								</layout>
+							
+							</element>							
 						</layout>
 					
 					</layout>
