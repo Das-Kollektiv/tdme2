@@ -42,6 +42,7 @@
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
+#include <tdme/tools/editor/tabviews/TerrainEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
@@ -95,6 +96,7 @@ using tdme::tools::editor::tabviews::FontTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::SoundTabView;
+using tdme::tools::editor::tabviews::TerrainEditorTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
@@ -719,7 +721,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN_TEXT;
@@ -729,6 +731,9 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
 		fileType = FILETYPE_MODELPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
+		fileType = FILETYPE_TERRAINPROTOTYPE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
 		fileType = FILETYPE_FONT;
@@ -812,6 +817,19 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
 					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_TERRAINPROTOTYPE:
+				{
+					icon = "{$icon.type_terrain}";
+					colorType = "{$color.type_terrain}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_TERRAINEDITOR;
+					tabView = new TerrainEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_terrain.xml";
 					break;
 				}
 			case FILETYPE_SCENE:

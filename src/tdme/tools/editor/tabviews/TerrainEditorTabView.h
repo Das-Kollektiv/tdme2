@@ -4,11 +4,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/TerrainEditorTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
@@ -17,19 +18,20 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabcontrollers::UIEditorTabController;
+using tdme::tools::editor::tabcontrollers::TerrainEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 
 /**
- * UI editor tab view
+ * Terrain editor tab view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::UIEditorTabView final
+class tdme::tools::editor::tabviews::TerrainEditorTabView final
 	: public TabView
 {
 protected:
@@ -39,23 +41,23 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	UIEditorTabController* uiTabController { nullptr };
+	TerrainEditorTabController* terrainEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	GUIScreenNode* uiScreenNode { nullptr };
+	Prototype* prototype { nullptr };
 
 public:
 	/**
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param tabId tab id
-	 * @param screenNode screenNode
+	 * @param prototype prototype
 	 */
-	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
+	TerrainEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype);
 
 	/**
 	 * Destructor
 	 */
-	~UIEditorTabView();
+	~TerrainEditorTabView();
 
 	/**
 	 * @return editor view
@@ -68,7 +70,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return uiTabController;
+		return terrainEditorTabController;
 	}
 
 	/**
@@ -76,13 +78,6 @@ public:
 	 */
 	inline PopUps* getPopUps() {
 		return popUps;
-	}
-
-	/**
-	 * @return UI screen node
-	 */
-	inline GUIScreenNode* getUIScreenNode() {
-		return uiScreenNode;
 	}
 
 	// overridden methods
