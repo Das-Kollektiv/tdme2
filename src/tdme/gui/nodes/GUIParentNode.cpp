@@ -343,22 +343,21 @@ void GUIParentNode::layoutSubNodes()
 void GUIParentNode::computeHorizontalChildrenAlignment()
 {
 	{
-		auto v = alignments.horizontal;
-		if (v == GUINode_AlignmentHorizontal::LEFT) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
 			}
 		} else
-		if (v == GUINode_AlignmentHorizontal::CENTER) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
 			}
 		} else
-		if (v == GUINode_AlignmentHorizontal::RIGHT) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
@@ -371,22 +370,21 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 void GUIParentNode::computeVerticalChildrenAlignment()
 {
 	{
-		auto v = alignments.vertical;
-		if (v == GUINode_AlignmentVertical::TOP) {
+		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
 			}
 		} else
-		if (v == GUINode_AlignmentVertical::CENTER) {
+		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
 			}
 		} else
-		if (v == GUINode_AlignmentVertical::BOTTOM) {
+		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
