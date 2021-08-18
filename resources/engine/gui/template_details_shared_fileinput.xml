@@ -1,4 +1,4 @@
-<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+<layout alignment="vertical" width="*" height="auto" horizontal-align="center">
 	
 	<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 		<text font="{$font.default}" color="{$color.font_normal}" text="{$type}" width="*" height="auto" horizontal-align="left" />

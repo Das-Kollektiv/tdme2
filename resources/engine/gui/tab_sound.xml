@@ -1,9 +1,9 @@
 <screen id="tab_sound">
 	<layout width="100%" height="100%" horizontal-align="center" vertical-align="center">
-		<layout width="auto" height="auto" alignment="horizontal" background-color="#404040" padding="10">
-			<button id="play" width="auto" height="25" text="Play" />
+		<layout width="auto" height="auto" alignment="horizontal" background-color="{$color.element_foreground}" padding="10">
+			<button id="play" width="25" height="25" image="resources/engine/images/play.png" />
 			<space width="20" />
-			<button id="stop" width="auto" height="25" text="Stop" />
+			<button id="stop" width="25" height="25" image="resources/engine/images/stop.png" />
 		</layout>
 	</layout>
 </screen>

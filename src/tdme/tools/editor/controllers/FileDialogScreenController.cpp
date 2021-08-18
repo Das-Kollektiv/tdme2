@@ -156,7 +156,7 @@ void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string
 	string filesInnerNodeSubNodesXML = "";
 	filesInnerNodeSubNodesXML =
 		filesInnerNodeSubNodesXML +
-		"<scrollarea width=\"100%\" height=\"100%\">\n";
+		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
 	for (auto& file : fileList) {
 		filesInnerNodeSubNodesXML =
 			filesInnerNodeSubNodesXML +
