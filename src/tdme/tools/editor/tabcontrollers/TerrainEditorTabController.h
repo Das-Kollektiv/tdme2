@@ -13,6 +13,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -33,6 +34,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 using tdme::utilities::MutableString;
 
@@ -50,6 +52,7 @@ class tdme::tools::editor::tabcontrollers::TerrainEditorTabController final
 {
 
 private:
+	BasePropertiesSubController* basePropertiesSubController { nullptr };
 	TerrainEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -103,6 +106,17 @@ public:
 	 * Set outliner content
 	 */
 	void setOutlinerContent();
+
+	/**
+	 * Set terrain brush details
+	 */
+	void setTerrainBrushDetails();
+
+	/**
+	 * Update details
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(const string& outlinerNode);
 
 	/**
 	 * Initialize terrain
