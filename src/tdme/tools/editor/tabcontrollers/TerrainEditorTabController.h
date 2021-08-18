@@ -1,8 +1,11 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -16,7 +19,10 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using std::string;
+using std::unordered_map;
+using std::vector;
 
+using tdme::engine::Transformations;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -47,6 +53,8 @@ private:
 	TerrainEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+
+	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 
 public:
 	/**
@@ -95,6 +103,11 @@ public:
 	 * Set outliner content
 	 */
 	void setOutlinerContent();
+
+	/**
+	 * Initialize terrain
+	 */
+	void initializeTerrain();
 
 	/**
 	 * Shows the error pop up
