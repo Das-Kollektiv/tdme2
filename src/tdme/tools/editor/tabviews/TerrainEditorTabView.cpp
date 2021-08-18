@@ -3,15 +3,24 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -19,27 +28,38 @@
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::string;
 
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 
 using tdme::engine::Engine;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
+using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
-using tdme::engine::Light;
+using tdme::engine::SceneConnector;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::subsystems::manager::TextureManager;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::tabcontrollers::TerrainEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Terrain;
 
 TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype)
 {
@@ -70,16 +90,187 @@ TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string&
 TerrainEditorTabView::~TerrainEditorTabView() {
 	delete cameraInputHandler;
 	delete prototype;
+	delete terrainEditorTabController;
 }
 
 void TerrainEditorTabView::handleInputEvents()
 {
+	brushMoved = false;
+	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
+		auto& event = engine->getGUI()->getMouseEvents()[i];
+		if (event.isProcessed() == true) continue;
+
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
+			if (event.isShiftDown() == true) {
+				setBrushScale(Math::clamp(brushScale + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				event.setProcessed(true);
+			}
+			if (event.isControlDown() == true) {
+				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				event.setProcessed(true);
+			}
+		} else
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+			brushMoved = true;
+			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+			if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
+				rampVertices[1] = brushCenterPosition;
+				//
+				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
+				brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
+				if (brushEnabled == true) {
+					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
+					if (Math::abs(rampVertices[0].getY() - rampVertices[1].getY()) > Math::EPSILON && rampVertices[0].getY() < rampVertices[1].getY()) brushRotation = brushRotation + 180.0f;
+					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
+					engine->setShaderParameter("terraineditor", "brushScale",
+						Vector2(
+							(brushScale * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
+							1.0f / (engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getY() / rampVertices[1].clone().sub(rampVertices[0]).computeLength())
+						)
+					);
+				}
+			}
+		} else
+		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+				event.setProcessed(true);
+			}
+		} else
+		if (event.getButton() == MOUSE_BUTTON_LEFT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					if (engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition) != nullptr &&
+						terrainEditorTabController->determineRampHeight(terrainBoundingBox, terrainModels, brushCenterPosition, rampHeight[rampMode + 1]) == true) {
+						//
+						rampMode++;
+						rampVertices[rampMode] = brushCenterPosition;
+						if (rampMode == 0) {
+							// no op
+						} else
+						if (rampMode == 1) {
+							// place ramp
+							brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+							terrainEditorTabController->applyRampTerrainBrush(
+								terrainBoundingBox,
+								terrainModels,
+								brushCenterPosition,
+								engine->getShaderParameter("terraineditor", "brushRotation").getFloatValue(),
+								engine->getShaderParameter("terraineditor", "brushScale").getVector2Value(),
+								Math::min(rampHeight[0], rampHeight[1]),
+								Math::max(rampHeight[0], rampHeight[1])
+							);
+							//
+							rampMode = -1;
+							engine->setShaderParameter("terraineditor", "brushEnabled", false);
+							engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+							engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+						}
+					}
+				} else {
+					recreateFoliage(temporaryPartitionIdxs);
+					temporaryPartitionIdxs.clear();
+					brushingEnabled = false;
+					terrainEditorTabController->unsetCurrentBrushFlattenHeight();
+				}
+				event.setProcessed(true);
+			} else
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
+				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				brushMoved = true;
+				if (terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) {
+					engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				}
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					// no op
+				} else
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
+					/*
+					if (terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
+						vector<Model*> waterModels;
+						Vector3 waterReflectionEnvironmentMappingPosition;
+						terrainEditorTabController->createWater(terrainBoundingBox, brushCenterPosition, waterModels, waterReflectionEnvironmentMappingPosition);
+						brushingEnabled = false;
+						terrainEditorTabController->unsetCurrentBrushFlattenHeight();
+						//
+						for (auto waterModel: waterModels) {
+							auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
+							waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
+							waterObject3D->setShader("water");
+							waterObject3D->setContributesShadows(false);
+							waterObject3D->setReceivesShadows(false);
+							waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
+							waterObject3D->setReflectionEnvironmentMappingPosition(waterReflectionEnvironmentMappingPosition);
+							waterObject3D->setPickable(true);
+							engine->addEntity(waterObject3D);
+						}
+					}
+					*/
+				} else
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
+					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
+					/*if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
+						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
+						terrainEditorTabController->deleteWater(waterPositionMapIdx);
+					} else */{
+						brushingEnabled = true;
+					}
+				} else {
+					brushingEnabled = true;
+				}
+				event.setProcessed(true);
+			}
+		}
+	}
+	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		if (event.isProcessed() == true) continue;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
+			if (isKeyDown == true) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+			}
+			event.setProcessed(true);
+		}
+	}
 	cameraInputHandler->handleInputEvents();
 }
 
 void TerrainEditorTabView::display()
 {
+	//
+	engine->setShaderParameter("terraineditor", "brushPosition", Vector2(brushCenterPosition.getX(), brushCenterPosition.getZ()));
+
+	//
 	updateSky();
+
+	// actually do the brushing
+	if (brushingEnabled == true && terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
+		if (terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
+			terrainEditorTabController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
+		}/* else
+		if (terrainEditorTabController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
+			if (brushMoved == true) {
+				terrainEditorTabController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
+			}
+		}
+		*/
+
+	}
+
+	//
 	engine->display();
 }
 
@@ -333,6 +524,147 @@ void TerrainEditorTabView::addFoliage() {
 	}
 }
 
+void TerrainEditorTabView::updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto partitionIdx = 0;
+	for (auto partitionIdx: partitionIdxSet) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			//
+			temporaryPartitionIdxs.insert(partitionIdx);
+
+			//
+			auto foliagePartitionObject3DRenderGroup = engine->getEntity("foliage.object3drendergroup." + to_string(partitionIdx) + ".0");
+			auto foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			if (foliagePartitionObject3DRenderGroup != nullptr || foliagePartitionEntityHierarchy == nullptr) {
+				auto shaderParameterIdx = 0;
+				while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+				recreateTemporaryFoliage(partitionIdx);
+			}
+			if (foliagePartitionEntityHierarchy == nullptr) foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
+			auto foliageIdx = 0;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				for (auto i = 0; i < transformationsVector.size(); i++) {
+					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->fromTransformations(transformationsVector[i]);
+					foliageIdx++;
+				}
+			}
+			foliagePartitionEntityHierarchy->update();
+		}
+		partitionIdx++;
+	}
+}
+
+void TerrainEditorTabView::recreateTemporaryFoliage(int partitionIdx) {
+	if (prototype == nullptr) return;
+
+	//
+	temporaryPartitionIdxs.insert(partitionIdx);
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	auto& foliageMapPartition = foliageMaps[partitionIdx];
+	engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+	auto shaderParameterIdx = 0;
+	while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+	auto partitionPrototypeInstanceCount = 0;
+	for (auto& foliageMapPartitionIt: foliageMapPartition) {
+		partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+	}
+	if (partitionPrototypeInstanceCount > 0) {
+		auto foliagePartitionEntityHierarchy = new EntityHierarchy("foliage.entityhierarchy." + to_string(partitionIdx));
+		foliagePartitionEntityHierarchy->setContributesShadows(true);
+		foliagePartitionEntityHierarchy->setReceivesShadows(true);
+		engine->addEntity(foliagePartitionEntityHierarchy);
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			auto prototypeIdx = foliageMapPartitionIt.first;
+			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+			auto& transformationsVector = foliageMapPartitionIt.second;
+			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+			for (auto& transformations: transformationsVector) {
+				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transformations, 1, foliagePartitionEntityHierarchy);
+				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
+				foliageIdx++;
+			}
+		}
+		foliagePartitionEntityHierarchy->update();
+	}
+}
+
+void TerrainEditorTabView::recreateFoliage(const unordered_set<int>& partitionIdxSet) {
+	if (prototype == nullptr) return;
+
+	//
+	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+
+	//
+	for (auto partitionIdx: partitionIdxSet) {
+		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
+		auto shaderParameterIdx = 0;
+		while (engine->removeEntity("foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
+		auto partitionPrototypeInstanceCount = 0;
+		for (auto& foliageMapPartitionIt: foliageMapPartition) {
+			partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+		}
+		if (partitionPrototypeInstanceCount > 0) {
+			unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto prototypeIdx = foliageMapPartitionIt.first;
+				auto& transformationsVector = foliageMapPartitionIt.second;
+				if (transformationsVector.empty() == false) {
+					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+					Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+					auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(foliagePrototype->getShaderParameters().getShaderParametersHash());
+					if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+						foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+					}
+					if (foliagePartitionObject3DRenderGroup == nullptr) {
+						foliagePartitionObject3DRenderGroup = new Object3DRenderGroup(
+							"foliage.object3drendergroup." + to_string(partitionIdx) + "." + to_string(object3DRenderGroupByShaderParameters.size()),
+							1,
+							25.0f,
+							50.0f,
+							4,
+							16,
+							false
+						);
+						foliagePartitionObject3DRenderGroup->setContributesShadows(true);
+						foliagePartitionObject3DRenderGroup->setReceivesShadows(true);
+						foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+						for (auto& parameterIt: shaderParametersDefault) {
+							auto& parameterName = parameterIt.first;
+							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+							foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						}
+						engine->addEntity(foliagePartitionObject3DRenderGroup);
+						object3DRenderGroupByShaderParameters[foliagePrototype->getShaderParameters().getShaderParametersHash()] = foliagePartitionObject3DRenderGroup;
+					}
+					for (auto& transformations: transformationsVector) {
+						foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+					}
+				}
+			}
+			for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+				object3DRenderGroupByShaderParametersIt.second->updateRenderGroup();
+			}
+		}
+	}
+}
+
 void TerrainEditorTabView::removeWater(int waterIdx) {
 	auto& water = waters[waterIdx];
 	for (auto waterModel: water.waterModels) {
@@ -357,4 +689,51 @@ void TerrainEditorTabView::setTerrain(BoundingBox& terrainBoundingBox, vector<Mo
 	this->terrainBoundingBox = terrainBoundingBox;
 	this->terrainModels = terrainModels;
 	this->partitionFoliageIdx.resize(terrainModels.size());
+}
+
+void TerrainEditorTabView::setTerrainBrush(Texture* texture, float scale, float densityStrength) {
+	unsetTerrainBrush();
+	if (texture != nullptr) texture->acquireReference();
+	brushTexture = texture;
+	//
+	brushScale = scale;
+	auto _scale = terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
+	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
+	engine->setShaderParameter(
+		"terraineditor",
+		"brushEnabled",
+		(terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
+		terrainEditorTabController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
+	);
+	rampMode = -1;
+	brushDensityStrength = densityStrength;
+}
+
+void TerrainEditorTabView::setBrushScale(float scale) {
+	if (brushTexture == nullptr ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER ||
+		(terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(brushTexture->getTextureWidth()) * scale, static_cast<int>(brushTexture->getTextureHeight()) * scale));
+	brushScale = scale;
+	terrainEditorTabController->setBrushScale(scale);
+}
+
+void TerrainEditorTabView::setBrushDensityStrength(float densityStrength) {
+	if (brushTexture == nullptr ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER ||
+		(terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
+	brushDensityStrength = densityStrength;
+	terrainEditorTabController->setBrushDensityStrength(densityStrength);
+}
+
+void TerrainEditorTabView::unsetTerrainBrush() {
+	if (brushTexture != nullptr) {
+		engine->getTextureManager()->removeTexture(brushTexture->getId());
+		brushTexture->releaseReference();
+		brushTexture = nullptr;
+		engine->setShaderParameter("terraineditor", "brushEnabled", false);
+	}
 }

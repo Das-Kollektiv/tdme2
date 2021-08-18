@@ -91,6 +91,7 @@ TerrainEditorTabController::TerrainEditorTabController(TerrainEditorTabView* vie
 	this->popUps = view->getPopUps();
 	this->currentTerrainBrushTextureFileName = "resources/engine/textures/terrain_brush_soft.png";
 	this->currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(currentTerrainBrushTextureFileName), Tools::getFileName(currentTerrainBrushTextureFileName), false, false);
+	this->rampTerrainBrushTexture = TextureReader::read("./resources/engine/textures", "terrain_ramp.png", false, false);
 }
 
 TerrainEditorTabController::~TerrainEditorTabController() {
@@ -110,6 +111,7 @@ void TerrainEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
+	view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 }
 
 void TerrainEditorTabController::dispose()
@@ -139,31 +141,37 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_substract") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_flatten") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_smooth") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_ramp") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_RAMP;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_delete") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
+		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else {
 		for (auto& textureBrushApplyNode: textureBrushApplyNodes) {
 			if (node->getId() == textureBrushApplyNode) {
@@ -210,6 +218,11 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 						);
 					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
 					terrainEditorTabController->brushTexturePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					terrainEditorTabController->view->setTerrainBrush(
+						terrainEditorTabController->currentTerrainBrushTexture,
+						terrainEditorTabController->currentTerrainBrushScale,
+						terrainEditorTabController->currentTerrainBrushStrength
+					);
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -245,6 +258,24 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
+void TerrainEditorTabController::setBrushScale(float scale) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushScale = scale;
+		if (view->getEditorView()->getScreenController()->getOutlinerSelection() == "terrain.brush") {
+			updateTerrainBrushDetails();
+		}
+	}
+}
+
+void TerrainEditorTabController::setBrushDensityStrength(float densityStrength) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushStrength = densityStrength;
+		if (view->getEditorView()->getScreenController()->getOutlinerSelection() == "terrain.brush") {
+			updateTerrainBrushDetails();
+		}
+	}
+}
+
 void TerrainEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Terrain") + "\" value=\"" + GUIParser::escapeQuotes("terrain") + "\">\n";
@@ -259,11 +290,25 @@ void TerrainEditorTabController::setTerrainBrushDetails() {
 		"<template id=\"details_terrainbrush\" src=\"resources/engine/gui/template_details_terrainbrush.xml\" />\n"
 	);
 
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_terrainbrush"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateTerrainBrushDetails();
+}
+
+void TerrainEditorTabController::updateTerrainBrushDetails() {
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_size"))->getController()->setValue(MutableString(currentTerrainBrushScale));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_strength"))->getController()->setValue(MutableString(currentTerrainBrushStrength));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::updateTerrainBrushDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -276,6 +321,8 @@ void TerrainEditorTabController::applyTerrainBrushDetails() {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	// TODO: a.drewke, maybe improve me
+	view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 }
 
 void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
@@ -327,3 +374,117 @@ void TerrainEditorTabController::initializeTerrain() {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
+
+void TerrainEditorTabController::applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	if (terrainModels.empty() == true) return;
+
+	// apply brush first
+	Terrain::applyBrushToTerrainModels(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		currentTerrainBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+		currentTerrainBrushOperation,
+		currentTerrainBrushHeight
+	);
+
+	// and update foliage
+	Terrain::updateFoliageTerrainBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->updateTemporaryFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
+}
+
+bool TerrainEditorTabController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_FLATTEN &&
+		currentTerrainBrushOperation != Terrain::BRUSHOPERATION_WATER &&
+		currentTerrainBrushOperation != Terrain::BRUSHOPERATION_RAMP) {
+		return true;
+	}
+	if (haveCurrentTerrainBrushHeight == true) return true;
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
+	if (terrainModel == nullptr) return false;
+	haveCurrentTerrainBrushHeight = Terrain::getTerrainModelsHeight(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentTerrainBrushHeight
+	);
+	return haveCurrentTerrainBrushHeight;
+}
+
+bool TerrainEditorTabController::determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_RAMP) {
+		return false;
+	}
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
+	if (terrainModel == nullptr) return false;
+	return Terrain::getTerrainModelsHeight(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		height
+	);
+}
+
+void TerrainEditorTabController::unsetCurrentBrushFlattenHeight() {
+	haveCurrentTerrainBrushHeight = false;
+}
+
+void TerrainEditorTabController::applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	if (terrainModels.empty() == true) return;
+
+	// apply brush first
+	Terrain::applyRampBrushToTerrainModels(
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture,
+		rotation,
+		scale,
+		minHeight,
+		maxHeight
+	);
+
+	// and update foliage
+	Terrain::updateFoliageTerrainRampBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		position,
+		currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture,
+		rotation,
+		scale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->recreateFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
+}
+

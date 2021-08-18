@@ -78,6 +78,15 @@ private:
 	vector<int> partitionFoliageIdx;
 	unordered_set<int> temporaryPartitionIdxs;
 
+	bool brushingEnabled { false };
+	bool brushMoved { false };
+	Vector3 brushCenterPosition;
+	Texture* brushTexture { nullptr };
+	float brushScale { 1.0f };
+	float brushDensityStrength { 1.0f };
+	int rampMode { -1 };
+	array<Vector3,2> rampVertices;
+	array<float,2> rampHeight;
 
 public:
 	/**
@@ -160,6 +169,31 @@ public:
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
 
 	/**
+	 * Set terrain brush
+	 * @param texture brush texture
+	 * @param scale scale
+	 * @param densityStrength density strength
+	 */
+	void setTerrainBrush(Texture* texture, float scale, float densityStrength);
+
+	/**
+	 * Set brush scale
+	 * @param scale scale
+	 */
+	void setBrushScale(float scale);
+
+	/**
+	 * Set brush density/strength
+	 * @param densityStrength density/strength
+	 */
+	void setBrushDensityStrength(float densityStrength);
+
+	/**
+	 * Unset terrain brush
+	 */
+	void unsetTerrainBrush();
+
+	/**
 	 * Unset water
 	 */
 	void unsetWater();
@@ -182,5 +216,30 @@ public:
 	 * Add foliage using render groups at given partition indices
 	 */
 	void addFoliage();
+
+	/**
+	 * Update temporary foliage
+	 */
+	void updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet);
+
+	/**
+	 * Recreate temporary foliage at given partition indices
+	 * @param partitionIdxSet partition indices set
+	 */
+	inline void recreateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+		for (auto partitionIdx: partitionIdxSet) recreateTemporaryFoliage(partitionIdx);
+	}
+
+	/**
+	 * Recreate temporary foliage at given partition index
+	 * @param partitionIdx partition index
+	 */
+	void recreateTemporaryFoliage(int partitionIdx);
+
+	/**
+	 * Recreate foliage using render groups at given partition indices that has been transformed to temporary foliage
+	 * @param partitionIdxSet partition index set
+	 */
+	void recreateFoliage(const unordered_set<int>& partitionIdxSet);
 
 };

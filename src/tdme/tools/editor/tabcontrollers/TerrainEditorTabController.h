@@ -63,6 +63,7 @@ private:
 	FileDialogPath brushTexturePath;
 
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
+	unordered_set<int> recreateFoliagePartitions;
 
 	bool haveCurrentTerrainBrushHeight { false };
 	float currentTerrainBrushHeight { 0.0f };
@@ -70,6 +71,7 @@ private:
 	float currentTerrainBrushStrength { 1.0f };
 	string currentTerrainBrushTextureFileName;
 	Texture* currentTerrainBrushTexture { nullptr };
+	Texture* rampTerrainBrushTexture { nullptr };
 	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_NONE };
 
 	array<string, 2> textureBrushApplyNodes = {
@@ -106,6 +108,20 @@ public:
 	 */
 	FileDialogPath* getAudioPath();
 
+	/**
+	 * @return current terrain brush operation
+	 */
+	inline Terrain::BrushOperation getTerrainBrushOperation() {
+		return currentTerrainBrushOperation;
+	}
+
+	/**
+	 * @return current foliage brush operation
+	 */
+	inline Terrain::BrushOperation getFoliageBrushOperation() {
+		return Terrain::BRUSHOPERATION_NONE; // TODO: a.drewke
+	}
+
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
@@ -120,6 +136,18 @@ public:
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
+	 * Set brush scale
+	 * @param scale scale
+	 */
+	void setBrushScale(float scale);
+
+	/**
+	 * Set brush density/strength
+	 * @param densityStrength density/strength
+	 */
+	void setBrushDensityStrength(float densityStrength);
+
+	/**
 	 * Set outliner content
 	 */
 	void setOutlinerContent();
@@ -128,6 +156,11 @@ public:
 	 * Set terrain brush details
 	 */
 	void setTerrainBrushDetails();
+
+	/**
+	 * Update terrain brush details
+	 */
+	void updateTerrainBrushDetails();
 
 	/**
 	 * Apply terrain brush details
@@ -144,6 +177,51 @@ public:
 	 * Initialize terrain
 	 */
 	void initializeTerrain();
+
+	/**
+	 * Apply current brush to terrain at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param brushCenterPosition brush center position
+	 * @param deltaTime delta time between last frame and this frame
+	 */
+	void applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
+
+	/**
+	 * Determine current brush flatten height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param brushCenterPosition brush center position
+	 * @return success
+	 */
+	bool determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
+
+	/**
+	 * Determine ramp height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param height height
+	 * @return success
+	 */
+	bool determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height);
+
+	/**
+	 * Unset current brush flatten height
+	 */
+	void unsetCurrentBrushFlattenHeight();
+
+	/**
+	 * Apply current brush to terrain at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param rotation rotation
+	 * @param scale scale
+	 * @param minHeight min height
+	 * @param maxHeigth max heigth
+	 */
+	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight);
 
 	/**
 	 * Shows the error pop up
