@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -28,6 +29,7 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::string;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::utilities::Action;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;

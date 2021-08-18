@@ -5,7 +5,7 @@
 		
 			<space height="5" />
 			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="terrainbrush_texture" type="Brush Texture" />
+			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="terrainbrush_texture" type="Brush Texture" />
 			
 			<space height="5" />
 			<menu-separator />
@@ -14,7 +14,7 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="terrainbrush_size" width="100%" height="auto" text="100.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+					<input id="terrainbrush_size" width="100%" height="auto" text="1.00" unit="m" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png"/>
 				</layout>
 			</layout>
 			
@@ -23,18 +23,21 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Strength" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="terrainbrush_strength" width="100%" height="auto" text="100.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+					<input id="terrainbrush_strength" width="100%" height="auto" text="1.00" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png"/>
 				</layout>
 			</layout>
 			
 			<space height="5" />
 			
+			<!--
+			TODO:
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Smoothness" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<input id="terrainbrush_smoothness" width="100%" height="auto" text="100.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
 				</layout>
 			</layout>
+			-->
 			
 		</layout>		
 	</layout>

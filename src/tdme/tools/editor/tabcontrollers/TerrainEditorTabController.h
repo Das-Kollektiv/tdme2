@@ -1,11 +1,13 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -15,15 +17,17 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Terrain.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
+using std::array;
 using std::string;
 using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -36,7 +40,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
-using tdme::utilities::MutableString;
+using tdme::utilities::Terrain;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -56,9 +60,22 @@ private:
 	TerrainEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	FileDialogPath brushTexturePath;
 
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 
+	bool haveCurrentTerrainBrushHeight { false };
+	float currentTerrainBrushHeight { 0.0f };
+	float currentTerrainBrushScale { 1.0f };
+	float currentTerrainBrushStrength { 1.0f };
+	string currentTerrainBrushTextureFileName;
+	Texture* currentTerrainBrushTexture { nullptr };
+	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_NONE };
+
+	array<string, 2> textureBrushApplyNodes = {
+		"terrainbrush_size",
+		"terrainbrush_strength"
+	};
 public:
 	/**
 	 * Public constructor
@@ -111,6 +128,11 @@ public:
 	 * Set terrain brush details
 	 */
 	void setTerrainBrushDetails();
+
+	/**
+	 * Apply terrain brush details
+	 */
+	void applyTerrainBrushDetails();
 
 	/**
 	 * Update details
