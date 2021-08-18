@@ -10,8 +10,10 @@ namespace tabcontrollers {
 	class ModelEditorTabController;
 	class SceneEditorTabController;
 	class SoundTabController;
+	class TerrainEditorTabController;
 	class TextureTabController;
-	class UITabEditorController;
+	class TextEditorTabController;
+	class UIEditorTabController;
 }  // namespace tabcontrollers
 }  // namespace editor
 }  // namespace tools

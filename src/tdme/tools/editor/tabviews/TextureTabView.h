@@ -4,7 +4,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/scene/Scene.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -18,7 +17,6 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::scene::Scene;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;

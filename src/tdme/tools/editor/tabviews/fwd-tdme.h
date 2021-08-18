@@ -10,8 +10,10 @@ namespace tabviews {
 	class ModelEditorTabView;
 	class SceneEditorTabView;
 	class SoundTabView;
+	class TerrainEditorTabView;
 	class TextureTabView;
-	class UITabEditorView;
+	class TextEditorTabView;
+	class UIEditorTabView;
 }  // namespace tabviews
 }  // namespace editor
 }  // namespace tools
