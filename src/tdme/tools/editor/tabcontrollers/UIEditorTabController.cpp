@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/tabcontrollers/UITabEditorController.h>
+#include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 
 #include <string>
 
@@ -17,14 +17,14 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/tabviews/UITabEditorView.h>
+#include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
-using tdme::tools::editor::tabcontrollers::UITabEditorController;
+using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
@@ -40,7 +40,7 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabviews::UITabEditorView;
+using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -52,25 +52,25 @@ using tinyxml::TiXmlElement;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-UITabEditorController::UITabEditorController(UITabEditorView* view)
+UIEditorTabController::UIEditorTabController(UIEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
 }
 
-UITabEditorController::~UITabEditorController() {
+UIEditorTabController::~UIEditorTabController() {
 }
 
-UITabEditorView* UITabEditorController::getView() {
+UIEditorTabView* UIEditorTabController::getView() {
 	return view;
 }
 
-GUIScreenNode* UITabEditorController::getScreenNode()
+GUIScreenNode* UIEditorTabController::getScreenNode()
 {
 	return screenNode;
 }
 
-void UITabEditorController::initialize(GUIScreenNode* screenNode)
+void UIEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 
@@ -82,37 +82,37 @@ void UITabEditorController::initialize(GUIScreenNode* screenNode)
 	);
 }
 
-void UITabEditorController::dispose()
+void UIEditorTabController::dispose()
 {
 }
 
-void UITabEditorController::save()
+void UIEditorTabController::save()
 {
 }
 
-void UITabEditorController::saveAs()
+void UIEditorTabController::saveAs()
 {
 }
 
-void UITabEditorController::showErrorPopUp(const string& caption, const string& message)
+void UIEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void UITabEditorController::onValueChanged(GUIElementNode* node)
+void UIEditorTabController::onValueChanged(GUIElementNode* node)
 {
 }
 
-void UITabEditorController::onFocus(GUIElementNode* node) {
+void UIEditorTabController::onFocus(GUIElementNode* node) {
 }
 
-void UITabEditorController::onUnfocus(GUIElementNode* node) {
+void UIEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void UITabEditorController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void UIEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
-void UITabEditorController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx) {
+void UIEditorTabController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx) {
 	if (xmlParentNode->FirstChildElement() == nullptr) {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
 		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(xmlParentNode->Value()) + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
@@ -126,15 +126,15 @@ void UITabEditorController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlPa
 	}
 }
 
-void UITabEditorController::setOutlinerContent() {
-	Console::println("UITabEditorController::setOutlinerContent()");
+void UIEditorTabController::setOutlinerContent() {
+	Console::println("UIEditorTabController::setOutlinerContent()");
 	string xml;
 	if (screenXML.empty() == false) {
 		try {
 			TiXmlDocument xmlDocument;
 			xmlDocument.Parse(screenXML.c_str());
 			if (xmlDocument.Error() == true) {
-				auto message = string("UITabEditorController::setOutlinerContent(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + screenXML;
+				auto message = string("UIEditorTabController::setOutlinerContent(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + screenXML;
 				Console::println(message);
 				throw GUIParserException(message);
 			}
@@ -148,6 +148,6 @@ void UITabEditorController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
-void UITabEditorController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

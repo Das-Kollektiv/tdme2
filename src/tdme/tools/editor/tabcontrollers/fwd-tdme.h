@@ -11,7 +11,7 @@ namespace tabcontrollers {
 	class SceneEditorTabController;
 	class SoundTabController;
 	class TextureTabController;
-	class UITabEditorController;
+	class UIEditorTabController;
 }  // namespace tabcontrollers
 }  // namespace editor
 }  // namespace tools

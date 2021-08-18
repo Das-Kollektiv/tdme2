@@ -43,7 +43,7 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
-#include <tdme/tools/editor/tabviews/UITabEditorView.h>
+#include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -95,7 +95,7 @@ using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::SoundTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
-using tdme::tools::editor::tabviews::UITabEditorView;
+using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -822,7 +822,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						FileSystem::getInstance()->getFileName(absoluteFileName)
 					);
 					tabType = EditorTabView::TABTYPE_UIEDITOR;
-					tabView = new UITabEditorView(view, tabId, screenNode);
+					tabView = new UIEditorTabView(view, tabId, screenNode);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}

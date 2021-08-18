@@ -9,7 +9,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/tabcontrollers/UITabEditorController.h>
+#include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
@@ -22,16 +22,16 @@ using tdme::engine::scene::Scene;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabcontrollers::UITabEditorController;
+using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 
 /**
- * UI tab editor view
+ * UI editor tab view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::UITabEditorView final
+class tdme::tools::editor::tabviews::UIEditorTabView final
 	: public TabView
 {
 protected:
@@ -41,7 +41,7 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	UITabEditorController* uiTabController { nullptr };
+	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	GUIScreenNode* uiScreenNode { nullptr };
 
@@ -52,12 +52,12 @@ public:
 	 * @param tabId tab id
 	 * @param screenNode screenNode
 	 */
-	UITabEditorView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
+	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
 
 	/**
 	 * Destructor
 	 */
-	~UITabEditorView();
+	~UIEditorTabView();
 
 	/**
 	 * @return editor view
