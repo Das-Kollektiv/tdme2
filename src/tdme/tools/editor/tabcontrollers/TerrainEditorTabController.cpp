@@ -144,41 +144,53 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_add") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_add") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_substract") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_substract") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_flatten") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_flatten") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_smooth") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_smooth") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_ramp") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_ramp") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_RAMP;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
-	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_button_delete") == true) {
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_terrain_delete") == true) {
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.brush");
 		updateDetails("terrain.brush");
 		view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_water_water") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_WATER;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.waters");
+		updateDetails("terrain.waters");
+		view->unsetTerrainBrush();
+	} else
+	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_water_delete") == true) {
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
+		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.waters");
+		updateDetails("terrain.waters");
+		view->unsetTerrainBrush();
 	} else {
 		for (auto& textureBrushApplyNode: textureBrushApplyNodes) {
 			if (node->getId() == textureBrushApplyNode) {
@@ -451,10 +463,16 @@ void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "terrain") {
 		setTerrainDetails();
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
 	} else
 	if (outlinerNode == "terrain.brush") {
 		setTerrainBrushDetails();
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
+	} else
+	if (outlinerNode == "terrain.waters" || StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("water");
 	} else {
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().removeAll();
 		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
