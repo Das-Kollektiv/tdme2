@@ -28,6 +28,8 @@
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
 using std::string;
@@ -59,6 +61,8 @@ using tdme::tools::editor::tabcontrollers::TerrainEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTools;
 using tdme::utilities::Terrain;
 
 TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype)
@@ -191,7 +195,6 @@ void TerrainEditorTabView::handleInputEvents()
 					// no op
 				} else
 				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
-					/*
 					if (terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
 						Vector3 waterReflectionEnvironmentMappingPosition;
@@ -211,14 +214,13 @@ void TerrainEditorTabView::handleInputEvents()
 							engine->addEntity(waterObject3D);
 						}
 					}
-					*/
 				} else
 				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_DELETE) {
 					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
-					/*if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
+					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
 						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), 6, selectedEntity->getId().rfind('.')));
 						terrainEditorTabController->deleteWater(waterPositionMapIdx);
-					} else */{
+					} else {
 						brushingEnabled = true;
 					}
 				} else {

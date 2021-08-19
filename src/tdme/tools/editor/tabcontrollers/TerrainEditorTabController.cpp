@@ -24,6 +24,7 @@
 #include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -37,6 +38,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
@@ -65,6 +67,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextureNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -78,6 +81,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Terrain;
 
@@ -195,6 +199,43 @@ void TerrainEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnTerrainWaterDelete: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					auto waterIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.waters.").size(), outlinerNode.size()));
+					terrainEditorTabController->deleteWater(waterIdx);
+					//
+					class ReloadOutlinerAction: public Action {
+					public:
+						void performAction() override {
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.waters");
+						}
+						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+						}
+					private:
+						TerrainEditorTabController* terrainEditorTabController;
+					};
+					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+				}
+				OnTerrainWaterDelete(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete Water", "contextmenu_delete", new OnTerrainWaterDelete(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 }
 
@@ -323,11 +364,25 @@ void TerrainEditorTabController::setBrushDensityStrength(float densityStrength) 
 }
 
 void TerrainEditorTabController::setOutlinerContent() {
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Terrain") + "\" value=\"" + GUIParser::escapeQuotes("terrain") + "\">\n";
 	xml+= "<selectbox-option image=\"resources/engine/images/terrain.png\" text=\"" + GUIParser::escapeQuotes("Terrain Brush") + "\" value=\"" + GUIParser::escapeQuotes("terrain.brush") + "\" />\n";
+	if (terrain != nullptr && terrain->getWaterPositionMapsIndices().empty() == false) {
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Waters") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\">\n";
+		auto i = 0;
+		for (auto waterIdx: terrain->getWaterPositionMapsIndices()) {
+			xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Water " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters." + to_string(waterIdx)) + "\" />\n";
+			i++;
+		}
+		xml+= "</selectbox-parent-option>\n";
+	} else {
+		xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Waters") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\" />\n";
+	}
 	basePropertiesSubController->createBasePropertiesXML(view->getPrototype(), xml);
 	xml+= "</selectbox-parent-option>\n";
+	Console::println(xml);
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
@@ -558,3 +613,40 @@ void TerrainEditorTabController::applyRampTerrainBrush(BoundingBox& terrainBound
 	recreateFoliagePartitions.clear();
 }
 
+void TerrainEditorTabController::createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	auto waterPositionMapIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
+	prototype->getTerrain()->setWaterPositionMapHeight(waterPositionMapIdx, currentTerrainBrushHeight);
+	if (Terrain::computeWaterPositionMap(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+		prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx)) == true) {
+		//
+		Terrain::createWaterModels(
+			terrainBoundingBox,
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+			waterPositionMapIdx,
+			waterModels
+		);
+		waterReflectionEnvironmentMappingPosition = Terrain::computeWaterReflectionEnvironmentMappingPosition(
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
+		);
+		view->addWater(
+			waterPositionMapIdx,
+			waterModels,
+			waterReflectionEnvironmentMappingPosition
+		);
+	}
+}
+
+void TerrainEditorTabController::deleteWater(int waterPositionMapIdx) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	prototype->getTerrain()->removeWaterPositionMap(waterPositionMapIdx);
+	view->removeWater(waterPositionMapIdx);
+}

@@ -234,6 +234,21 @@ public:
 	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight);
 
 	/**
+	 * Create water using a auto fill like algorithm
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param brushCenterPosition brush center position
+	 * @param waterModels water models
+	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
+	 */
+	void createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Delete water models
+	 * @param waterPositionMapIdx water position map index
+	 */
+	void deleteWater(int waterPositionMapIdx);
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message
