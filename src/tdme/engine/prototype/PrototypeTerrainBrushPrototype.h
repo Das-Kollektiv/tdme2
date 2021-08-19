@@ -18,18 +18,18 @@ private:
 	string fileName;
 	float count { 1.0f };
 	bool normalAlign { false };
-	float rotationXMin { 0.0f };
-	float rotationXMax { 0.0f };
+	float rotationXMin { -5.0f };
+	float rotationXMax { 5.0f };
 	float rotationYMin { 0.0f };
-	float rotationYMax { 0.0f };
-	float rotationZMin { 0.0f };
-	float rotationZMax { 0.0f };
-	float scaleMin { 1.0f };
-	float scaleMax { 1.0f };
-	float heightMin { -100.0f };
+	float rotationYMax { 360.0f };
+	float rotationZMin { -5.0f };
+	float rotationZMax { 5.0f };
+	float scaleMin { 0.8f };
+	float scaleMax { 1.2f };
+	float heightMin { 0.0f };
 	float heightMax { 100.0f };
 	float slopeMin { 0.0f };
-	float slopeMax { 90.0f };
+	float slopeMax { 30.0f };
 
 public:
 
