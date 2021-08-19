@@ -115,10 +115,10 @@ void UIEditorTabController::onContextMenuRequested(GUIElementNode* node, int mou
 void UIEditorTabController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx) {
 	if (xmlParentNode->FirstChildElement() == nullptr) {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
-		xml+= "<selectbox-option image=\"resources/engine/images/gui.png\" text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
+		xml+= "<selectbox-option text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
 	} else {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/gui.png\" text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" >\n";
+		xml+= "<selectbox-parent-option text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" >\n";
 		for (auto* childNode = xmlParentNode->FirstChildElement(); childNode != nullptr; childNode = childNode->NextSiblingElement()) {
 			createOutlinerParentNodeNodesXML(childNode, xml, nodeIdx);
 		}
