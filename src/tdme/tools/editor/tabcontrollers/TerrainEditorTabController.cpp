@@ -660,6 +660,7 @@ void TerrainEditorTabController::createWater(BoundingBox& terrainBoundingBox, co
 			waterReflectionEnvironmentMappingPosition
 		);
 	}
+	view->getEditorView()->reloadTabOutliner("terrain.waters." + to_string(waterPositionMapIdx));
 }
 
 void TerrainEditorTabController::deleteWater(int waterPositionMapIdx) {
@@ -667,4 +668,5 @@ void TerrainEditorTabController::deleteWater(int waterPositionMapIdx) {
 	if (prototype == nullptr) return;
 	prototype->getTerrain()->removeWaterPositionMap(waterPositionMapIdx);
 	view->removeWater(waterPositionMapIdx);
+	view->getEditorView()->reloadTabOutliner("terrain.waters");
 }
