@@ -249,7 +249,9 @@
 									<template id="content" src="resources/engine/gui/template_details_gui_content_image.xml"/>
 									<template id="layout" src="resources/engine/gui/template_details_gui_layout.xml"/>
 									<template id="appearance" src="resources/engine/gui/template_details_gui_appearance.xml"/>
-									<!-- <template id="animation" src="resources/engine/gui/template_details_animation.xml"/> -->d
+									<template id="visibility" src="resources/engine/gui/template_details_gui_visibility.xml"/>
+									<template id="event" src="resources/engine/gui/template_details_gui_event.xml"/>
+									<!-- <template id="animation" src="resources/engine/gui/template_details_animation.xml"/> -->
 									<!-- <template id="preview" src="resources/engine/gui/template_details_animationpreview.xml"/> -->
 									<!-- <template id="boundingvolume" src="resources/engine/gui/template_details_boundingvolume.xml"/> -->
 									<!-- <template id="environmentmapping" src="resources/engine/gui/template_details_environmentmapping.xml"/> -->
