@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -47,6 +49,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
@@ -198,6 +201,9 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "terrain_create") {
+			onCreateTerrain();
+		} else
 		if (node->getId() == "terrainbrush_texture_open") {
 			class OnTerrainBrushFileLoadAction: public virtual Action
 			{
@@ -258,6 +264,46 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
+void TerrainEditorTabController::onCreateTerrain() {
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+
+	//
+	try {
+		view->reset();
+		auto width = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_x"))->getController()->getValue().getString());
+		auto depth = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_z"))->getController()->getValue().getString());
+		if (width < 1.0f || width > 4000.0f) throw ExceptionBase("Width must be within 1 .. 4000");
+		if (depth < 1.0f || depth > 4000.0f) throw ExceptionBase("Depth must be within 1 .. 4000");
+		terrain->getHeightVector().clear();
+		for (auto idx: terrain->getWaterPositionMapsIndices()) terrain->removeWaterPositionMap(idx);
+		BoundingBox terrainBoundingBox;
+		vector<Model*> terrainModels;
+		Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels);
+		Terrain::createFoliageMaps(terrainBoundingBox, terrain->getFoliageMaps());
+		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
+		terrain->setWidth(terrainBoundingBox.getDimensions().getX());
+		terrain->setDepth(terrainBoundingBox.getDimensions().getZ());
+		view->initializeTerrain();
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	class ReloadOutlinerAction: public Action {
+	public:
+		void performAction() override {
+			terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain");
+		}
+		ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+		}
+	private:
+		TerrainEditorTabController* terrainEditorTabController;
+	};
+	Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this));
+}
+
 void TerrainEditorTabController::setBrushScale(float scale) {
 	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
 		currentTerrainBrushScale = scale;
@@ -283,6 +329,27 @@ void TerrainEditorTabController::setOutlinerContent() {
 	basePropertiesSubController->createBasePropertiesXML(view->getPrototype(), xml);
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
+}
+
+void TerrainEditorTabController::setTerrainDetails() {
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+
+	//
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_terrain\" src=\"resources/engine/gui/template_details_terrain.xml\" />\n"
+	);
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_terrain"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_x"))->getController()->setValue(MutableString(terrain->getWidth()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_z"))->getController()->setValue(MutableString(terrain->getDepth()));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setTerrainDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void TerrainEditorTabController::setTerrainBrushDetails() {
@@ -327,6 +394,9 @@ void TerrainEditorTabController::applyTerrainBrushDetails() {
 
 void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
+	if (outlinerNode == "terrain") {
+		setTerrainDetails();
+	} else
 	if (outlinerNode == "terrain.brush") {
 		setTerrainBrushDetails();
 	} else {

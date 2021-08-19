@@ -309,6 +309,7 @@ void TerrainEditorTabView::activate() {
 	terrainEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());
+	terrainEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void TerrainEditorTabView::deactivate() {
@@ -318,6 +319,7 @@ void TerrainEditorTabView::deactivate() {
 void TerrainEditorTabView::reloadOutliner() {
 	terrainEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->setDetailsContent(string());
+	terrainEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void TerrainEditorTabView::initSky() {
@@ -393,12 +395,17 @@ void TerrainEditorTabView::updateSky() {
 	skyDomeTranslation+= 1.0f / 60.0;
 }
 
-void TerrainEditorTabView::initializeTerrain() {
+void TerrainEditorTabView::reset() {
 	engine->reset();
 	for (auto terrainModel: terrainModels) delete terrainModel;
 	terrainBoundingBox = BoundingBox();
 	terrainModels.clear();
 	unsetWater();
+	initSky();
+}
+
+void TerrainEditorTabView::initializeTerrain() {
+	reset();
 
 	//
 	partitionFoliageIdx.clear();
@@ -684,8 +691,15 @@ void TerrainEditorTabView::addWater(int waterIdx, vector<Model*> waterModels, co
 	water.waterReflectionEnvironmentMappingPosition = waterReflectionEnvironmentMappingPosition;
 }
 
-void TerrainEditorTabView::setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels) {
+void TerrainEditorTabView::unsetTerrain() {
 	for (auto terrainModel: this->terrainModels) delete terrainModel;
+	this->terrainBoundingBox = BoundingBox();
+	this->terrainModels.clear();
+	this->partitionFoliageIdx.clear();
+}
+
+void TerrainEditorTabView::setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels) {
+	unsetTerrain();
 	this->terrainBoundingBox = terrainBoundingBox;
 	this->terrainModels = terrainModels;
 	this->partitionFoliageIdx.resize(terrainModels.size());

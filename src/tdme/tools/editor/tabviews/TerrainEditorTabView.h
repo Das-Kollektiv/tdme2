@@ -157,9 +157,19 @@ public:
 	void updateSky();
 
 	/**
+	 * Reset engine
+	 */
+	void reset();
+
+	/**
 	 * Initialize terrain
 	 */
 	void initializeTerrain();
+
+	/**
+	 * Unset terrain
+	 */
+	void unsetTerrain();
 
 	/**
 	 * Set terrain models

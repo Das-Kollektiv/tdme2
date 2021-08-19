@@ -136,6 +136,11 @@ public:
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
+	 * On create terrain
+	 */
+	void onCreateTerrain();
+
+	/**
 	 * Set brush scale
 	 * @param scale scale
 	 */
@@ -151,6 +156,11 @@ public:
 	 * Set outliner content
 	 */
 	void setOutlinerContent();
+
+	/**
+	 * Set terrain details
+	 */
+	void setTerrainDetails();
 
 	/**
 	 * Set terrain brush details
