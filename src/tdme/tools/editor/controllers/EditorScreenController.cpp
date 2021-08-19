@@ -561,8 +561,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				}
 				// fonts
 				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
-					icon = "resources/engine/images/font.png";
-					iconBig = "resources/engine/images/font_big.png";
+					icon = "{$icon.type_font}";
+					iconBig = "{$icon.type_font_big}";
 					typeColor = "{$color.type_font}";
 				}
 				// images

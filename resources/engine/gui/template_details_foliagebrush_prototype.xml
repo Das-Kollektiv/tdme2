@@ -91,7 +91,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
 						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_scalerange_min" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="foliagebrush_prototype_scalerange_min" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
 							<space width="5" />
 							<text font="{$font.default}" color="{$color.font_normal}" text="-"/>
 							<space width="5" />
@@ -106,7 +106,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" />
 						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_heightrange_min" width="40%" height="auto" text="-100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="foliagebrush_prototype_heightrange_min" width="40%" height="auto" text="-100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
 							<space width="5" />
 							<text font="{$font.default}" color="{$color.font_normal}" text="-"/>
 							<space width="5" />
@@ -117,7 +117,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Slope" width="*" height="auto" />
 						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_sloperange_min" width="40%" height="auto" text="0°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="foliagebrush_prototype_sloperange_min" width="40%" height="auto" text="0°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
 							<space width="5" />
 							<text font="{$font.default}" color="{$color.font_normal}" text="-"/>
 							<space width="5" />

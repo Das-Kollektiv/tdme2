@@ -22,7 +22,7 @@ class tdme::engine::prototype::PrototypeTerrainBrush final
 private:
 	float size { 1.0f };
 	float density { 1.0f };
-	string textureFileName;
+	string fileName { "resources/engine/textures/terrain_brush.png" };
 	vector<PrototypeTerrainBrushPrototype*> prototypes;
 
 public:
@@ -73,16 +73,16 @@ public:
 	/**
 	 * @return texture file name
 	 */
-	inline const string& getTextureFileName() const {
-		return textureFileName;
+	inline const string& getFileName() const {
+		return fileName;
 	}
 
 	/**
 	 * Set texture file name
 	 * @param textureFileName texture file name
 	 */
-	void setTextureFileName(const string &textureFileName) {
-		this->textureFileName = textureFileName;
+	void setFileName(const string &fileName) {
+		this->fileName = fileName;
 	}
 
 	/**

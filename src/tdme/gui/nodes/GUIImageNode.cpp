@@ -4,6 +4,7 @@
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
@@ -124,13 +126,42 @@ void GUIImageNode::setSource(const string& source) {
 				vector<uint8_t> thumbnailPNGData;
 				if (FileSystem::getInstance()->getThumbnailAttachment(
 						FileSystem::getInstance()->getPathName(source),
-						FileSystem::getInstance()->getFileName(source), thumbnailPNGData) == true) {
+						FileSystem::getInstance()->getFileName(source),
+						thumbnailPNGData
+					) == true) {
 					//
 					auto thumbnailTexture = TextureReader::readPNG("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
+					} else {
+						this->source = "resources/engine/images/mesh.png";
 					}
+				} else {
+					this->source = "resources/engine/images/mesh.png";
+				}
+			} catch (Exception& exception) {
+				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+			}
+		} else
+		if (StringTools::endsWith(StringTools::toLowerCase(source), ".tmodel") == true) {
+			try {
+				vector<uint8_t> thumbnailPNGData;
+				if (PrototypeReader::readThumbnail(
+						FileSystem::getInstance()->getPathName(source),
+						FileSystem::getInstance()->getFileName(source),
+						thumbnailPNGData
+					) == true) {
+					//
+					auto thumbnailTexture = TextureReader::readPNG("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+					if (thumbnailTexture != nullptr) {
+						thumbnailTexture->acquireReference();
+						this->texture = thumbnailTexture;
+					} else {
+						this->source = "resources/engine/images/tdme.png";
+					}
+				} else {
+					this->source = "resources/engine/images/tdme.png";
 				}
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());

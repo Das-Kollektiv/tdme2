@@ -61,6 +61,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	FileDialogPath brushTexturePath;
+	FileDialogPath brushPrototypePath;
 
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 	unordered_set<int> recreateFoliagePartitions;
@@ -78,6 +79,31 @@ private:
 		"terrainbrush_size",
 		"terrainbrush_strength"
 	};
+
+	array<string, 2> foliageBrushApplyNodes = {
+		"foliagebrush_size",
+		"foliagebrush_density"
+	};
+
+	array<string, 16> foliageBrushPrototypeApplyNodes = {
+		"foliagebrush_prototype_object_count",
+		"foliagebrush_prototype_normalalign",
+		"foliagebrush_prototype_rotationrange_x_min",
+		"foliagebrush_prototype_rotationrange_x_max",
+		"foliagebrush_prototype_rotationrange_y_min",
+		"foliagebrush_prototype_rotationrange_y_max",
+		"foliagebrush_prototype_rotationrange_z_min",
+		"foliagebrush_prototype_rotationrange_z_max",
+		"foliagebrush_prototype_scalerange_min",
+		"foliagebrush_prototype_scalerange_max",
+		"foliagebrush_prototype_scalerange_max",
+		"foliagebrush_prototype_heightrange_max",
+		"foliagebrush_prototype_heightrange_min",
+		"foliagebrush_prototype_heightrange_max",
+		"foliagebrush_prototype_sloperange_max",
+		"foliagebrush_prototype_sloperange_max"
+	};
+
 public:
 	/**
 	 * Public constructor
@@ -176,6 +202,34 @@ public:
 	 * Apply terrain brush details
 	 */
 	void applyTerrainBrushDetails();
+
+	/**
+	 * Set foliage brush details
+	 */
+	void setFoliageBrushDetails();
+
+	/**
+	 * Apply foliage brush details
+	 */
+	void applyFoliageBrushDetails();
+
+	/**
+	 * Set foliage brush details
+	 */
+	void setFoliageBrushPrototypeDetails();
+
+	/**
+	 * Apply foliage brush prototype details
+	 */
+	void applyFoliageBrushPrototypeDetails();
+
+	/**
+	 * Check if outliner selection is foliage brush prototype
+	 * @param outlinerNode outliner node
+	 * @param foliageBrushIdx foliage brush index
+	 * @param foliageBrushPrototypeIdx foliage brush prototype index
+	 */
+	bool checkOutlinerFoliageBrushPrototype(const string& outlinerNode, int& foliageBrushIdx, int& foliageBrushPrototypeIdx);
 
 	/**
 	 * Update details

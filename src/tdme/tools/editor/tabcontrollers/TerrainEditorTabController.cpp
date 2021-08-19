@@ -18,6 +18,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -61,6 +62,7 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -198,6 +200,18 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 				break;
 			}
 		}
+		for (auto& foliageBrushApplyNode: foliageBrushApplyNodes) {
+			if (node->getId() == foliageBrushApplyNode) {
+				applyFoliageBrushDetails();
+				break;
+			}
+		}
+		for (auto& foliageBrushPrototypeApplyNode: foliageBrushPrototypeApplyNodes) {
+			if (node->getId() == foliageBrushPrototypeApplyNode) {
+				applyFoliageBrushPrototypeDetails();
+				break;
+			}
+		}
 	}
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 }
@@ -216,7 +230,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 		if (StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
 			// clear
 			popUps->getContextMenuScreenController()->clear();
-			// add
+			// delete
 			class OnTerrainWaterDelete: public virtual Action
 			{
 			public:
@@ -229,6 +243,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 					public:
 						void performAction() override {
 							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.waters");
+							terrainEditorTabController->updateDetails("terrain.waters");
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 						}
@@ -246,6 +261,173 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "terrain.foliage") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnTerrainFoliageAddBrush: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+					auto brush = terrain->addBrush();
+					//
+					class ReloadOutlinerAction: public Action {
+					public:
+						void performAction() override {
+							string outlinerNode = "terrain.foliage";
+							auto prototype = terrainEditorTabController->view->getPrototype();
+							auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+							if (terrain != nullptr) outlinerNode = "terrain.foliage." + to_string(terrain->getBrushes().size() - 1);
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
+							terrainEditorTabController->updateDetails(outlinerNode);
+						}
+						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+						}
+					private:
+						TerrainEditorTabController* terrainEditorTabController;
+					};
+					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+				}
+				OnTerrainFoliageAddBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Foliage Brush", "contextmenu_add", new OnTerrainFoliageAddBrush(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(outlinerNode, "terrain.foliagebrushes.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// delete
+			class OnTerrainDeleteFoliageBrush: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					auto foliageBrushIdx = -1;
+					auto foliageBrushPrototypeIdx = -1;
+					if (terrainEditorTabController->checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+					auto brush = terrain->getBrush(foliageBrushIdx);
+					brush->removePrototype(foliageBrushPrototypeIdx);
+					auto newOutlinerNode = "terrain.brushes." + to_string(foliageBrushIdx);
+
+					//
+					class ReloadOutlinerAction: public Action {
+					public:
+						void performAction() override {
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
+							terrainEditorTabController->updateDetails(outlinerNode);
+						}
+						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
+						}
+					private:
+						TerrainEditorTabController* terrainEditorTabController;
+						string outlinerNode;
+					};
+					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController, newOutlinerNode));
+				}
+				OnTerrainDeleteFoliageBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete Foliage Brush Prototype", "contextmenu_delete", new OnTerrainDeleteFoliageBrush(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+
+			// add prototype
+			class OnTerrainAddFoliageBrushPrototype: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+					auto brush = terrain->getBrush(foliageBrushIdx);
+					if (brush == nullptr) return;
+					auto brushPrototype = brush->addPrototype();
+					auto newOutlinerNode = "terrain.foliagebrushes." + to_string(foliageBrushIdx) + "." + to_string(brush->getPrototypes().size() - 1);
+
+					//
+					class ReloadOutlinerAction: public Action {
+					public:
+						void performAction() override {
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
+							terrainEditorTabController->updateDetails(outlinerNode);
+						}
+						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
+						}
+					private:
+						TerrainEditorTabController* terrainEditorTabController;
+						string outlinerNode;
+					};
+					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController, newOutlinerNode));
+				}
+				OnTerrainAddFoliageBrushPrototype(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Foliage Prototype", "contextmenu_add", new OnTerrainAddFoliageBrushPrototype(this));
+
+
+			// delete
+			class OnTerrainDeleteFoliageBrush: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+					terrain->removeBrush(foliageBrushIdx);
+
+					//
+					class ReloadOutlinerAction: public Action {
+					public:
+						void performAction() override {
+							string outlinerNode = "terrain.foliage";
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
+							terrainEditorTabController->updateDetails(outlinerNode);
+						}
+						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+						}
+					private:
+						TerrainEditorTabController* terrainEditorTabController;
+					};
+					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+				}
+				OnTerrainDeleteFoliageBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete Foliage Brush", "contextmenu_delete", new OnTerrainDeleteFoliageBrush(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
@@ -257,8 +439,161 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == "terrain_create") {
 			onCreateTerrain();
 		} else
+		if (node->getId() == "foliagebrush_texture_open") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+			auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr) return;
+
+			//
+			class OnFoliageBrushFileOpenAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+					auto brush = terrain->getBrush(foliageBrushIdx);
+					if (brush == nullptr) return;
+					brush->setFileName(
+						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+						"/" +
+						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+					);
+					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
+					terrainEditorTabController->brushTexturePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+				}
+
+				/**
+				 * Public constructor
+				 * @param terrainEditorTabController terrain editor tab controller
+				 */
+				OnFoliageBrushFileOpenAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUps()->getFileDialogScreenController()->show(
+				brush->getFileName().empty() == true?brushTexturePath.getPath():Tools::getPathName(brush->getFileName()),
+				"Load foliage brush texture from: ",
+				extensions,
+				Tools::getFileName(brush->getFileName()),
+				true,
+				new OnFoliageBrushFileOpenAction(this)
+			);
+		} else
+		if (node->getId() == "foliagebrush_texture_remove") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+			auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr) return;
+			brush->setFileName(string());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
+		} else
+		if (node->getId() == "foliagebrush_texture_browseto") {
+
+		} else
+		if (node->getId() == "foliagebrush_prototype_file_open") {
+			class OnTerrainBrushPrototypeFileOpenAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = terrainEditorTabController->view->getPrototype();
+					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+					if (terrain == nullptr) return;
+
+					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					auto foliageBrushIdx = -1;
+					auto foliageBrushPrototypeIdx = -1;
+					if (terrainEditorTabController->checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+					auto brush = terrain->getBrush(foliageBrushIdx);
+					if (brush == nullptr) return;
+					auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+					brushPrototype->setFileName(
+						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+						"/" +
+						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+					);
+					try {
+						required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
+					} catch (Exception& exception) {
+						Console::println(string("OnTerrainBrushPrototypeFileOpenAction::performAction(): ") + exception.what());
+					}
+					terrainEditorTabController->brushPrototypePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+				}
+
+				/**
+				 * Public constructor
+				 * @param terrainEditorTabController terrain editor tab controller
+				 */
+				OnTerrainBrushPrototypeFileOpenAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				}
+
+			private:
+				TerrainEditorTabController* terrainEditorTabController;
+			};
+
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			auto foliageBrushIdx = -1;
+			auto foliageBrushPrototypeIdx = -1;
+			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr) return;
+			auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+			if (brushPrototype == nullptr) return;
+
+			vector<string> extensions = {"tmodel"};
+			view->getPopUps()->getFileDialogScreenController()->show(
+				brushPrototype->getFileName().empty() == true?brushPrototypePath.getPath():Tools::getPathName(brushPrototype->getFileName()),
+				"Load terrain brush texture from: ",
+				extensions,
+				Tools::getFileName(brushPrototype->getFileName()),
+				true,
+				new OnTerrainBrushPrototypeFileOpenAction(this)
+			);
+		} else
+		if (node->getId() == "foliagebrush_prototype_file_remove") {
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			auto foliageBrushIdx = -1;
+			auto foliageBrushPrototypeIdx = -1;
+			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr) return;
+			auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+			if (brushPrototype == nullptr) return;
+			brushPrototype->setFileName(string());
+			try {
+				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
+			} catch (Exception& exception) {
+				Console::println(string("TerrainEditorTabController::onActionPerformed(): ") + exception.what());
+			}
+		} else
 		if (node->getId() == "terrainbrush_texture_open") {
-			class OnTerrainBrushFileLoadAction: public virtual Action
+			class OnTerrainBrushFileOpenAction: public virtual Action
 			{
 			public:
 				void performAction() override {
@@ -289,7 +624,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 				 * Public constructor
 				 * @param terrainEditorTabController terrain editor tab controller
 				 */
-				OnTerrainBrushFileLoadAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
+				OnTerrainBrushFileOpenAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
 
 			private:
@@ -303,7 +638,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 				extensions,
 				Tools::getFileName(currentTerrainBrushTextureFileName),
 				true,
-				new OnTerrainBrushFileLoadAction(this)
+				new OnTerrainBrushFileOpenAction(this)
 			);
 		} else
 		if (node->getId() == "terrainbrush_texture_remove") {
@@ -380,6 +715,7 @@ void TerrainEditorTabController::setOutlinerContent() {
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Terrain") + "\" value=\"" + GUIParser::escapeQuotes("terrain") + "\">\n";
+	basePropertiesSubController->createBasePropertiesXML(view->getPrototype(), xml);
 	xml+= "<selectbox-option image=\"resources/engine/images/terrain.png\" text=\"" + GUIParser::escapeQuotes("Terrain Brush") + "\" value=\"" + GUIParser::escapeQuotes("terrain.brush") + "\" />\n";
 	if (terrain != nullptr && terrain->getWaterPositionMapsIndices().empty() == false) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Waters") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\">\n";
@@ -392,7 +728,27 @@ void TerrainEditorTabController::setOutlinerContent() {
 	} else {
 		xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Waters") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\" />\n";
 	}
-	basePropertiesSubController->createBasePropertiesXML(view->getPrototype(), xml);
+	if (terrain != nullptr && terrain->getBrushes().empty() == false) {
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brushes") + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage") + "\">\n";
+		auto i = 0;
+		for (auto brush: terrain->getBrushes()) {
+			if (brush->getPrototypes().empty() == false) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage." + to_string(i)) + "\" >\n";
+				auto j = 0;
+				for (auto brushPrototype: brush->getPrototypes()) {
+					xml+= "<selectbox-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brush Prototype " + to_string(j)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliagebrushes." + to_string(i) + "." + to_string(j)) + "\" />\n";
+					j++;
+				}
+				xml+= "</selectbox-parent-option>\n";
+			} else {
+				xml+= "<selectbox-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage." + to_string(i)) + "\" />\n";
+			}
+			i++;
+		}
+		xml+= "</selectbox-parent-option>\n";
+	} else {
+		xml+= "<selectbox-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brushes") + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage") + "\" />\n";
+	}
 	xml+= "</selectbox-parent-option>\n";
 	Console::println(xml);
 	view->getEditorView()->setOutlinerContent(xml);
@@ -459,6 +815,144 @@ void TerrainEditorTabController::applyTerrainBrushDetails() {
 	view->setTerrainBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 }
 
+void TerrainEditorTabController::setFoliageBrushDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_foliagebrush\" src=\"resources/engine/gui/template_details_foliagebrush.xml\" />\n"
+	);
+
+	//
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+	auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush"))->getActiveConditions().add("open");
+
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->setValue(MutableString(brush->getSize()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->setValue(MutableString(brush->getDensity()));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setFoliageBrushDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorTabController::applyFoliageBrushDetails() {
+	//
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+	auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+
+	//
+	try {
+		brush->setSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->getValue().getString()));
+		brush->setDensity(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->getValue().getString()));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::applyFoliageBrushDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorTabController::setFoliageBrushPrototypeDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_foliagebrush_prototype\" src=\"resources/engine/gui/template_details_foliagebrush_prototype.xml\" />\n"
+	);
+
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto foliageBrushIdx = -1;
+	auto foliageBrushPrototypeIdx = -1;
+	if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+	auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+	if (brushPrototype == nullptr) return;
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush_prototype"))->getActiveConditions().add("open");
+
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_object_count"))->getController()->setValue(MutableString(brushPrototype->getCount()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_normalalign"))->getController()->setValue(MutableString(brushPrototype->isNormalAlign() == true?"1":""));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_min"))->getController()->setValue(MutableString(brushPrototype->getRotationXMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_max"))->getController()->setValue(MutableString(brushPrototype->getRotationXMax()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_min"))->getController()->setValue(MutableString(brushPrototype->getRotationYMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_max"))->getController()->setValue(MutableString(brushPrototype->getRotationYMax()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_min"))->getController()->setValue(MutableString(brushPrototype->getRotationZMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_max"))->getController()->setValue(MutableString(brushPrototype->getRotationZMax()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_min"))->getController()->setValue(MutableString(brushPrototype->getScaleMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_max"))->getController()->setValue(MutableString(brushPrototype->getScaleMax()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_min"))->getController()->setValue(MutableString(brushPrototype->getHeightMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_max"))->getController()->setValue(MutableString(brushPrototype->getHeightMax()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_min"))->getController()->setValue(MutableString(brushPrototype->getSlopeMin()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->setValue(MutableString(brushPrototype->getSlopeMax()));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setFoliageBrushPrototypeDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorTabController::applyFoliageBrushPrototypeDetails() {
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto foliageBrushIdx = -1;
+	auto foliageBrushPrototypeIdx = -1;
+	if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+	auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+	if (brushPrototype == nullptr) return;
+
+	try {
+		brushPrototype->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_object_count"))->getController()->getValue().getString()));
+		brushPrototype->setNormalAlign(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_normalalign"))->getController()->getValue().getString() == "1");
+		brushPrototype->setRotationXMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationXMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_max"))->getController()->getValue().getString()));
+		brushPrototype->setRotationYMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationYMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_max"))->getController()->getValue().getString()));
+		brushPrototype->setRotationZMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationZMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_max"))->getController()->getValue().getString()));
+		brushPrototype->setScaleMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_min"))->getController()->getValue().getString()));
+		brushPrototype->setScaleMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_max"))->getController()->getValue().getString()));
+		brushPrototype->setHeightMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_min"))->getController()->getValue().getString()));
+		brushPrototype->setHeightMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_max"))->getController()->getValue().getString()));
+		brushPrototype->setSlopeMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_min"))->getController()->getValue().getString()));
+		brushPrototype->setSlopeMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->getValue().getString()));
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::applyFoliageBrushPrototypeDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+bool TerrainEditorTabController::checkOutlinerFoliageBrushPrototype(const string& outlinerNode, int& foliageBrushIdx, int& foliageBrushPrototypeIdx) {
+	if (StringTools::startsWith(outlinerNode, "terrain.foliagebrushes.") == false) return false;
+	auto brushIdxBeginIdx = string("terrain.foliagebrushes.").size();
+	auto brushIdxEndIdx = outlinerNode.find('.', brushIdxBeginIdx + 1);
+	auto prototypeBeginIdx = brushIdxEndIdx + 1;
+	auto prototypeEndIdx = outlinerNode.size();
+	foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, brushIdxBeginIdx, brushIdxEndIdx));
+	foliageBrushPrototypeIdx = Integer::parseInt(StringTools::substring(outlinerNode, prototypeBeginIdx, prototypeEndIdx));
+	return true;
+}
+
 void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "terrain") {
@@ -471,6 +965,17 @@ void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 	} else
 	if (outlinerNode == "terrain.waters" || StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("water");
+	} else
+	if (outlinerNode == "terrain.foliage") {
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
+	} else
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+		setFoliageBrushDetails();
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
+	} else
+	if (StringTools::startsWith(outlinerNode, "terrain.foliagebrushes.") == true) {
+		setFoliageBrushPrototypeDetails();
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
 	} else {
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().removeAll();
 		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
