@@ -36,6 +36,8 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrush.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrushPrototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
@@ -87,6 +89,9 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::prototype::PrototypeTerrainBrush;
+using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -704,6 +709,51 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				jFoliage.AddMember(Value(to_string(foliagePrototypeIdx).c_str(), jAllocator), jFoliagePrototype, jAllocator);
 			}
 			jTerrain.AddMember("f", jFoliage, jAllocator);
+		}
+		{
+			//
+			Value jFoliageBrushes;
+			jFoliageBrushes.SetArray();
+			//
+			for (auto brush: terrain->getBrushes()) {
+				Value jFoliageBrush;
+				jFoliageBrush.SetObject();
+
+				jFoliageBrush.AddMember("f", Value(brush->getFileName(), jAllocator), jAllocator);
+				jFoliageBrush.AddMember("s", Value(brush->getSize()), jAllocator);
+				jFoliageBrush.AddMember("d", Value(brush->getDensity()), jAllocator);
+
+				Value jFoliageBrushPrototypes;
+				jFoliageBrushPrototypes.SetArray();
+				for (auto brushPrototype: brush->getPrototypes()) {
+					Value jFoliageBrushPrototype;
+					jFoliageBrushPrototype.SetObject();
+
+					jFoliageBrushPrototype.AddMember("f", Value(brushPrototype->getFileName(), jAllocator), jAllocator);
+
+					jFoliageBrushPrototype.AddMember("c", Value(brushPrototype->getCount()), jAllocator);
+					jFoliageBrushPrototype.AddMember("n", Value(brushPrototype->isNormalAlign()), jAllocator);
+					jFoliageBrushPrototype.AddMember("xi", Value(brushPrototype->getRotationXMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("xa", Value(brushPrototype->getRotationXMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("yi", Value(brushPrototype->getRotationYMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("ya", Value(brushPrototype->getRotationYMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("zi", Value(brushPrototype->getRotationZMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("za", Value(brushPrototype->getRotationZMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("si", Value(brushPrototype->getScaleMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("sa", Value(brushPrototype->getScaleMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("hi", Value(brushPrototype->getHeightMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("ha", Value(brushPrototype->getHeightMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("li", Value(brushPrototype->getSlopeMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("la", Value(brushPrototype->getSlopeMax()), jAllocator);
+
+
+					jFoliageBrushPrototypes.PushBack(jFoliageBrushPrototype, jAllocator);
+				}
+				jFoliageBrush.AddMember("p", jFoliageBrushPrototypes, jAllocator);
+
+				jFoliageBrushes.PushBack(jFoliageBrush, jAllocator);
+			}
+			jTerrain.AddMember("b", jFoliageBrushes, jAllocator);
 		}
 		jPrototypeRoot.AddMember("t", jTerrain, jAllocator);
 	}
