@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrush.h>
 #include <tdme/engine/Transformations.h>
 
 using std::unordered_map;
@@ -14,6 +15,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeTerrainBrush;
 
 using tdme::engine::Transformations;
 
@@ -35,6 +37,7 @@ private:
 	unordered_map<Prototype*, int> foliagePrototypeFoliageMap;
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
 	vector<unordered_map<int, vector<Transformations>>> foliageMaps;
+	vector<PrototypeTerrainBrush*> brushes;
 
 public:
 
@@ -51,6 +54,7 @@ public:
 		for (auto& foliagePrototypeFoliageMapIt: foliagePrototypeFoliageMap) {
 			delete foliagePrototypeFoliageMapIt.first;
 		}
+		for (auto brush: brushes) delete brush;
 	}
 
 	/**
@@ -248,6 +252,45 @@ public:
 			}
 		}
 		return foliagePrototypeEntityTransformations;
+	}
+
+	/**
+	 * @return prototype terrain brushes
+	 */
+	inline const vector<PrototypeTerrainBrush*>& getBrushes() const {
+		return brushes;
+	}
+
+	/**
+	 * Get prototype terrain brush
+	 * @param idx index
+	 * @return prototype terrain brush prototype
+	 */
+	inline PrototypeTerrainBrush* getBrush(int idx) {
+		if (idx < 0 || idx >= brushes.size()) return nullptr;
+		return brushes[idx];
+	}
+
+	/**
+	 * Add prototype terrain brush
+	 * @param idx index
+	 */
+	PrototypeTerrainBrush* addBrush() {
+		auto brush = new PrototypeTerrainBrush();
+		brushes.push_back(brush);
+		return brush;
+	}
+
+	/**
+	 * Remove prototype terrain brush
+	 * @param idx index
+	 */
+	bool removeBrush(int idx) {
+		if (idx < 0 || idx >= brushes.size()) return false;
+		auto brush = brushes[idx];
+		brushes.erase(brushes.begin() + idx);
+		delete brush;
+		return true;
 	}
 
 };
