@@ -1,7 +1,7 @@
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 
+#include <list>
 #include <string>
-#include <vector>
 
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
@@ -20,9 +20,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::list;
 using std::string;
 using std::to_string;
-using std::vector;
 
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIMultilineTextNode;
@@ -77,6 +77,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->charEndIdx = text.length() - 1;
 	this->widthLast = -1;
 	this->heightLast = -1;
+	this->startTextStyleIdx = 0;
 	if (this->font != nullptr) this->font->initialize();
 }
 
@@ -133,7 +134,7 @@ void GUIMultilineTextNode::computeContentAlignment() {
 			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
 			// check if too long
 			auto tooLong =
-				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
+				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && // TODO: check with <multi... width="auto" />
 				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 			// if not auto and too long then draw current line and do a new line or flush last text
 			if (tooLong == true ||
@@ -200,6 +201,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->yLast = 0.0f;
 	this->widthLast = -1;
 	this->heightLast = -1;
+	this->startTextStyleIdx = 0;
 	screenNode->layout(this);
 }
 
@@ -250,6 +252,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		parentYOffsetLast = parentYOffset;
 		charStartIdx = 0;
 		charEndIdx = text.length() - 1;
+		startTextStyleIdx = 0;
 		parentOffsetsChanged = false;
 		yLast = 0;
 	} else {
@@ -258,7 +261,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	bool visible = false;
 	auto _charStartIdx = charStartIdx;
 	auto _y = y;
+	auto textStyleIdx = startTextStyleIdx;
+	auto j = charStartIdx;
 	for (auto i = charStartIdx; i <= charEndIdx; i++) {
+		//
 		auto c = text.charAt(i);
 		// last char
 		auto lastChar = i == charEndIdx;
@@ -270,7 +276,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
 			// check if too long
 			auto tooLong =
-				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
+				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && // TODO: check with <multi... width="auto" />
 				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 			// if not auto and too long then draw current line and do a new line or flush last text
 			if (tooLong == true ||
@@ -284,6 +290,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				//
 				string lineToRender = line;
 				string lineLeft;
+				auto k = 0;
+
 				//
 				do {
 					//
@@ -316,19 +324,74 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								((left + width) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 								((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
-							// flush/draw to screen
-							font->drawString(
-								guiRenderer,
-								x + xIndentLeft,
-								y + yIndentTop,
-								lineToRender,
-								0,
-								0,
-								color
-							);
+
+							auto styleFontColor = color;
+							string textToRender;
+							auto initTextStyleIdx = textStyleIdx;
+							auto textStyleChange = false;
+							auto yOffset = font->getYOffset(lineToRender) / 2;
+							TextStyle* textStyleLast = nullptr;
+							TextStyle* textStyle = nullptr;
+							for (auto l = 0; l < lineToRender.size(); l++) {
+								TextStyle* validTextStyle = nullptr;
+								if (textStyles.empty() == false) {
+									textStyle = textStyleIdx < textStyles.size()?&textStyles[textStyleIdx]:nullptr;
+									if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
+										if (j + k + l >= textStyle->endIdx) {
+											// invalid text style, check next text style
+											textStyleIdx++;
+											textStyle = textStyleIdx < textStyles.size()?&textStyles[textStyleIdx]:nullptr;
+											if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
+												if (j + k + l < textStyle->endIdx) {
+													// valid text style
+													validTextStyle = textStyle;
+												}
+											}
+										} else
+										if (j + k + l < textStyle->endIdx) {
+											// valid text style
+											validTextStyle = textStyle;
+										}
+									}
+								}
+								if (textToRender.empty() == false && textStyleLast != validTextStyle) {
+									// flush/draw to screen
+									font->drawString(
+										guiRenderer,
+										left,
+										top,
+										textToRender,
+										0,
+										0,
+										textStyleLast != nullptr?textStyleLast->color:color,
+										yOffset
+									);
+									left+= font->getTextWidth(textToRender);
+									textToRender.clear();
+								}
+								//
+								textToRender+= lineToRender[l];
+								textStyleLast = validTextStyle;
+							}
+							if (textToRender.empty() == false) {
+								// flush/draw to screen
+								font->drawString(
+									guiRenderer,
+									left,
+									top,
+									textToRender,
+									0,
+									0,
+									textStyleLast != nullptr?textStyleLast->color:color,
+									yOffset
+								);
+								left+= font->getTextWidth(textToRender);
+								textToRender.clear();
+							}
 							if (visible == false) {
 								visible = true;
 								charStartIdx = _charStartIdx;
+								startTextStyleIdx = initTextStyleIdx;
 								yLast = _y;
 							}
 						} else
@@ -340,6 +403,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					// move y
 					y+= font->getLineHeight();
 					//
+					k+= lineToRender.size();
 					lineToRender = lineLeft;
 					lineLeft.clear();
 				} while (lineToRender.empty() == false);
@@ -356,6 +420,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_charStartIdx = i + 1;
 					_y = y;
 				}
+				//
+				j = c == '\n'?i + 1:i;
 			} else
 			if (c != '\n') {
 				// no flush yet, add word to line
@@ -369,4 +435,45 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			word+= c;
 		}
 	}
+}
+
+void GUIMultilineTextNode::removeTextStyle(int startIdx, int endIdx) {
+	// TODO:
+}
+
+void GUIMultilineTextNode::addTextStyle(int startIdx, int endIdx, const GUIColor& color) {
+	removeTextStyle(startIdx, endIdx);
+
+	//
+	startTextStyleIdx = 0;
+	TextStyle* textStyleFirst = nullptr;
+	// 0->4 6->8
+	// 5
+	// 2
+	/*
+	auto textStyleIt = textStyles.begin();
+	for (auto& textStyle: textStyles) {
+		if (textStyleFirst == nullptr) textStyleFirst = &textStyle;
+		if (startIdx > textStyle.endIdx) {
+			textStyles.insert(
+				textStyleIt,
+				{
+					.startIdx = startIdx,
+					.endIdx = endIdx,
+					.color = color
+				}
+			);
+			return;
+		}
+		textStyleIt++;
+	}
+	*/
+	textStyles.insert(
+		/*textStyleFirst != nullptr && startIdx < textStyleFirst->startIdx?textStyles.begin():*/textStyles.end(),
+		{
+			.startIdx = startIdx,
+			.endIdx = endIdx,
+			.color = color
+		}
+	);
 }

@@ -125,8 +125,9 @@ public:
 	 * @param offset offset
 	 * @param length length or 0 if full length
 	 * @param color color
+	 * @param yOffset 10000 to detect it or a custom value
 	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color);
+	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset = 10000);
 
 	/**
 	 * Get text index X of given text and index
