@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/utilities/fwd-tdme.h>
@@ -25,18 +24,18 @@ public:
 	static constexpr float NAN_VALUE { numeric_limits<float>::quiet_NaN() };
 
 	/**
-	 * Parse float
-	 * @param str string
-	 * @return float
-	 */
-	static float parseFloat(const string& str);
-
-	/**
 	 * Check if given string is a float string
 	 * @param str string
 	 * @return given string is float
 	 */
 	static bool isFloat(const string& str);
+
+	/**
+	 * Parse float
+	 * @param str string
+	 * @return float
+	 */
+	static float parseFloat(const string& str);
 
 	/**
 	 * Check if float is not a number

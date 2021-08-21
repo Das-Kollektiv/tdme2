@@ -26,17 +26,17 @@ public:
 	static constexpr int MIN_VALUE { -numeric_limits<int>::max() };
 
 	/**
-	 * Parse integer
-	 * @param str string
-	 * @return integer
-	 */
-	static int parseInt(const string& str);
-
-	/**
 	 * Check if given string is a integer string
 	 * @param str string
 	 * @return given string is integer
 	 */
 	static bool isInt(const string& str);
+
+	/**
+	 * Parse integer
+	 * @param str string
+	 * @return integer
+	 */
+	static int parseInt(const string& str);
 
 };
