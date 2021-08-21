@@ -36,7 +36,7 @@ using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 
-TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
+TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& extension)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -46,141 +46,148 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	auto multiLineTextNode = required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("text"));
-	auto keywords1 = StringTools::tokenize(cppKeywords1, " ");
-	auto keywords2 = StringTools::tokenize(cppKeywords2, " ");
-	auto preprocessorLineKeywords = StringTools::tokenize(cppPreprocessorLineKeywords, " ");
-	auto datatypeLiteralSuffixes = StringTools::tokenize(cppDatatypeLiteralSuffixes, " ");
-	auto code = multiLineTextNode->getText().getString();
-	auto startIdx = 0;
-	auto endIdx = -1;
-	auto lc = '\0';
-	auto llc = '\0';
-	auto nc = '\0';
-	auto inlineComment = false;
-	auto lineComment = false;
-	auto preprocessorLine = false;
-	auto quote = '\0';
-	for (auto i = 0; i < code.size(); i++) {
-		auto c = code[i];
-		auto nc = i + 1 < code.size()?code[i + 1]:'\0';
-		if (inlineComment == false && lineComment == false && preprocessorLine == false && quote == '\0') {
-			if (cppCommentLine.empty() == false && (cppCommentLine.size() == 1 || c == cppCommentLine[0]) && nc == cppCommentLine[cppCommentLine.size() - 1]) {
-				lineComment = true;
-				startIdx = i - 1;
-				endIdx = -1;
-			} else
-			if (cppCommentInlineStart.empty() == false && (cppCommentInlineStart.size() == 1 || c == cppCommentInlineStart[0]) && nc == cppCommentInlineStart[cppCommentInlineStart.size() - 1]) {
-				inlineComment = true;
-				startIdx = i - 1;
-				endIdx = -1;
-			} else
-			if (quote == '\0' && cppKeywordQuotes.find(c) != string::npos) {
-				quote = c;
-				startIdx = i;
-				endIdx = -1;
-			} else {
-				// delimiter
-				if (cppKeywordDelimiters.find(c) != string::npos) {
-					endIdx = i;
-				}
-				if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
-					auto word = StringTools::trim(StringTools::substring(code, startIdx, endIdx));
-					if (word.empty() == true) continue;
-					auto literalWord = word;
-					for (auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
-						if (StringTools::endsWith(word, datatypeLiteralSuffix) == true) {
-							auto dotCount = 0;
-							auto valid = true;
-							for (auto j = 0; j < word.size() - datatypeLiteralSuffix.size(); j++) {
-								if (word[j] == '.') {
-									dotCount++;
-									if (dotCount > 1) {
-										valid = false;
+	for (auto& language: languages) {
+		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
+			auto multiLineTextNode = required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("text"));
+			auto keywords1 = StringTools::tokenize(language.keywords1, " ");
+			auto keywords2 = StringTools::tokenize(language.keywords2, " ");
+			auto preprocessorLineKeywords = StringTools::tokenize(language.preprocessorLineKeywords, " ");
+			auto datatypeLiteralSuffixes = StringTools::tokenize(language.datatypeLiteralSuffixes, " ");
+			auto code = multiLineTextNode->getText().getString();
+			auto startIdx = 0;
+			auto endIdx = -1;
+			auto lc = '\0';
+			auto llc = '\0';
+			auto nc = '\0';
+			auto inlineComment = false;
+			auto lineComment = false;
+			auto preprocessorLine = false;
+			auto quote = '\0';
+			for (auto i = 0; i < code.size(); i++) {
+				auto c = code[i];
+				auto nc = i + 1 < code.size()?code[i + 1]:'\0';
+				if (inlineComment == false && lineComment == false && preprocessorLine == false && quote == '\0') {
+					if (language.commentLine.empty() == false && (language.commentLine.size() == 1 || c == language.commentLine[0]) && nc == language.commentLine[language.commentLine.size() - 1]) {
+						lineComment = true;
+						startIdx = i - 1;
+						endIdx = -1;
+					} else
+					if (language.commentInlineStart.empty() == false && (language.commentInlineStart.size() == 1 || c == language.commentInlineStart[0]) && nc == language.commentInlineStart[language.commentInlineStart.size() - 1]) {
+						inlineComment = true;
+						startIdx = i - 1;
+						endIdx = -1;
+					} else
+					if (quote == '\0' && language.keywordQuotes.find(c) != string::npos) {
+						quote = c;
+						startIdx = i;
+						endIdx = -1;
+					} else {
+						// delimiter
+						if (language.keywordDelimiters.find(c) != string::npos) {
+							endIdx = i;
+						}
+						if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
+							auto word = StringTools::trim(StringTools::substring(code, startIdx, endIdx));
+							if (word.empty() == true) continue;
+							auto literalWord = word;
+							for (auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
+								if (StringTools::endsWith(word, datatypeLiteralSuffix) == true) {
+									auto dotCount = 0;
+									auto valid = true;
+									for (auto j = 0; j < word.size() - datatypeLiteralSuffix.size(); j++) {
+										if (word[j] == '.') {
+											dotCount++;
+											if (dotCount > 1) {
+												valid = false;
+												break;
+											}
+										} else
+										if (isdigit(word[j]) == false) {
+											valid = false;
+											break;
+										}
+									}
+									if (valid == true) {
+										literalWord = StringTools::substring(word, 0, word.size() - datatypeLiteralSuffix.size());
 										break;
 									}
-								} else
-								if (isdigit(word[j]) == false) {
-									valid = false;
-									break;
 								}
 							}
-							if (valid == true) {
-								literalWord = StringTools::substring(word, 0, word.size() - datatypeLiteralSuffix.size());
-								break;
+							if (Integer::isInt(literalWord) == true || Float::isFloat(literalWord) == true) {
+								multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#eabc19"));
+							} else {
+								for (auto& keyword: keywords1) {
+									if (word == keyword) {
+										multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#cb551a"));
+										break;
+									}
+								}
+								for (auto& keyword: keywords2) {
+									if (word == keyword) {
+										multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#8ae234"));
+										break;
+									}
+								}
+								for (auto& keyword: preprocessorLineKeywords) {
+									if (word == keyword) {
+										if (c == '\n' || i == code.size() - 1) {
+											multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#ab7779"));
+										} else {
+											preprocessorLine = true;
+											endIdx = startIdx - 1;
+										}
+										break;
+									}
+								}
 							}
+							startIdx = endIdx + 1;
+							endIdx = -1;
 						}
 					}
-					if (Integer::isInt(literalWord) == true || Float::isFloat(literalWord) == true) {
+				} else
+				if (lineComment == true) {
+					if (c == '\n' || i == code.size() - 1) {
+						lineComment = false;
+						endIdx = i;
+						multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#888a85"));
+						startIdx = endIdx + 1;
+						endIdx = -1;
+					}
+				} else
+				if (inlineComment == true) {
+					if (language.commentInlineEnd.empty() == false && (language.commentInlineEnd.size() == 1 || lc == language.commentInlineEnd[0]) && c == language.commentInlineEnd[language.commentInlineEnd.size() - 1]) {
+						inlineComment = false;
+						endIdx = i;
+						multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#888a85"));
+						startIdx = endIdx + 1;
+						endIdx = -1;
+					}
+				} else
+				if (preprocessorLine == true) {
+					if (c == '\n' || i == code.size() - 1) {
+						preprocessorLine = false;
+						endIdx = i;
+						multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#ab7779"));
+						startIdx = endIdx + 1;
+						endIdx = -1;
+					}
+				} else
+				if (quote != '\0') {
+					if (c == quote && (lc != '\\' || llc == '\\')) {
+						quote = '\0';
+						endIdx = i + 1;
 						multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#eabc19"));
-					} else {
-						for (auto& keyword: keywords1) {
-							if (word == keyword) {
-								multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#cb551a"));
-								break;
-							}
-						}
-						for (auto& keyword: keywords2) {
-							if (word == keyword) {
-								multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#8ae234"));
-								break;
-							}
-						}
-						for (auto& keyword: preprocessorLineKeywords) {
-							if (word == keyword) {
-								if (c == '\n' || i == code.size() - 1) {
-									multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#ab7779"));
-								} else {
-									preprocessorLine = true;
-									endIdx = startIdx - 1;
-								}
-								break;
-							}
-						}
+						startIdx = endIdx + 1;
+						endIdx = -1;
 					}
-					startIdx = endIdx + 1;
-					endIdx = -1;
 				}
+				llc = lc;
+				lc = c;
 			}
-		} else
-		if (lineComment == true) {
-			if (c == '\n' || i == code.size() - 1) {
-				lineComment = false;
-				endIdx = i;
-				multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#888a85"));
-				startIdx = endIdx + 1;
-				endIdx = -1;
-			}
-		} else
-		if (inlineComment == true) {
-			if (cppCommentInlineEnd.empty() == false && (cppCommentInlineEnd.size() == 1 || lc == cppCommentInlineEnd[0]) && c == cppCommentInlineEnd[cppCommentInlineEnd.size() - 1]) {
-				inlineComment = false;
-				endIdx = i;
-				multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#888a85"));
-				startIdx = endIdx + 1;
-				endIdx = -1;
-			}
-		} else
-		if (preprocessorLine == true) {
-			if (c == '\n' || i == code.size() - 1) {
-				preprocessorLine = false;
-				endIdx = i;
-				multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#ab7779"));
-				startIdx = endIdx + 1;
-				endIdx = -1;
-			}
-		} else
-		if (quote != '\0') {
-			if (c == quote && (lc != '\\' || llc == '\\')) {
-				quote = '\0';
-				endIdx = i + 1;
-				multiLineTextNode->addTextStyle(startIdx, endIdx, GUIColor("#eabc19"));
-				startIdx = endIdx + 1;
-				endIdx = -1;
-			}
+
+			// done
+			break;
 		}
-		llc = lc;
-		lc = c;
 	}
 }
 

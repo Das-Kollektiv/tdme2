@@ -873,7 +873,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 							{{ "text", text }}
 						);
 						tabType = EditorTabView::TABTYPE_TEXT;
-						tabView = new TextEditorTabView(view, tabId, screenNode);
+						tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
 					}
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
@@ -943,7 +943,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 						{{ "text", text }}
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
-					tabView = new TextEditorTabView(view, tabId, screenNode);
+					tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
