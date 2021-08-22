@@ -77,7 +77,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->charEndIdx = text.length() - 1;
 	this->widthLast = -1;
 	this->heightLast = -1;
-	this->startTextStyleIdx = 0;
+	this->startTextStyleIdx = -1;
 	if (this->font != nullptr) this->font->initialize();
 }
 
@@ -201,7 +201,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->yLast = 0.0f;
 	this->widthLast = -1;
 	this->heightLast = -1;
-	this->startTextStyleIdx = 0;
+	this->startTextStyleIdx = -1;
 	screenNode->layout(this);
 }
 
@@ -240,11 +240,15 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
 		y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight);
 	}
+
+	//
 	string line;
 	string word;
 	bool hadBreak = false;
 	auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
 	auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
+
+	// did a scrolling appear, then reset bounds to work with
 	if (parentOffsetsChanged == true ||
 		Math::abs(parentXOffset - parentXOffsetLast) > Math::EPSILON ||
 		Math::abs(parentYOffset - parentYOffsetLast) > Math::EPSILON) {
@@ -252,16 +256,18 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		parentYOffsetLast = parentYOffset;
 		charStartIdx = 0;
 		charEndIdx = text.length() - 1;
-		startTextStyleIdx = 0;
+		startTextStyleIdx = -1;
 		parentOffsetsChanged = false;
 		yLast = 0;
 	} else {
 		y = yLast;
 	}
+
+	//
+	auto textStyleIdx = startTextStyleIdx;
 	bool visible = false;
 	auto _charStartIdx = charStartIdx;
 	auto _y = y;
-	auto textStyleIdx = startTextStyleIdx;
 	auto j = charStartIdx;
 	for (auto i = charStartIdx; i <= charEndIdx; i++) {
 		//
@@ -340,6 +346,19 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							for (auto l = 0; l < lineToRender.size(); l++) {
 								TextStyle* validTextStyle = nullptr;
 								if (textStyles.empty() == false) {
+									// find style to start with, aligned with last line start
+									if (textStyleIdx == -1) {
+										textStyleIdx = 0;
+										for (auto i = 0; i < textStyles.size(); i++) {
+											auto textStyle = &textStyles[i];
+											if (textStyle->startIdx > j) {
+												textStyleIdx = i - 1;
+												break;
+											}
+										}
+										_startTextStyleIdx = textStyleIdx;
+									}
+									//
 									textStyle = textStyleIdx < textStyles.size()?&textStyles[textStyleIdx]:nullptr;
 									if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
 										if (j + k + l >= textStyle->endIdx) {
@@ -450,7 +469,7 @@ void GUIMultilineTextNode::addTextStyle(int startIdx, int endIdx, const GUIColor
 	removeTextStyle(startIdx, endIdx);
 
 	//
-	startTextStyleIdx = 0;
+	startTextStyleIdx = -1;
 	TextStyle* textStyleFirst = nullptr;
 	// 0->4 6->8
 	// 5
