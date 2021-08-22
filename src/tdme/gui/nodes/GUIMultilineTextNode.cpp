@@ -282,15 +282,23 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			if (tooLong == true ||
 				c == '\n' ||
 				lastChar == true) {
+
 				// add word to line if required
 				if ((tooLong == true && hadBreak == false) || lastChar == true || c == '\n') {
 					line+= word;
 					word.clear();
 				}
+
 				//
 				string lineToRender = line;
 				string lineLeft;
+
+				//
 				auto k = 0;
+
+				//
+				TextStyle* textStyleLast = nullptr;
+				TextStyle* textStyle = nullptr;
 
 				//
 				do {
@@ -327,11 +335,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 
 							auto styleFontColor = color;
 							string textToRender;
-							auto initTextStyleIdx = textStyleIdx;
-							auto textStyleChange = false;
+							auto _startTextStyleIdx = textStyleIdx;
 							auto yOffset = font->getYOffset(lineToRender) / 2;
-							TextStyle* textStyleLast = nullptr;
-							TextStyle* textStyle = nullptr;
 							for (auto l = 0; l < lineToRender.size(); l++) {
 								TextStyle* validTextStyle = nullptr;
 								if (textStyles.empty() == false) {
@@ -391,7 +396,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							if (visible == false) {
 								visible = true;
 								charStartIdx = _charStartIdx;
-								startTextStyleIdx = initTextStyleIdx;
+								startTextStyleIdx = _startTextStyleIdx;
 								yLast = _y;
 							}
 						} else
@@ -421,7 +426,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_y = y;
 				}
 				//
-				j = c == '\n'?i + 1:i;
+				j = i + 1 - line.size();
 			} else
 			if (c != '\n') {
 				// no flush yet, add word to line
