@@ -151,6 +151,64 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			llc = lc;
 			lc = c;
 		}
+	} else
+	if (std::find(propertiesLanguage.extensions.begin(), propertiesLanguage.extensions.end(), extension) != propertiesLanguage.extensions.end()) {
+		auto& language = propertiesLanguage;
+		auto code = multiLineTextNode->getText().getString();
+		auto commentCount = 0;
+		auto delimiterCount = 0;
+		auto nonWhitespaceCount = 0;
+		auto startIdx = -1;
+		auto endIdx = -1;
+		auto commentLine = false;
+		for (auto i = 0; i < code.size(); i++) {
+			auto c = code[i];
+			if (c == '\n') {
+				endIdx = i;
+				if (commentLine == true) {
+					if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
+						multiLineTextNode->addTextStyle(startIdx, endIdx, commentLineColor);
+					}
+				} else
+				if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
+					multiLineTextNode->addTextStyle(startIdx, endIdx, keyword2Color);
+				}
+				commentCount = 0;
+				delimiterCount = 0;
+				nonWhitespaceCount = 0;
+				startIdx = -1;
+				endIdx = -1;
+				commentLine = false;
+			} else
+			if (language.whitespaces.find(c) != string::npos) {
+				// no op
+			} else
+			if (c == language.comment && nonWhitespaceCount == 0) {
+				startIdx = i;
+				endIdx = -1;
+				commentLine = true;
+				nonWhitespaceCount++;
+			} else
+			if (c == language.delimiter && nonWhitespaceCount > 0) {
+				endIdx = i;
+				if (startIdx != -1 && startIdx != endIdx) {
+					multiLineTextNode->addTextStyle(startIdx, endIdx, keyword1Color);
+				}
+				startIdx = i + 1;
+				endIdx = -1;
+				nonWhitespaceCount++;
+			} else {
+				if (nonWhitespaceCount == 0) startIdx = i;
+				nonWhitespaceCount++;
+			}
+		}
+		endIdx = code.size();
+		if (commentLine == true) {
+			multiLineTextNode->addTextStyle(startIdx, endIdx, commentLineColor);
+		} else
+		if (startIdx != -1 && startIdx != endIdx) {
+			multiLineTextNode->addTextStyle(startIdx, endIdx, keyword2Color);
+		}
 	} else {
 		for (auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {

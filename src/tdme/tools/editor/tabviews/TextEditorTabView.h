@@ -109,6 +109,13 @@ private:
 		string quotes = "\"\'";
 	} xmlLanguage;
 
+	struct PropertiesLanguage {
+		vector<string> extensions = { "properties" };
+		char comment = '#';
+		char delimiter = '=';
+		string whitespaces = " \t";
+	} propertiesLanguage;
+
 public:
 	/**
 	 * Public constructor

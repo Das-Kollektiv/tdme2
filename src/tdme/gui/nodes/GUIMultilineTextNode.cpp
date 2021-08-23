@@ -462,11 +462,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 }
 
 void GUIMultilineTextNode::removeTextStyle(int startIdx, int endIdx) {
-	// TODO:
+	// TODO: a.drewke
 }
 
 void GUIMultilineTextNode::addTextStyle(int startIdx, int endIdx, const GUIColor& color) {
 	removeTextStyle(startIdx, endIdx);
+
+	// TODO: a.drewke
 
 	//
 	startTextStyleIdx = -1;
