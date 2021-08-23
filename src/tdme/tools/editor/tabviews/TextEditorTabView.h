@@ -48,6 +48,14 @@ private:
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 
+	// These were grabbed from gedit, yaaaa, not sure about License
+	GUIColor commentLineColor { "#888a85" };
+	GUIColor commentInlineColor { "#888a85" };
+	GUIColor literalColor { "#eabc19" };
+	GUIColor keyword1Color { "#cb551a" };
+	GUIColor keyword2Color { "#8ae234" };
+	GUIColor preprocessorColor { "#ab7779" };
+
 	struct Language {
 		vector<string> extensions;
 		string commentLine;
@@ -62,7 +70,7 @@ private:
 	};
 
 	Language cpp = {
-		// I have take keywords1+2 from NotePad++, not sure about license
+		// I have taken CPP keywords1+2 from NotePad++, not sure about license
 		.extensions = {"cpp", "hpp", "h", "c"},
 		.commentLine = "//",
 		.commentInlineStart = "/*",
