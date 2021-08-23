@@ -171,7 +171,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 					}
 				} else
 				if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
-					multiLineTextNode->addTextStyle(startIdx, endIdx, keyword2Color);
+					multiLineTextNode->addTextStyle(startIdx, endIdx, literalColor);
 				}
 				commentCount = 0;
 				delimiterCount = 0;
@@ -192,7 +192,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			if (c == language.delimiter && nonWhitespaceCount > 0) {
 				endIdx = i;
 				if (startIdx != -1 && startIdx != endIdx) {
-					multiLineTextNode->addTextStyle(startIdx, endIdx, keyword1Color);
+					multiLineTextNode->addTextStyle(startIdx, endIdx, keyword2Color);
 				}
 				startIdx = i + 1;
 				endIdx = -1;
@@ -207,7 +207,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			multiLineTextNode->addTextStyle(startIdx, endIdx, commentLineColor);
 		} else
 		if (startIdx != -1 && startIdx != endIdx) {
-			multiLineTextNode->addTextStyle(startIdx, endIdx, keyword2Color);
+			multiLineTextNode->addTextStyle(startIdx, endIdx, literalColor);
 		}
 	} else {
 		for (auto& language: languages) {
