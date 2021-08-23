@@ -98,41 +98,52 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			if (quote != '\0') {
 				if (c == quote) {
 					quote = '\0';
-					endIdx = i;
+					endIdx = i + 1;
 					multiLineTextNode->addTextStyle(startIdx, endIdx, literalColor);
-					startIdx = endIdx + 1;
+					startIdx = endIdx;
 					endIdx = -1;
 				}
 			} else
 			if (tag == true) {
 				if (quote == '\0' && language.quotes.find(c) != string::npos) {
 					endIdx = i;
-					multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
-					tagMode++;
+					if (startIdx != endIdx) {
+						multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+						tagMode++;
+					}
 					quote = c;
-					startIdx = i + 1;
+					startIdx = i;
 					endIdx = -1;
 				} else
 				if (lc == '/' && c == '>') {
 					endIdx = i - 1;
-					multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					if (startIdx != endIdx) {
+						multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					}
 					multiLineTextNode->addTextStyle(endIdx, endIdx + 2, keyword1Color);
 					startIdx = i + 1;
+					endIdx = -1;
 					tag = false;
 					tagMode = 0;
 				} else
 				if (c == '>') {
 					endIdx = i;
-					multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					if (startIdx != endIdx) {
+						multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					}
 					multiLineTextNode->addTextStyle(endIdx, endIdx + 1, keyword1Color);
 					startIdx = i + 1;
+					endIdx = -1;
 					tag = false;
 					tagMode = 0;
 				} else
 				if (language.delimiters.find(c) != string::npos) {
 					endIdx = i;
-					multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					if (startIdx != endIdx) {
+						multiLineTextNode->addTextStyle(startIdx, endIdx, tagMode == 0?keyword1Color:keyword2Color);
+					}
 					startIdx = i + 1;
+					endIdx = -1;
 					tagMode++;
 				}
 			}
@@ -268,7 +279,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 					} else
 					if (quote != '\0') {
 						if (c == quote && (lc != '\\' || llc == '\\')) {
-							quote = '\0';
+							quote = '\0';endIdx = -1;
 							endIdx = i + 1;
 							multiLineTextNode->addTextStyle(startIdx, endIdx, literalColor);
 							startIdx = endIdx + 1;
