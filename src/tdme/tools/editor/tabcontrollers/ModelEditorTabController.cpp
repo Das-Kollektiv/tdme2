@@ -38,6 +38,7 @@
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
@@ -121,25 +122,11 @@ ModelEditorTabController::~ModelEditorTabController() {
 	delete basePropertiesSubController;
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
+	delete prototypeSoundsSubController;
 }
 
 ModelEditorTabView* ModelEditorTabController::getView() {
 	return view;
-}
-
-PrototypeDisplaySubController* ModelEditorTabController::getPrototypeDisplaySubController()
-{
-	return prototypeDisplaySubController;
-}
-
-PrototypePhysicsSubController* ModelEditorTabController::getPrototypePhysicsSubController()
-{
-	return prototypePhysicsSubController;
-}
-
-PrototypeSoundsSubController* ModelEditorTabController::getPrototypeSoundsSubController()
-{
-	return prototypeSoundsSubController;
 }
 
 GUIScreenNode* ModelEditorTabController::getScreenNode()

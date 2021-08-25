@@ -545,11 +545,11 @@ void ModelEditorTabView::playSound(const string& soundId) {
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
-		string pathName = PrototypeReader::getResourcePathName(
+		auto pathName = PrototypeReader::getResourcePathName(
 			Tools::getPathName(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
-		string fileName = Tools::getFileName(soundDefinition->getFileName());
+		auto fileName = Tools::getFileName(soundDefinition->getFileName());
 		auto sound = new Sound(
 			"sound",
 			pathName,

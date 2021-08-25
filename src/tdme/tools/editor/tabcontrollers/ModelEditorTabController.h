@@ -161,17 +161,23 @@ public:
 	/**
 	 * @return prototype display sub screen controller
 	 */
-	PrototypeDisplaySubController* getPrototypeDisplaySubController();
+	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
+		return prototypeDisplaySubController;
+	}
 
 	/**
 	 * @return prototype bounding volume sub screen controller
 	 */
-	PrototypePhysicsSubController* getPrototypePhysicsSubController();
+	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
+		return prototypePhysicsSubController;
+	}
 
 	/**
 	 * @return prototype sounds sub screen controller
 	 */
-	PrototypeSoundsSubController* getPrototypeSoundsSubController();
+	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
+		return prototypeSoundsSubController;
+	}
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;

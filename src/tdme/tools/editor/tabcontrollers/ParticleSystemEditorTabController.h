@@ -10,6 +10,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -25,6 +26,9 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::utilities::MutableString;
 
@@ -38,9 +42,15 @@ class tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController fin
 {
 
 private:
+	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
+	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	ParticleSystemEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+
+	FileDialogPath modelPath;
+	FileDialogPath audioPath;
 
 public:
 	/**
@@ -53,6 +63,20 @@ public:
 	 * Destructor
 	 */
 	virtual ~ParticleSystemEditorTabController();
+
+	/**
+	 * @return prototype bounding volume sub screen controller
+	 */
+	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
+		return prototypePhysicsSubController;
+	}
+
+	/**
+	 * @return prototype sounds sub screen controller
+	 */
+	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
+		return prototypeSoundsSubController;
+	}
 
 	/**
 	 * Get view
