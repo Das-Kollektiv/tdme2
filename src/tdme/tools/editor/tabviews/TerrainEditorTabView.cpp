@@ -10,6 +10,7 @@
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -45,6 +46,7 @@ using tdme::engine::Object3DRenderGroup;
 using tdme::engine::SceneConnector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
@@ -95,6 +97,7 @@ TerrainEditorTabView::~TerrainEditorTabView() {
 	delete cameraInputHandler;
 	delete prototype;
 	delete terrainEditorTabController;
+	delete engine;
 }
 
 void TerrainEditorTabView::handleInputEvents()
@@ -295,8 +298,7 @@ void TerrainEditorTabView::initialize()
 
 void TerrainEditorTabView::dispose()
 {
-	engine->reset();
-	delete terrainEditorTabController;
+	engine->dispose();
 }
 
 void TerrainEditorTabView::updateRendering() {
@@ -322,6 +324,11 @@ void TerrainEditorTabView::reloadOutliner() {
 	terrainEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->setDetailsContent(string());
 	terrainEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+}
+
+void TerrainEditorTabView::saveFile(const string& pathName, const string& fileName)
+{
+	PrototypeWriter::write(pathName, fileName, prototype);
 }
 
 void TerrainEditorTabView::initSky() {

@@ -165,6 +165,8 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 
 SceneEditorTabView::~SceneEditorTabView() {
 	delete gridModel;
+	delete sceneEditorTabController;
+	delete engine;
 }
 
 void SceneEditorTabView::handleInputEvents()
@@ -564,7 +566,7 @@ void SceneEditorTabView::initialize()
 
 void SceneEditorTabView::dispose()
 {
-	delete sceneEditorTabController;
+	engine->dispose();
 }
 
 void SceneEditorTabView::updateRendering() {

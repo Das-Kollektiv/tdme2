@@ -38,6 +38,8 @@ TextureTabView::TextureTabView(EditorView* editorView, const string& tabId, GUIS
 }
 
 TextureTabView::~TextureTabView() {
+	delete textureTabController;
+	delete engine;
 }
 
 void TextureTabView::handleInputEvents()
@@ -66,8 +68,7 @@ void TextureTabView::initialize()
 
 void TextureTabView::dispose()
 {
-	engine->reset();
-	delete textureTabController;
+	engine->dispose();
 }
 
 void TextureTabView::updateRendering() {

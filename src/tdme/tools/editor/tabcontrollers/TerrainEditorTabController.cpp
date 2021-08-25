@@ -130,10 +130,69 @@ void TerrainEditorTabController::dispose()
 
 void TerrainEditorTabController::save()
 {
+	//
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	try {
+		if (prototype->getFileName().empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(prototype->getFileName()),
+			Tools::getFileName(prototype->getFileName())
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void TerrainEditorTabController::saveAs()
 {
+	class OnModelSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				modelEditorTabController->view->saveFile(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				modelEditorTabController->terrainPath.setPath(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				);
+			} catch (Exception& exception) {
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnModelSave(TerrainEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		TerrainEditorTabController* modelEditorTabController;
+	};
+
+	//
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	vector<string> extensions = {
+		"tterrain"
+	};
+	popUps->getFileDialogScreenController()->show(
+		prototype->getFileName().empty() == true?terrainPath.getPath():Tools::getPathName(prototype->getFileName()),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(prototype->getFileName()),
+		false,
+		new OnModelSave(this)
+	);
 }
 
 void TerrainEditorTabController::showErrorPopUp(const string& caption, const string& message)

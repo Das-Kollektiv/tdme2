@@ -356,6 +356,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 }
 
 TextEditorTabView::~TextEditorTabView() {
+	delete textEditorTabController;
+	delete engine;
 }
 
 void TextEditorTabView::handleInputEvents()
@@ -384,8 +386,7 @@ void TextEditorTabView::initialize()
 
 void TextEditorTabView::dispose()
 {
-	engine->reset();
-	delete textEditorTabController;
+	engine->dispose();
 }
 
 void TextEditorTabView::updateRendering() {

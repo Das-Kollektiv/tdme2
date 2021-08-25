@@ -202,7 +202,7 @@ public:
 	void reimportModel(const string& pathName, const string& fileName);
 
 	/**
-	 * Triggers saving a map
+	 * Saving prototype as tmodel prototype
 	 * @param pathName path name
 	 * @param fileName file name
 	 */

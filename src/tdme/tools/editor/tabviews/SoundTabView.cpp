@@ -46,6 +46,8 @@ SoundTabView::SoundTabView(EditorView* editorView, const string& tabId, GUIScree
 }
 
 SoundTabView::~SoundTabView() {
+	delete soundTabController;
+	delete engine;
 }
 
 void SoundTabView::handleInputEvents()
@@ -75,9 +77,8 @@ void SoundTabView::initialize()
 
 void SoundTabView::dispose()
 {
-	engine->reset();
+	engine->dispose();
 	audio->removeEntity(audioEntity->getId());
-	delete soundTabController;
 }
 
 void SoundTabView::updateRendering() {

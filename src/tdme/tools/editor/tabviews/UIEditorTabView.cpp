@@ -39,6 +39,8 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 }
 
 UIEditorTabView::~UIEditorTabView() {
+	delete uiTabController;
+	delete engine;
 }
 
 void UIEditorTabView::handleInputEvents()
@@ -67,8 +69,7 @@ void UIEditorTabView::initialize()
 
 void UIEditorTabView::dispose()
 {
-	engine->reset();
-	delete uiTabController;
+	engine->dispose();
 }
 
 void UIEditorTabView::updateRendering() {

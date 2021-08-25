@@ -62,6 +62,7 @@ private:
 	PopUps* popUps { nullptr };
 	FileDialogPath brushTexturePath;
 	FileDialogPath brushPrototypePath;
+	FileDialogPath terrainPath;
 
 	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
 	unordered_set<int> recreateFoliagePartitions;

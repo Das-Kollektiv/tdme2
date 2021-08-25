@@ -147,6 +147,13 @@ public:
 	void updateRendering() override;
 
 	/**
+	 * Saving prototype as tmodel prototype
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
+	/**
 	 * Initialize sky
 	 */
 	void initSky();

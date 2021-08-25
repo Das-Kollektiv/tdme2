@@ -252,6 +252,8 @@ void GUI::reset()
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
 		removeScreen(entitiesToRemove[i]);
 	}
+	/*
+	// TODO: fix me!
 	for (auto fontCacheIt: *fontCache) {
 		delete fontCacheIt.second;
 	}
@@ -260,6 +262,7 @@ void GUI::reset()
 		imageCacheIt.second->releaseReference();
 	}
 	imageCache->clear();
+	*/
 }
 
 void GUI::resetRenderScreens()

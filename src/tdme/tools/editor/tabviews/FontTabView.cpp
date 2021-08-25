@@ -38,6 +38,8 @@ FontTabView::FontTabView(EditorView* editorView, const string& tabId, GUIScreenN
 }
 
 FontTabView::~FontTabView() {
+	delete fontTabController;
+	delete engine;
 }
 
 void FontTabView::handleInputEvents()
@@ -66,8 +68,7 @@ void FontTabView::initialize()
 
 void FontTabView::dispose()
 {
-	engine->reset();
-	delete fontTabController;
+	engine->dispose();
 }
 
 void FontTabView::updateRendering() {

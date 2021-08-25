@@ -124,6 +124,7 @@ ModelEditorTabView::~ModelEditorTabView() {
 	delete prototype;
 	delete modelEditorTabController;
 	delete cameraRotationInputHandler;
+	delete engine;
 }
 
 EditorView* ModelEditorTabView::getEditorView() {
@@ -452,8 +453,8 @@ void ModelEditorTabView::dispose()
 
 {
 	storeSettings();
-	engine->reset();
-	audio->reset();
+	engine->dispose();
+	audio->removeEntity("sound");
 }
 
 void ModelEditorTabView::loadModel()
