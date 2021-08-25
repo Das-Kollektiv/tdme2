@@ -82,12 +82,13 @@ private:
 	 * Write PNG from memory
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param bitsPerPixel bits per pixel (24 or 32)
+	 * @param channels channel count, whereas 3 is RGB and 4 is RGBA
+	 * @param bitsPerChannel bits per color channel
 	 * @param width width
 	 * @param height height
 	 * @param pixels pixels
 	 */
-	static bool writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels);
+	static bool writePNG(const string& pathName, const string& fileName, int channels, int bitsPerChannel, int width, int height, const uint8_t* pixels);
 
 	/**
 	 * Determine texture file name

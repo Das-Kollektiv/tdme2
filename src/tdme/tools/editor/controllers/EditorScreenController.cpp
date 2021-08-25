@@ -1115,7 +1115,7 @@ const string EditorScreenController::getSelectedTabId() {
 
 void EditorScreenController::tick() {
 	auto now = Time::getCurrentMillis();
-	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm > 1000LL) {
+	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 500LL) {
 		string xml;
 		listProjectPathFiles(xml, fileNameSearchTerm);
 		try {
