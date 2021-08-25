@@ -39,6 +39,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/FontTabView.h>
+#include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
@@ -93,6 +94,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::FontTabView;
+using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 using tdme::tools::editor::tabviews::SoundTabView;
@@ -757,7 +759,7 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN_TEXT;
@@ -767,6 +769,9 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
 		fileType = FILETYPE_MODELPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
+		fileType = FILETYPE_PARTICLESYSTEMPROTOTYPE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
 		fileType = FILETYPE_TERRAINPROTOTYPE;
@@ -866,6 +871,19 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					tabType = EditorTabView::TABTYPE_TERRAINEDITOR;
 					tabView = new TerrainEditorTabView(view, tabId, prototype);
 					viewPortTemplate = "template_viewport_terrain.xml";
+					break;
+				}
+			case FILETYPE_PARTICLESYSTEMPROTOTYPE:
+				{
+					icon = "{$icon.type_particle}";
+					colorType = "{$color.type_particle}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_PARTICLESYSTEMEDITOR;
+					tabView = new ParticleSystemEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
 			case FILETYPE_SCENE:
@@ -1115,7 +1133,7 @@ const string EditorScreenController::getSelectedTabId() {
 
 void EditorScreenController::tick() {
 	auto now = Time::getCurrentMillis();
-	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 500LL) {
+	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 1000LL) {
 		string xml;
 		listProjectPathFiles(xml, fileNameSearchTerm);
 		try {

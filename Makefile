@@ -599,6 +599,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SoundTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/TerrainEditorTabController.cpp \
@@ -612,6 +613,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/FontTabView.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/ParticleSystemEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SoundTabView.cpp \
 	src/tdme/tools/editor/tabviews/TerrainEditorTabView.cpp \

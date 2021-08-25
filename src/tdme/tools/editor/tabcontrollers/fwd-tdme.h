@@ -8,6 +8,7 @@ namespace tabcontrollers {
 	struct TabController;
 	class FontTabController;
 	class ModelEditorTabController;
+	class ParticleSystemEditorTabController;
 	class SceneEditorTabController;
 	class SoundTabController;
 	class TerrainEditorTabController;

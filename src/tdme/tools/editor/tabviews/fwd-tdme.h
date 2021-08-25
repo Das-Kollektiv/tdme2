@@ -8,6 +8,7 @@ namespace tabviews {
 	struct TabView;
 	class FontTabView;
 	class ModelEditorTabView;
+	class ParticleSystemEditorTabView;
 	class SceneEditorTabView;
 	class SoundTabView;
 	class TerrainEditorTabView;
