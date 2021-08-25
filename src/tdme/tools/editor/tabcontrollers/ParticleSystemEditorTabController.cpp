@@ -42,7 +42,7 @@ ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSys
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, true);
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
 }
 

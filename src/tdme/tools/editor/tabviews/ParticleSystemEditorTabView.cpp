@@ -105,7 +105,6 @@ void ParticleSystemEditorTabView::initialize()
 void ParticleSystemEditorTabView::dispose()
 {
 	engine->reset();
-	delete particleSystemEditorTabController;
 }
 
 void ParticleSystemEditorTabView::updateRendering() {
