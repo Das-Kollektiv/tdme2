@@ -116,6 +116,8 @@ void EditorView::display()
 	}
 	//
 	Audio::getInstance()->update();
+	//
+	editorScreenController->tick();
 }
 
 void EditorView::updateGUIElements()

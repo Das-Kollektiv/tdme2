@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -20,6 +21,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::map;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -162,6 +164,11 @@ private:
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
 	string selectedTabId;
+	unordered_map<string, Texture*> fileNameTextureMapping;
+	map<string, string> fileNameButtonXMLMapping;
+	int thumbnailIdx { 0 };
+	string fileNameSearchTerm;
+	int64_t timeFileNameSearchTerm { -1LL };
 
 public:
 
@@ -219,6 +226,11 @@ public:
 	void closeTabs();
 
 	/**
+	 * Close project
+	 */
+	void closeProject();
+
+	/**
 	 * Clear project path files
 	 */
 	void clearProjectPathFiles();
@@ -227,9 +239,20 @@ public:
 	 * Scan project path files
 	 * @param relativeProjectPath relative project path
 	 * @param xml xml
-	 * @param fileNameTextureMapping file name texture mapping
 	 */
-	void scanProjectPathFiles(const string& relativeProjectPath, string& xml, unordered_map<string, Texture*>& fileNameTextureMapping);
+	void scanProjectPathFiles(const string& relativeProjectPath);
+
+	/**
+	 * List project path files
+	 * @param xml xml
+	 * @param searchTerm search term
+	 */
+	void listProjectPathFiles(string& xml, const string& searchTerm = string());
+
+	/**
+	 * Update project path thumbnails
+	 */
+	void updateProjectPathThumbnails();
 
 	/**
 	 * On open file
@@ -341,6 +364,11 @@ public:
 		}
 		return nullptr;
 	}
+
+	/**
+	 * Tick
+	 */
+	void tick();
 
 	/**
 	 * On quit

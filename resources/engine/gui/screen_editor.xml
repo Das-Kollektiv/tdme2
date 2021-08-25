@@ -63,7 +63,7 @@
 							
 							<space height="20"/>
 							
-							<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" />
+							<input id="projectpathfiles_search" width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" />
 							
 							<space height="5"/>
 							
