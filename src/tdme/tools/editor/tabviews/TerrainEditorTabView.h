@@ -179,12 +179,12 @@ public:
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
 
 	/**
-	 * Set terrain brush
+	 * Set brush
 	 * @param texture brush texture
 	 * @param scale scale
 	 * @param densityStrength density strength
 	 */
-	void setTerrainBrush(Texture* texture, float scale, float densityStrength);
+	void setBrush(Texture* texture, float scale, float densityStrength);
 
 	/**
 	 * Set brush scale
@@ -199,9 +199,9 @@ public:
 	void setBrushDensityStrength(float densityStrength);
 
 	/**
-	 * Unset terrain brush
+	 * Unset brush
 	 */
-	void unsetTerrainBrush();
+	void unsetBrush();
 
 	/**
 	 * Unset water
@@ -226,6 +226,12 @@ public:
 	 * Add foliage using render groups at given partition indices
 	 */
 	void addFoliage();
+
+	/**
+	 * Add temporary foliage
+	 * @param newFoliageMaps new foliage maps
+	 */
+	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
 
 	/**
 	 * Update temporary foliage

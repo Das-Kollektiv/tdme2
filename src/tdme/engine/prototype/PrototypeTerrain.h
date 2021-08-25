@@ -34,7 +34,6 @@ private:
 	unordered_map<int, float> waterPositionMapsHeight;
 	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMaps;
 	int foliagePrototypeMapIdx { 0 };
-	unordered_map<Prototype*, int> foliagePrototypeFoliageMap;
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
 	vector<unordered_map<int, vector<Transformations>>> foliageMaps;
 	vector<PrototypeTerrainBrush*> brushes;
@@ -51,8 +50,8 @@ public:
 	 * Destructor
 	 */
 	~PrototypeTerrain() {
-		for (auto& foliagePrototypeFoliageMapIt: foliagePrototypeFoliageMap) {
-			delete foliagePrototypeFoliageMapIt.first;
+		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
+			delete foliageFoliagePrototypeMapIt.second;
 		}
 		for (auto brush: brushes) delete brush;
 	}
@@ -169,13 +168,14 @@ public:
 	 * @return prototype index
 	 */
 	inline int getFoliagePrototypeIndex(Prototype* prototype) {
-		auto foliagePrototypeIt = foliagePrototypeFoliageMap.find(prototype);
-		if (foliagePrototypeIt == foliagePrototypeFoliageMap.end()) {
-			foliagePrototypeFoliageMap[prototype] = foliagePrototypeMapIdx;
-			foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
-			return foliagePrototypeMapIdx++;
+		auto foliagePrototypeMapIdx = 0;
+		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
+			if (foliageFoliagePrototypeMapIt.first > foliagePrototypeMapIdx) foliagePrototypeMapIdx = foliageFoliagePrototypeMapIt.first;
+			if (prototype->getFileName() == foliageFoliagePrototypeMapIt.second->getFileName()) return foliageFoliagePrototypeMapIt.first;
 		}
-		return foliagePrototypeIt->second;
+		foliagePrototypeMapIdx++;
+		foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
+		return foliagePrototypeMapIdx;
 	}
 
 	/**

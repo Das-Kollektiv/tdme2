@@ -25,15 +25,38 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 /**
- * Terrain utilitiy
+ * Terrain 2 utility
  * @author Andreas Drewke
- * @deprecated TODO: replace with Terrain2 after editor is finished
  */
-class tdme::utilities::Terrain
+class tdme::utilities::Terrain2
 {
 public:
 	static constexpr float STEP_SIZE { 1.0f };
 	static constexpr float PARTITION_SIZE { 64.0f };
+
+	struct FoliageBrush {
+		Texture* brushTexture;
+		float brushScale;
+		float brushDensity;
+	};
+
+	struct FoliageBrushPrototype {
+		int prototypeId;
+		float count;
+		bool normalAlign;
+		float rotationXMin;
+		float rotationXMax;
+		float rotationYMin;
+		float rotationYMax;
+		float rotationZMin;
+		float rotationZMax;
+		float scaleMin;
+		float scaleMax;
+		float heightMin;
+		float heightMax;
+		float slopeMin;
+		float slopeMax;
+	};
 
 private:
 	static uint32_t terrainModelId;
@@ -259,8 +282,7 @@ public:
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
-	 * @param brushTexture brush texture
-	 * @param brushScale brush scale
+	 * @param foliageBrush foliage brush
 	 * @param foliageMaps foliage maps
 	 * @param updateFoliagePartitions update foliage partitions
 	 */
@@ -268,8 +290,7 @@ public:
 		BoundingBox& terrainBoundingBox, // TODO: constness
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
-		Texture* brushTexture,
-		float brushScale,
+		const FoliageBrush& foliageBrush,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& updateFoliagePartitions
 	);
@@ -392,16 +413,8 @@ public:
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
-	 * @param brushTexture brush texture
-	 * @param brushScale brush scale
-	 * @param brushDensity brush density
-	 * @param brushPrototypeIds brush prototype ids
-	 * @param brushPrototypeCount brush prototype count
-	 * @param brushPrototypeScale brush prototype scale min, max
-	 * @param brushPrototypeRotation brush prototype rotation min, max per axis
-	 * @param brushPrototypeSlope brush prototype slope min, max
-	 * @param brushPrototypeHeight brush prototype height min, max
-	 * @param brushPrototypeNormalAlign brush prototype normal align
+	 * @param foliageBrush foliage brush
+	 * @param foliageBrushPrototypes foliage brush prototypes
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param newFoliageMaps new foliage maps
@@ -411,16 +424,8 @@ public:
 		BoundingBox& terrainBoundingBox, // TODO: constness
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
-		Texture* brushTexture,
-		float brushScale,
-		float brushDensity,
-		array<int, 10> brushPrototypeIds,
-		array<float, 10> brushPrototypeCount,
-		array<array<float, 2>, 10> brushPrototypeScale,
-		array<array<float, 6>, 10> brushPrototypeRotation,
-		array<array<float, 2>, 10> brushPrototypeSlope,
-		array<array<float, 2>, 10> brushPrototypeHeight,
-		array<bool, 10> brushPrototypeNormalAlign,
+		const FoliageBrush& foliageBrush,
+		const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
@@ -430,11 +435,8 @@ public:
 	 * Apply foliage delete brush
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param brushCenterPosition brush center position
-	 * @param brushTexture brush texture
-	 * @param brushScale brush scale
-	 * @param brushDensity brush density
-	 * @param brushPrototypeIds brush prototype ids
-	 * @param brushPrototypeHeight brush prototype height min, max
+	 * @param foliageBrush foliage brush
+	 * @param foliageBrushPrototypes foliage brush prototypes
 	 * @param brushOperation brush operation
 	 * @param foliageMaps foliage maps
 	 * @param recreateFoliagePartitions recreate foliage partitions
@@ -442,11 +444,8 @@ public:
 	static void applyFoliageDeleteBrush(
 		BoundingBox& terrainBoundingBox, // TODO: constness
 		const Vector3& brushCenterPosition,
-		Texture* brushTexture,
-		float brushScale,
-		float brushDensity,
-		array<int, 10> brushPrototypeIds,
-		array<array<float, 2>, 10> brushPrototypeHeight,
+		const FoliageBrush& foliageBrush,
+		const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 		BrushOperation brushOperation,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& recreateFoliagePartitions

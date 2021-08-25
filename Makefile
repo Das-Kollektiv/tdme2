@@ -688,6 +688,7 @@ SRCS = \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
+	src/tdme/utilities/Terrain2.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \

@@ -24,6 +24,15 @@
 				<space height="20"/>
 				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_delete" name="brush" width="40" height="40" value="7" image="resources/engine/images/delete.png" />
 			</layout>
+			<layout show-on="foliage" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
+				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/foliage_add.png" />
+				<space height="5"/>
+				<!--
+				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_smooth" name="brush" width="40" height="40" value="2" image="resources/engine/images/terrain_smooth.png" />
+				-->
+				<space height="20"/>
+				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_delete" name="brush" width="40" height="40" value="4" image="resources/engine/images/delete.png" />
+			</layout>
 			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
 				<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 					<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />

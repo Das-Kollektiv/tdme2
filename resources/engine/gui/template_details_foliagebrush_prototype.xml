@@ -17,7 +17,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="foliagebrush_prototype_object_count" width="100%" height="auto" text="1" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"  />
+							<input id="foliagebrush_prototype_object_count" width="100%" height="auto" text="1" options="type=float,min=0,step=0.01,decimals=2" image="resources/engine/images/inputslider.png"  />
 						</layout>
 					</layout>
 					

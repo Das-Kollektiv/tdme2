@@ -17,7 +17,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <tdme/utilities/Terrain.h>
+#include <tdme/utilities/Terrain2.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -40,7 +40,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
-using tdme::utilities::Terrain;
+using tdme::utilities::Terrain2;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -73,7 +73,15 @@ private:
 	string currentTerrainBrushTextureFileName;
 	Texture* currentTerrainBrushTexture { nullptr };
 	Texture* rampTerrainBrushTexture { nullptr };
-	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_NONE };
+	Terrain2::BrushOperation currentTerrainBrushOperation { Terrain2::BRUSHOPERATION_NONE };
+	Terrain2::BrushOperation currentFoliageBrushOperation { Terrain2::BRUSHOPERATION_NONE };
+
+	Terrain2::FoliageBrush foliageBrush = {
+		.brushTexture = nullptr,
+		.brushScale = 1.0f,
+		.brushDensity = 1.0f
+	};
+	vector<Terrain2::FoliageBrushPrototype> foliageBrushPrototypes;
 
 	array<string, 2> textureBrushApplyNodes = {
 		"terrainbrush_size",
@@ -137,15 +145,15 @@ public:
 	/**
 	 * @return current terrain brush operation
 	 */
-	inline Terrain::BrushOperation getTerrainBrushOperation() {
+	inline Terrain2::BrushOperation getTerrainBrushOperation() {
 		return currentTerrainBrushOperation;
 	}
 
 	/**
 	 * @return current foliage brush operation
 	 */
-	inline Terrain::BrushOperation getFoliageBrushOperation() {
-		return Terrain::BRUSHOPERATION_NONE; // TODO: a.drewke
+	inline Terrain2::BrushOperation getFoliageBrushOperation() {
+		return currentFoliageBrushOperation;
 	}
 
 	// overridden methods
@@ -301,6 +309,26 @@ public:
 	 * @param waterPositionMapIdx water position map index
 	 */
 	void deleteWater(int waterPositionMapIdx);
+
+	/**
+	 * Set foliage brush
+	 */
+	void setFoliageBrush();
+
+	/**
+	 * Update foliage brush structs
+	 * @param foliageBrush foliage brush
+	 * @param foliageBrushPrototypes foliage brush prototypes
+	 */
+	void updateFoliageBrushStructs();
+
+	/**
+	 * Apply current brush to foliage at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param brushCenterPosition brush center position
+	 * @param deltaTime delta time between last frame and this frame
+	 */
+	void applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Shows the error pop up

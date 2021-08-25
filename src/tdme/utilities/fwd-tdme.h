@@ -36,5 +36,6 @@ namespace utilities {
 	class StringTokenizer;
 	class StringTools;
 	class Terrain;
+	class Terrain2;
 }  // namespace utilities
 }  // namespace tdme
