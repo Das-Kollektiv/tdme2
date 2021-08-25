@@ -372,6 +372,36 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 				}
 			}
 		}
+		{
+			auto jBrushesArray = jTerrain["b"].GetArray();
+			for (auto i = 0; i < jBrushesArray.Size(); i++) {
+				auto& jBrush = jBrushesArray[i];
+				auto brush = terrain->addBrush();
+				brush->setFileName(jBrush["f"].GetString());
+				brush->setSize(jBrush["s"].GetFloat());
+				brush->setDensity(jBrush["d"].GetFloat());
+				auto jPrototypeArray = jBrush["p"].GetArray();
+				for (auto i = 0; i < jPrototypeArray.Size(); i++) {
+					auto& jPrototype = jPrototypeArray[i];
+					auto prototype = brush->addPrototype();
+					prototype->setFileName(jPrototype["f"].GetString());
+					prototype->setCount(jPrototype["c"].GetFloat());
+					prototype->setNormalAlign(jPrototype["n"].GetBool());
+					prototype->setRotationXMin(jPrototype["xi"].GetFloat());
+					prototype->setRotationXMax(jPrototype["xa"].GetFloat());
+					prototype->setRotationYMin(jPrototype["yi"].GetFloat());
+					prototype->setRotationYMax(jPrototype["ya"].GetFloat());
+					prototype->setRotationZMin(jPrototype["zi"].GetFloat());
+					prototype->setRotationZMax(jPrototype["za"].GetFloat());
+					prototype->setScaleMin(jPrototype["si"].GetFloat());
+					prototype->setScaleMax(jPrototype["sa"].GetFloat());
+					prototype->setHeightMin(jPrototype["hi"].GetFloat());
+					prototype->setHeightMax(jPrototype["ha"].GetFloat());
+					prototype->setSlopeMin(jPrototype["li"].GetFloat());
+					prototype->setSlopeMax(jPrototype["la"].GetFloat());
+				}
+			}
+		}
 	}
 
 	//
