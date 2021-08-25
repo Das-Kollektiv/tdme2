@@ -15,7 +15,11 @@
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 #include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
@@ -34,6 +38,11 @@ using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
+using tdme::tools::editor::tabviews::TabView;
+using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 using tdme::utilities::Console;
@@ -86,7 +95,8 @@ void ParticleSystemEditorTabView::display()
 		audioOffset = -1LL;
 	}
 
-	//
+	// rendering
+	prototypePhysicsView->display(prototype);
 	engine->display();
 }
 
@@ -94,6 +104,9 @@ void ParticleSystemEditorTabView::initialize()
 {
 	try {
 		particleSystemEditorTabController = new ParticleSystemEditorTabController(this);
+		particleSystemEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		prototypePhysicsView = particleSystemEditorTabController->getPrototypePhysicsSubController()->getView();
+		prototypeSoundsView = particleSystemEditorTabController->getPrototypeSoundsSubController()->getView();
 	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -115,7 +128,9 @@ Engine* ParticleSystemEditorTabView::getEngine() {
 }
 
 void ParticleSystemEditorTabView::activate() {
+	particleSystemEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
+	particleSystemEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void ParticleSystemEditorTabView::deactivate() {
@@ -123,6 +138,8 @@ void ParticleSystemEditorTabView::deactivate() {
 }
 
 void ParticleSystemEditorTabView::reloadOutliner() {
+	particleSystemEditorTabController->setOutlinerContent();
+	particleSystemEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void ParticleSystemEditorTabView::onCameraRotation() {

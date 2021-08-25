@@ -110,6 +110,17 @@ public:
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
+	 * Set outliner content
+	 */
+	void setOutlinerContent();
+
+	/**
+	 * Update details panel
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(const string& outlinerNode);
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

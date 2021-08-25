@@ -4,9 +4,13 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -23,8 +27,11 @@ using std::string;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 
 using tdme::utilities::Action;
+using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -67,6 +74,7 @@ void ParticleSystemEditorTabController::initialize(GUIScreenNode* screenNode)
 	basePropertiesSubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
 	prototypeSoundsSubController->initialize(screenNode);
+	setOutlinerContent();
 }
 
 void ParticleSystemEditorTabController::dispose()
@@ -88,6 +96,10 @@ void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, co
 
 void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		updateDetails(outlinerNode);
+	}
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
@@ -115,4 +127,29 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
+}
+
+void ParticleSystemEditorTabController::setOutlinerContent() {
+	string xml;
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
+	auto prototype = view->getPrototype();
+	if (prototype != nullptr) {
+		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
+		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
+		//
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\">\n";
+		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
+			auto particleSystem = prototype->getParticleSystemAt(i);
+			xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escapeQuotes("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" />\n";
+		}
+		xml+= "</selectbox-parent-option>\n";
+	}
+	xml+= "</selectbox-parent-option>\n";
+	view->getEditorView()->setOutlinerContent(xml);
+}
+
+void ParticleSystemEditorTabController::updateDetails(const string& outlinerNode) {
+	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
+	prototypeSoundsSubController->updateDetails(view->getPrototype(), nullptr, outlinerNode);
 }
