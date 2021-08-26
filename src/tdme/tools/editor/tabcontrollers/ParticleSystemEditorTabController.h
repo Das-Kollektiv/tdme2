@@ -53,10 +53,20 @@ private:
 
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
+	FileDialogPath texturePath;
 
 	array<string, 2> applyBaseNodes {
 		"particleemitter_type",
 		"particleemitter_type_details"
+	};
+
+	array<string, 6> applyPPSNodes {
+		"particletype_point_size",
+		"particletype_point_maxcount",
+		"particletype_point_horizontal_sprites",
+		"particletype_point_vertical_sprites",
+		"particletype_point_fps",
+		"particletype_point_autoemit"
 	};
 
 	array<string, 24> applyBBPENodes {
@@ -196,12 +206,23 @@ public:
 	/**
 	 * @return model path
 	 */
-	FileDialogPath* getModelPath();
+	inline FileDialogPath* getModelPath() {
+		return &modelPath;
+	}
 
 	/**
 	 * @return audio path
 	 */
-	FileDialogPath* getAudioPath();
+	inline FileDialogPath* getAudioPath() {
+		return &audioPath;
+	}
+
+	/**
+	 * @return texture path
+	 */
+	inline FileDialogPath* getTexturePath() {
+		return &texturePath;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

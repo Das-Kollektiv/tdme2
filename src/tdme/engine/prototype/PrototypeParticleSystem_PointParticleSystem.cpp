@@ -19,18 +19,19 @@ PrototypeParticleSystem_PointParticleSystem::PrototypeParticleSystem_PointPartic
 }
 
 void PrototypeParticleSystem_PointParticleSystem::setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName) {
-	if (texture != nullptr) texture->releaseReference();;
+	if (texture != nullptr) texture->releaseReference();
 	texture = nullptr;
 	this->textureFileName = textureFileName;
 	this->transparencyTextureFileName = transparencyTextureFileName;
-	if (this->transparencyTextureFileName.size() > 0) {
+	if (this->transparencyTextureFileName.empty() == false && this->textureFileName.empty() == false) {
 		texture = TextureReader::read(
 			Tools::getPathName(this->textureFileName),
 			Tools::getFileName(this->textureFileName),
 			Tools::getPathName(this->transparencyTextureFileName),
 			Tools::getFileName(this->transparencyTextureFileName)
 		);
-	} else {
+	} else
+	if (this->textureFileName.empty() == false) {
 		texture = TextureReader::read(
 			Tools::getPathName(this->textureFileName),
 			Tools::getFileName(this->textureFileName)

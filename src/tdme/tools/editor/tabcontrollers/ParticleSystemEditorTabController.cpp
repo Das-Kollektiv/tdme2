@@ -5,6 +5,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
@@ -32,8 +33,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -56,6 +60,7 @@ using tdme::utilities::Action;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem;
@@ -79,9 +84,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
@@ -156,6 +163,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
 			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			for (auto& applyPPSNode: applyPPSNodes) {
+				if (node->getId() == applyPPSNode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
 			for (auto& applyBaseNode: applyBaseNodes) {
 				if (node->getId() == applyBaseNode) {
 					applyParticleSystemDetails(particleSystemIdx);
@@ -591,6 +604,132 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					popUps->getColorPickerScreenController()->show(rpe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
 				}
 			}
+		} else
+		if (node->getId().compare("particletype_point_texture_open") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr) {
+					class OnLoadTexture: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+							if (pps == nullptr) return;
+							// TODO: try/catch
+							pps->setTextureFileName(
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
+								pps->getTransparencyTextureFileName()
+							);
+							particleSystemEditorTabController->getTexturePath()->setPath(
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+							);
+							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
+							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+						}
+
+						OnLoadTexture(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx)
+							: particleSystemEditorTabController(particleSystemEditorTabController)
+							, particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+
+					auto extensions = TextureReader::getTextureExtensions();
+					popUps->getFileDialogScreenController()->show(
+						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):texturePath.getPath(),
+						"Load point particle system texture from: ",
+						extensions,
+						Tools::getFileName(pps->getTextureFileName()),
+						true,
+						new OnLoadTexture(this, particleSystemIdx)
+					);
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_texture_remove") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr) {
+					// TODO: try/catch
+					pps->setTextureFileName(string(), pps->getTransparencyTextureFileName());
+					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
+					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_transparency_open") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr) {
+					class OnLoadTexture: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+							if (pps == nullptr) return;
+							// TODO: try/catch
+							pps->setTextureFileName(
+								pps->getTextureFileName(),
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
+							particleSystemEditorTabController->getTexturePath()->setPath(
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+							);
+							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
+							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+						}
+
+						OnLoadTexture(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx)
+							: particleSystemEditorTabController(particleSystemEditorTabController)
+							, particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+
+					auto extensions = TextureReader::getTextureExtensions();
+					popUps->getFileDialogScreenController()->show(
+						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):texturePath.getPath(),
+						"Load point particle system texture from: ",
+						extensions,
+						Tools::getFileName(pps->getTextureFileName()),
+						true,
+						new OnLoadTexture(this, particleSystemIdx)
+					);
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_transparency_remove") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr) {
+					// TODO: try/catch
+					pps->setTextureFileName(pps->getTextureFileName(), string());
+					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
+					view->initParticleSystem();
+				}
+			}
 		}
 	}
 
@@ -827,6 +966,18 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 
 	//
 	try {
+		//
+		if (particleSystem->getType() == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+			auto pps = particleSystem->getPointParticleSystem();
+			pps->setPointSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_size"))->getController()->getValue().getString()));
+			pps->setMaxPoints(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_maxcount"))->getController()->getValue().getString()));
+			pps->setTextureHorizontalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->getValue().getString()));
+			pps->setTextureVerticalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_vertical_sprites"))->getController()->getValue().getString()));
+			pps->setTextureSpritesFPS(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_fps"))->getController()->getValue().getString()));
+			pps->setAutoEmit(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_autoemit"))->getController()->getValue().getString() == "1");
+		}
+
+		//
 		auto newEmitterTypeId = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->getValue().getString());
 		auto newEmitterType = PrototypeParticleSystem_Emitter::NONE;
 		switch (newEmitterTypeId) {

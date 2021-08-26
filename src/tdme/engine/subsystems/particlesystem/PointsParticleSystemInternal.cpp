@@ -68,12 +68,14 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->textureVerticalSprites = textureVerticalSprites;
 	this->fps = fps;
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
+	if (this->texture != nullptr) this->texture->acquireReference();
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
 	delete emitter;
 	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 	engine->getTextureManager()->removeTexture(texture->getId());
+	if (this->texture != nullptr) this->texture->releaseReference();
 }
 
 void PointsParticleSystemInternal::initialize() {
