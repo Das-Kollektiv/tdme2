@@ -186,6 +186,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 					break;
 				}
 			}
+			for (auto& applyRPENode: applyRPENodes) {
+				if (node->getId() == applyRPENode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
 		}
 		basePropertiesSubController->onValueChanged(node, view->getPrototype());
 		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
@@ -511,6 +517,80 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					popUps->getColorPickerScreenController()->show(cpe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
 				}
 			}
+		} else
+		if (node->getId().compare("particleemitter_radial_colorstart_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
+				if (rpe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
+							if (rpe == nullptr) return;
+							rpe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpe->getColorStart());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(rpe->getColorStart(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		} else
+		if (node->getId().compare("particleemitter_radial_colorend_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
+				if (rpe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
+							if (rpe == nullptr) return;
+							rpe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpe->getColorEnd());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(rpe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
 		}
 	}
 
@@ -678,6 +758,31 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): cpepv");
+			auto rpse = particleSystem->getCircleParticleEmitterPlaneVelocity();
+
+			Matrix4x4 rotationMatrix;
+			rotationMatrix.identity();
+			rotationMatrix.setAxes(rpse->getAxis0(), Vector3::computeCrossProduct(rpse->getAxis0(), rpse->getAxis1()), rpse->getAxis1());
+			auto rotation = rotationMatrix.computeEulerAngles();
+
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(4));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("radial");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_x"))->getController()->setValue(MutableString(rpse->getCenter().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_y"))->getController()->setValue(MutableString(rpse->getCenter().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_z"))->getController()->setValue(MutableString(rpse->getCenter().getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->setValue(MutableString(rpse->getRadius()));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpse->getColorStart());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpse->getColorEnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_count"))->getController()->setValue(MutableString(rpse->getCount()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getLifeTime())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getLifeTime() + rpse->getLifeTimeRnd())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->setValue(MutableString(rpse->getVelocity()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_max"))->getController()->setValue(MutableString(rpse->getVelocity() + rpse->getVelocityRnd()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getMass())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_max"))->getController()->setValue(MutableString(static_cast<int32_t>(rpse->getMass() + rpse->getMassRnd())));
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): spe");
@@ -917,6 +1022,44 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): cpepv");
+			auto cpse = particleSystem->getCircleParticleEmitterPlaneVelocity();
+			cpse->setCenter(
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_z"))->getController()->getValue().getString())
+				)
+			);
+
+			Transformations transformations;
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->getValue().getString()));
+			transformations.update();
+			Vector3 tmpVector3;
+			Vector3 axis0;
+			Vector3 axis1;
+			transformations.getTransformationsMatrix().getAxes(axis0, tmpVector3, axis1);
+			cpse->setAxis0(axis0);
+			cpse->setAxis1(axis1);
+
+			cpse->setRadius(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->getValue().getString()));
+			cpse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_count"))->getController()->getValue().getString()));
+			cpse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString()));
+			cpse->setLifeTimeRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString())
+			);
+			cpse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString()));
+			cpse->setMassRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString())
+			);
+			cpse->setVelocity(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString()));
+			cpse->setVelocityRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString())
+			);
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): spe");

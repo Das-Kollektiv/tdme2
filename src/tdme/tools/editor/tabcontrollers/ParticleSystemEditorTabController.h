@@ -140,6 +140,25 @@ private:
 		"particleemitter_circle_mass_max",
 	};
 
+	array<string, 16> applyRPENodes {
+		"particleemitter_radial_location_x",
+		"particleemitter_radial_location_y",
+		"particleemitter_radial_location_z",
+		"particleemitter_radial_rotation_x",
+		"particleemitter_radial_rotation_y",
+		"particleemitter_radial_rotation_z",
+		"particleemitter_radial_radius",
+		"particleemitter_radial_colorstart",
+		"particleemitter_radial_colorend",
+		"particleemitter_radial_count",
+		"particleemitter_radial_lifetime_min",
+		"particleemitter_radial_lifetime_max",
+		"particleemitter_radial_velocity_min",
+		"particleemitter_radial_velocity_max",
+		"particleemitter_radial_mass_min",
+		"particleemitter_radial_mass_max"
+	};
+
 public:
 	/**
 	 * Public constructor
