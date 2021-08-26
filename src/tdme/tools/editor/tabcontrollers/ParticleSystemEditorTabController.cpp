@@ -5,6 +5,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
@@ -30,6 +31,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -53,6 +55,7 @@ using tdme::utilities::Action;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
@@ -74,6 +77,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -181,6 +185,86 @@ void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* n
 void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("particleemitter_box_colorstart_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
+				if (bbpe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
+							if (bbpe == nullptr) return;
+							bbpe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(bbpe->getColorStart(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		} else
+		if (node->getId().compare("particleemitter_box_colorend_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
+				if (bbpe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
+							if (bbpe == nullptr) return;
+							bbpe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(bbpe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		}
+	}
+
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
@@ -335,6 +419,21 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 
 	//
 	try {
+		auto newEmitterTypeId = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->getValue().getString());
+		auto newEmitterType = PrototypeParticleSystem_Emitter::NONE;
+		switch (newEmitterTypeId) {
+			case 1: newEmitterType = PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER; break;
+			case 2: newEmitterType = PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER; break;
+			case 3: newEmitterType = PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER; break;
+			case 4: newEmitterType = PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY; break;
+			case 5: newEmitterType = PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER; break;
+			default:
+				Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails: unknown emitter");
+				break;
+		}
+
+		if (particleSystem->getEmitter() != newEmitterType) particleSystem->setEmitter(newEmitterType);
+
 		//
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_particletype"))->getActiveConditions().add("open");
 
@@ -409,12 +508,6 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 				);
 			bbpe->setVelocity(velocityMin);
 			bbpe->setVelocityRnd(velocityMax.clone().sub(velocityMin));
-			/*
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(2));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("box");
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
-			*/
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): cpe");
