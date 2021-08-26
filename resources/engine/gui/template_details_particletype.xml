@@ -68,14 +68,14 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Sprites" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="particletype_point_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="particletype_point_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=1,step=1" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 					<space height="5" /> 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Sprites" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="particletype_point_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="particletype_point_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=1,step=1" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 					<space height="5" />
@@ -123,14 +123,14 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Sprites" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="particletype_fog_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="particletype_fog_horizontal_sprites"  width="50%" height="auto" text="10" options="type=int,min=1,step=1" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 					<space height="5" /> 
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Sprites" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="particletype_fog_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							<input id="particletype_fog_vertical_sprites" width="50%" height="auto" text="10" options="type=int,min=1,step=1" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 					<space height="5" />

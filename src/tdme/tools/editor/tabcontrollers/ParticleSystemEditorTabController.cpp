@@ -726,7 +726,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 				if (pps != nullptr) {
 					// TODO: try/catch
 					pps->setTextureFileName(pps->getTextureFileName(), string());
-					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
+					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
 					view->initParticleSystem();
 				}
 			}
