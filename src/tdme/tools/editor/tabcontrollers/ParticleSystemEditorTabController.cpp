@@ -250,17 +250,21 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
-			/*
-			// TODO:
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getX()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getY()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->setValue(MutableString(bbpe->getObbHalfextension().getZ()));
-			*/
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_count"))->getController()->setValue(MutableString(bbpe->getCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getLifeTime())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getLifeTime() + bbpe->getLifeTimeRnd())));
+			auto velocityMax = bbpe->getVelocity().clone().add(bbpe->getVelocityRnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_x"))->getController()->setValue(MutableString(bbpe->getVelocity().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_y"))->getController()->setValue(MutableString(bbpe->getVelocity().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_z"))->getController()->setValue(MutableString(bbpe->getVelocity().getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_x"))->getController()->setValue(MutableString(velocityMax.getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_y"))->getController()->setValue(MutableString(velocityMax.getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_z"))->getController()->setValue(MutableString(velocityMax.getZ()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getMass())));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_max"))->getController()->setValue(MutableString(static_cast<int32_t>(bbpe->getMass() + bbpe->getMassRnd())));
 		} else
