@@ -54,9 +54,12 @@ private:
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
 
-	array<string, 24> applyBBPENodes {
+	array<string, 2> applyBaseNodes {
 		"particleemitter_type",
-		"particleemitter_type_details",
+		"particleemitter_type_details"
+	};
+
+	array<string, 24> applyBBPENodes {
 		"particleemitter_box_location_x",
 		"particleemitter_box_location_y",
 		"particleemitter_box_location_z",
@@ -80,6 +83,24 @@ private:
 		"particleemitter_box_mass_min",
 		"particleemitter_box_mass_max"
 	};
+
+	array<string, 14> applyPPENodes {
+		"particleemitter_point_location_x",
+		"particleemitter_point_location_y",
+		"particleemitter_point_location_z",
+		"particleemitter_point_count",
+		"particleemitter_point_lifetime_min",
+		"particleemitter_point_lifetime_max",
+		"particleemitter_point_velocity_min_x",
+		"particleemitter_point_velocity_min_y",
+		"particleemitter_point_velocity_min_z",
+		"particleemitter_point_velocity_max_x",
+		"particleemitter_point_velocity_max_y",
+		"particleemitter_point_velocity_max_z",
+		"particleemitter_point_mass_min",
+		"particleemitter_point_mass_max"
+	};
+
 public:
 	/**
 	 * Public constructor

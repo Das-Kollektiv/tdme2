@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -52,6 +53,7 @@ using std::string;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 
 using tdme::utilities::Action;
+using tdme::engine::Engine;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -146,6 +148,7 @@ void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, co
 
 void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	Console::println("ParticleSystemEditorTabController::onValueChanged(): " + node->getId());
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
@@ -153,8 +156,20 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
 			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			for (auto& applyBaseNode: applyBaseNodes) {
+				if (node->getId() == applyBaseNode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
 			for (auto& applyBBPENode: applyBBPENodes) {
 				if (node->getId() == applyBBPENode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
+			for (auto& applyPPENode: applyPPENodes) {
+				if (node->getId() == applyPPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
@@ -262,6 +277,80 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					popUps->getColorPickerScreenController()->show(bbpe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
 				}
 			}
+		} else
+		if (node->getId().compare("particleemitter_point_colorstart_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
+				if (ppe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
+							if (ppe == nullptr) return;
+							ppe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppe->getColorStart());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(ppe->getColorStart(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		} else
+		if (node->getId().compare("particleemitter_point_colorend_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
+				if (ppe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
+							if (ppe == nullptr) return;
+							ppe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppe->getColorEnd());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(ppe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
 		}
 	}
 
@@ -336,6 +425,29 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_particleemitter"))->getActiveConditions().add("open");
 
 		//
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): ppe");
+			auto ppse = particleSystem->getPointParticleEmitter();
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(1));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("point");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->setValue(MutableString(ppse->getPosition().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->setValue(MutableString(ppse->getPosition().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->setValue(MutableString(ppse->getPosition().getZ()));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppse->getColorStart());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppse->getColorEnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->setValue(MutableString(ppse->getCount()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime() + ppse->getLifeTimeRnd())));
+			auto velocityMax = ppse->getVelocity().clone().add(ppse->getVelocityRnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_x"))->getController()->setValue(MutableString(ppse->getVelocity().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_y"))->getController()->setValue(MutableString(ppse->getVelocity().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_z"))->getController()->setValue(MutableString(ppse->getVelocity().getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_x"))->getController()->setValue(MutableString(velocityMax.getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_y"))->getController()->setValue(MutableString(velocityMax.getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_z"))->getController()->setValue(MutableString(velocityMax.getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getMass())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_max"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getMass() + ppse->getMassRnd())));
+		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): bbpe");
 			auto bbpe = particleSystem->getBoundingBoxParticleEmitters();
@@ -377,29 +489,6 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): cpepv");
 		} else
-		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
-			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): ppe");
-			auto ppse = particleSystem->getPointParticleEmitter();
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->setValue(MutableString(ppse->getPosition().getX()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->setValue(MutableString(ppse->getPosition().getY()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->setValue(MutableString(ppse->getPosition().getZ()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_colorstart"))->getController()->setValue(MutableString(0.0f));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_colorend"))->getController()->setValue(MutableString(0.0f));
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppse->getColorStart());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppse->getColorEnd());
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->setValue(MutableString(ppse->getCount()));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime())));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getLifeTime() + ppse->getLifeTimeRnd())));
-			// TODO:
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_x"))->getController()->setValue(MutableString(0.0f));
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_y"))->getController()->setValue(MutableString(0.0f));
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_z"))->getController()->setValue(MutableString(0.0f));
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_x"))->getController()->setValue(MutableString(0.0f));
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_y"))->getController()->setValue(MutableString(0.0f));
-			// required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_z"))->getController()->setValue(MutableString(0.0f));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getMass())));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_max"))->getController()->setValue(MutableString(static_cast<int32_t>(ppse->getMass() + ppse->getMassRnd())));
-		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): spe");
 		} else {
@@ -412,6 +501,9 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 }
 
 void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleSystemIdx) {
+
+	Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): " + to_string(particleSystemIdx));
+
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
@@ -432,7 +524,24 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 				break;
 		}
 
-		if (particleSystem->getEmitter() != newEmitterType) particleSystem->setEmitter(newEmitterType);
+		// check if to change particle system emitter
+		if (particleSystem->getEmitter() != newEmitterType) {
+			particleSystem->setEmitter(newEmitterType);
+			//
+			class ChangeEmitterAction: public Action {
+			private:
+				ParticleSystemEditorTabController* editorView;
+				int particleSystemIdx;
+			public:
+				ChangeEmitterAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): editorView(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {}
+				virtual void performAction() {
+					editorView->setParticleSystemDetails(particleSystemIdx);
+					editorView->view->initParticleSystem();
+				}
+			};
+			Engine::getInstance()->enqueueAction(new ChangeEmitterAction(this, particleSystemIdx));
+			return;
+		}
 
 		//
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_particletype"))->getActiveConditions().add("open");
@@ -454,6 +563,42 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		}
 
 		//
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): ppe");
+			auto ppse = particleSystem->getPointParticleEmitter();
+			ppse->setPosition(
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->getValue().getString())
+				)
+			);
+			ppse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->getValue().getString()));
+			ppse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString()));
+			ppse->setLifeTimeRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString())
+			);
+			ppse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString()));
+			ppse->setMassRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString())
+			);
+			auto velocityMin =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_z"))->getController()->getValue().getString())
+				);
+			auto velocityMax =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_z"))->getController()->getValue().getString())
+				);
+			ppse->setVelocity(velocityMin);
+			ppse->setVelocityRnd(velocityMax.clone().sub(velocityMin));
+		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): bbpe");
 			auto bbpe = particleSystem->getBoundingBoxParticleEmitters();
@@ -514,10 +659,6 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): cpepv");
-		} else
-		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
-			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): ppe");
-			auto ppse = particleSystem->getPointParticleEmitter();
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): spe");
