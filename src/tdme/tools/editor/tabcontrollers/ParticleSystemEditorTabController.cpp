@@ -174,6 +174,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 					break;
 				}
 			}
+			for (auto& applySPENode: applySPENodes) {
+				if (node->getId() == applySPENode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
 		}
 		basePropertiesSubController->onValueChanged(node, view->getPrototype());
 		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
@@ -352,6 +358,80 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 				}
 			}
 		}
+		if (node->getId().compare("particleemitter_sphere_colorstart_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
+				if (spe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
+							if (spe == nullptr) return;
+							spe->setColorStart(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spe->getColorStart());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(spe->getColorStart(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		} else
+		if (node->getId().compare("particleemitter_sphere_colorend_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
+				if (spe != nullptr) {
+					//
+					class OnColorChangeAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto prototype = particleSystemEditorTabController->view->getPrototype();
+							if (prototype == nullptr) return;
+							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+							auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
+							if (spe == nullptr) return;
+							spe->setColorEnd(Color4(particleSystemEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+							//
+							try {
+								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spe->getColorEnd());
+							} catch (Exception& exception) {
+								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
+								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+						OnColorChangeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+						}
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						int particleSystemIdx;
+					};
+					popUps->getColorPickerScreenController()->show(spe->getColorEnd(), new OnColorChangeAction(this, particleSystemIdx));
+				}
+			}
+		}
 	}
 
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
@@ -491,6 +571,27 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): spe");
+			auto spse = particleSystem->getSphereParticleEmitter();
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(5));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("sphere");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_x"))->getController()->setValue(MutableString(spse->getCenter().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->setValue(MutableString(spse->getCenter().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->setValue(MutableString(spse->getCenter().getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->setValue(MutableString(spse->getRadius()));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spse->getColorStart());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spse->getColorEnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_count"))->getController()->setValue(MutableString(spse->getCount()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getLifeTime())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_max"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getLifeTime() + spse->getLifeTimeRnd())));
+			auto velocityMax = spse->getVelocity().clone().add(spse->getVelocityRnd());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_x"))->getController()->setValue(MutableString(spse->getVelocity().getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_y"))->getController()->setValue(MutableString(spse->getVelocity().getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_z"))->getController()->setValue(MutableString(spse->getVelocity().getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_x"))->getController()->setValue(MutableString(velocityMax.getX()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_y"))->getController()->setValue(MutableString(velocityMax.getY()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_z"))->getController()->setValue(MutableString(velocityMax.getZ()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getMass())));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_max"))->getController()->setValue(MutableString(static_cast<int32_t>(spse->getMass() + spse->getMassRnd())));
 		} else {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): unknown emitter");
 		}
@@ -662,6 +763,40 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): spe");
+			auto spse = particleSystem->getSphereParticleEmitter();
+			spse->setCenter(
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->getValue().getString())
+				)
+			);
+			spse->setRadius(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->getValue().getString()));
+			spse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_count"))->getController()->getValue().getString()));
+			spse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString()));
+			spse->setLifeTimeRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString())
+			);
+			spse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString()));
+			spse->setMassRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString())
+			);
+			auto velocityMin =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_z"))->getController()->getValue().getString())
+				);
+			auto velocityMax =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_z"))->getController()->getValue().getString())
+				);
+			spse->setVelocity(velocityMin);
+			spse->setVelocityRnd(velocityMax.clone().sub(velocityMin));
 		} else {
 			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): unknown emitter");
 		}

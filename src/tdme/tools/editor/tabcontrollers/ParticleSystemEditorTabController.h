@@ -101,6 +101,24 @@ private:
 		"particleemitter_point_mass_max"
 	};
 
+	array<string, 15> applySPENodes {
+		"particleemitter_sphere_location_x",
+		"particleemitter_sphere_location_y",
+		"particleemitter_sphere_location_z",
+		"particleemitter_sphere_radius",
+		"particleemitter_sphere_count",
+		"particleemitter_sphere_lifetime_min",
+		"particleemitter_sphere_lifetime_max",
+		"particleemitter_sphere_velocity_min_x",
+		"particleemitter_sphere_velocity_min_y",
+		"particleemitter_sphere_velocity_min_z",
+		"particleemitter_sphere_velocity_max_x",
+		"particleemitter_sphere_velocity_max_y",
+		"particleemitter_sphere_velocity_max_z",
+		"particleemitter_sphere_mass_min",
+		"particleemitter_sphere_mass_max"
+	};
+
 public:
 	/**
 	 * Public constructor
