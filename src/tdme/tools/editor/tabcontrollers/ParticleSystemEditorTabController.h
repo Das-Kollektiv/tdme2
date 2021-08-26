@@ -119,6 +119,27 @@ private:
 		"particleemitter_sphere_mass_max"
 	};
 
+	array<string, 18> applyCPENodes {
+		"particleemitter_circle_location_x",
+		"particleemitter_circle_location_y",
+		"particleemitter_circle_location_z",
+		"particleemitter_circle_rotation_x",
+		"particleemitter_circle_rotation_y",
+		"particleemitter_circle_rotation_z",
+		"particleemitter_circle_radius",
+		"particleemitter_circle_count",
+		"particleemitter_circle_lifetime_min",
+		"particleemitter_circle_lifetime_max",
+		"particleemitter_circle_velocity_min_x",
+		"particleemitter_circle_velocity_min_y",
+		"particleemitter_circle_velocity_min_z",
+		"particleemitter_circle_velocity_max_x",
+		"particleemitter_circle_velocity_max_y",
+		"particleemitter_circle_velocity_max_z",
+		"particleemitter_circle_mass_min",
+		"particleemitter_circle_mass_max",
+	};
+
 public:
 	/**
 	 * Public constructor
