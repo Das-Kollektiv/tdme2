@@ -1224,6 +1224,7 @@ void SceneEditorTabController::onReplacePrototype() {
 				sceneLibrary->addPrototype(newPrototype);
 				sceneEditorTabController->view->clearScene();
 				scene->replacePrototypeByIds(prototype->getId(), newPrototype->getId());
+				sceneLibrary->removePrototype(prototype->getId());
 				sceneEditorTabController->view->reloadScene();
 
 				sceneEditorTabController->modelPath.setPath(sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName());
