@@ -115,6 +115,12 @@ public:
 	void setOutlinerContent();
 
 	/**
+	 * Set particle system details
+	 * @param particleSystemIdx particle system index
+	 */
+	void setParticleSystemDetails(int particleSystemIdx);
+
+	/**
 	 * Update details panel
 	 * @param outlinerNode outliner node
 	 */
