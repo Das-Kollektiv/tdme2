@@ -62,7 +62,7 @@ ParticleSystemEditorTabView::ParticleSystemEditorTabView(EditorView* editorView,
 	this->cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 	this->audioStarted = -1LL;
 	this->audioOffset = -1LL;
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	initParticleSystem();
 }
 
 ParticleSystemEditorTabView::~ParticleSystemEditorTabView() {
@@ -181,3 +181,6 @@ void ParticleSystemEditorTabView::stopSound() {
 	audio->removeEntity("sound");
 }
 
+void ParticleSystemEditorTabView::initParticleSystem() {
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+}

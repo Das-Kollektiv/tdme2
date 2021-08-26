@@ -130,4 +130,9 @@ public:
 	void playSound(const string& soundId) override;
 	void stopSound() override;
 
+	/**
+	 * Init particle system
+	 */
+	void initParticleSystem();
+
 };

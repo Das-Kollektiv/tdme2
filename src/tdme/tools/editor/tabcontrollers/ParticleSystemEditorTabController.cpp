@@ -2,6 +2,9 @@
 
 #include <string>
 
+#include <tdme/engine/Rotation.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
@@ -37,6 +40,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -46,6 +50,9 @@ using std::string;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 
 using tdme::utilities::Action;
+using tdme::engine::Rotation;
+using tdme::engine::Transformations;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
@@ -78,6 +85,7 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
@@ -137,10 +145,21 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
+	} else {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			for (auto& applyBBPENode: applyBBPENodes) {
+				if (node->getId() == applyBBPENode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
+		}
+		basePropertiesSubController->onValueChanged(node, view->getPrototype());
+		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+		prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
 }
 
 void ParticleSystemEditorTabController::onFocus(GUIElementNode* node) {
@@ -299,11 +318,125 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			Console::println("ParticleSystemEditorTabController::setParticleSystemDetails(): spe");
+		} else {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): unknown emitter");
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::setParticleSystemDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleSystemIdx) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	if (particleSystem == nullptr) return;
+
+	//
+	try {
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_particletype"))->getActiveConditions().add("open");
+
+		//
+		if (particleSystem->getType() == PrototypeParticleSystem_Type::NONE) {
+		} else
+		if (particleSystem->getType() == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): fps");
+		} else
+		if (particleSystem->getType() == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): ops");
+		} else
+		if (particleSystem->getType() == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): pps");
+			auto pps = particleSystem->getPointParticleSystem();
+		} else {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): Unknown particle system type");
+		}
+
+		//
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): bbpe");
+			auto bbpe = particleSystem->getBoundingBoxParticleEmitters();
+			bbpe->setObbCenter(
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_z"))->getController()->getValue().getString())
+				)
+			);
+			Transformations transformations;
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->getValue().getString()));
+			transformations.update();
+			Vector3 obbAxis0;
+			Vector3 obbAxis1;
+			Vector3 obbAxis2;
+			transformations.getTransformationsMatrix().getAxes(obbAxis0, obbAxis1, obbAxis2);
+			bbpe->setObbAxis0(obbAxis0);
+			bbpe->setObbAxis1(obbAxis1);
+			bbpe->setObbAxis2(obbAxis2);
+			bbpe->setObbHalfextension(
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->getValue().getString())
+				)
+			);
+			bbpe->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_count"))->getController()->getValue().getString()));
+			bbpe->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString()));
+			bbpe->setLifeTimeRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString())
+			);
+			bbpe->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString()));
+			bbpe->setMassRnd(
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_max"))->getController()->getValue().getString()) -
+				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString())
+			);
+			auto velocityMin =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_z"))->getController()->getValue().getString())
+				);
+			auto velocityMax =
+				Vector3(
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_z"))->getController()->getValue().getString())
+				);
+			bbpe->setVelocity(velocityMin);
+			bbpe->setVelocityRnd(velocityMax.clone().sub(velocityMin));
+			/*
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(2));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("box");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
+			*/
+		} else
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): cpe");
+		} else
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): cpepv");
+		} else
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): ppe");
+			auto ppse = particleSystem->getPointParticleEmitter();
+		} else
+		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): spe");
+		} else {
+			Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): unknown emitter");
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::applyParticleSystemDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+	//
+	view->initParticleSystem();
 }
 
 void ParticleSystemEditorTabController::updateDetails(const string& outlinerNode) {

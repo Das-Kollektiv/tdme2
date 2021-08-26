@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::array;
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
@@ -52,6 +54,32 @@ private:
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
 
+	array<string, 24> applyBBPENodes {
+		"particleemitter_type",
+		"particleemitter_type_details",
+		"particleemitter_box_location_x",
+		"particleemitter_box_location_y",
+		"particleemitter_box_location_z",
+		"particleemitter_box_rotation_x",
+		"particleemitter_box_rotation_y",
+		"particleemitter_box_rotation_z",
+		"particleemitter_box_halfsize_x",
+		"particleemitter_box_halfsize_y",
+		"particleemitter_box_halfsize_z",
+		"particleemitter_box_colorstart",
+		"particleemitter_box_colorend",
+		"particleemitter_box_count",
+		"particleemitter_box_lifetime_min",
+		"particleemitter_box_lifetime_max",
+		"particleemitter_box_velocity_min_x",
+		"particleemitter_box_velocity_min_y",
+		"particleemitter_box_velocity_min_z",
+		"particleemitter_box_velocity_max_x",
+		"particleemitter_box_velocity_max_y",
+		"particleemitter_box_velocity_max_z",
+		"particleemitter_box_mass_min",
+		"particleemitter_box_mass_max"
+	};
 public:
 	/**
 	 * Public constructor
@@ -119,6 +147,12 @@ public:
 	 * @param particleSystemIdx particle system index
 	 */
 	void setParticleSystemDetails(int particleSystemIdx);
+
+	/**
+	 * Apply particle system details
+	 * @param particleSystemIdx particle system index
+	 */
+	void applyParticleSystemDetails(int particleSystemIdx);
 
 	/**
 	 * Update details panel

@@ -146,7 +146,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleemitter_box_location_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_location_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -154,7 +154,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleemitter_box_location_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_location_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.11,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -162,7 +162,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleemitter_box_location_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_location_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>					
 					
@@ -275,7 +275,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="Velocity" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleemitter_box_velocity_min_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_min_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -283,7 +283,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleemitter_box_velocity_min_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_min_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -291,7 +291,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleemitter_box_velocity_min_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_min_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -300,7 +300,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleemitter_box_velocity_max_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_max_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -308,7 +308,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleemitter_box_velocity_max_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_max_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 					<space height="5" />
@@ -316,7 +316,7 @@
 						<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleemitter_box_velocity_max_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+							<input id="particleemitter_box_velocity_max_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.0,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
