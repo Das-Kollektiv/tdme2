@@ -19,7 +19,7 @@ class tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem final
 {
 private:
 	int maxPoints { 4000 };
-	float pointSize{ 10.0f };
+	float pointSize{ 0.1f };
 	string textureFileName;
 	string transparencyTextureFileName;
 	Texture* texture { nullptr };

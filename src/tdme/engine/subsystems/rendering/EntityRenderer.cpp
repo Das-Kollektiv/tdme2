@@ -1356,7 +1356,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	// textures
 	unordered_map<int, int> textureIndices;
 
-	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
+	// find particle systems that are combined, merge those pses, transform them into camera space and sort them
 	auto& cameraMatrix = renderer->getCameraMatrix();
 	for (auto entity: pses) {
 		if (entity->getRenderPass() != renderPass) continue;
