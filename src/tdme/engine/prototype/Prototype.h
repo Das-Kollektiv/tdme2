@@ -296,8 +296,10 @@ public:
 	/**
 	 * Add particle system
 	 */
-	inline void addParticleSystem() {
-		particleSystems.push_back(new PrototypeParticleSystem());
+	inline PrototypeParticleSystem* addParticleSystem() {
+		auto particleSystem = new PrototypeParticleSystem();
+		particleSystems.push_back(particleSystem);
+		return particleSystem;
 	}
 
 	/**
@@ -319,6 +321,7 @@ public:
 	 * @return prototype particle system
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
+		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
 		return particleSystems[idx];
 	}
 

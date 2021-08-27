@@ -33,6 +33,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
@@ -86,6 +87,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -237,9 +239,98 @@ void ParticleSystemEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "particlesystems") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// delete
+			class OnAddParticleSystemAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = particleSystemEditorTabController->view->getPrototype();
+					if (prototype == nullptr) return;
+					auto particleSystem = prototype->addParticleSystem();
+					if (particleSystem == nullptr) return;
+					auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
+
+					//
+					class ReloadTabOutlinerAction: public Action {
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						string outlinerNode;
+					public:
+						ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
+						virtual void performAction() {
+							particleSystemEditorTabController->view->uninitParticleSystem();
+							auto editorView = particleSystemEditorTabController->view->getEditorView();
+							editorView->reloadTabOutliner(outlinerNode);
+							editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+					};
+					Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(particleSystemEditorTabController, "particlesystems." + to_string(particleSystemIdx)));
+				}
+				OnAddParticleSystemAction(ParticleSystemEditorTabController* particleSystemEditorTabController): particleSystemEditorTabController(particleSystemEditorTabController) {
+				}
+			private:
+				ParticleSystemEditorTabController* particleSystemEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Particle System", "contextmenu_add", new OnAddParticleSystemAction(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// delete
+			class OnRemoveParticleSystemAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = particleSystemEditorTabController->view->getPrototype();
+					if (prototype == nullptr) return;
+					prototype->removeParticleSystemAt(particleSystemIdx);
+
+					//
+					class ReloadTabOutlinerAction: public Action {
+					private:
+						ParticleSystemEditorTabController* particleSystemEditorTabController;
+						string outlinerNode;
+					public:
+						ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
+						virtual void performAction() {
+							particleSystemEditorTabController->view->uninitParticleSystem();
+							auto editorView = particleSystemEditorTabController->view->getEditorView();
+							editorView->reloadTabOutliner(outlinerNode);
+							editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+							particleSystemEditorTabController->view->initParticleSystem();
+						}
+					};
+					Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(particleSystemEditorTabController, "particlesystems"));
+				}
+				OnRemoveParticleSystemAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
+				}
+			private:
+				ParticleSystemEditorTabController* particleSystemEditorTabController;
+				int particleSystemIdx;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Remove Particle System", "contextmenu_remove", new OnRemoveParticleSystemAction(this, particleSystemIdx));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 }
 
 void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -1001,12 +1092,16 @@ void ParticleSystemEditorTabController::setOutlinerContent() {
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
 		//
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\">\n";
-		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
-			auto particleSystem = prototype->getParticleSystemAt(i);
-			xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escapeQuotes("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" />\n";
+		if (prototype->getParticleSystemsCount() == 0) {
+			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\" />\n";
+		} else {
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\">\n";
+			for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
+				auto particleSystem = prototype->getParticleSystemAt(i);
+				xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escapeQuotes("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" />\n";
+			}
+			xml+= "</selectbox-parent-option>\n";
 		}
-		xml+= "</selectbox-parent-option>\n";
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
