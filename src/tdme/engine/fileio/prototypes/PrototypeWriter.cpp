@@ -233,9 +233,9 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				{
 					Value jObjectParticleSystem;
 					jObjectParticleSystem.SetObject();
-					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
-						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile())) + ".tm";
+					if (particleSystem->getObjectParticleSystem()->getModelFileName().length() > 0) {
+						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFileName());
+						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,
@@ -247,7 +247,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					jObjectParticleSystem.AddMember("sx", Value(particleSystem->getObjectParticleSystem()->getScale().getX()), jAllocator);
 					jObjectParticleSystem.AddMember("sy", Value(particleSystem->getObjectParticleSystem()->getScale().getY()), jAllocator);
 					jObjectParticleSystem.AddMember("sz", Value(particleSystem->getObjectParticleSystem()->getScale().getZ()), jAllocator);
-					jObjectParticleSystem.AddMember("mf", Value(particleSystem->getObjectParticleSystem()->getModelFile(), jAllocator), jAllocator);
+					jObjectParticleSystem.AddMember("mf", Value(particleSystem->getObjectParticleSystem()->getModelFileName(), jAllocator), jAllocator);
 					jObjectParticleSystem.AddMember("ae", Value(particleSystem->getObjectParticleSystem()->isAutoEmit()), jAllocator);
 					jParticleSystem.AddMember("ops", jObjectParticleSystem, jAllocator);
 				} else

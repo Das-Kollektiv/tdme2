@@ -184,3 +184,7 @@ void ParticleSystemEditorTabView::stopSound() {
 void ParticleSystemEditorTabView::initParticleSystem() {
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 }
+
+void ParticleSystemEditorTabView::uninitParticleSystem() {
+	engine->removeEntity("model");
+}

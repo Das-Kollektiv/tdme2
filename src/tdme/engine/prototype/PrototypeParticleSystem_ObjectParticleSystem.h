@@ -56,8 +56,16 @@ public:
 	/**
 	 * @return scale
 	 */
-	inline Vector3& getScale() {
+	inline const Vector3& getScale() {
 		return scale;
+	}
+
+	/**
+	 * Set scale
+	 * @param scale scale
+	 */
+	inline void setScale(const Vector3& scale) {
+		this->scale = scale;
 	}
 
 	/**
@@ -100,7 +108,7 @@ public:
 	/**
 	 * @return model file
 	 */
-	inline const string& getModelFile() {
+	inline const string& getModelFileName() {
 		return modelFileName;
 	}
 

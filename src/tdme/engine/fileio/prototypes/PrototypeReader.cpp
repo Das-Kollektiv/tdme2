@@ -569,9 +569,13 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
-			objectParticleSystem->getScale().setX(static_cast<float>(jObjectParticleSystem["sx"].GetFloat()));
-			objectParticleSystem->getScale().setY(static_cast<float>(jObjectParticleSystem["sy"].GetFloat()));
-			objectParticleSystem->getScale().setZ(static_cast<float>(jObjectParticleSystem["sz"].GetFloat()));
+			objectParticleSystem->setScale(
+				Vector3(
+					static_cast<float>(jObjectParticleSystem["sx"].GetFloat()),
+					static_cast<float>(jObjectParticleSystem["sy"].GetFloat()),
+					static_cast<float>(jObjectParticleSystem["sz"].GetFloat())
+				)
+			);
 			objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].GetBool());
 			try {
 				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());

@@ -55,7 +55,8 @@ private:
 	FileDialogPath audioPath;
 	FileDialogPath texturePath;
 
-	array<string, 2> applyBaseNodes {
+	array<string, 3> applyBaseNodes {
+		"particletype_type",
 		"particleemitter_type",
 		"particleemitter_type_details"
 	};
@@ -67,6 +68,12 @@ private:
 		"particletype_point_vertical_sprites",
 		"particletype_point_fps",
 		"particletype_point_autoemit"
+	};
+
+	array<string, 6> applyOPSNodes {
+		"particletype_object_scale",
+		"particletype_object_maxcount",
+		"particletype_object_autoemit"
 	};
 
 	array<string, 24> applyBBPENodes {

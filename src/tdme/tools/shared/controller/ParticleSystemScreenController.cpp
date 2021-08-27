@@ -419,7 +419,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			particleSystemType->getActiveConditions().add(TYPE_OBJECTPARTICLESYSTEM);
 			opsMaxCount->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getMaxCount()));
 			opsScale->getController()->setValue(MutableString(Tools::formatVector3(particleSystem->getObjectParticleSystem()->getScale())));
-			opsModel->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getModelFile()));
+			opsModel->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->getModelFileName()));
 			opsAutoEmit->getController()->setValue(MutableString(particleSystem->getObjectParticleSystem()->isAutoEmit() == true ? "1" : ""));
 		} else
 		if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
@@ -466,7 +466,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			} else
 			if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 				particleSystem->getObjectParticleSystem()->setMaxCount(Tools::convertToInt(opsMaxCount->getController()->getValue().getString()));
-				particleSystem->getObjectParticleSystem()->getScale().set(Tools::convertToVector3(opsScale->getController()->getValue().getString()));
+				particleSystem->getObjectParticleSystem()->setScale(Tools::convertToVector3(opsScale->getController()->getValue().getString()));
 				particleSystem->getObjectParticleSystem()->setAutoEmit(opsAutoEmit->getController()->getValue().getString() == "1");
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue().getString());

@@ -21,11 +21,15 @@ using tdme::utilities::StringTools;
 
 void PrototypeParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName)
 {
+	if (this->model != nullptr) delete model;
+	this->model = nullptr;
 	this->modelFileName = modelFileName;
-	model = ModelReader::read(
-		Tools::getPathName(modelFileName),
-		Tools::getFileName(modelFileName)
-	);
+	if (modelFileName.empty() == false) {
+		model = ModelReader::read(
+			Tools::getPathName(modelFileName),
+			Tools::getFileName(modelFileName)
+		);
+	}
 }
 
 PrototypeParticleSystem_ObjectParticleSystem::~PrototypeParticleSystem_ObjectParticleSystem() {

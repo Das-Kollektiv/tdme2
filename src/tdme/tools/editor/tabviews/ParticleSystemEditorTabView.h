@@ -135,4 +135,9 @@ public:
 	 */
 	void initParticleSystem();
 
+	/**
+	 * Uninit particle system
+	 */
+	void uninitParticleSystem();
+
 };
