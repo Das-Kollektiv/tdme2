@@ -163,6 +163,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
+		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			view->setParticleSystemIndex(particleSystemIdx, false);
+		} else {
+			view->setParticleSystemIndex(-1, false);
+		}
 	} else {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
@@ -1665,4 +1671,102 @@ void ParticleSystemEditorTabController::updateDetails(const string& outlinerNode
 	}
 	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypeSoundsSubController->updateDetails(view->getPrototype(), nullptr, outlinerNode);
+}
+
+void ParticleSystemEditorTabController::updatePointParticleSystemEmitter(const Vector3& position) {
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->setValue(MutableString(position.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->setValue(MutableString(position.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->setValue(MutableString(position.getZ()));
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::updatePointParticleSystemEmitter(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ParticleSystemEditorTabController::updateBoundingBoxParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension) {
+	//
+	try {
+		Matrix4x4 rotationMatrix;
+		rotationMatrix.identity();
+		rotationMatrix.setAxes(axis0, axis1, axis2);
+		auto rotation = rotationMatrix.computeEulerAngles();
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(2));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("box");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->setValue(MutableString(halfExtension.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->setValue(MutableString(halfExtension.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->setValue(MutableString(halfExtension.getZ()));
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::updateBoundingBoxParticleSystemEmitter(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ParticleSystemEditorTabController::updateCircleParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius) {
+	//
+	try {
+		Matrix4x4 rotationMatrix;
+		rotationMatrix.identity();
+		rotationMatrix.setAxes(axis0, Vector3::computeCrossProduct(axis0, axis1), axis1);
+		auto rotation = rotationMatrix.computeEulerAngles();
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(3));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("circle");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_radius"))->getController()->setValue(MutableString(radius));
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::updateCircleParticleSystemEmitter(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ParticleSystemEditorTabController::updateRadialParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius) {
+	//
+	try {
+		Matrix4x4 rotationMatrix;
+		rotationMatrix.identity();
+		rotationMatrix.setAxes(axis0, Vector3::computeCrossProduct(axis0, axis1), axis1);
+		auto rotation = rotationMatrix.computeEulerAngles();
+
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(4));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("radial");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->setValue(MutableString(rotation.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->setValue(MutableString(rotation.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->setValue(MutableString(rotation.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->setValue(MutableString(radius));
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::updateRadialParticleSystemEmitter(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ParticleSystemEditorTabController::updateSphereParticleSystemEmitter(const Vector3& center, float radius) {
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->setValue(MutableString(5));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type_details"))->getActiveConditions().set("sphere");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_x"))->getController()->setValue(MutableString(center.getX()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->setValue(MutableString(center.getY()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->setValue(MutableString(center.getZ()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->setValue(MutableString(radius));
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::updateSphereParticleSystemEmitter(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }

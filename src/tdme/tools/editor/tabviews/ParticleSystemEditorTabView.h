@@ -9,6 +9,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/tools/editor/misc/Gizmo.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -21,10 +22,12 @@ using std::string;
 using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::prototype::Prototype;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
+using tdme::tools::editor::misc::Gizmo;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -43,6 +46,7 @@ class tdme::tools::editor::tabviews::ParticleSystemEditorTabView final
 	: public TabView
 	, public PlayableSoundView
 	, protected CameraRotationInputHandlerEventHandler
+	, protected Gizmo
 {
 protected:
 	Audio* audio { nullptr };
@@ -63,6 +67,11 @@ private:
 
 	int64_t audioStarted;
 	int64_t audioOffset;
+
+	int particleSystemIdx { -1 };
+	Vector3 totalDeltaScale;
+	int mouseDownLastX { -1 };
+	int mouseDownLastY { -1 };
 
 protected:
 	/**
@@ -140,4 +149,33 @@ public:
 	 */
 	void uninitParticleSystem();
 
+	/**
+	 * @return particle system index
+	 */
+	int getParticleSystemIndex();
+
+	/**
+	 * Set particle system index, the particle system to edit
+	 * @param idx index
+	 * @param changeOutlinerSelection change outliner selection
+	 */
+	void setParticleSystemIndex(int idx, bool changeOutlinerSelection = true);
+
+	/**
+	 * Update GIZMO
+	 */
+	void updateGizmo();
+
+	/**
+	 * Set GIZMO rotation
+	 * @param transformations transformations
+	 */
+	void setGizmoRotation(const Transformations& transformations);
+
+	/**
+	 * Apply particle system transformations
+	 * @param particleSystemEntity particle system entity
+	 * @param guiOnly GUI only
+	 */
+	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
 };

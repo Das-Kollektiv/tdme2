@@ -9,6 +9,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
@@ -25,6 +26,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -274,6 +276,49 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * Update point particle system emitter
+	 * @param position position
+	 */
+	void updatePointParticleSystemEmitter(const Vector3& position);
+
+	/**
+	 * Update bounding box particle system emitter
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param halfExtension half extension
+	 */
+	void updateBoundingBoxParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+
+	/**
+	 * Update circle particle system emitter
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param radius radius
+	 */
+	void updateCircleParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius);
+
+	/**
+	 * Update radial particle system emitter
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param radius radius
+	 */
+	void updateRadialParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius);
+
+	/**
+	 * Update sphere particle system emitter
+	 * @param center center
+	 * @param radius radius
+	 */
+	void updateSphereParticleSystemEmitter(const Vector3& center, float radius);
 
 	/**
 	 * Shows the error pop up
