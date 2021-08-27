@@ -177,6 +177,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 					break;
 				}
 			}
+			for (auto& applyFPSNode: applyFPSNodes) {
+				if (node->getId() == applyFPSNode) {
+					applyParticleSystemDetails(particleSystemIdx);
+					break;
+				}
+			}
 			for (auto& applyBaseNode: applyBaseNodes) {
 				if (node->getId() == applyBaseNode) {
 					applyParticleSystemDetails(particleSystemIdx);

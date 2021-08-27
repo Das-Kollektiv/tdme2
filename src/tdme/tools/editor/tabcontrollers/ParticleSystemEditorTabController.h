@@ -61,6 +61,12 @@ private:
 		"particleemitter_type_details"
 	};
 
+	array<string, 6> applyOPSNodes {
+		"particletype_object_scale",
+		"particletype_object_maxcount",
+		"particletype_object_autoemit"
+	};
+
 	array<string, 6> applyPPSNodes {
 		"particletype_point_size",
 		"particletype_point_maxcount",
@@ -70,10 +76,12 @@ private:
 		"particletype_point_autoemit"
 	};
 
-	array<string, 6> applyOPSNodes {
-		"particletype_object_scale",
-		"particletype_object_maxcount",
-		"particletype_object_autoemit"
+	array<string, 5> applyFPSNodes {
+		"particletype_fog_size",
+		"particletype_fog_maxcount",
+		"particletype_fog_horizontal_sprites",
+		"particletype_fog_vertical_sprites",
+		"particletype_fog_fps",
 	};
 
 	array<string, 24> applyBBPENodes {
