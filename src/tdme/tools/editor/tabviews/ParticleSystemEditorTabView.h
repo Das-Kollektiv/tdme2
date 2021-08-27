@@ -32,6 +32,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
+using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::views::EditorView;
@@ -59,6 +60,7 @@ private:
 	Prototype* prototype { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	ParticleSystemEditorTabController* particleSystemEditorTabController { nullptr };
+	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	PrototypeSoundsSubView* prototypeSoundsView { nullptr };
 	TabView::OutlinerState outlinerState;

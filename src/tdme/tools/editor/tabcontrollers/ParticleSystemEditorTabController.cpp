@@ -43,6 +43,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 #include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
@@ -95,6 +96,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
@@ -113,12 +115,14 @@ ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSys
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, prototypePhysicsSubController->getView());
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
 }
 
 ParticleSystemEditorTabController::~ParticleSystemEditorTabController() {
 	delete basePropertiesSubController;
 	delete prototypePhysicsSubController;
+	delete prototypeDisplaySubController;
 	delete prototypeSoundsSubController;
 }
 
@@ -136,6 +140,7 @@ void ParticleSystemEditorTabController::initialize(GUIScreenNode* screenNode)
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
+	prototypeDisplaySubController->initialize(screenNode);
 	prototypeSoundsSubController->initialize(screenNode);
 	setOutlinerContent();
 }
@@ -229,6 +234,7 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 			}
 		}
 		basePropertiesSubController->onValueChanged(node, view->getPrototype());
+		prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 		prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
 	}

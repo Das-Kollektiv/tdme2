@@ -31,6 +31,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
@@ -47,6 +48,7 @@ class tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController fin
 
 private:
 	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
 	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
 	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
 	ParticleSystemEditorTabView* view { nullptr };
@@ -199,7 +201,14 @@ public:
 	virtual ~ParticleSystemEditorTabController();
 
 	/**
-	 * @return prototype bounding volume sub screen controller
+	 * @return display sub screen controller
+	 */
+	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
+		return prototypeDisplaySubController;
+	}
+
+	/**
+	 * @return pyhsics sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
 		return prototypePhysicsSubController;

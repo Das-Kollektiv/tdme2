@@ -26,9 +26,11 @@
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 #include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 #include <tdme/gui/GUI.h>
@@ -67,9 +69,11 @@ using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabviews::TabView;
+using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::views::EditorView;
@@ -239,6 +243,7 @@ void ParticleSystemEditorTabView::display()
 	}
 
 	// rendering
+	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
 	engine->display();
 }
@@ -249,6 +254,7 @@ void ParticleSystemEditorTabView::initialize()
 		particleSystemEditorTabController = new ParticleSystemEditorTabController(this);
 		particleSystemEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypePhysicsView = particleSystemEditorTabController->getPrototypePhysicsSubController()->getView();
+		prototypeDisplayView = particleSystemEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypeSoundsView = particleSystemEditorTabController->getPrototypeSoundsSubController()->getView();
 	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemEditorTabView::initialize(): An error occurred: "));

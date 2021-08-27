@@ -342,10 +342,6 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));
 }
 
-void PrototypeDisplaySubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
-{
-}
-
 void PrototypeDisplaySubController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);

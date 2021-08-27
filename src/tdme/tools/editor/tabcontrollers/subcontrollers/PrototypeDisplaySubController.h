@@ -168,14 +168,6 @@ public:
 	void onValueChanged(GUIElementNode* node, Prototype* prototype);
 
 	/**
-	 * On action performed
-	 * @param type type
-	 * @param node node
-	 * @param prototype prototype
-	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
-
-	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

@@ -2052,7 +2052,6 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 {
 	auto prototype = view->getPrototype();
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
-	prototypeDisplaySubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
