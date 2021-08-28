@@ -326,7 +326,6 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 		virtual void performAction() {
 			editorView->reloadTabOutliner(outlinerNode);
-			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 	};
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, string("sounds") + "." + newSoundName));

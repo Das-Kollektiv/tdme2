@@ -6,6 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -29,6 +30,7 @@ using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::PartitionNone;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -83,6 +85,7 @@ void EditorView::handleInputEvents()
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = event.getXUnscaled() - left;
 			auto eventY = event.getYUnscaled() - top;
+			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) continue;
 			event.setX(eventX);
 			event.setY(eventY);
 			event.setXUnscaled(eventX);
@@ -184,6 +187,7 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 		if (newSelectionValue.empty() == false) outlinerState.value = newSelectionValue;
 		editorScreenController->restoreOutlinerState(outlinerState);
 	}
+	editorScreenController->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorScreenController->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {

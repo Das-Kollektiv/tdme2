@@ -228,6 +228,7 @@ void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const st
 		boundingVolumeIdxActivated = PrototypePhysicsSubView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->endEditingBoundingVolume(prototype);
+		view->removeGizmo();
 	}
 }
 
@@ -724,7 +725,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
 						}
 						prototypePhysicsSubController->editorView->reloadTabOutliner("physics");
-						prototypePhysicsSubController->updateDetails(prototype, "physics");
 
 						//
 						for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
@@ -809,7 +809,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
 						}
 						prototypePhysicsSubController->editorView->reloadTabOutliner("physics");
-						prototypePhysicsSubController->updateDetails(prototype, "physics");
 
 						//
 						for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
@@ -867,7 +866,6 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 							prototypePhysicsSubController->view->setupModelBoundingVolume(prototype, i);
 						}
 						prototypePhysicsSubController->editorView->reloadTabOutliner("physics");
-						prototypePhysicsSubController->updateDetails(prototype, "physics");
 					}
 				}
 				OnDeleteAction(PrototypePhysicsSubController* prototypePhysicsSubController, Prototype* prototype): prototypePhysicsSubController(prototypePhysicsSubController), prototype(prototype) {

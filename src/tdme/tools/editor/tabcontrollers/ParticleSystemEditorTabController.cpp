@@ -164,16 +164,44 @@ void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, co
 
 void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	Console::println("ParticleSystemEditorTabController::onValueChanged(): " + node->getId());
+	Console::println("ParticleSystemEditorTabController::onValueChanged(): " + node->getId() + ": " + node->getController()->getValue().getString());
+
+	//
+	if (node->getId() == "dropdown_outliner_add") {
+		if (node->getController()->getValue().getString() == "particlesystem") {
+			// TODO: move me into a method as I am using it also in context menu, too lazy right now :D
+			auto prototype = view->getPrototype();
+			if (prototype == nullptr) return;
+			auto particleSystem = prototype->addParticleSystem();
+			if (particleSystem == nullptr) return;
+			auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
+
+			//
+			class ReloadTabOutlinerAction: public Action {
+			private:
+				ParticleSystemEditorTabController* particleSystemEditorTabController;
+				string outlinerNode;
+			public:
+				ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
+				virtual void performAction() {
+					particleSystemEditorTabController->view->uninitParticleSystem();
+					auto editorView = particleSystemEditorTabController->view->getEditorView();
+					editorView->reloadTabOutliner(outlinerNode);
+					particleSystemEditorTabController->view->initParticleSystem();
+				}
+			};
+			Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(this, "particlesystems." + to_string(particleSystemIdx)));
+		}
+	} else
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		updateDetails(outlinerNode);
-		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+		if (StringTools::startsWith(view->getEditorView()->getScreenController()->getOutlinerSelection(), "particlesystems.") == true) {
 			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 			view->setParticleSystemIndex(particleSystemIdx, false);
 		} else {
 			view->setParticleSystemIndex(-1, false);
 		}
+		updateDetails(outlinerNode);
 	} else {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
@@ -233,11 +261,12 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 				}
 			}
 		}
-		basePropertiesSubController->onValueChanged(node, view->getPrototype());
-		prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-		prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-		prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
 	}
+	//
+	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+	prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
 }
 
 void ParticleSystemEditorTabController::onFocus(GUIElementNode* node) {
@@ -283,7 +312,6 @@ void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* n
 							particleSystemEditorTabController->view->uninitParticleSystem();
 							auto editorView = particleSystemEditorTabController->view->getEditorView();
 							editorView->reloadTabOutliner(outlinerNode);
-							editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
 					};
@@ -325,7 +353,6 @@ void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* n
 							particleSystemEditorTabController->view->uninitParticleSystem();
 							auto editorView = particleSystemEditorTabController->view->getEditorView();
 							editorView->reloadTabOutliner(outlinerNode);
-							editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
 					};
@@ -1119,6 +1146,15 @@ void ParticleSystemEditorTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void ParticleSystemEditorTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(
+		string("<dropdown-option text=\"Property\" value=\"property\" />\n") +
+		string("<dropdown-option text=\"BV\" value=\"boundingvolume\" />\n") +
+		string("<dropdown-option text=\"PS\" value=\"particlesystem\" />\n") +
+		string("<dropdown-option text=\"Sound\" value=\"sound\" />\n")
+	);
+}
+
 void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSystemIdx) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
@@ -1671,6 +1707,7 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 }
 
 void ParticleSystemEditorTabController::updateDetails(const string& outlinerNode) {
+	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
 		auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 		setParticleSystemDetails(particleSystemIdx);

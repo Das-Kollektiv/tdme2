@@ -42,6 +42,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -87,6 +88,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 ParticleSystemEditorTabView::ParticleSystemEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype): Gizmo(nullptr, "spsv")
@@ -227,7 +229,6 @@ void ParticleSystemEditorTabView::handleInputEvents()
 			}
 		}
 	} else {
-		setParticleSystemIndex(-1);
 		prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	}
 	cameraRotationInputHandler->handleInputEvents();
@@ -277,6 +278,7 @@ Engine* ParticleSystemEditorTabView::getEngine() {
 }
 
 void ParticleSystemEditorTabView::activate() {
+	particleSystemEditorTabController->setOutlinerAddDropDownContent();
 	particleSystemEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	particleSystemEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
@@ -343,6 +345,7 @@ int ParticleSystemEditorTabView::getParticleSystemIndex() {
 }
 
 void ParticleSystemEditorTabView::setParticleSystemIndex(int idx, bool changeOutlinerSelection) {
+	if (particleSystemIdx == idx) return;
 	particleSystemIdx = idx;
 	totalDeltaScale.set(0.0, 0.0f, 0.0f);
 	if (particleSystemIdx == -1) {

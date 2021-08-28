@@ -269,6 +269,11 @@ public:
 	void setOutlinerContent();
 
 	/**
+	 * Set outliner add drop down content
+	 */
+	void setOutlinerAddDropDownContent();
+
+	/**
 	 * Set particle system details
 	 * @param particleSystemIdx particle system index
 	 */

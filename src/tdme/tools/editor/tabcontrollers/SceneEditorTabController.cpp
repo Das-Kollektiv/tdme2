@@ -353,7 +353,6 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 							virtual void performAction() {
 								editorView->reloadTabOutliner(outlinerNode);
-								editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 							}
 						};
 						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights.light" + to_string(light->getId())));
@@ -397,7 +396,6 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 							virtual void performAction() {
 								editorView->reloadTabOutliner(outlinerNode);
-								editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 							}
 						};
 						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights"));
@@ -1238,7 +1236,6 @@ void SceneEditorTabController::onReplacePrototype() {
 					ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 					virtual void performAction() {
 						editorView->reloadTabOutliner(outlinerNode);
-						editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 					}
 				};
 				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
@@ -1318,7 +1315,6 @@ void SceneEditorTabController::renameEntity() {
 		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
 		virtual void performAction() {
 			editorView->reloadTabOutliner(outlinerNode);
-			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 	};
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), "scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():"")));

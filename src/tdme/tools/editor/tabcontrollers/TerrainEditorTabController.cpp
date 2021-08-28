@@ -325,7 +325,6 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 					public:
 						void performAction() override {
 							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.waters");
-							terrainEditorTabController->updateDetails("terrain.waters");
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 						}
@@ -365,7 +364,6 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 							auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 							if (terrain != nullptr) outlinerNode = "terrain.foliage." + to_string(terrain->getBrushes().size() - 1);
 							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-							terrainEditorTabController->updateDetails(outlinerNode);
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 						}
@@ -409,7 +407,6 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 					public:
 						void performAction() override {
 							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-							terrainEditorTabController->updateDetails(outlinerNode);
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
 						}
@@ -455,7 +452,6 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 					public:
 						void performAction() override {
 							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-							terrainEditorTabController->updateDetails(outlinerNode);
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
 						}
@@ -490,9 +486,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 					class ReloadOutlinerAction: public Action {
 					public:
 						void performAction() override {
-							string outlinerNode = "terrain.foliage";
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-							terrainEditorTabController->updateDetails(outlinerNode);
+							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage");
 						}
 						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 						}
