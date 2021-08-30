@@ -113,19 +113,6 @@ ParticleSystemEditorTabView::~ParticleSystemEditorTabView() {
 	delete particleSystemEditorTabController;
 }
 
-EditorView* ParticleSystemEditorTabView::getEditorView() {
-	return editorView;
-}
-
-TabController* ParticleSystemEditorTabView::getTabController() {
-	return particleSystemEditorTabController;
-}
-
-PopUps* ParticleSystemEditorTabView::getPopUps()
-{
-	return popUps;
-}
-
 void ParticleSystemEditorTabView::handleInputEvents()
 {
 	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == false) {

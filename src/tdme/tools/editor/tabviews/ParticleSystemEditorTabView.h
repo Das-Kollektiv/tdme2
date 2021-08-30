@@ -12,6 +12,7 @@
 #include <tdme/tools/editor/misc/Gizmo.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
@@ -102,17 +103,23 @@ public:
 	/**
 	 * @return editor view
 	 */
-	EditorView* getEditorView();
+	inline EditorView* getEditorView() {
+		return editorView;
+	}
 
 	/**
 	 * @return associated tab controller
 	 */
-	TabController* getTabController();
+	inline TabController* getTabController() override {
+		return particleSystemEditorTabController;
+	}
 
 	/**
 	 * @return pop up views
 	 */
-	PopUps* getPopUps();
+	inline PopUps* getPopUps() {
+		return popUps;
+	}
 
 	/**
 	 * @return prototype
