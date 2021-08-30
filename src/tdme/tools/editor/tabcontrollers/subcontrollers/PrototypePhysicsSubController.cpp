@@ -151,6 +151,7 @@ void PrototypePhysicsSubController::createOutlinerPhysicsXML(Prototype* prototyp
 
 void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
 	auto physics = prototype->getPhysics();
+	if (physics == nullptr) return;
 
 	editorView->setDetailsContent(
 		"<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n"
@@ -312,7 +313,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 	if (boundingVolume == nullptr) return;
 
 	editorView->setDetailsContent(
-		string("<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n") +
+		(physics != nullptr?string("<template id=\"details_physics\" src=\"resources/engine/gui/template_details_physics.xml\" />\n"):string()) +
 		string("<template id=\"details_boundingvolume\" src=\"resources/engine/gui/template_details_boundingvolume.xml\" />\n")
 	);
 
@@ -369,28 +370,30 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 
 	try {
 		// physics
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_physics"))->getActiveConditions().add("open");
+		if (physics != nullptr) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_physics"))->getActiveConditions().add("open");
 
-		if (physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("collisionbody"));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("open");
-		} else
-		if (physics->getType() == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("dynamicrigidbody"));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("dynamic");
-		} else
-		if (physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("staticrigidbody"));
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("static");
-		} else {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("none"));
+			if (physics->getType() == PrototypePhysics_BodyType::COLLISION_BODY) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("collisionbody"));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("open");
+			} else
+			if (physics->getType() == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("dynamicrigidbody"));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("dynamic");
+			} else
+			if (physics->getType() == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("staticrigidbody"));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype_details"))->getActiveConditions().add("static");
+			} else {
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_bodytype"))->getController()->setValue(MutableString("none"));
+			}
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->setValue(physics->getInertiaTensor().getX());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->setValue(physics->getInertiaTensor().getY());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->setValue(physics->getInertiaTensor().getZ());
 		}
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->setValue(MutableString(physics->getMass()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->setValue(MutableString(physics->getRestitution()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->setValue(MutableString(physics->getFriction()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->setValue(physics->getInertiaTensor().getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->setValue(physics->getInertiaTensor().getY());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->setValue(physics->getInertiaTensor().getZ());
 
 		// bounding volume
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_boundingvolume"))->getActiveConditions().add("open");

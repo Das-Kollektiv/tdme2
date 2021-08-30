@@ -9,7 +9,9 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/TriggerEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -25,7 +27,9 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::views::EditorView;
+using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -41,7 +45,6 @@ TriggerEditorTabView::TriggerEditorTabView(EditorView* editorView, const string&
 	engine = Engine::createOffScreenInstance(512, 512, true, true);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
-	Vector3 objectScale;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
@@ -49,7 +52,7 @@ TriggerEditorTabView::TriggerEditorTabView(EditorView* editorView, const string&
 
 TriggerEditorTabView::~TriggerEditorTabView() {
 	delete prototype;
-	delete emptyEditorTabController;
+	delete triggerEditorTabController;
 	delete cameraRotationInputHandler;
 	delete engine;
 
@@ -57,18 +60,22 @@ TriggerEditorTabView::~TriggerEditorTabView() {
 
 void TriggerEditorTabView::handleInputEvents()
 {
+	prototypePhysicsView->handleInputEvents(prototype, objectScale);
+	cameraRotationInputHandler->handleInputEvents();
 }
 
 void TriggerEditorTabView::display()
 {
+	prototypePhysicsView->display(prototype);
 	engine->display();
 }
 
 void TriggerEditorTabView::initialize()
 {
 	try {
-		emptyEditorTabController = new TriggerEditorTabController(this);
-		emptyEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		triggerEditorTabController = new TriggerEditorTabController(this);
+		triggerEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		prototypePhysicsView = triggerEditorTabController->getPrototypePhysicsSubController()->getView();
 	} catch (Exception& exception) {
 		Console::print(string("TriggerEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -89,10 +96,10 @@ Engine* TriggerEditorTabView::getEngine() {
 }
 
 void TriggerEditorTabView::activate() {
-	emptyEditorTabController->setOutlinerAddDropDownContent();
-	emptyEditorTabController->setOutlinerContent();
+	triggerEditorTabController->setOutlinerAddDropDownContent();
+	triggerEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
-	emptyEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+	triggerEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void TriggerEditorTabView::deactivate() {
@@ -100,10 +107,18 @@ void TriggerEditorTabView::deactivate() {
 }
 
 void TriggerEditorTabView::reloadOutliner() {
-	emptyEditorTabController->setOutlinerContent();
-	emptyEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+	triggerEditorTabController->setOutlinerContent();
+	triggerEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void TriggerEditorTabView::saveFile(const string& pathName, const string& fileName) {
 	PrototypeWriter::write(pathName, fileName, prototype);
+}
+
+void TriggerEditorTabView::onCameraRotation() {
+	prototypePhysicsView->updateGizmo(prototype);
+}
+
+void TriggerEditorTabView::onCameraScale() {
+	prototypePhysicsView->updateGizmo(prototype);
 }

@@ -26,6 +26,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::utilities::MutableString;
@@ -41,10 +42,12 @@ class tdme::tools::editor::tabcontrollers::TriggerEditorTabController final
 
 private:
 	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
 	TriggerEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	FileDialogPath emptyPath;
+	FileDialogPath triggerPath;
+	FileDialogPath modelPath;
 
 public:
 	/**
@@ -75,6 +78,13 @@ public:
 	 * @return audio path
 	 */
 	FileDialogPath* getAudioPath();
+
+	/**
+	 * @return prototype bounding volume sub screen controller
+	 */
+	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
+		return prototypePhysicsSubController;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

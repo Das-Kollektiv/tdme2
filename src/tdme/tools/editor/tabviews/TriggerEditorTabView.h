@@ -7,9 +7,11 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TriggerEditorTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
@@ -21,9 +23,11 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
+using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::views::EditorView;
 
 /**
@@ -33,6 +37,7 @@ using tdme::tools::editor::views::EditorView;
  */
 class tdme::tools::editor::tabviews::TriggerEditorTabView final
 	: public TabView
+	, protected CameraRotationInputHandlerEventHandler
 {
 protected:
 	Engine* engine { nullptr };
@@ -41,11 +46,23 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	TriggerEditorTabController* emptyEditorTabController { nullptr };
+	TriggerEditorTabController* triggerEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 
 	Prototype* prototype { nullptr };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
+	Vector3 objectScale;
+
+	/**
+	 * On rotation event to be overloaded
+	 */
+	void onCameraRotation() override;
+
+	/**
+	 * On scale event to be overloaded
+	 */
+	void onCameraScale() override;
 
 public:
 	/**
@@ -72,7 +89,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() {
-		return emptyEditorTabController;
+		return triggerEditorTabController;
 	}
 
 	/**

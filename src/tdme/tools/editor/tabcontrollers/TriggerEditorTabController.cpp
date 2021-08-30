@@ -7,14 +7,17 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
 #include <tdme/utilities/Console.h>
@@ -28,8 +31,10 @@ using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
 using tdme::engine::prototype::Prototype;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -47,9 +52,11 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
 }
 
 TriggerEditorTabController::~TriggerEditorTabController() {
+	delete prototypePhysicsSubController;
 	delete basePropertiesSubController;
 }
 
@@ -66,6 +73,7 @@ void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
+	prototypePhysicsSubController->initialize(screenNode);
 }
 
 void TriggerEditorTabController::dispose()
@@ -88,27 +96,27 @@ void TriggerEditorTabController::save()
 
 void TriggerEditorTabController::saveAs()
 {
-	class OnEmptySave: public virtual Action
+	class OnTriggerSave: public virtual Action
 	{
 	public:
 		void performAction() override {
 			try {
-				emptyEditorTabController->view->saveFile(
-					emptyEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					emptyEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				triggerEditorTabController->view->saveFile(
+					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				emptyEditorTabController->emptyPath.setPath(
-					emptyEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				triggerEditorTabController->triggerPath.setPath(
+					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 				);
 			} catch (Exception& exception) {
-				emptyEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
-			emptyEditorTabController->popUps->getFileDialogScreenController()->close();
+			triggerEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
-		OnEmptySave(TriggerEditorTabController* modelEditorTabController): emptyEditorTabController(modelEditorTabController) {
+		OnTriggerSave(TriggerEditorTabController* triggerEditorTabController): triggerEditorTabController(triggerEditorTabController) {
 		}
 	private:
-		TriggerEditorTabController* emptyEditorTabController;
+		TriggerEditorTabController* triggerEditorTabController;
 	};
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
@@ -116,18 +124,23 @@ void TriggerEditorTabController::saveAs()
 		"tempty"
 	};
 	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):emptyPath.getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):triggerPath.getPath(),
 		"Save to: ",
 		extensions,
 		Tools::getFileName(fileName),
 		false,
-		new OnEmptySave(this)
+		new OnTriggerSave(this)
 	);
 }
 
 void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		updateDetails(outlinerNode);
+	}
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 }
 
 void TriggerEditorTabController::onFocus(GUIElementNode* node) {
@@ -140,12 +153,13 @@ void TriggerEditorTabController::onUnfocus(GUIElementNode* node) {
 
 void TriggerEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 }
 
 void TriggerEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	auto prototype = view->getPrototype();
-	basePropertiesSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
+	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void TriggerEditorTabController::setOutlinerContent() {
@@ -154,19 +168,22 @@ void TriggerEditorTabController::setOutlinerContent() {
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);}
 
 void TriggerEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(
-		string("<dropdown-option text=\"Property\" value=\"property\" />\n")
+		string("<dropdown-option text=\"Property\" value=\"property\" />\n") +
+		string("<dropdown-option text=\"BV\" value=\"boundingvolume\" />\n")
 	);
 }
 
 void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 }
 
 void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)

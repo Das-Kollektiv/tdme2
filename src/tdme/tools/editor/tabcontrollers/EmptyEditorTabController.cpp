@@ -105,7 +105,7 @@ void EmptyEditorTabController::saveAs()
 			}
 			emptyEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
-		OnEmptySave(EmptyEditorTabController* modelEditorTabController): emptyEditorTabController(modelEditorTabController) {
+		OnEmptySave(EmptyEditorTabController* emptyEditorTabController): emptyEditorTabController(emptyEditorTabController) {
 		}
 	private:
 		EmptyEditorTabController* emptyEditorTabController;
