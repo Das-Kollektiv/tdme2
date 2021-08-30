@@ -9,8 +9,10 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/TriggerEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
@@ -27,8 +29,10 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::views::EditorView;
+using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
@@ -66,6 +70,7 @@ void TriggerEditorTabView::handleInputEvents()
 
 void TriggerEditorTabView::display()
 {
+	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
 	engine->display();
 }
@@ -75,6 +80,7 @@ void TriggerEditorTabView::initialize()
 	try {
 		triggerEditorTabController = new TriggerEditorTabController(this);
 		triggerEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		prototypeDisplayView = triggerEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypePhysicsView = triggerEditorTabController->getPrototypePhysicsSubController()->getView();
 	} catch (Exception& exception) {
 		Console::print(string("TriggerEditorTabView::initialize(): An error occurred: "));

@@ -17,9 +17,11 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
+#include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -41,7 +43,10 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
+using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -53,9 +58,11 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
 TriggerEditorTabController::~TriggerEditorTabController() {
+	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 	delete basePropertiesSubController;
 }
@@ -73,6 +80,7 @@ void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
+	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
 }
 
@@ -140,6 +148,7 @@ void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
 		updateDetails(outlinerNode);
 	}
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 }
 
@@ -183,7 +192,9 @@ void TriggerEditorTabController::setOutlinerAddDropDownContent() {
 void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+	prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
+	prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
 }
 
 void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)

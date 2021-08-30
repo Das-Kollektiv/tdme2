@@ -101,7 +101,7 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 	if (prototypeBoundingVolume == nullptr) return;
 
 	{
-		Vector3 objectScale(1.0f, 1.0f, 1.0f);
+		Vector3 objectScale(0.15f, 0.15f, 0.15f); // TODO: have the default not as fixed constant here (this relates to bounding box fallback in Tools::setupPrototype() if none available)
 		auto modelEntity = engine->getEntity("model");
 		if (modelEntity != nullptr) objectScale = modelEntity->getScale();
 		auto modelBoundingVolumeEntityId = Prototype::MODEL_BOUNDINGVOLUME_IDS[idx];

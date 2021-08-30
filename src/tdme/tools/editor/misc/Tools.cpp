@@ -349,10 +349,12 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		}
 	}
 
+	//
 	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
 
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
+	if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 5.0f;
 	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
 
 	if (modelEntity != nullptr) {
@@ -363,8 +365,8 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	// generate ground
 	auto ground = createGroundModel(
-		Math::ceil((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) * 1.0f),
-		Math::ceil((entityBoundingBoxToUse->getMax().getZ() - entityBoundingBoxToUse->getMin().getZ()) * 1.0f),
+		Math::ceil(maxAxisDimension),
+		Math::ceil(maxAxisDimension),
 		entityBoundingBoxToUse->getMin().getY() - Math::EPSILON
 	);
 	auto groundObject = new Object3D("ground", ground);
