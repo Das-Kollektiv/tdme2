@@ -31,7 +31,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->uiScreenNode = screenNode;
-	engine = Engine::createOffScreenInstance(512, 512, false);
+	engine = Engine::createOffScreenInstance(512, 512, false, false);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);

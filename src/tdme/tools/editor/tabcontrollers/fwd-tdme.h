@@ -5,12 +5,13 @@ namespace tdme {
 namespace tools {
 namespace editor {
 namespace tabcontrollers {
-	struct TabController;
+	class EmptyEditorTabController;
 	class FontTabController;
 	class ModelEditorTabController;
 	class ParticleSystemEditorTabController;
 	class SceneEditorTabController;
 	class SoundTabController;
+	struct TabController;
 	class TerrainEditorTabController;
 	class TextureTabController;
 	class TextEditorTabController;

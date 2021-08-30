@@ -217,7 +217,7 @@ void Tools::setDefaultLight(Light* light)
 
 void Tools::oseInit()
 {
-	osEngine = Engine::createOffScreenInstance(128, 128, false);
+	osEngine = Engine::createOffScreenInstance(128, 128, false, true);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
 	oseScale = 0.75f;

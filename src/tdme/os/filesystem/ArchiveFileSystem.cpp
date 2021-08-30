@@ -432,7 +432,7 @@ const string ArchiveFileSystem::computeSHA256Hash() {
 
 	SHA256 ctx = SHA256();
 	ctx.init();
-	auto bytesRead = 0LL;
+	int64_t bytesRead = 0LL;
 	while (bytesRead < bytesTotal) {
 		auto bytesToRead = Math::min(static_cast<int64_t>(bytesTotal - bytesRead), sizeof(input));
 		ifs.read((char*)input, bytesToRead);

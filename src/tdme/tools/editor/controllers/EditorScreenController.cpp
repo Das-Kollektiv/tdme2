@@ -38,6 +38,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
 #include <tdme/tools/editor/tabviews/FontTabView.h>
 #include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
@@ -93,6 +94,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::tools::editor::tabviews::FontTabView;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
@@ -490,6 +492,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
+				// tdme empty
+				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -623,6 +627,12 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					icon = "{$icon.type_script}";
 					iconBig = "{$icon.type_script_big}";
 					typeColor = "{$color.type_script}";
+				}
+				// tdme empty
+				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
 				}
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
@@ -759,10 +769,13 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_EMPTYPROTOTYPE, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN_TEXT;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
+		fileType = FILETYPE_EMPTYPROTOTYPE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		fileType = FILETYPE_SCENE;
@@ -844,6 +857,19 @@ void EditorScreenController::onOpenFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
 					tabView = new ModelEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_EMPTYPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_EMPTYEDITOR;
+					tabView = new EmptyEditorTabView(view, tabId, prototype);
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}

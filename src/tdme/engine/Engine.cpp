@@ -319,7 +319,7 @@ Engine* Engine::getInstance()
 	return instance;
 }
 
-Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping)
+Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer)
 {
 	if (instance == nullptr || instance->initialized == false) {
 		Console::println(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
@@ -334,7 +334,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
 	offScreenEngine->entityRenderer->initialize();
 	// create framebuffers
-	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	offScreenEngine->frameBuffer = new FrameBuffer(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
 	offScreenEngine->camera = new Camera(renderer);

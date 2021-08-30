@@ -5,12 +5,13 @@ namespace tdme {
 namespace tools {
 namespace editor {
 namespace tabviews {
-	struct TabView;
+	class EmptyEditorTabView;
 	class FontTabView;
 	class ModelEditorTabView;
 	class ParticleSystemEditorTabView;
 	class SceneEditorTabView;
 	class SoundTabView;
+	struct TabView;
 	class TerrainEditorTabView;
 	class TextureTabView;
 	class TextEditorTabView;
