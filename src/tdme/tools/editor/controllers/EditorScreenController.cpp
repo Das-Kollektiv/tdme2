@@ -764,7 +764,7 @@ void EditorScreenController::updateProjectPathThumbnails() {
 	}
 }
 
-void EditorScreenController::onOpenFile(const string& absoluteFileName) {
+void EditorScreenController::openFile(const string& absoluteFileName) {
 	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);

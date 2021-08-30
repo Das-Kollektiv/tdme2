@@ -258,15 +258,15 @@ public:
 	 * On open file
 	 * @param absoluteProjectFileName absolute project file name
 	 */
-	void onOpenFile(const string& absoluteFileName);
+	inline void onOpenFile(const string& absoluteFileName) {
+		openFile(absoluteFileName);
+	}
 
 	/**
 	 * Open file
 	 * @param absoluteProjectFileName absolute project file name
 	 */
-	inline void openFile(const string& absoluteFileName) {
-		onOpenFile(absoluteFileName);
-	}
+	void openFile(const string& absoluteFileName);
 
 	/**
 	 * Store outliner state
