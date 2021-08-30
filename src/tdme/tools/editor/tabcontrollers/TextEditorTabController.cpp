@@ -113,6 +113,10 @@ void TextEditorTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void TextEditorTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
 void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

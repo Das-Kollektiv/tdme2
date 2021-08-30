@@ -79,7 +79,7 @@ Engine* FontTabView::getEngine() {
 }
 
 void FontTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	fontTabController->setOutlinerAddDropDownContent();
 	fontTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());

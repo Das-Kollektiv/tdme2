@@ -161,6 +161,9 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 		};
 		entityPickingFilterPlacing = new PrototypePickingFilterPlacing(this);
 	}
+
+	//
+	outlinerState.expandedOutlinerParentOptionValues.push_back("scene");
 }
 
 SceneEditorTabView::~SceneEditorTabView() {
@@ -561,7 +564,6 @@ void SceneEditorTabView::initialize()
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	updateGrid();
 	// TODO: load settings
-	sceneEditorTabController->setOutlinerContent();
 }
 
 void SceneEditorTabView::dispose()

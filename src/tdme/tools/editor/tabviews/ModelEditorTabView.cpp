@@ -118,6 +118,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	audioOffset = -1LL;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 	setPrototype(prototype);
+	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 ModelEditorTabView::~ModelEditorTabView() {
@@ -430,7 +431,6 @@ void ModelEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
-	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::storeSettings()

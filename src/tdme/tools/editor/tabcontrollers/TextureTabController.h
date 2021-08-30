@@ -97,6 +97,11 @@ public:
 	void setOutlinerContent();
 
 	/**
+	 * Set outliner add drop down content
+	 */
+	void setOutlinerAddDropDownContent();
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

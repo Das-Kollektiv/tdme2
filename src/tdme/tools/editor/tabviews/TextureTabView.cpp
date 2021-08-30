@@ -63,7 +63,6 @@ void TextureTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 }
 
 void TextureTabView::dispose()
@@ -79,7 +78,7 @@ Engine* TextureTabView::getEngine() {
 }
 
 void TextureTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	textureTabController->setOutlinerAddDropDownContent();
 	textureTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());

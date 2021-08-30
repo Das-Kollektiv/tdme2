@@ -106,6 +106,7 @@ ParticleSystemEditorTabView::ParticleSystemEditorTabView(EditorView* editorView,
 	this->audioOffset = -1LL;
 	Gizmo::setEngine(engine);
 	initParticleSystem();
+	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 ParticleSystemEditorTabView::~ParticleSystemEditorTabView() {
@@ -262,7 +263,6 @@ void ParticleSystemEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 }
 
 void ParticleSystemEditorTabView::dispose()

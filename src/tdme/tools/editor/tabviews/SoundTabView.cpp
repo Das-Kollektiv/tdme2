@@ -72,7 +72,6 @@ void SoundTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 }
 
 void SoundTabView::dispose()
@@ -89,7 +88,7 @@ Engine* SoundTabView::getEngine() {
 }
 
 void SoundTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	soundTabController->setOutlinerAddDropDownContent();
 	soundTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());

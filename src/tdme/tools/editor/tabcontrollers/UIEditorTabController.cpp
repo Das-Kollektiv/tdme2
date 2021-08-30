@@ -148,6 +148,10 @@ void UIEditorTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void UIEditorTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
 void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

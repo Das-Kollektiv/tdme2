@@ -113,6 +113,10 @@ void SoundTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void SoundTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
 void SoundTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;

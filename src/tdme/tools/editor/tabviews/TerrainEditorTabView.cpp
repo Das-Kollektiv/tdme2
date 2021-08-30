@@ -91,6 +91,7 @@ TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string&
 		light0->setEnabled(true);
 	}
 	this->cameraInputHandler = new CameraInputHandler(engine);
+	outlinerState.expandedOutlinerParentOptionValues.push_back("terrain");
 }
 
 TerrainEditorTabView::~TerrainEditorTabView() {
@@ -292,7 +293,6 @@ void TerrainEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 	initializeTerrain();
 }
 
@@ -309,7 +309,7 @@ Engine* TerrainEditorTabView::getEngine() {
 }
 
 void TerrainEditorTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	terrainEditorTabController->setOutlinerAddDropDownContent();
 	terrainEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());

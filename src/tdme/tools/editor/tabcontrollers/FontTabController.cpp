@@ -111,6 +111,10 @@ void FontTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void FontTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
 void FontTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

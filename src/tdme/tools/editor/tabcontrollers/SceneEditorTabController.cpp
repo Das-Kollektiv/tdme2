@@ -1119,9 +1119,7 @@ void SceneEditorTabController::setOutlinerContent() {
 }
 
 void SceneEditorTabController::setOutlinerAddDropDownContent() {
-	view->getEditorView()->setOutlinerAddDropDownContent(
-		string("<dropdown-option text=\"Property\" value=\"property\" />\n")
-	);
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
 void SceneEditorTabController::setDetailsContent() {

@@ -111,6 +111,10 @@ void TextureTabController::setOutlinerContent() {
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
+void TextureTabController::setOutlinerAddDropDownContent() {
+	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
 void TextureTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

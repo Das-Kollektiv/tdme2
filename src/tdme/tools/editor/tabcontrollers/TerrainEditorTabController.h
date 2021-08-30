@@ -134,16 +134,6 @@ public:
 	GUIScreenNode* getScreenNode() override;
 
 	/**
-	 * @return model path
-	 */
-	FileDialogPath* getModelPath();
-
-	/**
-	 * @return audio path
-	 */
-	FileDialogPath* getAudioPath();
-
-	/**
 	 * @return current terrain brush operation
 	 */
 	inline Terrain2::BrushOperation getTerrainBrushOperation() {
@@ -171,6 +161,16 @@ public:
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
+	 * Set outliner content
+	 */
+	void setOutlinerContent();
+
+	/**
+	 * Set outliner add drop down content
+	 */
+	void setOutlinerAddDropDownContent();
+
+	/**
 	 * On create terrain
 	 */
 	void onCreateTerrain();
@@ -186,11 +186,6 @@ public:
 	 * @param densityStrength density/strength
 	 */
 	void setBrushDensityStrength(float densityStrength);
-
-	/**
-	 * Set outliner content
-	 */
-	void setOutlinerContent();
 
 	/**
 	 * Set terrain details

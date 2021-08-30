@@ -381,7 +381,6 @@ void TextEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 }
 
 void TextEditorTabView::dispose()
@@ -397,7 +396,7 @@ Engine* TextEditorTabView::getEngine() {
 }
 
 void TextEditorTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	textEditorTabController->setOutlinerAddDropDownContent();
 	textEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());

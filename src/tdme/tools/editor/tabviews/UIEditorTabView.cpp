@@ -36,6 +36,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
+	outlinerState.expandedOutlinerParentOptionValues.push_back("0");
 }
 
 UIEditorTabView::~UIEditorTabView() {
@@ -64,7 +65,6 @@ void UIEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
-	// TODO: reloadTabOutliner
 }
 
 void UIEditorTabView::dispose()
@@ -80,7 +80,7 @@ Engine* UIEditorTabView::getEngine() {
 }
 
 void UIEditorTabView::activate() {
-	// uiTabController->setOutlinerAddDropDownContent();
+	uiTabController->setOutlinerAddDropDownContent();
 	uiTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
 	editorView->getScreenController()->setDetailsContent(string());
