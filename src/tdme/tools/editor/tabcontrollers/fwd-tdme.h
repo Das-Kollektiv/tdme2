@@ -15,6 +15,7 @@ namespace tabcontrollers {
 	class TerrainEditorTabController;
 	class TextureTabController;
 	class TextEditorTabController;
+	class TriggerEditorTabController;
 	class UIEditorTabController;
 }  // namespace tabcontrollers
 }  // namespace editor

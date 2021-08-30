@@ -15,6 +15,7 @@ namespace tabviews {
 	class TerrainEditorTabView;
 	class TextureTabView;
 	class TextEditorTabView;
+	class TriggerEditorTabView;
 	class UIEditorTabView;
 }  // namespace tabviews
 }  // namespace editor

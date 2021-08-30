@@ -47,6 +47,7 @@
 #include <tdme/tools/editor/tabviews/TerrainEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
+#include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -103,6 +104,7 @@ using tdme::tools::editor::tabviews::SoundTabView;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::tabviews::TextEditorTabView;
+using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
@@ -494,6 +496,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
 				// tdme empty
 				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) return true;
+				// tdme trigger
+				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -634,6 +638,12 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					iconBig = "{$icon.type_prototype_big}";
 					typeColor = "{$color.type_prototype}";
 				}
+				// tdme trigger
+				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
 					icon = "{$icon.type_prototype}";
@@ -769,13 +779,16 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_EMPTYPROTOTYPE, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
+	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_EMPTYPROTOTYPE, FILETYPE_TRIGGERPROTOTYPE, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN_TEXT;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
 		fileType = FILETYPE_EMPTYPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
+		fileType = FILETYPE_TRIGGERPROTOTYPE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		fileType = FILETYPE_SCENE;
@@ -870,6 +883,19 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_EMPTYEDITOR;
 					tabView = new EmptyEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_TRIGGERPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_TRIGGEREDITOR;
+					tabView = new TriggerEditorTabView(view, tabId, prototype);
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
