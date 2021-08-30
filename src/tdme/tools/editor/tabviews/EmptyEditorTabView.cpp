@@ -3,11 +3,16 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -16,9 +21,14 @@ using std::string;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 
 using tdme::engine::Engine;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 using tdme::tools::editor::views::EditorView;
+using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -27,25 +37,22 @@ EmptyEditorTabView::EmptyEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, true, false);
+	this->prototype = prototype;
+	engine = Engine::createOffScreenInstance(512, 512, true, true);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	Vector3 objectScale;
+	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 EmptyEditorTabView::~EmptyEditorTabView() {
-}
+	delete prototype;
+	delete emptyEditorTabController;
+	delete cameraRotationInputHandler;
+	delete engine;
 
-EditorView* EmptyEditorTabView::getEditorView() {
-	return editorView;
-}
-
-TabController* EmptyEditorTabView::getTabController() {
-	return emptyEditorTabController;
-}
-
-PopUps* EmptyEditorTabView::getPopUps()
-{
-	return popUps;
 }
 
 void EmptyEditorTabView::handleInputEvents()
@@ -61,6 +68,7 @@ void EmptyEditorTabView::initialize()
 {
 	try {
 		emptyEditorTabController = new EmptyEditorTabController(this);
+		emptyEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::print(string("EmptyEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -71,7 +79,6 @@ void EmptyEditorTabView::initialize()
 void EmptyEditorTabView::dispose()
 {
 	engine->reset();
-	delete emptyEditorTabController;
 }
 
 void EmptyEditorTabView::updateRendering() {
@@ -82,7 +89,10 @@ Engine* EmptyEditorTabView::getEngine() {
 }
 
 void EmptyEditorTabView::activate() {
+	emptyEditorTabController->setOutlinerAddDropDownContent();
+	emptyEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
+	emptyEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 }
 
 void EmptyEditorTabView::deactivate() {
@@ -90,4 +100,10 @@ void EmptyEditorTabView::deactivate() {
 }
 
 void EmptyEditorTabView::reloadOutliner() {
+	emptyEditorTabController->setOutlinerContent();
+	emptyEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+}
+
+void EmptyEditorTabView::saveFile(const string& pathName, const string& fileName) {
+	PrototypeWriter::write(pathName, fileName, prototype);
 }

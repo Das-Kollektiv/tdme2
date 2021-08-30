@@ -10,6 +10,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::utilities::MutableString;
@@ -38,9 +40,11 @@ class tdme::tools::editor::tabcontrollers::EmptyEditorTabController final
 {
 
 private:
+	BasePropertiesSubController* basePropertiesSubController { nullptr };
 	EmptyEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	FileDialogPath emptyPath;
 
 public:
 	/**
@@ -84,6 +88,22 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Set outliner content
+	 */
+	void setOutlinerContent();
+
+	/**
+	 * Set outliner add drop down content
+	 */
+	void setOutlinerAddDropDownContent();
+
+	/**
+	 * Update details panel
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(const string& outlinerNode);
 
 	/**
 	 * Shows the error pop up
