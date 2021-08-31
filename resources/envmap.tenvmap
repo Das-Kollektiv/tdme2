@@ -1,0 +1,32 @@
+{
+  "version": "1.99",
+  "type": "ENVIRONMENTMAPPING",
+  "name": "envmap",
+  "descr": "",
+  "px": 0,
+  "py": 0,
+  "pz": 0,
+  "bvs": [],
+  "properties": [
+    {
+      "name": "speed",
+      "value": "4.0"
+    },
+    {
+      "name": "maxhealth",
+      "value": "100"
+    },
+    {
+      "name": "itemslots",
+      "value": "4"
+    }
+  ],
+  "cs": true,
+  "rs": true,
+  "rg": false,
+  "s": "default",
+  "sds": "default",
+  "sdsd": 10000,
+  "sps": {},
+  "spds": {}
+}
