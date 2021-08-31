@@ -23,6 +23,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::array;
@@ -49,6 +50,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
 EnvMapEditorTabController::EnvMapEditorTabController(EnvMapEditorTabView* view)
@@ -143,6 +145,22 @@ void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_environmentmapping"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_location"))->getActiveConditions().add("open");
 
+		auto frequency = view->getEnvironmentMapFrequency();
+		switch (frequency) {
+			case 60LL * 60LL * 24LL * 1000LL:
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_details"))->getActiveConditions().removeAll();
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->setValue(MutableString(1));
+				break;
+			case 0LL:
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_details"))->getActiveConditions().removeAll();
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->setValue(MutableString(2));
+				break;
+			default:
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->setValue(MutableString(3));
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_details"))->getActiveConditions().set("custom");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_value"))->getController()->setValue(MutableString(static_cast<int32_t>(frequency)));
+		}
+
 		auto renderPassMask = view->getEnvironmentMapRenderPassMask();
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_renderpass_standard"))->getController()->setValue(MutableString((renderPassMask & Entity::RENDERPASS_STANDARD) == Entity::RENDERPASS_STANDARD?"1":""));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_renderpass_sky"))->getController()->setValue(MutableString((renderPassMask & Entity::RENDERPASS_SKY) == Entity::RENDERPASS_SKY?"1":""));
@@ -166,6 +184,23 @@ void EnvMapEditorTabController::applyRenderPasses() {
 
 	//
 	try {
+		//
+		int64_t frequency = -1LL;
+		switch (Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->getValue().getString())) {
+			case 1:
+				frequency = 60LL * 60LL * 24LL * 1000LL;
+				break;
+			case 2:
+				frequency = 0LL;
+				break;
+			case 3:
+				frequency = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_value"))->getController()->getValue().getString());
+				break;
+		}
+		view->setEnvironmentMapFrequency(frequency);
+		prototype->setEnvironmentMapTimeRenderUpdateFrequency(frequency);
+
+		//
 		int32_t renderPassMask = 0;
 		renderPassMask+= required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_renderpass_standard"))->getController()->getValue().equals("1") == true?Entity::RENDERPASS_STANDARD:0;
 		renderPassMask+= required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_renderpass_sky"))->getController()->getValue().equals("1") == true?Entity::RENDERPASS_SKY:0;
@@ -193,4 +228,3 @@ void EnvMapEditorTabController::applyLocation() {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
-
