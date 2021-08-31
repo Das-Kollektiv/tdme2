@@ -6,7 +6,7 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Standard" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_standard" width="25" height="25" value="8" />
+					<checkbox id="rendersettings_renderpass_standard" width="25" height="25" value="1" />
 				</layout>
 			</layout>
 			<space height="5" />
@@ -20,21 +20,21 @@
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Terrain" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_terrain" width="25" height="25" value="2" />
+					<checkbox id="rendersettings_renderpass_terrain" width="25" height="25" value="1" />
 				</layout>
 			</layout>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Water" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_water" width="25" height="25" value="4" />
+					<checkbox id="rendersettings_renderpass_water" width="25" height="25" value="1" />
 				</layout>
 			</layout>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<text font="{$font.default}" color="{$color.font_normal}" text="Post Processing" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_postprocessing" width="25" height="25" value="16" />
+					<checkbox id="rendersettings_renderpass_postprocessing" width="25" height="25" value="1" />
 				</layout>
 			</layout>
 			<space height="5" />

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::array;
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
@@ -41,6 +43,21 @@ private:
 	EnvMapEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+
+	array<string, 9> applyNodesRenderPasses {
+		"rendersettings_renderpass_standard",
+		"rendersettings_renderpass_sky",
+		"rendersettings_renderpass_terrain",
+		"rendersettings_renderpass_water",
+		"rendersettings_renderpass_postprocessing",
+		"rendersettings_frequency"
+	};
+
+	array<string, 3> applyNodesLocation {
+		"location_translation_x",
+		"location_translation_y",
+		"location_translation_z"
+	};
 
 public:
 	/**
@@ -84,6 +101,16 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Apply render passes
+	 */
+	void applyRenderPasses();
+
+	/**
+	 * Apply location
+	 */
+	void applyLocation();
 
 	/**
 	 * Set outliner content

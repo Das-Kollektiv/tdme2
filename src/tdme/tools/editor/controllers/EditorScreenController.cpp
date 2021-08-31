@@ -935,8 +935,12 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 						"resources/engine/scenes/envmap",
 						"envmap.tscene"
 					);
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
 					tabType = EditorTabView::TABTYPE_ENVMAPEDITOR;
-					tabView = new EnvMapEditorTabView(view, tabId, scene);
+					tabView = new EnvMapEditorTabView(view, tabId, scene, prototype);
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}

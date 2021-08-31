@@ -41,12 +41,13 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EnvMapEditorTabView::EnvMapEditorTabView(EditorView* editorView, const string& tabId, Scene* scene)
+EnvMapEditorTabView::EnvMapEditorTabView(EditorView* editorView, const string& tabId, Scene* scene, Prototype* prototype)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->scene = scene;
+	this->prototype = prototype;
 	engine = Engine::createOffScreenInstance(512, 512, true, true);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
@@ -70,6 +71,7 @@ void EnvMapEditorTabView::initialize()
 {
 	try {
 		envMapEditorTabController = new EnvMapEditorTabController(this);
+		envMapEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
 		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
 		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
@@ -177,8 +179,9 @@ void EnvMapEditorTabView::initSky() {
 
 	auto environmentMapping = new EnvironmentMapping("sky_environment_mapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), BoundingBox(Vector3(-30.0f, 0.0f, -30.0f), Vector3(30.0f, 60.0f, -30.0f)));
 	environmentMapping->setFrustumCulling(false);
-	//environmentMapping->setRenderPassMask(Entity::RENDERPASS_NOFRUSTUMCULLING);
-	environmentMapping->setTimeRenderUpdateFrequency(33LL);
+	environmentMapping->setTranslation(Vector3(54.0f, 6.0f, 69.0f));
+	environmentMapping->setTimeRenderUpdateFrequency(prototype->getEnvironmentMapTimeRenderUpdateFrequency());
+	environmentMapping->setRenderPassMask(prototype->getEnvironmentMapRenderPassMask());
 	environmentMapping->update();
 	engine->addEntity(environmentMapping);
 }
@@ -198,9 +201,37 @@ void EnvMapEditorTabView::updateSky() {
 	skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
 	skyPanorama->update();
 
-	auto environmentMapping = engine->getEntity("sky_environment_mapping");
-	environmentMapping->setTranslation(Vector3(54.0f, 6.0f, 69.0f));
-	environmentMapping->update();
-
 	skyDomeTranslation+= 1.0f / 60.0;
 }
+
+const Vector3& EnvMapEditorTabView::getEnvironmentMapTranslation() {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	return environmentMapping->getTranslation();
+}
+
+void EnvMapEditorTabView::setEnvironmentMapTranslation(const Vector3& translation) {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	environmentMapping->setTranslation(translation);
+	environmentMapping->update();
+}
+
+int32_t EnvMapEditorTabView::getEnvironmentMapRenderPassMask() {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	return environmentMapping->getRenderPassMask();
+}
+
+void EnvMapEditorTabView::setEnvironmentMapRenderPassMask(int32_t renderPassMask) {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	environmentMapping->setRenderPassMask(renderPassMask);
+}
+
+int64_t EnvMapEditorTabView::getEnvironmentMapFrequency() {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	return environmentMapping->getTimeRenderUpdateFrequency();
+}
+
+void EnvMapEditorTabView::setEnvironmentMapFrequency(int64_t frequency) {
+	auto environmentMapping = dynamic_cast<EnvironmentMapping*>(engine->getEntity("sky_environment_mapping"));
+	environmentMapping->setTimeRenderUpdateFrequency(frequency);
+}
+
