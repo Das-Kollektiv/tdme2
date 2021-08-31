@@ -138,7 +138,7 @@ void EnvMapEditorTabView::initSky() {
 	skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skySphere->setShader("sky");
 	skySphere->setFrustumCulling(false);
-	skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skySphere->setTranslation(Vector3(0.0f, -20.0f, 0.0f));
 	skySphere->setScale(Vector3(300.0f/200.0f, 300.0f/200.0f, 300.0f/200.0f));
 	skySphere->update();
 	skySphere->setContributesShadows(false);
@@ -151,7 +151,7 @@ void EnvMapEditorTabView::initSky() {
 	skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skyDome->setShader("sky");
 	skyDome->setFrustumCulling(false);
-	skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyDome->setTranslation(Vector3(0.0f, -20.0f, 0.0f));
 	skyDome->setScale(Vector3(295.0f/190.0f, 295.0f/190.0f, 295.0f/190.0f));
 	skyDome->getModel()->getMaterials().begin()->second->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
 	skyDome->update();
@@ -166,7 +166,7 @@ void EnvMapEditorTabView::initSky() {
 	skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skyPanorama->setShader("sky");
 	skyPanorama->setFrustumCulling(false);
-	skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyPanorama->setTranslation(Vector3(0.0f, -20.0f, 0.0f));
 	skyPanorama->setScale(Vector3(280.0f/190.0f, 280.0f/180.0f, 280.0f/180.0f));
 	skyPanorama->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	skyPanorama->update();
@@ -185,16 +185,16 @@ void EnvMapEditorTabView::initSky() {
 
 void EnvMapEditorTabView::updateSky() {
 	auto skySphere = engine->getEntity("sky_sphere");
-	skySphere->setTranslation(engine->getCamera()->getLookFrom());
+	skySphere->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
 	skySphere->update();
 
 	auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
-	skyDome->setTranslation(engine->getCamera()->getLookFrom());
+	skyDome->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
 	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 	skyDome->update();
 
 	auto skyPanorama = engine->getEntity("sky_panorama");
-	skyPanorama->setTranslation(engine->getCamera()->getLookFrom());
+	skyPanorama->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
 	skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
 	skyPanorama->update();
 
