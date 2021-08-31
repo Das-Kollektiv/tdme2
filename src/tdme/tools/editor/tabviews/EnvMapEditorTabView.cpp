@@ -4,9 +4,15 @@
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.h>
@@ -20,8 +26,15 @@ using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::Light;
+using tdme::engine::Object3D;
 using tdme::engine::SceneConnector;
+using tdme::engine::model::Material;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
 using tdme::tools::editor::views::EditorView;
@@ -49,6 +62,7 @@ void EnvMapEditorTabView::handleInputEvents()
 
 void EnvMapEditorTabView::display()
 {
+	updateSky();
 	engine->display();
 }
 
@@ -56,6 +70,9 @@ void EnvMapEditorTabView::initialize()
 {
 	try {
 		envMapEditorTabController = new EnvMapEditorTabController(this);
+		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
+		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
+		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
 	} catch (Exception& exception) {
 		Console::print(string("EnvMapEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -82,6 +99,7 @@ void EnvMapEditorTabView::initialize()
 	cam->setLookAt(Vector3(57.434414f, 0.695241f, 67.012329f));
 	SceneConnector::setLights(engine, scene, Vector3());
 	SceneConnector::addScene(engine, scene, true, true, true, true);
+	initSky();
 }
 
 void EnvMapEditorTabView::dispose()
@@ -111,4 +129,78 @@ void EnvMapEditorTabView::deactivate() {
 void EnvMapEditorTabView::reloadOutliner() {
 	envMapEditorTabController->setOutlinerContent();
 	envMapEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
+}
+
+
+void EnvMapEditorTabView::initSky() {
+	// sky sphere
+	auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
+	skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skySphere->setShader("sky");
+	skySphere->setFrustumCulling(false);
+	skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skySphere->setScale(Vector3(300.0f/200.0f, 300.0f/200.0f, 300.0f/200.0f));
+	skySphere->update();
+	skySphere->setContributesShadows(false);
+	skySphere->setReceivesShadows(false);
+	skySphere->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skySphere);
+
+	// sky dome
+	auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
+	skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skyDome->setShader("sky");
+	skyDome->setFrustumCulling(false);
+	skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyDome->setScale(Vector3(295.0f/190.0f, 295.0f/190.0f, 295.0f/190.0f));
+	skyDome->getModel()->getMaterials().begin()->second->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+	skyDome->update();
+	skyDome->setContributesShadows(false);
+	skyDome->setReceivesShadows(false);
+	skyDome->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.7f));
+	skyDome->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skyDome);
+
+	// sky panorama
+	auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
+	skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	skyPanorama->setShader("sky");
+	skyPanorama->setFrustumCulling(false);
+	skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	skyPanorama->setScale(Vector3(280.0f/190.0f, 280.0f/180.0f, 280.0f/180.0f));
+	skyPanorama->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+	skyPanorama->update();
+	skyPanorama->setContributesShadows(false);
+	skyPanorama->setReceivesShadows(false);
+	skyPanorama->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
+	engine->addEntity(skyPanorama);
+
+	auto environmentMapping = new EnvironmentMapping("sky_environment_mapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), BoundingBox(Vector3(-30.0f, 0.0f, -30.0f), Vector3(30.0f, 60.0f, -30.0f)));
+	environmentMapping->setFrustumCulling(false);
+	//environmentMapping->setRenderPassMask(Entity::RENDERPASS_NOFRUSTUMCULLING);
+	environmentMapping->setTimeRenderUpdateFrequency(33LL);
+	environmentMapping->update();
+	engine->addEntity(environmentMapping);
+}
+
+void EnvMapEditorTabView::updateSky() {
+	auto skySphere = engine->getEntity("sky_sphere");
+	skySphere->setTranslation(engine->getCamera()->getLookFrom());
+	skySphere->update();
+
+	auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
+	skyDome->setTranslation(engine->getCamera()->getLookFrom());
+	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+	skyDome->update();
+
+	auto skyPanorama = engine->getEntity("sky_panorama");
+	skyPanorama->setTranslation(engine->getCamera()->getLookFrom());
+	skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
+	skyPanorama->update();
+
+	auto environmentMapping = engine->getEntity("sky_environment_mapping");
+	environmentMapping->setTranslation(Vector3(54.0f, 6.0f, 69.0f));
+	environmentMapping->update();
+
+	skyDomeTranslation+= 1.0f / 60.0;
 }

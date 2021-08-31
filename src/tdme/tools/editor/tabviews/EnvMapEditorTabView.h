@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -16,6 +17,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
@@ -41,6 +43,12 @@ private:
 	EnvMapEditorTabController* envMapEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	Scene* scene { nullptr };
+
+	float skyDomeTranslation { 0.0f };
+
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
 
 public:
 	/**
@@ -97,5 +105,15 @@ public:
 
 	// overridden methods
 	void updateRendering() override;
+
+	/**
+	 * Initialize sky
+	 */
+	void initSky();
+
+	/**
+	 * Update sky
+	 */
+	void updateSky();
 
 };
