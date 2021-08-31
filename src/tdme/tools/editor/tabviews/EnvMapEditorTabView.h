@@ -158,4 +158,11 @@ public:
 	 */
 	void setEnvironmentMapFrequency(int64_t frequency);
 
+	/**
+	 * Saving prototype as tenvmap prototype
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
 };

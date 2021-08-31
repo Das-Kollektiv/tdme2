@@ -43,6 +43,7 @@ private:
 	EnvMapEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	FileDialogPath envMapPath;
 
 	array<string, 9> applyNodesRenderPasses {
 		"rendersettings_renderpass_standard",

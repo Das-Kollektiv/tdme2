@@ -44,7 +44,7 @@ private:
 	EmptyEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	FileDialogPath emptyPath;
+	FileDialogPath envmapPath;
 
 public:
 	/**

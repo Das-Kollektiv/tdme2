@@ -15,7 +15,10 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
@@ -41,8 +44,10 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
+using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::views::EditorView;
@@ -82,10 +87,55 @@ void EnvMapEditorTabController::dispose()
 
 void EnvMapEditorTabController::save()
 {
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	try {
+		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void EnvMapEditorTabController::saveAs()
 {
+	class OnEnvMapSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				envMapEditorTabController->view->saveFile(
+					envMapEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					envMapEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				envMapEditorTabController->envMapPath.setPath(
+					envMapEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				);
+			} catch (Exception& exception) {
+				envMapEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			envMapEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+		OnEnvMapSave(EnvMapEditorTabController* envMapEditorTabController): envMapEditorTabController(envMapEditorTabController) {
+		}
+	private:
+		EnvMapEditorTabController* envMapEditorTabController;
+	};
+
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	vector<string> extensions = {
+		"tenvmap"
+	};
+	popUps->getFileDialogScreenController()->show(
+		fileName.empty() == false?Tools::getPathName(fileName):envMapPath.getPath(),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnEnvMapSave(this)
+	);
 }
 
 void EnvMapEditorTabController::showErrorPopUp(const string& caption, const string& message)

@@ -9,6 +9,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/scene/Scene.h>
@@ -33,6 +34,7 @@ using tdme::engine::SceneConnector;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -235,3 +237,6 @@ void EnvMapEditorTabView::setEnvironmentMapFrequency(int64_t frequency) {
 	environmentMapping->setTimeRenderUpdateFrequency(frequency);
 }
 
+void EnvMapEditorTabView::saveFile(const string& pathName, const string& fileName) {
+	PrototypeWriter::write(pathName, fileName, prototype);
+}
