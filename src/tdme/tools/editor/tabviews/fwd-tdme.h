@@ -6,6 +6,7 @@ namespace tools {
 namespace editor {
 namespace tabviews {
 	class EmptyEditorTabView;
+	class EnvMapEditorTabView;
 	class FontTabView;
 	class ModelEditorTabView;
 	class ParticleSystemEditorTabView;

@@ -6,6 +6,7 @@ namespace tools {
 namespace editor {
 namespace tabcontrollers {
 	class EmptyEditorTabController;
+	class EnvMapEditorTabController;
 	class FontTabController;
 	class ModelEditorTabController;
 	class ParticleSystemEditorTabController;

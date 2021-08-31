@@ -39,6 +39,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
+#include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 #include <tdme/tools/editor/tabviews/FontTabView.h>
 #include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
@@ -96,6 +97,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
+using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::tabviews::FontTabView;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
@@ -498,6 +500,8 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) return true;
 				// tdme trigger
 				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) return true;
+				// tdme envmap
+				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -644,6 +648,12 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					iconBig = "{$icon.type_prototype_big}";
 					typeColor = "{$color.type_prototype}";
 				}
+				// tdme envmap
+				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
 					icon = "{$icon.type_prototype}";
@@ -779,7 +789,22 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	// TODO: error handling
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	enum FileType { FILETYPE_UNKNOWN, FILETYPE_MODEL, FILETYPE_EMPTYPROTOTYPE, FILETYPE_TRIGGERPROTOTYPE, FILETYPE_MODELPROTOTYPE, FILETYPE_TERRAINPROTOTYPE, FILETYPE_PARTICLESYSTEMPROTOTYPE, FILETYPE_SCENE, FILETYPE_SCREEN_TEXT, FILETYPE_SOUND, FILETYPE_TEXTURE, FILETYPE_FONT, FILETYPE_TEXT };
+	enum FileType {
+		FILETYPE_UNKNOWN,
+		FILETYPE_MODEL,
+		FILETYPE_EMPTYPROTOTYPE,
+		FILETYPE_TRIGGERPROTOTYPE,
+		FILETYPE_ENVMAPPROTOTYPE,
+		FILETYPE_MODELPROTOTYPE,
+		FILETYPE_TERRAINPROTOTYPE,
+		FILETYPE_PARTICLESYSTEMPROTOTYPE,
+		FILETYPE_SCENE,
+		FILETYPE_SCREEN_TEXT,
+		FILETYPE_SOUND,
+		FILETYPE_TEXTURE,
+		FILETYPE_FONT,
+		FILETYPE_TEXT
+	};
 	FileType fileType = FILETYPE_UNKNOWN;
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		fileType = FILETYPE_SCREEN_TEXT;
@@ -789,6 +814,9 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
 		fileType = FILETYPE_TRIGGERPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
+		fileType = FILETYPE_ENVMAPPROTOTYPE;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		fileType = FILETYPE_SCENE;
@@ -896,6 +924,19 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 					);
 					tabType = EditorTabView::TABTYPE_TRIGGEREDITOR;
 					tabView = new TriggerEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_ENVMAPPROTOTYPE:
+				{
+					icon = "{$icon.type_scene}";
+					colorType = "{$color.type_scene}";
+					auto scene = SceneReader::read(
+						"resources/engine/scenes/envmap",
+						"envmap.tscene"
+					);
+					tabType = EditorTabView::TABTYPE_ENVMAPEDITOR;
+					tabView = new EnvMapEditorTabView(view, tabId, scene);
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
