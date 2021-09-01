@@ -151,6 +151,14 @@ public:
 	static const string removeFileEnding(const string& fileName);
 
 	/**
+	 * Ensure file ending
+	 * @param fileName file name
+	 * @param extension extension
+	 * @return file name
+	 */
+	static const string ensureFileEnding(const string& fileName, const string& extension);
+
+	/**
 	 * Load settings
 	 * @param application application
 	 */

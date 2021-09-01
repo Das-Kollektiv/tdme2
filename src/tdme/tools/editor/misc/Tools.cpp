@@ -507,6 +507,15 @@ const string Tools::removeFileEnding(const string& fileName)
 	}
 }
 
+const string Tools::ensureFileEnding(const string& fileName, const string& extension)
+{
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), extension) == true) {
+		return fileName;
+	} else {
+		return removeFileEnding(fileName) + "." + extension;
+	}
+}
+
 void Tools::loadSettings(Application* application) {
 	Properties settings;
 

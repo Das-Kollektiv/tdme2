@@ -81,8 +81,8 @@ private:
 	EntityShaderParameters distanceShaderParameters;
 	map<string, PrototypeAudio*> soundsById;
 	vector<PrototypeAudio*> sounds;
-	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
-	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
+	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
+	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
 	PrototypeTerrain* terrain { nullptr };
 
 	/**

@@ -9,6 +9,7 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -56,6 +57,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::SceneConnector;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
@@ -536,4 +538,8 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 			engine->addEntity(modelEntity);
 		}
 	}
+}
+
+void ParticleSystemEditorTabView::saveFile(const string& pathName, const string& fileName) {
+	PrototypeWriter::write(pathName, fileName, prototype);
 }

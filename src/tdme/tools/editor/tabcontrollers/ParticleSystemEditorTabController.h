@@ -55,6 +55,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
+	FileDialogPath particlePath;
 	FileDialogPath modelPath;
 	FileDialogPath audioPath;
 	FileDialogPath texturePath;

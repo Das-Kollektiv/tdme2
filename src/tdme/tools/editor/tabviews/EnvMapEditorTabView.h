@@ -94,11 +94,6 @@ public:
 		return popUps;
 	}
 
-	/**
-	 * @return current scene file name
-	 */
-	const string& getFileName();
-
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;

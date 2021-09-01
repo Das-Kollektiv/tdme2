@@ -23,10 +23,6 @@ using tdme::engine::prototype::PrototypeTerrain;
 using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
-constexpr int Prototype::ID_NONE;
-constexpr int Prototype::MODEL_BOUNDINGVOLUME_COUNT;
-constexpr int Prototype::MODEL_SOUNDS_COUNT;
-
 char Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
 char Prototype::MODEL_BOUNDINGVOLUMES_ID[] = "model_bv";

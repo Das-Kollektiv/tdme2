@@ -261,6 +261,20 @@ public:
 	void updateProjectPathThumbnails();
 
 	/**
+	 * On add file
+	 * @param type type
+	 */
+	void onAddFile(const string& type);
+
+	/**
+	 * On add file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param type type
+	 */
+	void addFile(const string& pathName, const string& fileName, const string& type);
+
+	/**
 	 * On open file
 	 * @param absoluteProjectFileName absolute project file name
 	 */

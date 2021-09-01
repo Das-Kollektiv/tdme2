@@ -9,10 +9,13 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
@@ -68,10 +71,13 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::utilities::Action;
@@ -177,7 +183,6 @@ void EditorScreenController::showErrorPopUp(const string& caption, const string&
 
 void EditorScreenController::onValueChanged(GUIElementNode* node)
 {
-	Console::println("EditorScreenController::onValueChanged(): " + node->getId());
 	if (node->getId() == "projectpathfiles_search") {
 		fileNameSearchTerm = node->getController()->getValue().getString();
 		timeFileNameSearchTerm = Time::getCurrentMillis();
@@ -198,8 +203,9 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 			Console::println(string(exception.what()));
 		}
 		updateProjectPathThumbnails();
-	} else {
-		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
+	} else
+	if (node->getId() == "dropdown_projectlibrary_add") {
+		onAddFile(node->getController()->getValue().getString());
 	}
 	// forward onValueChanged to active tab tab controller
 	auto selectedTab = getSelectedTab();
@@ -262,8 +268,6 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else
 		if (node->getId() == "menu_file_quit") {
 			TDMEEditor::getInstance()->quit();
-		} else {
-			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
 		}
 	}
 	// forward onActionPerformed to active tab tab controller
@@ -807,6 +811,160 @@ void EditorScreenController::updateProjectPathThumbnails() {
 			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
+	}
+}
+
+void EditorScreenController::onAddFile(const string& type) {
+	class OnAddFile: public virtual Action
+	{
+	public:
+		// overriden methods
+		void performAction() override {
+			editorScreenController->addFile(
+				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), string("t") + type),
+				type
+			);
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+		OnAddFile(EditorScreenController* editorScreenController, const string& type): editorScreenController(editorScreenController), type(type) {
+		}
+	private:
+		EditorScreenController* editorScreenController;
+		string type;
+	};
+
+	view->getPopUps()->getFileDialogScreenController()->show(
+		projectPath + "/" + required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_projectpaths"))->getController()->getValue().getString(),
+		string("Add ") + type + " to project: ",
+		{ string("t") + type },
+		string("Untitled") + "." + "t" + type,
+		true,
+		new OnAddFile(this, type)
+	);
+
+}
+
+void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
+	Prototype* prototype = nullptr;
+	Scene* scene = nullptr;
+	if (type == "empty") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::EMPTY,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			pathName + "/" + fileName,
+			string(),
+			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+			Vector3(0.0f, 0.0f, 0.0f)
+		);
+	} else
+	if (type == "trigger") {
+		auto width = 1.0f;
+		auto height = 1.0f;
+		auto depth = 1.0f;
+		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::TRIGGER,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	} else
+	if (type == "envmap") {
+		auto width = 1.0f;
+		auto height = 1.0f;
+		auto depth = 1.0f;
+		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::ENVIRONMENTMAPPING,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	} else
+	if (type == "model") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::MODEL,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			pathName + "/" + fileName,
+			string(),
+			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+			Vector3(0.0f, 0.0f, 0.0f)
+		);
+	} else
+	if (type == "terrain") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::TERRAIN,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+	} else
+	if (type == "particle") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::PARTICLESYSTEM,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			string(),
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+	} else
+	if (type == "scene") {
+		scene = new Scene(
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName)
+		);
+	}
+	if (prototype != nullptr) {
+		try {
+			PrototypeWriter::write(pathName, fileName, prototype);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		}
+	} else
+	if (scene != nullptr) {
+		try {
+			SceneWriter::write(pathName, fileName, scene);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		}
+	} else {
+		showErrorPopUp("Error", string() + "Unknown file type: " + type);
 	}
 }
 

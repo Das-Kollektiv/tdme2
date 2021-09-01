@@ -187,4 +187,12 @@ public:
 	 * @param guiOnly GUI only
 	 */
 	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
+
+	/**
+	 * Saving prototype as tempty prototype
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
 };

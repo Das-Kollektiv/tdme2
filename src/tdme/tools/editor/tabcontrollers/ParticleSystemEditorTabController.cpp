@@ -151,12 +151,56 @@ void ParticleSystemEditorTabController::dispose()
 
 void ParticleSystemEditorTabController::save()
 {
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	try {
+		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 }
 
 void ParticleSystemEditorTabController::saveAs()
 {
-}
+	class OnParticleSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				particleSystemEditorTabController->view->saveFile(
+					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				particleSystemEditorTabController->particlePath.setPath(
+					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				);
+			} catch (Exception& exception) {
+				particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			particleSystemEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+		OnParticleSave(ParticleSystemEditorTabController* particleSystemEditorTabController): particleSystemEditorTabController(particleSystemEditorTabController) {
+		}
+	private:
+		ParticleSystemEditorTabController* particleSystemEditorTabController;
+	};
 
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	vector<string> extensions = {
+		"tparticle"
+	};
+	popUps->getFileDialogScreenController()->show(
+		fileName.empty() == false?Tools::getPathName(fileName):particlePath.getPath(),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnParticleSave(this)
+	);
+}
 void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
