@@ -53,6 +53,13 @@ private:
 
 public:
 	/**
+	 * Formats a float to a human readable format
+	 * @param value value
+	 * @return value as string
+	 */
+	static string formatFloat(float value);
+
+	/**
 	 * Set up given engine light with default light
 	 * @param light light
 	 */

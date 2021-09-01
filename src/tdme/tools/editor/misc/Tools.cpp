@@ -112,6 +112,13 @@ Model* Tools::gizmoRotations = nullptr;
 Model* Tools::defaultOBB = nullptr;
 Tools::ToolsShutdown Tools::toolsShutdown;
 
+string Tools::formatFloat(float value)
+{
+
+	string floatString = to_string(value);
+	return floatString.substr(0, floatString.length() - 3);
+}
+
 void Tools::setDefaultLight(Light* light)
 {
 	light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
