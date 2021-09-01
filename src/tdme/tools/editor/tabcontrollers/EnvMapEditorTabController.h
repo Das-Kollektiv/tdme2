@@ -45,13 +45,14 @@ private:
 	PopUps* popUps { nullptr };
 	FileDialogPath envMapPath;
 
-	array<string, 9> applyNodesRenderPasses {
+	array<string, 7> applyNodesRenderPasses {
 		"rendersettings_renderpass_standard",
 		"rendersettings_renderpass_sky",
 		"rendersettings_renderpass_terrain",
 		"rendersettings_renderpass_water",
 		"rendersettings_renderpass_postprocessing",
-		"rendersettings_frequency"
+		"rendersettings_frequency",
+		"rendersettings_frequency_value"
 	};
 
 	array<string, 3> applyNodesLocation {
