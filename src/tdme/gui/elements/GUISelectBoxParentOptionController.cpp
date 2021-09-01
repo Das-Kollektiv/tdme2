@@ -9,7 +9,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/utilities/Console.h>
 
 using tdme::gui::elements::GUISelectBoxParentOptionController;
 using tdme::gui::events::GUIActionListener;
@@ -21,13 +20,12 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 
-string GUISelectBoxParentOptionController::CONDITION_OPENED = "opened";
-string GUISelectBoxParentOptionController::CONDITION_CLOSED = "closed";
+string GUISelectBoxParentOptionController::CONDITION_EXPANDED = "expanded";
+string GUISelectBoxParentOptionController::CONDITION_COLLAPSED = "collapsed";
 
 GUISelectBoxParentOptionController::GUISelectBoxParentOptionController(GUINode* node)
-	: GUISelectBoxOptionController(node), open(false)
+	: GUISelectBoxOptionController(node), expanded(false)
 {
 }
 
@@ -39,7 +37,9 @@ void GUISelectBoxParentOptionController::initialize()
 	public:
 		// overriden method
 		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override {
-			if (node == selectBoxParentOptionController->arrowNode && type == GUIActionListenerType::PERFORMED) selectBoxParentOptionController->toggleOpenState();
+			if (node == selectBoxParentOptionController->arrowNode && type == GUIActionListenerType::PERFORMED) {
+				required_dynamic_cast<GUISelectBoxController*>(selectBoxParentOptionController->selectBoxNode->getController())->toggleOpenState(required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->node));
+			}
 		}
 
 		/**
@@ -53,7 +53,7 @@ void GUISelectBoxParentOptionController::initialize()
 		GUISelectBoxParentOptionController* selectBoxParentOptionController { nullptr };
 	};
 	arrowNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
-	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
 	arrowNode->getScreenNode()->addActionListener(arrowNodeActionListener = new ArrowNodeActionListener(this));
 	//
 	GUISelectBoxOptionController::initialize();
@@ -67,9 +67,13 @@ void GUISelectBoxParentOptionController::dispose() {
 	}
 }
 
-void GUISelectBoxParentOptionController::toggleOpenState()
+bool GUISelectBoxParentOptionController::isExpanded() {
+	return expanded;
+}
+
+void GUISelectBoxParentOptionController::toggleExpandState()
 {
-	arrowNode->getActiveConditions().remove(open == true ?CONDITION_OPENED:CONDITION_CLOSED);
-	open = open == true?false:true;
-	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().remove(expanded == true ?CONDITION_EXPANDED:CONDITION_COLLAPSED);
+	expanded = expanded == true?false:true;
+	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
 }

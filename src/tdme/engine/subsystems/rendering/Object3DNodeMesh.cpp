@@ -438,15 +438,68 @@ void Object3DNodeMesh::setupBitangentsBuffer(Renderer* renderer, void* context, 
 }
 
 void Object3DNodeMesh::setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId) {
-	// check if we have texture coordinates
+	// check if we have origins
 	auto& origins = node->getOrigins();
 	if (origins.size() == 0) return;
-	// create texture coordinates buffer, will never be changed in engine
+	// create origins buffer, will never be changed in engine
 	auto fbOrigins = ObjectBuffer::getByteBuffer(context, origins.size() * 3 * sizeof(float))->asFloatBuffer();
-	// construct float buffer as this will not change usually
+	// construct origins buffer
 	for (auto& origin: origins) {
 		fbOrigins.put(origin.getArray());
 	}
 	// done, upload
 	renderer->uploadBufferObject(context, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
+}
+
+void Object3DNodeMesh::setupLodBuffer(Renderer* renderer, void* context, int32_t vboId, int lodLevel) {
+	// TODO: we only support faces entities 0 lod indices for terrain now
+	const vector<int32_t>* indices { nullptr };
+	switch (lodLevel) {
+		case 1: indices = &node->getFacesEntities()[0].getLOD1Indices(); break;
+		case 2: indices = &node->getFacesEntities()[0].getLOD2Indices(); break;
+		case 3: indices = &node->getFacesEntities()[0].getLOD3Indices(); break;
+		default:
+			Console::println(
+				"Object3DNodeMesh::setupLodBuffer(): " +
+				node->getModel()->getName() + ":" +
+				node->getName() + ":" +
+				"no valid lod level: " + to_string(lodLevel)
+			);
+			return;
+	}
+	if (indices->empty() == true) {
+		Console::println(
+			"Object3DNodeMesh::setupLodBuffer(): " +
+			node->getModel()->getName() + ":" +
+			node->getName() + ":" +
+			"no indices"
+		);
+		return;
+	}
+	if (renderer->isUsingShortIndices() == true) {
+		if (instances * indices->size() > 65535) {
+			Console::println(
+				"Object3DNodeMesh::setupLodBuffer(): " +
+				node->getModel()->getName() + ":" +
+				node->getName() + ":" +
+				"more than 2^16-1 indices: " +
+				to_string(indices->size())
+			);
+		}
+		// create indices buffer, will never be changed in engine
+		auto sbIndices = ObjectBuffer::getByteBuffer(context, indices->size() * sizeof(uint16_t))->asShortBuffer();
+		// construct indices buffer
+		for (auto index: *indices) {
+			sbIndices.put(index);
+		}
+		renderer->uploadIndicesBufferObject(context, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+	} else {
+		// create indices buffer, will never be changed in engine
+		auto ibIndices = ObjectBuffer::getByteBuffer(context, indices->size() * sizeof(uint32_t))->asIntBuffer();
+		// construct indices buffer
+		for (auto index: *indices) {
+			ibIndices.put(index);
+		}
+		renderer->uploadIndicesBufferObject(context, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+	}
 }

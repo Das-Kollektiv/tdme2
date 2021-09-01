@@ -1,0 +1,6 @@
+<screen id="popup_contextmenu" popup="true" background-color="#00000000" min-width="1024" min-height="768" max-width="2560" max-height="1440">
+	<element id="background" width="100%" height="100%" horizontal-align="none" vertical-align="none" focusable="true">
+		<context-menu id="contextmenu">
+		</context-menu>
+	</element>
+</screen>

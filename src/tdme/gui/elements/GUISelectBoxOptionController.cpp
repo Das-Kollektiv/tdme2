@@ -41,13 +41,10 @@ GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node)
 	this->focussed = false;
 }
 
-bool GUISelectBoxOptionController::isDisabled()
-{
-	return false;
-}
-
 void GUISelectBoxOptionController::setDisabled(bool disabled)
 {
+	unselect();
+	GUIElementController::setDisabled(disabled);
 }
 
 bool GUISelectBoxOptionController::isSelected()
@@ -109,13 +106,41 @@ void GUISelectBoxOptionController::unfocus()
 	nodeConditions.add(this->focussed == true?CONDITION_FOCUSSED:CONDITION_UNFOCUSSED);
 }
 
-bool GUISelectBoxOptionController::isCollapsed() {
-	auto _node = node->getParentNode();
-	while(_node != nullptr && _node != selectBoxNode) {
-		if (_node->isConditionsMet() == false) return true;
-		_node = _node->getParentNode();
+bool GUISelectBoxOptionController::isHierarchyExpanded() {
+	if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+		while (_parentElementNode != nullptr) {
+			auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController());
+			if (selectBoxParentOptionController != nullptr) {
+				if (selectBoxParentOptionController->isExpanded() == false) return false;
+			} else {
+				break;
+			}
+			_parentElementNode =
+				_parentElementNode->getParentElementNodeId().empty() == false?
+					dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+					nullptr;
+		}
 	}
-	return false;
+	return true;
+}
+
+void GUISelectBoxOptionController::expandHierarchy() {
+	if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+		while (_parentElementNode != nullptr) {
+			auto selectBoxParentOptionController = dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController());
+			if (selectBoxParentOptionController != nullptr) {
+				if (selectBoxParentOptionController->isExpanded() == false) selectBoxParentOptionController->toggleExpandState();
+			} else {
+				break;
+			}
+			_parentElementNode =
+				_parentElementNode->getParentElementNodeId().empty() == false?
+					dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+					nullptr;
+		}
+	}
 }
 
 void GUISelectBoxOptionController::initialize()
@@ -135,18 +160,23 @@ void GUISelectBoxOptionController::initialize()
 
 	{
 		auto childIdx = 0;
-		GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
-		while (_parentElementNode != nullptr) {
-			if (dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController()) != nullptr) {
-				childIdx++;
-			} else {
-				break;
+		if (dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId().empty() == false) {
+			GUIElementNode* _parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(dynamic_cast<GUIElementNode*>(node)->getParentElementNodeId()));
+			while (_parentElementNode != nullptr) {
+				if (dynamic_cast<GUISelectBoxParentOptionController*>(_parentElementNode->getController()) != nullptr) {
+					childIdx++;
+				} else {
+					break;
+				}
+				_parentElementNode =
+					_parentElementNode->getParentElementNodeId().empty() == false?
+						dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId())):
+						nullptr;
 			}
-			_parentElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(_parentElementNode->getParentElementNodeId()));
-		}
-		if (childIdx > 0) {
-			auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
-			nodeConditions.add(CONDITION_CHILD);
+			if (childIdx > 0) {
+				auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+				nodeConditions.add(CONDITION_CHILD);
+			}
 		}
 	}
 
@@ -174,22 +204,27 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isDisabled();
 	auto multipleSelection = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isMultipleSelection();
-	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
+	if (disabled == false && node == this->node && node->isEventBelongingToNode(event)) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-			required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->unfocus();
-			if (multipleSelection == true && required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->isKeyControlDown() == true) {
-				toggle();
-				focus();
+			auto selectBoxController = required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController());
+			auto optionElementNode = required_dynamic_cast<GUIElementNode*>(node);
+			selectBoxController->unfocus();
+			if (multipleSelection == true && selectBoxController->isKeyControlDown() == true) {
+				selectBoxController->toggle(optionElementNode);
+				selectBoxController->focus(optionElementNode);
 			} else {
-				required_dynamic_cast<GUISelectBoxController*>(selectBoxNode->getController())->unselect();
-				select();
-				focus();
+				selectBoxController->unselect();
+				selectBoxController->select(optionElementNode);
+				selectBoxController->focus(optionElementNode);
 			}
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
 			node->scrollToNodeX(selectBoxNode);
 			node->scrollToNodeY(selectBoxNode);
 			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
+			if (event->getButton() == MOUSE_BUTTON_RIGHT) {
+				node->getScreenNode()->delegateContextMenuRequest(required_dynamic_cast<GUIElementNode*>(selectBoxNode), event->getXUnscaled(), event->getYUnscaled());
+			}
 		}
 	}
 }

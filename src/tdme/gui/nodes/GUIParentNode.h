@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <unordered_set>
 #include <string>
 #include <vector>
 
@@ -13,7 +13,7 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::set;
+using std::unordered_set;
 using std::string;
 using std::vector;
 
@@ -143,6 +143,14 @@ public:
 	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets);
 
 	/**
+	 * Add sub nodes with given XML
+	 * @param xml xml
+	 * @param resetScrollOffsets reset scroll offsets
+	 * @throws tdme::gui::GUIParserException
+	 */
+	virtual void addSubNodes(const string& xml, bool resetScrollOffsets);
+
+	/**
 	 * Add sub node
 	 * @param node node
 	 * @throws tdme::gui::GUIParserException
@@ -211,7 +219,7 @@ public:
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
 
 	/**
 	 * Invalidate render caches
@@ -225,4 +233,11 @@ private:
 	 * @param requireConditionsMet require conditions met
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
+
+	/**
+	 * Remove sub node
+	 * @param node node
+	 * @param resetScrollOffsets reset scroll offsets
+	 */
+	void removeSubNode(GUINode* node, bool resetScrollOffsets);
 };

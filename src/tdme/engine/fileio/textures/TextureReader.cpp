@@ -40,19 +40,19 @@ const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
 }
 
-Texture* TextureReader::read(const string& pathName, const string& fileName, bool useCache, bool powerOfTwo)
+Texture* TextureReader::read(const string& pathName, const string& fileName, bool useCache, bool powerOfTwo, const string& idPrefix)
 {
 	Texture* texture = nullptr;
 
 	// make canonical
-	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
-	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
-	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFile);
+	auto canonicalFilePath = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFilePath);
+	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFilePath);
 
 	// do cache look up
 	if (useCache == true) {
 		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(canonicalPathName + "/" + canonicalFileName);
+		auto textureCacheIt = textureCache->find(idPrefix + canonicalPathName + "/" + canonicalFileName);
 		if (textureCacheIt != textureCache->end()) {
 			texture = textureCacheIt->second;
 		}
@@ -63,7 +63,12 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 		// nope try to load
 		try {
 			if (StringTools::endsWith(StringTools::toLowerCase(canonicalFileName), ".png") == true) {
-				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName, powerOfTwo);
+
+				// create PNG input stream
+				vector<uint8_t> data;
+				FileSystem::getInstance()->getContent(pathName, fileName, data);
+
+				texture = TextureReader::readPNG(canonicalFilePath, data, powerOfTwo, idPrefix);
 				if (texture != nullptr && useCache == true) {
 					(*textureCache)[texture->getId()] = texture;
 				}
@@ -83,12 +88,12 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	return texture;
 }
 
-Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo) {
+Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo, const string& idPrefix) {
 	// make canonical
 	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(texturePathName, textureFileName);
 	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
 	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFile);
-	auto cacheId = canonicalPathName + "/" + canonicalFileName + "/transparency";
+	auto cacheId = idPrefix + canonicalPathName + "/" + canonicalFileName + "/transparency";
 
 	// do cache look up
 	if (useCache == true) {
@@ -103,13 +108,13 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 	}
 
 	// load diffuse texture
-	auto texture = TextureReader::read(texturePathName, textureFileName, false, powerOfTwo);
+	auto texture = TextureReader::read(texturePathName, textureFileName, false, powerOfTwo, idPrefix);
 	if (texture == nullptr) {
 		if (useCache == true) textureCacheMutex->unlock();
 		return nullptr;
 	}
 	// additional transparency texture
-	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo);
+	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo, idPrefix);
 	// do we have one?
 	if (transparencyTexture == nullptr) {
 		Console::println("TextureReader::read(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
@@ -133,7 +138,7 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 	auto textureHeight = texture->getTextureHeight();
 	ByteBuffer* textureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
 	auto textureWithTransparency = new Texture(
-		texture->getId() + "/transparency",
+		idPrefix + texture->getId() + "/transparency",
 		32,
 		texture->getWidth(),
 		texture->getHeight(),
@@ -168,49 +173,40 @@ void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	png_voidp io_ptr = png_get_io_ptr(png_ptr);
 	if (io_ptr == nullptr) return;
 
-	PNGInputStream* pngInputStream = (PNGInputStream*)io_ptr;
+	PNGInputStream* pngInputStream = static_cast<PNGInputStream*>(io_ptr);
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, bool powerOfTwo) {
+Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo, const string& idPrefix) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
-	// canonical file name for id
-	auto canonicalFileName = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
-
 	// create PNG input stream
-	vector<uint8_t> content;
-	FileSystem::getInstance()->getContent(pathName, fileName, content);
-	PNGInputStream* pngInputStream = new PNGInputStream(&content);
+	PNGInputStream pngInputStream(&data);
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];
-	pngInputStream->readBytes((int8_t*)sig, sizeof(sig));
+	pngInputStream.readBytes((int8_t*)sig, sizeof(sig));
 	if (png_sig_cmp(sig, 0, 8)) {
-		delete pngInputStream;
 		return nullptr;
 	}
 
 	// create two data structures: 'png_struct' and 'png_info'
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr) {
-		delete pngInputStream;
 		return nullptr;
 	}
 	png_infop info = png_create_info_struct(png);
 	if (info == nullptr) {
 		png_destroy_read_struct(&png, nullptr, nullptr);
-		delete pngInputStream;
 		return nullptr;
 	}
 
 	// set up custom read function
-	png_set_read_fn(png, pngInputStream, TextureReader::readPNGDataFromMemory);
+	png_set_read_fn(png, &pngInputStream, TextureReader::readPNGDataFromMemory);
 
 	// set libpng error handling mechanism
 	if (setjmp(png_jmpbuf(png))) {
 		png_destroy_read_struct(&png, &info, nullptr);
-		delete pngInputStream;
 		return nullptr;
 	}
 
@@ -269,7 +265,6 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, 
 	    default:
     		{
     			png_destroy_read_struct(&png, &info, nullptr);
-    			delete pngInputStream;
     			return nullptr;
     		}
 	}
@@ -300,7 +295,6 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, 
 
 	// done
 	png_destroy_read_struct(&png, &info, nullptr);
-	delete pngInputStream;
 
 	// make width, height a power of 2
 	auto textureWidth = width;
@@ -311,7 +305,7 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, 
 		textureHeight = 1;
 		while (textureHeight < height) textureHeight*= 2;
 		if (textureWidth != width || textureHeight != height) {
-			Console::println("TextureReader::loadPNG(): " + pathName + "/" + fileName + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			Console::println("TextureReader::loadPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
 			ByteBuffer* pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
 			auto textureYIncrement = (float)textureHeight / (float)height;
 			auto textureYPixelRest = 0.0f;
@@ -336,7 +330,7 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, 
 
 	// thats it
 	return new Texture(
-		canonicalFileName,
+		idPrefix + textureId,
 		bytesPerPixel * 8,
 		width,
 		height,

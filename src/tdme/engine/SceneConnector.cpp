@@ -42,8 +42,8 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
@@ -72,13 +72,13 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Terrain.h>
+#include <tdme/utilities/Terrain2.h>
 
 using std::map;
 using std::string;
@@ -119,8 +119,8 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
@@ -149,13 +149,13 @@ using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::MutableString;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
-using tdme::utilities::Terrain;
+using tdme::utilities::Terrain2;
 
 Model* SceneConnector::emptyModel = nullptr;
 float SceneConnector::renderGroupsPartitionWidth = 64.0f;
@@ -169,25 +169,29 @@ int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 bool SceneConnector::enableEarlyZRejection = false;
 
-void SceneConnector::setLights(Engine* engine, Scene& scene, const Vector3& translation)
+void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX && i < scene.getLightCount(); i++) {
-		engine->getLightAt(i)->setAmbient(Color4(scene.getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(scene.getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(scene.getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(scene.getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(scene.getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(scene.getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(scene.getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(scene.getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(scene.getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(scene.getLightAt(i)->isEnabled());
+	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
+		if (i >= scene->getLightCount()) {
+			engine->getLightAt(i)->setEnabled(false);
+			continue;
+		}
+		engine->getLightAt(i)->setAmbient(Color4(scene->getLightAt(i)->getAmbient()));
+		engine->getLightAt(i)->setDiffuse(Color4(scene->getLightAt(i)->getDiffuse()));
+		engine->getLightAt(i)->setSpecular(Color4(scene->getLightAt(i)->getSpecular()));
+		engine->getLightAt(i)->setSpotDirection(scene->getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->setSpotExponent(scene->getLightAt(i)->getSpotExponent());
+		engine->getLightAt(i)->setSpotCutOff(scene->getLightAt(i)->getSpotCutOff());
+		engine->getLightAt(i)->setConstantAttenuation(scene->getLightAt(i)->getConstantAttenuation());
+		engine->getLightAt(i)->setLinearAttenuation(scene->getLightAt(i)->getLinearAttenuation());
+		engine->getLightAt(i)->setQuadraticAttenuation(scene->getLightAt(i)->getQuadraticAttenuation());
+		engine->getLightAt(i)->setEnabled(scene->getLightAt(i)->isEnabled());
 		engine->getLightAt(i)->setPosition(
 			Vector4(
-				scene.getLightAt(i)->getPosition().getX() + translation.getX(),
-				scene.getLightAt(i)->getPosition().getY() + translation.getY(),
-				scene.getLightAt(i)->getPosition().getZ() + translation.getZ(),
-				scene.getLightAt(i)->getPosition().getW()
+				scene->getLightAt(i)->getPosition().getX() + translation.getX(),
+				scene->getLightAt(i)->getPosition().getY() + translation.getY(),
+				scene->getLightAt(i)->getPosition().getZ() + translation.getZ(),
+				scene->getLightAt(i)->getPosition().getW()
 			)
 		);
 	}
@@ -415,7 +419,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = prototype->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
-				auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
 				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
@@ -463,13 +467,13 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
 }
 
-void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	// TODO: progress callbacks for terrain
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// terrain
 	{
@@ -482,7 +486,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 			// terrain
 			BoundingBox terrainBoundingBox;
 			vector<Model*> terrainModels;
-			Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels);
+			Terrain2::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels, true);
 			if (terrainModels.empty() == false) {
 				auto idx = 0;
 				for (auto terrainModel: terrainModels) {
@@ -504,7 +508,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 				auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
 				for (auto waterPositionMapIdx: waterPositionMapsIndices) {
 					vector<Model*> waterModels;
-					Terrain::createWaterModels(
+					Terrain2::createWaterModels(
 						terrainBoundingBox,
 						prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
 						prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
@@ -519,7 +523,7 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 						waterObject3D->setReceivesShadows(false);
 						waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 						waterObject3D->setReflectionEnvironmentMappingPosition(
-							Terrain::computeWaterReflectionEnvironmentMappingPosition(
+							Terrain2::computeWaterReflectionEnvironmentMappingPosition(
 								terrain->getWaterPositionMap(waterPositionMapIdx),
 								terrain->getWaterPositionMapHeight(waterPositionMapIdx)
 							)
@@ -631,10 +635,10 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 0.5f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
@@ -871,13 +875,13 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
-void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// terrain + foliage
 	{
@@ -887,8 +891,8 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 			auto terrain = prototype->getTerrain();
 			auto width = terrain->getWidth();
 			auto depth = terrain->getDepth();
-			auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
-			auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
+			auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain2::STEP_SIZE));
+			auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain2::STEP_SIZE));
 			// terrain
 			auto minHeight = terrain->getHeightVector()[0];
 			auto maxHeight = terrain->getHeightVector()[0];
@@ -950,11 +954,11 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	}
 
 	//
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene.getEntityCount()) * 1.0f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -976,7 +980,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	}
 }
 
-void SceneConnector::disableScene(Engine* engine, Scene& scene)
+void SceneConnector::disableScene(Engine* engine, Scene* scene)
 {
 	// terrain + water + foliage render groups + render groups
 	{
@@ -1009,7 +1013,7 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1030,8 +1034,8 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1040,7 +1044,7 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	}
 }
 
-void SceneConnector::disableScene(World* world, Scene& scene)
+void SceneConnector::disableScene(World* world, Scene* scene)
 {
 	// terrain
 	{
@@ -1049,7 +1053,7 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1070,15 +1074,15 @@ void SceneConnector::disableScene(World* world, Scene& scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto body = world->getBody(sceneEntity->getId());
 		if (body == nullptr) continue;
 		body->setEnabled(false);
 	}
 }
 
-void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
+void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& translation)
 {
 	// terrain + water + foliage render groups + render groups
 	{
@@ -1111,7 +1115,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1132,8 +1136,8 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1148,7 +1152,7 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	}
 }
 
-void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
+void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& translation)
 {
 	// terrain
 	{
@@ -1160,7 +1164,7 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 	}
 
 	// scene library
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 
 	// single foliage
 	{
@@ -1182,8 +1186,8 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 
 	// scene entities
 	Transformations transformations;
-	for (auto i = 0; i < scene.getEntityCount(); i++) {
-		auto sceneEntity = scene.getEntityAt(i);
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto sceneEntity = scene->getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(sceneEntity->getTransformations());
@@ -1194,7 +1198,7 @@ void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& tran
 	}
 }
 
-void SceneConnector::resetEngine(Engine* engine, Scene& scene) {
+void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;

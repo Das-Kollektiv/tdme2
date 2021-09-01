@@ -1,8 +1,8 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 #include <array>
-#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -30,15 +30,16 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::nodes::GUINode;
@@ -68,6 +69,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTokenizer;
@@ -120,7 +122,7 @@ GUINode::GUINode(
 	// register this id with related element nodes
 	vector<string> elementNodeDependencies;
 	cfDetermineElementNodeDependencies(elementNodeDependencies);
-	for (auto elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
+	for (auto& elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
 }
 
 GUINode::~GUINode() {
@@ -204,7 +206,6 @@ void GUINode::layout()
 {
 	if (conditionsMet == false) {
 		computedConstraints = GUINode_ComputedConstraints();
-		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
@@ -484,7 +485,9 @@ void GUINode::setConditionsMet()
 
 void GUINode::layoutOnDemand() {
 	if (conditionsMet == false || layouted == true) return;
-	screenNode->forceLayout(this);
+	if (conditionsMet == true && layouted == false) {
+		screenNode->forceLayout(this);
+	}
 }
 
 void GUINode::render(GUIRenderer* guiRenderer)
@@ -961,7 +964,7 @@ float GUINode::computeParentChildrenRenderOffsetYTotal()
 	return childrenRenderOffSetY;
 }
 
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& position)
+bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& position)
 {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
@@ -998,11 +1001,11 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 
 bool GUINode::isEventBelongingToNode(GUIMouseEvent* event)
 {
-	array<float, 2> position;
+	Vector2 position;
 	return isEventBelongingToNode(event, position);
 }
 
-void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position)
+void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position)
 {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
@@ -1028,7 +1031,7 @@ void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float,
 	}
 }
 
-void GUINode::getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position) {
+void GUINode::getEventNodePosition(GUIMouseEvent* event, Vector2& position) {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
 	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
@@ -1050,7 +1053,7 @@ GUIParentNode* GUINode::getParentControllerNode()
 	return node;
 }
 
-void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
+void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
 {
 	if (conditionsMet == false)
 		return;
@@ -1248,6 +1251,9 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 	if (function == "empty") {
 		return cfEmpty(arguments);
 	} else
+	if (function == "notEmpty") {
+		return cfEmpty(arguments) == false;
+	} else
 	if (function == "hasCondition") {
 		return cfHasCondition(elementNode, arguments);
 	} else {
@@ -1258,6 +1264,9 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 
 void GUINode::cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies) {
 	if (function == "empty") {
+		// no op
+	} else
+	if (function == "notEmpty") {
 		// no op
 	} else
 	if (function == "hasCondition") {
@@ -1293,12 +1302,14 @@ void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string
 	for (auto& argument: arguments) {
 		string elementNodeId;
 		auto condition = argument;
-		if (condition.find('.') != -1) {
+		if (condition.find('.') != string::npos) {
 			t.tokenize(condition, ".");
 			elementNodeId = t.nextToken();
 			condition = t.nextToken();
 		}
-		if (elementNodeId.empty() == false) elementNodeDependencies.push_back(elementNodeId);
+		if (elementNodeId.empty() == false) {
+			elementNodeDependencies.push_back(elementNodeId);
+		}
 	}
 }
 

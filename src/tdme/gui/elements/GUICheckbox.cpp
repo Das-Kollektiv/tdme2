@@ -39,6 +39,9 @@ unordered_map<string, string> GUICheckbox::getAttributes(GUIScreenNode* screenNo
 {
 	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
+	attributes["image-unchecked"] = "resources/engine/images/checkbox_unchecked.png";
+	attributes["image-checked"] = "resources/engine/images/checkbox_checked.png";
+	attributes["size"] = "25";
 	return attributes;
 }
 

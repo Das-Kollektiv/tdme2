@@ -28,8 +28,9 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
@@ -66,8 +67,9 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
@@ -75,12 +77,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
+Scene* SceneReader::read(const string& pathName, const string& fileName, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
 {
-	read(pathName, fileName, scene, "", progressCallback, prototypeTransformFilter);
+	return read(pathName, fileName, "", progressCallback, prototypeTransformFilter);
 }
 
-void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
+Scene* SceneReader::read(const string& pathName, const string& fileName, const string& objectIdPrefix, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -91,85 +93,116 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
-	scene.setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
+	//
+	auto scene = new Scene(fileName, "");
+	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
-	scene.setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
-	scene.clearProperties();
+	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
 		auto& jSceneProperty = jRoot["properties"].GetArray()[i];
-		scene.addProperty(
+		scene->addProperty(
 			jSceneProperty["name"].GetString(),
 			jSceneProperty["value"].GetString()
 		);
 	}
 	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
-		for (auto i = 0; i < jRoot["lights"].GetArray().Size(); i++) {
-			auto& jLight = jRoot["lights"].GetArray()[i];
-			auto light = scene.getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
-			light->getAmbient().set(
-				jLight["ar"].GetFloat(),
-				jLight["ag"].GetFloat(),
-				jLight["ab"].GetFloat(),
-				jLight["aa"].GetFloat()
+		auto lightIdx = 0;
+		auto jLights = jRoot["lights"].GetArray();
+		for (auto i = 0; i < jLights.Size(); i++) {
+			auto& jLight = jLights[i];
+			if (jLight["e"].GetBool() == false) continue;
+			auto light = lightIdx < scene->getLightCount()?(scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()?jLight["id"].GetInt():lightIdx)):scene->addLight();
+			light->setAmbient(
+				Color4(
+					jLight["ar"].GetFloat(),
+					jLight["ag"].GetFloat(),
+					jLight["ab"].GetFloat(),
+					jLight["aa"].GetFloat()
+				)
 			);
-			light->getDiffuse().set(
-				jLight["dr"].GetFloat(),
-				jLight["dg"].GetFloat(),
-				jLight["db"].GetFloat(),
-				jLight["da"].GetFloat()
+			light->setDiffuse(
+				Color4(
+					jLight["dr"].GetFloat(),
+					jLight["dg"].GetFloat(),
+					jLight["db"].GetFloat(),
+					jLight["da"].GetFloat()
+				)
 			);
-			light->getSpecular().set(
-				jLight["sr"].GetFloat(),
-				jLight["sg"].GetFloat(),
-				jLight["sb"].GetFloat(),
-				jLight["sa"].GetFloat()
+			light->setSpecular(
+				Color4(
+					jLight["sr"].GetFloat(),
+					jLight["sg"].GetFloat(),
+					jLight["sb"].GetFloat(),
+					jLight["sa"].GetFloat()
+				)
 			);
-			light->getPosition().set(
-				jLight["px"].GetFloat(),
-				jLight["py"].GetFloat(),
-				jLight["pz"].GetFloat(),
-				jLight["pw"].GetFloat()
+			light->setPosition(
+				Vector4(
+					jLight["px"].GetFloat(),
+					jLight["py"].GetFloat(),
+					jLight["pz"].GetFloat(),
+					jLight["pw"].GetFloat()
+				)
 			);
 			light->setConstantAttenuation(jLight["ca"].GetFloat());
 			light->setLinearAttenuation(jLight["la"].GetFloat());
 			light->setQuadraticAttenuation(jLight["qa"].GetFloat());
-			light->getSpotTo().set(
-				jLight["stx"].GetFloat(),
-				jLight["sty"].GetFloat(),
-				jLight["stz"].GetFloat()
-			);
-			light->getSpotDirection().set(
-				jLight["sdx"].GetFloat(),
-				jLight["sdy"].GetFloat(),
-				jLight["sdz"].GetFloat()
+			light->setSpotDirection(
+				Vector3(
+					jLight["sdx"].GetFloat(),
+					jLight["sdy"].GetFloat(),
+					jLight["sdz"].GetFloat()
+				)
 			);
 			light->setSpotExponent(jLight["se"].GetFloat());
 			light->setSpotCutOff(jLight["sco"].GetFloat());
 			light->setEnabled(jLight["e"].GetBool());
+			lightIdx++;
 		}
 	}
-	scene.getLibrary()->clear();
 
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
-		auto& jPrototype = jRoot["models"].GetArray()[i];
-		Prototype* prototype = PrototypeReader::read(
-			jPrototype["id"].GetInt(),
-			pathName,
-			jPrototype["entity"],
-			prototypeTransformFilter
-		);
+	auto jPrototypes = jRoot["models"].GetArray();
+	for (auto i = 0; i < jPrototypes.Size(); i++) {
+		auto& jPrototype = jPrototypes[i];
+		Prototype* prototype = nullptr;
+		try {
+			auto embedded = jPrototype.FindMember("e") != jPrototype.MemberEnd()?jPrototype["e"].GetBool():true;
+			if (embedded == true) {
+				prototype = PrototypeReader::read(
+					jPrototype["id"].GetInt(),
+					pathName,
+					jPrototype["entity"],
+					prototypeTransformFilter
+				);
+				prototype->setEmbedded(true);
+			} else {
+				auto externalPrototypePathName = PrototypeReader::getResourcePathName(pathName, jPrototype["pf"].GetString());
+				auto externalPrototypeFileName = FileSystem::getInstance()->getFileName(jPrototype["pf"].GetString());
+				prototype = PrototypeReader::read(
+					jPrototype["id"].GetInt(),
+					externalPrototypePathName,
+					externalPrototypeFileName,
+					prototypeTransformFilter
+				);
+				prototype->setEmbedded(false);
+			}
+		} catch (Exception& exception) {
+			Console::println(string() + "SceneReader::read(): An error occurred: " + exception.what());
+			delete scene;
+			throw exception;
+		}
 		if (prototype == nullptr) {
-			Console::println("SceneReader::doImport(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
+			Console::println("SceneReader::read(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
 			continue;
 		}
-		scene.getLibrary()->addPrototype(prototype);
+		scene->getLibrary()->addPrototype(prototype);
 		if (jPrototype.FindMember("properties") != jPrototype.MemberEnd()) {
 			for (auto j = 0; j < jPrototype["properties"].GetArray().Size(); j++) {
 				auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
 				prototype->addProperty(
-					(jPrototypeProperty["name"].GetString()),
-					(jPrototypeProperty["value"].GetString())
+					jPrototypeProperty["name"].GetString(),
+					jPrototypeProperty["value"].GetString()
 				);
 			}
 		}
@@ -177,13 +210,13 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	scene.clearEntities();
 
-	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
-		auto& jSceneEntity = jRoot["objects"].GetArray()[i];
-		auto prototype = scene.getLibrary()->getPrototype(jSceneEntity["mid"].GetInt());
+	auto jEntities = jRoot["objects"].GetArray();
+	for (auto i = 0; i < jEntities.Size(); i++) {
+		auto& jSceneEntity = jEntities[i];
+		auto prototype = scene->getLibrary()->getPrototype(jSceneEntity["mid"].GetInt());
 		if (prototype == nullptr) {
-			Console::println("SceneReader::doImport(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
+			Console::println("SceneReader::read(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
 
 			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 			progressStepCurrent++;
@@ -212,9 +245,9 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			jSceneEntity["ry"].GetFloat(),
 			jSceneEntity["rz"].GetFloat()
 		);
-		transformations.addRotation(scene.getRotationOrder()->getAxis0(), rotation.getArray()[scene.getRotationOrder()->getAxis0VectorIndex()]);
-		transformations.addRotation(scene.getRotationOrder()->getAxis1(), rotation.getArray()[scene.getRotationOrder()->getAxis1VectorIndex()]);
-		transformations.addRotation(scene.getRotationOrder()->getAxis2(), rotation.getArray()[scene.getRotationOrder()->getAxis2VectorIndex()]);
+		transformations.addRotation(scene->getRotationOrder()->getAxis0(), rotation.getArray()[scene->getRotationOrder()->getAxis0VectorIndex()]);
+		transformations.addRotation(scene->getRotationOrder()->getAxis1(), rotation.getArray()[scene->getRotationOrder()->getAxis1VectorIndex()]);
+		transformations.addRotation(scene->getRotationOrder()->getAxis2(), rotation.getArray()[scene->getRotationOrder()->getAxis2VectorIndex()]);
 		transformations.update();
 		auto sceneEntity = new SceneEntity(
 			objectIdPrefix != "" ?
@@ -234,35 +267,41 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 			}
 		}
 		sceneEntity->setReflectionEnvironmentMappingId(jSceneEntity.FindMember("r") != jSceneEntity.MemberEnd()?jSceneEntity["r"].GetString():"");
-		scene.addEntity(sceneEntity);
+		scene->addEntity(sceneEntity);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	scene.setEntityIdx(jRoot["objects_eidx"].GetInt());
-	scene.setPathName(pathName);
-	scene.setFileName(fileName);
-	scene.update();
+	scene->setEntityIdx(jRoot["objects_eidx"].GetInt());
+	scene->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
+	scene->update();
 
 	//
 	if (jRoot.FindMember("sky") != jRoot.MemberEnd()) {
 		auto& jSky = jRoot["sky"];
-		scene.setSkyModelFileName(jSky["file"].GetString());
-		scene.setSkyModelScale(
+		scene->setSkyModelFileName(jSky["file"].GetString());
+		scene->setSkyModelScale(
 			Vector3(
 				jSky["sx"].GetFloat(),
 				jSky["sy"].GetFloat(),
 				jSky["sz"].GetFloat()
 			)
 		);
-		if (scene.getSkyModelFileName().empty() == false) {
-			auto skyModelPathName = PrototypeReader::getResourcePathName(pathName, scene.getSkyModelFileName());
-			scene.setSkyModel(
-				ModelReader::read(
-					skyModelPathName,
-					FileSystem::getInstance()->getFileName(scene.getSkyModelFileName())
-				)
-			);
+		if (scene->getSkyModelFileName().empty() == false) {
+			auto skyModelPathName = PrototypeReader::getResourcePathName(pathName, scene->getSkyModelFileName());
+			auto skyModelFileName = FileSystem::getInstance()->getFileName(scene->getSkyModelFileName());
+			scene->setSkyModelFileName(skyModelPathName + "/" + skyModelFileName);
+			try {
+				scene->setSkyModel(
+					ModelReader::read(
+						skyModelPathName,
+						skyModelFileName
+					)
+				);
+			} catch (Exception& exception) {
+				delete scene;
+				throw exception;
+			}
 		}
 	}
 
@@ -271,10 +310,13 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		progressCallback->progress(1.0f);
 		delete progressCallback;
 	}
+
+	//
+	return scene;
 }
 
-void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
-	auto sceneLibrary = scene.getLibrary();
+void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
+	auto sceneLibrary = scene->getLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
 	auto modelName = nodeId;
@@ -340,12 +382,8 @@ void SceneReader::determineMeshNodes(Scene& scene, Node* node, const string& par
 	}
 }
 
-void SceneReader::readFromModel(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback) {
+Scene* SceneReader::readFromModel(const string& pathName, const string& fileName, ProgressCallback* progressCallback) {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
-
-	scene.clearProperties();
-	scene.getLibrary()->clear();
-	scene.clearEntities();
 
 	string modelPathName = pathName + "/" + fileName + "-models";
 	if (FileSystem::getInstance()->fileExists(modelPathName)) {
@@ -360,9 +398,11 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 	auto upVector = sceneModel->getUpVector();
 	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
-	scene.setRotationOrder(rotationOrder);
+	//
+	auto scene = new Scene(fileName, "");
+	scene->setRotationOrder(rotationOrder);
 
-	auto sceneLibrary = scene.getLibrary();
+	auto sceneLibrary = scene->getLibrary();
 	auto nodeIdx = 0;
 	Prototype* emptyPrototype = nullptr;
 	Matrix4x4 sceneModelImportRotationMatrix;
@@ -447,8 +487,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			}
 			Prototype* prototype = nullptr;
 			if (prototypeType == Prototype_Type::MODEL && model != nullptr) {
-				for (auto i = 0; i < scene.getLibrary()->getPrototypeCount(); i++) {
-					auto prototypeCompare = scene.getLibrary()->getPrototypeAt(i);
+				for (auto i = 0; i < scene->getLibrary()->getPrototypeCount(); i++) {
+					auto prototypeCompare = scene->getLibrary()->getPrototypeAt(i);
 					if (prototypeCompare->getType() != Prototype_Type::MODEL)
 						continue;
 
@@ -461,25 +501,46 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				}
 				if (prototype == nullptr && model != nullptr) {
 					auto modelFileName = meshNode.name + ".tm";
-					TMWriter::write(
+					try {
+						TMWriter::write(
+							model,
+							modelPathName,
+							modelFileName
+						);
+					} catch (Exception& exception) {
+						delete model;
+						delete scene;
+						delete sceneModel;
+						throw exception;
+					}
+					prototype = new Prototype(
+						Prototype::ID_NONE,
+						Prototype_Type::MODEL,
+						Tools::removeFileEnding(fileName),
+						Tools::removeFileEnding(fileName),
+						modelPathName + "/" + modelFileName,
+						"resources/engine/models/empty.tm",
+						string(),
 						model,
-						modelPathName,
-						modelFileName
-					  );
-					delete model;
-					prototype = sceneLibrary->addModel(
-						nodeIdx++,
-						meshNode.name,
-						meshNode.name,
-						modelPathName,
-						modelFileName,
-						Vector3()
+						Vector3(0.0f, 0.0f, 0.0f)
 					);
+					sceneLibrary->addPrototype(prototype);
 				}
 			} else
 			if (prototypeType == Prototype_Type::EMPTY) {
 				if (emptyPrototype == nullptr) {
-					emptyPrototype = sceneLibrary->addEmpty(nodeIdx++, "Default Empty", "");
+					emptyPrototype = new Prototype(
+						nodeIdx++,
+						Prototype_Type::EMPTY,
+						"Default Empty",
+						"Default Empty",
+						string(),
+						"resources/engine/models/empty.tm",
+						string(),
+						ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+						Vector3(0.0f, 0.0f, 0.0f)
+					);
+					sceneLibrary->addPrototype(emptyPrototype);
 				}
 				prototype = emptyPrototype;
 			} else {
@@ -501,7 +562,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 				sceneEntityTransformations,
 				prototype
 			);
-			scene.addEntity(sceneEntity);
+			scene->addEntity(sceneEntity);
 		}
 		//
 		progressIdx++;
@@ -509,16 +570,25 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 
 	if (progressCallback != nullptr) progressCallback->progress(0.9f);
 
-	// export to tl
-	SceneWriter::write(
-		pathName,
-		Tools::removeFileEnding(fileName) + ".tscene",
-		scene
-	);
+	try {
+		// export to tscene
+		SceneWriter::write(
+			pathName,
+			Tools::removeFileEnding(fileName) + ".tscene",
+			scene
+		);
+	} catch (Exception& exception) {
+		delete scene;
+		delete sceneModel;
+		throw exception;
+	}
 
 	//
 	delete sceneModel;
 
 	//
 	if (progressCallback != nullptr) progressCallback->progress(1.0f);
+
+	//
+	return scene;
 }

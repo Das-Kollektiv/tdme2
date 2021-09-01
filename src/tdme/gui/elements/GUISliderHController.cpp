@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Time.h>
@@ -26,6 +27,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
+using tdme::math::Vector2;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::Time;
@@ -61,7 +63,7 @@ void GUISliderHController::postLayout() {
 
 void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	GUIElementController::handleMouseEvent(node, event);
-	array<float, 2> nodeMousePosition;
+	Vector2 nodeMousePosition;
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
 		this->node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(this->node));

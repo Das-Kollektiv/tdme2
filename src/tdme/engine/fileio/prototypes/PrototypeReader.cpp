@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -25,7 +26,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
@@ -35,14 +35,15 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Terrain.h>
+#include <tdme/utilities/Terrain2.h>
 
 #include <rapidjson/document.h>
 
@@ -54,6 +55,7 @@ using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -71,7 +73,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -81,50 +82,76 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
+using tdme::utilities::Base64EncDec;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
-using tdme::utilities::Terrain;
+using tdme::utilities::Terrain2;
 
 using rapidjson::Document;
 using rapidjson::Value;
+
+vector<string> PrototypeReader::extensions = {"tenvmap", "tmodel", "tparticle", "tterrain", "ttrigger"};
+
+const vector<string>& PrototypeReader::getPrototypeExtensions() {
+	return extensions;
+}
+
+bool PrototypeReader::readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData) {
+	try {
+		auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+
+		Document jPrototypeRoot;
+		jPrototypeRoot.Parse(jsonContent.c_str());
+
+		string thumbnail = jPrototypeRoot.FindMember("thumbnail") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["thumbnail"].GetString():"";
+		if (thumbnail.empty() == true) return false;
+
+		Base64EncDec::decode(thumbnail, pngData);
+
+		return true;
+	} catch (Exception& exception) {
+		Console::println("PrototypeReader::readThumbnail(): An error occurred: " + pathName + "/" + fileName + ": " + exception.what());
+		return false;
+	}
+}
 
 Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
-	Document jEntityRoot;
-	jEntityRoot.Parse(jsonContent.c_str());
+	Document jPrototypeRoot;
+	jPrototypeRoot.Parse(jsonContent.c_str());
 
-	auto prototype = read(id, pathName, jEntityRoot, transformFilter);
-	prototype->setFileName(pathName + "/" + fileName);
+	auto prototype = read(id, pathName, jPrototypeRoot, transformFilter);
+	prototype->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 	return prototype;
 }
 
-Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityRoot, PrototypeTransformFilter* transformFilter)
+Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter)
 {
-	Prototype* prototype;
-	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
+	//
+	Prototype* prototype = nullptr;
 	auto pivot = Vector3(
-		static_cast<float>(jEntityRoot["px"].GetFloat()),
-		static_cast<float>(jEntityRoot["py"].GetFloat()),
-		static_cast<float>(jEntityRoot["pz"].GetFloat())
+		static_cast<float>(jPrototypeRoot["px"].GetFloat()),
+		static_cast<float>(jPrototypeRoot["py"].GetFloat()),
+		static_cast<float>(jPrototypeRoot["pz"].GetFloat())
 	);
-	auto prototypeType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
-	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
-	auto name = (jEntityRoot["name"].GetString());
-	auto description = (jEntityRoot["descr"].GetString());
+	auto prototypeType = Prototype_Type::valueOf(jPrototypeRoot["type"].GetString());
+	auto thumbnail = jPrototypeRoot.FindMember("thumbnail") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["thumbnail"].GetString():"";
+	auto name = (jPrototypeRoot["name"].GetString());
+	auto description = (jPrototypeRoot["descr"].GetString());
 	string modelFileName = "";
 	string modelPathName = "";
-	if (jEntityRoot.FindMember("file") != jEntityRoot.MemberEnd()) {
-		modelFileName = (jEntityRoot["file"].GetString());
+	if (jPrototypeRoot.FindMember("file") != jPrototypeRoot.MemberEnd()) {
+		modelFileName = jPrototypeRoot["file"].GetString();
 	}
-	PrototypeProperties properties;
-	auto jProperties = jEntityRoot["properties"].GetArray();
+	BaseProperties properties(name, description);
+	auto jProperties = jPrototypeRoot["properties"].GetArray();
 	for (auto i = 0; i < jProperties.Size(); i++) {
 		auto& jProperty = jProperties[i];
 		properties.addProperty(
@@ -151,36 +178,37 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		prototypeType,
 		name,
 		description,
-		"",
+		string(),
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
-		modelThumbnail,
+		thumbnail,
 		model,
 		pivot
 	);
+	//
 	for (auto i = 0; i < properties.getPropertyCount(); i++) {
 		auto property = properties.getPropertyByIndex(i);
 		prototype->addProperty(property->getName(), property->getValue());
 	}
-	if (jEntityRoot.FindMember("bv") != jEntityRoot.MemberEnd()) {
+	if (jPrototypeRoot.FindMember("bv") != jPrototypeRoot.MemberEnd()) {
 		auto boundingVolume = parseBoundingVolume(
 			0,
 			prototype,
 			pathName,
-			jEntityRoot["bv"]
+			jPrototypeRoot["bv"]
 		);
 		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(0, boundingVolume);
 	} else
-	if (jEntityRoot.FindMember("bvs") != jEntityRoot.MemberEnd()) {
-		auto jBoundingVolumes = jEntityRoot["bvs"].GetArray();
+	if (jPrototypeRoot.FindMember("bvs") != jPrototypeRoot.MemberEnd()) {
+		auto jBoundingVolumes = jPrototypeRoot["bvs"].GetArray();
 		auto bvIdx = 0;
 		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
 			auto boundingVolume = parseBoundingVolume(bvIdx, prototype, pathName, jBoundingVolumes[i]);
 			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(bvIdx++, boundingVolume);
 		}
 	}
-	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
+	if (jPrototypeRoot.FindMember("p") != jPrototypeRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
 		auto physics = prototype->getPhysics();
-		auto& jPhysics = jEntityRoot["p"];
+		auto& jPhysics = jPrototypeRoot["p"];
 		physics->setType(PrototypePhysics_BodyType::valueOf(jPhysics["type"].GetString()));
 		physics->setMass(static_cast<float>(jPhysics["mass"].GetFloat()));
 		physics->setRestitution(static_cast<float>(jPhysics["restitution"].GetFloat()));
@@ -193,8 +221,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 			)
 		);
 	}
-	if (jEntityRoot.FindMember("sd") != jEntityRoot.MemberEnd()) {
-		for (auto& jSound: jEntityRoot["sd"].GetArray()) {
+	if (jPrototypeRoot.FindMember("sd") != jPrototypeRoot.MemberEnd()) {
+		for (auto& jSound: jPrototypeRoot["sd"].GetArray()) {
 			auto id = jSound["i"].GetString();
 			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;
@@ -208,37 +236,37 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		}
 	}
 	if (prototypeType == Prototype_Type::MODEL) {
-		prototype->setTerrainMesh(jEntityRoot["tm"].GetBool());
-		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
-		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
+		prototype->setTerrainMesh(jPrototypeRoot["tm"].GetBool());
+		if (jPrototypeRoot.FindMember("ll2") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jPrototypeRoot["ll2"]));
+		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"]));
 	} else
 	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
-		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
+		if (jPrototypeRoot.FindMember("ps") != jPrototypeRoot.MemberEnd()) {
 			prototype->addParticleSystem();
-			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
+			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jPrototypeRoot["ps"]);
 		} else
-		if (jEntityRoot.FindMember("pss") != jEntityRoot.MemberEnd()) {
-			auto jParticleSystems = jEntityRoot["pss"].GetArray();
+		if (jPrototypeRoot.FindMember("pss") != jPrototypeRoot.MemberEnd()) {
+			auto jParticleSystems = jPrototypeRoot["pss"].GetArray();
 			for (auto i = 0; i < jParticleSystems.Size(); i++) {
 				prototype->addParticleSystem();
 				parseParticleSystem(prototype->getParticleSystemAt(prototype->getParticleSystemsCount() - 1), pathName, jParticleSystems[i]);
 			}
 		}
 	}
-	if (jEntityRoot.FindMember("ds") != jEntityRoot.MemberEnd()) {
-		prototype->setContributesShadows(jEntityRoot["ds"].GetBool());
-		prototype->setReceivesShadows(jEntityRoot["ds"].GetBool());
+	if (jPrototypeRoot.FindMember("ds") != jPrototypeRoot.MemberEnd()) {
+		prototype->setContributesShadows(jPrototypeRoot["ds"].GetBool());
+		prototype->setReceivesShadows(jPrototypeRoot["ds"].GetBool());
 	} else
-	if (jEntityRoot.FindMember("cs") != jEntityRoot.MemberEnd() && jEntityRoot.FindMember("rs") != jEntityRoot.MemberEnd()) {
-		prototype->setContributesShadows(jEntityRoot["cs"].GetBool());
-		prototype->setReceivesShadows(jEntityRoot["rs"].GetBool());
+	if (jPrototypeRoot.FindMember("cs") != jPrototypeRoot.MemberEnd() && jPrototypeRoot.FindMember("rs") != jPrototypeRoot.MemberEnd()) {
+		prototype->setContributesShadows(jPrototypeRoot["cs"].GetBool());
+		prototype->setReceivesShadows(jPrototypeRoot["rs"].GetBool());
 	}
-	prototype->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
-	prototype->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
-	prototype->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
-	prototype->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
-	if (jEntityRoot.FindMember("sps") != jEntityRoot.MemberEnd()) {
-		Value& jShaderParameters = jEntityRoot["sps"];
+	prototype->setRenderGroups(jPrototypeRoot.FindMember("rg") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["rg"].GetBool():false);
+	prototype->setShader(jPrototypeRoot.FindMember("s") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["s"].GetString():"default");
+	prototype->setDistanceShader(jPrototypeRoot.FindMember("sds") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["sds"].GetString():"default");
+	prototype->setDistanceShaderDistance(jPrototypeRoot.FindMember("sdsd") != jPrototypeRoot.MemberEnd()?static_cast<float>(jPrototypeRoot["sdsd"].GetFloat()):10000.0f);
+	if (jPrototypeRoot.FindMember("sps") != jPrototypeRoot.MemberEnd()) {
+		Value& jShaderParameters = jPrototypeRoot["sps"];
 		EntityShaderParameters shaderParameters;
 		shaderParameters.setShader(prototype->getShader());
 		for (auto jShaderParameterIt = jShaderParameters.MemberBegin(); jShaderParameterIt != jShaderParameters.MemberEnd(); ++jShaderParameterIt) {
@@ -246,8 +274,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		}
 		prototype->setShaderParameters(shaderParameters);
 	}
-	if (jEntityRoot.FindMember("spds") != jEntityRoot.MemberEnd()) {
-		Value& jDistanceShaderParameters = jEntityRoot["spds"];
+	if (jPrototypeRoot.FindMember("spds") != jPrototypeRoot.MemberEnd()) {
+		Value& jDistanceShaderParameters = jPrototypeRoot["spds"];
 		EntityShaderParameters distanceShaderParameters;
 		distanceShaderParameters.setShader(prototype->getDistanceShader());
 		for (auto jDistanceShaderParameterIt = jDistanceShaderParameters.MemberBegin(); jDistanceShaderParameterIt != jDistanceShaderParameters.MemberEnd(); ++jDistanceShaderParameterIt) {
@@ -256,8 +284,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		prototype->setDistanceShaderParameters(distanceShaderParameters);
 	}
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
-		prototype->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
-		prototype->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
+		prototype->setEnvironmentMapRenderPassMask(jPrototypeRoot["emrpm"].GetInt());
+		prototype->setEnvironmentMapTimeRenderUpdateFrequency(jPrototypeRoot["emtf"].GetInt64());
 	}
 	//
 	if (prototype->getModel() != nullptr) ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
@@ -265,7 +293,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	//
 	if (prototype->getType() == Prototype_Type::TERRAIN) {
 		auto terrain = prototype->getTerrain();
-		Value& jTerrain = jEntityRoot["t"];
+		Value& jTerrain = jPrototypeRoot["t"];
 		{
 			terrain->setWidth(jTerrain["w"].GetFloat());
 			terrain->setDepth(jTerrain["d"].GetFloat());
@@ -291,7 +319,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		}
 		{
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
-			Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
+			Terrain2::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
 			auto& jFoliage = jTerrain["f"];
 			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
 				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
@@ -344,6 +372,36 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 				}
 			}
 		}
+		{
+			auto jBrushesArray = jTerrain["b"].GetArray();
+			for (auto i = 0; i < jBrushesArray.Size(); i++) {
+				auto& jBrush = jBrushesArray[i];
+				auto brush = terrain->addBrush();
+				brush->setFileName(jBrush["f"].GetString());
+				brush->setSize(jBrush["s"].GetFloat());
+				brush->setDensity(jBrush["d"].GetFloat());
+				auto jPrototypeArray = jBrush["p"].GetArray();
+				for (auto i = 0; i < jPrototypeArray.Size(); i++) {
+					auto& jPrototype = jPrototypeArray[i];
+					auto prototype = brush->addPrototype();
+					prototype->setFileName(jPrototype["f"].GetString());
+					prototype->setCount(jPrototype["c"].GetFloat());
+					prototype->setNormalAlign(jPrototype["n"].GetBool());
+					prototype->setRotationXMin(jPrototype["xi"].GetFloat());
+					prototype->setRotationXMax(jPrototype["xa"].GetFloat());
+					prototype->setRotationYMin(jPrototype["yi"].GetFloat());
+					prototype->setRotationYMax(jPrototype["ya"].GetFloat());
+					prototype->setRotationZMin(jPrototype["zi"].GetFloat());
+					prototype->setRotationZMax(jPrototype["za"].GetFloat());
+					prototype->setScaleMin(jPrototype["si"].GetFloat());
+					prototype->setScaleMax(jPrototype["sa"].GetFloat());
+					prototype->setHeightMin(jPrototype["hi"].GetFloat());
+					prototype->setHeightMax(jPrototype["ha"].GetFloat());
+					prototype->setSlopeMin(jPrototype["li"].GetFloat());
+					prototype->setSlopeMax(jPrototype["la"].GetFloat());
+				}
+			}
+		}
 	}
 
 	//
@@ -352,28 +410,27 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
-		(
-			StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
-				FileSystem::getInstance()->getPathName(fileName):
-				pathName + "/" +  FileSystem::getInstance()->getPathName(fileName)
-		 ),
+		StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
+			FileSystem::getInstance()->getPathName(fileName):
+			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
 	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(modelRelativeFileName);
+	return resourcePathName;
 }
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)
 {
-	auto entityBoundingVolume = new PrototypeBoundingVolume(idx, prototype);
+	auto prototypeBoundingVolume = new PrototypeBoundingVolume(idx, prototype);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
 	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {
-		entityBoundingVolume->setupNone();
+		prototypeBoundingVolume->setupNone();
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "sphere") == true) {
-		entityBoundingVolume->setupSphere(
+		prototypeBoundingVolume->setupSphere(
 			Vector3(
 				static_cast<float>(jBv["cx"].GetFloat()),
 				static_cast<float>(jBv["cy"].GetFloat()),
@@ -383,7 +440,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "capsule") == true) {
-		entityBoundingVolume->setupCapsule(
+		prototypeBoundingVolume->setupCapsule(
 			Vector3(
 				static_cast<float>(jBv["ax"].GetFloat()),
 				static_cast<float>(jBv["ay"].GetFloat()),
@@ -398,7 +455,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "aabb") == true) {
-		entityBoundingVolume->setupAabb(
+		prototypeBoundingVolume->setupAabb(
 			Vector3(
 				static_cast<float>(jBv["mix"].GetFloat()),
 				static_cast<float>(jBv["miy"].GetFloat()),
@@ -412,7 +469,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "obb") == true) {
-		entityBoundingVolume->setupObb(
+		prototypeBoundingVolume->setupObb(
 			Vector3(
 				static_cast<float>(jBv["cx"].GetFloat()),
 				static_cast<float>(jBv["cy"].GetFloat()),
@@ -442,17 +499,25 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			string fileName = jBv["file"].GetString();
-			entityBoundingVolume->setupConvexMesh(
-				getResourcePathName(pathName, fileName),
-				Tools::getFileName(fileName)
-			);
+			string data = jBv.FindMember("data") != jBv.MemberEnd()?jBv["data"].GetString():string();
+			if (data.empty() == false) {
+				vector<uint8_t> tmData;
+				Base64EncDec::decode(data, tmData);
+				prototypeBoundingVolume->setupConvexMesh(tmData);
+			} else {
+				string fileName = jBv["file"].GetString();
+				prototypeBoundingVolume->setupConvexMesh(
+					getResourcePathName(pathName, fileName),
+					Tools::getFileName(fileName)
+				);
+			}
 		} catch (Exception& exception) {
 			Console::print(string("PrototypeReader::parseBoundingVolume(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 	}
-	return entityBoundingVolume;
+	if (jBv.FindMember("g") != jBv.MemberEnd()) prototypeBoundingVolume->setGenerated(jBv["g"].GetBool());
+	return prototypeBoundingVolume;
 }
 
 PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel) {
@@ -504,9 +569,13 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
-			objectParticleSystem->getScale().setX(static_cast<float>(jObjectParticleSystem["sx"].GetFloat()));
-			objectParticleSystem->getScale().setY(static_cast<float>(jObjectParticleSystem["sy"].GetFloat()));
-			objectParticleSystem->getScale().setZ(static_cast<float>(jObjectParticleSystem["sz"].GetFloat()));
+			objectParticleSystem->setScale(
+				Vector3(
+					static_cast<float>(jObjectParticleSystem["sx"].GetFloat()),
+					static_cast<float>(jObjectParticleSystem["sy"].GetFloat()),
+					static_cast<float>(jObjectParticleSystem["sz"].GetFloat())
+				)
+			);
 			objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].GetBool());
 			try {
 				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());

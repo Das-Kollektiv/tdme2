@@ -29,6 +29,9 @@ class tdme::gui::elements::GUISelectBoxOptionController: public GUIElementContro
 	friend class GUISelectBoxController;
 	friend class GUISelectBoxParentOptionController;
 
+protected:
+	GUIParentNode* selectBoxNode { nullptr };
+
 private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
@@ -37,7 +40,6 @@ private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
 	static string CONDITION_CHILD;
-	GUIParentNode* selectBoxNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
 	bool focussed;
@@ -85,12 +87,16 @@ private:
 	void unfocus();
 
 	/**
-	 * @return if is collapsed in tree view
+	 * @return if hierarchy is expanded
 	 */
-	bool isCollapsed();
+	bool isHierarchyExpanded();
+
+	/**
+	 * Expand hierarchy
+	 */
+	void expandHierarchy();
 public:
 	// overridden methods
-	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;

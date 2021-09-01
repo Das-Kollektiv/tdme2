@@ -163,7 +163,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition,
 				-10000.0f,
-				ignoreStepUpMax == true?10000.0f:y + actorStepUpMax + 0.1f
+				ignoreStepUpMax == true?10000.0f:y + actorStepUpMax + 0.2f
 			);
 			if (body == nullptr || ((body->getCollisionTypeId() & skipOnCollisionTypeIds) != 0)) {
 				return false;
@@ -176,7 +176,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.1f:height + 0.1f, z));
+	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?height + 0.2f:Math::min(y + actorStepUpMax, height + 0.2f), z));
 	actorTransformations.update();
 
 	// update rigid body
@@ -402,14 +402,23 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 				forwardDistance+= stepSize;
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 				forwardDistance+= stepSize;
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
 			}
 			if (currentMaxTries == 0) {
 				forcedAlternativeEndSteps = 27 * 2;
@@ -669,6 +678,12 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 }
 
 FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, PathFindingCustomTest* customTest) {
+	// set up end position in costs map
+	if (path.empty() == true) {
+		Console::println("PathFinding::createFlowMap(): no path given");
+		return nullptr;
+	}
+
 	// set up custom test
 	this->customTest = customTest;
 
@@ -962,14 +977,20 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 				if (cell == nullptr) continue;
 
 				// check if we have missing neighbour cells
-				for (auto nZ = -1; nZ < 2; nZ++) {
-					for (auto nX = -1; nX < 2; nX++) {
+				auto hadMissingNeighborCell = false;
+				for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
+					for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
+						if (nZ == 0 && nX == 0) continue;
 						auto neighbourCellId = FlowMap::toIdInt(
 							centerPathNodeX + x + nX,
 							centerPathNodeZ + z + nZ
 						);
 						auto neighbourCell = flowMap->getCell(neighbourCellId);
-						if (neighbourCell == nullptr) cell->setMissingNeighborCell(true);
+						if (neighbourCell == nullptr) {
+							cell->setMissingNeighborCell(true);
+							hadMissingNeighborCell = true;
+							break;
+						}
 					}
 				}
 

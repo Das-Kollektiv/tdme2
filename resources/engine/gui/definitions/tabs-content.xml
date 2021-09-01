@@ -1,3 +1,5 @@
-<element width="100%" height="*" background-color="{$color.element_foreground}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.element_frame}">
-	{__InnerXML__}
+<element id="{$id}" width="100%" height="*" background-color="{$color.element_foreground}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.element_frame}" ignore-events="{$ignore-events}">
+	<layer id="{$id}_inner" width="100%" height="*">
+		{__InnerXML__}
+	</layer>
 </element>

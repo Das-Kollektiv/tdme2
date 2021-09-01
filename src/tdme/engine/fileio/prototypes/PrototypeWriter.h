@@ -62,11 +62,11 @@ public:
 	/**
 	 * Writes a prototype to JSON
 	 * @param document JSON document
-	 * @param jEntityRoot JSON value to store data in
+	 * @param jPrototypeRoot JSON value to store data in
 	 * @param prototype prototype
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void write(Document& jDocument, Value& jEntityRoot, Prototype* prototype);
+	static void write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype);
 
 };

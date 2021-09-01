@@ -55,7 +55,8 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608
+
 LINK_FLAGS = /LTCG
 
 SRC = src
@@ -134,6 +135,8 @@ SRCS = \
 	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/Body.cpp \
 	src/tdme/engine/physics/World.cpp \
+	src/tdme/engine/prototype/BaseProperties.cpp \
+	src/tdme/engine/prototype/BaseProperty.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
 	src/tdme/engine/primitives/BoundingVolume.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \
@@ -161,8 +164,6 @@ SRCS = \
 	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
 	src/tdme/engine/prototype/PrototypePhysics.cpp \
 	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
-	src/tdme/engine/prototype/PrototypeProperties.cpp \
-	src/tdme/engine/prototype/PrototypeProperty.cpp \
 	src/tdme/engine/prototype/Prototype_Type.cpp \
 	src/tdme/engine/scene/Scene.cpp \
 	src/tdme/engine/scene/SceneEntity.cpp \
@@ -260,6 +261,10 @@ SRCS = \
 	src/tdme/gui/elements/GUIButtonController.cpp \
 	src/tdme/gui/elements/GUICheckbox.cpp \
 	src/tdme/gui/elements/GUICheckboxController.cpp \
+	src/tdme/gui/elements/GUIContextMenu.cpp \
+	src/tdme/gui/elements/GUIContextMenuController.cpp \
+	src/tdme/gui/elements/GUIContextMenuItem.cpp \
+	src/tdme/gui/elements/GUIContextMenuItemController.cpp \
 	src/tdme/gui/elements/GUIDropDown.cpp \
 	src/tdme/gui/elements/GUIDropDownController.cpp \
 	src/tdme/gui/elements/GUIDropDownOption.cpp \
@@ -308,6 +313,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
 	src/tdme/gui/nodes/GUIElementNode.cpp \
+	src/tdme/gui/nodes/GUIFrameBufferNode.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp \
 	src/tdme/gui/nodes/GUIImageNode.cpp \
@@ -333,6 +339,8 @@ SRCS = \
 	src/tdme/gui/nodes/GUITableCellNode.cpp \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \
 	src/tdme/gui/nodes/GUITextNode.cpp \
+	src/tdme/gui/nodes/GUITextureBaseNode.cpp \
+	src/tdme/gui/nodes/GUITextureNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \
@@ -382,6 +390,7 @@ SRCS = \
 	src/tdme/tests/FlowMapTest.cpp \
 	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
+	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -397,56 +406,63 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
+	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
+	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
+	src/tdme/tools/editor/controllers/ContextMenuScreenController.cpp \
+	src/tdme/tools/editor/controllers/EditorScreenController.cpp \
+	src/tdme/tools/editor/controllers/FileDialogScreenController.cpp \
+	src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp \
+	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
+	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
+	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
+	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
+	src/tdme/tools/editor/misc/Gizmo.cpp \
+	src/tdme/tools/editor/misc/PopUps.cpp \
+	src/tdme/tools/editor/misc/Tools.cpp \
+	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/SoundTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/TerrainEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/TextureTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/TextEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/TriggerEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/UIEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
+	src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/EnvMapEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/FontTabView.cpp \
+	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/ParticleSystemEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/SoundTabView.cpp \
+	src/tdme/tools/editor/tabviews/TerrainEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/TextureTabView.cpp \
+	src/tdme/tools/editor/tabviews/TextEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/TriggerEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/UIEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
+	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
-	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
-	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
-	src/tdme/tools/sceneeditor/TDMESceneEditor.cpp \
-	src/tdme/tools/sceneeditor/controller/EmptyScreenController.cpp \
-	src/tdme/tools/sceneeditor/controller/EnvironmentMappingScreenController.cpp \
-	src/tdme/tools/sceneeditor/controller/SceneEditorLibraryScreenController.cpp \
-	src/tdme/tools/sceneeditor/controller/SceneEditorScreenController.cpp \
-	src/tdme/tools/sceneeditor/controller/TriggerScreenController.cpp \
-	src/tdme/tools/sceneeditor/views/EmptyView.cpp \
-	src/tdme/tools/sceneeditor/views/EnvironmentMappingView.cpp \
-	src/tdme/tools/sceneeditor/views/ModelEditorView.cpp \
-	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
-	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
-	src/tdme/tools/sceneeditor/views/TerrainEditorView.cpp \
-	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
-	src/tdme/tools/shared/controller/FileDialogPath.cpp \
-	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
-	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
-	src/tdme/tools/shared/controller/ProgressBarScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypeBaseSubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypeDisplaySubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
-	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
-	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
-	src/tdme/tools/shared/controller/TerrainEditorScreenController.cpp \
-	src/tdme/tools/shared/tools/Tools.cpp \
-	src/tdme/tools/shared/views/CameraInputHandler.cpp \
-	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
-	src/tdme/tools/shared/views/Gizmo.cpp \
-	src/tdme/tools/shared/views/PopUps.cpp \
-	src/tdme/tools/shared/views/PrototypeBaseView.cpp \
-	src/tdme/tools/shared/views/PrototypePhysicsView.cpp \
-	src/tdme/tools/shared/views/PrototypeDisplayView.cpp \
-	src/tdme/tools/shared/views/PrototypeSoundsView.cpp \
-	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
-	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
-	src/tdme/tools/shared/views/SharedTerrainEditorView.cpp \
-	src/tdme/tools/terraineditor/TDMETerrainEditor.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
+	src/tdme/utilities/HexEncDec.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/IntEncDec.cpp \
 	src/tdme/utilities/MiniScript.cpp \
@@ -459,7 +475,7 @@ SRCS = \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
-	src/tdme/utilities/Terrain.cpp \
+	src/tdme/utilities/Terrain2.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_SRCS = \
@@ -664,10 +680,7 @@ all: \
 	optimizemodel \
 	scenefixmodelszup2yup \
 	sortincludes \
-	TDMESceneEditor \
-	TDMEModelEditor \
-	TDMEParticleSystem \
-	TDMETerrainEditor \
+	TDMEEditor \
 	clean-mains
 
 ext-init:
@@ -796,8 +809,8 @@ create-installer:
 generatelicenses:
 	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-importtmm:
-	cl /Feimporttmm /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+importtmodel:
+	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
@@ -814,15 +827,5 @@ scenefixmodelszup2yup:
 sortincludes:
     cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-TDMESceneEditor:
-	cl /FeTDMESceneEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
-
-TDMEModelEditor:
-	cl /FeTDMEModelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
-
-TDMEParticleSystem:
-	cl /FeTDMEParticleSystem /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
-	
-
-TDMETerrainEditor:
-	cl /FeTDMETerrainEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/terrain/TDMETerrainEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+TDMEEditor:
+	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

@@ -131,11 +131,11 @@ void GUIFont::dispose()
 	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 }
 
-void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color)
+void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset)
 {
 	guiRenderer->bindTexture(textureId);
 	guiRenderer->setFontColor(color);
-	y -= getYOffset(text) / 2;
+	y -= yOffset == 10000?getYOffset(text) / 2:yOffset;
 	if (length == 0)
 		length = text.length();
 

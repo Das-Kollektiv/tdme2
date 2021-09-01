@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -38,7 +37,7 @@ public:
 	 * @param f f
 	 * @param decimals decimals
 	 */
-	MutableString(float f, int32_t decimals);
+	MutableString(float f, int32_t decimals = 3);
 
 	/**
 	 * @return length
@@ -151,7 +150,7 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& set(float f, int32_t decimals);
+	MutableString& set(float f, int32_t decimals = 3);
 
 	/**
 	 * Append float with given decimals
@@ -159,7 +158,7 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& append(float f, int32_t decimals);
+	MutableString& append(float f, int32_t decimals = 3);
 
 	/**
 	 * Insert float at idx
@@ -168,7 +167,7 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, float f, int32_t decimals);
+	MutableString& insert(int32_t idx, float f, int32_t decimals = 3);
 
 	/**
 	 * Delete characters at idx with given length
@@ -192,6 +191,19 @@ public:
 	 * @return index where string has been found or -1
 	 */
 	int32_t indexOf(const MutableString& s) const;
+
+	/**
+	 * Replace string with another string
+	 * @param what what to replace
+	 * @param by to replace by
+	 * @param beginIndex index to begin with
+	 */
+	void replace(const string& what, const string& by, int beginIndex = 0);
+
+	/**
+	 * @return if mutable string is empty
+	 */
+	bool empty() const;
 
 	/**
 	 * Equals

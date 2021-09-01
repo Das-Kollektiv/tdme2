@@ -72,7 +72,8 @@ void ShadowMapping::createShadowMaps()
 	// render to shadow maps
 	for (auto i = 0; i < engine->getLightCount(); i++) {
 		auto light = engine->getLightAt(i);
-		if (light->isEnabled() == true) {
+		if (light->isEnabled() == true &&
+			light->getSpotDirection().computeLengthSquared() > Math::square(Math::EPSILON)) {
 			// create shadow map for light, if required
 			if (shadowMaps[i] == nullptr) {
 				auto shadowMap = new ShadowMap(this, Engine::getShadowMapWidth(), Engine::getShadowMapHeight());

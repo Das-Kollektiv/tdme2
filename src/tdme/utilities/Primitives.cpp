@@ -520,7 +520,7 @@ void Primitives::setupConvexMeshMaterial(const map<string, Node*>& nodes, Materi
 		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);
 		}
-		node->setFacesEntities(node->getFacesEntities());
+		node->setFacesEntities(facesEntities);
 		setupConvexMeshMaterial(node->getSubNodes(), material);
 	}
 }

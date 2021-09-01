@@ -107,10 +107,7 @@ int GUITableRowNode::getContentHeight()
 void GUITableRowNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	GUITableNode* guiTableNode = required_dynamic_cast<GUITableNode*>(parentNode);
 	if (tableRowNodeIdx == -1) {
 		tableRowNodeIdx = 0;

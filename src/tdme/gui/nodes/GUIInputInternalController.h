@@ -93,6 +93,11 @@ public:
 	void reset();
 
 	/**
+	 * Format text according to options
+	 */
+	void formatText();
+
+	/**
 	 * @return show cursor
 	 */
 	bool isShowCursor();
@@ -111,5 +116,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };

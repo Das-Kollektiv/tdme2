@@ -13,6 +13,7 @@ using std::string;
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
@@ -33,6 +34,7 @@ private:
 	string CONDITION_UNSELECTED;
 	bool selected;
 	MutableString value;
+	GUIElementNode* parentElementNode { nullptr };
 
 	/**
 	 * Private constructor
@@ -66,5 +68,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };

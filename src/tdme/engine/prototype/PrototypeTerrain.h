@@ -1,12 +1,13 @@
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrush.h>
 #include <tdme/engine/Transformations.h>
 
 using std::unordered_map;
@@ -14,6 +15,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeTerrainBrush;
 
 using tdme::engine::Transformations;
 
@@ -32,9 +34,9 @@ private:
 	unordered_map<int, float> waterPositionMapsHeight;
 	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMaps;
 	int foliagePrototypeMapIdx { 0 };
-	unordered_map<Prototype*, int> foliagePrototypeFoliageMap;
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
 	vector<unordered_map<int, vector<Transformations>>> foliageMaps;
+	vector<PrototypeTerrainBrush*> brushes;
 
 public:
 
@@ -48,9 +50,10 @@ public:
 	 * Destructor
 	 */
 	~PrototypeTerrain() {
-		for (auto& foliagePrototypeFoliageMapIt: foliagePrototypeFoliageMap) {
-			delete foliagePrototypeFoliageMapIt.first;
+		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
+			delete foliageFoliagePrototypeMapIt.second;
 		}
+		for (auto brush: brushes) delete brush;
 	}
 
 	/**
@@ -165,13 +168,14 @@ public:
 	 * @return prototype index
 	 */
 	inline int getFoliagePrototypeIndex(Prototype* prototype) {
-		auto foliagePrototypeIt = foliagePrototypeFoliageMap.find(prototype);
-		if (foliagePrototypeIt == foliagePrototypeFoliageMap.end()) {
-			foliagePrototypeFoliageMap[prototype] = foliagePrototypeMapIdx;
-			foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
-			return foliagePrototypeMapIdx++;
+		auto foliagePrototypeMapIdx = 0;
+		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
+			if (foliageFoliagePrototypeMapIt.first > foliagePrototypeMapIdx) foliagePrototypeMapIdx = foliageFoliagePrototypeMapIt.first;
+			if (prototype->getFileName() == foliageFoliagePrototypeMapIt.second->getFileName()) return foliageFoliagePrototypeMapIt.first;
 		}
-		return foliagePrototypeIt->second;
+		foliagePrototypeMapIdx++;
+		foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
+		return foliagePrototypeMapIdx;
 	}
 
 	/**
@@ -248,6 +252,45 @@ public:
 			}
 		}
 		return foliagePrototypeEntityTransformations;
+	}
+
+	/**
+	 * @return prototype terrain brushes
+	 */
+	inline const vector<PrototypeTerrainBrush*>& getBrushes() const {
+		return brushes;
+	}
+
+	/**
+	 * Get prototype terrain brush
+	 * @param idx index
+	 * @return prototype terrain brush prototype
+	 */
+	inline PrototypeTerrainBrush* getBrush(int idx) {
+		if (idx < 0 || idx >= brushes.size()) return nullptr;
+		return brushes[idx];
+	}
+
+	/**
+	 * Add prototype terrain brush
+	 * @param idx index
+	 */
+	PrototypeTerrainBrush* addBrush() {
+		auto brush = new PrototypeTerrainBrush();
+		brushes.push_back(brush);
+		return brush;
+	}
+
+	/**
+	 * Remove prototype terrain brush
+	 * @param idx index
+	 */
+	bool removeBrush(int idx) {
+		if (idx < 0 || idx >= brushes.size()) return false;
+		auto brush = brushes[idx];
+		brushes.erase(brushes.begin() + idx);
+		delete brush;
+		return true;
 	}
 
 };

@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/math/Math.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -10,6 +11,7 @@ using std::to_string;
 
 using tdme::math::Math;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 MutableString::MutableString()
@@ -179,6 +181,15 @@ int32_t MutableString::indexOf(const MutableString& s, int32_t idx) const
 int32_t MutableString::indexOf(const MutableString& s) const
 {
 	return indexOf(s, 0);
+}
+
+void MutableString::replace(const string& what, const string& by, int beginIndex)
+{
+	data = StringTools::replace(data, what, by, beginIndex);
+}
+
+bool MutableString::empty() const {
+	return data.empty();
 }
 
 bool MutableString::equals(const string& s2) const

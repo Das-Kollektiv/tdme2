@@ -48,13 +48,10 @@ bool GUIDropDownOptionController::isSelected()
 	return selected;
 }
 
-bool GUIDropDownOptionController::isDisabled()
-{
-	return false;
-}
-
 void GUIDropDownOptionController::setDisabled(bool disabled)
 {
+	GUIElementController::setDisabled(disabled);
+	unselect();
 }
 
 void GUIDropDownOptionController::select()
@@ -106,7 +103,7 @@ void GUIDropDownOptionController::initialize()
 		dropDownNode = dropDownNode->getParentControllerNode();
 	}
 	if (selected == true) {
-		select();
+		required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->select(required_dynamic_cast<GUIElementNode*>(this->node));
 	} else {
 		unselect();
 	}
@@ -132,15 +129,13 @@ void GUIDropDownOptionController::dispose()
 
 void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	if (isDisabled() == true) return;
 	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->unselect();
-			select();
+			required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->select(required_dynamic_cast<GUIElementNode*>(this->node));
 			required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->toggleOpenState();
-			node->scrollToNodeX(dropDownNode);
-			node->scrollToNodeY(dropDownNode);
 			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(dropDownNode));
 		}
 	}

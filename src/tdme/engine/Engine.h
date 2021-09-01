@@ -753,9 +753,10 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param enableShadowMapping enable shadow mapping
+	 * @param enableDepthBuffer enable depth buffer
 	 * @return off screen engine
 	 */
-	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping);
+	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer = true);
 
 	/**
 	 * @return if initialized and ready to be used
@@ -1046,6 +1047,14 @@ public:
 	 * @return success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName);
+
+	/**
+	 * Creates a PNG file from current screen into a data vector
+	 * 	This does not seem to work with GLES2 and offscreen engines
+	 * @param pngData png data
+	 * @return success
+	 */
+	bool makeScreenshot(vector<uint8_t>& pngData);
 
 	/**
 	 * Clear post processing programs

@@ -339,7 +339,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					try {
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
 						pbrMaterialProperties->setBaseColorTexture(pathName, fileName);
@@ -358,7 +358,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					try {
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
 						pbrMaterialProperties->setMetallicRoughnessTexture(pathName, fileName);
@@ -374,7 +374,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					try {
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
 						}
 						pbrMaterialProperties->setNormalTexture(pathName, fileName);
@@ -636,7 +636,7 @@ void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model
 	}
 }
 
-bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels) {
+bool GLTFReader::writePNG(const string& pathName, const string& fileName, int channels, int bitsPerChannel, int width, int height, const uint8_t* pixels) {
 	// TODO: Use engine/fileio/textures/PNGTextureWriter
 	// see: https://gist.github.com/niw/5963798
 	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
@@ -664,20 +664,30 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 
 	png_init_io(png, fp);
 
-	auto targetBitsPerPixel = bitsPerPixel;
+	auto _pixels = pixels;
+	vector<uint8_t> pixel8Bit;
+	if (bitsPerChannel == 16) {
+		pixel8Bit.resize(width * height * channels);
+		for (auto i = 0; i < width * height * channels; i++) {
+			pixel8Bit[i] = ((int)(((uint16_t*)pixels)[i]) / (int)256);
+		}
+		_pixels = pixel8Bit.data();
+	}
+
+	auto targetChannels = channels;
 	png_bytep* row_pointers = new png_bytep[height];
-	for (auto y = 0; y < height; y++) row_pointers[y] = (png_bytep)(pixels + 	width * (bitsPerPixel / 8) * (height - 1 - y));
+	for (auto y = 0; y < height; y++) row_pointers[y] = (png_bytep)(_pixels + width * channels * (height - 1 - y));
 	// try to reduce from 32 bits with alpha to 24 bits without alpha
-	if (targetBitsPerPixel == 32) {
-		targetBitsPerPixel = 24;
+	if (targetChannels == 3) {
+		targetChannels = 4;
 		for (auto y = 0; y < height; y++) {
 			for (auto x = 0; x < width / 4; x++) {
 				if (row_pointers[y][x * 4 + 3] < 255) {
-					targetBitsPerPixel = 32;
+					targetChannels = 4;
 					break;
 				}
 			}
-			if (targetBitsPerPixel == 32) break;
+			if (targetChannels == 4) break;
 		}
 	}
 
@@ -688,7 +698,7 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 		width,
 		height,
 		8,
-		targetBitsPerPixel == 32?PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
+		targetChannels == 4?PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
 		PNG_INTERLACE_NONE,
 		PNG_COMPRESSION_TYPE_DEFAULT,
 		PNG_FILTER_TYPE_DEFAULT
@@ -696,7 +706,7 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 	png_write_info(png, info);
 
 	// Remove the alpha channel for PNG_COLOR_TYPE_RGB format
-	if (bitsPerPixel == 32 && targetBitsPerPixel == 24) {
+	if (targetChannels == 4 && targetChannels == 3) {
 		png_set_filler(png, 0, PNG_FILLER_AFTER);
 	}
 

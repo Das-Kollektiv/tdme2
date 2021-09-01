@@ -45,6 +45,12 @@ class tdme::gui::nodes::GUIMultilineTextNode final
 	friend class tdme::gui::GUIParser;
 
 private:
+	struct TextStyle {
+		int startIdx;
+		int endIdx;
+		GUIColor color;
+	};
+
 	GUIFont* font { nullptr };
 	GUIColor color;
 	MutableString text;
@@ -60,6 +66,10 @@ private:
 	int charEndIdx;
 	int widthLast;
 	int heightLast;
+
+	vector<TextStyle> textStyles;
+	int startTextStyleIdx { -1 };
+
 protected:
 	/**
 	 * Constructor
@@ -128,5 +138,20 @@ public:
 	 * @param text text
 	 */
 	void setText(const MutableString& text);
+
+	/**
+	 * Remove text style
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 */
+	void removeTextStyle(int startIdx, int endIdx);
+
+	/**
+	 * Add text style
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 * @param color color
+	 */
+	void addTextStyle(int startIdx, int endIdx, const GUIColor& color);
 
 };

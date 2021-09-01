@@ -37,7 +37,7 @@ bool GUITabContentController::isSelected()
 
 void GUITabContentController::setSelected(bool selected)
 {
-	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(this->node->getParentNode())->getActiveConditions();
+	auto& nodeConditions = parentElementNode->getActiveConditions();
 	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = selected;
 	nodeConditions.add(this->selected == true ?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -45,7 +45,9 @@ void GUITabContentController::setSelected(bool selected)
 
 void GUITabContentController::initialize()
 {
-	setSelected(selected);
+	auto _parentElementNode = this->node->getParentNode();
+	while (dynamic_cast<GUIElementNode*>(_parentElementNode) == nullptr) _parentElementNode = _parentElementNode->getParentNode();
+	parentElementNode = required_dynamic_cast<GUIElementNode*>(_parentElementNode);
 }
 
 void GUITabContentController::dispose()
@@ -90,3 +92,6 @@ void GUITabContentController::setValue(const MutableString& value)
 {
 }
 
+void GUITabContentController::onSubTreeChange()
+{
+}

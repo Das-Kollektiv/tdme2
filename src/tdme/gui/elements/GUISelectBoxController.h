@@ -16,6 +16,7 @@ using std::vector;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
@@ -35,11 +36,12 @@ private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
 	static constexpr char VALUE_DELIMITER { '|' };
-	vector<GUINode*> childControllerNodes;
-	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
+	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
 	bool disabled;
 	bool multipleSelection;
+	int focussedOptionIdx;
 	MutableString value;
+	MutableString singleValue;
 
 	bool keyControl;
 
@@ -60,9 +62,32 @@ private:
 	bool isKeyControlDown();
 
 	/**
+	 * Get focussed option idx
+	 */
+	int getFocussedOptionIdx();
+
+	/**
+	 * Get focussed option idx
+	 * @param optionElementNode option element node
+	 */
+	int getOptionIdx(GUIElementNode* optionElementNode);
+
+	/**
 	 * Unselect all nodes
 	 */
 	void unselect();
+
+	/**
+	 * Select
+	 * @param optionIdx option index
+	 */
+	void select(int optionIdx);
+
+	/**
+	 * Select
+	 * @param optionElementNode option element node
+	 */
+	void select(GUIElementNode* optionElementNode);
 
 	/**
 	 * Unfocus all nodes
@@ -70,14 +95,16 @@ private:
 	void unfocus();
 
 	/**
-	 * Determine select box option controllers
+	 * Focus
+	 * @param optionIdx option index
 	 */
-	void determineSelectBoxMultipleOptionControllers();
+	void focus(int optionIdx);
 
 	/**
-	 * Get focussed option idx
+	 * Focus
+	 * @param optionElementNode option element node
 	 */
-	int getFocussedOptionIdx();
+	void focus(GUIElementNode* optionElementNode);
 
 	/**
 	 * Select current options
@@ -95,9 +122,16 @@ private:
 	void focusPrevious();
 
 	/**
-	 * Toggle selected node
+	 * Toggle
+	 * @param optionIdx option index
 	 */
-	void toggle();
+	void toggle(int optionIdx);
+
+	/**
+	 * Toggle
+	 * @param optionElementNode option element node
+	 */
+	void toggle(GUIElementNode* optionElementNode);
 
 	/**
 	 * Select focussed node
@@ -105,14 +139,46 @@ private:
 	void select();
 
 	/**
-	 * Toggle open state of current parent option
+	 * Determine all options
 	 */
-	void toggleOpenState();
+	void determineAllOptions();
+
+	/**
+	 * Determine expanded options
+	 */
+	void determineExpandedOptions();
+
+	/**
+	 * Determine parent options
+	 */
+	void determineParentOptions();
+
+	/**
+	 * Toggle open state of current parent option
+	 * @param optionIdx option index
+	 */
+	void toggleOpenState(int optionIdx);
+
+	/**
+	 * Expand
+	 * @param optionIdx option index
+	 */
+	void expand(int optionIdx);
+
+	/**
+	 * Collapse
+	 * @param optionIdx option index
+	 */
+	void collapse(int optionIdx);
 
 public:
+	/**
+	 * Toggle open state of current parent option
+	 * @param optionElementNode option element node
+	 */
+	void toggleOpenState(GUIElementNode* optionElementNode);
+
 	// overridden methods
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
@@ -124,5 +190,18 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
+
+	/**
+	 * Determine expanded parent option values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void determineExpandedParentOptionValues(vector<string>& expandedParentOptionValues);
+
+	/**
+	 * Expand parent options by values
+	 * @param expandedParentOptionValues expanded parent option values
+	 */
+	void expandParentOptionsByValues(const vector<string>& expandedParentOptionValues);
 
 };

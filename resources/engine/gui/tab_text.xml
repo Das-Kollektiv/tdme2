@@ -1,0 +1,9 @@
+<screen id="tab_text">
+	<scrollarea width="100%" height="100%" alignment="none" background-color="{$color.element_midground}">
+		<multiline-text id="text" font="{$font.default}" color="{$color.font_normal}" padding="5" width="100%" height="auto">
+			<![CDATA[
+{$text}
+			]]>
+		</multiline-text>
+	</scrollarea>
+</screen>

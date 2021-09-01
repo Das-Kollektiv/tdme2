@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -23,12 +23,13 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
-using std::set;
 using std::string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -51,6 +52,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Vector2;
 
 /**
  * GUI node base class
@@ -158,7 +160,7 @@ protected:
 	GUINodeConditions showOn;
 	GUINodeConditions hideOn;
 	GUINodeController* controller { nullptr };
-	map<string, GUIEffect*> effects;
+	unordered_map<string, GUIEffect*> effects;
 	int guiEffectOffsetX;
 	int guiEffectOffsetY;
 	bool conditionsMet;
@@ -474,10 +476,10 @@ public:
 	/**
 	 * Is event belonging to node
 	 * @param event event
-	 * @param position x,y position in node coordinate system
+	 * @param position
 	 * @return boolean
 	 */
-	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
+	virtual bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * Is event belonging to node
@@ -490,19 +492,19 @@ public:
 	 * Get event off node relative position
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
-	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
+	 * @param position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
 	 * @return void
 	 */
-	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
+	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * Get event position clamped to node constraints
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
-	 * @param position x,y position clamped to node constraints
+	 * @param position position clamped to node constraints
 	 * @return void
 	 */
-	virtual void getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position);
+	virtual void getEventNodePosition(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * @return first parent node in tree with controller node attached
@@ -516,7 +518,7 @@ public:
 	 * @param eventNodeIds event node ids
 	 * @param eventFloatingNodeIds event floating node ids
 	 */
-	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds);
 
 	/**
 	 * @return controller

@@ -23,8 +23,8 @@ public:
 
 	/**
 	 * @brief Decodes an 6 char string representation to a unsigned 32 bit integer
-	 * @param encodedInt encoded string
+	 * @param encodedString encoded string
 	 * @param decodedInt integer
 	 */
-	static bool decodeInt(const string& encodedInt, uint32_t& decodedInt);
+	static bool decodeInt(const string& encodedString, uint32_t& decodedInt);
 };

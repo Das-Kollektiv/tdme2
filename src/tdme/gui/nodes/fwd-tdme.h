@@ -8,6 +8,7 @@ namespace nodes {
 	class GUIElementController;
 	class GUIElementIgnoreEventsController;
 	class GUIElementNode;
+	class GUIFrameBufferNode;
 	class GUIHorizontalScrollbarInternalController;
 	class GUIHorizontalScrollbarInternalController_State;
 	class GUIHorizontalScrollbarInternalNode;
@@ -43,6 +44,8 @@ namespace nodes {
 	class GUITableCellNode;
 	class GUITableRowNode;
 	class GUITextNode;
+	class GUITextureBaseNode;
+	class GUITextureNode;
 	class GUIVerticalScrollbarInternalController;
 	class GUIVerticalScrollbarInternalController_State;
 	class GUIVerticalScrollbarInternalNode;

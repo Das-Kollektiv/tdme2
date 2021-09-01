@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -24,18 +25,23 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
 using std::array;
 using std::map;
 using std::string;
+using std::to_string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::fileio::textures::PNGTextureWriter;
@@ -57,16 +63,25 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
 void TMWriter::write(Model* model, const string& pathName, const string& fileName)
 {
-	TMWriterOutputStream os;
+	vector<uint8_t> data;
+	write(model, data);
+	FileSystem::getInstance()->setContent(pathName, fileName, data);
+}
+
+void TMWriter::write(Model* model, vector<uint8_t>& data) {
+	TMWriterOutputStream os(&data);
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
@@ -90,7 +105,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 		AnimationSetup* animationSetup = it.second;
 		writeAnimationSetup(&os, animationSetup);
 	}
-	FileSystem::getInstance()->setContent(pathName, fileName, *os.getData());
+	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
@@ -280,4 +295,30 @@ void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 	writeSkinning(os, g->getSkinning());
 	writeFacesEntities(os, g->getFacesEntities());
 	writeSubNodes(os, g->getSubNodes());
+}
+
+void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
+	// generate thumbnail
+	auto prototype = new Prototype(
+		Prototype::ID_NONE,
+		Prototype_Type::MODEL,
+		model->getId(),
+		model->getId(),
+		"",
+		model->getId(),
+		string(),
+		model,
+		Vector3(0.0f, 0.0f, 0.0f)
+	);
+	vector<uint8_t> pngData;
+	string base64PNGData;
+	Tools::oseThumbnail(prototype, pngData);
+	prototype->unsetModel();
+	delete prototype;
+
+	// write as attachment
+	os->writeUInt8tArray(pngData);
+	os->writeInt(pngData.size()); // png size
+	os->writeUInt8tArray({'T', 'M', 'B', 'N'}); // attachment type id
+	os->writeUInt8tArray({'A', 'T', 'M', 'T'}); // attachment id
 }

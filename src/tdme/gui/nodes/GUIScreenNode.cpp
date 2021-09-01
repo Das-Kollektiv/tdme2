@@ -1,12 +1,13 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
@@ -25,12 +26,12 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::map;
 using std::remove;
 using std::reverse;
-using std::set;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
@@ -53,6 +54,7 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
 GUIScreenNode::GUIScreenNode(
+	const string& fileName,
 	const string& applicationRootPathName,
 	const string& applicationSubPathName,
 	const string& id,
@@ -76,6 +78,7 @@ GUIScreenNode::GUIScreenNode(
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
+	this->fileName = fileName;
 	this->applicationRootPathName = applicationRootPathName;
 	this->applicationSubPathName = applicationSubPathName;
 	this->sizeConstraints = sizeConstraints;
@@ -88,7 +91,6 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
-	this->reshapeRequested = false;
 }
 
 GUIScreenNode::~GUIScreenNode() {
@@ -114,10 +116,14 @@ void GUIScreenNode::setGUI(GUI* gui)
 
 void GUIScreenNode::setVisible(bool visible)
 {
+	if (this->visible == visible) return;
 	this->visible = visible;
-	if (gui != nullptr)
+	if (gui != nullptr &&
+		((visible == false && gui->getFocussedNode() != nullptr && gui->getFocussedNode()->getScreenNode() == this) ||
+		visible == true)) {
+		//
 		gui->invalidateFocussedNode();
-
+	}
 }
 
 void GUIScreenNode::setPopUp(bool popUp)
@@ -191,10 +197,12 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 	while (
 		_node->parentNode != nullptr &&
 		// auto depends on its children dimensions, so do relayout the parent
-		((_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
+		(((_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
-		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) ||
+		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) &&
+		// TODO: a.drewke, relayout of parent node with auto in child and same size after condition change or similar is not required
+		(_node->getContentWidth() != _node->computedConstraints.width || _node->getContentHeight() != _node->computedConstraints.height || _node->layouted == false)) ||
 		// percent depend on its parent dimensions so make sure its already layouted
 		(_node->layouted == false &&
 		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
@@ -211,6 +219,9 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 		_node = _node->parentNode;
 	}
 
+	// dumpParentNodes(_node);
+
+	//
 	_node->layouted = false;
 
 	//
@@ -224,7 +235,10 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 void GUIScreenNode::invalidateLayouts() {
 	for (auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
-		if (node != nullptr) forceInvalidateLayout(node);
+		if (node != nullptr) {
+			auto layoutNode = forceInvalidateLayout(node);
+			if (layoutNode != nullptr) forceLayout(layoutNode); // TODO: actually the relayout should happen automatically by layouting on demand, but we have a bug here it seems
+		}
 	}
 	invalidateLayoutNodeIds.clear();
 }
@@ -284,20 +298,6 @@ const string GUIScreenNode::getNodeType()
 	return "screen";
 }
 
-GUINode* GUIScreenNode::getNodeById(const string& nodeId)
-{
-	auto nodesByIdIt = nodesById.find(nodeId);
-	if (nodesByIdIt == nodesById.end()) {
-		return nullptr;
-	}
-	return nodesByIdIt->second;
-}
-
-const string GUIScreenNode::allocateNodeId()
-{
-	return "tdme_gui_anonymous_node_" + to_string(nodeCounter++);
-}
-
 bool GUIScreenNode::addNode(GUINode* node)
 {
 	// if node does exist do not insert it and return
@@ -311,6 +311,16 @@ bool GUIScreenNode::addNode(GUINode* node)
 	if (node->flow == GUINode_Flow::FLOATING) floatingNodes.push_back(node);
 
 	return true;
+}
+
+void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets) {
+	auto node = getNodeById(nodeId);
+	if (node == nullptr) {
+		Console::println("GUIScreenNode::removeNodeById(): node not found: " + nodeId);
+		return;
+	}
+	if (node->parentNode != nullptr) node->parentNode->removeSubNode(node, resetScrollOffsets);
+	removeNode(node);
 }
 
 bool GUIScreenNode::removeNode(GUINode* node)
@@ -381,7 +391,7 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
 {
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
@@ -454,6 +464,21 @@ void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
 	}
 }
 
+void GUIScreenNode::addContextMenuRequestListener(GUIContextMenuRequestListener* listener) {
+	removeContextMenuRequestListener(listener);
+	contextMenuRequestListener.push_back(listener);
+}
+
+void GUIScreenNode::removeContextMenuRequestListener(GUIContextMenuRequestListener* listener) {
+	contextMenuRequestListener.erase(std::remove(contextMenuRequestListener.begin(), contextMenuRequestListener.end(), listener), contextMenuRequestListener.end());
+}
+
+void GUIScreenNode::delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < contextMenuRequestListener.size(); i++) {
+		contextMenuRequestListener[i]->onContextMenuRequested(node, mouseX, mouseY);
+	}
+}
+
 void GUIScreenNode::addFocusListener(GUIFocusListener* listener)
 {
 	removeFocusListener(listener);
@@ -504,7 +529,7 @@ void GUIScreenNode::tick() {
 	}
 }
 
-void GUIScreenNode::getValues(map<string, MutableString>& values)
+void GUIScreenNode::getValues(unordered_map<string, MutableString>& values)
 {
 	values.clear();
 	getChildControllerNodes(childControllerNodes);
@@ -526,7 +551,7 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 	}
 }
 
-void GUIScreenNode::setValues(const map<string, MutableString>& values)
+void GUIScreenNode::setValues(const unordered_map<string, MutableString>& values)
 {
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {

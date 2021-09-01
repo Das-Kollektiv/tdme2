@@ -91,3 +91,7 @@ void GUIElementIgnoreEventsController::setValue(const MutableString& value)
 {
 }
 
+void GUIElementIgnoreEventsController::onSubTreeChange()
+{
+}
+

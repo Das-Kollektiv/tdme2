@@ -6,12 +6,14 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -21,17 +23,18 @@ using std::remove;
 using std::string;
 using std::vector;
 
-using tdme::engine::EntityShaderParameters;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics;
-using tdme::engine::prototype::PrototypeProperties;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
 
 /**
@@ -40,26 +43,21 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::prototype::Prototype final
-	: public PrototypeProperties
+	: public BaseProperties
 {
+	friend class tdme::engine::scene::SceneLibrary;
 	friend class Prototype_Type;
 
 public:
 	static constexpr int ID_NONE { -1 };
-	static constexpr int MODEL_BOUNDINGVOLUME_COUNT { 64 };
-	static constexpr int MODEL_SOUNDS_COUNT { 32 };
-	static char MODEL_BOUNDINGVOLUME_EDITING_ID[];
-	static char MODEL_BOUNDINGVOLUMES_ID[];
-	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
 	int id;
 	Prototype_Type* type { nullptr };
-	string name;
-	string description;
+	bool embedded { true };
 	string fileName;
 	string modelFileName;
-	string thumbnailFileName;
+	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
 	PrototypeLODLevel* lodLevel2 { nullptr };
@@ -78,9 +76,17 @@ private:
 	EntityShaderParameters distanceShaderParameters;
 	map<string, PrototypeAudio*> soundsById;
 	vector<PrototypeAudio*> sounds;
-	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
-	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
+	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
+	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
 	PrototypeTerrain* terrain { nullptr };
+
+	/**
+	 * Set Id
+	 * @param id id
+	 */
+	inline void setId(int id) {
+		this->id = id;
+	}
 
 public:
 
@@ -92,7 +98,7 @@ public:
 	 * @param description description
 	 * @param fileName file name
 	 * @param modelFileName model file name
-	 * @param thumbnail thumbnail
+	 * @param thumbnail thumbnail PNG data
 	 * @param model model
 	 * @param pivot pivot
 	 */
@@ -118,45 +124,30 @@ public:
 	}
 
 	/**
-	 * @return name
+	 * @return if this prototype is embedded into a tscene file
 	 */
-	inline const string& getName() {
-		return name;
+	inline bool isEmbedded() {
+		return embedded;
 	}
 
 	/**
-	 * Set up name
-	 * @param name name
+	 * Set embedded
+	 * @param embedded embedded
 	 */
-	inline void setName(const string& name) {
-		this->name = name;
+	inline void setEmbedded(bool embedded) {
+		this->embedded = embedded;
 	}
 
 	/**
-	 * @return description
-	 */
-	inline const string& getDescription() {
-		return description;
-	}
-
-	/**
-	 * Set up description
-	 * @param description description
-	 */
-	inline void setDescription(const string& description) {
-		this->description = description;
-	}
-
-	/**
-	 * @return prototype file name
+	 * @return prototype file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set prototype file name
-	 * @param fileName prototype file name
+	 * Set up prototype file name including relative path
+	 * @param fileName prototype file name including relative path
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;
@@ -178,10 +169,10 @@ public:
 	}
 
 	/**
-	 * @return thumbnail file name
+	 * @return thumbnail PNG data
 	 */
-	inline const string& getThumbnailFileName() {
-		return thumbnailFileName;
+	inline const string& getThumbnail() {
+		return thumbnail;
 	}
 
 	/**
@@ -245,12 +236,6 @@ public:
 	void removeBoundingVolume(int idx);
 
 	/**
-	 * Set default bounding volumes(to be used with SceneEditor)
-	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
-	 */
-	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
-
-	/**
 	 * @return physics
 	 */
 	inline PrototypePhysics* getPhysics() {
@@ -258,7 +243,7 @@ public:
 	}
 
 	/**
-	 * @return lod level 2
+	 * @return LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
 		return lodLevel2;
@@ -266,12 +251,12 @@ public:
 
 	/**
 	 * Set LOD level 2
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel2(PrototypeLODLevel* lodLevel);
 
 	/**
-	 * @return lod level 3
+	 * @return LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
 		return lodLevel3;
@@ -279,9 +264,15 @@ public:
 
 	/**
 	 * Set LOD level 3
-	 * @param lodLevel lod level settings
+	 * @param lodLevel LOD level settings
 	 */
 	void setLODLevel3(PrototypeLODLevel* lodLevel);
+
+	/**
+	 * Remove LOD level
+	 * @param lodLevel LOD level
+	 */
+	void removeLODLevel(int lodLevel);
 
 	/**
 	 * @return particle systems count
@@ -293,8 +284,10 @@ public:
 	/**
 	 * Add particle system
 	 */
-	inline void addParticleSystem() {
-		particleSystems.push_back(new PrototypeParticleSystem());
+	inline PrototypeParticleSystem* addParticleSystem() {
+		auto particleSystem = new PrototypeParticleSystem();
+		particleSystems.push_back(particleSystem);
+		return particleSystem;
 	}
 
 	/**
@@ -316,6 +309,7 @@ public:
 	 * @return prototype particle system
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
+		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
 		return particleSystems[idx];
 	}
 
@@ -502,6 +496,7 @@ public:
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return false;
 		auto sound = soundIt->second;
+		sound->setId(newId);
 		soundsById.erase(soundIt);
 		soundsById[newId] = sound;
 		return true;

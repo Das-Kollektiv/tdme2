@@ -45,23 +45,21 @@ int main(int argc, char** argv)
 	Console::println();
 
 	if (argc != 2) {
-		Console::println("Usage: scenefixmodelszup2yup scene.tscene");
+		Console::println("Usage: scenefixmodelszup2yup scene->tscene");
 		Application::exit(1);
 	}
 	string sceneFileName = string(argv[1]);
 	try {
 		Console::println("Loading scene: " + sceneFileName);
-		Scene scene;
-		SceneReader::read(
+		auto scene = SceneReader::read(
 			FileSystem::getInstance()->getPathName(sceneFileName),
-			FileSystem::getInstance()->getFileName(sceneFileName),
-			scene
+			FileSystem::getInstance()->getFileName(sceneFileName)
 		);
 		Console::println("Fixing scene models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
 		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// scene prototype library
-		auto sceneLibray = scene.getLibrary();
+		auto sceneLibray = scene->getLibrary();
 		for (auto i = 0; i < sceneLibray->getPrototypeCount(); i++) {
 			auto prototype = sceneLibray->getPrototypeAt(i);
 			if (prototype->getType() != Prototype_Type::MODEL) continue;
@@ -71,13 +69,13 @@ int main(int argc, char** argv)
 			prototype->getModel()->getBoundingBox()->update();
 		}
 		// scene entities
-		for (auto i = 0; i < scene.getEntityCount(); i++) {
-			auto sceneEntity = scene.getEntityAt(i);
+		for (auto i = 0; i < scene->getEntityCount(); i++) {
+			auto sceneEntity = scene->getEntityAt(i);
 			if (sceneEntity->getPrototype()->getType() != Prototype_Type::MODEL) continue;
 			auto scale = sceneEntity->getTransformations().getScale();
 			sceneEntity->getTransformations().setScale(Vector3(scale.getX(), scale.getZ(), scale.getY()));
-			auto rotationX = sceneEntity->getTransformations().getRotationAngle(scene.getRotationOrder()->getAxisXIndex());
-			sceneEntity->getTransformations().setRotationAngle(scene.getRotationOrder()->getAxisXIndex(), rotationX + 90);
+			auto rotationX = sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisXIndex());
+			sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), rotationX + 90);
 			sceneEntity->getTransformations().update();
 		}
 		// TODO: bvs

@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/application/Application.h>
+#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -14,6 +16,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -32,8 +35,9 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrush.h>
+#include <tdme/engine/prototype/PrototypeTerrainBrushPrototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
@@ -41,7 +45,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
@@ -55,6 +60,8 @@ using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 
+using tdme::application::Application;
+using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
@@ -64,6 +71,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::Triangle;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -81,7 +89,9 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::prototype::PrototypeTerrainBrush;
+using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -89,7 +99,8 @@ using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::tools::Tools;
+using tdme::tools::editor::misc::Tools;
+using tdme::utilities::Base64EncDec;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
@@ -105,7 +116,8 @@ void PrototypeWriter::copyFile(const string& source, const string& dest)
 
 void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
 {
-	prototype->setFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
+	prototype->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
+
 	Document jRoot;
 	jRoot.SetObject();
 	write(jRoot, jRoot, prototype);
@@ -143,7 +155,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* prototype)
+void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype)
 {
 	auto& jAllocator = jDocument.GetAllocator();
 	if (prototype->getType() == Prototype_Type::MODEL && prototype->getModelFileName().length() > 0) {
@@ -154,20 +166,18 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			modelPathName,
 			modelFileName
 		);
-		jEntityRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
-		/*
-		try {
-			auto thumbnail = modelFileName + ".png";
-			jEntityRoot.AddMember("thumbnail] = (thumbnail));
-			copyFile("./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
-		} catch (Exception& exception) {
-			Console::print(string("PrototypeWriter::export(): An error occurred: '));
-			Console::print(entity->getFileName());
-			Console::print(string(": "));
-			Console::println(exception.what());
+
+		// we can only use the offscreen engine currently if having a GL/Vulkan window and context
+		if (Application::hasApplication() == true) {
+			vector<uint8_t> pngData;
+			string base64PNGData;
+			Tools::oseThumbnail(prototype, pngData);
+			Base64EncDec::encode(pngData, base64PNGData);
+			jPrototypeRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
-		*/
-		jEntityRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
+
+		jPrototypeRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
+		jPrototypeRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = prototype->getLODLevel2();
@@ -179,7 +189,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 				Value jLodLevel;
 				jLodLevel.SetObject();
 				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
-				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
+				jPrototypeRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
+				lodLevelIdx++;
 			}
 		}
 		{
@@ -193,17 +204,18 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 				Value jLodLevel;
 				jLodLevel.SetObject();
 				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
-				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
+				jPrototypeRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
+				lodLevelIdx++;
 			}
 		}
 	}
-	jEntityRoot.AddMember("version", Value("1.99", jAllocator), jAllocator);
-	jEntityRoot.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("name", Value(prototype->getName(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("descr", Value(prototype->getDescription(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
-	jEntityRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
-	jEntityRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
+	jPrototypeRoot.AddMember("version", Value("1.99", jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("name", Value(prototype->getName(), jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("descr", Value(prototype->getDescription(), jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
+	jPrototypeRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
+	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
@@ -221,9 +233,9 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 				{
 					Value jObjectParticleSystem;
 					jObjectParticleSystem.SetObject();
-					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
-						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile())) + ".tm";
+					if (particleSystem->getObjectParticleSystem()->getModelFileName().length() > 0) {
+						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFileName());
+						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,
@@ -235,7 +247,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 					jObjectParticleSystem.AddMember("sx", Value(particleSystem->getObjectParticleSystem()->getScale().getX()), jAllocator);
 					jObjectParticleSystem.AddMember("sy", Value(particleSystem->getObjectParticleSystem()->getScale().getY()), jAllocator);
 					jObjectParticleSystem.AddMember("sz", Value(particleSystem->getObjectParticleSystem()->getScale().getZ()), jAllocator);
-					jObjectParticleSystem.AddMember("mf", Value(particleSystem->getObjectParticleSystem()->getModelFile(), jAllocator), jAllocator);
+					jObjectParticleSystem.AddMember("mf", Value(particleSystem->getObjectParticleSystem()->getModelFileName(), jAllocator), jAllocator);
 					jObjectParticleSystem.AddMember("ae", Value(particleSystem->getObjectParticleSystem()->isAutoEmit()), jAllocator);
 					jParticleSystem.AddMember("ops", jObjectParticleSystem, jAllocator);
 				} else
@@ -461,13 +473,13 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			}
 			jParticleSystems.PushBack(jParticleSystem, jAllocator);
 		}
-		jEntityRoot.AddMember("pss", jParticleSystems, jAllocator);
+		jPrototypeRoot.AddMember("pss", jParticleSystems, jAllocator);
 	}
 	Value jBoundingVolumes;
 	jBoundingVolumes.SetArray();
 	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = prototype->getBoundingVolume(i);
-		auto bv = entityBoundingVolume->getBoundingVolume();
+		auto prototypeBoundingVolume = prototype->getBoundingVolume(i);
+		auto bv = prototypeBoundingVolume->getBoundingVolume();
 		if (bv == nullptr) continue;
 		Value jBoundingVolume;
 		jBoundingVolume.SetObject();
@@ -524,11 +536,28 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
 			jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("file", Value(entityBoundingVolume->getModelMeshFile(), jAllocator), jAllocator);
+			if (prototypeBoundingVolume->getConvexMeshData().empty() == false) {
+				string base64TMData;
+				Base64EncDec::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
+				jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
+			} else {
+				jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
+				auto convexMeshModel =
+					TMReader::read(
+						Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+						Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+					);
+				TMWriter::write(
+					convexMeshModel,
+					Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+					Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+				);
+			}
 		}
+		jBoundingVolume.AddMember("g", Value(prototypeBoundingVolume->isGenerated()), jAllocator);
 		jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
 	}
-	jEntityRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
+	jPrototypeRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
 	auto physics = prototype->getPhysics();
 	if (physics != nullptr) {
 		Value jPhysics;
@@ -540,25 +569,25 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 		jPhysics.AddMember("itx", Value(physics->getInertiaTensor().getX()), jAllocator);
 		jPhysics.AddMember("ity", Value(physics->getInertiaTensor().getY()), jAllocator);
 		jPhysics.AddMember("itz", Value(physics->getInertiaTensor().getZ()), jAllocator);
-		jEntityRoot.AddMember("p", jPhysics, jAllocator);
+		jPrototypeRoot.AddMember("p", jPhysics, jAllocator);
 	}
 	Value jPrototypeProperties;
 	jPrototypeProperties.SetArray();
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-		PrototypeProperty* modelProperty = prototype->getPropertyByIndex(i);
+		BaseProperty* modelProperty = prototype->getPropertyByIndex(i);
 		Value jObjectProperty;
 		jObjectProperty.SetObject();
 		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);
 		jObjectProperty.AddMember("value", Value(modelProperty->getValue(), jAllocator), jAllocator);
 		jPrototypeProperties.PushBack(jObjectProperty, jAllocator);
 	}
-	jEntityRoot.AddMember("properties", jPrototypeProperties, jAllocator);
-	jEntityRoot.AddMember("cs", Value(prototype->isContributesShadows()), jAllocator);
-	jEntityRoot.AddMember("rs", Value(prototype->isReceivesShadows()), jAllocator);
-	jEntityRoot.AddMember("rg", Value(prototype->isRenderGroups()), jAllocator);
-	jEntityRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
-	jEntityRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
+	jPrototypeRoot.AddMember("properties", jPrototypeProperties, jAllocator);
+	jPrototypeRoot.AddMember("cs", Value(prototype->isContributesShadows()), jAllocator);
+	jPrototypeRoot.AddMember("rs", Value(prototype->isReceivesShadows()), jAllocator);
+	jPrototypeRoot.AddMember("rg", Value(prototype->isRenderGroups()), jAllocator);
+	jPrototypeRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
+	jPrototypeRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
 	{
 		Value jShaderParameters;
 		jShaderParameters.SetObject();
@@ -566,7 +595,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			auto& shaderParameterName = shaderParameterIt.first;
 			jShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
-		jEntityRoot.AddMember("sps", jShaderParameters, jAllocator);
+		jPrototypeRoot.AddMember("sps", jShaderParameters, jAllocator);
 	}
 	{
 		Value jDistanceShaderParameters;
@@ -575,7 +604,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			auto& shaderParameterName = shaderParameterIt.first;
 			jDistanceShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getDistanceShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
-		jEntityRoot.AddMember("spds", jDistanceShaderParameters, jAllocator);
+		jPrototypeRoot.AddMember("spds", jDistanceShaderParameters, jAllocator);
 	}
 	if (prototype->getSounds().size() > 0) {
 		Value jSounds;
@@ -594,11 +623,11 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			jSound.AddMember("f", Value(sound->isFixed()), jAllocator);
 			jSounds.PushBack(jSound, jAllocator);
 		}
-		jEntityRoot.AddMember("sd", jSounds, jAllocator);
+		jPrototypeRoot.AddMember("sd", jSounds, jAllocator);
 	}
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
-		jEntityRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
-		jEntityRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
+		jPrototypeRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
+		jPrototypeRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
 	}
 	if (prototype->getType() == Prototype_Type::TERRAIN) {
 		auto terrain = prototype->getTerrain();
@@ -681,6 +710,51 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 			}
 			jTerrain.AddMember("f", jFoliage, jAllocator);
 		}
-		jEntityRoot.AddMember("t", jTerrain, jAllocator);
+		{
+			//
+			Value jFoliageBrushes;
+			jFoliageBrushes.SetArray();
+			//
+			for (auto brush: terrain->getBrushes()) {
+				Value jFoliageBrush;
+				jFoliageBrush.SetObject();
+
+				jFoliageBrush.AddMember("f", Value(brush->getFileName(), jAllocator), jAllocator);
+				jFoliageBrush.AddMember("s", Value(brush->getSize()), jAllocator);
+				jFoliageBrush.AddMember("d", Value(brush->getDensity()), jAllocator);
+
+				Value jFoliageBrushPrototypes;
+				jFoliageBrushPrototypes.SetArray();
+				for (auto brushPrototype: brush->getPrototypes()) {
+					Value jFoliageBrushPrototype;
+					jFoliageBrushPrototype.SetObject();
+
+					jFoliageBrushPrototype.AddMember("f", Value(brushPrototype->getFileName(), jAllocator), jAllocator);
+
+					jFoliageBrushPrototype.AddMember("c", Value(brushPrototype->getCount()), jAllocator);
+					jFoliageBrushPrototype.AddMember("n", Value(brushPrototype->isNormalAlign()), jAllocator);
+					jFoliageBrushPrototype.AddMember("xi", Value(brushPrototype->getRotationXMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("xa", Value(brushPrototype->getRotationXMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("yi", Value(brushPrototype->getRotationYMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("ya", Value(brushPrototype->getRotationYMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("zi", Value(brushPrototype->getRotationZMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("za", Value(brushPrototype->getRotationZMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("si", Value(brushPrototype->getScaleMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("sa", Value(brushPrototype->getScaleMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("hi", Value(brushPrototype->getHeightMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("ha", Value(brushPrototype->getHeightMax()), jAllocator);
+					jFoliageBrushPrototype.AddMember("li", Value(brushPrototype->getSlopeMin()), jAllocator);
+					jFoliageBrushPrototype.AddMember("la", Value(brushPrototype->getSlopeMax()), jAllocator);
+
+
+					jFoliageBrushPrototypes.PushBack(jFoliageBrushPrototype, jAllocator);
+				}
+				jFoliageBrush.AddMember("p", jFoliageBrushPrototypes, jAllocator);
+
+				jFoliageBrushes.PushBack(jFoliageBrush, jAllocator);
+			}
+			jTerrain.AddMember("b", jFoliageBrushes, jAllocator);
+		}
+		jPrototypeRoot.AddMember("t", jTerrain, jAllocator);
 	}
 }

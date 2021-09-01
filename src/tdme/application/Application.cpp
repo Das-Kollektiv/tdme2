@@ -116,12 +116,16 @@ void Application::cancelExit() {
 }
 
 void Application::exit(int exitCode) {
-	Application::application->exitCode = exitCode;
-	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
-	#else
+	if (Application::application == nullptr) {
 		::exit(exitCode);
-	#endif
+	} else {
+		Application::application->exitCode = exitCode;
+		#if defined(VULKAN) || defined(GLFW3)
+			glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
+		#else
+			::exit(exitCode);
+		#endif
+	}
 }
 
 #if defined(_WIN32)
@@ -578,6 +582,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) {
 					glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 				}
+				if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) {
+					glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+				}
 				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
 				#if defined(__APPLE__)
 					glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
@@ -797,14 +804,14 @@ void Application::reshapeInternal(int width, int height) {
 			}
 		}
 		if (glfwIsSpecialKey(key) == true) {
-			if (action == GLFW_PRESS/* || action == GLFW_REPEAT*/) {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
 			} else
 			if (action == GLFW_RELEASE) {
 				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
 			}
 		} else {
-			if (action == GLFW_PRESS/* || action == GLFW_REPEAT*/) {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 				if (keyName != nullptr) {
 					Application::inputEventHandler->onKeyDown(

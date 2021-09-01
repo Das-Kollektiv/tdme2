@@ -16,6 +16,7 @@ using tdme::engine::model::Model;
  */
 class tdme::engine::model::AnimationSetup final
 {
+	friend class Model;
 
 private:
 	Model* model { nullptr };
@@ -152,6 +153,16 @@ public:
 	 */
 	inline void setSpeed(float speed) {
 		this->speed = speed;
+	}
+
+private:
+
+	/**
+	 * Set id
+	 * @param id id
+	 */
+	inline void setId(const string& id) {
+		this->id = id;
 	}
 
 };

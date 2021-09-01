@@ -168,3 +168,6 @@ void GUIVerticalScrollbarInternalController::setValue(const MutableString& value
 {
 }
 
+void GUIVerticalScrollbarInternalController::onSubTreeChange()
+{
+}

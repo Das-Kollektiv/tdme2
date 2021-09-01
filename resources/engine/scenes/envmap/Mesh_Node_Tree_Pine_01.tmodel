@@ -1,0 +1,54 @@
+{
+  "thumbnail": "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",
+  "file": "resources/engine/scenes/envmap/Mesh_Node_Tree_Pine_01.tm",
+  "tm": false,
+  "version": "1.99",
+  "type": "MODEL",
+  "name": "Mesh_Node_Tree_Pine_01.",
+  "descr": "Mesh_Node_Tree_Pine_01.",
+  "px": 0,
+  "py": 0,
+  "pz": 0,
+  "bvs": [
+    {
+      "type": "capsule",
+      "ax": 0,
+      "ay": 0.0009999989997595549,
+      "az": 0.0015661020297557116,
+      "bx": 0,
+      "by": 0.399999737739563,
+      "bz": 0.0015661020297557116,
+      "r": 0.009999999776482582,
+      "g": false
+    }
+  ],
+  "p": {
+    "type": "STATIC_RIGIDBODY",
+    "mass": 0,
+    "restitution": 0.5,
+    "friction": 0.5,
+    "itx": 1,
+    "ity": 1,
+    "itz": 1
+  },
+  "properties": [
+    {
+      "name": "type",
+      "value": "node"
+    },
+    {
+      "name": "subtype",
+      "value": "tree"
+    }
+  ],
+  "cs": true,
+  "rs": true,
+  "rg": false,
+  "s": "tree",
+  "sds": "default",
+  "sdsd": 10000,
+  "sps": {
+    "speed": "1.000"
+  },
+  "spds": {}
+}

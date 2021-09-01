@@ -50,8 +50,16 @@ public:
 	static constexpr int WINDOW_HINT_NONE { 0 };
 	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };
 	static constexpr int WINDOW_HINT_NOTDECORATED { 2 };
+	static constexpr int WINDOW_HINT_INVISIBLE { 4 };
 
 	static constexpr int FPS { 60 };
+
+	/**
+	 * @return if having a GL/Vulkan window and context
+	 */
+	inline static bool hasApplication() {
+		return application != nullptr;
+	}
 
 	/**
 	 * @return if FPS should be limited to 60 frames per seconds

@@ -123,7 +123,7 @@ void GUITabController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
 			guiTabsController->unselect();
-			setSelected(selected == true?false:true);
+			guiTabsController->select(required_dynamic_cast<GUIElementNode*>(this->node));
 			guiTabsController->setTabContentSelected(node->getId());
 		}
 	}
@@ -159,13 +159,4 @@ const MutableString& GUITabController::getValue()
 
 void GUITabController::setValue(const MutableString& value)
 {
-}
-
-void GUITabController::selectTab()
-{
-	auto guiTabsController = required_dynamic_cast<GUITabsController*>(tabsNode->getController());
-	guiTabsController->unselect();
-	setSelected(true);
-	guiTabsController->setTabContentSelected(node->getId());
-	node->getScreenNode()->getGUI()->invalidateFocussedNode();
 }

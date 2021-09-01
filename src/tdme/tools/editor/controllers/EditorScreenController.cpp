@@ -5,7 +5,18 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/audio/VorbisAudioStream.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/utilities/Action.h>
@@ -16,18 +27,32 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
+#include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
+#include <tdme/tools/editor/tabviews/FontTabView.h>
+#include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
+#include <tdme/tools/editor/tabviews/SoundTabView.h>
+#include <tdme/tools/editor/tabviews/TerrainEditorTabView.h>
+#include <tdme/tools/editor/tabviews/TextureTabView.h>
+#include <tdme/tools/editor/tabviews/TextEditorTabView.h>
+#include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
+#include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
@@ -41,8 +66,19 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
+using tdme::audio::VorbisAudioStream;
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::fileio::scenes::SceneWriter;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::utilities::Action;
 using tdme::gui::nodes::GUIElementNode;
@@ -52,18 +88,32 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix2D3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabviews::EmptyEditorTabView;
+using tdme::tools::editor::tabviews::EnvMapEditorTabView;
+using tdme::tools::editor::tabviews::FontTabView;
+using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::tools::editor::tabviews::SceneEditorTabView;
+using tdme::tools::editor::tabviews::SoundTabView;
+using tdme::tools::editor::tabviews::TerrainEditorTabView;
+using tdme::tools::editor::tabviews::TextureTabView;
+using tdme::tools::editor::tabviews::TextEditorTabView;
+using tdme::tools::editor::tabviews::TriggerEditorTabView;
+using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
@@ -99,6 +149,14 @@ void EditorScreenController::initialize()
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -125,25 +183,33 @@ void EditorScreenController::showErrorPopUp(const string& caption, const string&
 
 void EditorScreenController::onValueChanged(GUIElementNode* node)
 {
+	if (node->getId() == "projectpathfiles_search") {
+		fileNameSearchTerm = node->getController()->getValue().getString();
+		timeFileNameSearchTerm = Time::getCurrentMillis();
+	} else
 	if (node->getId() == "selectbox_projectpaths") {
+		fileNameSearchTerm.clear();
+		timeFileNameSearchTerm = -1LL;
 		string xml;
-		scanProjectPathFiles(node->getController()->getValue().getString(), xml);
+		fileNameButtonXMLMapping.clear();
+		for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
+		fileNameTextureMapping.clear();
+		scanProjectPathFiles(node->getController()->getValue().getString());
+		listProjectPathFiles(xml);
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
 		} catch (Exception& exception) {
 			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
-	} else {
-		Console::println("EditorScreenController::onValueChanged(): " + node->getId());
+		updateProjectPathThumbnails();
+	} else
+	if (node->getId() == "dropdown_projectlibrary_add") {
+		onAddFile(node->getController()->getValue().getString());
 	}
 	// forward onValueChanged to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onValueChanged(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onValueChanged(node);
 }
 
 void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -151,6 +217,15 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "menu_file_open") {
 			onOpenProject();
+		} else
+		if (node->getId() == "menu_file_save") {
+			onSaveCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveas") {
+			onSaveAsCurrentTab();
+		} else
+		if (node->getId() == "menu_file_saveall") {
+			onSaveAllTabs();
 		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
@@ -165,61 +240,127 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				}
 			}
 			if (tabIdToClose.empty() == false) {
-				screenNode->removeNodeById(tabIdToClose, false);
-				screenNode->removeNodeById(tabIdToClose + "-content", false);
-				auto tabIt = tabViews.find(tabIdToClose);
-				if (tabIt == tabViews.end()) {
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tabIdToClose + ": not found");
-				} else {
-					auto& tab = tabIt->second;
-					tab.getTabView()->dispose();
-					delete tab.getTabView();
-					tabViews.erase(tabIt);
-				}
-				setDetailsContent(string());
-				setOutlinerContent(string());
+				//
+				class CloseTabAction: public Action {
+				private:
+					EditorScreenController* editorScreenController;
+					string tabIdToClose;
+				public:
+					CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
+					virtual void performAction() {
+						editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
+						editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
+						auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
+						if (tabIt == editorScreenController->tabViews.end()) {
+							Console::println("CloseTabAction::performAction(): close tab: " + tabIdToClose + ": not found");
+						} else {
+							auto& tab = tabIt->second;
+							tab.getTabView()->dispose();
+							delete tab.getTabView();
+							editorScreenController->tabViews.erase(tabIt);
+						}
+						editorScreenController->setDetailsContent(string());
+						editorScreenController->setOutlinerContent(string());
+					}
+				};
+				Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabIdToClose));
 			}
-		} else {
-			Console::println("EditorScreenController::onActionPerformed(): " + node->getId());
+		} else
+		if (node->getId() == "menu_file_quit") {
+			TDMEEditor::getInstance()->quit();
 		}
 	}
 	// forward onActionPerformed to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onActionPerformed(type, node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onActionPerformed(type, node);
 }
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onFocus(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onFocus(node);
 }
 
 void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onUnfocus(node);
-	}
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onUnfocus(node);
 }
 
 void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	// forward onFocus to active tab tab controller
-	auto selectedTabId = getSelectedTabId();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
-		tab.getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
+		auto selectedTab = getSelectedTab();
+		if (selectedTab == nullptr) return;
+		switch (selectedTab->getType()) {
+			case EditorTabView::TABTYPE_MODELEDITOR:
+				break;
+			case EditorTabView::TABTYPE_SCENEEDITOR:
+				{
+					// clear
+					view->getPopUps()->getContextMenuScreenController()->clear();
+
+					// load
+					class OnAddToSceneAction: public virtual Action
+					{
+					public:
+						void performAction() override {
+							auto currentTab = editorScreenController->getSelectedTab();
+							if (currentTab == nullptr) return;
+							SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
+							if (sceneEditorTabView == nullptr) return;
+							try {
+								auto prototype = PrototypeReader::read(
+									Tools::getPathName(absoluteFileName),
+									Tools::getFileName(absoluteFileName)
+								);
+								sceneEditorTabView->addPrototype(prototype);
+							} catch (Exception& exception) {
+								Console::println(string("OnAddToSceneAction::performAction(): An error occurred: ") + exception.what());;
+								editorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+							}
+						}
+						OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+						}
+					private:
+						EditorScreenController* editorScreenController;
+						string absoluteFileName;
+					};
+					view->getPopUps()->getContextMenuScreenController()->addMenuItem("Add to scene", "contextmenu_addtoscene", new OnAddToSceneAction(this, absoluteFileName));
+
+					//
+					view->getPopUps()->getContextMenuScreenController()->show(mouseX, mouseY);
+				}
+				break;
+			case EditorTabView::TABTYPE_TEXTURE:
+				break;
+			case EditorTabView::TABTYPE_FONT:
+				break;
+			case EditorTabView::TABTYPE_UIEDITOR:
+				break;
+			default: break;
+		}
 	}
+	// forward onContextMenuRequested to active tab tab controller
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+}
+
+void EditorScreenController::openProject(const string& path) {
+	projectPath = path;
+	if (StringTools::endsWith(projectPath, "/") == true) {
+		projectPath = StringTools::substring(projectPath, 0, projectPath.size() - 1);
+	}
+	Console::println("EditorScreenController::openProject(): " + projectPath);
+	closeProject();
+	scanProjectPaths();
+	//
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
 }
 
 void EditorScreenController::onOpenProject() {
@@ -228,9 +369,7 @@ void EditorScreenController::onOpenProject() {
 	public:
 		// overriden methods
 		void performAction() override {
-			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
-			editorScreenController->scanProjectPaths();
+			editorScreenController->openProject(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -322,9 +461,40 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 	}
 }
 
-void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath, string& xml) {
-	auto path = projectPath + "/" + relativeProjectPath;
-	Console::println("EditorScreenController::scanProjectPathFiles(): " + path);
+void EditorScreenController::closeTabs() {
+	for (auto& tabsIt: tabViews) {
+		auto& tab = tabsIt.second;
+		screenNode->removeNodeById(tab.getId(), false);
+		screenNode->removeNodeById(tab.getId() + "-content", false);
+		tab.getTabView()->dispose();
+		delete tab.getTabView();
+	}
+	tabViews.clear();
+	setDetailsContent(string());
+	setOutlinerContent(string());
+}
+
+void EditorScreenController::closeProject() {
+	closeTabs();
+	clearProjectPathFiles();
+	fileNameButtonXMLMapping.clear();
+	for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
+	fileNameTextureMapping.clear();
+	//
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(true);
+}
+
+void EditorScreenController::clearProjectPathFiles() {
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
+}
+
+void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath) {
+	auto pathName = projectPath + "/" + relativeProjectPath;
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -356,6 +526,12 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
+				// tdme empty
+				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) return true;
+				// tdme trigger
+				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) return true;
+				// tdme envmap
+				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -375,91 +551,772 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 					return true;
 				}
 				//
-				return false;			}
+				return false;
+			}
 	};
 
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
-		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + path);
+	if (FileSystem::getInstance()->fileExists(pathName) == false) {
+		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + pathName);
 	} else
-	if (FileSystem::getInstance()->isPath(path) == false) {
-		if (listFilter.accept(".", path) == true) {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file" + path);
+	if (FileSystem::getInstance()->isPath(pathName) == false) {
+		if (listFilter.accept(".", pathName) == true) {
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file: " + pathName);
 		} else {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + path);
+			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + pathName);
 		}
 	} else {
-		FileSystem::getInstance()->list(path, files, &listFilter);
-		auto idx = 0;
+		FileSystem::getInstance()->list(pathName, files, &listFilter);
 		for (auto fileName: files) {
-			auto relativePath = path + "/" + fileName;
-			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
-			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == true) {
+			auto absolutePath = pathName + "/" + fileName;
+			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
 				// no op for now
 			} else {
-				if (idx % 2 == 0) {
-					if (xml.empty() == false) {
-						xml+= "</layout>\n";
-					}
-					xml+= "<layout alignment=\"horizontal\">\n";
-				}
 				// TODO: how to associate button with file name
-				xml+= "<button id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" template=\"button_template_thumbnail.xml\" size=\"75\" thumbnail=\"resources/engine/textures/terrain_dirt.png\" icon=\"resources/engine/images/folder.png\" filename=\"" + GUIParser::escapeQuotes(fileName) + "\" />\n";
-				idx++;
+				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+				//
+				string icon = "resources/engine/images/folder.png";
+				string iconBig;
+				string typeColor;
+				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
+					icon = "{$icon.type_sound}";
+					iconBig = "{$icon.type_sound_big}";
+					typeColor = "{$color.type_sound}";
+				}
+				// C++/C code
+				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".c") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				// fonts
+				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+					icon = "{$icon.type_font}";
+					iconBig = "{$icon.type_font_big}";
+					typeColor = "{$color.type_font}";
+				}
+				// images
+				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
+					icon = "{$icon.type_texture}";
+					iconBig = "{$icon.type_texture_big}";
+					typeColor = "{$color.type_texture}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+					icon = "{$icon.type_texture}";
+					iconBig = "{$icon.type_texture_big}";
+					typeColor = "{$color.type_texture}";
+				}
+				// models
+				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) {
+					icon = "{$icon.type_mesh}";
+					iconBig = "{$icon.type_mesh_big}";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) {
+					icon = "{$icon.type_mesh}";
+					iconBig = "{$icon.type_mesh_big}";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) {
+					icon = "{$icon.type_mesh}";
+					iconBig = "{$icon.type_mesh_big}";
+					typeColor = "{$color.type_mesh}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) {
+					icon = "{$icon.type_mesh}";
+					iconBig = "{$icon.type_mesh_big}";
+					typeColor = "{$color.type_mesh}";
+				}
+				// property files
+				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				// shader
+				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				// tdme empty
+				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
+				// tdme trigger
+				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
+				// tdme envmap
+				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
+				// tdme model
+				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+					icon = "{$icon.type_prototype}";
+					iconBig = "{$icon.type_prototype_big}";
+					typeColor = "{$color.type_prototype}";
+				}
+				// tdme scene
+				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+					icon = "{$icon.type_scene}";
+					iconBig = "{$icon.type_scene_big}";
+					typeColor = "{$color.type_scene}";
+				}
+				// tdme particle system
+				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
+					icon = "{$icon.type_particle}";
+					iconBig = "{$icon.type_particle_big}";
+					typeColor = "{$color.type_particle}";
+				}
+				// tdme terrain
+				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
+					icon = "{$icon.type_terrain}";
+					iconBig = "{$icon.type_terrain_big}";
+					typeColor = "{$color.type_terrain}";
+				}
+				// tdme script
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+				// xml
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
+					icon = "{$icon.type_gui}";
+					iconBig = "{$icon.type_gui_big}";
+					typeColor = "{$color.type_gui}";
+				}
+				// files without ending
+				if (fileName.rfind(".") == string::npos ||
+					(fileName.rfind("/") != string::npos &&
+					fileName.rfind(".") < fileName.rfind("/"))) {
+					icon = "{$icon.type_script}";
+					iconBig = "{$icon.type_script_big}";
+					typeColor = "{$color.type_script}";
+				}
+
+				//
+				auto _fileName = Tools::getFileName(fileName);
+
+				string thumbNail;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
+				string templateSource =
+					StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tm") == true?
+						"button_template_thumbnail_texture.xml":
+						"button_template_thumbnail.xml";
+				vector<uint8_t> thumbnailPNGData;
+				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
+					thumbnailPNGData.empty() == false) {
+					auto thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, true);
+					if (thumbnailTexture != nullptr) {
+						thumbnailTexture->acquireReference();
+						fileNameTextureMapping[_fileName] = thumbnailTexture;
+						iconBig.clear();
+					} else {
+						// no valid thumbnail texture
+						templateSource = "button_template_thumbnail.xml";
+					}
+				} else {
+					// no valid thumbnail texture
+					templateSource = "button_template_thumbnail.xml";
+				}
+				if (thumbNail.empty() == false) iconBig.clear();
+				if (iconBig.empty() == false) icon.clear();
+				auto buttonXML =
+					string() +
+					"<button " +
+					"id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName)) + "\" " +
+					"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+					"template=\"" + templateSource + "\" " +
+					"size=\"75\" " +
+					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
+					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
+					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+					"/>\n";
+				fileNameButtonXMLMapping[_fileName] = buttonXML;
 			}
 		}
+	}
+}
+
+void EditorScreenController::listProjectPathFiles(string& xml, const string& searchTerm) {
+	auto idx = 0;
+	auto searchTermLowerCase = StringTools::toLowerCase(searchTerm);
+	for (auto& fileNameButtonXMLMappingIt: fileNameButtonXMLMapping) {
+		if (idx % 2 == 0) {
+			if (xml.empty() == false) {
+				xml+= "</layout>\n";
+			}
+			xml+= "<layout alignment=\"horizontal\">\n";
+		}
+		auto& fileName = fileNameButtonXMLMappingIt.first;
+		auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+		if (fileNameLowerCase.find(searchTerm) == string::npos) continue;
+		auto& buttonXML = fileNameButtonXMLMappingIt.second;
+		xml+= buttonXML;
+		idx++;
 	}
 	if (xml.empty() == false) {
 		xml+= "</layout>\n";
 	}
 }
 
-void EditorScreenController::onOpenFile(const string& relativeProjectFileName) {
-	auto absoluteFileName = projectPath + "/" + relativeProjectFileName;
-	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
-	auto fileName = FileSystem::getInstance()->getFileName(relativeProjectFileName);
-	auto tabId = "tab_viewport_" + StringTools::replace(relativeProjectFileName, ".", "_");
-	tabId = StringTools::replace(tabId, "/", "_");
-	tabId = GUIParser::escapeQuotes(tabId);
-	//
-	{
-		string tabsHeaderXML = "<tab id=\"" + tabId + "\" value=\"" + GUIParser::escapeQuotes(relativeProjectFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+void EditorScreenController::updateProjectPathThumbnails() {
+	for (auto& fileNameTextureMappingIt: fileNameTextureMapping) {
+		auto& fileName = fileNameTextureMappingIt.first;
+		auto texture = fileNameTextureMappingIt.second;
+		if (screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_normal") == nullptr) continue;
 		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_normal"))->setTexture(texture);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_mouseover"))->setTexture(texture);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_clicked"))->setTexture(texture);
 		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 	}
+}
+
+void EditorScreenController::onAddFile(const string& type) {
+	class OnAddFile: public virtual Action
 	{
-		string tabsContentXML =
-			"<tab-content tab-id=\"" + tabId + "\">\n" +
-			"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/template_viewport_scene.xml\" />\n" +
-			"</tab-content>\n";
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
-			Console::println(string(exception.what()));
+	public:
+		// overriden methods
+		void performAction() override {
+			editorScreenController->addFile(
+				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), string("t") + type),
+				type
+			);
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
-	}
-	// try {
-		auto prototype = PrototypeReader::read(
-			FileSystem::getInstance()->getPathName(absoluteFileName),
-			FileSystem::getInstance()->getFileName(absoluteFileName)
+		OnAddFile(EditorScreenController* editorScreenController, const string& type): editorScreenController(editorScreenController), type(type) {
+		}
+	private:
+		EditorScreenController* editorScreenController;
+		string type;
+	};
+
+	view->getPopUps()->getFileDialogScreenController()->show(
+		projectPath + "/" + required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_projectpaths"))->getController()->getValue().getString(),
+		string("Add ") + type + " to project: ",
+		{ string("t") + type },
+		string("Untitled") + "." + "t" + type,
+		true,
+		new OnAddFile(this, type)
+	);
+
+}
+
+void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
+	Prototype* prototype = nullptr;
+	Scene* scene = nullptr;
+	if (type == "empty") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::EMPTY,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			"resources/engine/models/empty.tm",
+			string(),
+			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+			Vector3(0.0f, 0.0f, 0.0f)
 		);
-		auto tabView = new ModelEditorTabView(view, tabId, prototype);
+	} else
+	if (type == "trigger") {
+		auto width = 1.0f;
+		auto height = 1.0f;
+		auto depth = 1.0f;
+		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::TRIGGER,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	} else
+	if (type == "envmap") {
+		auto width = 1.0f;
+		auto height = 1.0f;
+		auto depth = 1.0f;
+		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::ENVIRONMENTMAPPING,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	} else
+	if (type == "model") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::MODEL,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			"resources/engine/models/empty.tm",
+			string(),
+			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+			Vector3(0.0f, 0.0f, 0.0f)
+		);
+	} else
+	if (type == "terrain") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::TERRAIN,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+	} else
+	if (type == "particle") {
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::PARTICLESYSTEM,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+	} else
+	if (type == "scene") {
+		scene = new Scene(
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName)
+		);
+	}
+	if (prototype != nullptr) {
+		try {
+			PrototypeWriter::write(pathName, fileName, prototype);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		}
+	} else
+	if (scene != nullptr) {
+		try {
+			SceneWriter::write(pathName, fileName, scene);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+			Console::println(string(exception.what()));
+			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		}
+	} else {
+		showErrorPopUp("Error", string() + "Unknown file type: " + type);
+	}
+}
+
+void EditorScreenController::openFile(const string& absoluteFileName) {
+	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	// TODO: error handling
+	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	enum FileType {
+		FILETYPE_UNKNOWN,
+		FILETYPE_MODEL,
+		FILETYPE_EMPTYPROTOTYPE,
+		FILETYPE_TRIGGERPROTOTYPE,
+		FILETYPE_ENVMAPPROTOTYPE,
+		FILETYPE_MODELPROTOTYPE,
+		FILETYPE_TERRAINPROTOTYPE,
+		FILETYPE_PARTICLESYSTEMPROTOTYPE,
+		FILETYPE_SCENE,
+		FILETYPE_SCREEN_TEXT,
+		FILETYPE_SOUND,
+		FILETYPE_TEXTURE,
+		FILETYPE_FONT,
+		FILETYPE_TEXT
+	};
+	FileType fileType = FILETYPE_UNKNOWN;
+	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
+		fileType = FILETYPE_SCREEN_TEXT;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
+		fileType = FILETYPE_EMPTYPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
+		fileType = FILETYPE_TRIGGERPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
+		fileType = FILETYPE_ENVMAPPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+		fileType = FILETYPE_SCENE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+		fileType = FILETYPE_MODELPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
+		fileType = FILETYPE_PARTICLESYSTEMPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
+		fileType = FILETYPE_TERRAINPROTOTYPE;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+		fileType = FILETYPE_FONT;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
+		fileType = FILETYPE_SOUND;
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".h") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".properties") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".cl") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".frag") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".glsl") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".vert") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".xml") == true ||
+		(fileName.rfind(".") == string::npos || (fileName.rfind("/") != string::npos && fileName.rfind(".") < fileName.rfind("/")))) {
+		fileType = FILETYPE_TEXT;
+	} else {
+		for (auto& extension: ModelReader::getModelExtensions()) {
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
+				fileType = FILETYPE_MODEL;
+				break;
+			}
+		}
+		for (auto& extension: TextureReader::getTextureExtensions()) {
+			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
+				fileType = FILETYPE_TEXTURE;
+				break;
+			}
+		}
+	}
+	if (fileType == FILETYPE_UNKNOWN) {
+		showErrorPopUp("Error", "File format not yet supported");
+		return;
+	}
+
+	//
+	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
+	tabId = StringTools::replace(tabId, "/", "_");
+	if (screenNode->getNodeById(tabId) != nullptr) return;
+	tabId = GUIParser::escapeQuotes(tabId);
+
+	//
+	try {
+		string icon;
+		string colorType;
+		EditorTabView::TabType tabType = EditorTabView::TABTYPE_UNKNOWN;
+		TabView* tabView = nullptr;
+		string viewPortTemplate;
+		switch (fileType) {
+			case FILETYPE_MODEL:
+				{
+					icon = "{$icon.type_mesh}";
+					colorType = "{$color.type_mesh}";
+					auto model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
+					auto prototype = new Prototype(
+						Prototype::ID_NONE,
+						Prototype_Type::MODEL,
+						Tools::removeFileEnding(fileName),
+						Tools::removeFileEnding(fileName),
+						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileEnding(fileName) + ".tmodel",
+						absoluteFileName,
+						string(),
+						model,
+						Vector3(0.0f, 0.0f, 0.0f)
+					);
+					tabType = EditorTabView::TABTYPE_MODELEDITOR;
+					tabView = new ModelEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_EMPTYPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_EMPTYEDITOR;
+					tabView = new EmptyEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_TRIGGERPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_TRIGGEREDITOR;
+					tabView = new TriggerEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_ENVMAPPROTOTYPE:
+				{
+					icon = "{$icon.type_scene}";
+					colorType = "{$color.type_scene}";
+					auto scene = SceneReader::read(
+						"resources/engine/scenes/envmap",
+						"envmap.tscene"
+					);
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_ENVMAPEDITOR;
+					tabView = new EnvMapEditorTabView(view, tabId, scene, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_MODELPROTOTYPE:
+				{
+					icon = "{$icon.type_prototype}";
+					colorType = "{$color.type_prototype}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_MODELEDITOR;
+					tabView = new ModelEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_TERRAINPROTOTYPE:
+				{
+					icon = "{$icon.type_terrain}";
+					colorType = "{$color.type_terrain}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_TERRAINEDITOR;
+					tabView = new TerrainEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_terrain.xml";
+					break;
+				}
+			case FILETYPE_PARTICLESYSTEMPROTOTYPE:
+				{
+					icon = "{$icon.type_particle}";
+					colorType = "{$color.type_particle}";
+					auto prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_PARTICLESYSTEMEDITOR;
+					tabView = new ParticleSystemEditorTabView(view, tabId, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_SCENE:
+				{
+					icon = "{$icon.type_scene}";
+					colorType = "{$color.type_scene}";
+					auto scene = SceneReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					tabType = EditorTabView::TABTYPE_SCENEEDITOR;
+					tabView = new SceneEditorTabView(view, tabId, scene);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_SCREEN_TEXT:
+				{
+					try {
+						icon = "{$icon.type_gui}";
+						colorType = "{$color.type_gui}";
+						auto screenNode = GUIParser::parse(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						);
+						tabType = EditorTabView::TABTYPE_UIEDITOR;
+						tabView = new UIEditorTabView(view, tabId, screenNode);
+					} catch (Exception &exception) {
+						icon = "{$icon.type_script}";
+						colorType = "{$color.type_script}";
+						auto text = StringTools::replace(
+							FileSystem::getInstance()->getContentAsString(
+								FileSystem::getInstance()->getPathName(absoluteFileName),
+								FileSystem::getInstance()->getFileName(absoluteFileName)
+							),
+							"\t",
+							"    "
+						);
+						auto screenNode = GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_text.xml",
+							{{ "text", text }}
+						);
+						tabType = EditorTabView::TABTYPE_TEXT;
+						tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
+					}
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_SOUND:
+				{
+					icon = "{$icon.type_sound}";
+					colorType = "{$color.type_sound}";
+					auto audioStream = new VorbisAudioStream(
+						tabId,
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_sound.xml"
+					);
+					tabType = EditorTabView::TABTYPE_SOUND;
+					tabView = new SoundTabView(view, tabId, screenNode, audioStream);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_TEXTURE:
+				{
+					icon = "{$icon.type_texture}";
+					colorType = "{$color.type_texture}";
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_texture.xml",
+						{{ "texture", absoluteFileName}}
+
+					);
+					tabType = EditorTabView::TABTYPE_TEXTURE;
+					tabView = new TextureTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_FONT:
+				{
+					icon = "{$icon.type_font}";
+					colorType = "{$color.type_font}";
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_font.xml",
+						{{ "font", absoluteFileName }}
+					);
+					tabType = EditorTabView::TABTYPE_FONT;
+					tabView = new FontTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_TEXT:
+				{
+					icon = "{$icon.type_script}";
+					colorType = "{$color.type_script}";
+					auto text = StringTools::replace(
+						FileSystem::getInstance()->getContentAsString(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						),
+						"\t",
+						"    "
+					);
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_text.xml",
+						{{ "text", text }}
+					);
+					tabType = EditorTabView::TABTYPE_TEXT;
+					tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			default:
+				throw ExceptionBase("Unknown file type.");
+		}
+		//
+		{
+			string tabsHeaderXML = "<tab id=\"" + tabId + "\" image=\"" + GUIParser::escapeQuotes(icon) + "\" type-color=\"" + GUIParser::escapeQuotes(colorType) + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		{
+			string tabsContentXML =
+				"<tab-content tab-id=\"" + tabId + "\">\n" +
+				"	<template id=\"" + tabId + "_tab\" src=\"resources/engine/gui/" + viewPortTemplate + "\" />\n" +
+				"</tab-content>\n";
+			try {
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsContent->getId()))->addSubNodes(tabsContentXML, true);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+		//
 		tabView->initialize();
+		//
 		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
-		tabViews[tabId] = EditorTabView(tabId, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
-	/*
+		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
 		Console::println(string(exception.what()));
+		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
-	*/
 }
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
@@ -522,6 +1379,25 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 	}
 }
 
+void EditorScreenController::onSaveCurrentTab() {
+	// forward save to active tab tab controller
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->save();
+}
+
+void EditorScreenController::onSaveAsCurrentTab() {
+	// forward saveAs to active tab tab controller
+	auto selectedTab = getSelectedTab();
+	if (selectedTab != nullptr) selectedTab->getTabController()->saveAs();
+}
+
+void EditorScreenController::onSaveAllTabs() {
+	// forward saveAs to active tab tab controller
+	for (auto& tabViewIt: tabViews) {
+		auto& tab = tabViewIt.second;
+		tab.getTabController()->save();
+	}
+}
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPortNode->getComputedConstraints();
@@ -534,4 +1410,20 @@ void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& 
 
 const string EditorScreenController::getSelectedTabId() {
 	return tabs->getController()->getValue().getString();
+}
+
+void EditorScreenController::tick() {
+	auto now = Time::getCurrentMillis();
+	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 1000LL) {
+		string xml;
+		listProjectPathFiles(xml, fileNameSearchTerm);
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::tick(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		updateProjectPathThumbnails();
+		timeFileNameSearchTerm = -1LL;
+	}
 }

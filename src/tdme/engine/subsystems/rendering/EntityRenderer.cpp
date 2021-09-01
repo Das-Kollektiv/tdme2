@@ -456,6 +456,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 	vector<int32_t>* boundVBOOrigins = nullptr;
+	auto currentLODLevel = -1;
 	int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 	Vector3 boundEnvironmentMappingCubeMapPosition;
 	for (auto object3DNodeIdx = 0; object3DNodeIdx < firstObject->object3dNodes.size(); object3DNodeIdx++) {
@@ -535,7 +536,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				}
 
 				// shader
-				auto distanceShader = object->getDistanceShader().empty() == true?false:objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() >= Math::square(object->getDistanceShaderDistance());
+				auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
+				auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
 				auto objectShader =
 					distanceShader == false?
 						object->getShader():
@@ -562,21 +564,56 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					shaderParametersHash = renderer->getShaderParameters(context).getShaderParametersHash();
 				}
 				// bind buffer base objects if not bound yet
-				auto currentVBOIds = _object3DNode->renderer->vboBaseIds;
-				if (boundVBOBaseIds != currentVBOIds) {
-					boundVBOBaseIds = currentVBOIds;
+				auto currentVBOBaseIds = _object3DNode->renderer->vboBaseIds;
+				if (boundVBOBaseIds != currentVBOBaseIds) {
+					boundVBOBaseIds = currentVBOBaseIds;
 					//	texture coordinates
 					if (isTextureCoordinatesAvailable == true &&
 						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && specularMaterialProperties != nullptr && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true))) {
-						renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOIds)[3]);
+						renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOBaseIds)[3]);
 					}
 					// 	indices
-					renderer->bindIndicesBufferObject(context, (*currentVBOIds)[0]);
+					renderer->bindIndicesBufferObject(context, (*currentVBOBaseIds)[0]);
 					// 	vertices
-					renderer->bindVerticesBufferObject(context, (*currentVBOIds)[1]);
+					renderer->bindVerticesBufferObject(context, (*currentVBOBaseIds)[1]);
 					// 	normals
-					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(context, (*currentVBOIds)[2]);
+					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(context, (*currentVBOBaseIds)[2]);
+				}
+				auto currentVBOLods = _object3DNode->renderer->vboLods;
+				if (currentVBOLods != nullptr) {
+					// index buffer
+					auto lodLevel = 0;
+					if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {
+						lodLevel = 3;
+					} else
+					if (currentVBOLods->size() >= 2 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Distance())) {
+						lodLevel = 2;
+					} else
+					if (currentVBOLods->size() >= 1 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Distance())) {
+						lodLevel = 1;
+					}
+					if (lodLevel == 0) {
+						renderer->bindIndicesBufferObject(context, (*currentVBOBaseIds)[0]);
+					} else {
+						renderer->bindIndicesBufferObject(context, (*currentVBOLods)[lodLevel - 1]);
+						switch(lodLevel) {
+							case 3:
+								faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->instances;
+								facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->enabledInstances;
+								break;
+							case 2:
+								faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->instances;
+								facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->enabledInstances;
+								break;
+							case 1:
+								faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->instances;
+								facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->enabledInstances;
+								break;
+							default: break;
+						}
+					}
+					currentLODLevel = lodLevel;
 				}
 				// bind tangent, bitangend buffers if not yet bound
 				auto currentVBONormalMappingIds = _object3DNode->renderer->vboNormalMappingIds;
@@ -795,6 +832,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				vector<int32_t>* boundVBOOrigins = nullptr;
+				auto currentLODLevel = -1;
 				int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 				Vector3 boundEnvironmentMappingCubeMapPosition;
 				auto objectCount = object3DRenderContext.objectsToRender.size();
@@ -840,7 +878,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// check if shader did change
 					// shader
-					auto distanceShader = object->getDistanceShader().empty() == true?false:objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() >= Math::square(object->getDistanceShaderDistance());
+					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
+					auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
 					auto objectShader =
 						distanceShader == false?
 							object->getShader():
@@ -912,6 +951,43 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if (boundVBOBaseIds != currentVBOBaseIds) {
 						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
+					}
+					auto currentVBOLods = _object3DNode->renderer->vboLods;
+					if (currentVBOLods != nullptr) {
+						// index buffer
+						auto lodLevel = 0;
+						if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {
+							lodLevel = 3;
+						} else
+						if (currentVBOLods->size() >= 2 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Distance())) {
+							lodLevel = 2;
+						} else
+						if (currentVBOLods->size() >= 1 && distanceSquared >= Math::square(_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Distance())) {
+							lodLevel = 1;
+						}
+						if (currentLODLevel != -1 && lodLevel != currentLODLevel) {
+							object3DRenderContext.objectsNotRendered.push_back(object);
+							continue;
+						}
+						if (lodLevel > 0) {
+							renderer->bindIndicesBufferObject(context, (*currentVBOLods)[lodLevel - 1]);
+							switch(lodLevel) {
+								case 3:
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD3Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								case 2:
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD2Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								case 1:
+									faces = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->instances;
+									facesToRender = (_object3DNode->node->getFacesEntities()[faceEntityIdx].getLOD1Indices().size() / 3) * firstObject->enabledInstances;
+									break;
+								default: break;
+							}
+						}
+						currentLODLevel = lodLevel;
 					}
 					// bind tangent, bitangend buffers
 					auto currentVBONormalMappingIds = _object3DNode->renderer->vboNormalMappingIds;
@@ -1280,7 +1356,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	// textures
 	unordered_map<int, int> textureIndices;
 
-	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
+	// find particle systems that are combined, merge those pses, transform them into camera space and sort them
 	auto& cameraMatrix = renderer->getCameraMatrix();
 	for (auto entity: pses) {
 		if (entity->getRenderPass() != renderPass) continue;

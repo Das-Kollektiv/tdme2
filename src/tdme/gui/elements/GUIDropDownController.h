@@ -38,7 +38,6 @@ private:
 	static string CONDITION_ENABLED;
 	static string CONDITION_OPENED;
 	static string CONDITION_CLOSED;
-	vector<GUINode*> childControllerNodes;
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
 	bool open;
 	bool disabled;
@@ -47,7 +46,8 @@ private:
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
 	string search;
-	int lastSelectedDropDownOptionControlerIdx { -1 };
+	int selectedDropDownOptionControllerIdx { -1 };
+	int lastSelectedDropDownOptionControllerIdx { -1 };
 
 private:
 	/**
@@ -62,9 +62,21 @@ private:
 	bool isOpen();
 
 	/**
-	 * Unselect all nodes
+	 * Unselect
 	 */
 	void unselect();
+
+	/**
+	 * Select by index
+	 * @param idx index
+	 */
+	void select(int idx);
+
+	/**
+	 * Select by option element node
+	 * @param selectedDropDownOptionElementNode selected drop down option element node
+	 */
+	void select(GUIElementNode* selectedDropDownOptionElementNode);
 
 	/**
 	 * Toggle open state
@@ -75,11 +87,6 @@ private:
 	 * Determine drop down option controllers
 	 */
 	void determineDropDownOptionControllers();
-
-	/**
-	 * Get selected option idx
-	 */
-	int getSelectedOptionIdx();
 
 	/**
 	 * Select next node
@@ -116,5 +123,6 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
+	void onSubTreeChange() override;
 
 };

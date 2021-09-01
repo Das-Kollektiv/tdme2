@@ -35,6 +35,7 @@
 				<tab id="tab9" text="Template" />
 				<tab id="tab10" text="Conditions" />
 				<tab id="tab11" text="Table" />
+				<tab id="tab12" text="Contextmenu" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -45,8 +46,6 @@
 							<checkbox name="checkbox4" value="1" disabled="true" selected="false" text="Can't check me!"/>
 							<checkbox name="checkbox2" value="1" selected="true" text="No! Check me!"/>
 							<checkbox name="checkbox3" value="1" selected="true" text="Rather check me!" />
-							<checkbox template="checkbox_template_visible.xml" name="checkbox5" value="1" selected="true" text="Visibility" />
-							<checkbox template="checkbox_template_locked.xml" name="checkbox6" value="1" selected="true" text="Lock Mode" />
 								
 						</layout>
 						
@@ -68,7 +67,7 @@
 								<scrollarea id="sasb" width="100%" height="200">
 									<selectbox-parent-option image="resources/engine/images/folder.png" text="Option A,B,C,D" value="1">
 										<selectbox-option image="resources/engine/images/folder.png" text="Option A" value="1.1" />
-										<selectbox-option image="resources/engine/images/folder.png" text="Option B" value="1.2" />
+										<selectbox-option image="resources/engine/images/folder.png" text="Option B" value="1.2" disabled="true" />
 										<selectbox-option image="resources/engine/images/folder.png" text="Option C" value="1.3" />
 										<selectbox-option image="resources/engine/images/folder.png" text="Option D" value="1.4" />
 									</selectbox-parent-option>
@@ -184,7 +183,7 @@
 									<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" selected="true"/>
 									<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
 									<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
-									<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" />
+									<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" disabled="true" />
 									<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" />
 									<dropdown-option text="Option F" value="6" on-mouse-click="dropdownvaluetext.condition=f" />
 									<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
@@ -225,7 +224,7 @@
 				</tab-content>
 				<tab-content tab-id="tab5" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="none" width="100%" height="auto">
-						<input name="input" width="80%" maxlength="120" text="" hint="This is the mighty hint" />
+						<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" text="0.0" unit="m" options="type=float,min=-10.0,max=10.0,step=0.1,decimals=1" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
@@ -287,6 +286,15 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 							vertical-align="center"
 							scale9="125" 
 						/>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab9" vertical-align="top">
+					<layout width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center">
+						<template src="resources/tests/screens/template.xml" my-text="Hello this is the first template parameter" />
+						<space height="10" />
+						<template src="resources/tests/screens/template.xml" my-text="Hello this is the second template parameter">
+							<text font="resources/engine/fonts/Roboto_20.fnt" text="In this case I have something additional to tell!" color="#000000" />
+						</template>
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab10" vertical-align="top">
@@ -357,6 +365,14 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 							</table-cell>
 						</table-row>
 					</table>
+				</tab-content>
+				<tab-content tab-id="tab12" vertical-align="center" horizontal-align="center">
+					<context-menu>
+						<context-menu-item image="resources/engine/images/folder.png" text="Cut" shortcut="ctrl + F4" />
+						<context-menu-item text="Copy" />
+						<context-menu-item text="Paste" />
+						<context-menu-item text="Delete" />
+					</context-menu>
 				</tab-content>
 			</tabs-content>
 		</tabs>

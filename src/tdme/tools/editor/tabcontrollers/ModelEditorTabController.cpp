@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -12,9 +13,9 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -30,13 +31,14 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeBaseSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
@@ -50,12 +52,14 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+#include "subcontrollers/BasePropertiesSubController.h"
 
 using std::string;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
 
+using tdme::engine::Engine;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -67,7 +71,7 @@ using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperty;
 using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -81,6 +85,7 @@ using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -88,7 +93,7 @@ using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
-using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeBaseSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
@@ -105,61 +110,23 @@ using tdme::utilities::StringTools;
 
 ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 {
-	class OnSetPrototypeDataAction: public virtual Action
-	{
-	public:
-		void performAction() override {
-			finalView->reloadOutliner();
-			finalView->onSetPrototypeData();
-		}
-
-		/**
-		 * Public constructor
-		 * @param ModelEditorTabController model editor tab controller
-		 * @param finalView final view
-		 */
-		OnSetPrototypeDataAction(ModelEditorTabController* modelEditorTabController, ModelEditorTabView* finalView)
-			: modelEditorTabController(modelEditorTabController)
-			, finalView(finalView) {
-		}
-
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-		ModelEditorTabView* finalView;
-	};
-
 	this->view = view;
-	auto const finalView = view;
-	this->prototypeBaseSubController = new PrototypeBaseSubController(view->getEditorView(), new OnSetPrototypeDataAction(this, finalView));
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view->getEngine(), &modelPath, true);
+	this->popUps = view->getPopUps();
+	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, view->getEngine(), this->prototypePhysicsSubController->getView());
+	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
-	delete prototypeBaseSubController;
+	delete basePropertiesSubController;
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
+	delete prototypeSoundsSubController;
 }
 
 ModelEditorTabView* ModelEditorTabController::getView() {
 	return view;
-}
-
-PrototypeDisplaySubController* ModelEditorTabController::getPrototypeDisplaySubController()
-{
-	return prototypeDisplaySubController;
-}
-
-PrototypePhysicsSubController* ModelEditorTabController::getPrototypePhysicsSubController()
-{
-	return prototypePhysicsSubController;
-}
-
-PrototypeSoundsSubController* ModelEditorTabController::getPrototypeSoundsSubController()
-{
-	return prototypeSoundsSubController;
 }
 
 GUIScreenNode* ModelEditorTabController::getScreenNode()
@@ -180,7 +147,7 @@ FileDialogPath* ModelEditorTabController::getAudioPath()
 void ModelEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
-	prototypeBaseSubController->initialize(screenNode);
+	basePropertiesSubController->initialize(screenNode);
 	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
 	prototypeSoundsSubController->initialize(screenNode);
@@ -190,55 +157,144 @@ void ModelEditorTabController::dispose()
 {
 }
 
-void ModelEditorTabController::createOutlinerModelNodesXML(const map<string, Node*>& subNodes, string& xml) {
+void ModelEditorTabController::save()
+{
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	try {
+		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::saveAs()
+{
+	class OnModelSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				modelEditorTabController->view->saveFile(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+				modelEditorTabController->modelPath.setPath(
+					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+				);
+			} catch (Exception& exception) {
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	if (fileName.length() == 0) {
+		fileName = view->getFileName();
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
+			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
+		}
+	}
+	vector<string> extensions = {
+		"tmodel"
+	};
+	popUps->getFileDialogScreenController()->show(
+		Tools::getPathName(fileName),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnModelSave(this)
+	);
+}
+
+void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
 	for (auto nodeIt: subNodes) {
 		auto node = nodeIt.second;
+		string image;
+		if (node->isJoint() == true) {
+			image = "bone.png";
+		} else
+		if (node->isEmpty() == true) {
+			image = "empty.png";
+		} else {
+			image = "mesh.png";
+		}
 		if (node->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\">\n";
-			createOutlinerModelNodesXML(node->getSubNodes(), xml);
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\">\n";
+			createOutlinerModelNodesXML(prefix, node->getSubNodes(), xml);
 			xml+= "</selectbox-parent-option>\n";
 		} else {
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes("model.nodes." + node->getId()) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\" />\n";
 		}
 	}
 }
 
 void ModelEditorTabController::setOutlinerContent() {
-
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
-		prototypeBaseSubController->createPrototypePropertiesXML(prototype, xml);
+		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
 		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
-		Model* model = view->getLodLevel() == 1?prototype->getModel():getLODLevel(view->getLodLevel())->getModel();
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Model") + "\" value=\"" + GUIParser::escapeQuotes("model") + "\">\n";
-		if (model != nullptr) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes("model.materials") + "\">\n";
-			for (auto it: model->getMaterials()) {
-				auto materialId = it.second->getId();
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes("model.material." + materialId) + "\" />\n";
+		for (auto lodLevel = 1; lodLevel < 4; lodLevel++) {
+			Model* model = nullptr;
+			switch (lodLevel) {
+				case 1:
+					model = prototype->getModel();
+					break;
+				case 2:
+					model = prototype->getLODLevel2() != nullptr?prototype->getLODLevel2()->getModel():nullptr;
+					if (prototype->getLODLevel2() == nullptr) continue;
+					break;
+				case 3:
+					model = prototype->getLODLevel3() != nullptr?prototype->getLODLevel3()->getModel():nullptr;
+					if (prototype->getLODLevel3() == nullptr) continue;
+					break;
+			}
+			auto modelPrefix = lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\">\n";
+			if (model != nullptr) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
+				for (auto it: model->getMaterials()) {
+					auto materialId = it.second->getId();
+					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials." + materialId) + "\" />\n";
+				}
+				xml+= "</selectbox-parent-option>\n";
+			}
+			if (model != nullptr && model->getSubNodes().empty() == false) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".nodes") + "\">\n";
+				createOutlinerModelNodesXML(modelPrefix, model->getSubNodes(), xml);
+				xml+= "</selectbox-parent-option>\n";
+			}
+			if (model != nullptr &&
+				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations") + "\">\n";
+				for (auto it: model->getAnimationSetups()) {
+					auto animationSetupId = it.second->getId();
+					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
+					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
+				}
+				xml+= "</selectbox-parent-option>\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
-		if (model != nullptr && model->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes("model.nodes") + "\">\n";
-			createOutlinerModelNodesXML(model->getSubNodes(), xml);
-			xml+= "</selectbox-parent-option>\n";
-		}
-		if (model != nullptr &&
-			(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes("model.animations") + "\">\n";
-			for (auto it: model->getAnimationSetups()) {
-				auto animationSetupId = it.second->getId();
-				if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
-				xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes("model.animations." + animationSetupId) + "\" />\n";
-			}
-			xml+= "</selectbox-parent-option>\n";
-		}
-		xml+= "</selectbox-parent-option>\n";
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
@@ -261,7 +317,7 @@ void ModelEditorTabController::setDetailsContent() {
 PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return nullptr;
-	switch(level) {
+	switch (level) {
 		case 2:
 			{
 				auto prototypeLodLevel = prototype->getLODLevel2();
@@ -270,7 +326,7 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
-						0.0f
+						75.0f
 					);
 					prototype->setLODLevel2(prototypeLodLevel);
 				}
@@ -284,40 +340,64 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
-						0.0f
+						150.0f
 					);
 					prototype->setLODLevel3(prototypeLodLevel);
 				}
 				return prototypeLodLevel;
 			}
-		default:
-			{
-				return nullptr;
-			}
 	}
+	return nullptr;
 }
 
-void ModelEditorTabController::setLODLevel(int level) {
-	auto prototype = view->getPrototype();
-	if (prototype == nullptr) return;
+Model* ModelEditorTabController::getLODLevelModel(int level) {
+	Model* model = nullptr;
+	switch (level) {
+		case 1: model = view->getPrototype()->getModel(); break;
+		case 2: model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr; break;
+		case 3: model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr; break;
+		default: model = nullptr;
+	}
+	return model;
+}
 
-	auto prototypeLodLevel = getLODLevel(level);
-
-	view->setLodLevel(level);
+Model* ModelEditorTabController::getSelectedModel() {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	return model;
 }
 
 Material* ModelEditorTabController::getSelectedMaterial() {
 	string materialId;
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
-		materialId = StringTools::substring(outlinerNode, string("model.material.").size(), outlinerNode.size());
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (model == nullptr) return nullptr;
+	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {
+		materialId = StringTools::substring(outlinerNodeModel, string("model.materials.").size(), outlinerNode.size());
 	} else {
 		return nullptr;
 	}
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return nullptr;
 	auto materialIt = model->getMaterials().find(materialId);
 	return materialIt != model->getMaterials().end()?materialIt->second:nullptr;
+}
+
+AnimationSetup* ModelEditorTabController::getSelectedAnimationSetup() {
+	string animationId;
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (model == nullptr) return nullptr;
+	if (StringTools::startsWith(outlinerNodeModel, "model.animations.") == true) {
+		animationId = StringTools::substring(outlinerNodeModel, string("model.animations.").size(), outlinerNode.size());
+	} else {
+		return nullptr;
+	}
+	return model->getAnimationSetup(animationId);
 }
 
 void ModelEditorTabController::setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount)
@@ -336,127 +416,25 @@ void ModelEditorTabController::onToolsOptimizeModel() {
 	view->optimizeModel();
 }
 
-void ModelEditorTabController::onQuit()
-{
-}
-
-void ModelEditorTabController::onModelLoad()
-{
-	class OnModelLoad: public virtual Action
-	{
-
-	public:
-		void performAction() override {
-			modelEditorTabController->view->loadFile(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-			);
-			modelEditorTabController->modelPath.setPath(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-			);
-			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelLoad(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
-
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	if (fileName.length() == 0) {
-		fileName = view->getFileName();
-	}
-	fileName = Tools::getFileName(fileName);
-	vector<string> extensions = ModelReader::getModelExtensions();
-	extensions.push_back("tmodel");
-	view->getPopUps()->getFileDialogScreenController()->show(
-		modelPath.getPath(),
-		"Load from: ",
-		extensions,
-		view->getFileName(),
-		true,
-		new OnModelLoad(this)
-	);
-}
-
-void ModelEditorTabController::onModelSave()
-{
-	class OnModelSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				modelEditorTabController->view->saveFile(
-					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-				);
-				modelEditorTabController->modelPath.setPath(
-					modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-				);
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-			} catch (Exception& exception) {
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-			}
-		}
-
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
-
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
-
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	if (fileName.length() == 0) {
-		fileName = view->getFileName();
-		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
-			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
-		}
-	}
-	vector<string> extensions = {
-		"tmm"
-	};
-	fileName = Tools::getFileName(fileName);
-	view->getPopUps()->getFileDialogScreenController()->show(
-		modelPath.getPath(),
-		"Save to: ",
-		extensions,
-		fileName,
-		false,
-		new OnModelSave(this)
-	);
-}
-
 void ModelEditorTabController::onModelReload()
 {
 	view->reloadFile();
 }
 
-void ModelEditorTabController::onModelReimport()
-{
+void ModelEditorTabController::onModelLoad() {
 	class OnModelLoad: public virtual Action
 	{
 
 	public:
 		void performAction() override {
-			modelEditorTabController->view->reimportModel(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->view->loadModel(
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->modelPath.setPath(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -471,13 +449,52 @@ void ModelEditorTabController::onModelReimport()
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		modelPath.getPath(),
-		"Reimport model: ",
+		"Load model from: ",
 		ModelReader::getModelExtensions(),
 		view->getFileName(),
 		true,
 		new OnModelLoad(this)
+	);
+}
+
+void ModelEditorTabController::onModelReimport()
+{
+	class OnModelReimport: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			modelEditorTabController->view->reimportModel(
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->modelPath.setPath(
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnModelReimport(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Reimport model from: ",
+		ModelReader::getModelExtensions(),
+		view->getFileName(),
+		true,
+		new OnModelReimport(this)
 	);
 }
 
@@ -488,12 +505,72 @@ void ModelEditorTabController::saveFile(const string& pathName, const string& fi
 
 void ModelEditorTabController::loadFile(const string& pathName, const string& fileName)
 {
-	view->loadFile(pathName, fileName);
+	view->loadModel(pathName, fileName);
+}
+
+void ModelEditorTabController::onLODLoad(int lodLevel) {
+	class OnLODLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+
+			modelEditorTabController->view->setLODLevel(1);
+
+			try {
+				// set model in LOD level
+				prototypeLODLevel->setModel(
+					ModelReader::read(
+						modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+						modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+					)
+				);
+			} catch (Exception& exception) {
+				Console::println(string("OnLODLoad::performAction(): An error occurred: ") + exception.what());;
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+
+			modelEditorTabController->view->setLODLevel(lodLevel);
+			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevel) + ".model");
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param prototype prototype
+		 * @param lodLevel LOD level
+		 */
+		OnLODLoad(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		Prototype* prototype;
+		int lodLevel;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Load LOD " + to_string(lodLevel) + " model from: ",
+		ModelReader::getModelExtensions(),
+		view->getFileName(),
+		true,
+		new OnLODLoad(this, view->getPrototype(), lodLevel)
+	);
 }
 
 void ModelEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
+	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
 void ModelEditorTabController::setMaterialDetails() {
@@ -536,7 +613,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 	try {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
 			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath(),
+				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
 				specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
 			) +
 			"/" +
@@ -544,7 +621,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 		);
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
 			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath(),
+				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
 				specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 			) +
 			"/" +
@@ -636,13 +713,11 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 	}
 }
 
-void ModelEditorTabController::setAnimationDetails(const string& animationId) {
-	Console::println("ModelEditorTabController::setAnimationDetails(): " + animationId);
+void ModelEditorTabController::setAnimationDetails() {
+	Console::println("ModelEditorTabController::setAnimationDetails(): ");
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto animationSetup = model->getAnimationSetup(animationId);
+	auto model = getSelectedModel();
+	auto animationSetup = getSelectedAnimationSetup();
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 
 	if (animationSetup == nullptr) return;
@@ -700,15 +775,13 @@ void ModelEditorTabController::setAnimationDetails(const string& animationId) {
 	}
 }
 
-void ModelEditorTabController::applyAnimationDetails(const string& animationId) {
-	Console::println("ModelEditorTabController::applyAnimationDetails(): " + animationId);
+void ModelEditorTabController::applyAnimationDetails() {
+	Console::println("ModelEditorTabController::applyAnimationDetails(): ");
 
 	view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	auto animationSetup = model->getAnimationSetup(animationId);
+	auto model = getSelectedModel();
+	auto animationSetup = getSelectedAnimationSetup();
 	auto defaultAnimation = animationSetup != nullptr && animationSetup->getId() == Model::ANIMATIONSETUP_DEFAULT;
 
 	if (animationSetup == nullptr) return;
@@ -726,22 +799,17 @@ void ModelEditorTabController::applyAnimationDetails(const string& animationId) 
 		animationSetup->setLoop(loop);
 		animationSetup->setOverlayFromNodeId(overlayFromNodeId);
 
-		view->playAnimation(animationId);
+		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-
 }
 
 void ModelEditorTabController::setAnimationPreviewDetails() {
 	Console::println("ModelEditorTabController::setAnimationPreviewDetails(): ");
 
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) {
-		return;
-	}
-
+	auto model = getSelectedModel();
 	auto defaultAnimationSetup = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 
 	view->getEditorView()->setDetailsContent(
@@ -841,12 +909,12 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 		void performAction() override {
 			modelEditorTabController->view->addAttachment1(
 				required_dynamic_cast<GUIElementNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_bone"))->getController()->getValue().getString(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->modelPath.setPath(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -861,7 +929,7 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		modelPath.getPath(),
 		"Load animation preview attachment 1 model from: ",
 		extensions,
@@ -876,9 +944,6 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
 }
 
 void ModelEditorTabController::applyAnimationPreviewDetails() {
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
 	try {
 		view->playAnimation(
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_base"))->getController()->getValue().getString(),
@@ -892,31 +957,26 @@ void ModelEditorTabController::applyAnimationPreviewDetails() {
 	}
 }
 
-void ModelEditorTabController::setSoundDetails(const string& soundId) {
-	Console::println("ModelEditorTabController::setSoundDetails(): " + soundId);
-
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) return;
-
-	prototypeSoundsSubController->setSoundDetails(view->getPrototype(), model, soundId);
-}
-
 void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
-	if (StringTools::startsWith(outlinerNode, "model.material.") == true) {
+	string outlinerNodeModel;
+	Model* model = nullptr;
+	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {
 		setMaterialDetails();
 	} else
-	if (outlinerNode == "model.animations") {
+	if (outlinerNodeModel == "model.animations") {
 		setAnimationPreviewDetails();
 	} else
-	if (StringTools::startsWith(outlinerNode, "model.animations.") == true) {
-		auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-		view->playAnimation(animationId);
-		setAnimationDetails(animationId);
+	if (StringTools::startsWith(outlinerNodeModel, "model.animations.") == true) {
+		auto animationSetup = getSelectedAnimationSetup();
+		view->playAnimation(animationSetup == nullptr?Model::ANIMATIONSETUP_DEFAULT:animationSetup->getId());
+		setAnimationDetails();
 	} else {
-		prototypeBaseSubController->updateDetails(view->getPrototype(), outlinerNode);
-		prototypeDisplaySubController->updateDetails(view->getPrototype(),outlinerNode);
+		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
 	}
 }
 
@@ -936,16 +996,16 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setDiffuseTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
 				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
 				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -965,7 +1025,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		specularMaterialProperties->getDiffuseTextureFileName().empty() == false?specularMaterialProperties->getDiffuseTexturePathName():modelPath.getPath(),
 		"Load specular diffuse texture from: ",
 		extensions,
@@ -1011,14 +1071,14 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 			specularMaterialProperties->setDiffuseTexture(
 				specularMaterialProperties->getDiffuseTexturePathName(),
 				specularMaterialProperties->getDiffuseTextureFileName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1031,14 +1091,13 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 			, specularMaterialProperties(specularMaterialProperties) {
 		}
 
-
 	private:
 		ModelEditorTabController* modelEditorTabController;
 		SpecularMaterialProperties* specularMaterialProperties;
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false?specularMaterialProperties->getDiffuseTransparencyTexturePathName():modelPath.getPath(),
 		"Load specular diffuse transparency texture from: ",
 		extensions,
@@ -1082,14 +1141,14 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setNormalTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1109,7 +1168,7 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		specularMaterialProperties->getNormalTextureFileName().empty() == false?specularMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
 		"Load specular normal texture from: ",
 		extensions,
@@ -1151,14 +1210,14 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			specularMaterialProperties->setSpecularTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1178,7 +1237,7 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		specularMaterialProperties->getSpecularTextureFileName().empty() == false?specularMaterialProperties->getSpecularTexturePathName():modelPath.getPath(),
 		"Load specular specular texture from: ",
 		extensions,
@@ -1217,14 +1276,14 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setBaseColorTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1244,7 +1303,7 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		pbrMaterialProperties->getBaseColorTextureFileName().empty() == false?pbrMaterialProperties->getBaseColorTexturePathName():modelPath.getPath(),
 		"Load PBR base color texture from: ",
 		extensions,
@@ -1280,14 +1339,14 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setMetallicRoughnessTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1307,7 +1366,7 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		pbrMaterialProperties->getMetallicRoughnessTextureFileName().empty() == false?pbrMaterialProperties->getMetallicRoughnessTexturePathName():modelPath.getPath(),
 		"Load PBR metallic/roughness texture from: ",
 		extensions,
@@ -1343,14 +1402,14 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 			MutableString value;
 			modelEditorTabController->view->reloadPrototype();
 			pbrMaterialProperties->setNormalTexture(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->getModelPath()->setPath(
-				modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->getPathName()
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
-			modelEditorTabController->getView()->getPopUps()->getFileDialogScreenController()->close();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -1370,7 +1429,7 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 	};
 
 	auto extensions = TextureReader::getTextureExtensions();
-	view->getPopUps()->getFileDialogScreenController()->show(
+	popUps->getFileDialogScreenController()->show(
 		pbrMaterialProperties->getNormalTextureFileName().empty() == false?pbrMaterialProperties->getNormalTexturePathName():modelPath.getPath(),
 		"Load PBR normal texture from: ",
 		extensions,
@@ -1393,66 +1452,605 @@ void ModelEditorTabController::onMaterialClearPBRNormalTexture() {
 	updateMaterialDetails();
 }
 
+void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& animationId) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById((lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model") + ".animations." + animationId));
+	if (selectBoxOptionParentNode == nullptr) return;
+
+	renameAnimationId = animationId;
+	renameAnimationLOD = lodLevel;
+	selectBoxOptionParentNode->replaceSubNodes(
+		"<template id=\"tdme.animations.rename_input\" hint=\"Animation name\" text=\"" + GUIParser::escapeQuotes(animationId) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		true
+	);
+	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.animations.rename_input")));
+	view->getEditorView()->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+}
+
+void ModelEditorTabController::renameAnimation() {
+	Model* model = getLODLevelModel(renameAnimationLOD);
+	if (model == nullptr) {
+		renameAnimationLOD = -1;
+		renameAnimationId.clear();
+		return;
+	}
+
+	auto animationSetup = model->getAnimationSetup(renameAnimationId);
+	renameAnimationId.clear();
+	if (animationSetup != nullptr) {
+		view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
+		try {
+			if (model->renameAnimationSetup(
+				animationSetup->getId(),
+				required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.animations.rename_input"))->getController()->getValue().getString()
+				) == false) {
+				//
+				throw ExceptionBase("Could not rename animation");
+			}
+		} catch (Exception& exception) {
+			Console::println(string("ModelEditorTabController::renameAnimation(): An error occurred: ") + exception.what());;
+			showErrorPopUp("Warning", (string(exception.what())));
+		}
+	}
+
+	//
+	class ReloadTabOutlinerAction: public Action {
+	private:
+		EditorView* editorView;
+		string outlinerNode;
+	public:
+		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+		virtual void performAction() {
+			editorView->reloadTabOutliner(outlinerNode);
+		}
+	};
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), (renameAnimationLOD == 1?"model":"lod" + to_string(renameAnimationLOD) + ".model") + ".animations" + (animationSetup != nullptr?"." + animationSetup->getId():"")));
+	renameAnimationLOD = -1;
+}
+
+void ModelEditorTabController::createAnimationSetup(int lodLevel) {
+	Model* model = getSelectedModel();
+	if (model == nullptr) return;
+
+	//
+	auto defaultAnimationSetup = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
+
+	auto animationSetupCreated = false;
+	auto animationSetupName = string() + "New animation";
+	if (model->getAnimationSetup(animationSetupName) == nullptr &&
+		model->addAnimationSetup(animationSetupName, defaultAnimationSetup != nullptr?defaultAnimationSetup->getStartFrame():0, defaultAnimationSetup != nullptr?defaultAnimationSetup->getEndFrame():0, false, 1.0f) != nullptr) {
+		animationSetupCreated = true;
+	} else {
+		//
+		for (auto i = 1; i < 10001; i++) {
+			animationSetupName = string() + "New animation " + to_string(i);
+			if (model->getAnimationSetup(animationSetupName) == nullptr &&
+				model->addAnimationSetup(animationSetupName, defaultAnimationSetup != nullptr?defaultAnimationSetup->getStartFrame():0, defaultAnimationSetup != nullptr?defaultAnimationSetup->getEndFrame():0, false, 1.0f) != nullptr) {
+				animationSetupCreated = true;
+				//
+				break;
+			}
+		}
+	}
+	try {
+		if (animationSetupCreated == false) {
+			throw ExceptionBase("Could not create animation");
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::createAnimationSetup(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	if (animationSetupCreated == true) {
+		view->getEditorView()->reloadTabOutliner(string() + "model.animations." + animationSetupName);
+		startRenameAnimation(lodLevel, animationSetupName);
+	}
+}
+
+void ModelEditorTabController::createLOD() {
+	class OnLoadLODModel: public virtual Action
+	{
+	public:
+		void performAction() override {
+			PrototypeLODLevel* lodLevel = nullptr;
+			if (modelEditorTabController->view->getPrototype()->getLODLevel2() == nullptr) {
+				lodLevel = modelEditorTabController->getLODLevel(2);
+			} else
+			if (modelEditorTabController->view->getPrototype()->getLODLevel3() == nullptr) {
+				lodLevel = modelEditorTabController->getLODLevel(3);
+			}
+			if (lodLevel == nullptr) return;
+
+			lodLevel->setFileName(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			lodLevel->setType(LODObject3D::LODLEVELTYPE_MODEL);
+			try {
+				lodLevel->setModel(
+						lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
+						ModelReader::read(
+							Tools::getPathName(lodLevel->getFileName()),
+							Tools::getFileName(lodLevel->getFileName())
+						):
+						nullptr
+				);
+			} catch (Exception& exception) {
+				Console::println(string("OnLoadLODModel::performAction(): An error occurred: ") + exception.what());;
+				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			modelEditorTabController->view->getEditorView()->reloadTabOutliner();
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 */
+		OnLoadLODModel(ModelEditorTabController* modelEditorTabController)
+			: modelEditorTabController(modelEditorTabController) {
+			//
+		}
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+	};
+
+	PrototypeLODLevel* lodLevel = nullptr;
+	if (view->getPrototype()->getLODLevel2() != nullptr && view->getPrototype()->getLODLevel3() != nullptr) {
+		Console::println("ModelEditorTabController::createLOD(): LOD level 2 and LOD level 3 is already in use");
+		showErrorPopUp("Warning", "LOD level 2 and LOD level 3 is already in use");
+		return;
+	}
+
+	auto extensions = ModelReader::getModelExtensions();
+	popUps->getFileDialogScreenController()->show(
+		modelPath.getPath(),
+		"Load LOD model from: ",
+		extensions,
+		string(),
+		true,
+		new OnLoadLODModel(this)
+	);
+}
+
+void ModelEditorTabController::setLODDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::setLODDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_lod\" src=\"resources/engine/gui/template_details_lod.xml\" />\n")
+	);
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_lod"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->setValue(prototypeLODLevel->getMinDistance());
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setLODDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateLODColorDetails(lodLevel);
+}
+
+void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::updateLODColorDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_add"))->setEffectColorMul(Color4(prototypeLODLevel->getColorAdd()));
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()));
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::updateLODColorDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorTabController::applyLODDetails(int lodLevel) {
+	Console::println("ModelEditorTabController::applyLODDetails(): ");
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	PrototypeLODLevel* prototypeLODLevel = nullptr;
+	switch (lodLevel) {
+		case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+		case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+	}
+	if (prototypeLODLevel == nullptr) return;
+
+	try {
+		prototypeLODLevel->setMinDistance(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyLODDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model, int* lodLevel) {
+	if (StringTools::startsWith(outlinerNode, "model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getModel();
+		if (lodLevel != nullptr) *lodLevel = 1;
+		modelOutlinerNode = outlinerNode;
+	} else
+	if (outlinerNode == "lod2.model") {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = outlinerNode;
+	} else
+	if (StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel2() != nullptr?view->getPrototype()->getLODLevel2()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod2.").size(), outlinerNode.size());
+	} else
+	if (outlinerNode == "lod3.model") {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 3;
+		modelOutlinerNode = outlinerNode;
+	} else
+	if (StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
+		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
+		if (lodLevel != nullptr) *lodLevel = 2;
+		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod3.").size(), outlinerNode.size());
+	} else {
+		if (model != nullptr) *model = view->getPrototype()->getModel();
+		if (lodLevel != nullptr) *lodLevel = 1;
+		modelOutlinerNode = outlinerNode;
+	}
+	return model != nullptr;
+}
+
 void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 {
-	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	if (node->getId() == "dropdown_outliner_add") {
+		auto addOutlinerType = node->getController()->getValue().getString();
+		if (addOutlinerType == "animation") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			createAnimationSetup(lodLevel);
+		} else
+		if (addOutlinerType == "lod") {
+			createLOD();
+		}
+	} else
 	if (node->getId() == "selectbox_outliner") {
-		updateDetails(outlinerNode);
-	}
-	for (auto& applyAnimationNode: applyAnimationNodes) {
-		if (node->getId() == applyAnimationNode) {
-			auto animationId = StringTools::substring(outlinerNode, string("model.animations.").size(), outlinerNode.size());
-			applyAnimationDetails(animationId);
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		Console::println(outlinerNode);
+		auto haveDetails = false;
+		if (outlinerNode == "lod2.model" ||
+			StringTools::startsWith(outlinerNode, "lod2.model.") == true) {
+			if (view->getLODLevel() != 2) view->setLODLevel(2);
+			if (outlinerNode == "lod2.model") {
+				haveDetails = true;
+				setLODDetails(2);
+			}
+		} else
+		if (outlinerNode == "lod3.model" ||
+			StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
+			if (view->getLODLevel() != 3) view->setLODLevel(3);
+			if (outlinerNode == "lod3.model") {
+				haveDetails = true;
+				setLODDetails(3);
+			}
+		} else {
+			if (view->getLODLevel() != 1) view->setLODLevel(1);
+		}
+		if (haveDetails == false) updateDetails(outlinerNode);
+	} else {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		for (auto& applyAnimationNode: applyAnimationNodes) {
+			if (node->getId() == applyAnimationNode) {
+				applyAnimationDetails();
+			}
+		}
+		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
+			if (node->getId() == applySpecularMaterialNode) {
+				applySpecularMaterialDetails();
+				break;
+			}
+		}
+		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
+			if (node->getId() == applyPBRMaterialNode) {
+				applyPBRMaterialDetails();
+				break;
+			}
+		}
+		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
+			if (node->getId() == applyAnimationPreviewNode) {
+				applyAnimationPreviewDetails();
+				break;
+			}
+		}
+		for (auto& applyLODNode: applyLODNodes) {
+			if (node->getId() == applyLODNode) {
+				auto lodLevel = -1;
+				if (outlinerNode == "lod2.model") {
+					lodLevel = 2;
+				} else
+				if (outlinerNode == "lod3.model") {
+					lodLevel = 3;
+				}
+				if (lodLevel != -1) applyLODDetails(lodLevel);
+				break;
+			}
 		}
 	}
-	for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
-		if (node->getId() == applySpecularMaterialNode) {
-			applySpecularMaterialDetails();
-			break;
-		}
-	}
-	for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
-		if (node->getId() == applyPBRMaterialNode) {
-			applyPBRMaterialDetails();
-			break;
-		}
-	}
-	for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
-		if (node->getId() == applyAnimationPreviewNode) {
-			applyAnimationPreviewDetails();
-			break;
-		}
-	}
-	prototypeBaseSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	{
-		Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
+		auto model = getSelectedModel();
 		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
 	}
 }
 
 void ModelEditorTabController::onFocus(GUIElementNode* node) {
-	prototypeBaseSubController->onFocus(node, view->getPrototype());
+	basePropertiesSubController->onFocus(node, view->getPrototype());
 	prototypeSoundsSubController->onFocus(node, view->getPrototype());
 }
 
 void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
-	prototypeBaseSubController->onUnfocus(node, view->getPrototype());
+	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
+	if (node->getId() == "tdme.animations.rename_input") {
+		renameAnimation();
+	}
 }
 
 void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	prototypeBaseSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		string modelOutlinerNode;
+		int lodLevel = -1;
+		getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+		if (outlinerNode == "model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// reload
+			class OnModelReloadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelReload();
+				}
+				OnModelReloadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Reload", "contextmenu_reload", new OnModelReloadAction(this));
+
+			// load
+			class OnModelLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelLoad();
+				}
+				OnModelLoadAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnModelLoadAction(this));
+
+			// reimport
+			class OnModelReimportAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onModelReimport();
+				}
+				OnModelReimportAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "lod2.model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// load
+			class OnLODLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onLODLoad(lodLevel);
+				}
+				OnLODLoadAction(ModelEditorTabController* modelEditorTabController, int lodLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 2));
+
+			// delete
+			class OnLODDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					if (prototype == nullptr) return;
+					modelEditorTabController->view->setLODLevel(1);
+					prototype->removeLODLevel(lodLevel);
+					modelEditorTabController->view->getEditorView()->reloadTabOutliner("model");
+				}
+				OnLODDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLODDeleteAction(this, view->getPrototype(), 2));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "lod3.model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// load
+			class OnLODLoadAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					modelEditorTabController->onLODLoad(lodLevel);
+				}
+				OnLODLoadAction(ModelEditorTabController* modelEditorTabController, int lodLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Load", "contextmenu_load", new OnLODLoadAction(this, 3));
+
+			// delete
+			class OnLODDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					if (prototype == nullptr) return;
+					modelEditorTabController->view->setLODLevel(2);
+					prototype->removeLODLevel(lodLevel);
+					modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod2.model");
+				}
+				OnLODDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype, int lodLevel): modelEditorTabController(modelEditorTabController), prototype(prototype), lodLevel(lodLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+				int lodLevel;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLODDeleteAction(this, view->getPrototype(), 3));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (modelOutlinerNode == "model.animations") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnAddAnimationAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (modelOutlinerNode == "model.animations") modelEditorTabController->createAnimationSetup(lodLevel);
+				}
+				OnAddAnimationAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Animation", "contextmenu_add", new OnAddAnimationAction(this, view->getPrototype()));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// rename
+			class OnRenameAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
+						modelEditorTabController->startRenameAnimation(
+							lodLevel,
+							StringTools::substring(modelOutlinerNode, string("model.animations.").size(), modelOutlinerNode.size())
+						);
+					}
+				}
+				OnRenameAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnRenameAction(this, view->getPrototype()));
+
+			// separator
+			popUps->getContextMenuScreenController()->addMenuSeparator();
+
+			// delete
+			class OnDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = modelEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
+					string modelOutlinerNode;
+					int lodLevel = -1;
+					modelEditorTabController->getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+					if (StringTools::startsWith(modelOutlinerNode, "model.animations.") == true) {
+						modelEditorTabController->view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
+						auto animationId = StringTools::substring(modelOutlinerNode, string("model.animations.").size(), modelOutlinerNode.size());
+						Model* model = modelEditorTabController->getLODLevelModel(lodLevel);
+						model->removeAnimationSetup(animationId);
+						modelEditorTabController->view->getEditorView()->reloadTabOutliner((lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model") + ".animations");
+					}
+				}
+				OnDeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, view->getPrototype()));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 }
 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	prototypeBaseSubController->onActionPerformed(type, node, prototype);
-	prototypeDisplaySubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
@@ -1512,7 +2110,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				{
 				public:
 					void performAction() override {
-						material->getSpecularMaterialProperties()->setAmbientColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						material->getSpecularMaterialProperties()->setAmbientColor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
@@ -1521,7 +2119,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					ModelEditorTabController* modelEditorTabController;
 					Material* material;
 				};
-				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getAmbientColor(), new OnColorChangeAction(this, material));
+				popUps->getColorPickerScreenController()->show(specularMaterialProperties->getAmbientColor(), new OnColorChangeAction(this, material));
 			}
 		} else
 		if (node->getId().compare("specularmaterial_diffuse_edit") == 0) {
@@ -1532,7 +2130,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				{
 				public:
 					void performAction() override {
-						material->getSpecularMaterialProperties()->setDiffuseColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						material->getSpecularMaterialProperties()->setDiffuseColor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
@@ -1541,7 +2139,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					ModelEditorTabController* modelEditorTabController;
 					Material* material;
 				};
-				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getDiffuseColor(), new OnColorChangeAction(this, material));
+				popUps->getColorPickerScreenController()->show(specularMaterialProperties->getDiffuseColor(), new OnColorChangeAction(this, material));
 			}
 		} else
 		if (node->getId().compare("specularmaterial_emission_edit") == 0) {
@@ -1552,7 +2150,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				{
 				public:
 					void performAction() override {
-						material->getSpecularMaterialProperties()->setEmissionColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						material->getSpecularMaterialProperties()->setEmissionColor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
@@ -1561,7 +2159,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					ModelEditorTabController* modelEditorTabController;
 					Material* material;
 				};
-				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getEmissionColor(), new OnColorChangeAction(this, material));
+				popUps->getColorPickerScreenController()->show(specularMaterialProperties->getEmissionColor(), new OnColorChangeAction(this, material));
 			}
 		} else
 		if (node->getId().compare("specularmaterial_specular_edit") == 0) {
@@ -1572,7 +2170,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				{
 				public:
 					void performAction() override {
-						material->getSpecularMaterialProperties()->setSpecularColor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						material->getSpecularMaterialProperties()->setSpecularColor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
@@ -1581,7 +2179,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					ModelEditorTabController* modelEditorTabController;
 					Material* material;
 				};
-				view->getPopUps()->getColorPickerScreenController()->show(specularMaterialProperties->getSpecularColor(), new OnColorChangeAction(this, material));
+				popUps->getColorPickerScreenController()->show(specularMaterialProperties->getSpecularColor(), new OnColorChangeAction(this, material));
 			}
 		} else
 		if (node->getId().compare("pbrmaterial_basecolor_edit") == 0) {
@@ -1592,7 +2190,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 				{
 				public:
 					void performAction() override {
-						material->getPBRMaterialProperties()->setBaseColorFactor(Color4(modelEditorTabController->view->getPopUps()->getColorPickerScreenController()->getColor()));
+						material->getPBRMaterialProperties()->setBaseColorFactor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
 						modelEditorTabController->updateMaterialColorDetails();
 					}
 					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
@@ -1601,247 +2199,69 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					ModelEditorTabController* modelEditorTabController;
 					Material* material;
 				};
-				view->getPopUps()->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor(), new OnColorChangeAction(this, material));
+				popUps->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor(), new OnColorChangeAction(this, material));
 			}
+		} else
+		if (node->getId().compare("lod_color_add_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+			class OnColorChangeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeLODLevel->setColorAdd(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+					modelEditorTabController->updateLODColorDetails(lodLevel);
+					modelEditorTabController->view->updateLODLevel();
+				}
+				OnColorChangeAction(ModelEditorTabController* modelEditorTabController, int lodLevel, PrototypeLODLevel* prototypeLODLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel), prototypeLODLevel(prototypeLODLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+				PrototypeLODLevel* prototypeLODLevel;
+			};
+			popUps->getColorPickerScreenController()->show(prototypeLODLevel->getColorAdd(), new OnColorChangeAction(this, lodLevel, prototypeLODLevel));
+		} else
+		if (node->getId().compare("lod_color_mul_edit") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			string modelOutlinerNode;
+			int lodLevel = -1;
+			getOutlinerNodeLOD(outlinerNode, modelOutlinerNode, nullptr, &lodLevel);
+			PrototypeLODLevel* prototypeLODLevel = nullptr;
+			switch (lodLevel) {
+				case 2: prototypeLODLevel = prototype->getLODLevel2(); break;
+				case 3: prototypeLODLevel = prototype->getLODLevel3(); break;
+				default: break;
+			}
+			if (prototypeLODLevel == nullptr) return;
+			class OnColorChangeAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeLODLevel->setColorMul(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+					modelEditorTabController->updateLODColorDetails(lodLevel);
+					modelEditorTabController->view->updateLODLevel();
+				}
+				OnColorChangeAction(ModelEditorTabController* modelEditorTabController, int lodLevel, PrototypeLODLevel* prototypeLODLevel): modelEditorTabController(modelEditorTabController), lodLevel(lodLevel), prototypeLODLevel(prototypeLODLevel) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				int lodLevel;
+				PrototypeLODLevel* prototypeLODLevel;
+			};
+			popUps->getColorPickerScreenController()->show(prototypeLODLevel->getColorMul(), new OnColorChangeAction(this, lodLevel, prototypeLODLevel));
+		} else
+		if (node->getId() == "tdme.animations.rename_input") {
+			renameAnimation();
 		}
-		/*
-		if (node->getId().compare("button_model_load") == 0) {
-			onModelLoad();
-		} else
-		if (node->getId().compare("button_model_reload") == 0) {
-			onModelReload();
-		} else
-		if (node->getId().compare("button_model_reimport") == 0) {
-			onModelReimport();
-		} else
-		if (node->getId().compare("button_model_save") == 0) {
-			onModelSave();
-		} else
-		if (node->getId().compare("button_pivot_apply") == 0) {
-			onPivotApply();
-		} else
-		if (node->getId().compare("button_rendering_apply") == 0) {
-			onRenderingApply();
-		} else
-		if (node->getId().compare("button_shaderparameters_apply") == 0) {
-			onShaderParametersApply();
-		} else
-		if (node->getId().compare("lod_level_apply") == 0) {
-			onLODLevelApply();
-		} elsevoid ModelEditorTabController::setPreview() {
-	previewAnimationsBaseDropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
-	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
-	previewAnimationsAttachment1BoneDropdown->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelModel->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelLoad->getController()->setDisabled(false);
-	previewAnimationsAttachment1ModelClear->getController()->setDisabled(false);
-	buttonPreviewApply->getController()->setDisabled(false);
-
-	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
-	if (model == nullptr) {
-		return;
-	}
-
-	{
-		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsBaseDropDown->getScreenNode()->getNodeById(previewAnimationsBaseDropDown->getId() + "_inner")));
-		string animationsDropDownInnerNodeSubNodesXML = "";
-		animationsDropDownInnerNodeSubNodesXML =
-			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea id=\"" +
-			previewAnimationsBaseDropDown->getId() +
-			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
-			if (animationSetup->isOverlayAnimationSetup() == true) continue;
-			animationsDropDownInnerNodeSubNodesXML =
-				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" " +
-				" />\n";
-		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
-		try {
-			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-	{
-		auto animationsDropDownInnerNode1 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay1DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay1DropDown->getId() + "_inner")));
-		auto animationsDropDownInnerNode2 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay2DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay2DropDown->getId() + "_inner")));
-		auto animationsDropDownInnerNode3 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay3DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay3DropDown->getId() + "_inner")));
-		string animationsDropDownInnerNodeSubNodesXML = "";
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
-			if (animationSetup->isOverlayAnimationSetup() == false) continue;
-			animationsDropDownInnerNodeSubNodesXML =
-				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
-				"\" " +
-				" />\n";
-		}
-		try {
-			animationsDropDownInnerNode1->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay1DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		try {
-			animationsDropDownInnerNode2->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay2DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		try {
-			animationsDropDownInnerNode3->replaceSubNodes(
-				"<scrollarea id=\"" +
-				previewAnimationsOverlay3DropDown->getId() +
-				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
-				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea>",
-				true
-			);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-	{
-		auto animationsAttachment1BoneDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsAttachment1BoneDropdown->getScreenNode()->getNodeById(previewAnimationsAttachment1BoneDropdown->getId() + "_inner")));
-		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
-			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
-			"<scrollarea id=\"" +
-			previewAnimationsAttachment1BoneDropdown->getId() +
-			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getNodes()) {
-			auto node = it.second;
-			animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
-				animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
-				"\" " +
-				" />\n";
-		}
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea>";
-		try {
-			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
-		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setPreview(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
-
-}
-
-		if (node->getId().compare("lod_model_file_load") == 0) {
-			onLODLevelLoadModel();
-		} else
-		if (node->getId().compare("lod_model_file_clear") == 0) {
-			onLODLevelClearModel();
-		} else
-		if (node->getId().compare("button_lod_apply") == 0) {
-			onLODLevelApplySettings();
-		} else
-		if (node->getId().compare("button_materials_dropdown_apply") == 0) {
-			onMaterialDropDownApply();
-		} else
-		if (node->getId().compare("button_materials_material_apply") == 0) {
-			onMaterialApply();
-		} else
-		if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
-			onMaterialLoadDiffuseTexture();
-		} else
-		if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
-			onMaterialLoadDiffuseTransparencyTexture();
-		} else
-		if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
-			onMaterialLoadNormalTexture();
-		} else
-		if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
-			onMaterialLoadSpecularTexture();
-		} else
-		if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialDiffuseTexture);
-		} else
-		if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
-		} else
-		if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialNormalTexture);
-		} else
-		if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialSpecularTexture);
-		} else
-		if (node->getId().compare("button_materials_material_pbr_base_color_texture_load") == 0) {
-			onMaterialLoadPBRBaseColorTexture();
-		} else
-		if (node->getId().compare("button_materials_material_pbr_base_color_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialPBRBaseColorTexture);
-		} else
-		if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_load") == 0) {
-			onMaterialLoadPBRMetallicRoughnessTexture();
-		} else
-		if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialPBRMetallicRoughnessTexture);
-		} else
-		if (node->getId().compare("button_materials_material_pbr_normal_texture_load") == 0) {
-			onMaterialLoadPBRNormalTexture();
-		} else
-		if (node->getId().compare("button_materials_material_pbr_normal_texture_clear") == 0) {
-			onMaterialClearTexture(materialsMaterialPBRNormalTexture);
-		} else
-		if (node->getId().compare("animations_dropdown_apply") == 0) {
-			onAnimationDropDownApply();
-		} else
-		if (node->getId().compare("animations_dropdown_delete") == 0) {
-			onAnimationDropDownDelete();
-		} else
-		if (node->getId().compare("button_animations_animation_apply") == 0) {
-			onAnimationApply();
-		} else
-		if (node->getId().compare("preview_animations_attachment1_model_load") == 0) {
-			onPreviewAnimationsAttachment1ModelLoad();
-		} else
-		if (node->getId().compare("preview_animations_attachment1_model_clear") == 0) {
-			onPreviewAnimationsAttachment1ModelClear();
-		} else
-		if (node->getId().compare("button_preview_apply") == 0) {
-			onPreviewApply();
-		} else
-		if (node->getId().compare("button_tools_computenormals") == 0) {
-			onToolsComputeNormal();
-		} else
-		if (node->getId().compare("button_tools_optimizemodel") == 0) {
-			onToolsOptimizeModel();
-		}
-		*/
 	}
 }

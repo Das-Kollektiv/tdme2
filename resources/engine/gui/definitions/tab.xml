@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-initialize="{$id}.condition+={$closeable}" >
+<element id="{$id}" value="{$value}" width="auto" height="25" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-initialize="{$id}.condition+={$closeable}" vertical-align="center" >
 	
 	<!-- normal -->
 	<layout 
@@ -14,7 +14,7 @@
 		border-left="1" 
 		border-right="1" 
 		border-color="{$color.element_background}"
-		border-top="2"
+		border-top="1"
 		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
@@ -32,7 +32,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -50,7 +50,7 @@
 		border-left="1" 
 		border-right="1" 
 		border-color="{$color.element_frame}"
-		border-top="2"
+		border-top="1"
 		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_foreground}"
@@ -69,7 +69,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_mouseover" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -87,7 +87,7 @@
 		border-left="1" 
 		border-right="1" 
 		border-color="{$color.element_frame}"
-		border-top="2"
+		border-top="1"
 		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_foreground}"
@@ -105,7 +105,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_selected" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 	
@@ -123,7 +123,7 @@
 		border-left="1" 
 		border-right="1" 
 		border-color="{$color.element_background}"
-		border-top="2"
+		border-top="1"
 		border-color-top="{$type-color}"
 		border-bottom="1" 
 		border-color-bottom="{$color.element_frame}"
@@ -141,7 +141,7 @@
 			height="25"				
 			vertical-align="center"
 		/>
-		<space show-on="true" width="20"/>
+		<space show-on="true" width="10"/>
 		<button show-on="true" template="button_template_tab.xml" id="{$id}_close_disabled" width="18" height="18" image="resources/engine/images/cross.png" />
 	</layout>
 

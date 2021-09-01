@@ -15,7 +15,6 @@ namespace utilities {
 	class FloatBuffer;
 	class FlowMap;
 	class FlowMapCell;
-	class HashLink;
 	class HexEncDec;
 	class IntBuffer;
 	class Integer;
@@ -35,6 +34,6 @@ namespace utilities {
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
-	class Terrain;
+	class Terrain2;
 }  // namespace utilities
 }  // namespace tdme

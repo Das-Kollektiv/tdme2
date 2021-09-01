@@ -126,10 +126,7 @@ void GUILayerNode::setLeft(int left)
 
 void GUILayerNode::layoutSubNodes()
 {
-	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	GUIParentNode::layoutSubNodes();
 	auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 	auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
@@ -157,10 +154,7 @@ void GUILayerNode::layoutSubNodes()
 
 void GUILayerNode::layout()
 {
-	if (conditionsMet == false) {
-		screenNode->forceInvalidateLayout(this);
-		return;
-	}
+	if (conditionsMet == false) return;
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 		for (auto i = 0; i < subNodes.size(); i++) {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,16 +13,19 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
-using std::map;
-using std::set;
+using std::unordered_set;
 using std::string;
+using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIContextMenuRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -63,31 +66,37 @@ class tdme::gui::nodes::GUIScreenNode final
 private:
 	string applicationRootPathName;
 	string applicationSubPathName;
+	string fileName;
 	GUI* gui { nullptr };
 	int nodeCounter;
 	int screenWidth;
 	int screenHeight;
-	map<string, GUINode*> nodesById;
-	map<string, GUINode*> tickNodesById;
+	unordered_map<string, GUINode*> nodesById;
+	unordered_map<string, GUINode*> tickNodesById;
 	vector<GUINode*> floatingNodes;
 	vector<GUIActionListener*> actionListener;
 	vector<GUIChangeListener*> changeListener;
 	vector<GUIMouseOverListener*> mouseOverListener;
+	vector<GUIContextMenuRequestListener*> contextMenuRequestListener;
 	vector<GUIFocusListener*> focusListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
-	set<string> invalidateLayoutNodeIds;
-	map<string, set<string>> elementNodeToNodeMapping;
+	unordered_set<string> invalidateLayoutNodeIds;
+	unordered_map<string, unordered_set<string>> elementNodeToNodeMapping;
 
 	bool visible;
 	bool popUp;
 
-	bool reshapeRequested;
-
-	map<int64_t, string> timedExpressions;
+	unordered_map<int64_t, string> timedExpressions;
 
 public:
+	/**
+	 * @return screen filename or complete file path
+	 */
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/**
 	 * @return application root path name
@@ -162,6 +171,7 @@ public:
 protected:
 	/**
 	 * Constructor
+	 * @oaram fileName file name or complete file path
 	 * @param applicationRootPath application root path
 	 * @param applicationSubPathName application sub path name which is usually "engine" or "project"
 	 * @param flow flow
@@ -184,6 +194,7 @@ protected:
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
+		const string& fileName,
 		const string& applicationRootPathName,
 		const string& applicationSubPathName,
 		const string& id,
@@ -236,7 +247,6 @@ private:
 	void tick();
 
 public:
-
 	/**
 	 * @return content width
 	 */
@@ -299,7 +309,20 @@ public:
 	 * @param nodeId nodeId
 	 * @return GUI node or null
 	 */
-	GUINode* getNodeById(const string& nodeId);
+	inline GUINode* getNodeById(const string& nodeId) {
+		auto nodesByIdIt = nodesById.find(nodeId);
+		if (nodesByIdIt == nodesById.end()) {
+			return nullptr;
+		}
+		return nodesByIdIt->second;
+	}
+
+	/**
+	 * Remove GUI node by id
+	 * @param nodeId nodeId
+	 * @param resetScrollOffsets reset scroll offsets
+	 */
+	void removeNodeById(const string& nodeId, bool resetScrollOffsets);
 
 	/**
 	 * Get inner GUI node by id
@@ -314,7 +337,9 @@ public:
 	 * Allocate node id
 	 * @return node id
 	 */
-	const string allocateNodeId();
+	inline const string allocateNodeId() {
+		return "<" + to_string(nodeCounter++) + ">";
+	}
 
 	/**
 	 * Render screen
@@ -336,7 +361,7 @@ public:
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
 	// overridden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
 
 	/**
 	 * Add action listener
@@ -405,6 +430,26 @@ public:
 	void delegateMouseOver(GUIElementNode* node);
 
 	/**
+	 * Add context menu request listener
+	 * @param listener listener
+	 */
+	void addContextMenuRequestListener(GUIContextMenuRequestListener* listener);
+
+	/**
+	 * Remove context menu request listener
+	 * @param listener listener
+	 */
+	void removeContextMenuRequestListener(GUIContextMenuRequestListener* listener);
+
+	/**
+	 * Delegate mouse over event
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 */
+	void delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY);
+
+	/**
 	 * Add focus listener
 	 * @param listener listener
 	 */
@@ -443,13 +488,13 @@ public:
 	 * Get values
 	 * @param values values
 	 */
-	void getValues(map<string, MutableString>& values);
+	void getValues(unordered_map<string, MutableString>& values);
 
 	/**
 	 * Set values
 	 * @param values values
 	 */
-	void setValues(const map<string, MutableString>& values);
+	void setValues(const unordered_map<string, MutableString>& values);
 
 	/**
 	 * Create size constraints

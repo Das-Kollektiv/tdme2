@@ -93,6 +93,8 @@ void GUIInputInternalController::initialize()
 	haveMin = minAsString.empty() == false;
 	haveMax = maxAsString.empty() == false;
 	haveStep = stepAsString.empty() == false;
+
+	formatText();
 }
 
 void GUIInputInternalController::dispose()
@@ -191,6 +193,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > max) value = max;
 						}
 						textInputNode->getText().set(value, decimals);
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 				case TYPE_INT:
@@ -206,6 +209,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > static_cast<int>(max)) value = static_cast<int>(max);
 						}
 						textInputNode->getText().set(value);
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 			}
@@ -387,6 +391,38 @@ void GUIInputInternalController::onFocusGained()
 
 void GUIInputInternalController::onFocusLost()
 {
+	formatText();
+	showCursor = false;
+}
+
+bool GUIInputInternalController::hasValue()
+{
+	return false;
+}
+
+const MutableString& GUIInputInternalController::getValue()
+{
+	return value;
+}
+
+void GUIInputInternalController::setValue(const MutableString& value)
+{
+}
+
+void GUIInputInternalController::reset()
+{
+	index = 0;
+	offset = 0;
+	resetCursorMode();
+}
+
+bool GUIInputInternalController::isShowCursor()
+{
+	return showCursor;
+}
+
+void GUIInputInternalController::formatText()
+{
 	switch (type) {
 		case TYPE_STRING:
 			break;
@@ -417,31 +453,8 @@ void GUIInputInternalController::onFocusLost()
 			}
 			break;
 	}
-	showCursor = false;
 }
 
-bool GUIInputInternalController::hasValue()
+void GUIInputInternalController::onSubTreeChange()
 {
-	return false;
-}
-
-const MutableString& GUIInputInternalController::getValue()
-{
-	return value;
-}
-
-void GUIInputInternalController::setValue(const MutableString& value)
-{
-}
-
-void GUIInputInternalController::reset()
-{
-	index = 0;
-	offset = 0;
-	draggingActive = false;
-	resetCursorMode();
-}
-
-bool GUIInputInternalController::isShowCursor() {
-	return showCursor;
 }

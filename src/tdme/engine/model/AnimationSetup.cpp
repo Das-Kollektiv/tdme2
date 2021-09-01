@@ -20,13 +20,13 @@ AnimationSetup::AnimationSetup(Model* model, const string& id, int32_t startFram
 void AnimationSetup::setStartFrame(int32_t startFrame) {
 	this->startFrame = startFrame;
 	this->frames = (endFrame - startFrame) + 1;
-	if (this->frames < 0) this->frames = 0;
+	if (this->frames <= 0) this->frames = 1;
 }
 
 void AnimationSetup::setEndFrame(int32_t endFrame) {
 	this->endFrame = endFrame;
 	this->frames = (endFrame - startFrame) + 1;
-	if (this->frames < 0) this->frames = 0;
+	if (this->frames <= 0) this->frames = 1;
 }
 
 int64_t AnimationSetup::computeDuration()

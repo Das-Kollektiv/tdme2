@@ -12,7 +12,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/installer/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/utilities/Properties.h>
 
 using std::string;
@@ -25,7 +25,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
-using tdme::tools::shared::views::PopUps;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Properties;
 
 /**

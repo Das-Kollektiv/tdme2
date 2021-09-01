@@ -62,11 +62,6 @@ private:
 	 */
 	void setSelected(bool selected);
 
-	/**
-	 * Select this tab
-	 */
-	void selectTab();
-
 public:
 	// overridden methods
 	bool isDisabled() override;

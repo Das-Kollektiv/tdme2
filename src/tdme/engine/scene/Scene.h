@@ -10,8 +10,9 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -24,7 +25,7 @@ using std::vector;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::prototype::BaseProperties;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
@@ -36,11 +37,10 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::scene::Scene final
-	: public PrototypeProperties
+	: public BaseProperties
 {
 private:
 	string applicationRootPathName;
-	string pathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
 	vector<SceneLight*> lights;
@@ -70,8 +70,10 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param name name
+	 * @param description description
 	 */
-	Scene();
+	Scene(const string& name, const string& description);
 
 	/**
 	 * Destructor
@@ -94,30 +96,15 @@ public:
 	}
 
 	/**
-	 * @return path name
-	 */
-	inline const string& getPathName() {
-		return pathName;
-	}
-
-	/**
-	 * Set up path name
-	 * @param pathName pathName
-	 */
-	inline void setPathName(const string& pathName) {
-		this->pathName = pathName;
-	}
-
-	/**
-	 * @return scene file name
+	 * @return scene file name including relative path
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
 	/**
-	 * Set up scene file name
-	 * @param fileName file name
+	 * Set up scene file name including relative path
+	 * @param fileName scene file name including relative path
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;
@@ -151,7 +138,28 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* getLightAt(int i) {
+		if (i < 0 || i >= lights.size()) return nullptr;
 		return lights[i];
+	}
+
+	/**
+	 * Add light
+	 * @return light
+	 */
+	inline SceneLight* addLight() {
+		lights.push_back(new SceneLight(lights.size()));
+		return lights[lights.size() - 1];
+	}
+
+	/**
+	 * Remove light at given index i
+	 * @param i index
+	 * @return success
+	 */
+	bool removeLightAt(int i) {
+		if (i < 0 || i >= lights.size()) return false;
+		lights.erase(lights.begin() + i);
+		return true;
 	}
 
 	/**
@@ -223,11 +231,11 @@ public:
 	void removeEntitiesByPrototypeId(int prototypeId);
 
 	/**
-	 * Replace entity
+	 * Replace prototype of given search prototype with new prototype
 	 * @param searchPrototypeId search prototype id
 	 * @param newPrototypeId new prototype id
 	 */
-	void replacePrototype(int searchPrototypeId, int newPrototypeId);
+	void replacePrototypeByIds(int searchPrototypeId, int newPrototypeId);
 
 	/**
 	 * @return environment mapping object ids
@@ -245,8 +253,17 @@ public:
 	/**
 	 * Removes an entity from scene
 	 * @param id id
+	 * @return success
 	 */
-	void removeEntity(const string& id);
+	bool removeEntity(const string& id);
+
+	/**
+	 * Rename an entity from scene
+	 * @param id id
+	 * @param newId new id
+	 * @return success
+	 */
+	bool renameEntity(const string& id, const string& newId);
 
 	/**
 	 * Returns scene entity by id

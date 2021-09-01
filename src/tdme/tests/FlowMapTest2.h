@@ -10,7 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
@@ -61,7 +61,7 @@ private:
 	};
 	World* world { nullptr };
 	Engine* engine { nullptr };
-	Scene scene;
+	Scene* scene { nullptr };
 	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
 	Model* formationLinePrototype { nullptr };

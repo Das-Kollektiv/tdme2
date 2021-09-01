@@ -116,74 +116,82 @@ void GUIMenuHeaderItemController::toggleOpenState()
 
 void GUIMenuHeaderItemController::determineMenuItemControllers()
 {
+	vector<GUINode*> childControllerNodes;
 	menuItemControllers.clear();
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		auto menuItemController = dynamic_cast<GUIMenuItemController*>(childController);
-		if (menuItemController != nullptr && menuItemController->isDisabled() == false) {
+		if (menuItemController != nullptr) {
 			menuItemControllers.push_back(menuItemController);
 		}
 	}
 }
 
-int GUIMenuHeaderItemController::getSelectedMenuItemControllerIdx()
+void GUIMenuHeaderItemController::unselectSelection()
 {
-	auto selectedMenuItemControllerIdx = 0;
-	for (auto i = 0; i < menuItemControllers.size(); i++) {
-		auto selectBoxOptionController = menuItemControllers[i];
-		if (selectBoxOptionController->isSelected() == true) {
-			selectedMenuItemControllerIdx = i;
-			break;
-		}
-	}
-	return selectedMenuItemControllerIdx;
+	if (selectedMenuItemControllerIdx == -1) return;
+	if (menuItemControllers.empty() == true) return;
+	menuItemControllers[selectedMenuItemControllerIdx]->unselect();
 }
 
 void GUIMenuHeaderItemController::selectFirst()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
-
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
-	menuItemControllers[0]->select();
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
+	selectedMenuItemControllerIdx = -1;
+	selectNext();
 }
 
 void GUIMenuHeaderItemController::selectNext()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
 
-	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx + 1) % (int)menuItemControllers.size();
-	if (selectedMenuItemControllerIdx < 0)
-		selectedMenuItemControllerIdx += menuItemControllers.size();
+	auto disabledItems = 0;
+	while (disabledItems < menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx + 1) % (int)menuItemControllers.size();
+		if (selectedMenuItemControllerIdx < 0)
+			selectedMenuItemControllerIdx += menuItemControllers.size();
+		if (menuItemControllers[selectedMenuItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
 
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
+	if (disabledItems == menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = -1;
+		return;
+	}
+
 	menuItemControllers[selectedMenuItemControllerIdx]->select();
 }
 
 void GUIMenuHeaderItemController::selectPrevious()
 {
-	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
+	unselectSelection();
+	if (menuItemControllers.empty() == true) return;
+	if (selectedMenuItemControllerIdx == -1) selectedMenuItemControllerIdx = (int)menuItemControllers.size();
 
-	selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx - 1) % (int)menuItemControllers.size();
-	if (selectedMenuItemControllerIdx < 0)
-		selectedMenuItemControllerIdx += menuItemControllers.size();
+	auto disabledItems = 0;
+	while (disabledItems < menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = (selectedMenuItemControllerIdx - 1) % (int)menuItemControllers.size();
+		if (selectedMenuItemControllerIdx < 0)
+			selectedMenuItemControllerIdx += menuItemControllers.size();
+		if (menuItemControllers[selectedMenuItemControllerIdx]->isDisabled() == false) break;
+		disabledItems++;
+	}
 
-	for (auto menuItemController: menuItemControllers) menuItemController->unselect();
-	menuItemControllers[selectedMenuItemControllerIdx]->select();
-}
+	if (disabledItems == menuItemControllers.size()) {
+		selectedMenuItemControllerIdx = -1;
+		return;
+	}
+
+	menuItemControllers[selectedMenuItemControllerIdx]->select();}
 
 void GUIMenuHeaderItemController::handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event)
 {
 	determineMenuItemControllers();
-	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
-	if (menuItemControllers.size() == 0) return;
+	if (selectedMenuItemControllerIdx == -1) return;
 	menuItemControllers[selectedMenuItemControllerIdx]->handleKeyboardEvent(event);
 }
 
@@ -201,7 +209,8 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			node->isEventBelongingToNode(event) == true) {
 			if (open == false) {
 				event->setProcessed(true);
-				toggleOpenState();
+				unselect();
+				menuHeaderController->select(required_dynamic_cast<GUIElementNode*>(this->node));
 			}
 		}
 	} else {
@@ -212,7 +221,7 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
 			if (innerNode->isEventBelongingToNode(event) == false) {
 				event->setProcessed(true);
-				toggleOpenState();
+				menuHeaderController->unselect();
 			}
 		} else
 		if (node == this->node &&
@@ -220,9 +229,7 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			if (node == this->node && node->isEventBelongingToNode(event) == true) {
 				if (open == false) {
 					event->setProcessed(true);
-					menuHeaderController->unselect();
-					toggleOpenState();
-				}
+					menuHeaderController->select(required_dynamic_cast<GUIElementNode*>(this->node));				}
 			}
 		}
 	}
@@ -260,5 +267,10 @@ const MutableString& GUIMenuHeaderItemController::getValue()
 
 void GUIMenuHeaderItemController::setValue(const MutableString& value)
 {
+	determineMenuItemControllers();
 }
 
+void GUIMenuHeaderItemController::onSubTreeChange() {
+	determineMenuItemControllers();
+	selectedMenuItemControllerIdx = -1;
+}

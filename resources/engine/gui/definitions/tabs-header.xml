@@ -1,7 +1,9 @@
 <element id="{$id}" width="100%" height="auto" focusable="true" on-initialize="{$id}.condition+={$scrollable}">
 
 	<layout alignment="horizontal" width="100%" height="auto">
-		{__InnerXML__}
+		<layout id="{$id}_inner" alignment="horizontal" width="100%" height="auto">
+			{__InnerXML__}
+		</layout>
 		<space width="*" height="100%" alignment="horizontal" horizontal-align="right" vertical-align="center" border-bottom="1" border-color-bottom="{$color.element_frame}"/>
 	</layout>
 

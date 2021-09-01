@@ -23,82 +23,8 @@ using tdme::engine::prototype::PrototypeTerrain;
 using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
-constexpr int Prototype::ID_NONE;
-constexpr int Prototype::MODEL_BOUNDINGVOLUME_COUNT;
-constexpr int Prototype::MODEL_SOUNDS_COUNT;
-
-char Prototype::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
-
-char Prototype::MODEL_BOUNDINGVOLUMES_ID[] = "model_bv";
-
-char Prototype::MODEL_BOUNDINGVOLUME_IDS[][Prototype::MODEL_BOUNDINGVOLUME_COUNT] = {
-	"model_bv.0",
-	"model_bv.1",
-	"model_bv.2",
-	"model_bv.3",
-	"model_bv.4",
-	"model_bv.5",
-	"model_bv.6",
-	"model_bv.7",
-	"model_bv.8",
-	"model_bv.9",
-	"model_bv.10",
-	"model_bv.11",
-	"model_bv.12",
-	"model_bv.13",
-	"model_bv.14",
-	"model_bv.15",
-	"model_bv.16",
-	"model_bv.17",
-	"model_bv.18",
-	"model_bv.19",
-	"model_bv.20",
-	"model_bv.21",
-	"model_bv.22",
-	"model_bv.23",
-	"model_bv.24",
-	"model_bv.25",
-	"model_bv.26",
-	"model_bv.27",
-	"model_bv.28",
-	"model_bv.29",
-	"model_bv.30",
-	"model_bv.31",
-	"model_bv.32",
-	"model_bv.33",
-	"model_bv.34",
-	"model_bv.35",
-	"model_bv.36",
-	"model_bv.37",
-	"model_bv.38",
-	"model_bv.39",
-	"model_bv.40",
-	"model_bv.41",
-	"model_bv.42",
-	"model_bv.43",
-	"model_bv.44",
-	"model_bv.45",
-	"model_bv.46",
-	"model_bv.47",
-	"model_bv.48",
-	"model_bv.49",
-	"model_bv.50",
-	"model_bv.51",
-	"model_bv.52",
-	"model_bv.53",
-	"model_bv.54",
-	"model_bv.55",
-	"model_bv.56",
-	"model_bv.57",
-	"model_bv.58",
-	"model_bv.59",
-	"model_bv.60",
-	"model_bv.61",
-	"model_bv.62",
-	"model_bv.63"
-};
-
-Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot)
+Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot):
+	BaseProperties(name, description)
 {
 	this->id = id;
 	this->type = entityType;
@@ -106,7 +32,7 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 	this->description = description;
 	this->fileName = fileName;
 	this->modelFileName = modelFileName;
-	this->thumbnailFileName = thumbnail;
+	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
 	if (this->type == Prototype_Type::PARTICLESYSTEM) {
@@ -157,17 +83,9 @@ bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBou
 
 void Prototype::removeBoundingVolume(int idx)
 {
+	if (idx < 0 || idx >= boundingVolumes.size()) return;
 	delete boundingVolumes[idx];
 	boundingVolumes.erase(boundingVolumes.begin() + idx);
-}
-
-void Prototype::setDefaultBoundingVolumes(int maxBoundingVolumeCount)
-{
-	auto boundingVolumeCount = maxBoundingVolumeCount == -1?MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
-	for (auto i = boundingVolumes.size(); i < boundingVolumeCount; i++) {
-		auto bv = new PrototypeBoundingVolume(i, this);
-		addBoundingVolume(i, bv);
-	}
 }
 
 void Prototype::setLODLevel2(PrototypeLODLevel* lodLevel) {
@@ -182,8 +100,27 @@ void Prototype::setLODLevel3(PrototypeLODLevel* lodLevel) {
 	lodLevel3 = lodLevel;
 }
 
+void Prototype::removeLODLevel(int lodLevel) {
+	if (lodLevel == 2) {
+		if (lodLevel2 != nullptr) {
+			delete lodLevel2;
+		}
+		if (lodLevel3 == nullptr) {
+			lodLevel2 = nullptr;
+		} else {
+			lodLevel2 = lodLevel3;
+			lodLevel3 = nullptr;
+		}
+	} else
+	if (lodLevel == 3) {
+		if (lodLevel3 != nullptr) {
+			delete lodLevel3;
+		}
+		lodLevel3 = nullptr;
+	}
+}
+
 PrototypeAudio* Prototype::addSound(const string& id) {
-	if (sounds.size() == MODEL_SOUNDS_COUNT) return nullptr;
 	auto sound = getSound(id);
 	if (sound != nullptr) return nullptr;
 	auto audio = new PrototypeAudio(id);

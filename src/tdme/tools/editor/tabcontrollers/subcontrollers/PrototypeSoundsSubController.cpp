@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -14,6 +15,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -37,6 +39,7 @@ using std::to_string;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
+using tdme::engine::Engine;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
@@ -47,6 +50,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -69,6 +73,7 @@ PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorVie
 	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
 	this->view = new PrototypeSoundsSubView(this, editorView->getPopUps());
+	this->popUps = editorView->getPopUps();
 }
 
 PrototypeSoundsSubController::~PrototypeSoundsSubController() {
@@ -110,8 +115,8 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
 			prototypeSoundsSubController->audioPath->setPath(prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName());
-			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
+			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 	private:
 		PrototypeSoundsSubController* prototypeSoundsSubController;
@@ -144,15 +149,18 @@ void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype,
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
 		for (auto sound: prototype->getSounds()) {
 			auto soundId = sound->getId();
-			xml+= "	<selectbox-option text=\"" + GUIParser::escapeQuotes(soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escapeQuotes(soundId) + "\" id=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
 }
 
-void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* model, const string& soundId) {
-	Console::println("PrototypeSoundsSubController::setSoundDetails(): " + soundId);
+void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* model, const string& outlinerNode) {
+	Console::println("PrototypeSoundsSubController::updateDetails(): " + outlinerNode);
 
+	if (StringTools::startsWith(outlinerNode, "sounds.") == false) return;
+
+	auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
 	auto sound = prototype->getSound(soundId);
 	if (sound == nullptr) return;
 
@@ -160,7 +168,8 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 		"<template id=\"details_sound\" src=\"resources/engine/gui/template_details_sound.xml\" />\n"
 	);
 
-	{
+	//
+	if (model != nullptr) {
 		auto idx = 0;
 		string animationsDropDownXML;
 		animationsDropDownXML =
@@ -193,7 +202,6 @@ void PrototypeSoundsSubController::setSoundDetails(Prototype* prototype, Model* 
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->setValue(MutableString(sound->getId()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
@@ -243,23 +251,110 @@ const string PrototypeSoundsSubController::applySoundDetailsRename(Prototype* pr
 	return newSoundId;
 }
 
-void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
-	for (auto& audioChangeNode: applyAudioNodes) {
-		if (node->getId() == audioChangeNode) {
-			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-				applySoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+void PrototypeSoundsSubController::createSound(Prototype* prototype) {
+	auto soundCreate = false;
+	auto soundName = string() + "New sound";
+	if (prototype->getSound(soundName) == nullptr) {
+		soundCreate = true;
+	} else {
+		//
+		for (auto i = 1; i < 10001; i++) {
+			soundName = string() + "New sound " + to_string(i);
+			if (prototype->getSound(soundName) == nullptr) {
+				soundCreate = true;
+				//
+				break;
 			}
 		}
 	}
-	if (node->getId() == "selectbox_outliner") {
-		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-			auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
-			setSoundDetails(prototype, model, soundId);
-			playableSoundView->playSound(soundId);
-		} else {
-			playableSoundView->stopSound();
+	try {
+		if (soundCreate == false) {
+			throw ExceptionBase("Could not create sound");
+		}
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeSoundsSubController::createSound(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	if (soundCreate == true) {
+		prototype->addSound(soundName);
+		editorView->reloadTabOutliner(string() + "sounds." + soundName);
+		startRenameSound(
+			prototype,
+			soundName
+		);
+	}
+}
+
+void PrototypeSoundsSubController::startRenameSound(Prototype* prototype, const string& soundName) {
+	auto sound = prototype->getSound(soundName);
+	if (sound == nullptr) return;
+	auto selectBoxOptionParentNode = dynamic_cast<GUIParentNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("sounds." + soundName));
+	if (selectBoxOptionParentNode == nullptr) return;
+	renameSoundName = soundName;
+	selectBoxOptionParentNode->replaceSubNodes(
+		"<template id=\"tdme.sounds.rename_input\" hint=\"Sound name\" text=\"" + GUIParser::escapeQuotes(sound->getId()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		true
+	);
+	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.sounds.rename_input")));
+	editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+}
+
+void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
+	auto newSoundName = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("tdme.sounds.rename_input"))->getController()->getValue().getString();
+	try {
+		if (prototype->renameSound(renameSoundName, newSoundName) == false) {
+			//
+			renameSoundName.clear();
+			throw ExceptionBase("Could not rename sound");
+		}
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeSoundsSubController::renameSound(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+		return;
+	}
+
+	//
+	renameSoundName.clear();
+
+	//
+	class ReloadTabOutlinerAction: public Action {
+	private:
+		EditorView* editorView;
+		string outlinerNode;
+	public:
+		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
+		virtual void performAction() {
+			editorView->reloadTabOutliner(outlinerNode);
+		}
+	};
+	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, string("sounds") + "." + newSoundName));
+}
+
+void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
+	if (node->getId() == "dropdown_outliner_add") {
+		auto addOutlinerType = node->getController()->getValue().getString();
+		if (addOutlinerType == "sound") {
+			createSound(prototype);
+		}
+	} else {
+		for (auto& audioChangeNode: applyAudioNodes) {
+			if (node->getId() == audioChangeNode) {
+				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+				if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+					applySoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+				}
+			}
+		}
+		if (node->getId() == "selectbox_outliner") {
+			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+				updateDetails(prototype, model, soundId);
+				playableSoundView->playSound(soundId);
+			} else {
+				playableSoundView->stopSound();
+			}
 		}
 	}
 }
@@ -278,6 +373,9 @@ void PrototypeSoundsSubController::onActionPerformed(GUIActionListenerType type,
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 		}
+	} else
+	if (node->getId() == "tdme.sounds.rename_input") {
+		renameSound(prototype);
 	}
 }
 
@@ -285,6 +383,9 @@ void PrototypeSoundsSubController::onFocus(GUIElementNode* node, Prototype* prot
 }
 
 void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
+	if (node->getId() == "tdme.sounds.rename_input") {
+		renameSound(prototype);
+	} else
 	if (node->getId() == "sound_key") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
@@ -295,5 +396,79 @@ void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* pr
 }
 
 void PrototypeSoundsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypeSoundsSubController::onContextMenuRequested(): " + node->getId());
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (outlinerNode == "sounds") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// add
+			class OnAddSoundAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					prototypeSoundsSubController->createSound(prototype);
+				}
+				OnAddSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeSoundsSubController* prototypeSoundsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Add Sound", "contextmenu_add", new OnAddSoundAction(this, prototype));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+			// rename
+			class OnRenameAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = prototypeSoundsSubController->editorView->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+						prototypeSoundsSubController->startRenameSound(
+							prototype,
+							StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size())
+						);
+					}
+				}
+				OnRenameAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeSoundsSubController* prototypeSoundsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_rename", new OnRenameAction(this, prototype));
+
+			// separator
+			popUps->getContextMenuScreenController()->addMenuSeparator();
+
+			// delete
+			class OnDeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto outlinerNode = prototypeSoundsSubController->editorView->getScreenController()->getOutlinerSelection();
+					if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+						prototypeSoundsSubController->playableSoundView->stopSound();
+						auto selectedSoundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+						prototype->removeSound(selectedSoundId);
+						prototypeSoundsSubController->editorView->reloadTabOutliner("sounds");
+					}
+				}
+				OnDeleteAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype) {
+				}
+			private:
+				PrototypeSoundsSubController* prototypeSoundsSubController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnDeleteAction(this, prototype));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
 }

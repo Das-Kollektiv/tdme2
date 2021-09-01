@@ -169,4 +169,13 @@ private:
 	 */
 	void setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
+	/**
+	 * Set up render node object lod data buffer
+	 * @param renderer renderer
+	 * @param context context
+	 * @param vboId vbo id
+	 * @param lodLevel LOD level
+	 */
+	void setupLodBuffer(Renderer* renderer, void* context, int32_t vboId, int lodLevel);
+
 };

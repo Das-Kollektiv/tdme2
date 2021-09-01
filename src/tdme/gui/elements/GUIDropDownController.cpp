@@ -75,6 +75,9 @@ void GUIDropDownController::initialize()
 
 	//
 	GUIElementController::initialize();
+
+	//
+	determineDropDownOptionControllers();
 }
 
 void GUIDropDownController::dispose()
@@ -93,18 +96,36 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
-	for (auto i = 0; i < childControllerNodes.size(); i++) {
-		auto childControllerNode = childControllerNodes[i];
-		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
-		if (childController != nullptr) childController->unselect();
+	if (selectedDropDownOptionControllerIdx == -1) return;
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->unselect();
+}
+
+void GUIDropDownController::select(int idx) {
+	unselect();
+	selectedDropDownOptionControllerIdx = idx;
+	if (selectedDropDownOptionControllerIdx == -1) return;
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->select();
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
+}
+
+void GUIDropDownController::select(GUIElementNode* selectedDropDownOptionElementNode) {
+	unselect();
+	auto selectedDropDownOptionElementController = selectedDropDownOptionElementNode->getController();
+	auto i = 0;
+	for (auto dropDownOptionController: dropDownOptionControllers) {
+		if (dropDownOptionController == selectedDropDownOptionElementController) {
+			select(i);
+			break;
+		}
+		i++;
 	}
 }
 
 void GUIDropDownController::toggleOpenState()
 {
 	if (open == false) {
-		lastSelectedDropDownOptionControlerIdx = getSelectedOptionIdx();
+		lastSelectedDropDownOptionControllerIdx = selectedDropDownOptionControllerIdx;
 	}
 	required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	arrowNode->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
@@ -117,6 +138,7 @@ void GUIDropDownController::toggleOpenState()
 
 void GUIDropDownController::determineDropDownOptionControllers()
 {
+	vector<GUINode*> childControllerNodes;
 	dropDownOptionControllers.clear();
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
@@ -126,71 +148,71 @@ void GUIDropDownController::determineDropDownOptionControllers()
 	}
 }
 
-int GUIDropDownController::getSelectedOptionIdx()
-{
-	auto selectedDropDownOptionControlerIdx = -1;
-	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto selectBoxOptionController = dropDownOptionControllers[i];
-		if (selectBoxOptionController->isSelected() == true) {
-			selectedDropDownOptionControlerIdx = i;
-			break;
-		}
-	}
-	return selectedDropDownOptionControlerIdx;
-}
-
 void GUIDropDownController::selectNext()
 {
-	determineDropDownOptionControllers();
-	auto selectedDropDownOptionControlerIdx = getSelectedOptionIdx();
 	unselect();
 	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectedDropDownOptionControlerIdx = (selectedDropDownOptionControlerIdx + 1) % dropDownOptionControllers.size();
-	if (selectedDropDownOptionControlerIdx < 0)
-		selectedDropDownOptionControlerIdx += dropDownOptionControllers.size();
+	auto disabledCount = 0;
+	while (disabledCount < dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx + 1) % dropDownOptionControllers.size();
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = -1;
+		return;
+	}
 
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->select();
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeX(dropDownNode);
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->select();
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::selectPrevious()
 {
-	determineDropDownOptionControllers();
-	auto selectedDropDownOptionControlerIdx = getSelectedOptionIdx();
 	unselect();
 	if (dropDownOptionControllers.size() == 0)
 		return;
 
-	selectedDropDownOptionControlerIdx = (selectedDropDownOptionControlerIdx - 1) % dropDownOptionControllers.size();
-	if (selectedDropDownOptionControlerIdx < 0)
-		selectedDropDownOptionControlerIdx += dropDownOptionControllers.size();
+	if (selectedDropDownOptionControllerIdx == -1) selectedDropDownOptionControllerIdx = (int)dropDownOptionControllers.size() - 1;
 
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->select();
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeX(dropDownNode);
-	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeY(dropDownNode);
+	auto disabledCount = 0;
+	while (disabledCount < dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx - 1) % dropDownOptionControllers.size();
+		if (selectedDropDownOptionControllerIdx < 0)
+			selectedDropDownOptionControllerIdx += dropDownOptionControllers.size();
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		disabledCount++;
+	}
+	if (disabledCount == dropDownOptionControllers.size()) {
+		selectedDropDownOptionControllerIdx = -1;
+		return;
+	}
+
+
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->select();
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::selectLast()
 {
-	determineDropDownOptionControllers();
-	if (lastSelectedDropDownOptionControlerIdx == -1 || lastSelectedDropDownOptionControlerIdx >= dropDownOptionControllers.size()) {
-		lastSelectedDropDownOptionControlerIdx = -1;
+	if (lastSelectedDropDownOptionControllerIdx == -1 || lastSelectedDropDownOptionControllerIdx >= dropDownOptionControllers.size()) {
+		lastSelectedDropDownOptionControllerIdx = -1;
 		return;
 	}
 	unselect();
 
-	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->select();
-	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->getNode()->scrollToNodeX(dropDownNode);
-	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->getNode()->scrollToNodeY(dropDownNode);
+	dropDownOptionControllers[lastSelectedDropDownOptionControllerIdx]->select();
+	dropDownOptionControllers[lastSelectedDropDownOptionControllerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[lastSelectedDropDownOptionControllerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::doSearch() {
 	determineDropDownOptionControllers();
 	string selectedDropDownOptionText;
-	auto selectedDropDownOptionControllerIdx = getSelectedOptionIdx();
 	if (selectedDropDownOptionControllerIdx != -1) {
 		selectedDropDownOptionText = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->getId() + "_unselected"))->getText().getString();
 	}
@@ -334,29 +356,25 @@ bool GUIDropDownController::hasValue()
 const MutableString& GUIDropDownController::getValue()
 {
 	value.reset();
-	determineDropDownOptionControllers();
-	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers[i];
-		if (dropDownOptionController->isSelected() == true) {
-			value.append(required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode())->getValue());
-		}
-	}
+	if (selectedDropDownOptionControllerIdx != -1) value.append(required_dynamic_cast<GUIElementNode*>(dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode())->getValue());
 	return value;
 }
 
 void GUIDropDownController::setValue(const MutableString& value)
 {
-	determineDropDownOptionControllers();
 	unselect();
-	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
-		auto dropDownOptionController = dropDownOptionControllers[i];
+	auto i = 0;
+	for (auto dropDownOptionController: dropDownOptionControllers) {
 		auto dropDownOptionNode = required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode());
 		if (value.equals(dropDownOptionNode->getValue())) {
-			dropDownOptionController->select();
-			dropDownOptionNode->scrollToNodeX(dropDownNode);
-			dropDownOptionNode->scrollToNodeY(dropDownNode);
+			select(i);
 			break;
 		}
+		i++;
 	}
 }
 
+void GUIDropDownController::onSubTreeChange() {
+	determineDropDownOptionControllers();
+	selectedDropDownOptionControllerIdx = -1;
+}

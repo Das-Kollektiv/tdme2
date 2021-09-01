@@ -141,7 +141,7 @@
             - layouting on demand in combination with conditions
         - supported primitive nodes from which compounds are built of
             - element
-            - image
+            - image(plus framebuffer and texture image nodes) 
             - input
             - layer
             - layout
@@ -240,7 +240,11 @@
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
+<<<<<<< HEAD
     - PBR lighting shader for GL3/CORE+, Vulkan
+=======
+    - PBR lighting shader for GL3/CORE+
+>>>>>>> ui-2.0#2
     - Add nmake support to makefile generator for TDME2 based projects
     - Installer for MacOSX
     - Improve on Vulkan

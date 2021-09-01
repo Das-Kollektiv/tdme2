@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/scenes/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -15,7 +16,6 @@ using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
 using tdme::math::Vector3;
 
 /**
@@ -34,12 +34,6 @@ private:
 	vector<Prototype*> prototypes;
 	int prototypeIdx;
 
-	/**
-	 * Allocata a unique prototype index
-	 * @return index
-	 */
-	int allocatePrototypeId();
-
 public:
 	/**
 	 * Public constructor
@@ -53,78 +47,17 @@ public:
 	~SceneLibrary();
 
 	/**
+	 * Allocata a unique prototype index
+	 * @return index
+	 */
+	inline int allocatePrototypeId() {
+		return prototypeIdx++;
+	}
+
+	/**
 	 * Clears this scene prototype library
 	 */
 	void clear();
-
-	/**
-	 * Adds a model
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @param pathName path name
-	 * @param fileName file name
-	 * @param pivot pivot
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
-
-	/**
-	 * Add a particle system
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addParticleSystem(int id, const string& name, const string& description);
-
-	/**
-	 * Add a trigger
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @param width width
-	 * @param height height
-	 * @param depth depth
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addTrigger(int id, const string& name, const string& description, float width, float height, float depth);
-
-	/**
-	 * Add a environment mapping
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @param width width
-	 * @param height height
-	 * @param depth depth
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth);
-
-	/**
-	 * Add a empty
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addEmpty(int id, const string& name, const string& description);
-
-	/**
-	 * Add a terrain
-	 * @param id id
-	 * @param name name
-	 * @param description description
-	 * @return prototype
-	 * @throws tdme::utilities::Exception
-	 */
-	Prototype* addTerrain(int id, const string& name, const string& description);
 
 	/**
 	 * Add a prototype
@@ -145,6 +78,13 @@ public:
 	 * @return prototype
 	 */
 	Prototype* getPrototype(int id);
+
+	/**
+	 * Get a prototype by given name
+	 * @param name name
+	 * @return prototype
+	 */
+	Prototype* getPrototypeByName(const string& name);
 
 	/**
 	 * Get a terrain prototype

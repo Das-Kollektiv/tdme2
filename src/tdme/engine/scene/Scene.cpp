@@ -11,8 +11,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
@@ -32,8 +32,8 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
@@ -43,23 +43,18 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 
-Scene::Scene()
+Scene::Scene(const string& name, const string& description): BaseProperties(name, description)
 {
 	applicationRootPathName = "";
-	pathName = ".";
 	fileName = "untitled.tscene";
 	rotationOrder = RotationOrder::XYZ;
 	lights.push_back(new SceneLight(0));
-	lights.push_back(new SceneLight(1));
-	lights.push_back(new SceneLight(2));
-	lights.push_back(new SceneLight(3));
 	auto light = lights[0];
-	light->getAmbient().set(0.7f, 0.7f, 0.7f, 1.0f);
-	light->getDiffuse().set(0.3f, 0.3f, 0.3f, 1.0f);
-	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()));
-	light->getSpotTo().set(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()).add(light->getSpotDirection());
+	light->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+	light->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
+	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -193,7 +188,7 @@ void Scene::removeEntitiesByPrototypeId(int prototypeId)
 	}
 }
 
-void Scene::replacePrototype(int searchPrototypeId, int newEntityId)
+void Scene::replacePrototypeByIds(int searchPrototypeId, int newEntityId)
 {
 	auto replaceEntity = getLibrary()->getPrototype(newEntityId);
 	if (replaceEntity == nullptr)
@@ -222,7 +217,7 @@ void Scene::addEntity(SceneEntity* entity)
 	if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
 }
 
-void Scene::removeEntity(const string& id)
+bool Scene::removeEntity(const string& id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
@@ -231,6 +226,26 @@ void Scene::removeEntity(const string& id)
 		entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
 		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
 		delete entity;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Scene::renameEntity(const string& id, const string& newId) {
+	if (id == newId) return true;
+	if (getEntity(newId) != nullptr) return false;
+	auto entityByIdIt = entitiesById.find(id);
+	if (entityByIdIt != entitiesById.end()) {
+		auto entity = entityByIdIt->second;
+		entitiesById.erase(entityByIdIt);
+		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
+		entity->setName(newId);
+		entitiesById[entity->getId()] = entity;
+		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
+		return true;
+	} else {
+		return false;
 	}
 }
 

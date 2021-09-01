@@ -3,22 +3,20 @@
 #include <string>
 
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeProperties.h>
-#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 
 using std::string;
 
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeProperties;
-using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Transformations;
 
-SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype)
+SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype): BaseProperties(id, description)
 {
-	this->id = id;
-	this->description = description;
 	this->transformations.fromTransformations(transformations);
 	this->prototype = prototype;
 }
@@ -26,9 +24,9 @@ SceneEntity::SceneEntity(const string& id, const string& description, const Tran
 SceneEntity::~SceneEntity() {
 }
 
-const PrototypeProperties SceneEntity::getTotalProperties()
+const BaseProperties SceneEntity::getTotalProperties()
 {
-	PrototypeProperties totalProperties;
+	BaseProperties totalProperties(name, description);
 	for (auto i = 0; i < getPrototype()->getPropertyCount(); i++) {
 		auto prototypeProperty = getPrototype()->getPropertyByIndex(i);
 		totalProperties.addProperty(prototypeProperty->getName(), prototypeProperty->getValue());

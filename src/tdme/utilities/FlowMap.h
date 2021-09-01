@@ -306,8 +306,62 @@ public:
 			cells[cellIt.first] = cellIt.second;
 			cells[cellIt.first].pathNodeIdx+= pathSize;
 		}
+		// check if we have missing neighbour cells
+		for (auto& cellIt: flowMap->cells) {
+			auto cell = getCell(cellIt.first);
+			cell->setMissingNeighborCell(false);
+			auto cellX = getIntegerPositionComponent(cell->position.getX());
+			auto cellZ = getIntegerPositionComponent(cell->position.getZ());
+			auto hadMissingNeighborCell = false;
+			for (auto nZ = -1; nZ < 2 && hadMissingNeighborCell == false; nZ++) {
+				for (auto nX = -1; nX < 2 && hadMissingNeighborCell == false; nX++) {
+					if (nZ == 0 && nX == 0) continue;
+					auto neighbourCellId = FlowMap::toIdInt(
+						cellX + nX,
+						cellZ + nZ
+					);
+					auto neighbourCell = getCell(neighbourCellId);
+					if (neighbourCell == nullptr) {
+						cell->setMissingNeighborCell(true);
+						hadMissingNeighborCell = true;
+						break;
+					}
+				}
+			}
+		}
 		// end positions
 		endPositions = flowMap->endPositions;
+	}
+
+	/**
+	 * Find nearest cell, which can be used if outside of flow map to find back in
+	 * @param x x
+	 * @param z z
+	 * @param steps steps
+	 */
+	inline FlowMapCell* findNearestCell(float x, float z, int steps = 8) {
+		Vector3 position = Vector3(x, 0.0f, z);
+		auto cellX = getIntegerPositionComponent(x);
+		auto cellZ = getIntegerPositionComponent(z);
+		auto halfSteps = steps / 2;
+		FlowMapCell* cellBestFit = nullptr;
+		float cellBestFitDistanceSquared = Float::MAX_VALUE;
+		for (auto nZ = -halfSteps; nZ < halfSteps; nZ++) {
+			for (auto nX = -halfSteps; nX < halfSteps; nX++) {
+				auto cellId = FlowMap::toIdInt(
+					cellX + nX,
+					cellZ + nZ
+				);
+				auto cellCandidate = getCell(cellId);
+				if (cellCandidate == nullptr) continue;
+				auto cellCandidateDistanceSquared = cellCandidate->getPosition().clone().sub(position).computeLengthSquared();
+				if (cellBestFit == nullptr || cellCandidateDistanceSquared < cellBestFitDistanceSquared) {
+					cellBestFit = cellCandidate;
+					cellBestFitDistanceSquared = cellCandidateDistanceSquared;
+				}
+			}
+		}
+		return cellBestFit;
 	}
 
 };

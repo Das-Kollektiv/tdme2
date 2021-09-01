@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
