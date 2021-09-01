@@ -7,8 +7,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/scene/fwd-tdme.h>

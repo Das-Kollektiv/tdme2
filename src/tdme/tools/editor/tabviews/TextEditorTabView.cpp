@@ -4,14 +4,14 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -23,10 +23,10 @@ using std::string;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::Engine;
-using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;

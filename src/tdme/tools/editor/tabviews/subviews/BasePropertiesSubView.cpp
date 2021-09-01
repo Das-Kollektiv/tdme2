@@ -2,15 +2,15 @@
 
 #include <string>
 
-#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/BaseProperty.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 
 using std::string;
 
-using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::BaseProperty;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::ScenePropertyPresets;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;

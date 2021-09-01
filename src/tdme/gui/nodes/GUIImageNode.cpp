@@ -2,9 +2,9 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -27,9 +27,9 @@ using tdme::gui::nodes::GUIImageNode;
 using std::string;
 using std::to_string;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;

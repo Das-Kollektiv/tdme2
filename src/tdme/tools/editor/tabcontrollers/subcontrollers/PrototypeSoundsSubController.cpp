@@ -3,12 +3,11 @@
 #include <array>
 #include <string>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
-#include <tdme/utilities/Action.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -16,9 +15,9 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
-#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -26,6 +25,7 @@
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -39,27 +39,27 @@ using std::to_string;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
-using tdme::engine::Engine;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeAudio;
-using tdme::utilities::Action;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
-using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

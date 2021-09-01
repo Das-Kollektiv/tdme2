@@ -32,7 +32,6 @@
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
 #include <tdme/gui/elements/GUITabContent.h>
-#include <tdme/utilities/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
@@ -53,14 +52,15 @@
 #include <tdme/gui/nodes/GUITableCellNode.h>
 #include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/nodes/GUITableRowNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUITextureNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -104,7 +104,6 @@ using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
 using tdme::gui::elements::GUITabContent;
-using tdme::utilities::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
@@ -123,8 +122,8 @@ using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUITableCellNode;
 using tdme::gui::nodes::GUITableNode;
 using tdme::gui::nodes::GUITableRowNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUITextureNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
@@ -132,6 +131,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::misc::Tools;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;

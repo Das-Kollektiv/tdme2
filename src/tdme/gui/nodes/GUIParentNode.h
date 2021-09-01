@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,8 +13,8 @@
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::unordered_set;
 using std::string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;

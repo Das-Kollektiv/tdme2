@@ -10,10 +10,10 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
-#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/Gizmo.h>
+#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/SceneEditorTabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
@@ -25,17 +25,17 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::scene::SceneEntity;
 using tdme::engine::Engine;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::model::Model;
-using tdme::engine::scene::Scene;
-using tdme::engine::scene::SceneEntity;
-using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 using tdme::tools::editor::misc::Gizmo;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;

@@ -9,8 +9,8 @@
 
 using std::string;
 
-using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Transformations;
 
 /**

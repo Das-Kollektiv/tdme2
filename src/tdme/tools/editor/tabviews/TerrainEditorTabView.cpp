@@ -2,13 +2,6 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/EntityHierarchy.h>
-#include <tdme/engine/EnvironmentMapping.h>
-#include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DRenderGroup.h>
-#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -17,6 +10,13 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/EnvironmentMapping.h>
+#include <tdme/engine/Light.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -24,9 +24,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/TerrainEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
@@ -37,6 +37,14 @@ using std::string;
 
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::model::Material;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
@@ -44,14 +52,6 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::SceneConnector;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::fileio::prototypes::PrototypeWriter;
-using tdme::engine::model::Material;
-using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeTerrain;
-using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;

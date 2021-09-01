@@ -2,17 +2,17 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
-#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -20,15 +20,15 @@ using std::string;
 
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 
-using tdme::engine::Engine;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::Engine;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
-using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
+using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
+using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 

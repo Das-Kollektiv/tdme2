@@ -2,22 +2,22 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/scene/Scene.h>
-#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -25,18 +25,18 @@ using std::string;
 
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::model::Material;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::SceneConnector;
-using tdme::engine::model::Material;
-using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::fileio::prototypes::PrototypeWriter;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::scene::Scene;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
 using tdme::tools::editor::views::EditorView;

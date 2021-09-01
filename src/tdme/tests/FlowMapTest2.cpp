@@ -7,8 +7,6 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/prototype/BaseProperties.h>
-#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
@@ -19,6 +17,8 @@
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>

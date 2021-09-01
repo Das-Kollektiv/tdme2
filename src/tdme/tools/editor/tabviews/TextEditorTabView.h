@@ -19,9 +19,9 @@
 using std::string;
 using std::vector;
 
+using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::scene::Scene;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;

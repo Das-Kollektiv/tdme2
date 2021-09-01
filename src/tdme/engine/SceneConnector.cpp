@@ -24,6 +24,8 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
+#include <tdme/engine/prototype/BaseProperties.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
@@ -42,8 +44,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/prototype/BaseProperties.h>
-#include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
@@ -102,6 +102,8 @@ using tdme::engine::primitives::HeightMap;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::TerrainMesh;
+using tdme::engine::prototype::BaseProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -119,8 +121,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::prototype::BaseProperties;
-using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;

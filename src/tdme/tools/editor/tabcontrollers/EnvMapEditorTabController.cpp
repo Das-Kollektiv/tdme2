@@ -3,25 +3,25 @@
 #include <array>
 #include <string>
 
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
-#include <tdme/utilities/Action.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -34,15 +34,14 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
 
-using tdme::engine::Entity;
 using tdme::engine::prototype::Prototype;
-using tdme::utilities::Action;
-using tdme::gui::GUIParser;
+using tdme::engine::Entity;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -51,6 +50,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

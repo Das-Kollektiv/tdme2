@@ -15,7 +15,6 @@
 using std::string;
 using std::vector;
 
-using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -24,6 +23,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::utilities::Action;
 using tdme::utilities::MutableString;
 
 /**

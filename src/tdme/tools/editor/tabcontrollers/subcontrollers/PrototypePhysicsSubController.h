@@ -33,8 +33,8 @@ using tdme::math::Vector3;
 using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
-using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::MutableString;
 

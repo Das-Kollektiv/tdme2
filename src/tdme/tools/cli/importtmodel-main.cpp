@@ -2,7 +2,6 @@
 #include <string>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -11,6 +10,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -21,7 +21,6 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -30,6 +29,7 @@ using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

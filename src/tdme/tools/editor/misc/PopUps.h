@@ -4,10 +4,10 @@
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 using tdme::tools::editor::controllers::ColorPickerScreenController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
-using tdme::tools::editor::controllers::ContextMenuScreenController;
 
 /**
  * Pop ups controller accessor class

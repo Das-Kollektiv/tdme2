@@ -15,10 +15,10 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::unordered_set;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::unordered_set;
 using std::vector;
 

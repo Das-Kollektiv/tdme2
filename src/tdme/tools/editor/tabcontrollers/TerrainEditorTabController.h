@@ -6,16 +6,16 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/FileDialogPath.h>
-#include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
+#include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/Terrain2.h>
 
@@ -26,8 +26,8 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Transformations;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -35,10 +35,10 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::FileDialogPath;
-using tdme::tools::editor::tabcontrollers::TabController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 using tdme::utilities::Terrain2;
 

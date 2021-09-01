@@ -9,7 +9,6 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/effects/GUIEffect.h>
-#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -31,6 +30,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector2.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTokenizer.h>
@@ -48,7 +48,6 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::effects::GUIEffect;
-using tdme::utilities::Action;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -70,6 +69,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::math::Vector2;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTokenizer;

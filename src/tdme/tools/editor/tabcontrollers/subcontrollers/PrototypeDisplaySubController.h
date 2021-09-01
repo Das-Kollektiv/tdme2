@@ -4,24 +4,24 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
-#include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::array;
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;

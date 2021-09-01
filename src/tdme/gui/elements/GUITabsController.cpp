@@ -1,8 +1,8 @@
 #include <tdme/gui/elements/GUITabsController.h>
 
+#include <tdme/gui/elements/GUITabsHeaderController.h>
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/elements/GUITabController.h>
-#include <tdme/gui/elements/GUITabsHeaderController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -13,9 +13,9 @@
 
 using tdme::gui::elements::GUITabsController;
 
+using tdme::gui::elements::GUITabsHeaderController;
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::elements::GUITabController;
-using tdme::gui::elements::GUITabsHeaderController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;

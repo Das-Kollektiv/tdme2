@@ -16,10 +16,10 @@
 
 using std::string;
 
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;

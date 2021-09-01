@@ -8,8 +8,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -25,11 +25,11 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::model::Model;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::PopUps;

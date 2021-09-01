@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -15,8 +15,8 @@
 
 using std::string;
 
-using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;

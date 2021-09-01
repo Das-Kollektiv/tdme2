@@ -23,8 +23,8 @@ using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Console;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
 using tdme::utilities::Console;
 
 

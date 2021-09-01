@@ -11,8 +11,8 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
+#include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/utilities/Properties.h>
 
 using std::string;

@@ -2,22 +2,22 @@
 
 #include <string>
 
-#include <tdme/gui/GUI.h>
-#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -28,12 +28,11 @@ using tdme::tools::editor::tabcontrollers::TextureTabController;
 
 using std::string;
 
-using tdme::utilities::Action;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -42,6 +41,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

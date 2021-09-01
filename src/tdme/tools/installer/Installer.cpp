@@ -16,7 +16,6 @@
 #include <tdme/engine/Version.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
-#include <tdme/utilities/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -36,8 +35,9 @@
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
-#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -66,7 +66,6 @@ using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
-using tdme::utilities::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -87,8 +86,9 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
-using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::Tools;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

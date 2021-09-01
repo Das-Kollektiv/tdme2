@@ -13,18 +13,18 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
-#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
+#include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 
 using std::string;
 
 using tdme::audio::Audio;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::ParticleSystemEntity;
-using tdme::engine::prototype::Prototype;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
@@ -32,10 +32,10 @@ using tdme::tools::editor::misc::Gizmo;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
+using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
 

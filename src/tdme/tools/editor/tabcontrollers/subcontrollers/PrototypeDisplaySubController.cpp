@@ -3,18 +3,18 @@
 #include <array>
 
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -34,17 +34,17 @@
 
 using std::array;
 
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::Prototype_Type;
-using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUIParser;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;

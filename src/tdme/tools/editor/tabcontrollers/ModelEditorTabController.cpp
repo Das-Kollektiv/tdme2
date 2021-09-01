@@ -3,10 +3,10 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/Engine.h>
+#include "subcontrollers/BasePropertiesSubController.h"
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -16,8 +16,7 @@
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/utilities/Action.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -26,8 +25,9 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUITextureNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
@@ -43,8 +43,9 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
+#include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -52,27 +53,25 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
-#include "subcontrollers/BasePropertiesSubController.h"
 
 using std::string;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
 
-using tdme::engine::Engine;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
-using tdme::engine::prototype::BaseProperty;
-using tdme::utilities::Action;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
@@ -80,8 +79,8 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUITextureNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
@@ -100,6 +99,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;

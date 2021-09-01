@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -26,9 +26,9 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;

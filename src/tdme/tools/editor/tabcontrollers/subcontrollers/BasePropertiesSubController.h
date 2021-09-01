@@ -20,15 +20,15 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::BaseProperties;
-using tdme::utilities::Action;
+using tdme::engine::prototype::BaseProperty;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::MutableString;
 
 /**
