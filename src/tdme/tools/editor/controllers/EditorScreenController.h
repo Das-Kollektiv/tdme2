@@ -204,6 +204,12 @@ public:
 	}
 
 	/**
+	 * Open project
+	 * @param path path
+	 */
+	void openProject(const string& path);
+
+	/**
 	 * On open project
 	 */
 	void onOpenProject();

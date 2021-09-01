@@ -143,6 +143,14 @@ void EditorScreenController::initialize()
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
+
+		//
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(true);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -334,19 +342,30 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 	if (selectedTab != nullptr) selectedTab->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
 }
 
+void EditorScreenController::openProject(const string& path) {
+	projectPath = path;
+	if (StringTools::endsWith(projectPath, "/") == true) {
+		projectPath = StringTools::substring(projectPath, 0, projectPath.size() - 1);
+	}
+	Console::println("EditorScreenController::openProject(): " + projectPath);
+	closeProject();
+	scanProjectPaths();
+	//
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
+}
+
 void EditorScreenController::onOpenProject() {
 	class OnOpenProject: public virtual Action
 	{
 	public:
 		// overriden methods
 		void performAction() override {
-			editorScreenController->projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			if (StringTools::endsWith(editorScreenController->projectPath, "/") == true) {
-				editorScreenController->projectPath = StringTools::substring(editorScreenController->projectPath, 0, editorScreenController->projectPath.size() - 1);
-			}
-			Console::println("OnOpenProject::performAction(): " + editorScreenController->projectPath);
-			editorScreenController->closeProject();
-			editorScreenController->scanProjectPaths();
+			editorScreenController->openProject(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -457,6 +476,13 @@ void EditorScreenController::closeProject() {
 	fileNameButtonXMLMapping.clear();
 	for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
 	fileNameTextureMapping.clear();
+	//
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpaths_search"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(true);
 }
 
 void EditorScreenController::clearProjectPathFiles() {

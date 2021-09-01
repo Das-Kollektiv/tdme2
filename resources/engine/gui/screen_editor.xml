@@ -49,7 +49,7 @@
 					
 						<layout padding="5" alignment="vertical" width="100%" height="100%">
 						
-							<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" />
+							<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" id="projectpaths_search" />
 							
 							<space height="5"/>
 							
@@ -69,14 +69,21 @@
 							
 							<layout alignment="horizontal" width="100%" height="auto">
 								<dropdown template="dropdown_template_button.xml" id="dropdown_projectlibrary_add" width="50%" height="25" image="resources/engine/images/add.png" text="Create">
+									<!--
 									<dropdown-option text="Folder" value="folder" />
 									<menu-separator />
+									-->
+									<dropdown-option text="Empty" value="empty" />
+									<dropdown-option text="Trigger" value="trigger" />
+									<dropdown-option text="EnvMap" value="envmap" />
 									<dropdown-option text="Model" value="model" />
 									<dropdown-option text="Terrain" value="terrain" />
 									<dropdown-option text="Particle" value="particle" />
 									<dropdown-option text="Scene" value="scene" />
+									<!--
 									<dropdown-option text="Script" value="script" />
 									<dropdown-option text="GUI" value="gui" />
+									-->
 								</dropdown>
 								<space width="5"/>
 								<button id="projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />
@@ -126,7 +133,7 @@
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 							
 								<layout alignment="horizontal" width="100%" height="auto">
-									<input width="*" height="auto" hint="Search" image="resources/engine/images/search.png" />
+									<input width="*" height="auto" hint="Search" image="resources/engine/images/search.png" id="outliner_search" />
 									<space width="5"/>
 									<dropdown template="dropdown_template_button.xml" id="dropdown_outliner_add" width="75" height="25" image="resources/engine/images/add.png" text="Add">
 										<dropdown-option text="Add" value="" selected="true" />
