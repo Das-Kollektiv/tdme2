@@ -7,6 +7,7 @@
 # 1. What is TDME2?
 - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
   - Read about the [philosophy](./README-Philosophy.md) if interested
+  - See [screenshots](./README-Screenshots.md), if you want to know where we are and where we go :) 
 - TDME2 is open source
   - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
   - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
