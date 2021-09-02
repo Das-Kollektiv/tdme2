@@ -129,7 +129,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 		// set up camera
 		camera->setZNear(engineCamera->getZNear());
 		camera->setZFar(engineCamera->getZFar());
-		camera->setFovY(90.0f);
+		camera->setFovX(90.0f);
 		camera->setLookFrom(position);
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);

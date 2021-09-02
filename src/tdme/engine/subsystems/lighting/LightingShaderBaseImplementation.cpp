@@ -92,6 +92,7 @@ void LightingShaderBaseImplementation::initialize()
 	if (uniformCameraMatrix == -1) return;
 	uniformProjectionMatrix = renderer->getProgramUniformLocation(programId, "projectionMatrix");
 	if (uniformProjectionMatrix == -1) return;
+	uniformCameraPosition = renderer->getProgramUniformLocation(programId, "cameraPosition");
 
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(programId, "material.ambient");
@@ -249,6 +250,11 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 	// set up camera and projection matrices if using instanced rendering
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
+	// camera position
+	if (uniformCameraPosition != -1) {
+		renderer->setProgramUniformFloatVec3(context, uniformCameraPosition, renderer->getCameraPosition().getArray());
+	}
+	//
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		// matrices
 		Matrix4x4 normalMatrix;

@@ -79,6 +79,8 @@ uniform samplerCube environmentMappingTextureUnit;
 uniform int environmentMappingTextureAvailable;
 uniform vec3 environmentMappingPosition;
 
+uniform vec3 cameraPosition;
+
 #if defined(HAVE_SOLID_SHADING)
 #else
 	uniform sampler2D specularTextureUnit;
@@ -410,11 +412,11 @@ void main(void) {
 		//
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
-			vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), normalize(normal * vec3(0.01, 1.0, 0.01)));
+			vec3 reflectionVector = reflect(normalize(vsPosition - cameraPosition), normalize(normal * vec3(0.01, 1.0, 0.01)));
 			#if defined(__VULKAN__)
 				reflectionVector*= vec3(1.0, -1.0, 1.0);
 			#endif
-			envColor = texture(environmentMappingTextureUnit, -reflectionVector);
+			envColor = texture(environmentMappingTextureUnit, reflectionVector);
 		}
 		outColor = fragColor * 0.4;
 		outColor+= envColor;

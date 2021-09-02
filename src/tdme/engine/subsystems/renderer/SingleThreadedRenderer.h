@@ -73,9 +73,4 @@ public:
 	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) override;
 	virtual const Renderer_Statistics getStatistics() override;
 
-private:
-
-	//
-	friend class Renderer_SpecularMaterial;
-	friend class Renderer_Light;
 };

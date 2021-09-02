@@ -181,7 +181,7 @@ void EnvMapEditorTabView::initSky() {
 
 	auto environmentMapping = new EnvironmentMapping("sky_environment_mapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), BoundingBox(Vector3(-30.0f, 0.0f, -30.0f), Vector3(30.0f, 60.0f, -30.0f)));
 	environmentMapping->setFrustumCulling(false);
-	environmentMapping->setTranslation(Vector3(54.0f, 6.0f, 69.0f));
+	environmentMapping->setTranslation(Vector3(64.0f, -5.0f, 73.0f));
 	environmentMapping->setTimeRenderUpdateFrequency(prototype->getEnvironmentMapTimeRenderUpdateFrequency());
 	environmentMapping->setRenderPassMask(prototype->getEnvironmentMapRenderPassMask());
 	environmentMapping->update();

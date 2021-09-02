@@ -29,8 +29,7 @@ private:
 	Renderer* renderer { nullptr };
 	int32_t width;
 	int32_t height;
-	float aspect;
-	float fovY;
+	float fovX;
 	float zNear;
 	float zFar;
 	CameraMode cameraMode;
@@ -130,18 +129,18 @@ public:
 	}
 
 	/**
-	 * @return field of view Y
+	 * @return field of view X
 	 */
-	inline float getFovY() const {
-		return fovY;
+	inline float getFovX() const {
+		return fovX;
 	}
 
 	/**
-	 * Set field of view Y
-	 * @param fovY field of view y
+	 * Set field of view X
+	 * @param fovY field of view X
 	 */
-	inline void setFovY(float fovY) {
-		this->fovY = fovY;
+	inline void setFovX(float fovX) {
+		this->fovX = fovX;
 	}
 
 	/**
