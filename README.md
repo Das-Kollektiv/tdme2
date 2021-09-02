@@ -4,17 +4,17 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/andreasdrewke)
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
-- What is TDME2?
-    - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
-      - Read about the [philosophy](./README-Philosophy.md) if interested
-    - TDME2 is open source
-      - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
-      - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
-      - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-      - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha)
-        - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
+# 1. What is TDME2?
+- ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
+  - Read about the [philosophy](./README-Philosophy.md) if interested
+- TDME2 is open source
+  - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
+  - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
+  - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
+  - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha)
+    - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
-- What is already working
+# 2. What is already working
     - application
         - creates main window and initializes OpenGL/Vulkan context and does HID via GLUT or GLFW3
         - supports
@@ -227,100 +227,103 @@
         - sortincludes tool to sort "include" and "using" source code statements
         - others ...
 
-- What does it (maybe still) lack
-    - physics
-      - some more RP3D integration
-    - example games
-    - documentation
+# 3. What does it (maybe still) lack
+- physics
+  - some more RP3D integration
+- example games
+- documentation
 
-- What is WIP or planned
-    - Shader parameters, the system is implemented and working, now lets connect tools and shaders
-    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
-    - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
-    - GUI effects via XML definitions
-    - Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
-    - PBR lighting shader for GL3/CORE+, Vulkan
-    - Add nmake support to makefile generator for TDME2 based projects
-    - Installer for MacOSX
-    - Improve on Vulkan
-    - Expose shader and post processing programs setup API
-    - Some UI elements need some default skinning fixes
-    - A release plan
-    - A demonstration video
+# 4. What is WIP or planned
+- Shader parameters, the system is implemented and working, now lets connect tools and shaders
+- Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
+- Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
+- GUI effects via XML definitions
+- Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
+- PBR lighting shader for GL3/CORE+, Vulkan
+- Add nmake support to makefile generator for TDME2 based projects
+- Installer for MacOSX
+- Improve on Vulkan
+- Expose shader and post processing programs setup API
+- Some UI elements need some default skinning fixes
+- A release plan
+- A demonstration video
 
-- Technology
-    - designed for simple multi threading, but
-        - 3D rendering engine uses multiple threads if using Vulkan renderer, or one thread only if using a GL renderer
-        - UDP client has its own thread
-        - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
-        - HTTP download client has its own thread
-        - physics or game mechanics can also run in a separate thread(s)
-    - uses 3rd party libraries
-    	- need to be installed 
-            - GLUT(NetBSD, Haiku)
-            - OpenGL
-            - OpenAL
-            - glew
-            - pthreads
-            - Vulkan(optional)
-            - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
-        - included in TDME2 repository
-            - FBXSDK
-            - Hashlink
-            - libpng
-            - ReactPhysics3D
-            - RapidJSON
-            - sha256
-            - tinygltf
-            - tinyxml
-            - V-HACD
-            - Vorbis/OGG
-            - Vulkan
-              - glslang
-              - OGLCompilersDLL
-              - simple_vulkan_synchronization
-              - spirv
-              - VulkanMemoryAllocator
-            - zlib
-    - targeted platforms and its current state
-        - Windows/MINGW(port completed)
-        - Windows/MSC(port completed)
-        - Linux(port completed)
-        - MacOSX(port completed)
-        - FreeBSD(port completed)
-        - NetBSD(port completed)
-        - OpenBSD(port completed)
-        - Haiku(port completed)
-        - Android(port pending)
-        - iOS(port pending)
+# 5. Technology
+- designed for simple multi threading, but
+    - 3D rendering engine uses multiple threads if using Vulkan renderer, or one thread only if using a GL renderer
+    - UDP client has its own thread
+    - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
+    - HTTP download client has its own thread
+    - physics or game mechanics can also run in a separate thread(s)
+- uses 3rd party libraries
+	- need to be installed 
+        - GLUT(NetBSD, Haiku)
+        - OpenGL
+        - OpenAL
+        - glew
+        - pthreads
+        - Vulkan(optional)
+        - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
+    - included in TDME2 repository
+        - FBXSDK
+        - Hashlink
+        - libpng
+        - ReactPhysics3D
+        - RapidJSON
+        - sha256
+        - tinygltf
+        - tinyxml
+        - V-HACD
+        - Vorbis/OGG
+        - Vulkan
+          - glslang
+          - OGLCompilersDLL
+          - simple_vulkan_synchronization
+          - spirv
+          - VulkanMemoryAllocator
+        - zlib
+- targeted platforms and its current state
+    - Windows/MINGW(port completed)
+    - Windows/MSC(port completed)
+    - Linux(port completed)
+    - MacOSX(port completed)
+    - FreeBSD(port completed)
+    - NetBSD(port completed)
+    - OpenBSD(port completed)
+    - Haiku(port completed)
+    - Android(port pending)
+    - iOS(port pending)
 
-- Links
-	- TDME2 [Philosophy](./README-Philosophy.md)
-    - TDME2 Engine, see [README.md](./README.md)
-    - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
-    - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+# 6. Other information
+## 6.1. Links
+- TDME2 [Philosophy](./README-Philosophy.md)
+- TDME2 Engine, see [README.md](./README.md)
+- TDME2 Editor, see [README-Editor.md](./README-Editor.md)
+- TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
-- External references
-    - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
-    - the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
+## 6.2. External references
+- "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
+- the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
 
-- Other credits
-    - Dominik Hepp
-    - Mathias Lenz
-    - Kolja Gumpert
-    - Mathias Wenzel
-    - Sergiu Crăiţoiu
-    - Chantal Zabel
-    - others
+## 6.3. Other credits
+- Dominik Hepp
+- Mathias Lenz
+- Kolja Gumpert
+- Mathias Wenzel
+- Sergiu Crăiţoiu
+- Chantal Zabel
+- others
 
-- Special thanks go to
-    - Kristin Meissner
-    - Dominik Hepp
+## 6.4. Special thanks go to
+- Kristin Meissner
+- Dominik Hepp
 
+# 7. Collaboration
 - Interested in collaboration? Then drop me a line via mail or use the [issues section on tdme2@github](https://github.com/andreasdr/tdme2/issues)
     - You can help with testing and reporting bugs 
     - I have easy to hard task regarding engine/tools development
     - I have tasks regarding documentation
     - I even might have system administrator tasks
 
-- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke
+# 8. Donation 
+- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke or click the GitHub sponsor button
