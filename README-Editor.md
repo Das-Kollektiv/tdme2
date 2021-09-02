@@ -1,0 +1,183 @@
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+
+# 1. What is Editor?
+- Editor is our TDME2 project content editor, featuring tabs for the following type of content
+    - Empties
+    - Triggers
+    - Environment Maps        
+    - 3D Models
+    - Particle Systems
+    - Terrains
+    - Scenes
+    - TDME2 UIs
+    - Texts
+    - Sounds
+    - Textures
+    - Fonts
+- It has a hierarchal project folder view
+- It has a folder content view with preview for each file if available      
+- It has a hierarchal outliner for each tab managed by the tabs itself
+- It has context menus for outliner and folder content view
+- It also provides search functions at certain places in the editor
+
+# 2. Tabs
+## 2.1. Model Editor Tab
+- model loading
+    - DAE, Wavefront OBJ, FBX, TM model files and TMM meta data files
+- model meta data file saving 
+    - TMM
+        - stores its model as TM file additionally
+- render with generated ground, shadowing, bounding volume
+- rotate, zoom
+- setting up the model pivot
+- set up rendering options
+    - shader
+    - contribute/receiving dynamic shadowing
+    - set up as render group
+- setting up bounding volumes
+    - none
+    - sphere
+    - capsule
+    - bounding box
+    - oriented bounding box
+    - convex mesh
+      - multiple convex meshes can be automatically generated from any mesh using V-HACD
+      - or be imported from a given model with each top level node representing a convex mesh
+    - concave terrain mesh
+    - bounding volumes can be transformed by using a gizmo 
+- setting up physics properties
+  - body type, mass, bounciness, friction, inertia tensor
+- setting up model properties
+    - key, value map for what ever reason
+- LOD level editor
+    - type, distance, model, adjustment add/mul color, ... 
+- material editor
+    - adjust colors, textures, masked transparency
+- animations editor
+    - create, edit and delete animations
+    - relate sounds to animations
+- preview to test your model
+  - set up base animation and up to 3 animation overlays
+  - attach models on bones
+- sound
+    - attach sounds to optional animations with optional additional key
+    - also set up gain, pitch, looping, fixed and offset for each sound
+- tools
+    - be able to compute smooth normals
+    - be able to optimize models in terms of mesh nodes and materials
+- see statistics
+    - opaque faces
+    - transparent faces
+    - material count
+
+## 2.2. Particle System Editor Tab   
+- particle system loading
+- particle system saving
+- render with generated ground, shadowing, bounding volume
+- rotate, zoom
+- setting up particle system properties
+    - key, value map for what ever reason
+- setting up a particle system group which consists of multiple particle systems, for each you can
+  - set up the type
+      - object particle system
+      - point particle system
+      - fog particle system
+  - set up and edit the emitter
+      - point particle emitter
+      - bounding box particle emitter
+      - circle particle emitter
+      - circle particle emitter with velocity on circle plane
+      - sphere particle emitter
+  -  emitters can be transformed by using a gizmo
+- setting up bounding volumes
+    - none
+    - sphere
+    - capsule
+    - bounding box
+    - oriented bounding box
+    - convex mesh
+    - bounding volumes can be transformed by using a gizmo 
+- sound
+    - attach sounds to optional animations with optional additional key
+    - also set up gain, pitch, looping, fixed and offset for each sound
+
+## 2.3. Terrain Editor Tab
+- setting up terrain properties
+    - key, value map for what ever reason
+- create terrain from 1m x 1m up to 4000m x 4000m
+- load and save terrains
+- use a brush to alter terrain with predefined or user generated textures
+  - operations are add, subtract, flatten, delete, smooth
+  - load a predefined or user generated texture as brush, whereas the rgb color space is used as strength base
+  - set up the texture scale
+  - set up the strength which will be multiplied with strength base derived from texture rgb color space
+  - foliage gets updated after terrain height change
+  - the terrain brush is displayed on top of terrain
+- create water meshes with a auto fill like algorithm at grabbed brush terrain height
+- use a brush to add or remove foliage with predefined or user generated textures
+  - operations are place, delete
+  - load a predefined or user generated texture as brush, whereas the rgb color space is used as density base
+  - set up the texture scale
+  - set up the density which will be multiplied with density base derived from texture rgb color space
+  - each prototype that will be painted has the following properties
+    - scale min, max
+    - rotation range X axis min, max
+    - rotation range Y axis min, max
+    - rotation range Z axis min, max
+    - slope min, max
+    - height min, max
+    - normal align
+  - the foliage brush is displayed on top of terrain
+- use the ramp tool to connect higher terrain with lower terrain
+- mirror the map around x and/or z axis optionally flipped
+
+## 2.3. Scene Editor Tab
+- prototype library
+    - in general
+        - setting up prototype properties
+            - key, value map for what ever reason
+    - models
+        - see model editor
+    - particle systems
+        - see particle system editor
+    - terrain
+        - see terrain editor
+    - empties
+    - trigger
+    - environment mappings
+- scene editor
+    - setting up a grid where to place prototypes on
+    - setting up snapping where to align prototypes at
+    - load, save scenes, showing scene dimension
+    - import scenes from model files like FBX, DAE or TM
+    - setting up scene properties
+        - key, value map for what ever reason
+    - entities, which are instances from prototypes
+         - set up name, description
+         - see prototype name, center
+    - setting up entity transformations for a single or multiple entities
+         - translation
+         - scaling
+         - rotation
+         - color your entities
+         - center entities
+         - remove entities
+         - reflection using a environment mapping
+    - entities can be transformed by using a gizmo
+    - setting up entity properties
+         - key, value map for what ever reason
+    - set up up to 8 lights (for now)
+    - see and select entities(models, particle systems, empties and trigger) from prototype library to place them in the scene
+    - rotate, zoom and pan scene
+    - copy and paste
+- other
+    - large models like terrain meshes can be partitioned in 64mx64mx64m objects
+
+# 3. Other information
+## 3.1. Links
+	- TDME2 [Philosophy](./README-Philosophy.md)
+    - TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
+    - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+## 3.2. Additional notes
+- Note: This document is WIP
