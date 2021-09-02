@@ -1,5 +1,6 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
+# 1. Web References
 - This is a detailed, but for sure still incomplete, list of web references that I used to implement certain engine features
   - http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
   - http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
@@ -59,10 +60,9 @@
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
   - https://www.zlib.net/zpipe.c
 
-- Links
-    - TDME2 Engine, see [README.md](./README.md)
-    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
-    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
-    - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
-    - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
-    - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+# 2. Other information
+## 2.1. Links
+- TDME2 [Philosophy](./README-Philosophy.md)
+- TDME2 Engine, see [README.md](./README.md)
+- TDME2 Editor, see [README-Editor.md](./README-Editor.md)
+- TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)

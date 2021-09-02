@@ -214,6 +214,8 @@
         - TDME2 tools contains the installer creation application, whereas
             - installer definitions are set up using property files
             - create-installer is able to group files into components
+    - TDME2 Editor
+        - This is our content editor, please see [README-Editor.md](./README-Editor.md)
     - Other tools
         - archive tool to generate a single compressed file file system from ./resources and ./shader folders
         - converttotm tool to generate TDME2 model files
@@ -223,8 +225,6 @@
         - makefilegenerator tool to generate Makefiles for TDME2 based projects
         - optimizemodel tool to generate texture atlases and bake down model mesh nodes into a few one to reduce GL/VK (render/compute) calls
         - sortincludes tool to sort "include" and "using" source code statements
-        - GUITest tool to test GUI XML screen files
-        - Content editors, see "Links" section below
         - others ...
 
 - What does it (maybe still) lack
@@ -235,7 +235,6 @@
 
 - What is WIP or planned
     - Shader parameters, the system is implemented and working, now lets connect tools and shaders
-    - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
@@ -296,11 +295,9 @@
         - iOS(port pending)
 
 - Links
+	- TDME2 [Philosophy](./README-Philosophy.md)
     - TDME2 Engine, see [README.md](./README.md)
-    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
-    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
-    - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
-    - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
+    - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
 - External references

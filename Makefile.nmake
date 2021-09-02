@@ -454,7 +454,6 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
 	src/tdme/tools/editor/views/EditorView.cpp \
-	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
@@ -651,7 +650,6 @@ all: \
 	CrashTest \
 	EngineTest \
 	EntityHierarchyTest \
-	GUITest \
 	Installer \
 	HTTPClientTest \
 	HTTPDownloadClientTest \

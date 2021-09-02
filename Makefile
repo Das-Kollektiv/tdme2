@@ -613,7 +613,6 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
 	src/tdme/tools/editor/views/EditorView.cpp \
-	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
@@ -872,7 +871,6 @@ MAIN_SRCS = \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
-	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
