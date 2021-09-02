@@ -301,6 +301,7 @@
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
 - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+- TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 
 ## 7.2. External references
 - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
