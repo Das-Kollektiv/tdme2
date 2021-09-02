@@ -175,8 +175,6 @@
 
 # 3. Other information
 ## 3.1. Links
-# 3. Other information
-## 3.1. Links
 - TDME2 [Philosophy](./README-Philosophy.md)
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
