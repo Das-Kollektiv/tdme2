@@ -60,7 +60,7 @@ void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const
 	diffuseTransparencyTexturePathName = transparencyPathName;
 	diffuseTransparencyTextureFileName = transparencyFileName;
 	if (diffuseTransparencyTextureFileName.size() > 0) {
-		diffuseTexture = TextureReader::read(
+		diffuseTexture = TextureReader::read2(
 			diffuseTexturePathName,
 			diffuseTextureFileName,
 			diffuseTransparencyTexturePathName,

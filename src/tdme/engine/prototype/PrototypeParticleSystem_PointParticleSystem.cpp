@@ -24,7 +24,7 @@ void PrototypeParticleSystem_PointParticleSystem::setTextureFileName(const strin
 	this->textureFileName = textureFileName;
 	this->transparencyTextureFileName = transparencyTextureFileName;
 	if (this->transparencyTextureFileName.empty() == false && this->textureFileName.empty() == false) {
-		texture = TextureReader::read(
+		texture = TextureReader::read2(
 			Tools::getPathName(this->textureFileName),
 			Tools::getFileName(this->textureFileName),
 			Tools::getPathName(this->transparencyTextureFileName),

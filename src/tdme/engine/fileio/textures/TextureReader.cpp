@@ -88,7 +88,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	return texture;
 }
 
-Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo, const string& idPrefix) {
+Texture* TextureReader::read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo, const string& idPrefix) {
 	// make canonical
 	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(texturePathName, textureFileName);
 	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);

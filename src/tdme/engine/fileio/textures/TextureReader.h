@@ -59,7 +59,7 @@ public:
 	 * @param idPrefix id prefix
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
+	static Texture* read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
 	 * Read PNG

@@ -6,9 +6,9 @@ namespace tools {
 namespace editor {
 namespace misc {
 	class CameraInputHandler;
-	class CameraInputHandlerEventHandler;
+	struct CameraInputHandlerEventHandler;
 	class CameraRotationInputHandler;
-	class CameraRotationInputHandlerEventHandler;
+	struct CameraRotationInputHandlerEventHandler;
 	class FileDialogPath;
 	class GenerateConvexMeshes;
 	class Gizmo;
