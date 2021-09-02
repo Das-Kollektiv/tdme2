@@ -195,5 +195,6 @@ $ ./bin/tdme/tests/AngleTest
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
 - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+- TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 ## 3.2. Additional notes
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
