@@ -374,7 +374,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	auto ground = createGroundModel(
 		Math::ceil(maxAxisDimension),
 		Math::ceil(maxAxisDimension),
-		entityBoundingBoxToUse->getMin().getY() - Math::EPSILON
+		0.0f
 	);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
