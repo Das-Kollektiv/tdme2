@@ -49,6 +49,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	FileDialogPath modelPath;
+	FileDialogPath scenePath;
 
 	array<string, 2> applyBaseNodes = {
 		"base_name",
@@ -280,6 +281,13 @@ public:
 	 * Rename entity
 	 */
 	void renameEntity();
+
+	/**
+	 * Save
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void save(const string& pathName, const string& fileName);
 
 	/**
 	 * Shows the error pop up

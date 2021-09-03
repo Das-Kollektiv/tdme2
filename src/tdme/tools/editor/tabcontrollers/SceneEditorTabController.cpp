@@ -127,21 +127,67 @@ void SceneEditorTabController::save()
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
 
+
+	//
+	save(Tools::getPathName(scene->getFileName()), Tools::getFileName(scene->getFileName()));
+}
+
+void SceneEditorTabController::saveAs()
+{
+	class OnSceneSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			sceneEditorTabController->save(
+				sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+				sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+			);
+			sceneEditorTabController->scenePath.setPath(
+				sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
+			);
+			sceneEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		OnSceneSave(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+		}
+
+	private:
+		SceneEditorTabController* sceneEditorTabController;
+	};
+
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+
+	auto fileName = scene->getFileName();
+	vector<string> extensions = {
+		"tscene"
+	};
+	popUps->getFileDialogScreenController()->show(
+		Tools::getPathName(fileName),
+		"Save Scene to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnSceneSave(this)
+	);
+}
+
+void SceneEditorTabController::save(const string& pathName, const string& fileName)
+{
+	auto scene = view->getScene();
+	if (scene == nullptr) return;
+
 	//
 	try {
 		SceneWriter::write(
-			Tools::getPathName(scene->getFileName()),
-			Tools::getFileName(scene->getFileName()),
+			Tools::getPathName(pathName),
+			Tools::getFileName(fileName),
 			scene
 		);
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::save(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-}
-
-void SceneEditorTabController::saveAs()
-{
 }
 
 void SceneEditorTabController::showErrorPopUp(const string& caption, const string& message)
@@ -164,6 +210,10 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 			selectedEntityIds.push_back(StringTools::substring(selectedEntityId, string("scene.entities.").size()));
 		}
 		view->selectEntities(selectedEntityIds);
+	} else
+	if (node->getId() == view->getTabId() + "_tab_button_translate") {
+		view->setGizmoType(Gizmo::GIZMOTYPE_TRANSLATE);
+		view->updateGizmo();
 	} else
 	if (node->getId() == view->getTabId() + "_tab_button_rotate") {
 		view->setGizmoType(Gizmo::GIZMOTYPE_ROTATE);
