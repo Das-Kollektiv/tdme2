@@ -162,6 +162,12 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual const string getCurrentWorkingPathName() = 0;
 
 	/**
+	 * Change path
+	 * @param pathName path name
+	 */
+	virtual void changePath(const string& pathName) = 0;
+
+	/**
 	 * Get path name
 	 * @param fileName file name
 	 * @return canonical path

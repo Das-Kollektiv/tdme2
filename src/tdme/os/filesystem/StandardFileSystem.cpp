@@ -62,13 +62,13 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 	auto _pathName = pathName;
 	if (StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
 
-	DIR *dir;
-	struct dirent *dirent;
-	if ((dir = opendir(_pathName.c_str())) == NULL) {
+	DIR* dir = nullptr;
+	struct dirent* dirent = nullptr;
+	if ((dir = opendir(_pathName.c_str())) == nullptr) {
 		throw FileSystemException("Unable to list path(" + to_string(errno) + "): " + _pathName);
 	}
-	while ((dirent = readdir(dir)) != NULL) {
-		string fileName = (dirent->d_name);
+	while ((dirent = readdir(dir)) != nullptr) {
+		string fileName = dirent->d_name;
 		if (fileName == ".") continue;
 		try {
 			if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
@@ -289,6 +289,12 @@ const string StandardFileSystem::getCurrentWorkingPathName() {
 	}
 	auto cwd = string(cwdPtr);
 	return StringTools::replace(cwd, "\\", "/");
+}
+
+void StandardFileSystem::changePath(const string& pathName) {
+	if (chdir(pathName.c_str()) != 0) {
+		throw FileSystemException("Unable to change path(" + to_string(errno) + "): " + pathName);
+	}
 }
 
 const string StandardFileSystem::getPathName(const string& fileName) {
