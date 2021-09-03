@@ -275,8 +275,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (disabled == false &&
 		(
 			(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
-			(type == TYPE_FLOAT && ((keyChar >= 48 && keyChar < 58) || (keyChar == 46))) ||
-			(type == TYPE_INT && keyChar >= 48 && keyChar < 58)
+			(type == TYPE_FLOAT && ((keyChar >= '0' && keyChar < '9') || (keyChar == '.') || keyChar == '-')) ||
+			(type == TYPE_INT && ((keyChar >= '0' && keyChar < '9') || keyChar == '-'))
 		)) {
 		event->setProcessed(true);
 		#if defined(VULKAN) || defined(GLFW3)
@@ -285,7 +285,13 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 		#endif
 			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
-				if (type == TYPE_FLOAT && keyChar == 46 && textInputNode->getText().getString().find('.') != string::npos) {
+				if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
+					// no op
+				} else
+				if (type == TYPE_FLOAT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
+					// no op
+				} else
+				if (type == TYPE_INT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
 					// no op
 				} else {
 					textInputNode->getText().insert(index, event->getKeyChar());
@@ -429,27 +435,39 @@ void GUIInputInternalController::formatText()
 		case TYPE_FLOAT:
 			{
 				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-				auto value = Float::parseFloat(textInputNode->getText().getString());
+				auto stringValue = StringTools::trim(textInputNode->getText().getString());
+				auto value = stringValue == "-"?0.0f:Float::parseFloat(stringValue);
 				if (haveMin == true) {
 					if (value < min) value = min;
 				}
 				if (haveMax == true) {
 					if (value > max) value = max;
 				}
-				textInputNode->getText().set(value, decimals);
+				if (value == 0.0f && StringTools::startsWith(stringValue, "-") == true && (haveMin == false || min < 0.0f)) {
+					textInputNode->getText().set("-");
+					textInputNode->getText().append(value, decimals);
+				} else {
+					textInputNode->getText().set(value, decimals);
+				}
 			}
 			break;
 		case TYPE_INT:
 			{
 				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-				auto value = Integer::parseInt(textInputNode->getText().getString());
+				auto stringValue = StringTools::trim(textInputNode->getText().getString());
+				auto value = stringValue == "-"?0:Integer::parseInt(stringValue);
 				if (haveMin == true) {
 					if (value < static_cast<int>(min)) value = static_cast<int>(min);
 				}
 				if (haveMax == true) {
 					if (value > static_cast<int>(max)) value = static_cast<int>(max);
 				}
-				textInputNode->getText().set(value);
+				if (value == 0 && StringTools::startsWith(stringValue, "-") == true && (haveMin == false || min < 0.0f)) {
+					textInputNode->getText().set("-");
+					textInputNode->getText().append(value);
+				} else {
+					textInputNode->getText().set(value);
+				}
 			}
 			break;
 	}
