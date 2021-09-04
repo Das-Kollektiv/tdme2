@@ -268,7 +268,6 @@
         - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
     - included in TDME2 repository
         - FBXSDK
-        - Hashlink
         - libpng
         - ReactPhysics3D
         - RapidJSON
