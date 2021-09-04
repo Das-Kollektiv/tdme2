@@ -16,7 +16,7 @@
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
 # 2. What is already working
-- application
+- Application
     - creates main window and initializes OpenGL/Vulkan context and does HID via GLUT or GLFW3
     - supports
       - setting window position and dimension
@@ -29,11 +29,11 @@
     - provides
       - a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
       - application life cycle
-- math
+- Math
     - Math class with common math functions
     - Vector2, Vector3, Vector4, Matrix3x3, Matrix4x4 and Quaternion class
         - those have a ordinary API + operators, the latter is still a bit WIP
-- 3d engine
+- 3D engine
     - model reader
         - DAE
             - node names/ids must not have whitespace characters
@@ -114,7 +114,7 @@
     - screenshot ability
     - multiple renderer
       - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)
-- physics via ReactPhysics3D 0.7.0
+- Physics via ReactPhysics3D 0.7.0
     - have sphere, capsule, obb, convex mesh, concave terrain mesh, height map bounding volumes
     - have multiple bounding volumes per body
     - have static, dynamic rigid bodies and collision bodies
@@ -122,12 +122,12 @@
     - rigid body simulator
     - ray tracing
     - for RP3D internals and additional features see ReactPhysics3D website
-- path finding/flow maps
+- Path finding/flow maps
     - uses A*
     - is paired with physics world to determine if a "cell" is walkable
     - optional custom walkable test
     - path finding utility supports generating flow maps
-- 3d audio
+- 3D audio
     - decoder
       - ogg vorbis decoder
     - audio entities
