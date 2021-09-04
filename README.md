@@ -328,4 +328,4 @@
     - I even might have system administrator tasks
 
 # 9. Donation 
-- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke or click the GitHub sponsor button
+- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke or here https://github.com/sponsors/andreasdr
