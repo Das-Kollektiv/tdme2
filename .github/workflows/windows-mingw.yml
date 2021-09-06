@@ -16,6 +16,8 @@ jobs:
       uses: egor-tensin/setup-mingw@v2
       with:
         platform: x64
+    - name: install packages
+      run: pacman -S make mingw-w64-x86_64-gcc mingw-w64-x86_64-glew mingw-w64-x86_64-openal mingw-w64-x86_64-glfw
     - uses: actions/checkout@v2
     - name: make mains
       run: make mains
