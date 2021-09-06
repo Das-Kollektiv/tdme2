@@ -1,4 +1,4 @@
-name: TDME2 CI *NIX - Ubuntu/MacOSX
+name: TDME2 CI *NIX - Ubuntu
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: [ubuntu-latest, macos-latest]
+    runs-on: ubuntu-latest
 
     steps:
       - name: install required packages
