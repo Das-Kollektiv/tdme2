@@ -1,4 +1,4 @@
-TDME2 CI *NIX - Ubuntu/MacOSX
+name: TDME2 CI *NIX - Ubuntu/MacOSX
 
 on:
   push:
