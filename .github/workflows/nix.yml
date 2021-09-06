@@ -12,6 +12,8 @@ jobs:
     runs-on: [ubuntu-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: make mains
-      run: make mains
+      - name: install required packages
+        run: sudo apt-get install libglew-dev libopenal-dev libglfw3-dev
+      - uses: actions/checkout@v2
+      - name: make mains
+        run: make mains
