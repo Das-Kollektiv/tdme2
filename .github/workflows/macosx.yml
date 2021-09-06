@@ -1,4 +1,4 @@
-name: TDME2 CI MacOSX
+name: CI MacOSX
 
 on:
   push:
