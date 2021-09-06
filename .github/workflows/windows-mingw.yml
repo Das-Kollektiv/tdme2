@@ -1,4 +1,4 @@
-name: TDME2 CI Windows/MINGW
+name: CI Windows/MINGW
 
 on:
   push:
