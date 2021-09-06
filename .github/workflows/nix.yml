@@ -1,4 +1,4 @@
-name: TDME2 CI *NIX - Ubuntu
+name: CI Ubuntu
 
 on:
   push:
