@@ -249,14 +249,14 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 		view->setBrush(currentTerrainBrushOperation == Terrain2::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_water_water") == true) {
-		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_WATER;
+		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_WATER_ADD;
 		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.waters");
 		updateDetails("terrain.waters");
 		view->unsetBrush();
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_water_delete") == true) {
-		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_DELETE;
+		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_WATER_DELETE;
 		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
 		view->getEditorView()->getScreenController()->setOutlinerSelection("terrain.waters");
 		updateDetails("terrain.waters");
@@ -267,12 +267,14 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_ADD;
 		view->unsetBrush();
 		setFoliageBrush();
+		updateFoliageBrush();
 	} else
 	if (StringTools::startsWith(node->getId(), view->getTabId() + "_tab_foliage_delete") == true) {
 		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_NONE;
 		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_DELETE;
 		view->unsetBrush();
 		setFoliageBrush();
+		updateFoliageBrush();
 	} else {
 		for (auto& textureBrushApplyNode: textureBrushApplyNodes) {
 			if (node->getId() == textureBrushApplyNode) {
@@ -283,14 +285,14 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 		for (auto& foliageBrushApplyNode: foliageBrushApplyNodes) {
 			if (node->getId() == foliageBrushApplyNode) {
 				applyFoliageBrushDetails();
-				updateFoliageBrushStructs();
+				updateFoliageBrush();
 				break;
 			}
 		}
 		for (auto& foliageBrushPrototypeApplyNode: foliageBrushPrototypeApplyNodes) {
 			if (node->getId() == foliageBrushPrototypeApplyNode) {
 				applyFoliageBrushPrototypeDetails();
-				updateFoliageBrushStructs();
+				updateFoliageBrush();
 				break;
 			}
 		}
@@ -545,7 +547,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 					);
 					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
 					terrainEditorTabController->brushTexturePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
-					terrainEditorTabController->updateFoliageBrushStructs();
+					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -581,7 +583,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 			if (brush == nullptr) return;
 			brush->setFileName(string());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
-			updateFoliageBrushStructs();
+			updateFoliageBrush();
 		} else
 		if (node->getId() == "foliagebrush_texture_browseto") {
 
@@ -613,7 +615,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 						Console::println(string("OnTerrainBrushPrototypeFileOpenAction::performAction(): ") + exception.what());
 					}
 					terrainEditorTabController->brushPrototypePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
-					terrainEditorTabController->updateFoliageBrushStructs();
+					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -665,7 +667,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 			auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
 			if (brushPrototype == nullptr) return;
 			brushPrototype->setFileName(string());
-			updateFoliageBrushStructs();
+			updateFoliageBrush();
 			try {
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
 			} catch (Exception& exception) {
@@ -1051,24 +1053,41 @@ void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "terrain") {
 		setTerrainDetails();
+		currentTerrainBrushOperation = getUITerrainBrushOperation();
+		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		view->setBrush(currentTerrainBrushOperation == Terrain2::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
 	} else
 	if (outlinerNode == "terrain.brush") {
 		setTerrainBrushDetails();
+		currentTerrainBrushOperation = getUITerrainBrushOperation();
+		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		view->unsetBrush();
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
 	} else
 	if (outlinerNode == "terrain.waters" || StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
+		currentTerrainBrushOperation = getUIWaterOperation();
+		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		view->unsetBrush();
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("water");
 	} else
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
 		setFoliageBrushDetails();
+		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		currentFoliageBrushOperation = getUIFoliageBrushOperation();
+		updateFoliageBrush();
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
 	} else
 	if (StringTools::startsWith(outlinerNode, "terrain.foliagebrushes.") == true) {
 		setFoliageBrushPrototypeDetails();
-		updateFoliageBrushStructs();
+		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		currentFoliageBrushOperation = getUIFoliageBrushOperation();
+		updateFoliageBrush();
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
 	} else {
+		view->unsetBrush();
+		currentTerrainBrushOperation = Terrain2::BRUSHOPERATION_NONE;
+		currentFoliageBrushOperation = Terrain2::BRUSHOPERATION_NONE;
 		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().removeAll();
 		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
@@ -1159,7 +1178,7 @@ bool TerrainEditorTabController::determineCurrentBrushHeight(BoundingBox& terrai
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return false;
 	if (currentTerrainBrushOperation != Terrain2::BRUSHOPERATION_FLATTEN &&
-		currentTerrainBrushOperation != Terrain2::BRUSHOPERATION_WATER &&
+		currentTerrainBrushOperation != Terrain2::BRUSHOPERATION_WATER_ADD &&
 		currentTerrainBrushOperation != Terrain2::BRUSHOPERATION_RAMP) {
 		return true;
 	}
@@ -1296,15 +1315,21 @@ void TerrainEditorTabController::setFoliageBrush() {
 	view->setBrush(foliageBrushTexture, brush->getSize(), brush->getDensity());
 }
 
-void TerrainEditorTabController::updateFoliageBrushStructs() {
+void TerrainEditorTabController::updateFoliageBrush() {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
 	//
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto foliageBrushIdx = -1;
-	auto foliageBrushPrototypeIdx = -1;
-	if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+		foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	} else {
+		auto foliageBrushPrototypeIdx = -1;
+		if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	}
+
+	//
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	if (terrain == nullptr) return;
 	auto brush = terrain->getBrush(foliageBrushIdx);
@@ -1350,16 +1375,24 @@ void TerrainEditorTabController::updateFoliageBrushStructs() {
 			}
 		);
 	}
+
+	//
+	view->setBrush(foliageBrush.brushTexture, brush->getSize(), brush->getDensity());
 }
 
 void TerrainEditorTabController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
+
 	//
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto foliageBrushIdx = -1;
-	auto foliageBrushPrototypeIdx = -1;
-	if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+		foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	} else {
+		auto foliageBrushPrototypeIdx = -1;
+		if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	}
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	if (terrain == nullptr) return;
 	auto brush = terrain->getBrush(foliageBrushIdx);
@@ -1420,4 +1453,49 @@ void TerrainEditorTabController::applyFoliageBrush(BoundingBox& terrainBoundingB
 	//
 	recreateFoliagePartitions.clear();
 	Terrain2::emptyFoliageMaps(newFoliageMaps);
+}
+
+Terrain2::BrushOperation TerrainEditorTabController::getUITerrainBrushOperation() {
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_add"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_ADD;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_substract"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_SUBTRACT;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_flatten"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_FLATTEN;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_smooth"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_SMOOTH;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_ramp"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_RAMP;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_terrain_delete"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_DELETE;
+	} else {
+		return Terrain2::BRUSHOPERATION_NONE;
+	}
+}
+
+Terrain2::BrushOperation TerrainEditorTabController::getUIWaterOperation() {
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_water_water"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_WATER_ADD;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_water_delete"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_WATER_DELETE;
+	} else {
+		return Terrain2::BRUSHOPERATION_NONE;
+	}
+}
+
+Terrain2::BrushOperation TerrainEditorTabController::getUIFoliageBrushOperation() {
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_foliage_add"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_ADD;
+	} else
+	if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_foliage_delete"))->getController()->getValue().equals("1") == true) {
+		return Terrain2::BRUSHOPERATION_DELETE;
+	} else {
+		return Terrain2::BRUSHOPERATION_NONE;
+	}
 }

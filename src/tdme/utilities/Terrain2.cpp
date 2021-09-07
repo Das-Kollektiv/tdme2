@@ -424,7 +424,7 @@ void Terrain2::applyBrushToTerrainModels(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// water
-	if (brushOperation == BRUSHOPERATION_WATER) return;
+	if (brushOperation == BRUSHOPERATION_WATER_ADD) return;
 
 	// other operations
 	auto textureData = brushTexture->getTextureData();

@@ -312,11 +312,11 @@ public:
 	void setFoliageBrush();
 
 	/**
-	 * Update foliage brush structs
+	 * Update foliage brush
 	 * @param foliageBrush foliage brush
 	 * @param foliageBrushPrototypes foliage brush prototypes
 	 */
-	void updateFoliageBrushStructs();
+	void updateFoliageBrush();
 
 	/**
 	 * Apply current brush to foliage at given brush center position
@@ -325,6 +325,21 @@ public:
 	 * @param deltaTime delta time between last frame and this frame
 	 */
 	void applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime);
+
+	/**
+	 * @return UI terrain brush operation
+	 */
+	Terrain2::BrushOperation getUITerrainBrushOperation();
+
+	/**
+	 * @return UI water operation
+	 */
+	Terrain2::BrushOperation getUIWaterOperation();
+
+	/**
+	 * @return UI foliage brush operation
+	 */
+	Terrain2::BrushOperation getUIFoliageBrushOperation();
 
 	/**
 	 * Shows the error pop up
