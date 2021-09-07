@@ -624,6 +624,15 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
+		#if defined(__APPLE__)
+			// change working directory on MacOSX if started from app bundle
+			auto executablePathName = string(argv[0]);
+			if (executablePathName.find(".app/Contents/MacOS/") != string::npos) {
+				auto appBundleName = StringTools::substring(executablePathName, 0, executablePathName.rfind(".app") + string(".app").size());
+				auto workingPathName = StringTools::substring(appBundleName, 0, appBundleName.rfind('/'));
+				FileSystem::getStandardFileSystem()->changePath(workingPathName);
+			}
+		#endif
 		while (glfwWindowShouldClose(glfwWindow) == false) {
 			displayInternal();
 			#if !defined(VULKAN)
