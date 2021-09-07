@@ -49,7 +49,6 @@ public:
 	void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) override;
 	const string getCanonicalPath(const string& pathName, const string& fileName) override;
 	const string getCurrentWorkingPathName() override;
-	void changePath(const string& pathName) override;
 	const string getPathName(const string& fileName) override;
 	const string getFileName(const string& fileName) override;
 	void createPath(const string& pathName) override;

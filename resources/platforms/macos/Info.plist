@@ -5,22 +5,22 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>{__EXECUTABLE__}</string>
+	<string>TDMELevelEditor.sh</string>
 	<key>CFBundleIconFile</key>
-	<string>{__ICON__}</string>
+	<string>tdme2.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>drewke.net.tdme2.{__EXECUTABLE_LOWERCASE__}</string>
+	<string>drewke.net.tdme2</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>TDME2 {__EXECUTABLE__}</string>
+	<string>TDME2</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>{__VERSION__}</string>
+	<string>1.9</string>
 	<key>CFBundleVersion</key>
-	<string>{__VERSION__}</string>
+	<string>1.9</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>{__COPYRIGHT__}</string>
+	<string>Copyright © 2020 Andreas Drewke. All rights reserved.</string>
 </dict>
 </plist>

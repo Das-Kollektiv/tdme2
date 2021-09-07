@@ -166,7 +166,7 @@ public:
 		Engine::getInstance()->initialize();
 	}
 
-	void reshape(int32_t width, int32_t height) override {
+	void reshape(int32_t width, int32_t height) {
 		Engine::getInstance()->reshape(width, height);
 	}
 };

@@ -70,7 +70,6 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				// fonts
 				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
 				// images
-				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
 				// models
@@ -85,12 +84,6 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
-				// tdme empty
-				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) return true;
-				// tdme trigger
-				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) return true;
-				// tdme environment maps
-				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -103,8 +96,6 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) return true;
 				// xml
 				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
-				// plist
-				if (StringTools::endsWith(fileNameLowerCase, ".plist") == true) return true;
 				// files without ending
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&
@@ -148,14 +139,7 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 			bool accept(const string& pathName, const string& fileName) override {
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
-				// path
-				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
-					// Apple: no .dSYM folders
-					#if defined(__APPLE__)
-						if (StringTools::endsWith(fileName, ".dSYM") == true) return false;
-					#endif
-					return true;
-				};
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// static libraries
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".a") == true) return true;
 				// dynamic libraries
@@ -245,15 +229,7 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 			bool accept(const string& pathName, const string& fileName) override {
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
-				// path
-				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
-					// Apple: no .dSYM folders
-					#if defined(__APPLE__)
-						if (StringTools::endsWith(fileName, ".dSYM") == true) return false;
-					#endif
-					return true;
-				};
-				// win32
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				#if defined(_WIN32)
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".exe") == true) return true;
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dll") == true) return true;

@@ -387,9 +387,6 @@ const string ArchiveFileSystem::getCurrentWorkingPathName() {
 	return ".";
 }
 
-void ArchiveFileSystem::changePath(const string& pathName) {
-}
-
 const string ArchiveFileSystem::getPathName(const string& fileName) {
 	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
