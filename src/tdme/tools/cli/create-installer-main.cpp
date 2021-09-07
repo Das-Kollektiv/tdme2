@@ -566,7 +566,7 @@ int main(int argc, char** argv)
 					}
 					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + executableFileName + ".app\"";
 					Console::println("Signing '" + fileName + "': " + codeSignCommand);
-					Application::execute(codeSignCommand);
+					Console::println(Application::execute(codeSignCommand));
 					processFile(executableFileName + ".app/Contents/Info.plist", fileInformations, "installer/" + componentFileName, false, tdmePath);
 					processFile(executableFileName + ".app/Contents/Resources/icon.icns", fileInformations, "installer/" + componentFileName, false, tdmePath);
 					processFile(executableFileName + ".app/Contents/_CodeSignature/CodeResources", fileInformations, "installer/" + componentFileName, false, tdmePath);
@@ -596,7 +596,7 @@ int main(int argc, char** argv)
 					auto signedFileName = "signed-executables/" + executableFileName;
 					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + signedFileName + "\"";
 					Console::println("Signing '" + fileName + "': " + codeSignCommand);
-					Application::execute(codeSignCommand);
+					Console::println(Application::execute(codeSignCommand));
 					processFile(signedFileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
 					FileSystem::getInstance()->removePath("signed-executables", true);
 				}
