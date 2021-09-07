@@ -1,0 +1,19 @@
+name: CI Ubuntu
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: install required packages
+        run: sudo apt-get install libglew-dev libopenal-dev libglfw3-dev
+      - uses: actions/checkout@v2
+      - name: make mains
+        run: make mains

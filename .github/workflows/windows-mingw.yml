@@ -1,0 +1,32 @@
+name: CI Windows/MINGW
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+defaults:
+    run:
+      shell: msys2 {0}
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          base-devel
+          git
+          make
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-glew
+          mingw-w64-x86_64-openal
+          mingw-w64-x86_64-glfw
+    - uses: actions/checkout@v2
+    - name: make mains
+      run: make mains
