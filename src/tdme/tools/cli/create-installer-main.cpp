@@ -307,7 +307,7 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 	}
 }
 
-void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile, const string& basePath = string()) {
+void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile, const string& basePath, const string& executablePath = string()) {
 	// read content
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(
@@ -319,7 +319,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	auto fileNameToUse = StringTools::startsWith(fileName, basePath + "/") == true?StringTools::substring(fileName, (basePath + "/").size(), fileName.size()):fileName;
 	// remove prefix if requested
 	if (executableFile == true && fileName.find_last_of('/') != string::npos) {
-		fileNameToUse = StringTools::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
+		fileNameToUse = (executablePath.empty() == false?executablePath + "/":"") + StringTools::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
 	}
 
 	Console::print(archiveFileName + ": Processing file: " + fileNameToUse);
@@ -509,7 +509,100 @@ int main(int argc, char** argv)
 
 		// add files to archive
 		for (auto fileName: filesBin) {
-			processFile(fileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
+			#if defined(__APPLE__)
+				auto _fileName = StringTools::substring(fileName, fileName.rfind('/') + 1, fileName.size());
+				auto _filePath = StringTools::substring(fileName, 0, fileName.rfind('/'));
+				auto startMenuName = installerProperties.get("startmenu_" + StringTools::toLowerCase(_fileName), "");
+				if (startMenuName.empty() == false) {
+					auto executablePathName = FileSystem::getInstance()->getPathName(fileName);
+					auto executableFileName = FileSystem::getInstance()->getFileName(fileName);
+					auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.icns";
+					if (FileSystem::getInstance()->fileExists("resources/platforms/macos/" + iconFileName) == false &&
+						FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
+					auto infoplistFile = FileSystem::getInstance()->getContentAsString("resources/platforms/macos", "Info.plist");
+					infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE__}", executableFileName);
+					infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE_LOWERCASE__}", StringTools::toLowerCase(executableFileName));
+					infoplistFile = StringTools::replace(infoplistFile, "{__ICON__}", "icon.icns");
+					infoplistFile = StringTools::replace(infoplistFile, "{__COPYRIGHT__}", Version::getCopyright());
+					infoplistFile = StringTools::replace(infoplistFile, "{__VERSION__}", Version::getVersion());
+					FileSystem::getInstance()->createPath(executableFileName + ".app");
+					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents");
+					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents/MacOS");
+					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents/Resources");
+					FileSystem::getStandardFileSystem()->setContentFromString(
+						executableFileName + ".app/Contents",
+						"Info.plist",
+						infoplistFile
+					);
+					{
+						vector<uint8_t> content;
+						FileSystem::getInstance()->getContent(
+							"resources/platforms/macos",
+							iconFileName,
+							content
+						);
+						FileSystem::getStandardFileSystem()->setContent(
+							executableFileName + ".app/Contents/Resources",
+							"icon.icns",
+							content
+						);
+					}
+					{
+						vector<uint8_t> content;
+						FileSystem::getInstance()->getContent(
+							executablePathName,
+							executableFileName,
+							content
+						);
+						FileSystem::getInstance()->setContent(
+							executableFileName + ".app/Contents/MacOS",
+							executableFileName,
+							content
+						);
+						FileSystem::getInstance()->setExecutable(
+							executableFileName + ".app/Contents/MacOS",
+							executableFileName
+						);
+					}
+					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + executableFileName + ".app\"";
+					Console::println("Signing '" + fileName + "': " + codeSignCommand);
+					Application::execute(codeSignCommand);
+					processFile(executableFileName + ".app/Contents/Info.plist", fileInformations, "installer/" + componentFileName, false, tdmePath);
+					processFile(executableFileName + ".app/Contents/Resources/icon.icns", fileInformations, "installer/" + componentFileName, false, tdmePath);
+					processFile(executableFileName + ".app/Contents/_CodeSignature/CodeResources", fileInformations, "installer/" + componentFileName, false, tdmePath);
+					processFile(executableFileName + ".app/Contents/MacOS/" + executableFileName, fileInformations, "installer/" + componentFileName, true, tdmePath, executableFileName + ".app/Contents/MacOS");
+					FileSystem::getInstance()->removePath(executableFileName + ".app", true);
+				} else {
+					auto executablePathName = FileSystem::getInstance()->getPathName(fileName);
+					auto executableFileName = FileSystem::getInstance()->getFileName(fileName);
+					FileSystem::getInstance()->createPath("signed-executables");
+					{
+						vector<uint8_t> content;
+						FileSystem::getInstance()->getContent(
+							executablePathName,
+							executableFileName,
+							content
+						);
+						FileSystem::getInstance()->setContent(
+							"signed-executables",
+							executableFileName,
+							content
+						);
+						FileSystem::getInstance()->setExecutable(
+							"signed-executables",
+							executableFileName
+						);
+					}
+					auto signedFileName = "signed-executables/" + executableFileName;
+					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + signedFileName + "\"";
+					Console::println("Signing '" + fileName + "': " + codeSignCommand);
+					Application::execute(codeSignCommand);
+					processFile(signedFileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
+					FileSystem::getInstance()->removePath("signed-executables", true);
+				}
+			#else
+				processFile(fileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
+			#endif
 		}
 
 		// add file informations

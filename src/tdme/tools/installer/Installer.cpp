@@ -663,12 +663,12 @@ void Installer::performScreenAction() {
 														content
 													);
 													log.push_back(generatedFileName);
+													FileSystem::getStandardFileSystem()->setExecutable(
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
+													);
 													auto startMenuName = installer->installerProperties.get("startmenu_" + StringTools::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
 													if (startMenuName.empty() == false) {
-														FileSystem::getStandardFileSystem()->setExecutable(
-															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-															FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
-														);
 														Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
@@ -751,81 +751,19 @@ void Installer::performScreenAction() {
 														log.push_back(linkFile);
 														FileSystem::getStandardFileSystem()->removeFile(installFolder, "windows-create-shortcut.bat");
 													}
-												#elif defined(__APPLE__)
-													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
-													auto startMenuName = installer->installerProperties.get(
-														"startmenu_" +
-														StringTools::substring(
-															StringTools::toLowerCase(executable),
-															0,
-															executable.rfind('.')
-														),
-														""
-													);
-													if (startMenuName.empty() == false) {
-														Installer::createPathRecursively(generatedFileName + ".app");
-														Installer::createPathRecursively(generatedFileName + ".app/Contents");
-														Installer::createPathRecursively(generatedFileName + ".app/Contents/MacOS");
-														Installer::createPathRecursively(generatedFileName + ".app/Contents/Resources");
-														log.push_back(generatedFileName + ".app");
-														log.push_back(generatedFileName + ".app/Contents");
-														log.push_back(generatedFileName + ".app/Contents/MacOS");
-														log.push_back(generatedFileName + ".app/Contents/Resources");
-														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
-														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
-														auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.icns";
-														if (FileSystem::getInstance()->fileExists("resources/platforms/macos/" + iconFileName) == false &&
-															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
-														auto infoplistFile = FileSystem::getInstance()->getContentAsString("resources/platforms/macos", "Info.plist");
-														infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE__}", executableFileName);
-														infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE_LOWERCASE__}", StringTools::toLowerCase(executableFileName));
-														infoplistFile = StringTools::replace(infoplistFile, "{__ICON__}", "icon.icns");
-														infoplistFile = StringTools::replace(infoplistFile, "{__COPYRIGHT__}", Version::getCopyright());
-														infoplistFile = StringTools::replace(infoplistFile, "{__VERSION__}", Version::getVersion());
-														FileSystem::getStandardFileSystem()->setContentFromString(
-															generatedFileName + ".app/Contents",
-															"Info.plist",
-															infoplistFile
-														);
-														log.push_back(generatedFileName + ".app/Contents/Info.plist");
-														{
-															vector<uint8_t> iconContent;
-															FileSystem::getInstance()->getContent(
-																"resources/platforms/macos",
-																iconFileName,
-																iconContent
-															);
-															FileSystem::getStandardFileSystem()->setContent(
-																generatedFileName + ".app/Contents/Resources",
-																"icon.icns",
-																iconContent
-															);
-															log.push_back(generatedFileName + ".app/Contents/Resources/icon.icns");
-														}
-														FileSystem::getStandardFileSystem()->setContent(
-															generatedFileName + ".app/Contents/MacOS",
-															FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
-															content
-														);
-														FileSystem::getStandardFileSystem()->setExecutable(
-															generatedFileName + ".app/Contents/MacOS",
-															FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
-														);
-														log.push_back(generatedFileName + ".app/Contents/MacOS/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName));
-												} else {
+												#else
 													FileSystem::getStandardFileSystem()->setContent(
 														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
 														FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
 														content
 													);
+													log.push_back(generatedFileName);
 													FileSystem::getStandardFileSystem()->setExecutable(
 														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
 														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
 													);
-													log.push_back(generatedFileName);
-												}
-												#endif
 
+												#endif
 											} else {
 												FileSystem::getStandardFileSystem()->setContent(
 													FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
