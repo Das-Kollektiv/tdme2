@@ -334,7 +334,7 @@ bool Application::limitFPS = true;
 #endif
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
-	#if defined(VULKAN) || defined(GLFW3)
+	#if !defined(VULKAN) && !defined(GLFW3)
 		if (Application::application != nullptr) {
 			Console::println("Application::ApplicationShutdown::~ApplicationShutdown(): Shutting down application");
 			Application::application->dispose();
