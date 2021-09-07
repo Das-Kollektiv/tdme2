@@ -101,7 +101,7 @@ bool PrototypeDisplaySubController::getDisplayBoundingVolume()
 }
 
 void PrototypeDisplaySubController::createDisplayPropertiesXML(Prototype* prototype, string& xml) {
-	xml+= "	<selectbox-option text=\"Rendering\" value=\"rendering\" />\n";
+	xml+= "	<selectbox-option image=\"resources/engine/images/rendering.png\" text=\"Rendering\" value=\"rendering\" />\n";
 }
 
 void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
