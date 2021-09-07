@@ -22,18 +22,6 @@ Properties::Properties()
 {
 }
 
-const string& Properties::get(const string& key, const string& defaultValue)
-{
-	auto it = properties.find(key);
-	if (it == properties.end()) return defaultValue;
-	return it->second;
-}
-
-void Properties::put(const string& key, const string& value)
-{
-	properties[key] = value;
-}
-
 void Properties::load(const string& pathName, const string& fileName, FileSystemInterface* fileSystem)
 {
 	properties.clear();
@@ -51,7 +39,7 @@ void Properties::load(const string& pathName, const string& fileName, FileSystem
 	}
 }
 
-void Properties::store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem) {
+void Properties::store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem) const {
 	vector<string> result;
 	int32_t idx = 0;
 	for (auto it = properties.begin(); it != properties.end(); ++it) {

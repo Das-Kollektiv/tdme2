@@ -36,7 +36,11 @@ public:
 	 * @param defaultValue default value
 	 * @return value if found or default value
 	 */
-	const string& get(const string& key, const string& defaultValue);
+	inline const string& get(const string& key, const string& defaultValue) const {
+		auto it = properties.find(key);
+		if (it == properties.end()) return defaultValue;
+		return it->second;
+	}
 
 	/**
 	 * Add property
@@ -44,7 +48,9 @@ public:
 	 * @param value value
 	 *
 	 */
-	void put(const string& key, const string& value);
+	inline void put(const string& key, const string& value) {
+		properties[key] = value;
+	}
 
 	/**
 	 * Load property file
@@ -62,7 +68,7 @@ public:
 	 * @param fileSystem file system to use
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr);
+	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr) const;
 
 	/**
 	 * @return properties map

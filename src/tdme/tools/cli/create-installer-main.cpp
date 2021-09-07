@@ -407,8 +407,75 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	Console::println(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
 }
 
+#if defined(__APPLE__)
+void createMacApplication(const Properties& installerProperties, const string& fileName, const string& pathName = string()) {
+	auto _pathName = pathName.empty() == true?"":pathName + "/";
+	auto _fileName = StringTools::substring(fileName, fileName.rfind('/') + 1, fileName.size());
+	auto _filePath = StringTools::substring(fileName, 0, fileName.rfind('/'));
+	auto startMenuName = installerProperties.get("startmenu_" + StringTools::toLowerCase(_fileName), "");
+	if (startMenuName.empty() == false) {
+		auto executablePathName = FileSystem::getInstance()->getPathName(fileName);
+		auto executableFileName = FileSystem::getInstance()->getFileName(fileName);
+		auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.icns";
+		if (FileSystem::getInstance()->fileExists("resources/platforms/macos/" + iconFileName) == false &&
+			FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
+		auto infoplistFile = FileSystem::getInstance()->getContentAsString("resources/platforms/macos", "Info.plist");
+		infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE__}", executableFileName);
+		infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE_LOWERCASE__}", StringTools::toLowerCase(executableFileName));
+		infoplistFile = StringTools::replace(infoplistFile, "{__ICON__}", "icon.icns");
+		infoplistFile = StringTools::replace(infoplistFile, "{__COPYRIGHT__}", Version::getCopyright());
+		infoplistFile = StringTools::replace(infoplistFile, "{__VERSION__}", Version::getVersion());
+		FileSystem::getInstance()->createPath(_pathName + executableFileName + ".app");
+		FileSystem::getInstance()->createPath(_pathName + executableFileName + ".app/Contents");
+		FileSystem::getInstance()->createPath(_pathName + executableFileName + ".app/Contents/MacOS");
+		FileSystem::getInstance()->createPath(_pathName + executableFileName + ".app/Contents/Resources");
+		FileSystem::getStandardFileSystem()->setContentFromString(
+			_pathName + executableFileName + ".app/Contents",
+			"Info.plist",
+			infoplistFile
+		);
+		{
+			vector<uint8_t> content;
+			FileSystem::getInstance()->getContent(
+				"resources/platforms/macos",
+				iconFileName,
+				content
+			);
+			FileSystem::getStandardFileSystem()->setContent(
+				_pathName + executableFileName + ".app/Contents/Resources",
+				"icon.icns",
+				content
+			);
+		}
+		{
+			vector<uint8_t> content;
+			FileSystem::getInstance()->getContent(
+				executablePathName,
+				executableFileName,
+				content
+			);
+			FileSystem::getInstance()->setContent(
+				_pathName + executableFileName + ".app/Contents/MacOS",
+				executableFileName,
+				content
+			);
+			FileSystem::getInstance()->setExecutable(
+				_pathName + executableFileName + ".app/Contents/MacOS",
+				executableFileName
+			);
+		}
+		auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + _pathName + executableFileName + ".app\"";
+		Console::println("Signing '" + fileName + "': " + codeSignCommand);
+		Console::println(Application::execute(codeSignCommand));
+	}
+}
+#endif
+
 int main(int argc, char** argv)
 {
+	// TODO: error handling
+
+	//
 	Console::println(string("create-installer ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
@@ -514,59 +581,8 @@ int main(int argc, char** argv)
 				auto _filePath = StringTools::substring(fileName, 0, fileName.rfind('/'));
 				auto startMenuName = installerProperties.get("startmenu_" + StringTools::toLowerCase(_fileName), "");
 				if (startMenuName.empty() == false) {
-					auto executablePathName = FileSystem::getInstance()->getPathName(fileName);
+					createMacApplication(installerProperties, fileName);
 					auto executableFileName = FileSystem::getInstance()->getFileName(fileName);
-					auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.icns";
-					if (FileSystem::getInstance()->fileExists("resources/platforms/macos/" + iconFileName) == false &&
-						FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
-					auto infoplistFile = FileSystem::getInstance()->getContentAsString("resources/platforms/macos", "Info.plist");
-					infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE__}", executableFileName);
-					infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE_LOWERCASE__}", StringTools::toLowerCase(executableFileName));
-					infoplistFile = StringTools::replace(infoplistFile, "{__ICON__}", "icon.icns");
-					infoplistFile = StringTools::replace(infoplistFile, "{__COPYRIGHT__}", Version::getCopyright());
-					infoplistFile = StringTools::replace(infoplistFile, "{__VERSION__}", Version::getVersion());
-					FileSystem::getInstance()->createPath(executableFileName + ".app");
-					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents");
-					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents/MacOS");
-					FileSystem::getInstance()->createPath(executableFileName + ".app/Contents/Resources");
-					FileSystem::getStandardFileSystem()->setContentFromString(
-						executableFileName + ".app/Contents",
-						"Info.plist",
-						infoplistFile
-					);
-					{
-						vector<uint8_t> content;
-						FileSystem::getInstance()->getContent(
-							"resources/platforms/macos",
-							iconFileName,
-							content
-						);
-						FileSystem::getStandardFileSystem()->setContent(
-							executableFileName + ".app/Contents/Resources",
-							"icon.icns",
-							content
-						);
-					}
-					{
-						vector<uint8_t> content;
-						FileSystem::getInstance()->getContent(
-							executablePathName,
-							executableFileName,
-							content
-						);
-						FileSystem::getInstance()->setContent(
-							executableFileName + ".app/Contents/MacOS",
-							executableFileName,
-							content
-						);
-						FileSystem::getInstance()->setExecutable(
-							executableFileName + ".app/Contents/MacOS",
-							executableFileName
-						);
-					}
-					auto codeSignCommand = "codesign -s \"" + installerProperties.get("macos_codesign_identity", "No identity") + "\" \"" + executableFileName + ".app\"";
-					Console::println("Signing '" + fileName + "': " + codeSignCommand);
-					Console::println(Application::execute(codeSignCommand));
 					processFile(executableFileName + ".app/Contents/Info.plist", fileInformations, "installer/" + componentFileName, false, tdmePath);
 					processFile(executableFileName + ".app/Contents/Resources/icon.icns", fileInformations, "installer/" + componentFileName, false, tdmePath);
 					processFile(executableFileName + ".app/Contents/_CodeSignature/CodeResources", fileInformations, "installer/" + componentFileName, false, tdmePath);
@@ -641,4 +657,14 @@ int main(int argc, char** argv)
 		ofstream ofs("installer/" + completionFileName, ofstream::binary | ofstream::trunc);
 		ofs.close();
 	}
+
+	//
+	#if defined(__APPLE__)
+		if (FileSystem::getInstance()->fileExists("installer-package") == true &&
+			FileSystem::getInstance()->isPath("installer-package") == true) {
+			FileSystem::getInstance()->removePath("installer-package", true);
+		}
+		FileSystem::getInstance()->createPath("installer-package");
+		createMacApplication(installerProperties, "bin/tdme/tools/installer/Installer", "installer-package");
+	#endif
 }

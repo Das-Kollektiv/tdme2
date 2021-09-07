@@ -334,12 +334,14 @@ bool Application::limitFPS = true;
 #endif
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
-	if (Application::application != nullptr) {
-		Console::println("Application::ApplicationShutdown::~ApplicationShutdown(): Shutting down application");
-		Application::application->dispose();
-		delete Application::application;
-		Application::application = nullptr;
-	}
+	#if defined(VULKAN) || defined(GLFW3)
+		if (Application::application != nullptr) {
+			Console::println("Application::ApplicationShutdown::~ApplicationShutdown(): Shutting down application");
+			Application::application->dispose();
+			delete Application::application;
+			Application::application = nullptr;
+		}
+	#endif
 }
 
 Application::Application() {
@@ -641,6 +643,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glfwPollEvents();
 		}
 		glfwTerminate();
+		if (Application::application != nullptr) {
+			Console::println("Application::run(): Shutting down application");
+			Application::application->dispose();
+			delete Application::application;
+			Application::application = nullptr;
+		}
 		if (exitCode != 0) ::exit(exitCode);
 	#else
 		glutInit(&argc, argv);

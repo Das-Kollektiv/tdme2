@@ -244,7 +244,6 @@
 - Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
 - PBR lighting shader for GL3/CORE+, Vulkan
 - Add nmake support to makefile generator for TDME2 based projects
-- Installer for MacOSX
 - Improve on Vulkan
 - Expose shader and post processing programs setup API
 - Some UI elements need some default skinning fixes
