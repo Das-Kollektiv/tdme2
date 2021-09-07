@@ -26,17 +26,23 @@ public:
 	/**
 	 * @return name
 	 */
-	const string& getName() const;
+	inline const string& getName() const {
+		return name;
+	}
 
 	/**
 	 * @return ordinal or index
 	 */
-	int32_t getOrdinal() const;
+	inline int32_t getOrdinal() const {
+		return ordinal;
+	}
 
 	/**
 	 * Compare enum with another enum
 	 * @return equality
 	 */
-	bool equals(Enum* enumObject) const;
+	inline bool equals(Enum* enumObject) const {
+		return this == enumObject;
+	}
 
 };
