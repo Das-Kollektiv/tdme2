@@ -63,7 +63,7 @@ else ifeq ($(OS), FreeBSD)
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
 		EXTRAFLAGS := -DGLFW3
 		#FreeBSD, GL
@@ -75,7 +75,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
