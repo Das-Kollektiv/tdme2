@@ -1,8 +1,6 @@
 #!/bin/sh
-tail -n +6 ../README.md > README.md
 rm -rf public
 doxygen doxygen.public.config
-rm README.md
 cd public
 cd html
 find . > ../public.filelist.txt

@@ -2,7 +2,8 @@
 [![NIX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/nix.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
 [![MacOSX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/macosx.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
 [![Windows/MINGW Build Status](https://github.com/andreasdr/tdme2/actions/workflows/windows-mingw.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)  
+  
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. What is TDME2?
