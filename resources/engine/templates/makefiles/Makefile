@@ -28,11 +28,11 @@ else ifeq ($(OS), FreeBSD)
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN
-		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread
+		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
 		# FreeBSD, GL
 		EXTRAFLAGS := -DGLFW3
-		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread
+		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	endif
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	OFLAGS := -O2
