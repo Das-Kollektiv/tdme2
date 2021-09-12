@@ -14,8 +14,12 @@
 - Make it complete! It should be possible to create a number of game types or app types with it without really or only adjusting the engine very little
 - Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating 3D games/applications! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
 
-# 2. Other information
-## 2.1. Links
+# 2. Who is this 3D engine for?
+- Small developer studios that want/insist on having/need a complete and light free open source 3d engine that they can build upon, improve and such and adapt for their needs
+- Anyone who wants to do 3D game/app prototyping
+
+# 3. Other information
+## 3.1. Links
 - TDME2 Philosophy, see [README-Philosophy.md](./README-Philosophy.md)
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
