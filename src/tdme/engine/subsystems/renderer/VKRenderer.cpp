@@ -6733,12 +6733,12 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, instances);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, ID_NONE, instances);
 }
 
 void VKRenderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, 1);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, ID_NONE, 1);
 }
 
 void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
