@@ -11,12 +11,12 @@
     - A game designer should be able to script game content without needing to have a full C++ education
     - A programmer should program mostly
 - Keep it portable, so the engine should also be able to run on a toaster :smile: (sorry, I used to love NetBSD)
-- Make it complete! It should be possible to create a number of game types or app types with it without really or only adjusting the engine very little
-- Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating 3D games/applications! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
+- Make it complete! It should be possible to create a number of app types or game types with it without really or only adjusting the engine very little
+- Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating 3D apps/games! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
 
 # 2. Who is this 3D engine for?
 - Small developer studios that want/insist on having/need a complete and light free open source 3d engine that they can build upon, improve and such and adapt for their needs
-- Anyone who wants to do 3D game/app prototyping
+- Anyone who wants to do 3D apps/games prototyping
 
 # 3. Other information
 ## 3.1. Links
