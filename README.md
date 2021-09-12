@@ -246,6 +246,8 @@
 - PBR lighting shader for GL3/CORE+, Vulkan
 - Add nmake support to makefile generator for TDME2 based projects
 - Improve on Vulkan
+- Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
+- Editor: Code editing with code completion, also visual editing is planned!
 - Expose shader and post processing programs setup API
 - Some UI elements need some default skinning fixes
 - A release plan
