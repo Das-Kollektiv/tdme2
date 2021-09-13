@@ -375,6 +375,19 @@ void GUIDropDownController::setValue(const MutableString& value)
 }
 
 void GUIDropDownController::onSubTreeChange() {
+	unselect();
 	determineDropDownOptionControllers();
 	selectedDropDownOptionControllerIdx = -1;
+	auto i = 0;
+	for (auto dropDownOptionController: dropDownOptionControllers) {
+		auto dropDownOptionNode = required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode());
+		if (dropDownOptionNode->isSelected() == true) {
+			selectedDropDownOptionControllerIdx = i;
+			break;
+		}
+		i++;
+	}
+	if (selectedDropDownOptionControllerIdx != -1) {
+		select(selectedDropDownOptionControllerIdx);
+	}
 }

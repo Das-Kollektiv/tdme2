@@ -180,11 +180,11 @@
 						<layout id="dropdown_panel" horizontal-align="center" alignment="vertical" width="80%">
 							<dropdown name="dropdown" text="Click me and select a drop down option">
 								<scrollarea id="sadd" width="100%" height="80">
-									<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" selected="true"/>
+									<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" />
 									<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
 									<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
 									<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" disabled="true" />
-									<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" />
+									<dropdown-option text="Option E" value="5" on-mouse-click="dropdownvaluetext.condition=e" selected="true" />
 									<dropdown-option text="Option F" value="6" on-mouse-click="dropdownvaluetext.condition=f" />
 									<dropdown-option text="Option G" value="7" on-mouse-click="dropdownvaluetext.condition=g" />
 									<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
@@ -192,7 +192,7 @@
 							</dropdown>
 							<space height="20" />
 							<dropdown name="dropdown2" text="Click me and select a drop down option">
-								<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" selected="true"/>
+								<dropdown-option text="Option A" value="1" on-mouse-click="dropdownvaluetext.condition=a" />
 								<dropdown-option text="Option B" value="2" on-mouse-click="dropdownvaluetext.condition=b" />
 								<dropdown-option text="Option C" value="3" on-mouse-click="dropdownvaluetext.condition=c" />
 								<dropdown-option text="Option D" value="4" on-mouse-click="dropdownvaluetext.condition=d" />
