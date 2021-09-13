@@ -308,6 +308,18 @@ protected:
 		return conditionsMet == true || haveActiveOutEffect() == true;
 	}
 
+	/**
+	 * Scroll to node X
+	 * @param toNode stop at node to node
+	 */
+	virtual void _scrollToNodeX(GUIParentNode* toNode = nullptr);
+
+	/**
+	 * Scroll to node Y
+	 * @param toNode stop at node to node
+	 */
+	virtual void _scrollToNodeY(GUIParentNode* toNode = nullptr);
+
 public:
 	/**
 	 * @return scren node
@@ -533,25 +545,15 @@ public:
 
 	/**
 	 * Scroll to node Y
-	 */
-	virtual void scrollToNodeY();
-
-	/**
-	 * Scroll to node Y
 	 * @param toNode stop at node to node
 	 */
-	virtual void scrollToNodeY(GUIParentNode* toNode);
-
-	/**
-	 * Scroll to node X
-	 */
-	virtual void scrollToNodeX();
+	virtual void scrollToNodeY(GUIParentNode* toNode = nullptr);
 
 	/**
 	 * Scroll to node X
 	 * @param toNode stop at node to node
 	 */
-	virtual void scrollToNodeX(GUIParentNode* toNode);
+	virtual void scrollToNodeX(GUIParentNode* toNode = nullptr);
 
 	/**
 	 * Set background image

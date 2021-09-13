@@ -710,6 +710,7 @@ void GUI::handleEvents()
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
 		screen->invalidateLayouts();
+		screen->scrollToNodes();
 	}
 }
 

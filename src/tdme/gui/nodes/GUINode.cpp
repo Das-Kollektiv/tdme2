@@ -1080,36 +1080,7 @@ void GUINode::setController(GUINodeController* controller)
 	this->controller = controller;
 }
 
-void GUINode::scrollToNodeY()
-{
-	scrollToNodeY(nullptr);
-}
-
-void GUINode::scrollToNodeY(GUIParentNode* toNode)
-{
-	if (layouted == false) return;
-	auto scrollYParentNode = this->parentNode;
-	while (true == true) {
-		if (scrollYParentNode == toNode || scrollYParentNode == nullptr) return;
-		if (scrollYParentNode->overflowY == GUIParentNode_Overflow::SCROLL) break;
-		scrollYParentNode = scrollYParentNode->parentNode;
-		if (scrollYParentNode == nullptr) return;
-	}
-	if (computedConstraints.top < scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top) {
-		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top - scrollYParentNode->computedConstraints.top);
-	}
-	if (computedConstraints.top + computedConstraints.height > scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top + scrollYParentNode->computedConstraints.height) {
-		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top + computedConstraints.height - scrollYParentNode->computedConstraints.top - scrollYParentNode->computedConstraints.height);
-	}
-	scrollYParentNode->scrollToNodeY(toNode);
-}
-
-void GUINode::scrollToNodeX()
-{
-	scrollToNodeX(nullptr);
-}
-
-void GUINode::scrollToNodeX(GUIParentNode* toNode)
+void GUINode::_scrollToNodeX(GUIParentNode* toNode)
 {
 	if (layouted == false) return;
 	auto scrollXParentNode = this->parentNode;
@@ -1128,7 +1099,36 @@ void GUINode::scrollToNodeX(GUIParentNode* toNode)
 	if (computedConstraints.left + computedConstraints.width > scrollXParentNode->getChildrenRenderOffsetX() + scrollXParentNode->computedConstraints.left + scrollXParentNode->computedConstraints.width) {
 		scrollXParentNode->setChildrenRenderOffsetX(computedConstraints.left + computedConstraints.width - scrollXParentNode->computedConstraints.left - scrollXParentNode->computedConstraints.width);
 	}
-	scrollXParentNode->scrollToNodeX(toNode);
+	scrollXParentNode->_scrollToNodeX(toNode);
+}
+
+void GUINode::_scrollToNodeY(GUIParentNode* toNode)
+{
+	if (layouted == false) return;
+	auto scrollYParentNode = this->parentNode;
+	while (true == true) {
+		if (scrollYParentNode == toNode || scrollYParentNode == nullptr) return;
+		if (scrollYParentNode->overflowY == GUIParentNode_Overflow::SCROLL) break;
+		scrollYParentNode = scrollYParentNode->parentNode;
+		if (scrollYParentNode == nullptr) return;
+	}
+	if (computedConstraints.top < scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top) {
+		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top - scrollYParentNode->computedConstraints.top);
+	}
+	if (computedConstraints.top + computedConstraints.height > scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top + scrollYParentNode->computedConstraints.height) {
+		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top + computedConstraints.height - scrollYParentNode->computedConstraints.top - scrollYParentNode->computedConstraints.height);
+	}
+	scrollYParentNode->_scrollToNodeY(toNode);
+}
+
+void GUINode::scrollToNodeX(GUIParentNode* toNode)
+{
+	screenNode->scrollToNodeX(getId(), toNode != nullptr?toNode->getId():string());
+}
+
+void GUINode::scrollToNodeY(GUIParentNode* toNode)
+{
+	screenNode->scrollToNodeY(getId(), toNode != nullptr?toNode->getId():string());
 }
 
 void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {

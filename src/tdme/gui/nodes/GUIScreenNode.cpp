@@ -277,6 +277,21 @@ void GUIScreenNode::forceLayout(GUINode* node)
 	}
 }
 
+void GUIScreenNode::scrollToNodes() {
+	for (auto& scrollToNodeX: scrollToNodesX) {
+		auto node = getNodeById(scrollToNodeX.node);
+		auto toNode = scrollToNodeX.toNode.empty() == true?nullptr:required_dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeX.toNode));
+		if (node != nullptr) node->_scrollToNodeX(toNode);
+	}
+	scrollToNodesX.clear();
+	for (auto& scrollToNodeY: scrollToNodesY) {
+		auto node = getNodeById(scrollToNodeY.node);
+		auto toNode = scrollToNodeY.toNode.empty() == true?nullptr:required_dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeY.toNode));
+		if (node != nullptr) node->_scrollToNodeY(toNode);
+	}
+	scrollToNodesY.clear();
+}
+
 void GUIScreenNode::setScreenSize(int width, int height)
 {
 	this->screenWidth = width;

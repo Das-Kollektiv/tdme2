@@ -41,7 +41,7 @@ private:
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
 	bool open;
 	bool disabled;
-	GUIParentNode* dropDownNode { nullptr };
+	GUIParentNode* dropDownContainerNode { nullptr };
 	GUIElementNode* arrowNode { nullptr };
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
