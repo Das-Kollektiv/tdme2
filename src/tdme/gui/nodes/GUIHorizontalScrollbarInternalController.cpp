@@ -63,7 +63,7 @@ float GUIHorizontalScrollbarInternalController::getBarWidth()
 	auto barWidthRelative = (elementWidth / contentWidth);
 	if (barWidthRelative > 1.0f) barWidthRelative = 1.0f;
 	float barWidth = (node->computedConstraints.width - node->border.left - node->border.right) * barWidthRelative;
-	if (barWidth < 5.0f) barWidth = 5.0f;
+	if (barWidth < 20.0f) barWidth = 20.0f;
 	return barWidth;
 }
 

@@ -63,7 +63,7 @@ float GUIVerticalScrollbarInternalController::getBarHeight()
 	auto barHeightRelative = (elementHeight / contentHeight);
 	if (barHeightRelative > 1.0f) barHeightRelative = 1.0f;
 	float barHeight = (node->computedConstraints.height - node->border.top - node->border.bottom) * barHeightRelative;
-	if (barHeight < 5.0f) barHeight = 5.0f;
+	if (barHeight < 20.0f) barHeight = 20.0f;
 	return barHeight;
 }
 
