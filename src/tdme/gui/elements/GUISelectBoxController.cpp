@@ -1,6 +1,7 @@
 #include <tdme/gui/elements/GUISelectBoxController.h>
 
 #include <algorithm>
+#include <unordered_set>
 
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
@@ -14,9 +15,12 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
+
 using std::count;
+using std::unordered_set;
 
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::elements::GUISelectBoxOptionController;
@@ -31,6 +35,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
 string GUISelectBoxController::CONDITION_DISABLED = "disabled";
@@ -453,13 +458,11 @@ void GUISelectBoxController::setValue(const MutableString& value)
 {
 	unfocus();
 	determineAllOptions();
-	for (auto selectBoxOptionController: selectBoxOptionControllers) {
-		selectBoxOptionController->unselect();
-		selectBoxOptionController->unfocus();
-	}
-	auto _value = value;
-	if (count(value.getString().begin(), value.getString().end(), '|') == 0) {
-		_value = "|" + value.getString() + "|";
+	unordered_set<string> valueSet;
+	StringTokenizer valueTokenizer;
+	valueTokenizer.tokenize(value.getString(), "|");
+	while (valueTokenizer.hasMoreTokens()) {
+		valueSet.insert(valueTokenizer.nextToken());
 	}
 	MutableString searchValue;
 	GUISelectBoxOptionController* selectBoxOptionNodeControllerLast = nullptr;
@@ -467,16 +470,13 @@ void GUISelectBoxController::setValue(const MutableString& value)
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {
 		auto selectBoxOptionController = selectBoxOptionControllers[i];
 		auto selectBoxOptionNode = required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode());
-		searchValue.reset();
-		if (multipleSelection == true) searchValue.append(VALUE_DELIMITER);
-		searchValue.append(selectBoxOptionNode->getValue());
-		if (multipleSelection == true) searchValue.append(VALUE_DELIMITER);
-		if (multipleSelection == true) {
-			if (_value.indexOf(searchValue) != -1 || (multipleSelection == false && _value.equals(searchValue) == true)) {
-				selectBoxOptionController->expandHierarchy();
-				if (multipleSelection == true) toggle(i);
-				selectBoxOptionNodeControllerLast = selectBoxOptionController;
-			}
+		auto optionValue = selectBoxOptionNode->getValue();
+		if (selectBoxOptionController->isSelected() == true) selectBoxOptionController->unselect();
+		if (selectBoxOptionController->isFocussed() == true) selectBoxOptionController->unfocus();
+		if (valueSet.find(optionValue) != valueSet.end()) {
+			selectBoxOptionController->expandHierarchy();
+			if (multipleSelection == true) toggle(i);
+			selectBoxOptionNodeControllerLast = selectBoxOptionController;
 		}
 	}
 	determineExpandedOptions();
@@ -493,12 +493,16 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		focus(0);
 		selectBoxOptionNode->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
 		selectBoxOptionNode->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-		_value.set("|" + required_dynamic_cast<GUIElementNode*>(selectBoxOptionController->getNode())->getValue() + "|");
 	}
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
 	node->getScreenNode()->layout(node);
 	//
-	this->value = _value;
+	this->value.reset();
+	for (auto& valueSetValue: valueSet) {
+		this->value.append(VALUE_DELIMITER);
+		this->value.append(valueSetValue);
+	}
+	if (valueSet.empty() == false) this->value.append(VALUE_DELIMITER);
 }
 
 void GUISelectBoxController::onSubTreeChange() {

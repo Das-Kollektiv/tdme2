@@ -54,7 +54,9 @@ private:
 	/**
 	 * @return is selected
 	 */
-	bool isSelected();
+	inline bool isSelected() {
+		return selected;
+	}
 
 	/**
 	 * Select
@@ -74,7 +76,9 @@ private:
 	/**
 	 * @return is focussed
 	 */
-	bool isFocussed();
+	inline bool isFocussed() {
+		return focussed;
+	}
 
 	/**
 	 * Focus

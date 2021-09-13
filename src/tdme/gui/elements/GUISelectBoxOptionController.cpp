@@ -47,11 +47,6 @@ void GUISelectBoxOptionController::setDisabled(bool disabled)
 	GUIElementController::setDisabled(disabled);
 }
 
-bool GUISelectBoxOptionController::isSelected()
-{
-	return selected;
-}
-
 void GUISelectBoxOptionController::select()
 {
 	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
@@ -83,11 +78,6 @@ void GUISelectBoxOptionController::toggle()
 	} else {
 		select();
 	}
-}
-
-bool GUISelectBoxOptionController::isFocussed()
-{
-	return focussed;
 }
 
 void GUISelectBoxOptionController::focus()
