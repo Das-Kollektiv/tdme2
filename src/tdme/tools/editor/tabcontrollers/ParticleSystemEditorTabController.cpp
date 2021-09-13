@@ -30,6 +30,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
@@ -84,6 +85,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
@@ -1469,8 +1471,8 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto pps = particleSystem->getPointParticleSystem();
 			pps->setPointSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_size"))->getController()->getValue().getString()));
 			pps->setMaxPoints(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_maxcount"))->getController()->getValue().getString()));
-			pps->setTextureHorizontalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->getValue().getString()));
-			pps->setTextureVerticalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_vertical_sprites"))->getController()->getValue().getString()));
+			pps->setTextureHorizontalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->getValue().getString())));
+			pps->setTextureVerticalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_vertical_sprites"))->getController()->getValue().getString())));
 			pps->setTextureSpritesFPS(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_fps"))->getController()->getValue().getString()));
 			pps->setAutoEmit(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_autoemit"))->getController()->getValue().getString() == "1");
 		} else
@@ -1478,8 +1480,8 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto fps = particleSystem->getFogParticleSystem();
 			fps->setPointSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_size"))->getController()->getValue().getString()));
 			fps->setMaxPoints(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_maxcount"))->getController()->getValue().getString()));
-			fps->setTextureHorizontalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_horizontal_sprites"))->getController()->getValue().getString()));
-			fps->setTextureVerticalSprites(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_vertical_sprites"))->getController()->getValue().getString()));
+			fps->setTextureHorizontalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_horizontal_sprites"))->getController()->getValue().getString())));
+			fps->setTextureVerticalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_vertical_sprites"))->getController()->getValue().getString())));
 			fps->setTextureSpritesFPS(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_fps"))->getController()->getValue().getString()));
 		}
 
