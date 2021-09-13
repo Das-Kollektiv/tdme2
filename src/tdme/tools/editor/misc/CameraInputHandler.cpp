@@ -201,13 +201,16 @@ void CameraInputHandler::handleInputEvents() {
 	}
 
 	//
+	if (engine->getTiming()->getDeltaTime() <= 0LL) return;
+
+	//
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 sideVector(1.0f, 0.0f, 0.0f);
 	auto forwardVectorTransformed = camLookRotationX.getQuaternion().multiply(forwardVector);
 	forwardVectorTransformed = camLookRotationY.getQuaternion().multiply(forwardVectorTransformed);
 	auto camLookAtToFromVector = forwardVectorTransformed.clone().scale(camScale * 10.0f);
-	auto camForwardVector = camLookRotationY.getQuaternion().multiply(forwardVector).scale(engine->getTiming()->getDeltaTime() / 1000.0f * 60.0f);
-	auto camSideVector = camLookRotationY.getQuaternion().multiply(sideVector).scale(engine->getTiming()->getDeltaTime() / 1000.0f * 60.0f);
+	auto camForwardVector = camLookRotationY.getQuaternion().multiply(forwardVector).scale(engine->getTiming()->getDeltaTime() * 60.0f / 1000.0f);
+	auto camSideVector = camLookRotationY.getQuaternion().multiply(sideVector).scale(engine->getTiming()->getDeltaTime() * 60.0f / 1000.0f);
 
 	auto camLookAt = cam->getLookAt();
 	if (keyUp == true) camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(0.1f));
@@ -215,12 +218,12 @@ void CameraInputHandler::handleInputEvents() {
 	if (keyLeft == true) camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(0.1f));
 	if (keyRight == true) camLookAt.add(forwardVectorTransformed.set(camSideVector).scale(0.1f));
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
+		camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(mousePanningForward / 15.0f));
 		mousePanningForward = MOUSE_PANNING_NONE;
 		if (eventHandler != nullptr) eventHandler->onCameraTranslation();
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
+		camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(mousePanningSide / 15.0f));
 		mousePanningSide = MOUSE_PANNING_NONE;
 		if (eventHandler != nullptr) eventHandler->onCameraTranslation();
 	}
