@@ -37,6 +37,7 @@ private:
 	GUIParentNode* dropDownNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
+	bool hidden;
 	MutableString value;
 
 	/**
@@ -48,7 +49,9 @@ private:
 	/**
 	 * @return is selected
 	 */
-	bool isSelected();
+	inline bool isSelected() {
+		return selected;
+	}
 
 	/**
 	 * Select
@@ -66,6 +69,13 @@ private:
 	 * @return search did match
 	 */
 	bool search(const string& value);
+
+	/**
+	 * @return hidden
+	 */
+	inline bool isHidden() {
+		return hidden;
+	}
 
 public:
 	// overridden methods

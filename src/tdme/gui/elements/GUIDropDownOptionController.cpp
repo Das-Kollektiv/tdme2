@@ -41,11 +41,7 @@ GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node)
 {
 	this->initialPostLayout = true;
 	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
-}
-
-bool GUIDropDownOptionController::isSelected()
-{
-	return selected;
+	this->hidden = false;
 }
 
 void GUIDropDownOptionController::setDisabled(bool disabled)
@@ -79,15 +75,18 @@ bool GUIDropDownOptionController::search(const string& value) {
 	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	if (value.empty() == true) {
 		nodeConditions.remove(CONDITION_HIDDEN);
+		hidden = false;
 		return true;
 	}
 	auto dropDownOptionTextNode = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
 	auto nodeTextLowerCase = StringTools::toLowerCase(dropDownOptionTextNode->getText().getString());
 	if (nodeTextLowerCase.find(value) == string::npos) {
 		nodeConditions.add(CONDITION_HIDDEN);
+		hidden = true;
 		return false;
 	} else {
 		nodeConditions.remove(CONDITION_HIDDEN);
+		hidden = false;
 		return true;
 	}
 }

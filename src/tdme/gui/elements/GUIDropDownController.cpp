@@ -157,7 +157,8 @@ void GUIDropDownController::selectNext()
 	auto disabledCount = 0;
 	while (disabledCount < dropDownOptionControllers.size()) {
 		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx + 1) % dropDownOptionControllers.size();
-		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false &&
+			dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isHidden() == false) break;
 		disabledCount++;
 	}
 	if (disabledCount == dropDownOptionControllers.size()) {
@@ -183,7 +184,8 @@ void GUIDropDownController::selectPrevious()
 		selectedDropDownOptionControllerIdx = (selectedDropDownOptionControllerIdx - 1) % dropDownOptionControllers.size();
 		if (selectedDropDownOptionControllerIdx < 0)
 			selectedDropDownOptionControllerIdx += dropDownOptionControllers.size();
-		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false) break;
+		if (dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isDisabled() == false &&
+			dropDownOptionControllers[selectedDropDownOptionControllerIdx]->isHidden() == false) break;
 		disabledCount++;
 	}
 	if (disabledCount == dropDownOptionControllers.size()) {
