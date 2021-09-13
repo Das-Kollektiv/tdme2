@@ -908,6 +908,9 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	auto pasteEntitiesMinX = Float::MAX_VALUE;
 	auto pasteEntitiesMinZ = Float::MAX_VALUE;
 	auto pasteEntitiesMinY = Float::MAX_VALUE;
+	auto pasteEntitiesMaxX = Float::MIN_VALUE;
+	auto pasteEntitiesMaxZ = Float::MIN_VALUE;
+	auto pasteEntitiesMaxY = Float::MIN_VALUE;
 	for (auto copiedEntity: copiedEntities) {
 		auto entity = engine->getEntity(copiedEntity->getId());
 		if (entity == nullptr) continue;
@@ -917,7 +920,13 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		if (entityBBMinXYZ[0] < pasteEntitiesMinX) pasteEntitiesMinX = entityBBMinXYZ[0];
 		if (entityBBMinXYZ[1] < pasteEntitiesMinY) pasteEntitiesMinY = entityBBMinXYZ[1];
 		if (entityBBMinXYZ[2] < pasteEntitiesMinZ) pasteEntitiesMinZ = entityBBMinXYZ[2];
+		auto& entityBBMaxXYZ = cbv.getMax().getArray();
+		if (entityBBMaxXYZ[0] > pasteEntitiesMaxX) pasteEntitiesMaxX = entityBBMaxXYZ[0];
+		if (entityBBMaxXYZ[1] > pasteEntitiesMaxY) pasteEntitiesMaxY = entityBBMaxXYZ[1];
+		if (entityBBMaxXYZ[2] > pasteEntitiesMaxZ) pasteEntitiesMaxZ = entityBBMaxXYZ[2];
 	}
+	auto centerX = (pasteEntitiesMaxX - pasteEntitiesMinX) / 2.0f;
+	auto centerZ = (pasteEntitiesMaxZ - pasteEntitiesMinZ) / 2.0f;
 	auto pasteEntitiesIdx = 0;
 	vector<string> entitiesToSelect;
 	for (auto copiedEntity: copiedEntities) {
@@ -929,9 +938,9 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		auto entityDiffZ = copiedEntity->getTransformations().getTranslation().getZ() - pasteEntitiesMinZ;
 		sceneEntityTransformations.setTranslation(
 			Vector3(
-				placeEntityTranslation.getX() + entityDiffX,
+				placeEntityTranslation.getX() + entityDiffX - centerX,
 				placeEntityTranslation.getY() + entityDiffY,
-				placeEntityTranslation.getZ() + entityDiffZ
+				placeEntityTranslation.getZ() + entityDiffZ - centerZ
 			)
 		);
 		sceneEntityTransformations.update();
