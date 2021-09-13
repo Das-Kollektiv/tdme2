@@ -1310,7 +1310,10 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		//
 		tabView->initialize();
 		//
-		required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
+		// TODO: move me into GUIFrameBufferNode
+		#if !defined(VULKAN)
+			required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
+		#endif
 		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));

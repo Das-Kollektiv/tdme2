@@ -5927,7 +5927,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	buffer->current_buffer = reusableBuffer;
 
 	// clean up
-	/*
 	vector<int> buffersToRemove;
 	if (buffer->buffer_count > 1 && frame >= buffer->frame_cleaned_last + 60) {
 		int i = 0;
@@ -5948,7 +5947,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		}
 		buffer->frame_cleaned_last = frame;
 	}
-	*/
 
 	//
 	buffer->uploading = false;
