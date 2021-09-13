@@ -35,6 +35,7 @@ private:
 	static string CONDITION_UNSELECTED;
 	static string CONDITION_HIDDEN;
 	GUIParentNode* dropDownNode { nullptr };
+	GUIParentNode* dropDownContainerNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
 	bool hidden;

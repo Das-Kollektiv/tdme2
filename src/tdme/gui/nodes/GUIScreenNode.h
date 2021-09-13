@@ -13,9 +13,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/RTTI.h>
 
 using std::string;
 using std::to_string;
@@ -48,9 +46,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 using tdme::utilities::MutableString;
-using tdme::utilities::RTTI;
 
 /**
  * GUI screen node that represents a screen that can be rendered via GUI system
@@ -200,8 +196,6 @@ public:
 	 * @param toNode to node
 	 */
 	inline void scrollToNodeY(const string& node, const string& toNode) {
-		Console::println("GUIScreenNode::scrollToNodeY(): " + node + " / " + toNode);
-		Console::println(RTTI::backtrace());
 		scrollToNodesY.push_back(
 			{
 				.node = node,

@@ -223,17 +223,17 @@ void GUIDropDownController::doSearch() {
 	auto dropDownTextNodeDisabled = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text_disabled"));
 	dropDownTextNodeDisabled->setText(search.empty() == false?MutableString(search):MutableString(selectedDropDownOptionText));
 	if (dropDownOptionControllers.size() > 0) {
-		auto firstVisibleDropDown = -1;
+		auto scrollToDropDownOption = -1;
 		auto searchLowerCase = StringTools::toLowerCase(search);
 		auto i = 0;
 		for (auto dropDownOptionController: dropDownOptionControllers) {
 			auto match = dropDownOptionController->search(searchLowerCase);
-			if (firstVisibleDropDown == -1 && match == true) firstVisibleDropDown = i;
+			if (match == true && (scrollToDropDownOption == -1 || i == lastSelectedDropDownOptionControllerIdx)) scrollToDropDownOption = i;
 			i++;
 		}
-		if (firstVisibleDropDown != -1) {
-			dropDownOptionControllers[firstVisibleDropDown]->getNode()->scrollToNodeX(dropDownContainerNode);
-			dropDownOptionControllers[firstVisibleDropDown]->getNode()->scrollToNodeY(dropDownContainerNode);
+		if (scrollToDropDownOption != -1) {
+			dropDownOptionControllers[scrollToDropDownOption]->getNode()->scrollToNodeX(dropDownContainerNode);
+			dropDownOptionControllers[scrollToDropDownOption]->getNode()->scrollToNodeY(dropDownContainerNode);
 		}
 	}
 }
@@ -330,7 +330,6 @@ void GUIDropDownController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				}
 			}
 		}
-		doSearch();
 	}
 }
 

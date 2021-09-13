@@ -101,6 +101,7 @@ void GUIDropDownOptionController::initialize()
 		}
 		dropDownNode = dropDownNode->getParentControllerNode();
 	}
+	dropDownContainerNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getInnerNodeById(dropDownNode->getId()));
 	if (selected == true) {
 		required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->select(required_dynamic_cast<GUIElementNode*>(this->node));
 	} else {
@@ -115,8 +116,8 @@ void GUIDropDownOptionController::postLayout()
 {
 	if (initialPostLayout != true) return;
 	if (selected == true) {
-		node->scrollToNodeX(dropDownNode);
-		node->scrollToNodeY(dropDownNode);
+		node->scrollToNodeX(dropDownContainerNode);
+		node->scrollToNodeY(dropDownContainerNode);
 	}
 	initialPostLayout = false;
 }
