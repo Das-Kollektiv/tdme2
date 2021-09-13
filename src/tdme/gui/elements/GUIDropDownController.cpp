@@ -272,8 +272,9 @@ void GUIDropDownController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			#else
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 			#endif
-				search+= event->getKeyChar();
 				if (isOpen() == false) toggleOpenState();
+				search+= event->getKeyChar();
+				doSearch();
 			}
 		} else {
 			switch (event->getKeyCode()) {
