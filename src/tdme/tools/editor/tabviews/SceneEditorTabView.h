@@ -278,8 +278,9 @@ public:
 
 	/**
 	 * Finish place entity mode
+	 * @param cancelled cancelled place entity mode?
 	 */
-	void unsetPlaceEntityMode();
+	void unsetPlaceEntityMode(bool cancelled);
 
 	/**
 	 * Places selected entity on selected object

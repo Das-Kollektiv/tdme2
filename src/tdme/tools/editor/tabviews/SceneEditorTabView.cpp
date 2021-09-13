@@ -302,7 +302,7 @@ void SceneEditorTabView::handleInputEvents()
 				} else
 				if (placeEntityMode == true && placeEntityValid == true) {
 					placeEntity();
-					if (keyShift == false) unsetPlaceEntityMode();
+					if (keyShift == false) unsetPlaceEntityMode(false);
 				} else {
 					setGizmoMode(GIZMOMODE_NONE);
 				}
@@ -471,7 +471,7 @@ void SceneEditorTabView::display()
 	updateSkyPosition();
 
 	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
-		unsetPlaceEntityMode();
+		unsetPlaceEntityMode(keyEscape == true);
 		unsetPasteMode();
 		keyEscape = false;
 	}
@@ -773,38 +773,39 @@ void SceneEditorTabView::copyEntities()
 }
 
 void SceneEditorTabView::setPlaceEntityMode(Prototype* prototype) {
-	sceneEditorTabController->unselectEntities();
 	unselectEntities();
 	selectedPrototype = prototype;
 	placeEntityMode = true;
 	placeEntityValid = false;
 }
 
-void SceneEditorTabView::unsetPlaceEntityMode() {
+void SceneEditorTabView::unsetPlaceEntityMode(bool cancelled) {
 	placeEntityMode = false;
 	placeEntityValid = false;
 	selectedPrototype = nullptr;
 	engine->removeEntity("tdme.sceneeditor.placeentity");
 	//
-	class ReloadOutlinerWithNewSelectionAction: public Action {
-	public:
-		void performAction() override {
-			sceneEditorTabView->reloadOutliner();
-			// select selected entities
-			sceneEditorTabView->sceneEditorTabController->unselectEntities();
-			for (auto& entityId: entitiesToSelect) {
-				sceneEditorTabView->sceneEditorTabController->selectEntity(entityId);
+	if (cancelled == false || selectedEntityIds.empty() == false) {
+		class ReloadOutlinerWithNewSelectionAction: public Action {
+		public:
+			void performAction() override {
+				sceneEditorTabView->reloadOutliner();
+				// select selected entities
+				sceneEditorTabView->sceneEditorTabController->unselectEntities();
+				for (auto& entityId: entitiesToSelect) {
+					sceneEditorTabView->sceneEditorTabController->selectEntity(entityId);
+				}
+				sceneEditorTabView->selectEntities(entitiesToSelect);
 			}
-			sceneEditorTabView->selectEntities(entitiesToSelect);
-		}
-		ReloadOutlinerWithNewSelectionAction(SceneEditorTabView* sceneEditorTabView, const vector<string>& entitiesToSelect): sceneEditorTabView(sceneEditorTabView), entitiesToSelect(entitiesToSelect) {
+			ReloadOutlinerWithNewSelectionAction(SceneEditorTabView* sceneEditorTabView, const vector<string>& entitiesToSelect): sceneEditorTabView(sceneEditorTabView), entitiesToSelect(entitiesToSelect) {
 
-		}
-	private:
-		SceneEditorTabView* sceneEditorTabView;
-		vector<string> entitiesToSelect;
-	};
-	Engine::getInstance()->enqueueAction(new ReloadOutlinerWithNewSelectionAction(this, selectedEntityIds));
+			}
+		private:
+			SceneEditorTabView* sceneEditorTabView;
+			vector<string> entitiesToSelect;
+		};
+		Engine::getInstance()->enqueueAction(new ReloadOutlinerWithNewSelectionAction(this, selectedEntityIds));
+	}
 }
 
 void SceneEditorTabView::placeEntity()
