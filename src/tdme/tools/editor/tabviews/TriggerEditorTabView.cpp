@@ -50,7 +50,7 @@ TriggerEditorTabView::TriggerEditorTabView(EditorView* editorView, const string&
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 

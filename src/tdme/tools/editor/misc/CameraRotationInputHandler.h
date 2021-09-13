@@ -35,8 +35,8 @@ private:
 	bool keyR;
 	int mouseLastX;
 	int mouseLastY;
-	float maxAxisDimension;
 	Transformations lookFromRotations;
+	float defaultScale;
 	float scale;
 	bool resetRequested;
 	BoundingBox boundingBoxTransformed;
@@ -56,31 +56,39 @@ public:
 	~CameraRotationInputHandler();
 
 	/**
-	 * @return max dimension on one of x,y,z axis
-	 */
-	float getMaxAxisDimension();
-
-	/**
-	 * Set max dimension on one of x,y,z axis
-	 * @param maxAxisDimension max axis dimension
-	 */
-	void setMaxAxisDimension(float maxAxisDimension);
-
-	/**
 	 * @return look from rotation
 	 */
 	const Transformations& getLookFromRotations();
 
 	/**
+	 * @return default scale
+	 */
+	inline float getDefaultScale() {
+		return defaultScale;
+	}
+
+	/**
+	 * Set default scale
+	 * @param scale default scale
+	 */
+	inline void setDefaultScale(float defaultScale) {
+		this->defaultScale = defaultScale;
+	}
+
+	/**
 	 * @return scale
 	 */
-	float getScale();
+	inline float getScale() {
+		return scale;
+	}
 
 	/**
 	 * Set scale
 	 * @param scale scale
 	 */
-	void setScale(float scale);
+	inline void setScale(float scale) {
+		this->scale = scale;
+	}
 
 	/**
 	 * Reset

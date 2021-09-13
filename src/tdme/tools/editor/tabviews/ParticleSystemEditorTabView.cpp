@@ -322,7 +322,7 @@ void ParticleSystemEditorTabView::stopSound() {
 }
 
 void ParticleSystemEditorTabView::initParticleSystem() {
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
 }
 
 void ParticleSystemEditorTabView::uninitParticleSystem() {

@@ -232,9 +232,11 @@ void PrototypePhysicsSubView::display(Prototype* prototype) {
 	if (prototype == nullptr) return;
 
 	auto bvsEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("tdme.prototype.bvs"));
-	for (auto i = 0; i < bvsEntityHierarchy->getEntities().size(); i++) {
-		auto modelBoundingVolume = bvsEntityHierarchy->getEntity("tdme.prototype.bv." + to_string(i));
-		if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+	if (bvsEntityHierarchy != nullptr) {
+		for (auto i = 0; i < bvsEntityHierarchy->getEntities().size(); i++) {
+			auto modelBoundingVolume = bvsEntityHierarchy->getEntity("tdme.prototype.bv." + to_string(i));
+			if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+		}
 	}
 	auto modelBoundingVolume = engine->getEntity("tdme.prototype.bv.editing");
 	if (modelBoundingVolume != nullptr) {

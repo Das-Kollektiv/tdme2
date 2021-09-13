@@ -43,7 +43,7 @@ EmptyEditorTabView::EmptyEditorTabView(EditorView* editorView, const string& tab
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	Vector3 objectScale;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 

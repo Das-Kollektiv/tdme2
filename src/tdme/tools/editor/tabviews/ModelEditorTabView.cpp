@@ -42,6 +42,7 @@
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/views/PlayableSoundView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ModelTools.h>
@@ -89,6 +90,7 @@ using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::PlayableSoundView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ModelTools;
@@ -109,9 +111,6 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	prototypeDisplayView = nullptr;
 	prototypePhysicsView = nullptr;
 	prototypeSoundsView = nullptr;
-	loadModelRequested = false;
-	initModelRequested = false;
-	initModelRequestedReset = false;
 	prototypeFileName = "";
 	lodLevel = 1;
 	audioStarted = -1LL;
@@ -152,32 +151,72 @@ void ModelEditorTabView::setPrototype(Prototype* prototype)
 	if (this->prototype != nullptr) delete this->prototype;
 	this->prototype = prototype;
 	lodLevel = 1;
-	initModelRequested = true;
-	initModelRequestedReset = false;
+	//
+	class SetPrototypeAction: public Action {
+	private:
+		ModelEditorTabView* modelEditorTabView;
+	public:
+		SetPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
+		virtual void performAction() {
+			modelEditorTabView->initModel(false);
+			modelEditorTabView->modelEditorTabController->setOutlinerContent();
+		}
+	};
+	engine->enqueueAction(new SetPrototypeAction(this));
 }
 
 void ModelEditorTabView::resetPrototype()
 {
 	engine->reset();
-	initModelRequested = true;
-	initModelRequestedReset = true;
+	//
+	class ResetPrototypeAction: public Action {
+	private:
+		ModelEditorTabView* modelEditorTabView;
+	public:
+		ResetPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
+		virtual void performAction() {
+			modelEditorTabView->initModel(true);
+			modelEditorTabView->modelEditorTabController->setOutlinerContent();
+		}
+	};
+	engine->enqueueAction(new ResetPrototypeAction(this));
 }
 
 void ModelEditorTabView::reloadPrototype()
 {
 	engine->reset();
-	initModelRequested = true;
-	initModelRequestedReset = false;
+	//
+	class ReloadPrototypeAction: public Action {
+	private:
+		ModelEditorTabView* modelEditorTabView;
+	public:
+		ReloadPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
+		virtual void performAction() {
+			modelEditorTabView->initModel(true);
+			modelEditorTabView->modelEditorTabController->setOutlinerContent();
+		}
+	};
+	engine->enqueueAction(new ReloadPrototypeAction(this));
 }
 
 void ModelEditorTabView::reimportPrototype()
 {
 	engine->reset();
-	initModelRequested = true;
-	initModelRequestedReset = false;
+	//
+	class ReimportPrototypeAction: public Action {
+	private:
+		ModelEditorTabView* modelEditorTabView;
+	public:
+		ReimportPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
+		virtual void performAction() {
+			modelEditorTabView->initModel(false);
+			modelEditorTabView->modelEditorTabController->setOutlinerContent();
+		}
+	};
+	engine->enqueueAction(new ReimportPrototypeAction(this));
 }
 
-void ModelEditorTabView::initModel()
+void ModelEditorTabView::initModel(bool resetup)
 {
 	if (prototype == nullptr) return;
 	engine->removeEntity("model");
@@ -187,8 +226,7 @@ void ModelEditorTabView::initModel()
 		attachment1Model = nullptr;
 	}
 	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler, 1.5f, resetup);
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
@@ -198,7 +236,6 @@ void ModelEditorTabView::initModel()
 	{
 		modelEditorTabController->unsetStatistics();
 	}
-	if (initModelRequestedReset == true) modelEditorTabController->setOutlinerContent();
 }
 
 const string& ModelEditorTabView::getFileName()
@@ -213,14 +250,13 @@ int ModelEditorTabView::getLODLevel() const {
 void ModelEditorTabView::setLODLevel(int lodLevel) {
 	if (this->lodLevel != lodLevel) {
 		this->lodLevel = lodLevel;
-		engine->reset();
-		initModelRequested = true;
+		reloadPrototype();
 	}
 }
 
 void ModelEditorTabView::updateLODLevel() {
 	engine->reset();
-	initModelRequested = true;
+	reloadPrototype();
 }
 
 void ModelEditorTabView::loadModel(const string& pathName, const string& fileName)
@@ -307,7 +343,21 @@ void ModelEditorTabView::saveFile(const string& pathName, const string& fileName
 
 void ModelEditorTabView::reloadFile()
 {
-	loadModelRequested = true;
+	engine->reset();
+	//
+	class ReloadFileAction: public Action {
+	private:
+		ModelEditorTabView* modelEditorTabView;
+	public:
+		ReloadFileAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView)  {}
+		virtual void performAction() {
+			modelEditorTabView->loadModel();
+			modelEditorTabView->initModel(true);
+			modelEditorTabView->modelEditorTabController->setOutlinerContent();
+		}
+	};
+	engine->enqueueAction(new ReloadFileAction(this));
+
 }
 
 void ModelEditorTabView::pivotApply(float x, float y, float z)
@@ -339,7 +389,7 @@ void ModelEditorTabView::optimizeModel() {
 	if (prototype == nullptr || prototype->getModel() == nullptr) return;
 	engine->removeEntity("model");
 	prototype->setModel(ModelTools::optimizeModel(prototype->unsetModel()));
-	initModelRequested = true;
+	reloadPrototype();
 }
 
 void ModelEditorTabView::handleInputEvents()
@@ -379,21 +429,6 @@ void ModelEditorTabView::display()
 		attachment1->setScale(scale);
 		// finally update
 		attachment1->update();
-	}
-
-	// commands
-	if (loadModelRequested == true) {
-		initModelRequested = true;
-		initModelRequestedReset = false;
-		loadModelRequested = false;
-		loadModel();
-		cameraRotationInputHandler->reset();
-	}
-	if (initModelRequested == true) {
-		initModel();
-		initModelRequested = false;
-		initModelRequestedReset = false;
-		cameraRotationInputHandler->reset();
 	}
 
 	// rendering

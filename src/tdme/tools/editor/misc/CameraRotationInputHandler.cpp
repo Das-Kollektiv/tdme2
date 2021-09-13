@@ -41,7 +41,7 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRot
 	keyMinus = false;
 	keyR = false;
 	mouseDragging = false;
-	maxAxisDimension = 0.0f;
+	defaultScale = 1.0f;
 	scale = 1.0f;
 	lookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	lookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
@@ -55,29 +55,9 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRot
 CameraRotationInputHandler::~CameraRotationInputHandler() {
 }
 
-float CameraRotationInputHandler::getMaxAxisDimension()
-{
-	return maxAxisDimension;
-}
-
-void CameraRotationInputHandler::setMaxAxisDimension(float maxAxisDimension)
-{
-	this->maxAxisDimension = maxAxisDimension;
-}
-
 const Transformations& CameraRotationInputHandler::getLookFromRotations()
 {
 	return lookFromRotations;
-}
-
-float CameraRotationInputHandler::getScale()
-{
-	return scale;
-}
-
-void CameraRotationInputHandler::setScale(float scale)
-{
-	this->scale = scale;
 }
 
 void CameraRotationInputHandler::reset()
@@ -181,7 +161,7 @@ void CameraRotationInputHandler::handleInputEvents()
 	if (keyR == true || resetRequested == true) {
 		rotationY.setAngle(-45.0f);
 		rotationZ.setAngle(0.0f);
-		scale = 1.0f;
+		scale = defaultScale;
 	}
 	if (keyLeft == true ||
 		keyRight == true ||

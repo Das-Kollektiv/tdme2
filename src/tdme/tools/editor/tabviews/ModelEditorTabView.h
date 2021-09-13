@@ -61,9 +61,6 @@ private:
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	PrototypeSoundsSubView* prototypeSoundsView { nullptr };
 	Prototype* prototype { nullptr };
-	bool loadModelRequested;
-	bool initModelRequested;
-	bool initModelRequestedReset;
 	string prototypeFileName;
 	int lodLevel;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
@@ -76,8 +73,9 @@ private:
 
 	/**
 	 * Init model
+	 * @param resetup resetup flag which would mean to leave camera and lighting as is
 	 */
-	void initModel();
+	void initModel(bool resetup);
 
 	/**
 	 * Load settings

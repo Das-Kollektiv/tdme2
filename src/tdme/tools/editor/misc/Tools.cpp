@@ -40,6 +40,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -92,6 +93,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -103,7 +105,6 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
 Engine* Tools::osEngine = nullptr;
-float Tools::oseScale = 0.75f;
 Model* Tools::gizmoAll = nullptr;
 Model* Tools::gizmoTranslationScale = nullptr;
 Model* Tools::gizmoTranslation = nullptr;
@@ -140,7 +141,6 @@ void Tools::oseInit()
 	osEngine = Engine::createOffScreenInstance(128, 128, false, true);
 	osEngine->setPartition(new PartitionNone());
 	setDefaultLight(osEngine->getLightAt(0));
-	oseScale = 0.75f;
 }
 
 void Tools::oseDispose()
@@ -158,7 +158,7 @@ void Tools::oseThumbnail(Prototype* prototype, vector<uint8_t>& pngData)
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupPrototype(prototype, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
+	Tools::setupPrototype(prototype, osEngine, oseLookFromRotations, 1, objectScale, nullptr, 1.0f);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
 	osEngine->makeScreenshot(pngData);
@@ -267,7 +267,7 @@ Model* Tools::createGridModel()
 	return groundPlate;
 }
 
-void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
+void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler, float scale, bool resetup)
 {
 	if (prototype == nullptr) return;
 
@@ -361,8 +361,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
-	if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 5.0f;
-	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
+	if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 1.0f;
 
 	if (modelEntity != nullptr) {
 		modelEntity->setPickable(true);
@@ -386,44 +385,53 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	dynamic_cast<EntityHierarchy*>(engine->getEntity("tdme.prototype.bvs"))->setScale(objectScale);
 	dynamic_cast<EntityHierarchy*>(engine->getEntity("tdme.prototype.bvs"))->update();
 
-	// lights
-	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
-	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
-	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
-	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(
-		Vector4(
-			0.0f,
-			10.0f,
-			10.0f,
-			1.0f
-		)
-	);
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
-	light0->setConstantAttenuation(0.5f);
-	light0->setLinearAttenuation(0.0f);
-	light0->setQuadraticAttenuation(0.0f);
-	light0->setSpotExponent(0.0f);
-	light0->setSpotCutOff(180.0f);
-	light0->setEnabled(true);
+	// if re setting up we do leave camera and lighting as it is
+	if (resetup == false) {
+		// lights
+		for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
+		auto light0 = engine->getLightAt(0);
+		light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+		light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
+		light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+		light0->setPosition(
+			Vector4(
+				0.0f,
+				20.0f * maxAxisDimension,
+				20.0f * maxAxisDimension,
+				1.0f
+			)
+		);
+		light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
+		light0->setConstantAttenuation(0.5f);
+		light0->setLinearAttenuation(0.0f);
+		light0->setQuadraticAttenuation(0.0f);
+		light0->setSpotExponent(0.0f);
+		light0->setSpotCutOff(180.0f);
+		light0->setEnabled(true);
 
-	// cam
-	auto cam = engine->getCamera();
-	cam->setZNear(0.1f);
-	cam->setZFar(15.0f);
-	auto lookAt = cam->getLookAt();
-	lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
-	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
-	// TODO: a.drewke
-	Transformations _lookFromRotations;
-	_lookFromRotations.fromTransformations(lookFromRotations);
-	auto forwardVectorTransformed = _lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(camScale);
-	auto upVector = _lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
-	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
-	cam->setLookFrom(lookFrom);
-	cam->setLookAt(lookAt);
-	cam->setUpVector(upVector);
+		// cam
+		auto cam = engine->getCamera();
+		auto lookAt = cam->getLookAt();
+		lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
+		Vector3 forwardVector(0.0f, 0.0f, 1.0f);
+		// TODO: a.drewke
+		Transformations _lookFromRotations;
+		_lookFromRotations.fromTransformations(lookFromRotations);
+		if (cameraRotationInputHandler != nullptr) {
+			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
+			cameraRotationInputHandler->setScale(maxAxisDimension * scale);
+		}
+		auto forwardVectorTransformed = _lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(cameraRotationInputHandler != nullptr?cameraRotationInputHandler->getScale():maxAxisDimension * scale);
+		auto upVector = _lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
+		auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
+		cam->setLookFrom(lookFrom);
+		cam->setLookAt(lookAt);
+		cam->setUpVector(upVector);
+	} else {
+		if (cameraRotationInputHandler != nullptr) {
+			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
+		}
+	}
 
 	//
 	delete entityBoundingBoxFallback;

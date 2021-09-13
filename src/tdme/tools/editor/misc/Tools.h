@@ -27,6 +27,7 @@ using tdme::engine::Light;
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::tools::editor::misc::CameraRotationInputHandler;
 
 /**
  * Editor tools
@@ -37,7 +38,6 @@ class tdme::tools::editor::misc::Tools final
 {
 private:
 	static Engine* osEngine;
-	static float oseScale;
 	static Model* gizmoAll;
 	static Model* gizmoTranslationScale;
 	static Model* gizmoTranslation;
@@ -109,10 +109,11 @@ public:
 	 * @param prototype prototype
 	 * @param engine engine
 	 * @param lookFromRotations look from rotations
-	 * @param camScale scale
 	 * @param lodLevel lod level
+	 * @param cameraRotationInputHandler camera rotation input handler
+	 * @param resetup resetup which would mean to leave camera and lighting as is
 	 */
-	static void setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
+	static void setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler = nullptr, float scale = 1.5f, bool resetup = false);
 
 	/**
 	 * Get relative resources file name

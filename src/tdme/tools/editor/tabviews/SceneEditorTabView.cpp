@@ -556,8 +556,6 @@ void SceneEditorTabView::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
-	cam->setZNear(0.1f);
-	cam->setZFar(150.0f);
 	SceneConnector::setLights(engine, scene, Vector3());
 	SceneConnector::addScene(engine, scene, true, true, true, true);
 	updateSky();
