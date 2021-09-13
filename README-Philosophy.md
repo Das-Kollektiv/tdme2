@@ -17,6 +17,7 @@
 # 2. What is our idea of "Who is this 3D engine for"?
 - Small developer studios that want/insist on having/need a complete and light free open source 3d engine that they can build upon, improve and such and adapt for their needs
 - Anyone who wants to do 3D apps/games prototyping
+- Educational purpose: If you want to see how things can be done in a 3D Engine world, feel free to have a look at our little engine :)
 
 # 3. Other information
 ## 3.1. Links
