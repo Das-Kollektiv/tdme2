@@ -648,6 +648,7 @@ void GUI::handleEvents()
 			if (screen->isVisible() == false) continue;
 
 			//
+			auto processed = false;
 			auto& floatingNodes = screen->getFloatingNodes();
 			for (auto j = 0; j < floatingNodes.size(); j++) {
 				auto floatingNode = floatingNodes.at(j);
@@ -656,9 +657,20 @@ void GUI::handleEvents()
 
 				// do not continue handling mouse events if already processed
 				if (event.isProcessed() == true) break;
+
+				// We do not consume mouse moved events by default, so:
+				// consume mouse move event, if floating node has conditions met and is expanded/collapsed by condition
+				// as in this case you do not want to have other mouse movement event handling
+				if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED &&
+					floatingNode->flow == GUINode_Flow::FLOATING &&
+					floatingNode->conditionsMet == true &&
+					((floatingNode->showOn.getConditions().empty() == false && floatingNode->showOn.has("always") == false) ||
+					(floatingNode->hideOn.getConditions().empty() == false && floatingNode->showOn.has("never") == false))) processed = true;
 			}
 			// do not continue handling mouse events if already processed
 			if (event.isProcessed() == true) break;
+			// set processed if we decided to do so :D
+			if (processed == true) event.setProcessed(true);
 			// skip on pop ups
 			if (screen->isPopUp() == true) break;
 		}

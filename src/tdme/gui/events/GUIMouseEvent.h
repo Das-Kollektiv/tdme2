@@ -274,6 +274,4 @@ public:
 	 */
 	GUIMouseEvent();
 
-private:
-	friend class GUIMouseEvent_Type;
 };

@@ -1,5 +1,5 @@
 <element width="100%" height="auto">
-	<layout alignment="horizontal" width="auto" height="auto">
+	<layout alignment="horizontal" width="auto" height="auto" flow="floating">
 		{__InnerXML__}
 	</layout>
 </element>
