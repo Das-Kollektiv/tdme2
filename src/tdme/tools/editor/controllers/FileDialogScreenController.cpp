@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::remove;
 using std::string;
 using std::vector;
 
@@ -82,6 +84,9 @@ void FileDialogScreenController::initialize()
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_tabs-header"));
 		pathNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
 		filesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
+		favoritesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_favorites"));
+		recentNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_recent"));
+		drivesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_drives"));
 		fileNameNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
 		typeDropDownNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
 	} catch (Exception& exception) {
@@ -95,7 +100,7 @@ void FileDialogScreenController::dispose()
 	screenNode = nullptr;
 }
 
-bool FileDialogScreenController::setupFileDialogListBox()
+bool FileDialogScreenController::setupFiles()
 {
 	class ExtensionFilter: public virtual FileNameFilter
 	{
@@ -140,7 +145,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 		Console::println(string(exception.what()));
 		success = false;
 	}
-	setupFileDialogListBoxFiles(fileList);
+	setupFiles(fileList);
 	if (enableFilter == true) fileNameNode->getController()->setValue(MutableString("Type a string to filter the list..."));
 
 	//
@@ -150,30 +155,127 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	return success;
 }
 
-void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile) {
+void FileDialogScreenController::setupFiles(const vector<string>& fileNameList, const string& selectedFileName) {
 	auto filesInnerNode = required_dynamic_cast<GUIParentNode*>(filesNode->getScreenNode()->getInnerNodeById(filesNode->getId()));
 	auto idx = 1;
-	string filesInnerNodeSubNodesXML = "";
-	filesInnerNodeSubNodesXML =
-		filesInnerNodeSubNodesXML +
+	string filesInnerNodeSubNodesXML;
+	filesInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
-	for (auto& file : fileList) {
-		filesInnerNodeSubNodesXML =
-			filesInnerNodeSubNodesXML +
+	for (auto& fileName : fileNameList) {
+		auto fileImageName = getFileImageName(fileName);
+		try {
+			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + fileName) == true) fileImageName = "folder";
+		} catch (Exception& exception) {
+			Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		filesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(file) +
+			GUIParser::escapeQuotes(fileName) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(file) +
+			GUIParser::escapeQuotes(fileName) +
 			"\"" +
-			(selectedFile == file?" selected=\"true\"":"") +
+			(selectedFileName == fileName?" selected=\"true\"":"") + " " +
+			"image=\"{$icon.type_" + fileImageName + "}\" " +
 			"/>\n";
 	}
-	filesInnerNodeSubNodesXML =
-		filesInnerNodeSubNodesXML + "</scrollarea>\n";
+	filesInnerNodeSubNodesXML+= "</scrollarea>\n";
 	try {
 		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void FileDialogScreenController::setupFavorites() {
+	auto favoritesInnerNode = required_dynamic_cast<GUIParentNode*>(favoritesNode->getScreenNode()->getInnerNodeById(favoritesNode->getId()));
+	auto idx = 1;
+	string favoritesInnerNodeSubNodesXML;
+	favoritesInnerNodeSubNodesXML+=
+		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
+	for (auto& favorite: favorites) {
+		auto fileImageName = "folder";
+		favoritesInnerNodeSubNodesXML+=
+			"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(favorite, "/") == true?StringTools::substring(favorite, 0, favorite.size() - 1):favorite)) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(favorite) +
+			"\" " +
+			"image=\"{$icon.type_folder}\" " +
+			"/>\n";
+	}
+	favoritesInnerNodeSubNodesXML+= "</scrollarea>\n";
+	try {
+		favoritesInnerNode->replaceSubNodes(favoritesInnerNodeSubNodesXML, false);
+	} catch (Exception& exception) {
+		Console::print(string("FileDialogScreenController::setupFavorites(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void FileDialogScreenController::setupRecent() {
+	auto recentsInnerNode = required_dynamic_cast<GUIParentNode*>(recentNode->getScreenNode()->getInnerNodeById(recentNode->getId()));
+	auto idx = 1;
+	string recentsInnerNodeSubNodesXML;
+	recentsInnerNodeSubNodesXML+=
+		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
+	for (auto& recent: recents) {
+		auto fileImageName = getFileImageName(recent);
+		recentsInnerNodeSubNodesXML+=
+			"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(recent)) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(recent) +
+			"\" " +
+			"image=\"{$icon.type_" + fileImageName + "}\" " +
+			"/>\n";
+	}
+	recentsInnerNodeSubNodesXML+= "</scrollarea>\n";
+	try {
+		recentsInnerNode->replaceSubNodes(recentsInnerNodeSubNodesXML, false);
+	} catch (Exception& exception) {
+		Console::print(string("FileDialogScreenController::setupRecent(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void FileDialogScreenController::setupDrives() {
+	vector<string> drives;
+	#if defined(_WIN32)
+		for (char drive = 'A'; drive <= 'Z'; drive++) {
+			string fileName;
+			fileName+= drive;
+			fileName+= ":";
+			try {
+				if (fileExists(fileName + "/") == true) drives.push_back(fileName);
+			} catch (Exception& exception) {
+				Console::println("FileDialogScreenController::setupDrives(): fileExists(): " + pathName + "/" + fileName + ": " + exception.what());
+			}
+		}
+	#else
+		drives.push_back("/");
+	#endif
+	auto drivesInnerNode = required_dynamic_cast<GUIParentNode*>(drivesNode->getScreenNode()->getInnerNodeById(drivesNode->getId()));
+	auto idx = 1;
+	string drivesInnerNodeSubNodesXML;
+	drivesInnerNodeSubNodesXML+=
+		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
+	for (auto& drive: drives) {
+		drivesInnerNodeSubNodesXML+=
+			"<selectbox-option text=\"" +
+			GUIParser::escapeQuotes(drive) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(drive) +
+			"\" " +
+			"image=\"{$icon.type_folder}\" " +
+			"/>\n";
+	}
+	drivesInnerNodeSubNodesXML+= "</scrollarea>\n";
+	try {
+		drivesInnerNode->replaceSubNodes(drivesInnerNodeSubNodesXML, false);
+	} catch (Exception& exception) {
+		Console::print(string("FileDialogScreenController::setupDrives(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
@@ -195,7 +297,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	this->extensions = extensions;
 	this->fileNameNode->getController()->setValue(fileName);
 	this->enableFilter = enableFilter;
-	setupFileDialogListBox();
+	setupFiles();
 	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
 	this->applyAction = applyAction;
@@ -208,6 +310,9 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		}
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(typeDropDownNode->getId()))->replaceSubNodes(extensionsDropDownOptionsXML, true);
 	}
+	setupDrives();
+	setupFavorites();
+	setupRecent();
 }
 
 void FileDialogScreenController::close()
@@ -222,7 +327,7 @@ void FileDialogScreenController::close()
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == typeDropDownNode->getId()) {
-		setupFileDialogListBox();
+		setupFiles();
 	} else
 	if (node->getId() == filesNode->getId()) {
 		try {
@@ -230,9 +335,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
 				auto lastCwd = cwd;
 				cwd = selectedFile;
-				if (setupFileDialogListBox() == false) {
+				if (setupFiles() == false) {
 					cwd = lastCwd;
-					setupFileDialogListBox();
+					setupFiles();
 				}
 			} else
 			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
@@ -243,13 +348,13 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
-				if (setupFileDialogListBox() == false) {
+				if (setupFiles() == false) {
 					cwd = lastCwd;
-					setupFileDialogListBox();
+					setupFiles();
 				}
 			} else {
 				if (filtered == true) {
-					setupFileDialogListBoxFiles(fileList, selectedFile);
+					setupFiles(fileList, selectedFile);
 					filtered = false;
 				}
 				fileNameNode->getController()->setValue(selectedFile);
@@ -266,13 +371,13 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				auto filterString = StringTools::toLowerCase(node->getController()->getValue().getString());
 				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
-					setupFileDialogListBoxFiles(fileList, selectedFile);
+					setupFiles(fileList, selectedFile);
 				} else {
 					vector<string> fileListFiltered;
 					for (auto file: fileList) {
 						if (StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
 					}
-					setupFileDialogListBoxFiles(fileListFiltered);
+					setupFiles(fileListFiltered);
 					filtered = true;
 				}
 			}
@@ -290,12 +395,21 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == pathNode->getId()) {
 			auto lastCwd = cwd;
 			cwd = pathNode->getController()->getValue().getString();
-			if (setupFileDialogListBox() == false) {
+			if (setupFiles() == false) {
 				cwd = lastCwd;
-				setupFileDialogListBox();
+				setupFiles();
 			}
 		} else
 		if (node->getId() == "filedialog_apply") {
+			auto recent = cwd + "/" + fileNameNode->getController()->getValue().getString();
+			try {
+				if (FileSystem::getStandardFileSystem()->isPath(recent) == false) {
+					recents.erase(remove(recents.begin(), recents.end(), recent), recents.end());
+					recents.push_back(recent);
+				}
+			} catch (Exception& exception) {
+				// no op
+			}
 			if (applyAction != nullptr) {
 				applyAction->performAction();
 				delete applyAction;
@@ -310,6 +424,24 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 				cancelAction = nullptr;
 			}
 			close();
+		} else
+		if (node->getId() == "filedialog_favorites_add") {
+			favorites.erase(remove(favorites.begin(), favorites.end(), cwd), favorites.end());
+			favorites.push_back(cwd);
+			setupFavorites();
+		} else
+		if (node->getId() == "filedialog_favorites_remove") {
+			auto favorite = favoritesNode->getController()->getValue().getString();
+			favorites.erase(remove(favorites.begin(), favorites.end(), favorite), favorites.end());
+			setupFavorites();
+		} else
+		if (node == favoritesNode) {
+			cwd = favoritesNode->getController()->getValue().getString();
+			setupFiles();
+		} else
+		if (node == drivesNode) {
+			cwd = drivesNode->getController()->getValue().getString();
+			setupFiles();
 		}
 	}
 }
@@ -323,3 +455,105 @@ void FileDialogScreenController::onFocus(GUIElementNode* node) {
 void FileDialogScreenController::onUnfocus(GUIElementNode* node) {
 }
 
+const string FileDialogScreenController::getFileImageName(const string& fileName) {
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
+		return "sound";
+	} else
+	// C++/C code
+	if (StringTools::endsWith(fileNameLowerCase, ".h") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".c") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+		return "font";
+	} else
+	// images
+	if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
+		return "texture";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) {
+		return "texture";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+		return "texture";
+	} else
+	// models
+	if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) {
+		return "mesh";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) {
+		return "mesh";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) {
+		return "mesh";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) {
+		return "mesh";
+	} else
+	// property files
+	if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) {
+		return "script";
+	} else
+	// shader
+	if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) {
+		return "script";
+	} else
+	// tdme empty
+	if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
+		return "prototype";
+	} else
+	// tdme trigger
+	if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
+		return "prototype";
+	} else
+	// tdme envmap
+	if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
+		return "prototype";
+	} else
+	// tdme model
+	if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
+		return "prototype";
+	} else
+	// tdme scene
+	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
+		return "scene";
+	} else
+	// tdme particle system
+	if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
+		return "particle";
+	} else
+	// tdme terrain
+	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
+		return "terrain";
+	} else
+	// tdme script
+	if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
+		return "script";
+	} else
+	// xml
+	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
+		return "gui";
+	} else
+	// files without ending
+	if (fileName.rfind(".") == string::npos ||
+		(fileName.rfind("/") != string::npos &&
+		fileName.rfind(".") < fileName.rfind("/"))) {
+		return "script";
+	}
+	return string();
+}

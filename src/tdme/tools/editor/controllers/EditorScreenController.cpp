@@ -512,6 +512,7 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				// fonts
 				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
 				// images
+				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
 				// models
@@ -580,154 +581,10 @@ void EditorScreenController::scanProjectPathFiles(const string& relativeProjectP
 				string icon = "resources/engine/images/folder.png";
 				string iconBig;
 				string typeColor;
-				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
-					icon = "{$icon.type_sound}";
-					iconBig = "{$icon.type_sound_big}";
-					typeColor = "{$color.type_sound}";
-				}
-				// C++/C code
-				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".c") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				// fonts
-				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
-					icon = "{$icon.type_font}";
-					iconBig = "{$icon.type_font_big}";
-					typeColor = "{$color.type_font}";
-				}
-				// images
-				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
-					icon = "{$icon.type_texture}";
-					iconBig = "{$icon.type_texture_big}";
-					typeColor = "{$color.type_texture}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
-					icon = "{$icon.type_texture}";
-					iconBig = "{$icon.type_texture_big}";
-					typeColor = "{$color.type_texture}";
-				}
-				// models
-				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) {
-					icon = "{$icon.type_mesh}";
-					iconBig = "{$icon.type_mesh_big}";
-					typeColor = "{$color.type_mesh}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) {
-					icon = "{$icon.type_mesh}";
-					iconBig = "{$icon.type_mesh_big}";
-					typeColor = "{$color.type_mesh}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) {
-					icon = "{$icon.type_mesh}";
-					iconBig = "{$icon.type_mesh_big}";
-					typeColor = "{$color.type_mesh}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) {
-					icon = "{$icon.type_mesh}";
-					iconBig = "{$icon.type_mesh_big}";
-					typeColor = "{$color.type_mesh}";
-				}
-				// property files
-				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				// shader
-				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				// tdme empty
-				if (StringTools::endsWith(fileNameLowerCase, ".tempty") == true) {
-					icon = "{$icon.type_prototype}";
-					iconBig = "{$icon.type_prototype_big}";
-					typeColor = "{$color.type_prototype}";
-				}
-				// tdme trigger
-				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) {
-					icon = "{$icon.type_prototype}";
-					iconBig = "{$icon.type_prototype_big}";
-					typeColor = "{$color.type_prototype}";
-				}
-				// tdme envmap
-				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
-					icon = "{$icon.type_prototype}";
-					iconBig = "{$icon.type_prototype_big}";
-					typeColor = "{$color.type_prototype}";
-				}
-				// tdme model
-				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) {
-					icon = "{$icon.type_prototype}";
-					iconBig = "{$icon.type_prototype_big}";
-					typeColor = "{$color.type_prototype}";
-				}
-				// tdme scene
-				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
-					icon = "{$icon.type_scene}";
-					iconBig = "{$icon.type_scene_big}";
-					typeColor = "{$color.type_scene}";
-				}
-				// tdme particle system
-				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
-					icon = "{$icon.type_particle}";
-					iconBig = "{$icon.type_particle_big}";
-					typeColor = "{$color.type_particle}";
-				}
-				// tdme terrain
-				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
-					icon = "{$icon.type_terrain}";
-					iconBig = "{$icon.type_terrain_big}";
-					typeColor = "{$color.type_terrain}";
-				}
-				// tdme script
-				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
-				// xml
-				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
-					icon = "{$icon.type_gui}";
-					iconBig = "{$icon.type_gui_big}";
-					typeColor = "{$color.type_gui}";
-				}
-				// files without ending
-				if (fileName.rfind(".") == string::npos ||
-					(fileName.rfind("/") != string::npos &&
-					fileName.rfind(".") < fileName.rfind("/"))) {
-					icon = "{$icon.type_script}";
-					iconBig = "{$icon.type_script_big}";
-					typeColor = "{$color.type_script}";
-				}
+				auto image = FileDialogScreenController::getFileImageName(fileName);
+				icon = "{$icon.type_" + image + "}";
+				iconBig = "{$icon.type_" + image + "_big}";
+				typeColor = "{$color.type_" + image + "}";
 
 				//
 				auto _fileName = Tools::getFileName(fileName);

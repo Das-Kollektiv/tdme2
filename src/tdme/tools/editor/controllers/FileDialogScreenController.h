@@ -47,12 +47,17 @@ private:
 	GUIElementNode* pathNode { nullptr };
 	GUIElementNode* fileNameNode { nullptr };
 	GUIElementNode* filesNode { nullptr };
+	GUIElementNode* recentNode { nullptr };
+	GUIElementNode* favoritesNode { nullptr };
+	GUIElementNode* drivesNode { nullptr };
 	GUIElementNode* typeDropDownNode { nullptr };
 	Action* applyAction { nullptr };
 	Action* cancelAction { nullptr };
 	vector<string> fileList;
 	bool enableFilter;
 	bool filtered;
+	vector<string> favorites;
+	vector<string> recents;
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -73,17 +78,32 @@ public:
 private:
 
 	/**
-	 * Set up file dialog list box
+	 * Set up files
 	 * @return success
 	 */
-	bool setupFileDialogListBox();
+	bool setupFiles();
 
 	/**
-	 * Set up file dialog list box files
-	 * @param fileList file list
-	 * @param selectedFile selected file
+	 * Set up files
+	 * @param fileNameList file name list
+	 * @param selectedFileName selected file name
 	 */
-	void setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile = string());
+	void setupFiles(const vector<string>& fileNameList, const string& selectedFileName = string());
+
+	/**
+	 * Set up favorites
+	 */
+	void setupFavorites();
+
+	/**
+	 * Set up recent
+	 */
+	void setupRecent();
+
+	/**
+	 * Set up drives
+	 */
+	void setupDrives();
 
 public:
 	/**
@@ -119,5 +139,12 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
+
+	/**
+	 * Get file image name
+	 * @param fileName file name
+	 * @return file image name
+	 */
+	static const string getFileImageName(const string& fileName);
 
 };
