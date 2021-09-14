@@ -564,6 +564,24 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			Console::println("glflInit(): failed!");
 			return;
 		}
+
+		// determine window position of not yet done
+		if (windowXPosition == -1 || windowYPosition == -1) {
+			// have some random position if position determination does fail
+			windowXPosition = 100;
+			windowYPosition = 100;
+			// otherwise center application window on primary monitor
+			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+			const GLFWvidmode* monitorMode = glfwGetVideoMode(monitor);
+			if (monitorMode != nullptr) {
+				int monitorX = -1;
+				int monitorY = -1;
+				glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+				windowXPosition = monitorX + (monitorMode->width - windowWidth) / 2;
+				windowYPosition = monitorY + (monitorMode->height - windowHeight) / 2;
+			}
+		}
+
 		#if defined(VULKAN)
 			if (glfwVulkanSupported() == false) {
 				Console::println("glfwVulkanSupported(): Vulkan not available!");
@@ -651,6 +669,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 		if (exitCode != 0) ::exit(exitCode);
 	#else
+		// determine window position of not yet done
+		if (windowXPosition == -1 || windowYPosition == -1) {
+			// TODO: if this is possible at all with GLUT
+			windowXPosition = 100;
+			windowYPosition = 100;
+		}
 		glutInit(&argc, argv);
 		#if defined(__APPLE__)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);

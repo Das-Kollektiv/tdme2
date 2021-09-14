@@ -550,13 +550,13 @@ void Tools::loadSettings(Application* application) {
 	// Window
 	Console::println("Settings: window width: " + settings.get("window_width", "1024"));
 	Console::println("Settings: window height: " + settings.get("window_height", "768"));
-	Console::println("Settings: window X position: " + settings.get("window_x", "100"));
-	Console::println("Settings: window Y position: " + settings.get("window_y", "100"));
+	Console::println("Settings: window X position: " + settings.get("window_x", "-1"));
+	Console::println("Settings: window Y position: " + settings.get("window_y", "-1"));
 	Console::println("Settings: fullscreen: " + settings.get("fullscreen", "false"));
 	application->setWindowWidth(Integer::parseInt(settings.get("window_width", "1024")));
 	application->setWindowHeight(Integer::parseInt(settings.get("window_height", "768")));
-	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "100")));
-	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "100")));
+	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "-1")));
+	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "-1")));
 	application->setFullScreen(settings.get("fullscreen", "false") == "true");
 }
 

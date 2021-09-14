@@ -265,8 +265,8 @@ private:
 	bool initialized { false };
 	int windowWidth { 1024 };
 	int windowHeight { 768 };
-	int windowXPosition { 100 };
-	int windowYPosition { 100 };
+	int windowXPosition { -1 };
+	int windowYPosition { -1 };
 	bool fullScreen { false };
 	static int64_t timeLast;
 	static bool limitFPS;
