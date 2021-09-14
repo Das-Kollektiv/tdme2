@@ -85,7 +85,7 @@ void FileDialogScreenController::initialize()
 		pathNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
 		filesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
 		favoritesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_favorites"));
-		recentNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_recent"));
+		recentsNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_recent"));
 		drivesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_drives"));
 		fileNameNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_filename"));
 		typeDropDownNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_typedropdown"));
@@ -214,28 +214,28 @@ void FileDialogScreenController::setupFavorites() {
 	}
 }
 
-void FileDialogScreenController::setupRecent() {
-	auto recentsInnerNode = required_dynamic_cast<GUIParentNode*>(recentNode->getScreenNode()->getInnerNodeById(recentNode->getId()));
+void FileDialogScreenController::setupRecents() {
+	auto recentsInnerNode = required_dynamic_cast<GUIParentNode*>(recentsNode->getScreenNode()->getInnerNodeById(recentsNode->getId()));
 	auto idx = 1;
 	string recentsInnerNodeSubNodesXML;
 	recentsInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
 	for (auto& recent: recents) {
-		auto fileImageName = getFileImageName(recent);
+		auto fileImageName = "folder";
 		recentsInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(recent)) +
+			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(recent, "/") == true?StringTools::substring(recent, 0, recent.size() - 1):recent)) +
 			"\" value=\"" +
 			GUIParser::escapeQuotes(recent) +
 			"\" " +
-			"image=\"{$icon.type_" + fileImageName + "}\" " +
+			"image=\"{$icon.type_folder}\" " +
 			"/>\n";
 	}
 	recentsInnerNodeSubNodesXML+= "</scrollarea>\n";
 	try {
 		recentsInnerNode->replaceSubNodes(recentsInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
-		Console::print(string("FileDialogScreenController::setupRecent(): An error occurred: "));
+		Console::print(string("FileDialogScreenController::setupRecents(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
@@ -312,7 +312,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	}
 	setupDrives();
 	setupFavorites();
-	setupRecent();
+	setupRecents();
 }
 
 void FileDialogScreenController::close()
@@ -348,7 +348,11 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
-				if (setupFiles() == false) {
+				if (setupFiles() == true) {
+					recents.erase(remove(recents.begin(), recents.end(), cwd), recents.end());
+					recents.push_back(cwd);
+					setupRecents();
+				} else {
 					cwd = lastCwd;
 					setupFiles();
 				}
@@ -395,21 +399,17 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == pathNode->getId()) {
 			auto lastCwd = cwd;
 			cwd = pathNode->getController()->getValue().getString();
-			if (setupFiles() == false) {
+			if (setupFiles() == true) {
+				recents.erase(remove(recents.begin(), recents.end(), cwd), recents.end());
+				recents.push_back(cwd);
+				setupRecents();
+			} else {
 				cwd = lastCwd;
 				setupFiles();
 			}
 		} else
 		if (node->getId() == "filedialog_apply") {
 			auto recent = cwd + "/" + fileNameNode->getController()->getValue().getString();
-			try {
-				if (FileSystem::getStandardFileSystem()->isPath(recent) == false) {
-					recents.erase(remove(recents.begin(), recents.end(), recent), recents.end());
-					recents.push_back(recent);
-				}
-			} catch (Exception& exception) {
-				// no op
-			}
 			if (applyAction != nullptr) {
 				applyAction->performAction();
 				delete applyAction;
@@ -435,12 +435,20 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 			favorites.erase(remove(favorites.begin(), favorites.end(), favorite), favorites.end());
 			setupFavorites();
 		} else
+		if (node->getId() == "filedialog_recent_delete") {
+			recents.clear();
+			setupRecents();
+		} else
 		if (node == favoritesNode) {
 			cwd = favoritesNode->getController()->getValue().getString();
 			setupFiles();
 		} else
 		if (node == drivesNode) {
 			cwd = drivesNode->getController()->getValue().getString();
+			setupFiles();
+		} else
+		if (node == recentsNode) {
+			cwd = recentsNode->getController()->getValue().getString();
 			setupFiles();
 		}
 	}

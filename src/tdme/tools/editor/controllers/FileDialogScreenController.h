@@ -47,7 +47,7 @@ private:
 	GUIElementNode* pathNode { nullptr };
 	GUIElementNode* fileNameNode { nullptr };
 	GUIElementNode* filesNode { nullptr };
-	GUIElementNode* recentNode { nullptr };
+	GUIElementNode* recentsNode { nullptr };
 	GUIElementNode* favoritesNode { nullptr };
 	GUIElementNode* drivesNode { nullptr };
 	GUIElementNode* typeDropDownNode { nullptr };
@@ -98,7 +98,7 @@ private:
 	/**
 	 * Set up recent
 	 */
-	void setupRecent();
+	void setupRecents();
 
 	/**
 	 * Set up drives
