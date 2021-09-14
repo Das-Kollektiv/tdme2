@@ -9,7 +9,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -24,7 +24,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
@@ -43,7 +42,6 @@ private:
 	EnvMapEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	FileDialogPath envMapPath;
 
 	array<string, 7> applyNodesRenderPasses {
 		"rendersettings_renderpass_standard",
@@ -80,16 +78,6 @@ public:
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
-
-	/**
-	 * @return model path
-	 */
-	FileDialogPath* getModelPath();
-
-	/**
-	 * @return audio path
-	 */
-	FileDialogPath* getAudioPath();
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

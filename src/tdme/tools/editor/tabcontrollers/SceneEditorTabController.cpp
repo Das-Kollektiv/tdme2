@@ -105,11 +105,6 @@ GUIScreenNode* SceneEditorTabController::getScreenNode()
 	return screenNode;
 }
 
-FileDialogPath* SceneEditorTabController::getModelPath()
-{
-	return &modelPath;
-}
-
 void SceneEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
@@ -141,9 +136,6 @@ void SceneEditorTabController::saveAs()
 			sceneEditorTabController->save(
 				sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 				sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-			);
-			sceneEditorTabController->scenePath.setPath(
-				sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
 			);
 			sceneEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
@@ -625,9 +617,6 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 							Tools::getPathName(scene->getSkyModelFileName()),
 							Tools::getFileName(scene->getSkyModelFileName()))
 					);
-					sceneEditorTabController->modelPath.setPath(
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-					);
 					sceneEditorTabController->view->updateSky();
 					sceneEditorTabController->setSkyDetails();
 				} catch (Exception& exception) {
@@ -653,7 +642,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 
 		auto extensions = ModelReader::getModelExtensions();
 		popUps->getFileDialogScreenController()->show(
-			modelPath.getPath(),
+			string(),
 			"Load sky model from: ",
 			extensions,
 			string(),
@@ -1273,8 +1262,6 @@ void SceneEditorTabController::onReplacePrototype() {
 				sceneLibrary->removePrototype(prototype->getId());
 				sceneEditorTabController->view->reloadScene();
 
-				sceneEditorTabController->modelPath.setPath(sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName());
-
 				//
 				class ReloadTabOutlinerAction: public Action {
 				private:
@@ -1309,7 +1296,7 @@ void SceneEditorTabController::onReplacePrototype() {
 
 	auto extensions = PrototypeReader::getPrototypeExtensions();
 	popUps->getFileDialogScreenController()->show(
-		modelPath.getPath(),
+		string(),
 		"Replace prototype with: ",
 		extensions,
 		string(),

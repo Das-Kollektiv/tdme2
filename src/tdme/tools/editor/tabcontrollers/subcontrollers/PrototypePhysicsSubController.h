@@ -11,8 +11,8 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/subviews/fwd-tdme.h>
@@ -30,7 +30,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
@@ -52,7 +51,6 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 
 private:
 	GUIScreenNode* screenNode { nullptr };
-	FileDialogPath* modelPath { nullptr };
 	EditorView* editorView { nullptr };
 	TabView* tabView { nullptr };
 	PrototypePhysicsSubView* view { nullptr };
@@ -119,12 +117,11 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param tabView tabView
-	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
 	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
+	PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor

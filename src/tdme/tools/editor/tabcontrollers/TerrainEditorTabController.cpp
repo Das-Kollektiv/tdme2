@@ -157,9 +157,6 @@ void TerrainEditorTabController::saveAs()
 					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				modelEditorTabController->terrainPath.setPath(
-					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
 			} catch (Exception& exception) {
 				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -182,13 +179,10 @@ void TerrainEditorTabController::saveAs()
 	if (prototype == nullptr) return;
 
 	//
-	vector<string> extensions = {
-		"tterrain"
-	};
 	popUps->getFileDialogScreenController()->show(
-		prototype->getFileName().empty() == true?terrainPath.getPath():Tools::getPathName(prototype->getFileName()),
+		prototype->getFileName().empty() == false?Tools::getPathName(prototype->getFileName()):string(),
 		"Save to: ",
-		extensions,
+		{{ "tterrain" }},
 		Tools::getFileName(prototype->getFileName()),
 		false,
 		new OnModelSave(this)
@@ -546,7 +540,6 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 					);
 					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
-					terrainEditorTabController->brushTexturePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -564,7 +557,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
 			view->getPopUps()->getFileDialogScreenController()->show(
-				brush->getFileName().empty() == true?brushTexturePath.getPath():Tools::getPathName(brush->getFileName()),
+				brush->getFileName().empty() == false?Tools::getPathName(brush->getFileName()):string(),
 				"Load foliage brush texture from: ",
 				extensions,
 				Tools::getFileName(brush->getFileName()),
@@ -614,7 +607,6 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 					} catch (Exception& exception) {
 						Console::println(string("OnTerrainBrushPrototypeFileOpenAction::performAction(): ") + exception.what());
 					}
-					terrainEditorTabController->brushPrototypePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -645,7 +637,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 
 			vector<string> extensions = {"tmodel"};
 			view->getPopUps()->getFileDialogScreenController()->show(
-				brushPrototype->getFileName().empty() == true?brushPrototypePath.getPath():Tools::getPathName(brushPrototype->getFileName()),
+				brushPrototype->getFileName().empty() == false?Tools::getPathName(brushPrototype->getFileName()):string(),
 				"Load terrain brush texture from: ",
 				extensions,
 				Tools::getFileName(brushPrototype->getFileName()),
@@ -693,7 +685,6 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 							false
 						);
 					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
-					terrainEditorTabController->brushTexturePath.setPath(terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 					terrainEditorTabController->view->setBrush(
 						terrainEditorTabController->currentTerrainBrushTexture,
 						terrainEditorTabController->currentTerrainBrushScale,
@@ -715,7 +706,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
 			view->getPopUps()->getFileDialogScreenController()->show(
-				currentTerrainBrushTextureFileName.empty() == true?brushTexturePath.getPath():Tools::getPathName(currentTerrainBrushTextureFileName),
+				currentTerrainBrushTextureFileName.empty() == false?Tools::getPathName(currentTerrainBrushTextureFileName):string(),
 				"Load terrain brush texture from: ",
 				extensions,
 				Tools::getFileName(currentTerrainBrushTextureFileName),

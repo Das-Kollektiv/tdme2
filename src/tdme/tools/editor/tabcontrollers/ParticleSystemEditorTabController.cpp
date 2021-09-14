@@ -116,9 +116,9 @@ ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSys
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, prototypePhysicsSubController->getView());
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view, &audioPath);
+	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
 }
 
 ParticleSystemEditorTabController::~ParticleSystemEditorTabController() {
@@ -176,9 +176,6 @@ void ParticleSystemEditorTabController::saveAs()
 					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				particleSystemEditorTabController->particlePath.setPath(
-					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
 			} catch (Exception& exception) {
 				particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -195,7 +192,7 @@ void ParticleSystemEditorTabController::saveAs()
 		"tparticle"
 	};
 	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):particlePath.getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Save to: ",
 		extensions,
 		Tools::getFileName(fileName),
@@ -820,9 +817,6 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 								Console::println(string("OnPointParticleSystemLoadTexture::performAction(): An error occurred: ") + exception.what());;
 								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 							}
-							particleSystemEditorTabController->getTexturePath()->setPath(
-								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-							);
 							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
 							particleSystemEditorTabController->view->initParticleSystem();
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -839,7 +833,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 
 					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
-						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):texturePath.getPath(),
+						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						extensions,
 						Tools::getFileName(pps->getTextureFileName()),
@@ -893,9 +887,6 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 								Console::println(string("OnPointParticleSystemLoadTransparencyTexture::performAction(): An error occurred: ") + exception.what());;
 								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 							}
-							particleSystemEditorTabController->getTexturePath()->setPath(
-								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-							);
 							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
 							particleSystemEditorTabController->view->initParticleSystem();
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -912,7 +903,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 
 					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
-						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):texturePath.getPath(),
+						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						extensions,
 						Tools::getFileName(pps->getTextureFileName()),
@@ -966,9 +957,6 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 								Console::println(string("OnFogParticleSystemLoadTexture::performAction(): An error occurred: ") + exception.what());;
 								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 							}
-							particleSystemEditorTabController->getTexturePath()->setPath(
-								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-							);
 							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
 							particleSystemEditorTabController->view->initParticleSystem();
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -985,7 +973,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 
 					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
-						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):texturePath.getPath(),
+						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						extensions,
 						Tools::getFileName(fps->getTextureFileName()),
@@ -1039,9 +1027,6 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 								Console::println(string("OnFogParticleSystemLoadTransparencyTexture::performAction(): An error occurred: ") + exception.what());;
 								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 							}
-							particleSystemEditorTabController->getTexturePath()->setPath(
-								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName()
-							);
 							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTextureFileName());
 							particleSystemEditorTabController->view->initParticleSystem();
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -1058,7 +1043,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 
 					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
-						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):texturePath.getPath(),
+						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
 						extensions,
 						Tools::getFileName(fps->getTextureFileName()),
@@ -1133,7 +1118,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					//
 					auto extensions = ModelReader::getModelExtensions();
 					popUps->getFileDialogScreenController()->show(
-						ops->getModelFileName().empty() == false?Tools::getPathName(ops->getModelFileName()):modelPath.getPath(),
+						ops->getModelFileName().empty() == false?Tools::getPathName(ops->getModelFileName()):string(),
 						"Load object particle system model from: ",
 						extensions,
 						string(),

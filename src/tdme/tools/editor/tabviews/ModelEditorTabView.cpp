@@ -30,7 +30,6 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
@@ -78,7 +77,6 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
@@ -439,14 +437,13 @@ void ModelEditorTabView::display()
 
 void ModelEditorTabView::loadSettings()
 {
+	// TODO: a.drewke
 	try {
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
 		prototypePhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
 		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
-		modelEditorTabController->getModelPath()->setPath(settings.get("model.path", "."));
-		modelEditorTabController->getAudioPath()->setPath(settings.get("audio.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -470,13 +467,12 @@ void ModelEditorTabView::initialize()
 
 void ModelEditorTabView::storeSettings()
 {
+	// TODO: a.drewke
 	try {
 		Properties settings;
 		settings.put("display.boundingvolumes", prototypePhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
-		settings.put("model.path", modelEditorTabController->getModelPath()->getPath());
-		settings.put("audio.path", modelEditorTabController->getAudioPath()->getPath());
 		settings.store("settings", "modeleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("ModelEditorTabView::storeSettings(): An error occurred: "));

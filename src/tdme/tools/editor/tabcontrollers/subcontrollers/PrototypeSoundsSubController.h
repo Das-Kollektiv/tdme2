@@ -25,8 +25,6 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::FileDialogPath;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
@@ -42,7 +40,6 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 {
 private:
 	GUIScreenNode* screenNode { nullptr };
-	FileDialogPath* audioPath { nullptr };
 	EditorView* editorView { nullptr };
 	PrototypeSoundsSubView* view { nullptr };
 	PopUps* popUps { nullptr };
@@ -63,9 +60,8 @@ public:
 	 * Public constructor
 	 * @param editorView editor view
 	 * @param playableSoundView view that supports playing sounds
-	 * @param audioPath audio path
 	 */
-	PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, FileDialogPath* audioPath);
+	PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView);
 
 	/**
 	 * Destructor

@@ -33,7 +33,6 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/GenerateConvexMeshes.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -84,7 +83,6 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -99,11 +97,10 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
+PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorView, TabView* tabView, bool isModelBoundingVolumes, int maxBoundingVolumeCount, int32_t boundingVolumeTypeMask)
 {
 	this->editorView = editorView;
 	this->tabView = tabView;
-	this->modelPath = modelPath;
 	this->view = new PrototypePhysicsSubView(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->popUps = editorView->getPopUps();
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount;
@@ -638,9 +635,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 								boundingVolumeIdx,
 								prototypePhysicsSubController->popUps->getFileDialogScreenController()->getPathName() + "/" + prototypePhysicsSubController->popUps->getFileDialogScreenController()->getFileName()
 							);
-							prototypePhysicsSubController->modelPath->setPath(
-									prototypePhysicsSubController->popUps->getFileDialogScreenController()->getPathName()
-							);
 						} catch (Exception& exception) {
 							Console::println(string("OnConvexMeshFileOpen::performAction(): An error occurred: ") + exception.what());;
 							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
@@ -664,11 +658,10 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 				auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdxActivated);
 				if (boundingVolume != nullptr) {
 					auto fileName = boundingVolume->getConvexMeshFile();
-					auto extensions = ModelReader::getModelExtensions();
 					popUps->getFileDialogScreenController()->show(
-						fileName.empty() == true?modelPath->getPath():Tools::getPathName(fileName),
+						fileName.empty() == false?Tools::getPathName(fileName):string(),
 						"Load convex mesh from: ",
-						extensions,
+						ModelReader::getModelExtensions(),
 						Tools::getFileName(fileName),
 						false,
 						new OnConvexMeshFileOpen(this, prototype, boundingVolumeIdxActivated)
@@ -719,9 +712,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 										Console::println(string("OnConvexMeshesFileImport::performAction(): An error occurred: ") + exception.what());
 									}
 								}
-								prototypePhysicsSubController->modelPath->setPath(
-									prototypePhysicsSubController->popUps->getFileDialogScreenController()->getPathName()
-								);
 							}
 						} catch (Exception& exception) {
 							Console::println(string("OnConvexMeshesFileImport::performAction(): An error occurred: ") + exception.what());;
@@ -747,11 +737,10 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 					Prototype* prototype;
 				};
 
-				auto extensions = ModelReader::getModelExtensions();
 				popUps->getFileDialogScreenController()->show(
-					modelPath->getPath(),
+					string(),
 					"Import convex meshes from: ",
-					extensions,
+					ModelReader::getModelExtensions(),
 					string(),
 					false,
 					new OnConvexMeshesFileImport(this, prototype)
@@ -804,9 +793,6 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 									}
 								}
 							}
-							prototypePhysicsSubController->modelPath->setPath(
-								prototypePhysicsSubController->popUps->getFileDialogScreenController()->getPathName()
-							);
 						} catch (Exception& exception) {
 							Console::println(string("OnConvexMeshesFileOpen::performAction(): An error occurred: ") + exception.what());
 							prototypePhysicsSubController->showErrorPopUp("Warning", (string(exception.what())));
@@ -831,11 +817,10 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 					Prototype* prototype;
 				};
 
-				auto extensions = ModelReader::getModelExtensions();
 				popUps->getFileDialogScreenController()->show(
-					modelPath->getPath(),
+					string(),
 					"Import convex meshes from: ",
-					extensions,
+					ModelReader::getModelExtensions(),
 					string(),
 					false,
 					new OnConvexMeshesFileOpen(this, prototype)

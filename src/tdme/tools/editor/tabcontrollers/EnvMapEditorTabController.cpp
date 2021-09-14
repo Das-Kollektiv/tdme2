@@ -110,9 +110,6 @@ void EnvMapEditorTabController::saveAs()
 					envMapEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					envMapEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				envMapEditorTabController->envMapPath.setPath(
-					envMapEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
 			} catch (Exception& exception) {
 				envMapEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -129,7 +126,7 @@ void EnvMapEditorTabController::saveAs()
 		"tenvmap"
 	};
 	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):envMapPath.getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Save to: ",
 		extensions,
 		Tools::getFileName(fileName),

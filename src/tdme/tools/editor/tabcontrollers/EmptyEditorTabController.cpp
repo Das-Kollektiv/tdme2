@@ -97,9 +97,6 @@ void EmptyEditorTabController::saveAs()
 					emptyEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					emptyEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				emptyEditorTabController->emptyPath.setPath(
-					emptyEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
 			} catch (Exception& exception) {
 				emptyEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -116,7 +113,7 @@ void EmptyEditorTabController::saveAs()
 		"tempty"
 	};
 	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):emptyPath.getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Save to: ",
 		extensions,
 		Tools::getFileName(fileName),

@@ -15,7 +15,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
@@ -41,7 +41,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
@@ -67,9 +66,6 @@ private:
 	ModelEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-
-	FileDialogPath modelPath;
-	FileDialogPath audioPath;
 
 	array<string, 5> applyAnimationNodes = {
 		"animation_startframe",
@@ -181,16 +177,6 @@ public:
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
-
-	/**
-	 * @return model path
-	 */
-	FileDialogPath* getModelPath();
-
-	/**
-	 * @return audio path
-	 */
-	FileDialogPath* getAudioPath();
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

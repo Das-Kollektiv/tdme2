@@ -18,7 +18,6 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
-#include <tdme/tools/editor/misc/FileDialogPath.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
@@ -53,7 +52,6 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
-using tdme::tools::editor::misc::FileDialogPath;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;
@@ -67,10 +65,9 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView, FileDialogPath* audioPath)
+PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorView, PlayableSoundView* playableSoundView)
 {
 	this->editorView = editorView;
-	this->audioPath = audioPath;
 	this->playableSoundView = playableSoundView;
 	this->view = new PrototypeSoundsSubView(this, editorView->getPopUps());
 	this->popUps = editorView->getPopUps();
@@ -114,7 +111,6 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 				"/" +
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			prototypeSoundsSubController->audioPath->setPath(prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName());
 			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
 			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -128,11 +124,10 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 	if (sound == nullptr) return;
 	auto fileName = sound->getFileName();
 
-	vector<string> extensions = {{"ogg"}};
 	view->getPopUps()->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):audioPath->getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Load audio from: ",
-		extensions,
+		{{"ogg"}},
 		fileName.empty() == false?Tools::getFileName(fileName):"",
 		true,
 		new LoadSoundAction(this, prototype, soundId)

@@ -57,7 +57,7 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, &modelPath, false);
+	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
@@ -113,9 +113,6 @@ void TriggerEditorTabController::saveAs()
 					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
 					triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
-				triggerEditorTabController->triggerPath.setPath(
-					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName()
-				);
 			} catch (Exception& exception) {
 				triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -132,7 +129,7 @@ void TriggerEditorTabController::saveAs()
 		"tempty"
 	};
 	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):triggerPath.getPath(),
+		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Save to: ",
 		extensions,
 		Tools::getFileName(fileName),
