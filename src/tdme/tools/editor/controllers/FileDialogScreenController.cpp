@@ -139,7 +139,7 @@ bool FileDialogScreenController::setupFiles()
 	try {
 		auto directory = cwd;
 		ExtensionFilter extensionsFilter(this, typeDropDownNode->getController()->getValue().getString());
-		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter, FileSystem::getStandardFileSystem()->isDrive(directory));
+		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter);
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -248,9 +248,9 @@ void FileDialogScreenController::setupDrives() {
 			fileName+= drive;
 			fileName+= ":";
 			try {
-				if (fileExists(fileName + "/") == true) drives.push_back(fileName);
+				if (FileSystem::getStandardFileSystem()->fileExists(fileName + "/") == true) drives.push_back(fileName);
 			} catch (Exception& exception) {
-				Console::println("FileDialogScreenController::setupDrives(): fileExists(): " + pathName + "/" + fileName + ": " + exception.what());
+				Console::println("FileDialogScreenController::setupDrives(): " + exception.what());
 			}
 		}
 	#else
@@ -268,7 +268,7 @@ void FileDialogScreenController::setupDrives() {
 			"\" value=\"" +
 			GUIParser::escapeQuotes(drive) +
 			"\" " +
-			"image=\"{$icon.type_folder}\" " +
+			"image=\"{$icon.type_drive}\" " +
 			"/>\n";
 	}
 	drivesInnerNodeSubNodesXML+= "</scrollarea>\n";
