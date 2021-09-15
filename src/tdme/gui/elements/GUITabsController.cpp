@@ -152,6 +152,7 @@ void GUITabsController::setValue(const MutableString& value)
 	auto tabElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(value.getString()));
 	if (tabElementNode != nullptr) {
 		tabsHeaderController->select(tabElementNode);
+		setTabContentSelected(tabElementNode->getId());
 	} else {
 		Console::println("GUITabsController::setValue(): tab with id '" + value.getString() + "' not found");
 	}

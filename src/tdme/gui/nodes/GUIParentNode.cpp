@@ -104,7 +104,7 @@ void GUIParentNode::clearSubNodes()
 		}
 	}
 
-	screenNode->forceInvalidateLayout(this);
+	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
 
 	setConditionsMet();
 	floatingNodesCache.clear();
@@ -137,7 +137,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 		}
 	}
 
-	screenNode->forceInvalidateLayout(this);
+	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
 	GUIParser::parse(this, xml);
 
 	floatingNodesCache.clear();
@@ -199,7 +199,7 @@ void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 
 	invalidateRenderCaches();
 	setConditionsMet();
-	screenNode->layout(this);
+	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
 
 	if (layouted == false || resetScrollOffsets == true) {
 		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
