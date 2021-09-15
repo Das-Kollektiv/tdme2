@@ -552,22 +552,30 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
 				childrenRenderOffsetX -= event->getWheelX() * 10.0f;
-				float elementWidth = this->computedConstraints.width;
+				float nodeWidth = this->computedConstraints.width;
 				float contentWidth = this->getContentWidth();
-				auto scrollableWidth = contentWidth - elementWidth;
-				if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
-				if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+				auto scrollableWidth = contentWidth - nodeWidth;
+				if (nodeWidth > contentWidth) {
+					childrenRenderOffsetX = 0.0f;
+				} else {
+					if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
+					if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+				}
 				event->setProcessed(true);
 				invalidateRenderCaches();
 				return;
 			}
 			if (event->getWheelY() != 0.0f && overflowY == GUIParentNode_Overflow::SCROLL) {
 				childrenRenderOffsetY -= event->getWheelY() * 10.0f;
-				float elementHeight = this->computedConstraints.height;
+				float nodeHeight = this->computedConstraints.height;
 				float contentHeight = this->getContentHeight();
-				auto scrollableHeight = contentHeight - elementHeight;
-				if (childrenRenderOffsetY < 0) childrenRenderOffsetY = 0;
-				if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+				auto scrollableHeight = contentHeight - nodeHeight;
+				if (nodeHeight > contentHeight) {
+					childrenRenderOffsetY = 0.0f;
+				} else {
+					if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
+					if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+				}
 				event->setProcessed(true);
 				invalidateRenderCaches();
 				return;
