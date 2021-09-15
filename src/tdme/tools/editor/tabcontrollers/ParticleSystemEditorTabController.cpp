@@ -188,13 +188,10 @@ void ParticleSystemEditorTabController::saveAs()
 	};
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	vector<string> extensions = {
-		"tparticle"
-	};
 	popUps->getFileDialogScreenController()->show(
 		fileName.empty() == false?Tools::getPathName(fileName):string(),
 		"Save to: ",
-		extensions,
+		{{ "tparticle" }},
 		Tools::getFileName(fileName),
 		false,
 		new OnParticleSave(this)
@@ -831,11 +828,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						int particleSystemIdx;
 					};
 
-					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
 						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
-						extensions,
+						TextureReader::getTextureExtensions(),
 						Tools::getFileName(pps->getTextureFileName()),
 						true,
 						new OnPointParticleSystemLoadTexture(this, particleSystemIdx)
@@ -901,11 +897,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						int particleSystemIdx;
 					};
 
-					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
 						pps->getTextureFileName().empty() == false?Tools::getPathName(pps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
-						extensions,
+						TextureReader::getTextureExtensions(),
 						Tools::getFileName(pps->getTextureFileName()),
 						true,
 						new OnPointParticleSystemLoadTransparencyTexture(this, particleSystemIdx)
@@ -971,11 +966,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						int particleSystemIdx;
 					};
 
-					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
 						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
-						extensions,
+						TextureReader::getTextureExtensions(),
 						Tools::getFileName(fps->getTextureFileName()),
 						true,
 						new OnFogParticleSystemLoadTexture(this, particleSystemIdx)
@@ -1041,11 +1035,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						int particleSystemIdx;
 					};
 
-					auto extensions = TextureReader::getTextureExtensions();
 					popUps->getFileDialogScreenController()->show(
 						fps->getTextureFileName().empty() == false?Tools::getPathName(fps->getTextureFileName()):string(),
 						"Load point particle system texture from: ",
-						extensions,
+						TextureReader::getTextureExtensions(),
 						Tools::getFileName(fps->getTextureFileName()),
 						true,
 						new OnFogParticleSystemLoadTransparencyTexture(this, particleSystemIdx)
@@ -1116,11 +1109,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					};
 
 					//
-					auto extensions = ModelReader::getModelExtensions();
 					popUps->getFileDialogScreenController()->show(
 						ops->getModelFileName().empty() == false?Tools::getPathName(ops->getModelFileName()):string(),
 						"Load object particle system model from: ",
-						extensions,
+						ModelReader::getModelExtensions(),
 						string(),
 						true,
 						new OnObjectParticleSystemLoadModel(this, particleSystemIdx)
