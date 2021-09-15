@@ -15,7 +15,7 @@
 - Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating 3D apps/games! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
 
 # 2. What is our idea of "Who is this 3D engine for"?
-- Small developer studios that want/insist on having/need a complete and light free open source 3d engine that they can build upon, improve and such and adapt for their needs
+- Small developer studios that want/insist on having/need a complete, lightweight and free open source 3d engine that they can build upon, improve and such and adapt for their needs
 - Anyone who wants to do 3D apps/games prototyping
 - Educational purpose: If you want to see how things can be done in a 3D Engine world, feel free to have a look at our little engine :)
 
