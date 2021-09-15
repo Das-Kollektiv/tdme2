@@ -78,6 +78,7 @@ const string FileDialogScreenController::getFileName()
 }
 
 void FileDialogScreenController::setDefaultCWD(const string& defaultCwd) {
+	// TODO: load relative paths and make them absolute by concatenate default cwd at the beginning
 	this->defaultCwd = defaultCwd;
 	defaultCwdByExtensions.clear();
 	favorites.clear();
@@ -525,6 +526,7 @@ void FileDialogScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void FileDialogScreenController::saveSettings() {
+	// TODO: store relative paths
 	try {
 		Properties settings;
 		{
