@@ -130,6 +130,7 @@ public:
 	 */
 	inline void setDefaultCWD(const string& defaultCwd) {
 		this->defaultCwd = defaultCwd;
+		defaultCwdByExtensions.clear();
 	}
 
 	/**
