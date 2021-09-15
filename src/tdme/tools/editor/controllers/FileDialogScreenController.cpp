@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/gui/events/GUIActionListener.h>
@@ -25,6 +26,7 @@
 
 using std::remove;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::gui::events::GUIActionListenerType;
@@ -282,8 +284,19 @@ void FileDialogScreenController::setupDrives() {
 
 void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction)
 {
+	this->captionText = captionText;
+	this->extensions = extensions;
+	this->fileNameNode->getController()->setValue(fileName);
+	this->enableFilter = enableFilter;
 	auto _cwd = cwd;
-	if (cwd.empty() == true) _cwd = defaultCwd;
+	if (cwd.empty() == true) {
+		auto defaultCwdByExtensionsIt = defaultCwdByExtensions.find(getExtensionHash());
+		if (defaultCwdByExtensionsIt != defaultCwdByExtensions.end()) {
+			_cwd = defaultCwdByExtensionsIt->second;
+		} else {
+			_cwd = defaultCwd;
+		}
+	}
 	try {
 		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(_cwd, "");
 		if (FileSystem::getStandardFileSystem()->isPath(this->cwd) == false) {
@@ -295,10 +308,6 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		Console::println(": using cwd!");
 		this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	}
-	this->captionText = captionText;
-	this->extensions = extensions;
-	this->fileNameNode->getController()->setValue(fileName);
-	this->enableFilter = enableFilter;
 	setupFiles();
 	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
@@ -411,7 +420,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 			}
 		} else
 		if (node->getId() == "filedialog_apply") {
-			auto recent = cwd + "/" + fileNameNode->getController()->getValue().getString();
+			defaultCwdByExtensions[getExtensionHash()] = cwd;
 			if (applyAction != nullptr) {
 				applyAction->performAction();
 				delete applyAction;
@@ -420,6 +429,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 		} else
 		if (node->getId() == "filedialog_abort" ||
 			StringTools::startsWith(node->getId(), "filedialog_caption_close_") == true) { // TODO: a.drewke, check with DH
+			defaultCwdByExtensions[getExtensionHash()] = cwd;
 			if (cancelAction != nullptr) {
 				cancelAction->performAction();
 				delete cancelAction;

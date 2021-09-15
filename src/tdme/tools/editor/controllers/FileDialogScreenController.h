@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
@@ -59,6 +61,7 @@ private:
 	vector<string> favorites;
 	vector<string> recents;
 	string defaultCwd;
+	unordered_map<string, string> defaultCwdByExtensions;
 
 private:
 
@@ -89,6 +92,16 @@ private:
 	 * Set up drives
 	 */
 	void setupDrives();
+
+	/**
+	 * @return extension hash
+	 */
+	inline const string getExtensionHash() {
+		string extensionHash = "|";
+		for (auto& extension: extensions) extensionHash+= extension + "|";
+		if (extensions.empty() == true) extensionHash+= "|";
+		return extensionHash;
+	}
 
 public:
 	/**
