@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUITabsController;
@@ -22,6 +23,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 
 GUITabsController::GUITabsController(GUINode* node)
@@ -147,7 +149,12 @@ const MutableString& GUITabsController::getValue()
 
 void GUITabsController::setValue(const MutableString& value)
 {
-	setTabContentSelected(value.getString());
+	auto tabElementNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(value.getString()));
+	if (tabElementNode != nullptr) {
+		tabsHeaderController->select(tabElementNode);
+	} else {
+		Console::println("GUITabsController::setValue(): tab with id '" + value.getString() + "' not found");
+	}
 }
 
 void GUITabsController::onSubTreeChange()
@@ -155,4 +162,3 @@ void GUITabsController::onSubTreeChange()
 	determineTabContentControllers();
 	setTabContentSelectedInternal(value.getString());
 }
-
