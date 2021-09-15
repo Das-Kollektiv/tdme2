@@ -58,22 +58,7 @@ private:
 	bool filtered;
 	vector<string> favorites;
 	vector<string> recents;
-
-public:
-	GUIScreenNode* getScreenNode() override;
-
-	/**
-	 * @return path name
-	 */
-	const string& getPathName();
-
-	/**
-	 * @return file name
-	 */
-	const string getFileName();
-
-	void initialize() override;
-	void dispose() override;
+	string defaultCwd;
 
 private:
 
@@ -116,6 +101,34 @@ public:
 	 */
 	virtual ~FileDialogScreenController();
 
+	// overridden methods
+	GUIScreenNode* getScreenNode() override;
+
+	/**
+	 * @return default current working directory
+	 */
+	inline const string& getDefaultCWD() {
+		return defaultCwd;
+	}
+
+	/**
+	 * Set default current working directory
+	 * @param defaultCWD default current working directory
+	 */
+	inline void setDefaultCWD(const string& defaultCwd) {
+		this->defaultCwd = defaultCwd;
+	}
+
+	/**
+	 * @return path name
+	 */
+	const string& getPathName();
+
+	/**
+	 * @return file name
+	 */
+	const string getFileName();
+
 	/**
 	 * Shows the file dialog pop up
 	 * @param cwd current working directory
@@ -135,6 +148,8 @@ public:
 	void close();
 
 	// overridden methods
+	void initialize() override;
+	void dispose() override;
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;

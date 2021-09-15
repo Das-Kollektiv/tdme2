@@ -369,7 +369,9 @@ void EditorScreenController::onOpenProject() {
 	public:
 		// overriden methods
 		void performAction() override {
-			editorScreenController->openProject(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			auto projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(projectPath);
+			editorScreenController->openProject(projectPath);
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 

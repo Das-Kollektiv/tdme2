@@ -282,8 +282,10 @@ void FileDialogScreenController::setupDrives() {
 
 void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction)
 {
+	auto _cwd = cwd;
+	if (cwd.empty() == true) _cwd = defaultCwd;
 	try {
-		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, "");
+		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(_cwd, "");
 		if (FileSystem::getStandardFileSystem()->isPath(this->cwd) == false) {
 			this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 		}
