@@ -130,7 +130,7 @@ void CameraInputHandler::handleInputEvents() {
 			}
 			event.setProcessed(true);
 		} else
-		if (event.getButton() == MOUSE_BUTTON_MIDDLE) {
+		if (event.getButton() == MOUSE_BUTTON_MIDDLE && mouseDragging == true) {
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
 				mouseRotationX = event.getXUnscaled() - mouseDownLastX;
 				mouseRotationY = event.getYUnscaled() - mouseDownLastY;
@@ -138,8 +138,13 @@ void CameraInputHandler::handleInputEvents() {
 			event.setProcessed(true);
 		}
 		if (event.getButton() != MOUSE_BUTTON_NONE) {
-			mouseDownLastX = event.getXUnscaled();
-			mouseDownLastY = event.getYUnscaled();
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
+				mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
+			} else {
+				mouseDownLastX = event.getXUnscaled();
+				mouseDownLastY = event.getYUnscaled();
+			}
 			event.setProcessed(true);
 		}
 		auto mouseWheel = event.getWheelY();
