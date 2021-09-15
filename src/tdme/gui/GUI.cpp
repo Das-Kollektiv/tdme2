@@ -896,6 +896,13 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
+	// TODO: not 100% sure, lets see if it does some sort of trouble, otherwise I see no problem with this solution
+	// fake mouse moved after releasing a button
+	if (guiMouseEvent.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+		guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
+		guiMouseEvent.setButton(-1);;
+		mouseEvents.push_back(guiMouseEvent);
+	}
 	unlockEvents();
 }
 
