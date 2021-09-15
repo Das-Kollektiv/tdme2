@@ -586,6 +586,10 @@ void GUIScreenNode::setValues(const unordered_map<string, MutableString>& values
 	}
 }
 
+GUIScreenNode_SizeConstraints& GUIScreenNode::getSizeConstraints() {
+	return sizeConstraints;
+}
+
 GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)
 {
 	GUIScreenNode_SizeConstraints constraints;

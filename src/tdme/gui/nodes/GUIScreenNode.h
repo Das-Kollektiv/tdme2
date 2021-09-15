@@ -538,6 +538,11 @@ public:
 	void setValues(const unordered_map<string, MutableString>& values);
 
 	/**
+	 * @return size constraints
+	 */
+	GUIScreenNode_SizeConstraints& getSizeConstraints();
+
+	/**
 	 * Create size constraints
 	 * @param minWidth min width
 	 * @param minHeight min height
