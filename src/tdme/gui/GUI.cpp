@@ -661,7 +661,7 @@ void GUI::handleEvents()
 				// We do not consume mouse moved events by default, so:
 				// consume mouse move event, if floating node has conditions met and is expanded/collapsed by condition
 				// as in this case you do not want to have other mouse movement event handling
-				if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED &&
+				if ((event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED || floatingNode->isEventBelongingToNode(&event) == true) &&
 					floatingNode->flow == GUINode_Flow::FLOATING &&
 					floatingNode->conditionsMet == true &&
 					((floatingNode->showOn.getConditions().empty() == false && floatingNode->showOn.has("always") == false) ||
