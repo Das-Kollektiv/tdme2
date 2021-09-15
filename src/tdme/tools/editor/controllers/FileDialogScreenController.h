@@ -128,10 +128,7 @@ public:
 	 * Set default current working directory
 	 * @param defaultCWD default current working directory
 	 */
-	inline void setDefaultCWD(const string& defaultCwd) {
-		this->defaultCwd = defaultCwd;
-		defaultCwdByExtensions.clear();
-	}
+	void setDefaultCWD(const string& defaultCwd);
 
 	/**
 	 * @return path name
@@ -168,6 +165,11 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
+
+	/**
+	 * Save settings
+	 */
+	void saveSettings();
 
 	/**
 	 * Get file image name

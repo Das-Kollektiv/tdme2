@@ -22,6 +22,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
@@ -45,6 +46,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 FileDialogScreenController::FileDialogScreenController()
@@ -73,6 +75,44 @@ const string& FileDialogScreenController::getPathName()
 const string FileDialogScreenController::getFileName()
 {
 	return fileNameNode->getController()->getValue().getString();
+}
+
+void FileDialogScreenController::setDefaultCWD(const string& defaultCwd) {
+	this->defaultCwd = defaultCwd;
+	defaultCwdByExtensions.clear();
+	favorites.clear();
+	recents.clear();
+	defaultCwdByExtensions.clear();
+	try {
+		Properties settings;
+		settings.load(defaultCwd, ".filedialog.properties", FileSystem::getStandardFileSystem());
+		{
+			auto i = 0;
+			string favorite;
+			while ((favorite = settings.get("favorite_" + to_string(i++), "")).empty() == false) {
+				favorites.push_back(favorite);
+			}
+		}
+		{
+			auto i = 0;
+			string recent;
+			while ((recent = settings.get("recent_" + to_string(i++), "")).empty() == false) {
+				recents.push_back(recent);
+			}
+		}
+		{
+			auto i = 0;
+			string defaultCwdString;
+			while ((defaultCwdString = settings.get("default_cwd_" + to_string(i++), "")).empty() == false) {
+				auto defaultCwdComponents = StringTools::tokenize(defaultCwdString, ":");
+				if (defaultCwdComponents.size() == 2) {
+					defaultCwdByExtensions[defaultCwdComponents[0]] = defaultCwdComponents[1];
+				}
+			}
+		}
+	} catch (Exception& exception) {
+		Console::println(string() + "FileDialogScreenController::setDefaultCWD(): An error occurred: " + exception.what());
+	}
 }
 
 void FileDialogScreenController::initialize()
@@ -363,6 +403,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					recents.erase(remove(recents.begin(), recents.end(), cwd), recents.end());
 					recents.push_back(cwd);
 					setupRecents();
+					saveSettings();
 				} else {
 					cwd = lastCwd;
 					setupFiles();
@@ -414,13 +455,17 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 				recents.erase(remove(recents.begin(), recents.end(), cwd), recents.end());
 				recents.push_back(cwd);
 				setupRecents();
+				saveSettings();
 			} else {
 				cwd = lastCwd;
 				setupFiles();
 			}
 		} else
 		if (node->getId() == "filedialog_apply") {
-			defaultCwdByExtensions[getExtensionHash()] = cwd;
+			if (defaultCwd.empty() == false) {
+				defaultCwdByExtensions[getExtensionHash()] = cwd;
+				saveSettings();
+			}
 			if (applyAction != nullptr) {
 				applyAction->performAction();
 				delete applyAction;
@@ -429,7 +474,10 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 		} else
 		if (node->getId() == "filedialog_abort" ||
 			StringTools::startsWith(node->getId(), "filedialog_caption_close_") == true) { // TODO: a.drewke, check with DH
-			defaultCwdByExtensions[getExtensionHash()] = cwd;
+			if (defaultCwd.empty() == false) {
+				defaultCwdByExtensions[getExtensionHash()] = cwd;
+				saveSettings();
+			}
 			if (cancelAction != nullptr) {
 				cancelAction->performAction();
 				delete cancelAction;
@@ -450,6 +498,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == "filedialog_recent_delete") {
 			recents.clear();
 			setupRecents();
+			saveSettings();
 		} else
 		if (node == favoritesNode) {
 			cwd = favoritesNode->getController()->getValue().getString();
@@ -473,6 +522,33 @@ void FileDialogScreenController::onFocus(GUIElementNode* node) {
 }
 
 void FileDialogScreenController::onUnfocus(GUIElementNode* node) {
+}
+
+void FileDialogScreenController::saveSettings() {
+	try {
+		Properties settings;
+		{
+			auto i = 0;
+			for (auto& favorite: favorites) {
+				settings.put("favorite_" + to_string(i++), favorite);
+			}
+		}
+		{
+			auto i = 0;
+			for (auto& recent: recents) {
+				settings.put("recent_" + to_string(i++), recent);
+			}
+		}
+		{
+			auto i = 0;
+			for (auto& defaultCwdByExtensionsIt: defaultCwdByExtensions) {
+				settings.put("default_cwd_" + to_string(i++), defaultCwdByExtensionsIt.first + ":" + defaultCwdByExtensionsIt.second);
+			}
+		}
+		settings.store(defaultCwd, ".filedialog.properties", FileSystem::getStandardFileSystem());
+	} catch (Exception& exception) {
+		Console::println(string() + "FileDialogScreenController::setDefaultCWD(): An error occurred: " + exception.what());
+	}
 }
 
 const string FileDialogScreenController::getFileImageName(const string& fileName) {
