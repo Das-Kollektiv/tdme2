@@ -353,6 +353,7 @@ void EditorScreenController::openProject(const string& path) {
 	}
 	Console::println("EditorScreenController::openProject(): " + projectPath);
 	closeProject();
+	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(projectPath);
 	scanProjectPaths();
 	//
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(false);
@@ -370,7 +371,6 @@ void EditorScreenController::onOpenProject() {
 		// overriden methods
 		void performAction() override {
 			auto projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			editorScreenController->view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(projectPath);
 			editorScreenController->openProject(projectPath);
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -477,6 +477,7 @@ void EditorScreenController::closeTabs() {
 }
 
 void EditorScreenController::closeProject() {
+	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(string());
 	closeTabs();
 	clearProjectPathFiles();
 	fileNameButtonXMLMapping.clear();
