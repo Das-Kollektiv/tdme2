@@ -54,7 +54,7 @@ private:
 	/**
 	 * Mount installer file system
 	 */
-	static void mountInstallerFileSystem(const string& timestamp = string());
+	static void mountInstallerFileSystem(const string& timestamp = string(), bool remountInstallerArchive = false);
 
 	/**
 	 * Initialize screens

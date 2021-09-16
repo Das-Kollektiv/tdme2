@@ -381,10 +381,12 @@ void Installer::performScreenAction() {
 										installer->installThreadMutex.unlock();
 
 										// sha256
-										installer->installThreadMutex.lock();
-										installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256.download");
-										installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256");
-										installer->installThreadMutex.unlock();
+										if (componentIdx > 0) {
+											installer->installThreadMutex.lock();
+											installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256.download");
+											installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256");
+											installer->installThreadMutex.unlock();
+										}
 										httpDownloadClient.reset();
 										httpDownloadClient.setUsername(installer->installerProperties.get("repository_username", ""));
 										httpDownloadClient.setPassword(installer->installerProperties.get("repository_password", ""));
@@ -407,10 +409,12 @@ void Installer::performScreenAction() {
 										}
 
 										// archive
-										installer->installThreadMutex.lock();
-										installer->downloadedFiles.push_back("installer/" + componentFileName + ".download");
-										installer->downloadedFiles.push_back("installer/" + componentFileName);
-										installer->installThreadMutex.unlock();
+										if (componentIdx > 0) {
+											installer->installThreadMutex.lock();
+											installer->downloadedFiles.push_back("installer/" + componentFileName + ".download");
+											installer->downloadedFiles.push_back("installer/" + componentFileName);
+											installer->installThreadMutex.unlock();
+										}
 										httpDownloadClient.reset();
 										httpDownloadClient.setFile("installer/" + componentFileName);
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName);
@@ -429,13 +433,6 @@ void Installer::performScreenAction() {
 											delete this;
 											return;
 										}
-									}
-
-									//
-									try {
-										FileSystem::getStandardFileSystem()->setContentFromString("installer", Application::getOSName() + "-" + Application::getCPUName() + "-upload-" + timestampWeb, "");
-									} catch (Exception& exception) {
-										Console::println(string("CheckForUpdateThread::run(): An error occurred: ") + exception.what());
 									}
 								}
 							}
@@ -1305,7 +1302,7 @@ void Installer::display()
 {
 	installThreadMutex.lock();
 	if (remountInstallerArchive == true) {
-		mountInstallerFileSystem(timestamp);
+		mountInstallerFileSystem(timestamp, true);
 		initializeScreens();
 		performScreenAction();
 		remountInstallerArchive = false;
@@ -1316,7 +1313,7 @@ void Installer::display()
 	installThreadMutex.unlock();
 }
 
-void Installer::mountInstallerFileSystem(const string& timestamp) {
+void Installer::mountInstallerFileSystem(const string& timestamp, bool remountInstallerArchive) {
 	Console::println("Installer::mountInstallerFileSystem(): timestamp: " + (timestamp.empty() == false?timestamp:"no timestamp"));
 	// determine installer tdme archive
 	try {
@@ -1327,7 +1324,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		FileSystem::getStandardFileSystem()->list("installer", files);
 		for (auto file: files) {
 			if (StringTools::startsWith(file, installerArchiveFileNameStart) == true &&
-				StringTools::endsWith(file, ".sha256") == false) {
+				StringTools::endsWith(file, ".ta") == true) {
 				Console::println("Installer::main(): Have installer tdme archive file: " + file);
 				installerArchiveFileName = file;
 			}
@@ -1339,10 +1336,29 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		// file system
 		auto installerFileSystem = new ArchiveFileSystem("installer/" + installerArchiveFileName);
 		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
-			Console::println("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
+			throw ExceptionBase("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
 		}
 		Console::println("Installer::mountInstallerFileSystem(): unmounting");
+		// check if to remove old installer file system
+		auto lastInstallerArchiveFileName = remountInstallerArchive == true?static_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName():string();
 		FileSystem::unsetFileSystem();
+		// so?
+		if (lastInstallerArchiveFileName.empty() == false) {
+			// yep
+			Console::println("Installer::mountInstallerFileSystem(): deleting installer tdme archive file: " + lastInstallerArchiveFileName);
+			try {
+				FileSystem::getStandardFileSystem()->removeFile(
+					FileSystem::getStandardFileSystem()->getPathName(lastInstallerArchiveFileName),
+					FileSystem::getStandardFileSystem()->getFileName(lastInstallerArchiveFileName)
+				);
+				FileSystem::getStandardFileSystem()->removeFile(
+					FileSystem::getStandardFileSystem()->getPathName(lastInstallerArchiveFileName),
+					FileSystem::getStandardFileSystem()->getFileName(lastInstallerArchiveFileName) + ".sha256"
+				);
+			} catch (Exception& exception) {
+				Console::println(string("Installer::mountInstallerFileSystem(): An error occurred: ") + exception.what());
+			}
+		}
 		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
 		FileSystem::setupFileSystem(installerFileSystem);
 	} catch (Exception& exception) {
