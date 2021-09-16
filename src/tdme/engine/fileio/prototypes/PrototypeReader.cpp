@@ -409,15 +409,15 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 }
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
-	string modelFile = FileSystem::getInstance()->getCanonicalPath(
+	string resourceFile = FileSystem::getInstance()->getCanonicalPath(
 		StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
 			FileSystem::getInstance()->getPathName(fileName):
 			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
 	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
-	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(modelRelativeFileName);
+	auto resourceRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, resourceFile);
+	auto resourcePathName = (applicationRoot.empty() == false?applicationRoot + "/":"") + Tools::getPathName(resourceRelativeFileName);
 	return resourcePathName;
 }
 

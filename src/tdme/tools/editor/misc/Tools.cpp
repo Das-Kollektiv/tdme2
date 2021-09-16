@@ -440,16 +440,16 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 const string Tools::getRelativeResourcesFileName(const string& applicationRoot, const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
-	auto cutFileNameIdx = -1;
-	if (cutFileNameIdx == -1) {
+	auto cutFileNameIdx = string::npos;
+	if (cutFileNameIdx == string::npos) {
 		cutFileNameIdx = fileName.rfind("/resources/");
-		if (cutFileNameIdx != -1) {
+		if (cutFileNameIdx != string::npos) {
 			newFileName = StringTools::substring(fileName, cutFileNameIdx + 1);
 		}
 	}
-	if (cutFileNameIdx == -1) {
+	if (cutFileNameIdx == string::npos) {
 		cutFileNameIdx = fileName.rfind("resources/");
-		if (cutFileNameIdx != -1) {
+		if (cutFileNameIdx != string::npos) {
 			newFileName = StringTools::substring(fileName, cutFileNameIdx);
 		}
 	}
