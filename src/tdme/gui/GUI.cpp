@@ -534,6 +534,9 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 		}
 		if (controllerNode == nullptr) continue;
 
+		// this corresponding screen node could have been detached from GUI by removing it from render screens
+		if (eventNode->getScreenNode()->getGUI() == nullptr) continue;
+
 		// handle event with determined controller
 		controllerNode->getController()->handleMouseEvent(eventNode, event);
 	}
