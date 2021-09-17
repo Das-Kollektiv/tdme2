@@ -1,0 +1,70 @@
+<screen id="popup_about" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="2560" max-height="1440">
+	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+	
+			<tabs width="400" height="400">
+				<tabs-header id="about_tabs-header">
+					<tab id="about_caption" image="resources/engine/images/tdme.png" text="About" closeable="true"/>
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="about_caption" vertical-align="center">
+					
+						<layout padding="20" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+					
+							<image width="339" height="94" src="resources/engine/images/tdme_fontlogo_white.png"/>
+							
+							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="*">
+							
+								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
+									<text font="{$font.default}" color="{$color.font_normal}" text="TDME2" width="auto" height="25" />
+									
+									<text id="about_version" font="{$font.default}" color="{$color.font_disabled}" text="v1.9.99" width="auto" height="25" />
+								</layout>
+								
+								<space width="150"/>
+								
+								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
+									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+										<image src="resources/engine/images/weblink.png"/>
+										<space width="5"/>
+										<text id="about_releasenotes" font="{$font.default}" color="{$color.font_normal}" text="Release Notes" width="auto" />
+									</layout>
+									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+										<image src="resources/engine/images/weblink.png"/>
+										<space width="5"/>
+										<text id="about_github" font="{$font.default}" color="{$color.font_normal}" text="GitHub" width="auto" />
+									</layout>
+									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+										<image src="resources/engine/images/weblink.png"/>
+										<space width="5"/>
+										<text id="about_discord" font="{$font.default}" color="{$color.font_normal}" text="Discord" width="auto" />
+									</layout>
+									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+										<image src="resources/engine/images/weblink.png"/>
+										<space width="5"/>
+										<text id="about_license" font="{$font.default}" color="{$color.font_normal}" text="License" width="auto" />
+									</layout>
+									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+										<image src="resources/engine/images/weblink.png"/>
+										<space width="5"/>
+										<text id="about_patreon" font="{$font.default}" color="{$color.font_normal}" text="Patreon" width="auto" />
+									</layout>
+
+								</layout>
+
+							</layout>
+							
+							<multiline-text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+								<![CDATA[
+									Developed 2012-2021 by drewke.net, mindty.com
+								]]>
+							</multiline-text>
+							
+						</layout>
+						
+					</tab-content>
+				</tabs-content>
+			</tabs>
+			
+	</layout>
+</screen>
+

@@ -26,7 +26,7 @@
 					<layout show-on="bvs" width="auto" height="auto" alignment="vertical">
 						<checkbox id="{$id}_checkbox_bvs" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
 					</layout>
-					<layout show-on="snapping" width="auto" height="auto" alignment="vertical">
+					<layout show-on="snapping" width="auto" height="auto" alignment="horizontal">
 						<checkbox id="{$id}_checkbox_snapping" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
 						<element id="{$id}_snapping_details">
 							<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
