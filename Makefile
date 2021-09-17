@@ -873,6 +873,7 @@ MAIN_SRCS = \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
+	src/tdme/tools/cli/collectguitags-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/create-installer-main.cpp \
