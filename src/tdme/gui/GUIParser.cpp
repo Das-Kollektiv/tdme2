@@ -170,7 +170,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(newXML.c_str());
 	if (xmlDocument.Error() == true) {
-		string message = string("GUIParser::parse():: Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
+		string message = string("GUIParser::parse(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
 		Console::println(message);
 		throw GUIParserException(message);
 	}
@@ -277,7 +277,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse((string("<gui-element>") + newXML + string("</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
-		auto message = "GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
+		auto message = "GUIParser::parse(): Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "':\n\n" + newXML;
 		Console::println(message);
 		throw GUIParserException(message);
 	}

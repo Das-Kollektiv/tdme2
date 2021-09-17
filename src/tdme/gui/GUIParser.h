@@ -12,7 +12,6 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-
 #include <ext/tinyxml/tinyxml.h>
 
 using std::map;

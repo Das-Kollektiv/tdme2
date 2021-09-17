@@ -1342,8 +1342,8 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 		// check if to remove old installer file system
 		auto lastInstallerArchiveFileName = remountInstallerArchive == true?static_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName():string();
 		FileSystem::unsetFileSystem();
-		// so?
-		if (lastInstallerArchiveFileName.empty() == false) {
+		// so? Also check if new installer archive file name is same as currently used installer archive file name
+		if (lastInstallerArchiveFileName.empty() == false && lastInstallerArchiveFileName != "installer/" + installerArchiveFileName) {
 			// yep
 			Console::println("Installer::mountInstallerFileSystem(): deleting installer tdme archive file: " + lastInstallerArchiveFileName);
 			try {

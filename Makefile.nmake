@@ -669,6 +669,7 @@ all: \
 	UDPServerTest \
 	WaterTest \
 	archive \
+	collectguitags \
 	converttotm \
 	copyanimationsetups \
 	create-installer \
@@ -791,6 +792,9 @@ WaterTest:
 
 archive:
     cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+collectguitags:
+	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 converttotm:
 	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
