@@ -33,6 +33,7 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
@@ -93,6 +94,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -226,6 +228,9 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		} else
 		if (node->getId() == "menu_file_saveall") {
 			onSaveAllTabs();
+		} else
+		if (node->getId() == "menu_help_about") {
+			view->getPopUps()->getAboutDialogScreenController()->show();
 		} else
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());

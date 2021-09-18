@@ -109,6 +109,16 @@ void Application::executeBackground(const string& command) {
 	#endif
 }
 
+void Application::openBrowser(const string& url) {
+	#if defined(_WIN32)
+		execute("explorer \"" + url + "\"");
+	#elif defined(__APPLE__)
+		execute("open \"" + url + "\"");
+	#else
+		execute("xdg-open \"" + url + "\"");
+	#endif
+}
+
 void Application::cancelExit() {
 	#if defined(VULKAN) || defined(GLFW3)
 		glfwSetWindowShouldClose(glfwWindow, GLFW_FALSE);

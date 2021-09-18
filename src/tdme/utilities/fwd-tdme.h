@@ -19,7 +19,6 @@ namespace utilities {
 	class IntBuffer;
 	class Integer;
 	class IntEncDec;
-	class Key;
 	class MiniScript;
 	class MutableString;
 	class ModelTools;

@@ -123,6 +123,12 @@ public:
 	static void executeBackground(const string& command);
 
 	/**
+	 * Open browser with given url
+	 * @param url url
+	 */
+	static void openBrowser(const string& url);
+
+	/**
 	 * Cancels a users requested exit (ALT-F4 or X button)
 	 */
 	static void cancelExit();

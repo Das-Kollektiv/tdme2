@@ -566,6 +566,7 @@ SRCS = \
 	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
 	src/tdme/tools/editor/controllers/ContextMenuScreenController.cpp \

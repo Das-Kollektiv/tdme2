@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -35,6 +36,7 @@ using std::find;
 using std::set;
 using std::to_string;
 
+using tdme::application::Application;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -184,6 +186,10 @@ const string& GUIElementNode::getOnChangeExpression() {
 }
 
 void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression) {
+	if (StringTools::startsWith(expression, "http://") == true || StringTools::startsWith(expression, "https://") == true) {
+		Application::openBrowser(expression);
+		return;
+	}
 	StringTokenizer t1;
 	StringTokenizer t2;
 	t1.tokenize(expression, ";");

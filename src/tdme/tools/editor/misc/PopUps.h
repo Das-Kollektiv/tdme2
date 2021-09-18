@@ -3,6 +3,7 @@
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
+using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -21,6 +22,7 @@ private:
 	ProgressBarScreenController* progressBarScreenController { nullptr };
 	ColorPickerScreenController* colorPickerScreenController { nullptr };
 	ContextMenuScreenController* contextMenuScreenController { nullptr };
+	AboutDialogScreenController* aboutDialogScreenController { nullptr };
 
 public:
 	/**
@@ -66,6 +68,13 @@ public:
 	 */
 	inline ContextMenuScreenController* getContextMenuScreenController() {
 		return contextMenuScreenController;
+	}
+
+	/**
+ 	 * @return about dialog screen controller
+	 */
+	inline AboutDialogScreenController* getAboutDialogScreenController() {
+		return aboutDialogScreenController;
 	}
 
 	/**

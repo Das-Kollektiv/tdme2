@@ -25,7 +25,6 @@ using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
-using tdme::utilities::Key;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 {

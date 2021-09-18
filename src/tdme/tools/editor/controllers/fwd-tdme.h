@@ -5,6 +5,7 @@ namespace tdme {
 namespace tools {
 namespace editor {
 namespace controllers {
+	class AboutDialogScreenController;
 	class ColorPickerImageController;
 	class ColorPickerScreenController;
 	class ContextMenuScreenController;

@@ -23,32 +23,45 @@
 								<space width="150"/>
 								
 								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
-									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-										<image src="resources/engine/images/weblink.png"/>
-										<space width="5"/>
-										<text id="about_releasenotes" font="{$font.default}" color="{$color.font_normal}" text="Release Notes" width="auto" />
-									</layout>
-									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-										<image src="resources/engine/images/weblink.png"/>
-										<space width="5"/>
-										<text id="about_github" font="{$font.default}" color="{$color.font_normal}" text="GitHub" width="auto" />
-									</layout>
-									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-										<image src="resources/engine/images/weblink.png"/>
-										<space width="5"/>
-										<text id="about_discord" font="{$font.default}" color="{$color.font_normal}" text="Discord" width="auto" />
-									</layout>
-									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-										<image src="resources/engine/images/weblink.png"/>
-										<space width="5"/>
-										<text id="about_license" font="{$font.default}" color="{$color.font_normal}" text="License" width="auto" />
-									</layout>
-									<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-										<image src="resources/engine/images/weblink.png"/>
-										<space width="5"/>
-										<text id="about_patreon" font="{$font.default}" color="{$color.font_normal}" text="Patreon" width="auto" />
-									</layout>
-
+									<!-- 
+									<element id="about_releasenotes_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2/commits/master">
+										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+											<image src="resources/engine/images/weblink.png"/>
+											<space width="5"/>
+											<text id="about_releasenotes" font="{$font.default}" color="{$color.font_normal}" text="Release Notes" width="auto" />
+										</layout>
+									</element>
+									 -->
+									<element id="about_github_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2">
+										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+											<image src="resources/engine/images/weblink.png"/>
+											<space width="5"/>
+											<text id="about_github" font="{$font.default}" color="{$color.font_normal}" text="GitHub" width="auto" />
+										</layout>
+									</element>										
+									<element id="about_discord_element" width="auto" height="auto" on-mouse-click="https://discord.gg/tMqrmcp23Q">
+										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+											<image src="resources/engine/images/weblink.png"/>
+											<space width="5"/>
+											<text id="about_discord" font="{$font.default}" color="{$color.font_normal}" text="Discord" width="auto" />
+										</layout>
+									</element>
+									<element id="about_license_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2/blob/master/LICENSE">
+										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+											<image src="resources/engine/images/weblink.png"/>
+											<space width="5"/>
+											<text id="about_license" font="{$font.default}" color="{$color.font_normal}" text="License" width="auto" />
+										</layout>
+									</element>
+									<!-- 								
+									<element id="about_patreon_element" width="auto" height="auto">
+										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
+											<image src="resources/engine/images/weblink.png"/>
+											<space width="5"/>
+											<text id="about_patreon" font="{$font.default}" color="{$color.font_normal}" text="Patreon" width="auto" />
+										</layout>
+									</element>
+ 									-->
 								</layout>
 
 							</layout>
