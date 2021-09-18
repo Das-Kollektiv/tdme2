@@ -1,4 +1,4 @@
-<screen id="popup_rangepicker" popup="true" min-width="1024" min-height="768" max-width="2560" max-height="1440">
+<screen id="popup_rangepicker" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
 		<tabs width="360" height="300">
 			<tabs-header id="rangepicker_tabs-header">
