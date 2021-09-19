@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -16,6 +17,7 @@
 using std::string;
 using std::to_string;
 
+using tdme::application::Application;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -129,12 +131,14 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	} else
 	if (event->getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 		if (elementNode->isEventBelongingToNode(event) == true) {
+			if (elementNode->getOptionValue("mouse-cursor") == "hand") Application::setMouseCursor(MOUSE_CURSOR_HAND);
 			node->getScreenNode()->delegateMouseOver(elementNode);
 			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_ONMOUSEOVER);
 			node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(elementNode);
 			auto onMouseOverExpression = elementNode->getOnMouseOverExpression();
 			if (onMouseOverExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseOverExpression);
 		} else {
+			if (elementNode->getOptionValue("mouse-cursor") == "hand") Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
 			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
 			auto onMouseOutExpression = elementNode->getOnMouseOutExpression();
 			if (onMouseOutExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseOutExpression);

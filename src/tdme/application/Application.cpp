@@ -340,7 +340,8 @@ bool Application::limitFPS = true;
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
 	int Application::glfwMouseButtonLast = -1;
-	bool Application::capsLockEnabled = false;
+	bool Application::glfwCapsLockEnabled = false;
+	GLFWcursor* Application::glfwHandCursor = nullptr;
 #endif
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
@@ -512,9 +513,15 @@ void Application::installExceptionHandler() {
 void Application::setMouseCursor(int mouseCursor) {
 	#if defined(VULKAN) || defined(GLFW3)
 		if (mouseCursor == MOUSE_CURSOR_DISABLED) {
+			glfwSetCursor(glfwWindow, nullptr);
 			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		} else
 		if (mouseCursor == MOUSE_CURSOR_ENABLED) {
+			glfwSetCursor(glfwWindow, nullptr);
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		} else
+		if (mouseCursor == MOUSE_CURSOR_HAND) {
+			glfwSetCursor(glfwWindow, glfwHandCursor);
 			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 	#else
@@ -574,6 +581,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			Console::println("glflInit(): failed!");
 			return;
 		}
+
+		// TODO: dispose
+		Application::glfwHandCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
 		// determine window position of not yet done
 		if (windowXPosition == -1 || windowYPosition == -1) {
@@ -851,7 +861,7 @@ void Application::reshapeInternal(int width, int height) {
 		// TODO: Use GLFW_MOD_CAPS_LOCK, which does not seem to be available with my version, need to update perhabs
 		if (key == GLFW_KEY_CAPS_LOCK) {
 			if (action == GLFW_PRESS) {
-				capsLockEnabled = capsLockEnabled == false?true:false;
+				glfwCapsLockEnabled = glfwCapsLockEnabled == false?true:false;
 			}
 		}
 		if (glfwIsSpecialKey(key) == true) {
@@ -866,7 +876,7 @@ void Application::reshapeInternal(int width, int height) {
 				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 				if (keyName != nullptr) {
 					Application::inputEventHandler->onKeyDown(
-						(mods & GLFW_MOD_SHIFT) == 0 && capsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+						(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
 						(int)mouseX,
 						(int)mouseY
 					);
@@ -876,7 +886,7 @@ void Application::reshapeInternal(int width, int height) {
 				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 				if (keyName != nullptr) {
 					Application::inputEventHandler->onKeyUp(
-						(mods & GLFW_MOD_SHIFT) == 0 && capsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+						(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
 						(int)mouseX,
 						(int)mouseY
 					);

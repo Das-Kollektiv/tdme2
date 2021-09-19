@@ -9,6 +9,8 @@
 	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
 	#define MOUSE_CURSOR_ENABLED 1
+	#define MOUSE_CURSOR_NORMAL 1
+	#define MOUSE_CURSOR_HAND 2
 	#include <array>
 	using std::array;
 #else
@@ -20,6 +22,8 @@
 
 	#define MOUSE_CURSOR_DISABLED GLUT_CURSOR_NONE
 	#define MOUSE_CURSOR_ENABLED GLUT_CURSOR_INHERIT
+	#define MOUSE_CURSOR_NORMAL GLUT_CURSOR_INHERIT
+	#define MOUSE_CURSOR_HAND GLUT_CURSOR_INFO
 #endif
 
 #include <string>
@@ -283,7 +287,8 @@ private:
 		static GLFWwindow* glfwWindow;
 		static array<unsigned int, 10> glfwMouseButtonDownFrames;
 		static int glfwMouseButtonLast;
-		static bool capsLockEnabled;
+		static bool glfwCapsLockEnabled;
+		static GLFWcursor* glfwHandCursor;
 	#endif
 
 	/**
