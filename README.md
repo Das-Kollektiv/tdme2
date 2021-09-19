@@ -14,7 +14,7 @@
   - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
   - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
   - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-  - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha)
+  - you find developer documentation including collaboration graphs and [http://drewke.net/tdme2-documentation/alpha/private](private API) as well as [http://drewke.net/tdme2-documentation/alpha/private](public API) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
 # 2. Features
