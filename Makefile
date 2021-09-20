@@ -81,6 +81,7 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
+	EXTRAFLAGS := -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -89,7 +90,7 @@ else ifeq ($(OS), NetBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
