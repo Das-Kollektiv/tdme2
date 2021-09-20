@@ -165,7 +165,6 @@ You need to adjust "tdme2" if you used a different folder.
 ```
 cd %HOMEPATH%/tdme2
 copy ext\fbx\win64\lib\libfbxsdk.dll .
-copy ext\win-freeglut\libs\freeglut.dll .
 copy ext\win-glew\libs\glew32.dll .
 copy ext\win-openal-soft\libs\OpenAL32.dll .
 copy ext\win-pthread\libs\pthreadVC2.dll .

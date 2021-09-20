@@ -23,10 +23,10 @@ INCLUDES = \
 	/I "ext" \
 	/I "ext\src" \
 	/I "ext\fbx\win64\include" \
+	/I "ext/glfw3/include" \
 	/I "ext\win-pthread\includes" \
 	/I "ext\win-openal-soft\includes" \
 	/I "ext\win-glew\include" \
-	/I "ext\win-freeglut\include" \
 	/I "ext\win-dirent\include" \
 	/I "ext/rapidjson/include"
 
@@ -40,22 +40,24 @@ EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\libvcruntime.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\uuid.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\libcpmt.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\glu32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\opengl32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\gdi32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\winmm.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\shell32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\user32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\ws2_32.lib" \
 	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\dbghelp.lib" \
+	/LIBPATH "ext/glfw3/win64/lib/glfw3_mt.lib" \
 	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\win-glew\libs/glew32.lib" \
-	/LIBPATH "ext\win-freeglut\libs\freeglut.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608 /D GLFW3
+
+# /NODEFAULTLIB:msvcrt
 
 LINK_FLAGS = /LTCG
 
