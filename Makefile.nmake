@@ -651,7 +651,6 @@ all: \
 	CrashTest \
 	EngineTest \
 	EntityHierarchyTest \
-	Installer \
 	HTTPClientTest \
 	HTTPDownloadClientTest \
 	LODTest \
@@ -681,6 +680,7 @@ all: \
 	scenefixmodelszup2yup \
 	sortincludes \
 	TDMEEditor \
+	InstallerApp \
 	clean-mains
 
 ext-init:
@@ -755,9 +755,6 @@ MiniScriptTest:
 PathFindingTest: 
 	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-Installer: 
-	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
-
 PhysicsTest1: 
 	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
@@ -829,3 +826,6 @@ sortincludes:
 
 TDMEEditor:
 	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+InstallerApp:
+	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
