@@ -114,7 +114,7 @@
         - rendering can be used (in other engine instances) as diffuse texture
     - supports down/up scaled rendering of main engine
     - screenshot ability
-    - multiple renderer
+    - multiple renderer backends
       - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)
 - Physics via ReactPhysics3D 0.7.0
     - have sphere, capsule, obb, convex mesh, concave terrain mesh, height map bounding volumes
