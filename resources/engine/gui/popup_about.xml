@@ -62,6 +62,7 @@
 										</layout>
 									</element>
  									-->
+									<space height="5" />
 									<element id="about_drewke_net_element" width="auto" height="auto" on-mouse-click="https://drewke.net" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
