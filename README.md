@@ -270,7 +270,7 @@
         - glew
         - pthreads
         - Vulkan(optional)
-        - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
+        - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, NetBSD, required for Vulkan)
     - included in TDME2 repository
         - FBXSDK
         - libpng
