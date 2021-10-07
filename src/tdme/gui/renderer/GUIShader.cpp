@@ -1,10 +1,23 @@
 #include <tdme/gui/renderer/GUIShader.h>
 
+#include <array>
+
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+
+#include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::gui::renderer::GUIShader;
 
+using std::array;
+
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::gui::nodes::GUIColor;
+using tdme::math::Math;
+using tdme::math::Matrix2D3x3;
+using tdme::utilities::Console;
 
 GUIShader::GUIShader(Renderer* renderer)
 {
@@ -70,6 +83,23 @@ void GUIShader::initialize()
 	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
 
+	// gradients
+	uniformGradientAvailable = renderer->getProgramUniformLocation(programId, "gradientAvailable");
+	if (uniformGradientAvailable == -1) return;
+	for (auto i = 0; i < uniformGradientColors.size(); i++) {
+		uniformGradientColors[i] = renderer->getProgramUniformLocation(programId, "gradientColors[" + to_string(i) + "]");
+		if (uniformGradientColors[i] == -1) return;
+	}
+	uniformGradientColorCount = renderer->getProgramUniformLocation(programId, "gradientColorCount");
+	if (uniformGradientColorCount == -1) return;
+	for (auto i = 0; i < uniformGradientColorStarts.size(); i++) {
+		uniformGradientColorStarts[i] = renderer->getProgramUniformLocation(programId, "gradientColorStarts[" + to_string(i) + "]");
+		if (uniformGradientColorStarts[i] == -1) return;
+	}
+	uniformInverseGradientTextureMatrix = renderer->getProgramUniformLocation(programId, "inverseGradientTextureMatrix");
+	if (uniformInverseGradientTextureMatrix == -1) return;
+
+	//
 	initialized = true;
 }
 
@@ -125,4 +155,26 @@ void GUIShader::updateTextureMatrix() {
 
 	//
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+}
+
+void GUIShader::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	//
+	count = Math::clamp(count, 0, 10);
+	renderer->setProgramUniformInteger(context, uniformGradientAvailable, count > 0?1:0);
+	if (count == 0) return;
+	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloatVec4(context, uniformGradientColors[i], colors[i].getArray());
+	renderer->setProgramUniformInteger(context, uniformGradientColorCount, count);
+	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloat(context, uniformGradientColorStarts[i], colorStarts[i]);
+	renderer->setProgramUniformFloatMatrix3x3(context, uniformInverseGradientTextureMatrix, Matrix2D3x3::rotateAroundTextureCenter(-rotationAngle).getArray());
+}
+
+void GUIShader::unsetGradient() {
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	//
+	renderer->setProgramUniformInteger(context, uniformGradientAvailable, 0);
 }

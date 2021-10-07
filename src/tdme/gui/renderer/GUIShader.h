@@ -1,10 +1,17 @@
 #pragma once
 
+#include <array>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
+
+using std::array;
+
+using tdme::gui::nodes::GUIColor;
 
 /**
  * GUI shader
@@ -27,6 +34,11 @@ private:
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
 	int32_t uniformTextureMatrix { -1 };
+	int32_t uniformGradientAvailable { -1 };
+	array<int32_t, 10> uniformGradientColors { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	int32_t uniformGradientColorCount { -1 };
+	array<int32_t, 10> uniformGradientColorStarts { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	int32_t uniformInverseGradientTextureMatrix { -1 };
 	bool initialized;
 	bool isRunning;
 
@@ -72,5 +84,21 @@ public:
 	 * Update texure matrix to program
 	 */
 	void updateTextureMatrix();
+
+	/**
+	 * Set gradient properties
+	 * @deprecated use rather custom UI shader and parameters
+	 * @param count color count
+	 * @param colors colors
+	 * @param colorStarts color starts
+	 * @param rotationAngle rotation angle
+	 */
+	void setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle);
+
+	/**
+	 * Disable gradient
+	 * @deprecated use rather custom UI shader and parameters
+	 */
+	void unsetGradient();
 
 };

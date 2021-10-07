@@ -1,5 +1,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 
+#include <array>
+
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -16,6 +18,8 @@
 #include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/Time.h>
+
+using std::array;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -58,17 +62,6 @@ GUIRenderer::~GUIRenderer() {
 	delete fbColorsByteBuffer;
 	delete fbTextureCoordinatesByteBuffer;
 }
-
-
-constexpr int GUIRenderer::QUAD_COUNT;
-
-constexpr float GUIRenderer::SCREEN_LEFT;
-
-constexpr float GUIRenderer::SCREEN_TOP;
-
-constexpr float GUIRenderer::SCREEN_RIGHT;
-
-constexpr float GUIRenderer::SCREEN_BOTTOM;
 
 void GUIRenderer::setGUI(GUI* gui)
 {
@@ -321,6 +314,14 @@ void GUIRenderer::bindMask(int32_t textureId)
 
 void GUIRenderer::setMaskMaxValue(float maskMaxValue) {
 	renderer->setMaskMaxValue(renderer->getDefaultContext(), maskMaxValue);
+}
+
+void GUIRenderer::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
+	Engine::guiShader->setGradient(count, colors, colorStarts, rotationAngle);
+}
+
+void GUIRenderer::unsetGradient() {
+	Engine::guiShader->unsetGradient();
 }
 
 void GUIRenderer::render()

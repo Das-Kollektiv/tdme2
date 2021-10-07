@@ -65,11 +65,6 @@ GUITextureBaseNode::GUITextureBaseNode(
 	this->maskMaxValue = maskMaxValue;
 }
 
-const string GUITextureBaseNode::getNodeType()
-{
-	return "image";
-}
-
 bool GUITextureBaseNode::isContentNode()
 {
 	return true;

@@ -9,6 +9,7 @@ namespace nodes {
 	class GUIElementIgnoreEventsController;
 	class GUIElementNode;
 	class GUIFrameBufferNode;
+	class GUIGradientNode;
 	class GUIHorizontalScrollbarInternalController;
 	class GUIHorizontalScrollbarInternalController_State;
 	class GUIHorizontalScrollbarInternalNode;

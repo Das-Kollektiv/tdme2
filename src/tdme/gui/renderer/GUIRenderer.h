@@ -404,6 +404,20 @@ public:
 	void setMaskMaxValue(float maskMaxValue);
 
 	/**
+	 * Set gradient properties
+	 * @param count color count
+	 * @param colors colors
+	 * @param colorStarts color starts
+	 * @param rotationAngle rotationAngle
+	 */
+	void setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle);
+
+	/**
+	 * Disable gradient
+	 */
+	void unsetGradient();
+
+	/**
 	 * Render
 	 */
 	void render();

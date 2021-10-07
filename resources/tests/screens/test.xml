@@ -269,8 +269,8 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 					<layout horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
 						<space height="*" />
 						<image 
-							width="80%" 
-							height="25" 
+							width="40%" 
+							height="15" 
 							src="resources/tests/screens/images/hr.png" 
 							horizontal-align="center" 
 							vertical-align="center"
@@ -278,14 +278,22 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 							scale9-right="500"
 						/>
 						<space height="*" />
+						<gradient 
+							width="50%" 
+							height="50%"
+							colors="red,green,blue"
+							starts="0%,50%,100%" 
+						/>
+						<space height="*" />
 						<image 
-							width="100%" 
-							height="50%" 
+							width="50%" 
+							height="25%" 
 							src="resources/tests/screens/images/scale9GridTest.png" 
 							horizontal-align="center" 
 							vertical-align="center"
 							scale9="125" 
 						/>
+						<space height="*" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab9" vertical-align="top">

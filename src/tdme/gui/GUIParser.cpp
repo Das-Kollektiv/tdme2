@@ -35,6 +35,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIGradientNode.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
@@ -107,6 +108,7 @@ using tdme::gui::elements::GUITabContent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIGradientNode;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIInputInternalNode;
@@ -930,6 +932,76 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					guiElementController = guiElement->createController(guiTextureNode);
 					if (guiElementController != nullptr) {
 						guiTextureNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+			} else
+			if (nodeTagName == "gradient") {
+				auto guiGradientNode = new GUIGradientNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUINode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUIGradientNode::createClipping(
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
+					),
+					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
+					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value"))))
+				);
+				guiParentNode->addSubNode(guiGradientNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiGradientNode);
+					if (guiElementController != nullptr) {
+						guiGradientNode->setController(guiElementController);
 					}
 					guiElementControllerInstalled = true;
 				}
