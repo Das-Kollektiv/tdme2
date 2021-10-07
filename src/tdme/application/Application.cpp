@@ -112,7 +112,7 @@ void Application::executeBackground(const string& command) {
 void Application::openBrowser(const string& url) {
 	#if defined(_WIN32)
 		execute("explorer \"" + url + "\"");
-	#elif defined(__APPLE__)
+	#elif defined(__APPLE__) || defined(__HAIKU__)
 		execute("open \"" + url + "\"");
 	#else
 		execute("xdg-open \"" + url + "\"");
