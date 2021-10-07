@@ -264,7 +264,7 @@
     - physics or game mechanics can also run in a separate thread(s)
 - uses 3rd party libraries
 	- need to be installed 
-        - GLUT(NetBSD, Haiku)
+        - GLUT(Haiku)
         - OpenGL
         - OpenAL
         - glew
