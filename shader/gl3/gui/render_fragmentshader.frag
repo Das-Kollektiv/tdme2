@@ -31,7 +31,7 @@ void main(void) {
 		int gradientColorIdx = 0;
 		for (int i = gradientColorCount - 1; i >= 0; i--) {
 			if (vsFragGradientTextureUV.x > gradientColorStarts[i]) {
-				gradientColorIdx = clamp(i, 0, gradientColorCount - 1);
+				gradientColorIdx = i;
 				break;
 			}
 		}
