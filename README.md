@@ -144,6 +144,7 @@
         - layouting on demand in combination with conditions
     - supported primitive nodes from which compounds are built of
         - element
+        - gradient
         - image(plus framebuffer and texture image nodes) 
         - input
         - layer
@@ -158,7 +159,6 @@
             - button
             - checkbox
             - dropdown
-            - gradient
             - image button
             - input
             - knob
