@@ -14,6 +14,10 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix2D3x3.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUIGradientNode;
 
@@ -31,6 +35,36 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTools;
+
+GUIGradientNode::Gradient GUIGradientNode::createGradient(const string& colors, const string& rotation) {
+	Gradient gradient;
+	gradient.rotationAngle = Integer::parseInt(rotation);
+	auto colorsArray = StringTools::tokenize(colors, ",");
+	for (auto& color: colorsArray) {
+		auto colorComponents = StringTools::tokenize(color, "=");
+		if (colorComponents.size() != 2) {
+			Console::println("GUIGradientNode::createGradient():color invalid: " + color);
+			continue;
+		}
+		if (StringTools::endsWith(colorComponents[0], "%") == false) {
+			Console::println("GUIGradientNode::createGradient():color start invalid: " + colorComponents[0]);
+			continue;
+		}
+		colorComponents[0] = StringTools::trim(colorComponents[0]);
+		colorComponents[0] = StringTools::substring(colorComponents[0], 0, colorComponents[0].size() - 1);
+		colorComponents[1] = StringTools::trim(colorComponents[1]);
+		auto start = Float::parseFloat(colorComponents[0]) / 100.0f;
+		auto guiColor = GUIColor(colorComponents[1]);
+		gradient.colors[gradient.count] = guiColor;
+		gradient.colorStarts[gradient.count] = start;
+		gradient.count++;
+	}
+	return gradient;
+}
 
 GUIGradientNode::GUIGradientNode(
 	GUIScreenNode* screenNode,
@@ -52,7 +86,8 @@ GUIGradientNode::GUIGradientNode(
 	const GUIColor& effectColorAdd,
 	const GUINode_Clipping& clipping,
 	const string& mask,
-	float maskMaxValue):
+	float maskMaxValue,
+	const Gradient& gradient):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->effectColorMul = effectColorMul;
@@ -61,6 +96,7 @@ GUIGradientNode::GUIGradientNode(
 	this->clipping = clipping;
 	this->setMask(mask);
 	this->maskMaxValue = maskMaxValue;
+	this->gradient = gradient;
 }
 
 const string GUIGradientNode::getNodeType()
@@ -126,14 +162,7 @@ void GUIGradientNode::render(GUIRenderer* guiRenderer)
 		guiRenderer->setMaskMaxValue(maskMaxValue);
 		guiRenderer->bindMask(maskTextureId);
 	}
-	// gradient
-	array<GUIColor, 10> gradientColors;
-	array<float, 10> gradientColorStarts;
-	gradientColors[0] = GUIColor("red");
-	gradientColors[1] = GUIColor("green");
-	gradientColorStarts[0] = 0.00f;
-	gradientColorStarts[1] = 1.00f;
-	guiRenderer->setGradient(2, gradientColors, gradientColorStarts, 45.0f);
+	guiRenderer->setGradient(gradient.count, gradient.colors, gradient.colorStarts, gradient.rotationAngle);
 	//
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();

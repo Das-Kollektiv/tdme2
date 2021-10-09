@@ -995,7 +995,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
 					),
 					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
-					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value"))))
+					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value")))),
+					GUIGradientNode::createGradient(string(AVOID_NULLPTR_STRING(node->Attribute("colors"))), string(AVOID_NULLPTR_STRING(node->Attribute("rotation"))))
 				);
 				guiParentNode->addSubNode(guiGradientNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

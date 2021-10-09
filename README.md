@@ -158,6 +158,7 @@
             - button
             - checkbox
             - dropdown
+            - gradient
             - image button
             - input
             - knob

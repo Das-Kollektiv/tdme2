@@ -405,6 +405,7 @@ public:
 
 	/**
 	 * Set gradient properties
+	 * @deprecated use rather custom UI shader and parameters
 	 * @param count color count
 	 * @param colors colors
 	 * @param colorStarts color starts
@@ -414,6 +415,7 @@ public:
 
 	/**
 	 * Disable gradient
+	 * @deprecated use rather custom UI shader and parameters
 	 */
 	void unsetGradient();
 

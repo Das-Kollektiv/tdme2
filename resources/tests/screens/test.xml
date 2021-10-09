@@ -31,7 +31,7 @@
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
 				<tab id="tab7" text="Sliders + Knob" />
-				<tab id="tab8" text="Scale9" />
+				<tab id="tab8" text="Scale9 + Gradient" />
 				<tab id="tab9" text="Template" />
 				<tab id="tab10" text="Conditions" />
 				<tab id="tab11" text="Table" />
@@ -281,8 +281,8 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 						<gradient 
 							width="50%" 
 							height="50%"
-							colors="red,green,blue"
-							starts="0%,50%,100%" 
+							colors="0%=red,50%=green,100%=blue"
+							rotation="45"
 						/>
 						<space height="*" />
 						<image 

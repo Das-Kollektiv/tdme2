@@ -41,6 +41,21 @@ class tdme::gui::nodes::GUIGradientNode
 {
 	friend class tdme::gui::GUIParser;
 
+public:
+	struct Gradient {
+		int count { 0 };
+		array<GUIColor, 10> colors;
+		array<float, 10> colorStarts;
+		float rotationAngle { 0.0f };
+	};
+
+	/**
+	 * Create gradient from string values
+	 * @param colors colors
+	 * @param rotation rotation
+	 */
+	static Gradient createGradient(const string& colors, const string& rotation);
+
 private:
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
@@ -52,6 +67,7 @@ private:
 	Matrix2D3x3 textureMatrix;
 	string mask;
 
+	Gradient gradient;
 protected:
 	/**
 	 * Constructor
@@ -75,6 +91,7 @@ protected:
 	 * @param clipping clipping
 	 * @param mask mask image
 	 * @param maskMaxValue maximum value of mask to display image
+	 * @param gradient gradient
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIGradientNode(
@@ -97,7 +114,8 @@ protected:
 		const GUIColor& effectColorAdd,
 		const GUINode_Clipping& clipping,
 		const string& mask,
-		float maskMaxValue
+		float maskMaxValue,
+		const Gradient& gradient
 	);
 
 	/**
