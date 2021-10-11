@@ -918,7 +918,10 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	//
 	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
 	tabId = StringTools::replace(tabId, "/", "_");
-	if (screenNode->getNodeById(tabId) != nullptr) return;
+	if (screenNode->getNodeById(tabId) != nullptr) {
+		tabs->getController()->setValue(MutableString(tabId));
+		return;
+	}
 	tabId = GUIParser::escapeQuotes(tabId);
 
 	//
