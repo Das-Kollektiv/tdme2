@@ -68,6 +68,7 @@ protected:
 	 * @param clipping clipping
 	 * @param mask mask image
 	 * @param maskMaxValue maximum value of mask to display image
+	 * @param rotation rotation
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIImageNode(
@@ -92,7 +93,8 @@ protected:
 		const GUINode_Scale9Grid& scale9Grid,
 		const GUINode_Clipping& clipping,
 		const string& mask,
-		float maskMaxValue
+		float maskMaxValue,
+		float rotation
 	);
 
 	/**
@@ -122,4 +124,8 @@ public:
 		return texture;
 	}
 
+	/**
+	 * Rotate image around center
+	 */
+	void rotate(float rotation);
 };

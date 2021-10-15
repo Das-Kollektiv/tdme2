@@ -8,6 +8,8 @@
 #include <tdme/utilities/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
@@ -27,6 +29,8 @@ using tdme::utilities::Exception;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
@@ -371,3 +375,119 @@ void TextureReader::removeFromCache(Texture* texture) {
 	if (textureCacheIt != textureCache->end()) textureCache->erase(textureCacheIt);
 	textureCacheMutex->unlock();
 }
+
+Texture* TextureReader::rotate(Texture* texture, float rotation) {
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
+	auto textureBytesPerPixel = texture->getDepth() / 8;
+	auto textureWidthRotated = -1;
+	auto textureHeightRotated = -1;
+	{
+		auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+		Vector2 leftTop(0.0f, 0.0f);
+		Vector2 rightTop(textureWidth, 0.0f);
+		Vector2 leftBottom(0.0f, textureHeight);
+		Vector2 rightBottom(textureWidth, textureHeight);
+		auto leftTopRotated = rotationsMatrix.multiply(leftTop);
+		auto rightTopRotated = rotationsMatrix.multiply(rightTop);
+		auto leftBottomRotated = rotationsMatrix.multiply(leftBottom);
+		auto rightBottomRotated = rotationsMatrix.multiply(rightBottom);
+		auto textureWidthTransformedMin = Math::min(leftTopRotated.getX(),
+				Math::min(rightTopRotated.getX(),
+						Math::min(leftBottomRotated.getX(),
+								rightBottomRotated.getX())));
+		auto textureWidthTransformedMax = Math::max(leftTopRotated.getX(),
+				Math::max(rightTopRotated.getX(),
+						Math::max(leftBottomRotated.getX(),
+								rightBottomRotated.getX())));
+		auto textureHeightTransformedMin = Math::min(leftTopRotated.getY(),
+				Math::min(rightTopRotated.getY(),
+						Math::min(leftBottomRotated.getY(),
+								rightBottomRotated.getY())));
+		auto textureHeightTransformedMax = Math::max(leftTopRotated.getY(),
+				Math::max(rightTopRotated.getY(),
+						Math::max(leftBottomRotated.getY(),
+								rightBottomRotated.getY())));
+		textureWidthRotated = static_cast<int>(textureWidthTransformedMax
+				- textureWidthTransformedMin);
+		textureHeightRotated = static_cast<int>(textureHeightTransformedMax
+				- textureHeightTransformedMin);
+	}
+	auto rotatedTextureByteBuffer = new ByteBuffer(textureWidthRotated * textureHeightRotated * 4);
+	auto rotatedTexture = new Texture(
+		texture->getId() + ":r=" + to_string(rotation),
+		32,
+		textureWidthRotated,
+		textureHeightRotated,
+		textureWidthRotated,
+		textureHeightRotated,
+		rotatedTextureByteBuffer
+	);
+	rotatedTexture->acquireReference();
+	auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+	for (auto y = 0; y < rotatedTexture->getTextureHeight(); y++) {
+		for (auto x = 0; x < rotatedTexture->getTextureWidth(); x++) {
+			auto originalTexturePoint = rotationsMatrix.multiply(
+				Vector2(
+					x - (textureWidthRotated - textureWidth) / 2.0f,
+					y - (textureHeightRotated - textureHeight) / 2.0f
+				)
+			);
+			auto red = 0;
+			auto green = 0;
+			auto blue = 0;
+			auto alpha = 0;
+			auto originalX = static_cast<int>(originalTexturePoint.getX());
+			auto originalY = static_cast<int>(originalTexturePoint.getY());
+			if (originalX >= 0 && originalX < textureWidth && originalY >= 0 && originalY < textureHeight) {
+				red = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 0);
+				green = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 1);
+				blue = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 2);
+				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):-1;
+			}
+			rotatedTextureByteBuffer->put(red);
+			rotatedTextureByteBuffer->put(green);
+			rotatedTextureByteBuffer->put(blue);
+			rotatedTextureByteBuffer->put(alpha);
+		}
+	}
+	// TODO: should be improved
+	auto filteredTextureByteBuffer = new ByteBuffer(textureWidthRotated * textureHeightRotated * 4);
+	auto filteredTexture = new Texture(
+		texture->getId() + ":r=" + to_string(rotation) + ":bf",
+		32,
+		textureWidthRotated,
+		textureHeightRotated,
+		textureWidthRotated,
+		textureHeightRotated,
+		filteredTextureByteBuffer
+	);
+	filteredTexture->acquireReference();
+	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
+		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
+			auto samples = 0;
+			auto red = 0;
+			auto green = 0;
+			auto blue = 0;
+			auto alpha = 0;
+			for (auto _y = -1; _y <= 1; _y++)
+			for (auto _x = -1; _x <= 1; _x++)
+			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
+				(x + _x >= 0 && x + _x < textureWidthRotated && y + _y >= 0 && y + _y < textureHeightRotated)) {
+				auto pixelOffset = (y + _y) * textureWidthRotated * 4 + (x + _x) * 4;
+				red+= rotatedTexture->getTextureData()->get(pixelOffset + 0);
+				green+= rotatedTexture->getTextureData()->get(pixelOffset + 1);
+				blue+= rotatedTexture->getTextureData()->get(pixelOffset + 2);
+				alpha+= rotatedTexture->getTextureData()->get(pixelOffset + 3);
+				samples++;
+			}
+			filteredTextureByteBuffer->put(red / samples);
+			filteredTextureByteBuffer->put(green / samples);
+			filteredTextureByteBuffer->put(blue / samples);
+			filteredTextureByteBuffer->put(alpha / samples);
+		}
+	}
+	rotatedTexture->releaseReference();
+	return filteredTexture;
+}
+

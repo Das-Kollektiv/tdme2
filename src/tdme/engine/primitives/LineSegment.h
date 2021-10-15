@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>

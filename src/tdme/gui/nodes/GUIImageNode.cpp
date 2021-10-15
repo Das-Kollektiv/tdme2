@@ -17,6 +17,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -71,7 +72,8 @@ GUIImageNode::GUIImageNode(
 	const GUINode_Scale9Grid& scale9Grid,
 	const GUINode_Clipping& clipping,
 	const string& mask,
-	float maskMaxValue):
+	float maskMaxValue,
+	float rotation):
 	GUITextureBaseNode(
 		screenNode,
 		parentNode,
@@ -97,6 +99,7 @@ GUIImageNode::GUIImageNode(
 	)
 {
 	this->setSource(source);
+	if (Math::abs(rotation) > Math::EPSILON) rotate(rotation);
 }
 
 const string GUIImageNode::getNodeType()
@@ -170,6 +173,20 @@ void GUIImageNode::setSource(const string& source) {
 			this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
 		}
 	}
+	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
+	this->textureWidth = texture == nullptr?0:texture->getWidth();
+	this->textureHeight = texture == nullptr?0:texture->getHeight();
+}
+
+void GUIImageNode::rotate(float rotation) {
+	if (texture == nullptr) return;
+	auto rotatedTexture = TextureReader::rotate(texture, rotation);
+	if (rotatedTexture == nullptr) return;
+	if (texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+		texture = nullptr;
+	}
+	this->texture = rotatedTexture;
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();

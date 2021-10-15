@@ -21,6 +21,8 @@ class tdme::engine::fileio::textures::Texture final: public Reference
 {
 public:
 
+	enum ClampMode { CLAMPMODE_EDGE, CLAMPMODE_TRANSPARENTPIXEL };
+
 	/**
 	 * Public constructor
 	 * @param id id
@@ -47,6 +49,7 @@ public:
 		textureData(textureData),
 		useMipMap(true),
 		repeat(true),
+		clampMode(CLAMPMODE_EDGE),
 		atlasSize(1) {
 		//
 	}
@@ -131,6 +134,21 @@ public:
 	}
 
 	/**
+	 * @return clamp mode
+	 */
+	inline ClampMode getClampMode() const {
+		return clampMode;
+	}
+
+	/**
+	 * Set clamp mode
+	 * @param clampMode clamp mode
+	 */
+	inline void setClampMode(ClampMode clampMode) {
+		this->clampMode = clampMode;
+	}
+
+	/**
 	 * @return atlas size
 	 */
 	inline int32_t getAtlasSize() const {
@@ -158,6 +176,7 @@ private:
 	ByteBuffer* textureData;
 	bool useMipMap;
 	bool repeat;
+	ClampMode clampMode;
 	int32_t atlasSize;
 
 	/**

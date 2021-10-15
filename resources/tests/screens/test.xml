@@ -172,7 +172,8 @@
 							src-disabled="resources/tests/screens/images/button_normal.png"
 						/>
 						<space height="*" />
-						
+						<image src="resources/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" rotation="45" />
+						<space height="*" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab4" vertical-align="top">

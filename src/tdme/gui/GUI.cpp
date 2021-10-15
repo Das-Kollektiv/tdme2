@@ -198,6 +198,7 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 			if (image != nullptr) {
 				image->setUseMipMap(false);
 				image->setRepeat(false);
+				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
 			}
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));

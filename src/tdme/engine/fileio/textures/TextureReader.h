@@ -70,6 +70,13 @@ public:
 	 */
 	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
 
+	/**
+	 * Rotate texture around center
+	 * @param texture texture
+	 * @return rotation rotation
+	 */
+	static Texture* rotate(Texture* texture, float rotation);
+
 private:
 	/**
 	 * PNG input stream

@@ -769,7 +769,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
 					),
 					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
-					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value"))))
+					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value")))),
+					node->Attribute("rotation") != nullptr?Float::parseFloat(node->Attribute("rotation")):0.0f
 				);
 				guiParentNode->addSubNode(guiImageNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

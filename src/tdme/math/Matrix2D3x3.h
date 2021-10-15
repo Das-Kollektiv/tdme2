@@ -207,7 +207,7 @@ public:
 		Matrix2D3x3 matrix;
 		matrix.identity();
 		matrix.translate(point);
-		matrix.multiply((Matrix2D3x3()).identity().rotate(angle));
+		matrix.multiply((Matrix2D3x3()).identity().rotate(-angle));
 		matrix.multiply((Matrix2D3x3()).identity().translate(point.clone().scale(-1.0f)));
 		return matrix;
 	}
@@ -263,6 +263,24 @@ public:
 				Math::abs(data[7] - m.data[7]) < Math::EPSILON &&
 				Math::abs(data[8] - m.data[8]) < Math::EPSILON
 			);
+	}
+
+	/**
+	 * Array access operator
+	 * @param i index
+	 * @return vector3 component
+	 */
+	inline float& operator[](int i) {
+		return data[i];
+	}
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return vector3 component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
 	}
 
 	/**

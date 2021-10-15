@@ -5201,9 +5201,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
 		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-		.addressModeU = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-		.addressModeV = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-		.addressModeW = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+		.addressModeU = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),
+		.addressModeV = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),
+		.addressModeW = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),
 		.mipLodBias = 0.0f,
 		.anisotropyEnable = VK_FALSE,
 		.maxAnisotropy = 1,
@@ -5211,7 +5211,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.compareOp = VK_COMPARE_OP_NEVER,
 		.minLod = 0.0f,
 		.maxLod = texture->isUseMipMap() == true?static_cast<float>(mipLevels):0.0f,
-		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
+		.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
 	VkImageViewCreateInfo view = {
