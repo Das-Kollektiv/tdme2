@@ -203,6 +203,7 @@
         - standard file system
         - zlib based compressed archive file system and a tool to generate it from ./resources and ./shader folder
     - multi threading
+        - atomic operations
         - barrier
         - condition
         - consumer/producer queue
