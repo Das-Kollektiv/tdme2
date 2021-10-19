@@ -137,7 +137,7 @@ public:
 
 	/**
 	 * Set field of view X
-	 * @param fovY field of view X
+	 * @param fovX field of view X
 	 */
 	inline void setFovX(float fovX) {
 		this->fovX = fovX;

@@ -1497,7 +1497,8 @@ void Terrain2::applyFoliageBrush(
 			auto brushMapCountMapEntity = brushMapCountMap[brushMapCountMapZ * brushMapCountMapWidth + brushMapCountMapX];
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
 			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
-			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
+			if (brushPosition.getX() < 0.0f || brushPosition.getZ() < 0.0f ||
+				terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
 				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
 				//
 				brushPosition.add(
@@ -1737,10 +1738,10 @@ void Terrain2::applyFoliageDeleteBrush(
 							for (auto i = 0; i < foliageMapPartitionPrototypeTransformations.size(); i++) {
 								auto& translation = foliageMapPartitionPrototypeTransformations[i].getTranslation();
 								if (appliedDensity > 0.0f &&
-									translation.getX() >= leftVertex.getX() &&
-									translation.getX() <= vertex.getX() &&
-									translation.getZ() >= topVertex.getZ() &&
-									translation.getZ() <= vertex.getZ() &&
+									translation.getX() >= leftVertex.getX() - 0.01f &&
+									translation.getX() <= vertex.getX() + 0.01f &&
+									translation.getZ() >= topVertex.getZ() - 0.01f &&
+									translation.getZ() <= vertex.getZ() + 0.01f &&
 									(prototypeCount == 0 ||
 									(translation.getY() >= heightMin &&
 									translation.getY() <= heightMax))) {

@@ -318,6 +318,11 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			}
 		}
 		{
+			//
+			auto partitionsX = static_cast<int>(Math::ceil(terrain->getWidth() / Terrain2::PARTITION_SIZE));
+			auto partitionsZ = static_cast<int>(Math::ceil(terrain->getDepth() / Terrain2::PARTITION_SIZE));
+
+			//
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 			Terrain2::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
 			auto& jFoliage = jTerrain["f"];
@@ -344,6 +349,11 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 
 				//
 				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {
+					//
+					auto partitionX = foliagePrototypePartitionIdx % partitionsX;
+					auto partitionZ = foliagePrototypePartitionIdx / partitionsX;
+
+					//
 					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
 					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
 					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
@@ -368,6 +378,22 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 						);
 						foliagePrototypeTransformations.update();
 						foliagePrototypePartitionTransformations.push_back(foliagePrototypeTransformations);
+						auto partitionLeft = partitionX * Terrain2::PARTITION_SIZE;
+						auto partitionTop = partitionZ * Terrain2::PARTITION_SIZE;
+						auto partitionRight = partitionX * Terrain2::PARTITION_SIZE + Terrain2::PARTITION_SIZE;
+						auto partitionBottom = partitionZ * Terrain2::PARTITION_SIZE + Terrain2::PARTITION_SIZE;
+						// just some debugging output if foliage is not in correct partition
+						if (foliagePrototypeTransformations.getTranslation().getX() < partitionLeft ||
+							foliagePrototypeTransformations.getTranslation().getZ() < partitionTop ||
+							foliagePrototypeTransformations.getTranslation().getX() > partitionRight ||
+							foliagePrototypeTransformations.getTranslation().getZ() > partitionBottom) {
+							Console::println(
+								"PrototypeReader::read(): foliage entity not in partition: " +
+								to_string(foliagePrototypeTransformations.getTranslation().getX()) + ", " + to_string(foliagePrototypeTransformations.getTranslation().getZ()) + " ! in " +
+								to_string(partitionLeft) + ", " + to_string(partitionTop) + ", " +
+								to_string(partitionRight) + ", " + to_string(partitionBottom)
+							);
+						}
 					}
 				}
 			}
