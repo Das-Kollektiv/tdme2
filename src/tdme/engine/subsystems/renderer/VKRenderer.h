@@ -226,8 +226,13 @@ private:
 		array<string, 3> pipeline_id;
 		array<VkPipeline, 3> pipeline;
 
-		int32_t bound_indices_buffer { 0 };
-		array<int32_t, 10> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
+		array<VkBuffer, 10> bound_buffers {
+			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+			VK_NULL_HANDLE, VK_NULL_HANDLE
+		};
+		array<uint32_t, 10> bound_buffer_sizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<bool, 4> uniform_buffers_changed;
 		int32_t texture_unit_active { 0 };
@@ -504,7 +509,7 @@ private:
 	const string createPipelineId(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
-	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
+	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
 	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);

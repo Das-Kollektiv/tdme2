@@ -1895,9 +1895,11 @@ void VKRenderer::finishFrame()
 	}
 
 	// unbind bound resources
+	uint32_t bufferSize = 0;
 	for (auto& context: contexts) {
-		context.bound_indices_buffer = 0;
-		context.bound_buffers.fill(0);
+		context.bound_indices_buffer = VK_NULL_HANDLE;
+		context.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
+		context.bound_buffer_sizes.fill(bufferSize);
 		context.bound_textures.fill(0);
 	}
 
@@ -3712,8 +3714,10 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	}
 
 	// reset bound buffers
-	contextTyped.bound_indices_buffer = 0;
-	contextTyped.bound_buffers.fill(0);
+	uint32_t bufferSize;
+	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
+	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
+	contextTyped.bound_buffer_sizes.fill(bufferSize);
 
 	//
 	contextTyped.program_id = 0;
@@ -6047,75 +6051,171 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 
 void VKRenderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_indices_buffer = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	uint32_t bufferSize = 0;
+	contextTyped.bound_indices_buffer =
+		bufferObjectId == ID_NONE?
+			VK_NULL_HANDLE:
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, bufferSize);
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[2] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[2] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[2]);
+	if (contextTyped.bound_buffers[2] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[2] = getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]);
+	}
 }
 
 void VKRenderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[0] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[0] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[0]);
+	if (contextTyped.bound_buffers[0] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[0] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]);
+	}
 }
 
 void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[1] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
+	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+	}
 }
 
 void VKRenderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[3] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[3] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[3]);
+	if (contextTyped.bound_buffers[3] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[3] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]);
+	}
 }
 
 void VKRenderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[4] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[4] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[4]);
+	if (contextTyped.bound_buffers[4] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[4] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]);
+	}
 }
 
 void VKRenderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[5] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[5] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
+	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+	}
 }
 
 void VKRenderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[6] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[6] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
+	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[6] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+	}
 }
 
 void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[7] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[7]);
+	if (contextTyped.bound_buffers[7] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[7] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]);
+	}
 }
 
 void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
 {
-	(*static_cast<context_type*>(context)).bound_buffers[8] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[8] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[8]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[8]);
+	if (contextTyped.bound_buffers[8] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[8] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[8]);
+	}
 }
 
 void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[9] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[9] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[9]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[9]);
+	if (contextTyped.bound_buffers[9] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[9] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[9]);
+	}
 }
 
 void VKRenderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[1] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
+	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+	}
 }
 
 void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[5] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[5] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
+	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+	}
 }
 
 void VKRenderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[6] = bufferObjectId;
+	auto& contextTyped = (*static_cast<context_type*>(context));
+	contextTyped.bound_buffers[6] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
+	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[6] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+	}
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, (*static_cast<context_type*>(context)).bound_indices_buffer, instances);
 }
 
-inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances)
+inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
@@ -6156,11 +6256,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	uint32_t bufferSize;
 
 	//
-	contextTyped.objects_render_command.indices_buffer = indicesBuffer == ID_NONE?nullptr:getBufferObjectInternal(contextTyped.idx, indicesBuffer, bufferSize);
+	contextTyped.objects_render_command.indices_buffer = contextTyped.bound_indices_buffer;
 	for (auto i = 0; i < contextTyped.objects_render_command.vertex_buffers.size(); i++) {
-		contextTyped.objects_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
-		if (contextTyped.objects_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.objects_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
-
+		contextTyped.objects_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
 	}
 	contextTyped.objects_render_command.count = triangles;
 	contextTyped.objects_render_command.offset = trianglesOffset;
@@ -6731,12 +6829,12 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, ID_NONE, instances);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, instances);
 }
 
 void VKRenderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, ID_NONE, 1);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, 1);
 }
 
 void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
@@ -6784,8 +6882,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	//
 	for (auto i = 0; i < contextTyped.points_render_command.vertex_buffers.size(); i++) {
-		contextTyped.points_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
-		if (contextTyped.points_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.points_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
+		contextTyped.points_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
 	}
 	contextTyped.points_render_command.count = points;
 	contextTyped.points_render_command.offset = pointsOffset;
@@ -6852,8 +6949,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	//
 	for (auto i = 0; i < contextTyped.lines_render_command.vertex_buffers.size(); i++) {
-		contextTyped.lines_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
-		if (contextTyped.lines_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.lines_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
+		contextTyped.lines_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
 	}
 	contextTyped.lines_render_command.count = points;
 	contextTyped.lines_render_command.offset = pointsOffset;
@@ -6873,8 +6969,10 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 void VKRenderer::unbindBufferObjects(void* context)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_indices_buffer = 0;
-	contextTyped.bound_buffers.fill(0);
+	uint32_t bufferSize = 0;
+	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
+	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
+	contextTyped.bound_buffer_sizes.fill(bufferSize);
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
@@ -6947,8 +7045,8 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 
 	//
 	for (auto i = 0; i < contextTyped.compute_command.storage_buffers.size(); i++) {
-		if (contextTyped.bound_buffers[i] != ID_NONE) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], contextTyped.compute_command.storage_buffer_sizes[i]);
-		if (contextTyped.compute_command.storage_buffers[i] == VK_NULL_HANDLE) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, contextTyped.compute_command.storage_buffer_sizes[i]);
+		contextTyped.compute_command.storage_buffers[i] = contextTyped.bound_buffers[i];
+		contextTyped.compute_command.storage_buffer_sizes[i] = contextTyped.bound_buffer_sizes[i];
 	}
 	contextTyped.compute_command.num_groups_x = numGroupsX;
 	contextTyped.compute_command.num_groups_y = numGroupsY;
@@ -7004,35 +7102,92 @@ void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectI
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[0] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[0] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[0]);
+	if (contextTyped.bound_buffers[0] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[0] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]);
+	}
 }
 
 void VKRenderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[1] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
+	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+	}
 }
 
 void VKRenderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[2] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[2] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[2]);
+	if (contextTyped.bound_buffers[2] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[2] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]);
+	}
 }
 
 void VKRenderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[3] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[3] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[3]);
+	if (contextTyped.bound_buffers[3] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[3] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]);
+	}
 }
 
 void VKRenderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[4] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[4] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[4]);
+	if (contextTyped.bound_buffers[4] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[4] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]);
+	}
 }
 
 void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[5] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[5] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
+	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+	}
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[6] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[6] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
+	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[6] =
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+	}
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
-	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.bound_buffers[7] =
+		bufferObjectId == ID_NONE?
+			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]):
+			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[7]);
+	if (contextTyped.bound_buffers[7] == VK_NULL_HANDLE) {
+		contextTyped.bound_buffers[7] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]);
+	}
 }
 
 int32_t VKRenderer::createVertexArrayObject() {
