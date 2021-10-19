@@ -8,7 +8,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>

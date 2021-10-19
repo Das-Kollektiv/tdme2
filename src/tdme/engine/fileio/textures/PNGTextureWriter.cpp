@@ -25,7 +25,6 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
-using tdme::utilities::Console;
 
 
 void PNGTextureWriter::writePNGDataToMemory(png_structp png_ptr, png_bytep inBytes, png_size_t inBytesToWrite) {

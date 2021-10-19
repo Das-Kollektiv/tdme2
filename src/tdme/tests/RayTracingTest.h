@@ -5,7 +5,6 @@
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -13,7 +12,6 @@
 #include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
-using tdme::engine::model::Model;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;

@@ -13,7 +13,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -32,7 +31,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::math::Math;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

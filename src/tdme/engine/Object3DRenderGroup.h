@@ -14,12 +14,10 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
 

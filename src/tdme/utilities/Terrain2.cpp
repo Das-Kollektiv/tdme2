@@ -62,7 +62,6 @@ using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
-using tdme::math::Vector2;
 using tdme::os::threading::AtomicOperations;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

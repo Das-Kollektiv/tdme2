@@ -34,7 +34,6 @@ using std::array;
 using std::map;
 using std::string;
 using std::to_string;
-using std::to_string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;

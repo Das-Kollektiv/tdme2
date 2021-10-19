@@ -18,7 +18,6 @@
 
 using std::array;
 using std::string;
-using std::string;
 using std::to_string;
 using std::vector;
 

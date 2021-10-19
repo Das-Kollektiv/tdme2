@@ -34,7 +34,6 @@ using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
-using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::scene::Scene;

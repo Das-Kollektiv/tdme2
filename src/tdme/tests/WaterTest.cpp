@@ -16,7 +16,6 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/SceneConnector.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -45,7 +44,6 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
-using tdme::engine::SceneConnector;
 using tdme::engine::SceneConnector;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

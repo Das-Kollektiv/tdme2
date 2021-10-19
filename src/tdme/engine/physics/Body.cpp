@@ -2,7 +2,6 @@
 #include <vector>
 
 #include <ext/reactphysics3d/src/body/Body.h>
-#include <ext/reactphysics3d/src/body/Body.h>
 #include <ext/reactphysics3d/src/body/CollisionBody.h>
 #include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
 #include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>

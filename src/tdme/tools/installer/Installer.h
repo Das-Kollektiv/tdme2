@@ -8,7 +8,6 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>

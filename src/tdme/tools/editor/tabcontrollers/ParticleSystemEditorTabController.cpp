@@ -28,7 +28,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -64,7 +63,6 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;

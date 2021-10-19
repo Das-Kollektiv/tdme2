@@ -31,7 +31,6 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -83,7 +82,6 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
-using tdme::engine::SceneConnector;
 using tdme::engine::SceneConnector;
 using tdme::engine::Transformations;
 using tdme::math::Math;

@@ -17,7 +17,6 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>

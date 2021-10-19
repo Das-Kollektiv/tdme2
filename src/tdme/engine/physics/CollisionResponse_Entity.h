@@ -5,7 +5,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>

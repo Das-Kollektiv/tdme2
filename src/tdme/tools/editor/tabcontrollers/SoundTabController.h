@@ -5,7 +5,6 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>

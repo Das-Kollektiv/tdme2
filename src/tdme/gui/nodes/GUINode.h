@@ -17,7 +17,6 @@
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
-#include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>

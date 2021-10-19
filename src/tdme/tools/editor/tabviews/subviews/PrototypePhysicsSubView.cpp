@@ -9,7 +9,6 @@
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
-#include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/Engine.h>

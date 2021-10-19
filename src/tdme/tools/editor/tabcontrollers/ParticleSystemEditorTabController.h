@@ -6,7 +6,6 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>

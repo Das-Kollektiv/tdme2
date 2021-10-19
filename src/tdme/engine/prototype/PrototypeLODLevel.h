@@ -6,7 +6,6 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/LODObject3D.h>
 
 using std::string;
 

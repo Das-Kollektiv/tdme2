@@ -66,7 +66,6 @@ using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;

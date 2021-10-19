@@ -20,7 +20,6 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::engine::Engine;
 using tdme::math::Vector3;
 
 bool PostProcessingShaderSSAOMapImplementation::isSupported(Renderer* renderer) {

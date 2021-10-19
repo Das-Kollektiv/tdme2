@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <vector>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>

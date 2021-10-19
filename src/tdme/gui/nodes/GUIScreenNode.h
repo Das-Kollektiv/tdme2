@@ -19,7 +19,6 @@ using std::string;
 using std::to_string;
 using std::unordered_map;
 using std::unordered_set;
-using std::unordered_set;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;

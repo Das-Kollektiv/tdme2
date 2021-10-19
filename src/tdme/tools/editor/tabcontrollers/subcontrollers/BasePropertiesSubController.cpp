@@ -22,7 +22,6 @@
 #include <tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
-#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
@@ -50,7 +49,6 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabviews::subviews::BasePropertiesSubView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::Action;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

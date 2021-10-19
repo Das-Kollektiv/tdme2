@@ -15,7 +15,6 @@ using std::regex_match;
 using std::regex_replace;
 using std::replace;
 using std::string;
-using std::string;
 using std::tolower;
 using std::toupper;
 using std::transform;

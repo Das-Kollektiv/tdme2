@@ -10,7 +10,6 @@
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
-#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Version.h>
 #include <tdme/math/Matrix4x4.h>

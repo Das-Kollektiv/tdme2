@@ -36,12 +36,10 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/FrameBuffer.h>

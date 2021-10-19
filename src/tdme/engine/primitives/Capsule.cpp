@@ -5,7 +5,6 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 

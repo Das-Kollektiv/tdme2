@@ -17,7 +17,6 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -38,7 +37,6 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
-using tdme::math::Math;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

@@ -27,7 +27,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
-#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
@@ -59,7 +58,6 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;

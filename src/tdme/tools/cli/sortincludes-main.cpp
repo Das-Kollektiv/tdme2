@@ -17,6 +17,7 @@
 using std::sort;
 using std::string;
 using std::to_string;
+using std::unique;
 using std::vector;
 
 using tdme::application::Application;
@@ -138,6 +139,19 @@ void processFile(const string& fileName) {
 				endLineIdx = -1;
 			}
 			lineIdx++;
+		}
+	}
+	fileContent = newFileContent;
+	newFileContent.clear();
+	{
+		string lastLine;
+		for (auto line: fileContent) {
+			if ((StringTools::startsWith(line, "using ") == true || StringTools::startsWith(line, "#include ")) && line == lastLine) {
+				lastLine = line;
+				continue;
+			}
+			newFileContent.push_back(line);
+			lastLine = line;
 		}
 	}
 	FileSystem::getInstance()->setContentFromStringArray(".", fileName, newFileContent);

@@ -8,8 +8,6 @@
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -69,7 +67,6 @@ using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
-using tdme::engine::SceneConnector;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::math::Math;

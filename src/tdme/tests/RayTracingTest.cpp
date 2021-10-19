@@ -23,7 +23,6 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/SceneConnector.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -64,7 +63,6 @@ using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
-using tdme::engine::SceneConnector;
 using tdme::engine::SceneConnector;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;

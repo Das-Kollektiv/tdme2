@@ -21,7 +21,6 @@
 #include <tdme/utilities/Console.h>
 
 using std::string;
-using std::string;
 using std::to_string;
 
 using tdme::audio::decoder::AudioDecoderException;

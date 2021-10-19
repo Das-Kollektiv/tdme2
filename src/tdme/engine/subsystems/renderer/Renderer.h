@@ -9,7 +9,6 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>

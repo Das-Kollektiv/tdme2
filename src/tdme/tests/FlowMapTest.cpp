@@ -23,7 +23,6 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
-#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -57,7 +56,6 @@ using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
-using tdme::engine::SceneConnector;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::math::Math;
