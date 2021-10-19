@@ -1900,7 +1900,13 @@ void VKRenderer::finishFrame()
 		context.bound_indices_buffer = VK_NULL_HANDLE;
 		context.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
 		context.bound_buffer_sizes.fill(bufferSize);
-		context.bound_textures.fill(0);
+		context.bound_textures.fill(context_type::bound_texture());
+		for (auto& bound_texture: context.bound_textures) {
+			bound_texture.id = ID_NONE;
+			bound_texture.sampler = VK_NULL_HANDLE;
+			bound_texture.view = VK_NULL_HANDLE;
+			bound_texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		}
 	}
 
 	// reset desc index
@@ -4655,20 +4661,21 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
 
 	//
 	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
-	auto textureObjectIt = textures.find(contextTyped.bound_textures[contextTyped.texture_unit_active]);
+	auto textureObjectIt = textures.find(boundTexture.id);
 	if (textureObjectIt == textures.end()) {
 		textures_rwlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
 	auto& texture = *textureObjectIt->second;
 
 	// already uploaded
 	if (texture.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		textures_rwlock.unlock();
 		return;
 	}
@@ -4799,6 +4806,12 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 
 	//
 	texture.uploaded = true;
+
+	//
+	boundTexture.sampler = texture.sampler;
+	boundTexture.view = texture.view;
+	boundTexture.layout = texture.vkLayout;
+
 
 	//
 	textures_rwlock.unlock();
@@ -4992,20 +5005,21 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
 
 	//
 	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
-	auto textureObjectIt = textures.find(contextTyped.bound_textures[contextTyped.texture_unit_active]);
+	auto textureObjectIt = textures.find(boundTexture.id);
 	if (textureObjectIt == textures.end()) {
 		textures_rwlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
 	auto& textureType = *textureObjectIt->second;
 
 	// already uploaded
 	if (textureType.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		textures_rwlock.unlock();
 		return;
 	}
@@ -5252,6 +5266,11 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textureType.uploaded = true;
 
 	//
+	boundTexture.sampler = textureType.sampler;
+	boundTexture.view = textureType.view;
+	boundTexture.layout = textureType.vkLayout;
+
+	//
 	textures_rwlock.unlock();
 
 	//
@@ -5423,21 +5442,35 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 {
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
 
 	//
-	contextTyped.bound_textures[contextTyped.texture_unit_active] = 0;
+	boundTexture.id = ID_NONE;
 
-	//
+	// textures
 	auto textureObjectPtr = textureId != ID_NONE?getTextureInternal(contextTyped.idx, textureId):nullptr;
 	if (textureId != ID_NONE) {
 		if (textureObjectPtr == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 			return;
 		}
 	}
 
-	// bin
-	contextTyped.bound_textures[contextTyped.texture_unit_active] = textureId;
+	//
+	if (textureObjectPtr != nullptr) {
+		auto& textureObject = *textureObjectPtr;
+		boundTexture.sampler = textureObject.sampler;
+		boundTexture.view = textureObject.view;
+		boundTexture.layout = textureObject.vkLayout;
+	} else {
+		boundTexture.sampler = VK_NULL_HANDLE;
+		boundTexture.view = VK_NULL_HANDLE;
+		boundTexture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	}
+
+	//
+	boundTexture.id = textureId;
+
 	if (textureId == ID_NONE) {
 		onBindTexture(context, textureId);
 		return;
@@ -5990,6 +6023,11 @@ void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId
 }
 
 inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, int32_t textureId) {
+	// return default texture if no texture was requested
+	if (textureId == ID_NONE) {
+		return white_texture_sampler2d_default;
+	}
+
 	// have our context typed
 	texture_type* texture = nullptr;
 	if (contextIdx != -1) {
@@ -5999,7 +6037,6 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return white_texture_sampler2d_default;
 			return texture;
 		}
-
 	}
 	textures_rwlock.readLock();
 	auto textureIt = textures.find(textureId);
@@ -6221,18 +6258,11 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto textureId = contextTyped.bound_textures[i];
+		auto& boundTexture = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.objects_render_command.textures[i];
-		if (textureId == ID_NONE) {
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		} else {
-			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
-			texture.sampler = textureObject.sampler;
-			texture.view = textureObject.view;
-			texture.layout = textureObject.vkLayout;
-		}
+		texture.sampler = boundTexture.sampler;
+		texture.view = boundTexture.view;
+		texture.layout = boundTexture.layout;
 	}
 
 	// ubos
@@ -6846,18 +6876,11 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto textureId = contextTyped.bound_textures[i];
+		auto& boundTexture = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.points_render_command.textures[i];
-		if (textureId == ID_NONE) {
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		} else {
-			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
-			texture.sampler = textureObject.sampler;
-			texture.view = textureObject.view;
-			texture.layout = textureObject.vkLayout;
-		}
+		texture.sampler = boundTexture.sampler;
+		texture.view = boundTexture.view;
+		texture.layout = boundTexture.layout;
 	}
 
 	// ubos
@@ -6913,18 +6936,11 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto textureId = contextTyped.bound_textures[i];
+		auto& boundTexture = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.lines_render_command.textures[i];
-		if (textureId == ID_NONE) {
-			texture.sampler = VK_NULL_HANDLE;
-			texture.view = VK_NULL_HANDLE;
-			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		} else {
-			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
-			texture.sampler = textureObject.sampler;
-			texture.view = textureObject.view;
-			texture.layout = textureObject.vkLayout;
-		}
+		texture.sampler = boundTexture.sampler;
+		texture.view = boundTexture.view;
+		texture.layout = boundTexture.layout;
 	}
 
 	// ubos

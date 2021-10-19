@@ -236,7 +236,13 @@ private:
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<bool, 4> uniform_buffers_changed;
 		int32_t texture_unit_active { 0 };
-		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		struct bound_texture {
+			int id { 0 };
+			VkSampler sampler { VK_NULL_HANDLE };
+			VkImageView view { VK_NULL_HANDLE };
+			VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
+		};
+		array<bound_texture, 16> bound_textures;
 
 		struct objects_render_command {
 			struct texture {
