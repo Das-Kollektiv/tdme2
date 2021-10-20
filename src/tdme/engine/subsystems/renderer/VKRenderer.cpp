@@ -1704,7 +1704,7 @@ void VKRenderer::finishFrame()
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
-	memoryBarrier();
+	finishRendering();
 
 	// flush command buffers
 	for (auto& context: contexts) {
@@ -7077,7 +7077,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	AtomicOperations::increment(statistics.computeCalls);
 }
 
-void VKRenderer::memoryBarrier() {
+void VKRenderer::finishRendering() {
 	VkResult err;
 
 	// end render passes
@@ -7102,6 +7102,49 @@ void VKRenderer::memoryBarrier() {
 		for (auto i = 0; i < Engine::getThreadCount(); i++) {
 			recreateContextFences(i);
 		}
+	}
+
+	//
+	for (auto& context: contexts) {
+		for (auto i = 0; i < context.compute_render_barrier_buffer_count; i++) {
+			Console::println(to_string((uint64_t)context.compute_render_barrier_buffers[i]));
+		}
+		context.compute_render_barrier_buffer_count = 0;
+	}
+}
+
+void VKRenderer::memoryBarrier() {
+	VkResult err;
+
+	//
+	auto prevAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
+	auto nextAccesses = THSVS_ACCESS_VERTEX_BUFFER;
+	for (auto& context: contexts) {
+		for (auto i = 0; i < context.compute_render_barrier_buffer_count; i++) {
+			ThsvsBufferBarrier svsbufferBarrier = {
+			    .prevAccessCount = 1,
+			    .pPrevAccesses = &prevAccesses,
+			    .nextAccessCount = 1,
+			    .pNextAccesses = &nextAccesses,
+			    .srcQueueFamilyIndex = 0,
+			    .dstQueueFamilyIndex = 0,
+			    .buffer = context.compute_render_barrier_buffers[i],
+			    .offset = 0,
+			    .size = VK_WHOLE_SIZE
+			};
+			VkBufferMemoryBarrier vkBufferMemoryBarrier;
+			VkPipelineStageFlags srcStages;
+			VkPipelineStageFlags dstStages;
+			thsvsGetVulkanBufferMemoryBarrier(
+				svsbufferBarrier,
+				&srcStages,
+				&dstStages,
+				&vkBufferMemoryBarrier
+			);
+			prepareSetupCommandBuffer(context.idx);
+			vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
+		}
+		context.compute_render_barrier_buffer_count = 0;
 	}
 }
 
@@ -7179,6 +7222,36 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
 		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
 	}
+	if (contextTyped.compute_render_barrier_buffer_count >= contextTyped.compute_render_barrier_buffers.size()) {
+		Console::println("VKRenderer::bindSkinningVerticesResultBufferObject(): too many compute render buffers");
+		return;
+	}
+	contextTyped.compute_render_barrier_buffers[contextTyped.compute_render_barrier_buffer_count++] = contextTyped.bound_buffers[5];
+	//
+	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
+	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
+	ThsvsBufferBarrier svsbufferBarrier = {
+		.prevAccessCount = 1,
+		.pPrevAccesses = &prevAccesses,
+		.nextAccessCount = 1,
+		.pNextAccesses = &nextAccesses,
+		.srcQueueFamilyIndex = 0,
+		.dstQueueFamilyIndex = 0,
+		.buffer = contextTyped.bound_buffers[5],
+		.offset = 0,
+		.size = VK_WHOLE_SIZE
+	};
+	VkBufferMemoryBarrier vkBufferMemoryBarrier;
+	VkPipelineStageFlags srcStages;
+	VkPipelineStageFlags dstStages;
+	thsvsGetVulkanBufferMemoryBarrier(
+		svsbufferBarrier,
+		&srcStages,
+		&dstStages,
+		&vkBufferMemoryBarrier
+	);
+	prepareSetupCommandBuffer(contextTyped.idx);
+	vkCmdPipelineBarrier(contextTyped.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
@@ -7191,6 +7264,35 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 		contextTyped.bound_buffers[6] =
 			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
 	}
+	if (contextTyped.compute_render_barrier_buffer_count >= contextTyped.compute_render_barrier_buffers.size()) {
+		Console::println("VKRenderer::bindSkinningNormalsResultBufferObject(): too many compute render buffers");
+		return;
+	}
+	contextTyped.compute_render_barrier_buffers[contextTyped.compute_render_barrier_buffer_count++] = contextTyped.bound_buffers[6];
+	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
+	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
+	ThsvsBufferBarrier svsbufferBarrier = {
+		.prevAccessCount = 1,
+		.pPrevAccesses = &prevAccesses,
+		.nextAccessCount = 1,
+		.pNextAccesses = &nextAccesses,
+		.srcQueueFamilyIndex = 0,
+		.dstQueueFamilyIndex = 0,
+		.buffer = contextTyped.bound_buffers[6],
+		.offset = 0,
+		.size = VK_WHOLE_SIZE
+	};
+	VkBufferMemoryBarrier vkBufferMemoryBarrier;
+	VkPipelineStageFlags srcStages;
+	VkPipelineStageFlags dstStages;
+	thsvsGetVulkanBufferMemoryBarrier(
+		svsbufferBarrier,
+		&srcStages,
+		&dstStages,
+		&vkBufferMemoryBarrier
+	);
+	prepareSetupCommandBuffer(contextTyped.idx);
+	vkCmdPipelineBarrier(contextTyped.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {

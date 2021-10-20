@@ -322,6 +322,9 @@ private:
 			int32_t num_groups_z { 0 };
 		};
 
+		int32_t compute_render_barrier_buffer_count { 0 };
+		array<VkBuffer, 1024> compute_render_barrier_buffers;
+
 		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_LINES, COMMAND_COMPUTE };
 		command_type command_type { COMMAND_NONE };
 		objects_render_command objects_render_command;
@@ -522,6 +525,7 @@ private:
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void recreateContextFences(int contextIdx);
 	void uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
+	void finishRendering();
 
 protected:
 	/**
