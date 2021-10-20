@@ -719,6 +719,64 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
 		} else
 		if (node->getId() == "terrainbrush_texture_browseto") {
+		} else
+		if (node->getId() == "terrain_mirrormode_apply") {
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+			auto mirrorMode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_mirrormode"))->getController()->getValue().getString();
+			auto flipped = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_mirrormode_flipped"))->getController()->getValue().getString() == "1";
+			view->reset();
+			if (mirrorMode == "1") {
+				// no op
+			} else
+			if (mirrorMode == "2") {
+				Terrain2::mirrorXAxis(
+					flipped,
+					terrain->getWidth(),
+					terrain->getDepth(),
+					terrain->getHeightVector(),
+					terrain->getWaterPositionMapsHeight(),
+					terrain->getWaterPositionMaps(),
+					terrain->getFoliageMaps()
+				);
+				terrain->setWidth(terrain->getWidth() * 2.0f);
+			} else
+			if (mirrorMode == "3") {
+				Terrain2::mirrorZAxis(
+					flipped,
+					terrain->getWidth(),
+					terrain->getDepth(),
+					terrain->getHeightVector(),
+					terrain->getWaterPositionMapsHeight(),
+					terrain->getWaterPositionMaps(),
+					terrain->getFoliageMaps()
+				);
+				terrain->setDepth(terrain->getDepth() * 2.0f);
+			} else
+			if (mirrorMode == "4") {
+				Terrain2::mirrorXAxis(
+					flipped,
+					terrain->getWidth(),
+					terrain->getDepth(),
+					terrain->getHeightVector(),
+					terrain->getWaterPositionMapsHeight(),
+					terrain->getWaterPositionMaps(),
+					terrain->getFoliageMaps()
+				);
+				terrain->setWidth(terrain->getWidth() * 2.0f);
+				Terrain2::mirrorZAxis(
+					flipped,
+					terrain->getWidth(),
+					terrain->getDepth(),
+					terrain->getHeightVector(),
+					terrain->getWaterPositionMapsHeight(),
+					terrain->getWaterPositionMaps(),
+					terrain->getFoliageMaps()
+				);
+				terrain->setDepth(terrain->getDepth() * 2.0f);
+			}
+			view->initializeTerrain();
 		}
 	}
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());

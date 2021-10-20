@@ -2170,7 +2170,13 @@ void Terrain2::mirrorXAxis(
 							flipZ == true?depth - transformationsMirrored.getTranslation().getZ():transformationsMirrored.getTranslation().getZ()
 						)
 					);
-					transformationsMirrored.setRotationAngle(0, -transformationsMirrored.getRotationAngle(0));
+					transformationsMirrored.addRotation(transformationsMirrored.getRotationAxis(0), -transformationsMirrored.getRotationAngle(0));
+					transformationsMirrored.update();
+					auto eulerAngles = transformationsMirrored.getTransformationsMatrix().computeEulerAngles();
+					transformationsMirrored.removeRotation(3);
+					transformationsMirrored.setRotationAngle(0, eulerAngles.getZ());
+					transformationsMirrored.setRotationAngle(1, eulerAngles.getY());
+					transformationsMirrored.setRotationAngle(2, eulerAngles.getX());
 					transformationsMirrored.update();
 					//
 					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
@@ -2260,7 +2266,13 @@ void Terrain2::mirrorZAxis(
 							depth * 2.0f - transformationsMirrored.getTranslation().getZ()
 						)
 					);
-					transformationsMirrored.setRotationAngle(2, -transformationsMirrored.getRotationAngle(2));
+					transformationsMirrored.addRotation(transformationsMirrored.getRotationAxis(2), -transformationsMirrored.getRotationAngle(2));
+					transformationsMirrored.update();
+					auto eulerAngles = transformationsMirrored.getTransformationsMatrix().computeEulerAngles();
+					transformationsMirrored.removeRotation(3);
+					transformationsMirrored.setRotationAngle(0, eulerAngles.getZ());
+					transformationsMirrored.setRotationAngle(1, eulerAngles.getY());
+					transformationsMirrored.setRotationAngle(2, eulerAngles.getX());
 					transformationsMirrored.update();
 					//
 					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
