@@ -65,7 +65,7 @@ void TDMEEditor::main(int argc, char** argv)
 	Console::println();
 
 	auto tdmeEditor = new TDMEEditor();
-	tdmeEditor->run(argc, argv, "TDMEEditor");
+	tdmeEditor->run(argc, argv, "TDMEEditor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
 }
 
 void TDMEEditor::setView(View* view)

@@ -55,6 +55,7 @@ public:
 	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };
 	static constexpr int WINDOW_HINT_NOTDECORATED { 2 };
 	static constexpr int WINDOW_HINT_INVISIBLE { 4 };
+	static constexpr int WINDOW_HINT_MAXIMIZED { 8 };
 
 	static constexpr int FPS { 60 };
 

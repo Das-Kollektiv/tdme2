@@ -607,6 +607,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				Console::println("glfwVulkanSupported(): Vulkan not available!");
 				return;
 			}
+			if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+				glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		#elif defined(GLES2)
@@ -614,6 +617,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+			if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+				glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+			}
 			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		#else
 				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) {
