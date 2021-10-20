@@ -62,6 +62,8 @@ private:
 	vector<string> recents;
 	string defaultCwd;
 	unordered_map<string, string> defaultCwdByExtensions;
+	string settingsPathName;
+	string settingsFileName;
 
 private:
 
@@ -149,9 +151,11 @@ public:
 	 * @param enableFilter enable filter
 	 * @param applyAction apply action
 	 * @param cancelAction cancel action
+	 * @param settingsFileName settings file name
+	 * @param settingsPathName settings path name
 	 * @throws IOException
 	 */
-	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction = nullptr);
+	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction, Action* cancelAction = nullptr, const string& settingsFileName = ".filedialog.properties", const string& settingsPathName = string());
 
 	/**
 	 * Abort the file dialog pop up
@@ -165,6 +169,11 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
+
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
 
 	/**
 	 * Save settings

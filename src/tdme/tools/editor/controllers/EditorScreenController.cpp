@@ -397,7 +397,10 @@ void EditorScreenController::onOpenProject() {
 		{},
 		string(),
 		true,
-		new OnOpenProject(this)
+		new OnOpenProject(this),
+		nullptr,
+		".projects.filedialog.properties",
+		"."
 	);
 }
 
