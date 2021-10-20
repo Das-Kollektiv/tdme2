@@ -71,11 +71,10 @@ bool BaseProperties::renameProperty(const string& oldName, const string& name) {
 		return false;
 	}
 
-	propertiesByName.erase(propertyByNameIt);
-
 	BaseProperty* property = propertyByNameIt->second;
 	property->setName(name);
 
+	propertiesByName.erase(propertyByNameIt);
 	propertiesByName[property->getName()] = property;
 
 	return true;
@@ -91,12 +90,11 @@ bool BaseProperties::updateProperty(const string& oldName, const string& name, c
 		return false;
 	}
 
-	propertiesByName.erase(propertyByNameIt);
-
 	BaseProperty* property = propertyByNameIt->second;
 	property->setName(name);
 	property->setValue(value);
 
+	propertiesByName.erase(propertyByNameIt);
 	propertiesByName[property->getName()] = property;
 
 	return true;
