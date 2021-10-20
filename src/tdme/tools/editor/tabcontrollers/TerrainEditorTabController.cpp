@@ -1444,10 +1444,14 @@ void TerrainEditorTabController::updateFoliageBrush() {
 	for (auto foliageBrushPrototype: brush->getPrototypes()) {
 		Prototype* foliagePrototype = nullptr;
 		if (foliageBrushPrototype->getFileName().empty() == false) {
-			foliagePrototype = PrototypeReader::read(
-				PrototypeReader::getResourcePathName(Tools::getPathName(foliageBrushPrototype->getFileName()), foliageBrushPrototype->getFileName()),
-				Tools::getFileName(foliageBrushPrototype->getFileName())
-			);
+			try {
+				foliagePrototype = PrototypeReader::read(
+					PrototypeReader::getResourcePathName(Tools::getPathName(foliageBrushPrototype->getFileName()), foliageBrushPrototype->getFileName()),
+					Tools::getFileName(foliageBrushPrototype->getFileName())
+				);
+			} catch (Exception& exception) {
+				Console::println("TerrainEditorTabController::updateFoliageBrush(): failed to load prototype: " + foliageBrushPrototype->getFileName());
+			}
 		}
 		if (foliagePrototype == nullptr) continue;
 		foliageBrushPrototypes.push_back(
