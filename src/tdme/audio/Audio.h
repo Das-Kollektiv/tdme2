@@ -57,7 +57,12 @@ public:
 	/**
 	 * @return audio singleton instance
 	 */
-	static Audio* getInstance();
+	inline static Audio* getInstance() {
+		if (Audio::instance == nullptr) {
+			Audio::instance = new Audio();
+		}
+		return Audio::instance;
+	}
 
 	/**
 	 * @return listener position

@@ -44,19 +44,7 @@ Audio::Audio()
 	update();
 }
 
-constexpr int32_t Audio::ALBUFFERID_NONE;
-
-constexpr int32_t Audio::ALSOURCEID_NONE;
-
 Audio* Audio::instance = nullptr;
-
-Audio* Audio::getInstance()
-{
-	if (Audio::instance == nullptr) {
-		Audio::instance = new Audio();
-	}
-	return Audio::instance;
-}
 
 AudioEntity* Audio::getEntity(const string& id)
 {

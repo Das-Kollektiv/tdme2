@@ -311,14 +311,6 @@ Engine::~Engine() {
 	if (currentEngine == this) currentEngine = nullptr;
 }
 
-Engine* Engine::getInstance()
-{
-	if (instance == nullptr) {
-		instance = new Engine();
-	}
-	return instance;
-}
-
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer)
 {
 	if (instance == nullptr || instance->initialized == false) {

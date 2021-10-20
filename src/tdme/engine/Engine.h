@@ -492,7 +492,12 @@ public:
 	 * Returns engine instance
 	 * @return
 	 */
-	static Engine* getInstance();
+	inline static Engine* getInstance() {
+		if (instance == nullptr) {
+			instance = new Engine();
+		}
+		return instance;
+	}
 
 	/**
 	 * @return texture manager
