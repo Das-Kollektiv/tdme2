@@ -208,6 +208,11 @@ public:
 	void setFoliageBrushDetails();
 
 	/**
+	 * Update foliage brush details
+	 */
+	void updateFoliageBrushDetails();
+
+	/**
 	 * Apply foliage brush details
 	 */
 	void applyFoliageBrushDetails();

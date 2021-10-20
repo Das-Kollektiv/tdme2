@@ -828,6 +828,24 @@ void TerrainEditorTabController::setBrushScale(float scale) {
 		if (view->getEditorView()->getScreenController()->getOutlinerSelection() == "terrain.brush") {
 			updateTerrainBrushDetails();
 		}
+	} else
+	if (currentFoliageBrushOperation != Terrain2::BRUSHOPERATION_NONE) {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		auto foliageBrushIdx = -1;
+		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+			foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+		} else {
+			auto foliageBrushPrototypeIdx = -1;
+			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+		}
+		auto prototype = view->getPrototype();
+		auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+		if (terrain == nullptr) return;
+		auto brush = terrain->getBrush(foliageBrushIdx);
+		if (brush == nullptr) return;
+		brush->setSize(scale);
+		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) updateFoliageBrushDetails();
+		updateFoliageBrush();
 	}
 }
 
@@ -837,6 +855,24 @@ void TerrainEditorTabController::setBrushDensityStrength(float densityStrength) 
 		if (view->getEditorView()->getScreenController()->getOutlinerSelection() == "terrain.brush") {
 			updateTerrainBrushDetails();
 		}
+	} else
+	if (currentFoliageBrushOperation != Terrain2::BRUSHOPERATION_NONE) {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		auto foliageBrushIdx = -1;
+		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
+			foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+		} else {
+			auto foliageBrushPrototypeIdx = -1;
+			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+		}
+		auto prototype = view->getPrototype();
+		auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+		if (terrain == nullptr) return;
+		auto brush = terrain->getBrush(foliageBrushIdx);
+		if (brush == nullptr) return;
+		brush->setDensity(densityStrength);
+		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) updateFoliageBrushDetails();
+		updateFoliageBrush();
 	}
 }
 
@@ -907,6 +943,19 @@ void TerrainEditorTabController::setFoliageBrushDetails() {
 	);
 
 	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setFoliageBrushDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	updateFoliageBrushDetails();
+}
+
+void TerrainEditorTabController::updateFoliageBrushDetails() {
+	//
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
 	auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
@@ -918,13 +967,11 @@ void TerrainEditorTabController::setFoliageBrushDetails() {
 
 	//
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush"))->getActiveConditions().add("open");
-
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->setValue(MutableString(brush->getSize()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->setValue(MutableString(brush->getDensity()));
 	} catch (Exception& exception) {
-		Console::println(string("TerrainEditorTabController::setFoliageBrushDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("TerrainEditorTabController::updateFoliageBrushDetails(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
