@@ -4231,7 +4231,7 @@ void VKRenderer::setCullFace(int32_t cullFace)
 	if (cull_mode == cullFace) return;
 	endDrawCommandsAllContexts();
 	cull_mode = (VkCullModeFlagBits)cullFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::enableBlending()
@@ -4239,14 +4239,14 @@ void VKRenderer::enableBlending()
 	if (blending_mode == BLENDING_NORMAL) return;
 	endDrawCommandsAllContexts();
 	blending_mode = BLENDING_NORMAL;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::enableAdditionBlending() {
 	if (blending_mode == BLENDING_ADDITIVE) return;
 	endDrawCommandsAllContexts();
 	blending_mode = BLENDING_ADDITIVE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::disableBlending()
@@ -4254,7 +4254,7 @@ void VKRenderer::disableBlending()
 	if (blending_mode == BLENDING_NONE) return;
 	endDrawCommandsAllContexts();
 	blending_mode = BLENDING_NONE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::enableDepthBufferWriting()
@@ -4262,7 +4262,7 @@ void VKRenderer::enableDepthBufferWriting()
 	if (depth_buffer_writing == true) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_writing = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::disableDepthBufferWriting()
@@ -4270,7 +4270,7 @@ void VKRenderer::disableDepthBufferWriting()
 	if (depth_buffer_writing == false) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_writing = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::disableDepthBufferTest()
@@ -4278,7 +4278,7 @@ void VKRenderer::disableDepthBufferTest()
 	if (depth_buffer_testing == false) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_testing = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::enableDepthBufferTest()
@@ -4286,7 +4286,7 @@ void VKRenderer::enableDepthBufferTest()
 	if (depth_buffer_testing == true) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_testing = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
@@ -4294,7 +4294,7 @@ void VKRenderer::setDepthFunction(int32_t depthFunction)
 	if (depth_function == depthFunction) return;
 	endDrawCommandsAllContexts();
 	depth_function = depthFunction;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(0);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(ID_NONE);
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
