@@ -127,14 +127,14 @@ private:
 	};
 
 	struct pipeline_type {
-		string id;
+		uint32_t id;
 		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 		VkPipeline pipeline { VK_NULL_HANDLE };
 	};
 
 	struct program_type {
 		int type { 0 };
-		unordered_map<string, pipeline_type*> pipelines;
+		unordered_map<uint32_t, pipeline_type*> pipelines;
 		vector<int32_t> shader_ids;
 		vector<shader_type*> shaders;
 		unordered_map<int32_t, string> uniforms;
@@ -223,7 +223,7 @@ private:
 
 		program_type* program { nullptr };
 
-		array<string, 3> pipeline_id;
+		array<uint32_t, 3> pipeline_id;
 		array<VkPipeline, 3> pipeline;
 
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
@@ -471,7 +471,7 @@ private:
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int contextIdx, int32_t textureId);
-	pipeline_type* getPipelineInternal(int contextIdx, program_type* program, const string& pipelineId);
+	pipeline_type* getPipelineInternal(int contextIdx, program_type* program, uint32_t pipelineId);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
@@ -515,7 +515,7 @@ private:
 	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
-	const string createPipelineId(program_type* program, int contextIdx);
+	uint32_t createPipelineId(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
