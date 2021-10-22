@@ -1352,7 +1352,7 @@ bool Terrain2::getTerrainModelsHeight(
 	auto terrainHeightVectorZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 	if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terreinHeightVectorVerticesPerZ ||
 			terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) return false;
-	brushHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];
+	brushHeight = terrainHeightVector[terrainHeightVectorZ * terrainHeightVectorVerticesPerX + terrainHeightVectorX];
 
 	//
 	return true;
