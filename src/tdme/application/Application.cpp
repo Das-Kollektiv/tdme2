@@ -647,7 +647,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glfwTerminate();
 			return;
 		}
-		glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+		if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
 		setIcon();
 		#if !defined(VULKAN)
 			glfwMakeContextCurrent(glfwWindow);
@@ -667,6 +667,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
+		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+			int32_t width;
+			int32_t height;
+			glfwGetWindowSize(glfwWindow, &width, &height);
+			glfwOnWindowResize(glfwWindow, width, height);
+		}
 		#if defined(__APPLE__)
 			// change working directory on MacOSX if started from app bundle
 			auto executablePathName = string(argv[0]);
