@@ -1,6 +1,8 @@
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
+	#define GLFW_EXPOSE_NATIVE_WIN32
 	#include <GLFW/glfw3.h>
+	#include <GLFW/glfw3native.h>
 	#include <tdme/engine/Engine.h>
 	#include <tdme/engine/subsystems/renderer/VKRenderer.h>
 	using tdme::engine::Engine;
@@ -14,7 +16,9 @@
 #endif
 #if defined(GLFW3)
 	#define GLFW_INCLUDE_NONE
+	#define GLFW_EXPOSE_NATIVE_WIN32
 	#include <GLFW/glfw3.h>
+	#include <GLFW/glfw3native.h>
 #elif !defined(VULKAN)
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#include <GL/freeglut.h>
@@ -587,6 +591,107 @@ void Application::swapBuffers() {
 	#endif
 }
 
+#if defined(_WIN32)
+static bool win32_wide_to_utf8(const wchar_t *src, char *dst, int dst_num_bytes) {
+	// see https://github.com/floooh/sokol/blob/master/sokol_app.h
+	memset(dst, 0, (size_t) dst_num_bytes);
+	const int bytes_needed = WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
+	if (bytes_needed <= dst_num_bytes) {
+		WideCharToMultiByte(CP_UTF8, 0, src, -1, dst, dst_num_bytes, NULL, NULL);
+		return true;
+	} else {
+		return false;
+	}
+}
+#endif
+
+string Application::getClipboardContent() {
+	#if defined(_WIN32)
+		// see https://github.com/floooh/sokol/blob/master/sokol_app.h
+		if (Application::application == nullptr) return string();
+		#if defined(VULKAN) || defined(GLFW3)
+			auto hwnd = glfwGetWin32Window(glfwWindow);
+		#else
+			auto hwnd = FindWindow(NULL, title.c_str()); // TODO: improve me
+		#endif
+		if (OpenClipboard(hwnd) == false) {
+			return string();
+		}
+		auto object = GetClipboardData(CF_UNICODETEXT);
+		if (object == nullptr) {
+			CloseClipboard();
+			return string();
+		}
+		const wchar_t *wchar_buf = (const wchar_t*) GlobalLock(object);
+		if (wchar_buf == nullptr) {
+			GlobalUnlock(object);
+			CloseClipboard();
+			return string();
+		}
+		char buf[16384];
+		if (::win32_wide_to_utf8(wchar_buf, buf, sizeof(buf)) == false) {
+			GlobalUnlock(object);
+			CloseClipboard();
+			return string();
+		}
+		GlobalUnlock(object);
+		CloseClipboard();
+		return string(buf);
+	#endif
+	return string("Unsupported");
+}
+
+#if defined(_WIN32)
+static bool win32_utf8_to_wide(const char *src, wchar_t *dst,int dst_num_bytes) {
+	// https://github.com/floooh/sokol/blob/master/sokol_app.h
+	memset(dst, 0, (size_t) dst_num_bytes);
+	const int dst_chars = dst_num_bytes / (int) sizeof(wchar_t);
+	const int dst_needed = MultiByteToWideChar(CP_UTF8, 0, src, -1, 0, 0);
+	if ((dst_needed > 0) && (dst_needed < dst_chars)) {
+		MultiByteToWideChar(CP_UTF8, 0, src, -1, dst, dst_chars);
+		return true;
+	} else {
+		/* input string doesn't fit into destination buffer */
+		return false;
+	}
+}
+#endif
+
+void Application::setClipboardContent(const string& content) {
+	#if defined(_WIN32)
+		// https://github.com/floooh/sokol/blob/master/sokol_app.h
+		#if defined(VULKAN) || defined(GLFW3)
+			auto hwnd = glfwGetWin32Window(glfwWindow);
+		#else
+			auto hwnd = FindWindow(NULL, title.c_str()); // TODO: improve me
+		#endif
+		wchar_t *wchar_buf = 0;
+		const SIZE_T wchar_buf_size = 16384;
+		auto object = GlobalAlloc(GMEM_MOVEABLE, wchar_buf_size);
+		if (object == nullptr) {
+			return;
+		}
+		wchar_buf = (wchar_t*) GlobalLock(object);
+		if (wchar_buf == nullptr) {
+			if (wchar_buf != nullptr) GlobalUnlock(object);
+		    if (object != nullptr) GlobalFree(object);
+		}
+		if (win32_utf8_to_wide(content.c_str(), wchar_buf, (int)wchar_buf_size) == false) {
+			if (wchar_buf != nullptr) GlobalUnlock(object);
+		    if (object != nullptr) GlobalFree(object);
+		}
+		GlobalUnlock(wchar_buf);
+		wchar_buf = 0;
+		if (OpenClipboard(hwnd) == false) {
+			if (wchar_buf != nullptr) GlobalUnlock(object);
+		    if (object != nullptr) GlobalFree(object);
+		}
+		EmptyClipboard();
+		SetClipboardData(CF_UNICODETEXT, object);
+		CloseClipboard();
+	#endif
+}
+
 #if defined(VULKAN) || defined(GLFW3)
 	static void glfwErrorCallback(int error, const char* description) {
 		Console::println(string("glfwErrorCallback(): ") + description);
@@ -800,7 +905,11 @@ void Application::setIcon() {
 			delete [] glfwPixels;
 		}
 	#elif defined(_WIN32)
-		HWND hwnd = FindWindow(NULL, title.c_str());
+		#if defined(VULKAN) || defined(GLFW3)
+			auto hwnd = glfwGetWin32Window(glfwWindow);
+		#else
+			auto hwnd = FindWindow(NULL, title.c_str()); // TODO: improve me
+		#endif
 		HANDLE icon = LoadImage(GetModuleHandle(nullptr), "resources/platforms/win32/app.ico", IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
 		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
 	#endif

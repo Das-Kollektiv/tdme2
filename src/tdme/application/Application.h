@@ -245,6 +245,17 @@ public:
 	static void swapBuffers();
 
 	/**
+	 * @return clipboard content as utf8 string
+	 */
+	string getClipboardContent();
+
+	/**
+	 * Set clipboard content
+	 * @param content content
+	 */
+	void setClipboardContent(const string& content);
+
+	/**
 	 * Run this application
 	 * @param argc argument count
 	 * @param argv argument values
