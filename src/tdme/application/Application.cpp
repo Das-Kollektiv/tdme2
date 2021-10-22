@@ -529,6 +529,28 @@ void Application::setMouseCursor(int mouseCursor) {
 	#endif
 }
 
+int Application::getMousePositionX() {
+	#if defined(VULKAN) || defined(GLFW3)
+		double mouseX, mouseY;
+		glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
+		return static_cast<int>(mouseX);
+	#else
+		// TODO: implement me!
+		return -1;
+	#endif
+}
+
+int Application::getMousePositionY() {
+	#if defined(VULKAN) || defined(GLFW3)
+		double mouseX, mouseY;
+		glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
+		return static_cast<int>(mouseY);
+	#else
+		// TODO: implement me!
+		return -1;
+	#endif
+}
+
 void Application::setMousePosition(int x, int y) {
 	#if defined(VULKAN) || defined(GLFW3)
 		#if defined(__APPLE__)

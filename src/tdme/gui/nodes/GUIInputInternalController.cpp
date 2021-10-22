@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -23,6 +24,7 @@
 
 using tdme::gui::nodes::GUIInputInternalController;
 
+using tdme::application::Application;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -55,9 +57,10 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->cursorMode = CURSORMODE_SHOW;
 	this->index = 0;
 	this->offset = 0;
-	this->draggingActive = false;
-	this->draggingInit = false;
-	this->dragPosition = {{ 0, 0 }};
+	this->mouseDraggingActive = false;
+	this->mouseDraggingInit = false;
+	this->mouseDragPosition = {{ -1, -1 }};
+	this->mouseOriginalPosition = {{ -1, -1 }};
 }
 
 bool GUIInputInternalController::isDisabled()
@@ -142,7 +145,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	}
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		if (draggingActive == false) {
+		if (mouseDraggingActive == false) {
 			if (node->isEventBelongingToNode(event) == true &&
 				event->getButton() == MOUSE_BUTTON_LEFT) {
 				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -161,30 +164,35 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				showCursor = true;
 			}
 		}
-		draggingInit = false;
-		draggingActive = false;
-		dragPosition[0] = 0;
-		dragPosition[1] = 0;
+		mouseDraggingInit = false;
+		mouseDraggingActive = false;
+		mouseDragPosition[0] = -1;
+		mouseDragPosition[1] = -1;
+		Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
+		Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
+		mouseOriginalPosition[0] = -1;
+		mouseOriginalPosition[1] = -1;
 		event->setProcessed(true);
 	} else
-	if (draggingInit == true || draggingActive == true) {
-		if (draggingInit == true) {
-			if (dragPosition[0] != event->getXUnscaled() ||
-				dragPosition[1] != event->getYUnscaled()) {
-				draggingInit = false;
-				draggingActive = true;
+	if (mouseDraggingInit == true || mouseDraggingActive == true) {
+		if (mouseDraggingInit == true) {
+			if (mouseDragPosition[0] != event->getXUnscaled() ||
+				mouseDragPosition[1] != event->getYUnscaled()) {
+				mouseDraggingInit = false;
+				mouseDraggingActive = true;
 			}
 		}
-		if (draggingActive == true) {
+		if (mouseDraggingActive == true) {
 			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 			switch (type) {
 				case TYPE_STRING:
 					break;
 				case TYPE_FLOAT:
 					{
+						auto mouseDraggedX = Application::getMousePositionX() - mouseDragPosition[0];
 						auto value = Float::parseFloat(textInputNode->getText().getString());
 						if (haveStep == true) {
-							value+= static_cast<float>(event->getXUnscaled() - dragPosition[0]) * step;
+							value+= static_cast<float>(mouseDraggedX) * step;
 						}
 						if (haveMin == true) {
 							if (value < min) value = min;
@@ -198,9 +206,10 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 					break;
 				case TYPE_INT:
 					{
+						auto mouseDraggedX = Application::getMousePositionX() - mouseDragPosition[0];
 						auto value = Integer::parseInt(textInputNode->getText().getString());
 						if (haveStep == true) {
-							value+= (event->getXUnscaled() - dragPosition[0]) * static_cast<int>(step);
+							value+= mouseDraggedX * static_cast<int>(step);
 						}
 						if (haveMin == true) {
 							if (value < static_cast<int>(min)) value = static_cast<int>(min);
@@ -213,8 +222,13 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 					}
 					break;
 			}
-			dragPosition[0] = event->getXUnscaled();
-			dragPosition[1] = event->getYUnscaled();
+			auto application = Application::getApplication();
+			Application::setMousePosition(
+				application->getWindowXPosition() + application->getWindowWidth() / 2,
+				application->getWindowYPosition() + application->getWindowHeight() / 2
+			);
+			mouseDragPosition[0] = Application::getMousePositionX();
+			mouseDragPosition[1] = Application::getMousePositionY();
 		}
 		event->setProcessed(true);
 	} else
@@ -234,10 +248,18 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		);
 		resetCursorMode();
 		event->setProcessed(true);
-		draggingInit = true;
-		draggingActive = false;
-		dragPosition[0] = event->getXUnscaled();
-		dragPosition[1] = event->getYUnscaled();
+		mouseDraggingInit = true;
+		mouseDraggingActive = false;
+		auto application = Application::getApplication();
+		mouseOriginalPosition[0] = Application::getMousePositionX();
+		mouseOriginalPosition[1] = Application::getMousePositionY();
+		Application::setMouseCursor(MOUSE_CURSOR_DISABLED);
+		Application::setMousePosition(
+			application->getWindowXPosition() + application->getWindowWidth() / 2,
+			application->getWindowYPosition() + application->getWindowHeight() / 2
+		);
+		mouseDragPosition[0] = Application::getMousePositionX();
+		mouseDragPosition[1] = Application::getMousePositionY();
 		showCursor = false;
 	}
 }

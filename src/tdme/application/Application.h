@@ -67,6 +67,13 @@ public:
 	}
 
 	/**
+	 * @return application
+	 */
+	inline static Application* getApplication() {
+		return application;
+	}
+
+	/**
 	 * @return if FPS should be limited to 60 frames per seconds
 	 */
 	inline static bool isLimitFPS() {
@@ -214,6 +221,16 @@ public:
 	 * @param mouseCursor mouse cursor, see MOUSE_CURSOR_*
 	 */
 	static void setMouseCursor(int mouseCursor);
+
+	/**
+	 * @return get mouse X position
+	 */
+	static int getMousePositionX();
+
+	/**
+	 * @return get mouse Y position
+	 */
+	static int getMousePositionY();
 
 	/**
 	 * Set mouse position

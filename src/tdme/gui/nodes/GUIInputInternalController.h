@@ -38,9 +38,10 @@ private:
 	CursorMode cursorMode { CURSORMODE_SHOW };
 	int index { 0 };
 	int offset { 0 };
-	bool draggingInit { false };
-	bool draggingActive { false };
-	array<int, 2> dragPosition;
+	bool mouseDraggingInit { false };
+	bool mouseDraggingActive { false };
+	array<int, 2> mouseDragPosition;
+	array<int, 2> mouseOriginalPosition;
 	MutableString value;
 
 	enum Type { TYPE_STRING, TYPE_FLOAT, TYPE_INT};
