@@ -112,8 +112,8 @@ void Terrain2::createTerrainModels(float width, float depth, float y, vector<flo
 			int normalIdx = terrainNormals.size();
 			int vertexIdx = terrainVertices.size();
 
-			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
 
 			Vector3 topVertex;
 			Vector3 topLeftVertex;
@@ -456,8 +456,8 @@ void Terrain2::applyBrushToTerrainModels(
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
 			auto appliedStrength = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushStrength;
-			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
 				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
 				brushPosition.add(
@@ -817,8 +817,8 @@ void Terrain2::applyRampBrushToTerrainModels(
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
 			auto height = ((static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * (heightMax - heightMin)) + heightMin;
-			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terrainHeightVectorVerticesPerX ||
 				terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) {
 				brushPosition.add(
@@ -1062,8 +1062,8 @@ bool Terrain2::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const ve
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	auto brushPosition = brushCenterPosition;
-	auto terrainHeightVectorXCenter = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE) + 1;
-	auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE) + 1;
+	auto terrainHeightVectorXCenter = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+	auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 
 	//
 	waterPositionMap[terrainHeightVectorZCenter].insert(terrainHeightVectorXCenter);
@@ -1149,7 +1149,7 @@ bool Terrain2::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const ve
 					}
 				}
 			}
-		} while (waterPositionMapCopy != waterPositionMap);
+		} while (waterPositionMapCopy.size() != waterPositionMap.size());
 		waterPositionMap[zMax] = waterPositionMap[zMax - 1];
 	}
 
@@ -1203,8 +1203,8 @@ void Terrain2::createWaterModels(
 	partitionWaterFaces.resize(partitionCount);
 	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
 		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
-			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE) + 1;
-			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE) + 1;
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
 
 			Vector3 topVertex;
 			Vector3 topLeftVertex;
@@ -1348,8 +1348,8 @@ bool Terrain2::getTerrainModelsHeight(
 	// get height at brush position
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
-	auto terrainHeightVectorX = static_cast<int>((brushCenterPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE) + 1;
-	auto terrainHeightVectorZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE) + 1;
+	auto terrainHeightVectorX = static_cast<int>((brushCenterPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+	auto terrainHeightVectorZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 	if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terreinHeightVectorVerticesPerZ ||
 			terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) return false;
 	brushHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];

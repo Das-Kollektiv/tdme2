@@ -68,7 +68,7 @@ private:
 	 * @param z z
 	 * @return terrain vertex
 	 */
-	static inline void getTerrainVertex(int x, int z, Vector3& vertex) {
+	inline static void getTerrainVertex(int x, int z, Vector3& vertex) {
 		vertex.set(
 			static_cast<float>(x) * STEP_SIZE,
 			0.0f,
@@ -84,7 +84,7 @@ private:
 	 * @param z z
 	 * @return terrain vertex
 	 */
-	static inline bool getTerrainVertex(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, Vector3& vertex) {
+	inline static bool getTerrainVertex(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, Vector3& vertex) {
 		vertex.set(
 			static_cast<float>(x) * STEP_SIZE,
 			0.0f,
@@ -107,7 +107,7 @@ private:
 	 * @param waterHeight water height
 	 * @param vertex vertex
 	 */
-	static inline void getWaterVertex(int x, int z, float waterHeight, Vector3& vertex) {
+	inline static void getWaterVertex(int x, int z, float waterHeight, Vector3& vertex) {
 		vertex.set(
 			static_cast<float>(x) * STEP_SIZE,
 			waterHeight,
@@ -121,7 +121,7 @@ private:
 	 * @param x x
 	 * @param z z
 	 */
-	static inline bool hasWaterPosition(const unordered_map<int, unordered_set<int>>& waterPositionSet, int x, int z) {
+	inline static bool hasWaterPosition(const unordered_map<int, unordered_set<int>>& waterPositionSet, int x, int z) {
 		auto waterPositionSetIt = waterPositionSet.find(z);
 		if (waterPositionSetIt == waterPositionSet.end()) return false;
 		auto waterXPositionSetIt = waterPositionSetIt->second.find(x);
@@ -150,7 +150,7 @@ private:
 	 * @param waterHeight water height
 	 * @return if water can be generated at given position
 	 */
-	static bool determineWater(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight) {
+	inline static bool determineWater(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight) {
 		if (x < 0 || x >= verticesPerX ||
 			z < 0 || z >= verticesPerZ) return false;
 		auto vertexIdx = z * verticesPerX + x;
@@ -170,7 +170,7 @@ private:
 	 * @param waterXPositionSet water x position set
 	 * @return if water can be generated at given position
 	 */
-	static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, unordered_set<int>& waterXPositionSet) {
+	inline static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, unordered_set<int>& waterXPositionSet) {
 		auto xMin = -1;
 		auto xMax = +1;
 		while(true == true) {
