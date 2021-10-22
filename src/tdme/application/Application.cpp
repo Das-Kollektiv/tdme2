@@ -2,7 +2,9 @@
 	#define GLFW_INCLUDE_VULKAN
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#include <GLFW/glfw3.h>
-	#include <GLFW/glfw3native.h>
+	#if defined(_WIN32)
+		#include <GLFW/glfw3native.h>
+	#endif
 	#include <tdme/engine/Engine.h>
 	#include <tdme/engine/subsystems/renderer/VKRenderer.h>
 	using tdme::engine::Engine;
@@ -18,7 +20,9 @@
 	#define GLFW_INCLUDE_NONE
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#include <GLFW/glfw3.h>
-	#include <GLFW/glfw3native.h>
+	#if defined(_WIN32)
+		#include <GLFW/glfw3native.h>
+	#endif
 #elif !defined(VULKAN)
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#include <GL/freeglut.h>

@@ -28,6 +28,7 @@
       - executing other applications or background applications
       - swapping double buffered buffers (to screen) manually if required
       - checking if application is active (port-mingw, port-msc only for now)
+      - setting and getting data from clipboard(port-mingw, port-msc, next: MacOSX, then XOrg)
     - provides
       - a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
       - application life cycle
