@@ -668,10 +668,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
 		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
-			int32_t width;
-			int32_t height;
-			glfwGetWindowSize(glfwWindow, &width, &height);
-			glfwOnWindowResize(glfwWindow, width, height);
+			glfwGetWindowPos(glfwWindow, &windowXPosition, &windowXPosition);
+			glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
+			glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
 		}
 		#if defined(__APPLE__)
 			// change working directory on MacOSX if started from app bundle
