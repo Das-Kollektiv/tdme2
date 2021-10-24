@@ -382,7 +382,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (keyControlX == true) {
 			Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex) + 1);
+				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
 				checkOffset();

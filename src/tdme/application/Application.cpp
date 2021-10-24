@@ -45,6 +45,7 @@
 
 #if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
+	#include <tdme/application/AppleClipboard.h>
 #endif
 
 #include <stdlib.h>
@@ -641,6 +642,10 @@ string Application::getClipboardContent() {
 		GlobalUnlock(object);
 		CloseClipboard();
 		return string(buf);
+	#elif defined(__APPLE__)
+		char buf[16384];
+		appleGetClipboardContent(buf, sizeof(buf));
+		return string(buf);
 	#endif
 	return string("Unsupported");
 }
@@ -693,6 +698,8 @@ void Application::setClipboardContent(const string& content) {
 		EmptyClipboard();
 		SetClipboardData(CF_UNICODETEXT, object);
 		CloseClipboard();
+	#elif defined(__APPLE__)
+		appleSetClipboardContent(content.c_str());
 	#endif
 }
 
