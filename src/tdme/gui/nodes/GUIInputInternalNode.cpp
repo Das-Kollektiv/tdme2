@@ -158,7 +158,8 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 	if (screenNode->getGUI() != nullptr &&
 		static_cast<GUIParentNode*>(screenNode->getGUI()->getFocussedNode()) == inputNode &&
 		inputInternalController->isShowCursor() == true &&
-		inputInternalController->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {
+		inputInternalController->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW &&
+		(selectionIndex == -1 || selectionIndex == index)) {
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
 		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + (font != nullptr?font->getTextIndexX(text, inputInternalController->getOffset(), 0, inputInternalController->getIndex()):0);

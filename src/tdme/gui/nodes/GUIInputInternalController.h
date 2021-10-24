@@ -104,7 +104,7 @@ public:
 	/**
 	 * Reset cursor index and offset
 	 */
-	void reset();
+	void onTextUpdate();
 
 	/**
 	 * Format text according to options

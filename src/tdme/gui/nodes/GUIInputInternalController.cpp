@@ -157,6 +157,10 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				);
 				resetCursorMode();
 				event->setProcessed(true);
+				if (editMode == false) {
+					index = 0;
+					selectionIndex = textInputNode->getText().length();
+				}
 				editMode = true;
 			}
 		}
@@ -535,6 +539,8 @@ void GUIInputInternalController::onFocusLost()
 {
 	formatText();
 	editMode = false;
+	index = 0;
+	selectionIndex = -1;
 }
 
 bool GUIInputInternalController::hasValue()
@@ -551,10 +557,16 @@ void GUIInputInternalController::setValue(const MutableString& value)
 {
 }
 
-void GUIInputInternalController::reset()
+void GUIInputInternalController::onTextUpdate()
 {
-	index = 0;
-	offset = 0;
+	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+	if (index < 0) index = 0;
+	if (index >= textInputNode->getText().length()) index = textInputNode->getText().length();
+	if (selectionIndex != -1) {
+		if (selectionIndex < 0) selectionIndex = 0;
+		if (selectionIndex >= textInputNode->getText().length()) selectionIndex = textInputNode->getText().length();
+	}
+	checkOffset();
 	resetCursorMode();
 }
 
