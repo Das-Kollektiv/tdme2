@@ -18,21 +18,21 @@
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" color="{$color.font_normal}" text="Mass" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="physics_dynamic_mass" width="100%" height="auto" text="1000.00" unit="kg" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+								<input id="physics_dynamic_mass" width="100%" height="auto" text="1000.00" unit="kg" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" color="{$color.font_normal}" text="Bounciness" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="physics_dynamic_bounciness" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+								<input id="physics_dynamic_bounciness" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" color="{$color.font_normal}" text="Friction" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="physics_dynamic_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+								<input id="physics_dynamic_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 
@@ -44,7 +44,7 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="Inertia tensor" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="physics_dynamic_inertiatensor_x" width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_x" width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 						<space height="5" />
@@ -52,7 +52,7 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="physics_dynamic_inertiatensor_y"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_y"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 						<space height="5" />
@@ -60,7 +60,7 @@
 							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="physics_dynamic_inertiatensor_z"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input id="physics_dynamic_inertiatensor_z"  width="*" height="auto" text="0.0" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 					</layout>
@@ -70,7 +70,7 @@
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<text font="{$font.default}" color="{$color.font_normal}" text="Friction" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="physics_static_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+								<input id="physics_static_friction" width="100%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 					</layout>

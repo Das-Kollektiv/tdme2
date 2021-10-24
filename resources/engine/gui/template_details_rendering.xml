@@ -33,7 +33,7 @@
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" color="{$color.font_normal}" text="Min Distance" width="*" height="auto" />
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="rendering_distanceshader_distance" name="rendering_distance_shader_distance" width="100%" height="auto" text="1000.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+						<input id="rendering_distanceshader_distance" name="rendering_distance_shader_distance" width="100%" height="auto" text="1000.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 					</layout>
 				</layout>
 

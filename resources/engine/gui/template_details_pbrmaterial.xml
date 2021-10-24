@@ -34,7 +34,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Metallic factor" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="pbrmaterial_metallic_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+							<input id="pbrmaterial_metallic_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 						</layout>
 					</layout>
 
@@ -43,7 +43,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Roughness factor" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="pbrmaterial_roughness_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<input id="pbrmaterial_roughness_factor" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 
@@ -52,7 +52,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Normal scale" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="pbrmaterial_normal_scale" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<input id="pbrmaterial_normal_scale" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 
@@ -61,7 +61,7 @@
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<text font="{$font.default}" color="{$color.font_normal}" text="Exposure" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="pbrmaterial_exposure" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<input id="pbrmaterial_exposure" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 						</layout>
 					</layout>
 

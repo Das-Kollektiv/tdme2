@@ -32,11 +32,11 @@
 							<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 								<text font="{$font.default}" text="X" color="{$color.font_normal}" />
 								<space width="5"/>
-								<input width="100" id="{$id}_snapping_x" text="1.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input width="100" id="{$id}_snapping_x" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 								<space width="10"/>
 								<text font="{$font.default}" text="Z" color="{$color.font_normal}" />
 								<space width="5"/>
-								<input width="100" id="{$id}_snapping_z" text="1.00" unit="m" options="type=float,min=0.0,step=0.25,decimals=2" image="resources/engine/images/inputslider.png" />
+								<input width="100" id="{$id}_snapping_z" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</element>
 					</layout>
