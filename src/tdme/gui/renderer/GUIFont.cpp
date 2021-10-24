@@ -134,13 +134,13 @@ void GUIFont::dispose()
 void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
 {
 	y -= yOffset == 10000?getYOffset(text) / 2:yOffset;
-	if (length == 0) length = text.length();
+	if (length == 0) length = text.size();
 	auto inSelection = false;
 	auto currentColor = color;
 	auto currentBackgroundColor = backgroundColor;
 	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
 		auto currentX = x;
-		for (auto i = offset; i < text.length() && i < length; i++) {
+		for (auto i = offset; i < text.size() && i < length; i++) {
 			auto characterId = text.charAt(i);
 			auto characterDefinition = getCharacter(characterId);
 			if (characterDefinition == nullptr) continue;
@@ -159,7 +159,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	guiRenderer->render();
 	guiRenderer->bindTexture(textureId);
 	auto currentX = x;
-	for (auto i = offset; i < text.length() && i < length; i++) {
+	for (auto i = offset; i < text.size() && i < length; i++) {
 		auto characterId = text.charAt(i);
 		auto characterDefinitions = getCharacter(characterId);
 		if (characterDefinitions == nullptr) continue;
@@ -181,9 +181,9 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
 {
-	if (length == 0) length = text.length();
+	if (length == 0) length = text.size();
 	auto x = 0;
-	for (auto i = offset; i < index && i < text.length() && i < length; i++) {
+	for (auto i = offset; i < index && i < text.size() && i < length; i++) {
 		auto characterId = text.charAt(i);
 		auto characterDefinition = getCharacter(characterId);
 		if (characterDefinition == nullptr) continue;
@@ -196,8 +196,8 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 {
 	auto x = 0;
 	auto index = offset;
-	if (length == 0) length = text.length();
-	for (; index < text.length() && index < length; index++) {
+	if (length == 0) length = text.size();
+	for (; index < text.size() && index < length; index++) {
 		auto characterId = text.charAt(index);
 		auto characterDefinition = getCharacter(characterId);
 		if (characterDefinition == nullptr) continue;
@@ -213,7 +213,7 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 int GUIFont::getYOffset(const MutableString& text)
 {
 	auto minYOffset = 10000;
-	for (auto i = 0; i < text.length(); i++) {
+	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
 		auto characterDefinition = getCharacter(characterId);
 		if (characterDefinition == nullptr) continue;
@@ -225,7 +225,7 @@ int GUIFont::getYOffset(const MutableString& text)
 int GUIFont::getTextHeight(const MutableString& text)
 {
 	auto maxHeight = 0;
-	for (auto i = 0; i < text.length(); i++) {
+	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
 		if (characterId == ' ') continue;
 		auto characterDefinition = getCharacter(characterId);
@@ -238,7 +238,7 @@ int GUIFont::getTextHeight(const MutableString& text)
 int GUIFont::getTextWidth(const MutableString& text)
 {
 	auto width = 0;
-	for (auto i = 0; i < text.length(); i++) {
+	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
 		auto characterDefinition = getCharacter(characterId);
 		if (characterDefinition == nullptr) continue;
@@ -249,14 +249,14 @@ int GUIFont::getTextWidth(const MutableString& text)
 
 int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 	auto x = 0;
-	for (auto i = 0; i < text.length(); i++) {
+	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
 		auto characterDefinition = getCharacter(characterId);
 		if (characterDefinition == nullptr) continue;
 		x += characterDefinition->xAdvance;
 		if (x > width) return i;
 	}
-	return text.length() - 1;
+	return text.size() - 1;
 }
 
 int GUIFont::getLineHeight()

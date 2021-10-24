@@ -32,11 +32,6 @@ MutableString::MutableString(float f, int32_t decimals) {
 	set(f, decimals);
 }
 
-int32_t MutableString::length() const
-{
-	return data.size();
-}
-
 char MutableString::charAt(int32_t idx) const
 {
 	return data[idx];
@@ -200,11 +195,6 @@ bool MutableString::equals(const string& s2) const
 bool MutableString::equals(const MutableString& s2) const
 {
 	return data == s2.data;
-}
-
-const string& MutableString::getString() const
-{
-	return data;
 }
 
 MutableString MutableString::clone() {

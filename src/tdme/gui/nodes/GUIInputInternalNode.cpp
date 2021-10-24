@@ -107,21 +107,6 @@ int GUIInputInternalNode::getContentHeight()
 	return font == nullptr?0:font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
-GUIFont* GUIInputInternalNode::getFont()
-{
-	return font;
-}
-
-MutableString& GUIInputInternalNode::getText()
-{
-	return text;
-}
-
-int GUIInputInternalNode::getMaxLength()
-{
-	return maxLength;
-}
-
 void GUIInputInternalNode::dispose()
 {
 	if (font != nullptr) font->dispose();

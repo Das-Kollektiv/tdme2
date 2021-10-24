@@ -159,7 +159,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				event->setProcessed(true);
 				if (editMode == false) {
 					index = 0;
-					selectionIndex = textInputNode->getText().length();
+					selectionIndex = textInputNode->getText().size();
 				}
 				editMode = true;
 			}
@@ -332,7 +332,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
 			}
-			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
+			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() < textInputNode->getMaxLength()) {
 				if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
 					// no op
 				} else
@@ -400,13 +400,13 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (keyControlV == true) {
 			auto clipboardContent = Application::getApplication()->getClipboardContent();
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() - Math::abs(index - selectionIndex) + clipboardContent.size() < textInputNode->getMaxLength()) {
+				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() - Math::abs(index - selectionIndex) + clipboardContent.size() < textInputNode->getMaxLength()) {
 					textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 					index = Math::min(index, selectionIndex);
 					selectionIndex = -1;
 				}
 			}
-			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() + clipboardContent.size() < textInputNode->getMaxLength()) {
+			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() + clipboardContent.size() < textInputNode->getMaxLength()) {
 				textInputNode->getText().insert(index, clipboardContent);
 				index+= clipboardContent.size();
 				checkOffset();
@@ -438,7 +438,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						if (index < textInputNode->getText().length()) {
+						if (index < textInputNode->getText().size()) {
 							index++;
 							checkOffset();
 							resetCursorMode();
@@ -476,7 +476,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
-							if (index < textInputNode->getText().length()) {
+							if (index < textInputNode->getText().size()) {
 								textInputNode->getText().remove(index, 1);
 								resetCursorMode();
 								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
@@ -517,7 +517,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						index = textInputNode->getText().length();
+						index = textInputNode->getText().size();
 						checkOffset();
 					}
 				}
@@ -561,10 +561,10 @@ void GUIInputInternalController::onTextUpdate()
 {
 	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 	if (index < 0) index = 0;
-	if (index >= textInputNode->getText().length()) index = textInputNode->getText().length();
+	if (index >= textInputNode->getText().size()) index = textInputNode->getText().size();
 	if (selectionIndex != -1) {
 		if (selectionIndex < 0) selectionIndex = 0;
-		if (selectionIndex >= textInputNode->getText().length()) selectionIndex = textInputNode->getText().length();
+		if (selectionIndex >= textInputNode->getText().size()) selectionIndex = textInputNode->getText().size();
 	}
 	checkOffset();
 	resetCursorMode();
@@ -577,12 +577,13 @@ bool GUIInputInternalController::isShowCursor()
 
 void GUIInputInternalController::formatText()
 {
+	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+	auto originalText = textInputNode->getText().getString();
 	switch (type) {
 		case TYPE_STRING:
 			break;
 		case TYPE_FLOAT:
 			{
-				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 				auto stringValue = StringTools::trim(textInputNode->getText().getString());
 				auto value = stringValue == "-"?0.0f:Float::parseFloat(stringValue);
 				if (haveMin == true) {
@@ -601,7 +602,6 @@ void GUIInputInternalController::formatText()
 			break;
 		case TYPE_INT:
 			{
-				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 				auto stringValue = StringTools::trim(textInputNode->getText().getString());
 				auto value = stringValue == "-"?0:Integer::parseInt(stringValue);
 				if (haveMin == true) {
@@ -618,6 +618,9 @@ void GUIInputInternalController::formatText()
 				}
 			}
 			break;
+	}
+	if (originalText != textInputNode->getText().getString()) {
+		node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 	}
 }
 

@@ -74,7 +74,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->parentYOffsetLast = 0.0f;
 	this->yLast = 0.0f;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.length() - 1;
+	this->charEndIdx = text.size() - 1;
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
@@ -122,10 +122,10 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	string line;
 	string word;
 	bool hadBreak = false;
-	for (auto i = 0; i < text.length(); i++) {
+	for (auto i = 0; i < text.size(); i++) {
 		auto c = text.charAt(i);
 		// last char
-		auto lastChar = i == text.length() - 1;
+		auto lastChar = i == text.size() - 1;
 		// check for separation char or last char
 		if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
 			// if last char add it to current word
@@ -197,7 +197,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.length() - 1;
+	this->charEndIdx = text.size() - 1;
 	this->yLast = 0.0f;
 	this->widthLast = -1;
 	this->heightLast = -1;
@@ -255,7 +255,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		parentXOffsetLast = parentXOffset;
 		parentYOffsetLast = parentYOffset;
 		charStartIdx = 0;
-		charEndIdx = text.length() - 1;
+		charEndIdx = text.size() - 1;
 		startTextStyleIdx = -1;
 		parentOffsetsChanged = false;
 		yLast = 0;

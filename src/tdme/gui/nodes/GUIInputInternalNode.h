@@ -117,16 +117,22 @@ public:
 	/**
 	 * @return font
 	 */
-	GUIFont* getFont();
+	inline GUIFont* getFont() {
+		return font;
+	}
 
 	/**
 	 * @return text
 	 */
-	MutableString& getText();
+	inline MutableString& getText() {
+		return text;
+	}
 
 	/**
 	 * @return max length
 	 */
-	int getMaxLength();
+	inline int getMaxLength() {
+		return maxLength;
+	}
 
 };

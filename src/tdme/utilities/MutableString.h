@@ -40,9 +40,11 @@ public:
 	MutableString(float f, int32_t decimals = 3);
 
 	/**
-	 * @return length
+	 * @return size
 	 */
-	int32_t length() const;
+	inline int32_t size() const {
+		return data.size();
+	}
 
 	/**
 	 * Get char at index
@@ -222,7 +224,9 @@ public:
 	/**
 	 * @return string
 	 */
-	const string& getString() const;
+	inline const string& getString() const {
+		return data;
+	}
 
 	/**
 	 * Clone

@@ -559,7 +559,7 @@ void GUIScreenNode::getValues(unordered_map<string, MutableString>& values)
 			auto& name = guiElementNode->getName();
 			auto& value = guiElementNodeController->getValue();
 			auto currentValueIt = values.find(name);
-			if (currentValueIt == values.end() || currentValueIt->second.length() == 0) {
+			if (currentValueIt == values.end() || currentValueIt->second.size() == 0) {
 				values[name] = value;
 			}
 		}
