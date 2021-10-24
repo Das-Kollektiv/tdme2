@@ -15,7 +15,6 @@ OFLAGS =
 EXTRAFLAGS =
 LDFLAGS =
 INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/ -Iext/rapidjson/include
-SRCS_M =
 
 # set platform specific flags
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
@@ -24,7 +23,6 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
-	SRCS_M := src/tdme/application/AppleClipboard.m
 	# MacOSX, Metal via Vulkan
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN -DHAVE_UNISTD_H
@@ -143,7 +141,7 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread 
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
 	else
 		# Linux, GL
 		#EXTRAFLAGS = -D_GLIBCXX_DEBUG
@@ -892,7 +890,6 @@ MAIN_SRCS = \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
-OBJS_M = $(SRCS_M:$(SRC)/%.m=$(OBJ)/%.o)
 OBJS_DEBUG = $(SRCS_DEBUG:$(SRC)/%.cpp=$(OBJ_DEBUG)/%.o)
 
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
@@ -941,9 +938,6 @@ $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OBJS_DEBUG):$(OBJ_DEBUG)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command-debug)
-
-$(OBJS_M):$(OBJ)/%.o: $(SRC)/%.m | print-opts
-	$(m-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cpp-command)
@@ -994,7 +988,7 @@ $(EXT_VMA_OBJS):$(OBJ)/vulkan/%.o: ext/$(VMA)/%.cpp | print-opts
 	$(CXX) -shared  $^ -o $@
 
 
-$(LIB_DIR)/$(LIB): $(OBJS_M) $(OBJS) $(OBJS_DEBUG)
+$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(EXT_HL_OBJS)
 
@@ -1023,5 +1017,4 @@ print-opts:
 .PHONY: all mains clean print-opts
 
 -include $(OBJS:%.o=%.d)
--include $(OBJS_M:%.o=%.d)
 -include $(OBJS_DEBUG:%.o=%.d)
