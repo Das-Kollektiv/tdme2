@@ -37,9 +37,11 @@ private:
 	int64_t cursorModeStarted { -1LL };
 	CursorMode cursorMode { CURSORMODE_SHOW };
 	int index { 0 };
+	int selectionIndex { -1 };
 	int offset { 0 };
 	bool mouseDraggingInit { false };
-	bool mouseDraggingActive { false };
+	bool mouseDraggingSlideValueActive { false };
+	bool mouseDraggingSelectionActive { false };
 	array<int, 2> mouseDragPosition;
 	array<int, 2> mouseOriginalPosition;
 	MutableString value;
@@ -54,7 +56,7 @@ private:
 	float step { 0.0f };
 	int decimals { 3 };
 
-	bool showCursor { false };
+	bool editMode { false };
 
 	/**
 	 * Private constructor
@@ -65,12 +67,23 @@ private:
 	/**
 	 * @return index
 	 */
-	int getIndex();
+	inline int getIndex() {
+		return index;
+	}
+
+	/**
+	 * @return selection index
+	 */
+	inline int getSelectionIndex() {
+		return selectionIndex;
+	}
 
 	/**
 	 * @return offset
 	 */
-	int getOffset();
+	inline int getOffset() {
+		return offset;
+	}
 
 	/**
 	 * Reset cursor mode

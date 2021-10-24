@@ -14,6 +14,7 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
@@ -34,6 +35,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::math::Math;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
@@ -132,22 +134,38 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
-	auto controller = required_dynamic_cast<GUIInputInternalController*>(this->controller);
-	auto inputInternalNode = this->getParentControllerNode();
-	auto inputInternalNodeController = required_dynamic_cast<GUIInputController*>(inputInternalNode->getController());
-	auto disable = inputInternalNodeController->isDisabled();
-	if (font != nullptr) font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
+	auto inputInternalController = required_dynamic_cast<GUIInputInternalController*>(this->controller);
+	auto inputNode = this->getParentControllerNode();
+	auto inputNodeController = required_dynamic_cast<GUIInputController*>(inputNode->getController());
+	auto disable = inputNodeController->isDisabled();
+	auto index = inputInternalController->getIndex();
+	auto selectionIndex = inputInternalController->getSelectionIndex();
+	if (font != nullptr) {
+		font->drawString(
+			guiRenderer,
+			computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft,
+			computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop,
+			text,
+			inputInternalController->getOffset(),
+			0,
+			disable == false?color:colorDisabled,
+			0,
+			selectionIndex == -1 || selectionIndex == index?-1:Math::min(selectionIndex, index),
+			selectionIndex == -1 || selectionIndex == index?-1:Math::max(selectionIndex, index),
+			inputNode->getBackgroundColor()
+		);
+	}
 	if (screenNode->getGUI() != nullptr &&
-		static_cast<GUIParentNode*>(screenNode->getGUI()->getFocussedNode()) == inputInternalNode &&
-		controller->isShowCursor() == true &&
-		controller->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {
+		static_cast<GUIParentNode*>(screenNode->getGUI()->getFocussedNode()) == inputNode &&
+		inputInternalController->isShowCursor() == true &&
+		inputInternalController->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + (font != nullptr?font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex()):0);
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + (font != nullptr?font->getTextIndexX(text, inputInternalController->getOffset(), 0, inputInternalController->getIndex()):0);
 		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top + padding.top;
 		float width = 2;
 		float height = computedConstraints.height - border.top - border.bottom- padding.top - padding.bottom;
-		auto& colorData = (disable == false ? color : colorDisabled).getArray();
+		auto& colorData = (disable == false?color:colorDisabled).getArray();
 		guiRenderer->bindTexture(0);
 		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 0.0f);
 		guiRenderer->render();

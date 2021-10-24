@@ -167,7 +167,7 @@ MutableString& MutableString::insert(int32_t idx, float f, int32_t decimals)
 	return *this;
 }
 
-MutableString& MutableString::delete_(int32_t idx, int32_t count)
+MutableString& MutableString::remove(int32_t idx, int32_t count)
 {
 	data.erase(idx, count);
 	return *this;

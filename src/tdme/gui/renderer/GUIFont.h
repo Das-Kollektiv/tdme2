@@ -1,12 +1,12 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -14,8 +14,8 @@
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
@@ -62,7 +62,7 @@ private:
 	/**
 	 * The characters building up the font
 	 */
-	map<uint32_t, GUIFont_CharacterDefinition*> chars;
+	unordered_map<uint32_t, GUIFont_CharacterDefinition*> chars;
 
 	/**
 	 * The height of a line
@@ -126,8 +126,11 @@ public:
 	 * @param length length or 0 if full length
 	 * @param color color
 	 * @param yOffset 10000 to detect it or a custom value
+	 * @param selectionStartIndex selection start index
+	 * @param selectionEndIndex selection end index
+	 * @param backgroundColor background color
 	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset = 10000);
+	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset = 10000, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
 
 	/**
 	 * Get text index X of given text and index

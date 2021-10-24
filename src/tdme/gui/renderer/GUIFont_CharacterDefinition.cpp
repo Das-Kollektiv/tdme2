@@ -16,15 +16,10 @@ using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 
-GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont* font)
-	: font(font)
+void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int x, int y, const GUIColor& color)
 {
-}
-
-void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int x, int y)
-{
-	auto screenWidth = guiRenderer->screenNode->getScreenWidth();
-	auto screenHeight = guiRenderer->screenNode->getScreenHeight();
+	float screenWidth = guiRenderer->screenNode->getScreenWidth();
+	float screenHeight = guiRenderer->screenNode->getScreenHeight();
 	float left = x + xOffset;
 	float top = y + yOffset;
 	float width = this->width;
@@ -35,25 +30,56 @@ void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int x, int y)
 	float textureCharTop = this->y;
 	float textureCharWidth = this->width;
 	float textureCharHeight = this->height;
-	auto fontColor = &GUIColor::GUICOLOR_WHITE.getArray();
+	auto& fontColor = color.getArray();
 	guiRenderer->addQuad(
 		((left) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		(*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3],
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
 		(textureCharLeft) / textureWidth, (textureCharTop) / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		(*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3],
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
 		(textureCharLeft + textureCharWidth) / textureWidth, (textureCharTop) / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		(*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3],
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
 		(textureCharLeft + textureCharWidth) / textureWidth,
 		(textureCharTop + textureCharHeight) / textureHeight,
 		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		(*fontColor)[0], (*fontColor)[1], (*fontColor)[2], (*fontColor)[3],
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
 		(textureCharLeft) / textureWidth,
 		(textureCharTop + textureCharHeight) / textureHeight
+	);
+}
+
+void GUIFont_CharacterDefinition::drawBackground(GUIRenderer* guiRenderer, int x, int y, int lineHeight, const GUIColor& color) {
+	float screenWidth = guiRenderer->screenNode->getScreenWidth();
+	float screenHeight = guiRenderer->screenNode->getScreenHeight();
+	float left = x + xOffset;
+	float top = y;
+	float width = this->width;
+	float height = lineHeight;
+	auto& backgroundColor = color.getArray();
+	guiRenderer->addQuad(
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		0.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		1.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		1.0f,
+		0.0f,
+		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		0.0f,
+		0.0f
 	);
 }
 

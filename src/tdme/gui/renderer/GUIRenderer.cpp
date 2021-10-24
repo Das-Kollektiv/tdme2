@@ -63,16 +63,6 @@ GUIRenderer::~GUIRenderer() {
 	delete fbTextureCoordinatesByteBuffer;
 }
 
-void GUIRenderer::setGUI(GUI* gui)
-{
-	this->gui = gui;
-}
-
-GUI* GUIRenderer::getGUI()
-{
-	return gui;
-}
-
 void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
@@ -145,45 +135,10 @@ void GUIRenderer::doneScreen()
 	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 }
 
-void GUIRenderer::setFontColor(const GUIColor& color)
-{
-	fontColor = color.getArray();
-}
-
-void GUIRenderer::setEffectColorMul(const GUIColor& color)
-{
-	effectColorMul = color.getArray();
-}
-
-void GUIRenderer::setEffectColorAdd(const GUIColor& color)
-{
-	effectColorAdd = color.getArray();
-}
-
-void GUIRenderer::setGUIEffectColorMul(const GUIColor& color)
-{
-	guiEffectColorMul = color.getArray();
-}
-
-void GUIRenderer::setGUIEffectColorAdd(const GUIColor& color)
-{
-	guiEffectColorAdd = color.getArray();
-}
-
-float GUIRenderer::getGuiEffectOffsetX()
-{
-	return guiEffectOffsetX;
-}
-
 void GUIRenderer::setGUIEffectOffsetX(float guiEffectOffsetX)
 {
 	this->guiEffectOffsetX = guiEffectOffsetX;
 	screenNode->setGUIEffectOffsetX(static_cast<int>((guiEffectOffsetX * screenNode->getScreenWidth() / 2.0f)));
-}
-
-float GUIRenderer::getGuiEffectOffsetY()
-{
-	return guiEffectOffsetY;
 }
 
 void GUIRenderer::setGUIEffectOffsetY(float guiEffectOffsetY)

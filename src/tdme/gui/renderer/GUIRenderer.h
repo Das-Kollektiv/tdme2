@@ -89,12 +89,16 @@ public:
 	 * Set GUI
 	 * @param gui gui
 	 */
-	void setGUI(GUI* gui);
+	inline void setGUI(GUI* gui) {
+		this->gui = gui;
+	}
 
 	/**
 	 * @return GUI
 	 */
-	GUI* getGUI();
+	inline GUI* getGUI() {
+		return gui;
+	}
 
 	/**
 	 * Init
@@ -131,36 +135,48 @@ public:
 	 * Set effect color mul
 	 * @param color color
 	 */
-	void setFontColor(const GUIColor& color);
+	inline void setFontColor(const GUIColor& color) {
+		fontColor = color.getArray();
+	}
 
 	/**
 	 * Set effect color mul
 	 * @param color color
 	 */
-	void setEffectColorMul(const GUIColor& color);
+	inline void setEffectColorMul(const GUIColor& color) {
+		effectColorMul = color.getArray();
+	}
 
 	/**
 	 * Set effect color add
 	 * @param color color
 	 */
-	void setEffectColorAdd(const GUIColor& color);
+	inline void setEffectColorAdd(const GUIColor& color) {
+		effectColorAdd = color.getArray();
+	}
 
 	/**
 	 * Set GUI effect color mul
 	 * @param color color
 	 */
-	void setGUIEffectColorMul(const GUIColor& color);
+	void setGUIEffectColorMul(const GUIColor& color) {
+		guiEffectColorMul = color.getArray();
+	}
 
 	/**
 	 * Set GUI effect color add
 	 * @param color color
 	 */
-	void setGUIEffectColorAdd(const GUIColor& color);
+	inline void setGUIEffectColorAdd(const GUIColor& color) {
+		guiEffectColorAdd = color.getArray();
+	}
 
 	/**
 	 * @return GUI effect offset X
 	 */
-	float getGuiEffectOffsetX();
+	inline float getGuiEffectOffsetX() {
+		return guiEffectOffsetX;
+	}
 
 	/**
 	 * Set GUI effect offset X
@@ -171,7 +187,9 @@ public:
 	/**
 	 * @return GUI effect offset Y
 	 */
-	float getGuiEffectOffsetY();
+	inline float getGuiEffectOffsetY() {
+		return guiEffectOffsetY;
+	}
 
 	/**
 	 * Set GUI effect offset Y
@@ -199,7 +217,7 @@ public:
 	 * @param renderAreaLeft render area left
 	 */
 	inline void setSubRenderAreaLeft(float renderAreaLeft) {
-		this->renderAreaLeft = renderAreaLeft > this->renderAreaLeft ? renderAreaLeft : this->renderAreaLeft;
+		this->renderAreaLeft = renderAreaLeft > this->renderAreaLeft?renderAreaLeft:this->renderAreaLeft;
 	}
 
 	/**
@@ -222,7 +240,7 @@ public:
 	 * @param renderAreaTop render area top
 	 */
 	inline void setSubRenderAreaTop(float renderAreaTop) {
-		this->renderAreaTop = renderAreaTop < this->renderAreaTop ? renderAreaTop : this->renderAreaTop;
+		this->renderAreaTop = renderAreaTop < this->renderAreaTop?renderAreaTop:this->renderAreaTop;
 	}
 
 	/**
@@ -245,7 +263,7 @@ public:
 	 * @param renderAreaRight render area right
 	 */
 	inline void setSubRenderAreaRight(float renderAreaRight) {
-		this->renderAreaRight = renderAreaRight < this->renderAreaRight ? renderAreaRight : this->renderAreaRight;
+		this->renderAreaRight = renderAreaRight < this->renderAreaRight?renderAreaRight:this->renderAreaRight;
 	}
 
 	/**
@@ -268,7 +286,7 @@ public:
 	 * @param renderAreaBottom render area bottom
 	 */
 	inline void setSubRenderAreaBottom(float renderAreaBottom) {
-		this->renderAreaBottom = renderAreaBottom > this->renderAreaBottom ? renderAreaBottom : this->renderAreaBottom;
+		this->renderAreaBottom = renderAreaBottom > this->renderAreaBottom?renderAreaBottom:this->renderAreaBottom;
 	}
 
 	/**

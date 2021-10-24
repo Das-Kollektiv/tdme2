@@ -137,21 +137,6 @@ GUINode::~GUINode() {
 	}
 }
 
-GUIScreenNode* GUINode::getScreenNode()
-{
-	return screenNode;
-}
-
-GUIParentNode* GUINode::getParentNode()
-{
-	return parentNode;
-}
-
-const string& GUINode::getId()
-{
-	return id;
-}
-
 int GUINode::getAutoWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
@@ -168,26 +153,6 @@ int GUINode::getAutoHeight()
 	} else {
 		return computedConstraints.height;
 	}
-}
-
-GUINode_Border& GUINode::getBorder()
-{
-	return border;
-}
-
-GUINode_Padding& GUINode::getPadding()
-{
-	return padding;
-}
-
-GUINode_RequestedConstraints& GUINode::getRequestsConstraints()
-{
-	return requestedConstraints;
-}
-
-GUINode_ComputedConstraints& GUINode::getComputedConstraints()
-{
-	return computedConstraints;
 }
 
 void GUINode::setLeft(int left)
@@ -1065,11 +1030,6 @@ void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, 
 	}
 }
 
-GUINodeController* GUINode::getController()
-{
-	return controller;
-}
-
 void GUINode::setController(GUINodeController* controller)
 {
 	if (this->controller != nullptr) {
@@ -1121,13 +1081,11 @@ void GUINode::_scrollToNodeY(GUIParentNode* toNode)
 	scrollYParentNode->_scrollToNodeY(toNode);
 }
 
-void GUINode::scrollToNodeX(GUIParentNode* toNode)
-{
+void GUINode::scrollToNodeX(GUIParentNode* toNode) {
 	screenNode->scrollToNodeX(getId(), toNode != nullptr?toNode->getId():string());
 }
 
-void GUINode::scrollToNodeY(GUIParentNode* toNode)
-{
+void GUINode::scrollToNodeY(GUIParentNode* toNode) {
 	screenNode->scrollToNodeY(getId(), toNode != nullptr?toNode->getId():string());
 }
 
@@ -1334,26 +1292,6 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPathName(), backgroundImage);
 		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
 	}
-}
-
-int GUINode::getGUIEffectOffsetX()
-{
-	return guiEffectOffsetX;
-}
-
-void GUINode::setGUIEffectOffsetX(int guiEffectOffsetX)
-{
-	this->guiEffectOffsetX = guiEffectOffsetX;
-}
-
-int GUINode::getGUIEffectOffsetY()
-{
-	return guiEffectOffsetY;
-}
-
-void GUINode::setGUIEffectOffsetY(int guiEffectOffsetY)
-{
-	this->guiEffectOffsetY = guiEffectOffsetY;
 }
 
 void GUINode::addEffect(const string& id, GUIEffect* effect)

@@ -16,6 +16,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
@@ -59,7 +60,7 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->cursorMode = CURSORMODE_SHOW;
 	this->index = 0;
 	this->offset = 0;
-	this->mouseDraggingActive = false;
+	this->mouseDraggingSlideValueActive = false;
 	this->mouseDraggingInit = false;
 	this->mouseDragPosition = {{ -1, -1 }};
 	this->mouseOriginalPosition = {{ -1, -1 }};
@@ -110,16 +111,6 @@ void GUIInputInternalController::postLayout()
 {
 }
 
-int GUIInputInternalController::getIndex()
-{
-	return index;
-}
-
-int GUIInputInternalController::getOffset()
-{
-	return offset;
-}
-
 void GUIInputInternalController::resetCursorMode()
 {
 	cursorModeStarted = Time::getCurrentMillis();
@@ -132,8 +123,11 @@ GUIInputInternalController::CursorMode GUIInputInternalController::getCursorMode
 		resetCursorMode();
 		return cursorMode;
 	}
+	if (mouseDraggingSelectionActive == true) {
+		return CURSORMODE_SHOW;
+	}
 	if (Time::getCurrentMillis() - cursorModeStarted > CURSOR_MODE_DURATION) {
-		cursorMode = cursorMode == CURSORMODE_SHOW ? CURSORMODE_HIDE : CURSORMODE_SHOW;
+		cursorMode = cursorMode == CURSORMODE_SHOW?CURSORMODE_HIDE:CURSORMODE_SHOW;
 		cursorModeStarted = Time::getCurrentMillis();
 	}
 	return cursorMode;
@@ -147,7 +141,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	}
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		if (mouseDraggingActive == false) {
+		if (mouseDraggingSlideValueActive == false) {
 			if (node->isEventBelongingToNode(event) == true &&
 				event->getButton() == MOUSE_BUTTON_LEFT) {
 				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -163,28 +157,43 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				);
 				resetCursorMode();
 				event->setProcessed(true);
-				showCursor = true;
+				editMode = true;
 			}
 		}
+		if (mouseDraggingSlideValueActive == true) {
+			Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
+			Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
+		}
 		mouseDraggingInit = false;
-		mouseDraggingActive = false;
+		mouseDraggingSlideValueActive = false;
+		mouseDraggingSelectionActive = false;
 		mouseDragPosition[0] = -1;
 		mouseDragPosition[1] = -1;
-		Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
-		Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 		mouseOriginalPosition[0] = -1;
 		mouseOriginalPosition[1] = -1;
 		event->setProcessed(true);
 	} else
-	if (mouseDraggingInit == true || mouseDraggingActive == true) {
-		if (mouseDraggingInit == true) {
-			if (mouseDragPosition[0] != event->getXUnscaled() ||
-				mouseDragPosition[1] != event->getYUnscaled()) {
-				mouseDraggingInit = false;
-				mouseDraggingActive = true;
+	if (mouseDraggingInit == true || mouseDraggingSlideValueActive == true || mouseDraggingSelectionActive == true) {
+		if (mouseDraggingInit == true &&
+			(Math::abs(mouseDragPosition[0] - event->getXUnscaled()) >= 5 ||
+			Math::abs(mouseDragPosition[1] - event->getYUnscaled()) >= 5)) {
+			mouseDraggingInit = false;
+			if (editMode == false) {
+				mouseDraggingSlideValueActive = true;
+				auto application = Application::getApplication();
+				Application::setMouseCursor(MOUSE_CURSOR_DISABLED);
+				Application::setMousePosition(
+					application->getWindowXPosition() + application->getWindowWidth() / 2,
+					application->getWindowYPosition() + application->getWindowHeight() / 2
+				);
+			} else {
+				mouseDraggingSelectionActive = true;
+				selectionIndex = index;
 			}
+			mouseDragPosition[0] = Application::getMousePositionX();
+			mouseDragPosition[1] = Application::getMousePositionY();
 		}
-		if (mouseDraggingActive == true) {
+		if (mouseDraggingSlideValueActive == true) {
 			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 			switch (type) {
 				case TYPE_STRING:
@@ -231,6 +240,19 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 			);
 			mouseDragPosition[0] = Application::getMousePositionX();
 			mouseDragPosition[1] = Application::getMousePositionY();
+		} else
+		if (mouseDraggingSelectionActive == true) {
+			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+			index = textInputNode->getFont()->getTextIndexByX(
+				textInputNode->getText(),
+				offset,
+				0,
+				event->getX() -
+					(
+						textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft +
+						textInputNode->border.left+ textInputNode->padding.left
+					)
+			);
 		}
 		event->setProcessed(true);
 	} else
@@ -251,18 +273,9 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		resetCursorMode();
 		event->setProcessed(true);
 		mouseDraggingInit = true;
-		mouseDraggingActive = false;
-		auto application = Application::getApplication();
 		mouseOriginalPosition[0] = Application::getMousePositionX();
 		mouseOriginalPosition[1] = Application::getMousePositionY();
-		Application::setMouseCursor(MOUSE_CURSOR_DISABLED);
-		Application::setMousePosition(
-			application->getWindowXPosition() + application->getWindowWidth() / 2,
-			application->getWindowYPosition() + application->getWindowHeight() / 2
-		);
-		mouseDragPosition[0] = Application::getMousePositionX();
-		mouseDragPosition[1] = Application::getMousePositionY();
-		showCursor = false;
+		selectionIndex = -1;
 	}
 }
 
@@ -291,7 +304,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	}
 
 	//
-	showCursor = true;
+	editMode = true;
 
 	//
 	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -310,6 +323,11 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		#else
 			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 		#endif
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+				index = Math::min(index, selectionIndex);
+				selectionIndex = -1;
+			}
 			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
 				if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
 					// no op
@@ -362,19 +380,44 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			}
 		}
 		if (keyControlX == true) {
-			// Application::getApplication()->setClipboardContent();
+			Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex) + 1);
+				index = Math::min(index, selectionIndex);
+				selectionIndex = -1;
+				checkOffset();
+			}
 		} else
 		if (keyControlC == true) {
-			// Application::getApplication()->setClipboardContent();
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+			}
 		} else
 		if (keyControlV == true) {
-			// Application::getApplication()->getClipboardContent());
+			auto clipboardContent = Application::getApplication()->getClipboardContent();
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() - Math::abs(index - selectionIndex) + clipboardContent.size() < textInputNode->getMaxLength()) {
+					textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+					index = Math::min(index, selectionIndex);
+					selectionIndex = -1;
+				}
+			}
+			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() + clipboardContent.size() < textInputNode->getMaxLength()) {
+				textInputNode->getText().insert(index, clipboardContent);
+				index+= clipboardContent.size();
+				checkOffset();
+			}
 		} else {
 			// navigation, delete, return
 			switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
 						if (index > 0) {
 							index--;
 							checkOffset();
@@ -386,6 +429,11 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
 						if (index < textInputNode->getText().length()) {
 							index++;
 							checkOffset();
@@ -398,8 +446,13 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							} else
 							if (index > 0) {
-								textInputNode->getText().delete_(index - 1, 1);
+								textInputNode->getText().remove(index - 1, 1);
 								index--;
 								checkOffset();
 								resetCursorMode();
@@ -414,8 +467,13 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							} else
 							if (index < textInputNode->getText().length()) {
-								textInputNode->getText().delete_(index, 1);
+								textInputNode->getText().remove(index, 1);
 								resetCursorMode();
 								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
 								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
@@ -437,6 +495,11 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						event->setProcessed(true);
 						resetCursorMode();
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
 						index = 0;
 						checkOffset();
 					}
@@ -445,6 +508,11 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_END: {
 					if (disabled == false) {
 						resetCursorMode();
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
 						index = textInputNode->getText().length();
 						checkOffset();
 					}
@@ -466,7 +534,7 @@ void GUIInputInternalController::onFocusGained()
 void GUIInputInternalController::onFocusLost()
 {
 	formatText();
-	showCursor = false;
+	editMode = false;
 }
 
 bool GUIInputInternalController::hasValue()
@@ -492,7 +560,7 @@ void GUIInputInternalController::reset()
 
 bool GUIInputInternalController::isShowCursor()
 {
-	return showCursor;
+	return editMode;
 }
 
 void GUIInputInternalController::formatText()

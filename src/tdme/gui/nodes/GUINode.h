@@ -246,7 +246,7 @@ protected:
 	 * @param value value
 	 * @return pixel
 	 */
-	virtual int layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value);
+	int layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value);
 
 	/**
 	 * Get requested constraints type
@@ -276,34 +276,34 @@ protected:
 	 * Check if conditions are met
 	 * @return conditions met
 	 */
-	virtual bool checkConditions();
+	bool checkConditions();
 
 	/**
 	 * @return compute parent children render offset X total
 	 */
-	virtual float computeParentChildrenRenderOffsetXTotal();
+	float computeParentChildrenRenderOffsetXTotal();
 
 	/**
 	 * @return compute children render offset Y total
 	 */
-	virtual float computeParentChildrenRenderOffsetYTotal();
+	float computeParentChildrenRenderOffsetYTotal();
 
 	/**
 	 * On set condition
 	 * @param conditions conditions
 	 */
-	virtual void onSetConditions(const vector<string>& conditions);
+	void onSetConditions(const vector<string>& conditions);
 
 	/**
 	 * Determine if we have a out effect active
 	 */
-	virtual bool haveActiveOutEffect();
+	bool haveActiveOutEffect();
 
 	/**
 	 * Determine if to render
 	 * @return if node will be rendered
 	 */
-	inline virtual bool shouldRender() {
+	inline bool shouldRender() {
 		return conditionsMet == true || haveActiveOutEffect() == true;
 	}
 
@@ -311,29 +311,35 @@ protected:
 	 * Scroll to node X
 	 * @param toNode stop at node to node
 	 */
-	virtual void _scrollToNodeX(GUIParentNode* toNode = nullptr);
+	void _scrollToNodeX(GUIParentNode* toNode = nullptr);
 
 	/**
 	 * Scroll to node Y
 	 * @param toNode stop at node to node
 	 */
-	virtual void _scrollToNodeY(GUIParentNode* toNode = nullptr);
+	void _scrollToNodeY(GUIParentNode* toNode = nullptr);
 
 public:
 	/**
 	 * @return scren node
 	 */
-	virtual GUIScreenNode* getScreenNode();
+	inline GUIScreenNode* getScreenNode() {
+		return screenNode;
+	}
 
 	/**
 	 * @return parent node
 	 */
-	virtual GUIParentNode* getParentNode();
+	inline GUIParentNode* getParentNode() {
+		return parentNode;
+	}
 
 	/**
 	 * @return id
 	 */
-	virtual const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/**
 	 * @return content width including border, margin
@@ -358,22 +364,37 @@ public:
 	/**
 	 * @return border
 	 */
-	virtual GUINode_Border& getBorder();
+	inline GUINode_Border& getBorder() {
+		return border;
+	}
 
 	/**
 	 * @return padding
 	 */
-	virtual GUINode_Padding& getPadding();
+	inline GUINode_Padding& getPadding() {
+		return padding;
+	}
 
 	/**
 	 * @return requested constraints
 	 */
-	virtual GUINode_RequestedConstraints& getRequestsConstraints();
+	inline GUINode_RequestedConstraints& getRequestsConstraints() {
+		return requestedConstraints;
+	}
 
 	/**
 	 * @return computed constraints
 	 */
-	virtual GUINode_ComputedConstraints& getComputedConstraints();
+	inline GUINode_ComputedConstraints& getComputedConstraints() {
+		return computedConstraints;
+	}
+
+	/**
+	 * @return background color
+	 */
+	inline GUIColor& getBackgroundColor() {
+		return backgroundColor;
+	}
 
 	/**
 	 * Create alignments
@@ -490,14 +511,14 @@ public:
 	 * @param position
 	 * @return boolean
 	 */
-	virtual bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
+	bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * Is event belonging to node
 	 * @param event event
 	 * @return boolean
 	 */
-	virtual bool isEventBelongingToNode(GUIMouseEvent* event);
+	bool isEventBelongingToNode(GUIMouseEvent* event);
 
 	/**
 	 * Get event off node relative position
@@ -506,7 +527,7 @@ public:
 	 * @param position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
 	 * @return void
 	 */
-	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position);
+	void getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * Get event position clamped to node constraints
@@ -515,12 +536,12 @@ public:
 	 * @param position position clamped to node constraints
 	 * @return void
 	 */
-	virtual void getEventNodePosition(GUIMouseEvent* event, Vector2& position);
+	void getEventNodePosition(GUIMouseEvent* event, Vector2& position);
 
 	/**
 	 * @return first parent node in tree with controller node attached
 	 */
-	virtual GUIParentNode* getParentControllerNode();
+	GUIParentNode* getParentControllerNode();
 
 	/**
 	 * Determine mouse event nodes
@@ -534,53 +555,63 @@ public:
 	/**
 	 * @return controller
 	 */
-	virtual GUINodeController* getController();
+	inline GUINodeController* getController() {
+		return controller;
+	}
 
 	/**
 	 * Set up node controller
 	 * @param controller controller
 	 */
-	virtual void setController(GUINodeController* controller);
+	void setController(GUINodeController* controller);
 
 	/**
 	 * Scroll to node Y
 	 * @param toNode stop at node to node
 	 */
-	virtual void scrollToNodeY(GUIParentNode* toNode = nullptr);
+	void scrollToNodeY(GUIParentNode* toNode = nullptr);
 
 	/**
 	 * Scroll to node X
 	 * @param toNode stop at node to node
 	 */
-	virtual void scrollToNodeX(GUIParentNode* toNode = nullptr);
+	void scrollToNodeX(GUIParentNode* toNode = nullptr);
 
 	/**
 	 * Set background image
 	 * @param backgroundImage background image
 	 */
-	virtual void setBackgroundImage(const string& backgroundImage);
+	void setBackgroundImage(const string& backgroundImage);
 
 	/**
 	 * @return GUI effect offset X
 	 */
-	int getGUIEffectOffsetX();
+	inline int getGUIEffectOffsetX() {
+		return guiEffectOffsetX;
+	}
 
 	/**
 	 * Set GUI effect offset X
 	 * @param guiEffectOffsetX gui effect offset X
 	 */
-	void setGUIEffectOffsetX(int guiEffectOffsetX);
+	inline void setGUIEffectOffsetX(int guiEffectOffsetX) {
+		this->guiEffectOffsetX = guiEffectOffsetX;
+	}
 
 	/**
 	 * @return GUI effect offset Y
 	 */
-	int getGUIEffectOffsetY();
+	inline int getGUIEffectOffsetY() {
+		return guiEffectOffsetY;
+	}
 
 	/**
 	 * Set GUI effect offset Y
 	 * @param guiEffectOffsetY gui effect offset Y
 	 */
-	void setGUIEffectOffsetY(int guiEffectOffsetY);
+	inline void setGUIEffectOffsetY(int guiEffectOffsetY) {
+		this->guiEffectOffsetY = guiEffectOffsetY;
+	}
 
 	/**
 	 * Add effect, effect already registered with the is will be removed

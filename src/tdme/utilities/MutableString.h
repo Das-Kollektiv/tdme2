@@ -170,12 +170,12 @@ public:
 	MutableString& insert(int32_t idx, float f, int32_t decimals = 3);
 
 	/**
-	 * Delete characters at idx with given length
+	 * Remove characters at idx with given length
 	 * @param idx idx
 	 * @param count length
 	 * @return this mutable string
 	 */
-	MutableString& delete_(int32_t idx, int32_t count);
+	MutableString& remove(int32_t idx, int32_t count);
 
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
