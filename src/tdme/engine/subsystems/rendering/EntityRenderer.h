@@ -84,7 +84,7 @@ private:
 	Renderer* renderer { nullptr };
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
+	unordered_map<string, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -187,7 +187,7 @@ private:
 		int threadIdx,
 		Entity::RenderPass renderPass,
 		const vector<Object3D*>& objects,
-		unordered_map<string, unordered_map<string, vector<Object3D*>>>& objectsByShadersAndModels,
+		unordered_map<string, unordered_map<Model*, vector<Object3D*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
@@ -208,7 +208,7 @@ private:
 					object->getShader():
 					object->getDistanceShader();
 			auto& objectsByShaders = objectsByShadersAndModels[objectShader];
-			auto& objectsByModel = objectsByShaders[object->getModel()->getId()];
+			auto& objectsByModel = objectsByShaders[object->getModel()];
 			objectsByModel.push_back(object);
 		}
 

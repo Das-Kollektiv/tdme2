@@ -632,8 +632,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 
 	// scene entities
-	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
-	map<string, Prototype*> renderGroupSceneEditorEntities;
+	map<string, map<string, map<Model*, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
+	map<Model*, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto sceneEntity = scene->getEntityAt(i);
@@ -651,8 +651,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
-			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()->getId()] = sceneEntity->getPrototype();
-			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()->getId()].push_back(&sceneEntity->getTransformations());
+			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()] = sceneEntity->getPrototype();
+			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransformations());
 		} else {
 			Entity* entity = createEntity(sceneEntity);
 			if (entity == nullptr) continue;

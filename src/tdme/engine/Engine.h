@@ -53,6 +53,7 @@ using std::vector;
 
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
+using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
@@ -295,7 +296,7 @@ private:
 		int idx;
 		RealtimeQueue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
-		unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
+		unordered_map<string, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
 		volatile int elementsProcessed { 0 };
 
 	private:

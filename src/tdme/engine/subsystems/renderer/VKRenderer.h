@@ -233,8 +233,12 @@ private:
 			VK_NULL_HANDLE, VK_NULL_HANDLE
 		};
 		array<uint32_t, 10> bound_buffer_sizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		array<vector<uint8_t>, 4> uniform_buffers;
-		array<bool, 4> uniform_buffers_changed;
+		struct uniform_buffer_object {
+			VkBuffer buffer;
+			int size;
+			void* data;
+		};
+		array<uniform_buffer_object, 4> uniform_buffers;
 		int32_t texture_unit_active { 0 };
 		struct bound_texture {
 			int id { 0 };
