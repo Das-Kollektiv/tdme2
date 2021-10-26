@@ -27,7 +27,6 @@ using tdme::math::Vector3;
 class tdme::engine::prototype::PrototypeBoundingVolume final
 {
 private:
-	static volatile unsigned int modelIdx;
 	int id;
 	Prototype* prototype { nullptr };
 	string convexMeshFile;
@@ -76,11 +75,6 @@ public:
 	inline BoundingVolume* getBoundingVolume() {
 		return boundingVolume;
 	}
-
-	/**
-	 * @return bounding volume model index
-	 */
-	int allocateModelIdx();
 
 	/**
 	 * Setup bounding volume none

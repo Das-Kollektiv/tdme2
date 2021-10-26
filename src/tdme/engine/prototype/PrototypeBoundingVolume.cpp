@@ -17,7 +17,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Primitives.h>
@@ -42,13 +41,10 @@ using tdme::engine::Object3DModel;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::os::threading::AtomicOperations;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
-
-volatile unsigned int PrototypeBoundingVolume::modelIdx = 0;
 
 PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
 {
@@ -74,10 +70,6 @@ void PrototypeBoundingVolume::setupNone()
 	generated = false;
 }
 
-int PrototypeBoundingVolume::allocateModelIdx() {
-	return AtomicOperations::increment(modelIdx);
-}
-
 void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
@@ -89,9 +81,7 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 			string(",") +
 			to_string(prototype->getId()) +
 			string("_model_bv.") +
-			to_string(id) +
-			string(".") +
-			to_string(allocateModelIdx())
+			to_string(id)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -110,8 +100,7 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 			to_string(prototype->getId()) +
 			string("_model_bv.") +
 			to_string(id) +
-			string(".") +
-			to_string(allocateModelIdx())
+			string(".")
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -129,9 +118,7 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 			string(",") +
 			to_string(prototype->getId()) +
 			string("_model_bv.") +
-			to_string(id) +
-			string(".") +
-			to_string(allocateModelIdx())
+			to_string(id)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -150,9 +137,7 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 			string(",") +
 			to_string(prototype->getId()) +
 			string("_model_bv.") +
-			to_string(id) +
-			string(".") +
-			to_string(allocateModelIdx())
+			to_string(id)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();

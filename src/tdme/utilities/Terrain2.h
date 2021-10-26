@@ -59,9 +59,6 @@ public:
 	};
 
 private:
-	static uint32_t terrainModelId;
-	static uint32_t waterModelId;
-
 	/**
 	 * Get the terrain vertex for given x and z position without providing y component
 	 * @param x x
