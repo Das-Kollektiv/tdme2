@@ -123,7 +123,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 
 	// 	create model
 	auto model = new Model(
-		FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
+		fileName,
 		fileName,
 		upVector,
 		rotationOrder,

@@ -418,7 +418,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		determineMeshNodes(scene, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
 		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
-				modelPathName + "/" + meshNode.name + ".tm",
+				meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,
 				upVector,
 				rotationOrder,

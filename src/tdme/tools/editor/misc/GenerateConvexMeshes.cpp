@@ -218,7 +218,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 						", triangles = " + to_string(convexHull.m_nTriangles)
 					);
 					auto convexHullModel = createModel(
-						pathName + "/" + convexHullFileName,
+						convexHullFileName,
 						convexHull.m_points,
 						convexHull.m_triangles,
 						convexHull.m_nPoints,
@@ -263,7 +263,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 						", triangles = " + to_string(nodeTriangles.size())
 					);
 					auto convexHullModel = createModel(
-						pathName + "/" + convexHullFileName,
+						convexHullFileName,
 						nodeTriangles
 					);
 					convexMeshTMsData.push_back(vector<uint8_t>());

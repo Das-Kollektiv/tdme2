@@ -37,9 +37,11 @@ public:
 
 	static string ANIMATIONSETUP_DEFAULT;
 	static constexpr float FPS_DEFAULT { 30.0f };
+	static uint32_t uidCounter;
 
 private:
 	AuthoringTool authoringTool;
+	uint32_t uniqueId;
 	string id;
 	string name;
 	UpVector* upVector;
@@ -102,6 +104,13 @@ public:
 	 */
 	inline AuthoringTool getAuthoringTool() {
 		return authoringTool;
+	}
+
+	/**
+	 * @return unique model id
+	 */
+	inline uint32_t getUniqueId() {
+		return uniqueId;
 	}
 
 	/**

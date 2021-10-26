@@ -15,6 +15,7 @@
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/threading/AtomicOperations.h>
 
 using std::map;
 using std::string;
@@ -32,14 +33,17 @@ using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Object3DModel;
 using tdme::math::Matrix4x4;
+using tdme::os::threading::AtomicOperations;
 
 string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";
+uint32_t Model::uidCounter = 0;
 
 constexpr float Model::FPS_DEFAULT;
 
 Model::Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool)
 {
-	this->id = id;
+	this->uniqueId = AtomicOperations::increment(uidCounter);
+	this->id = id + ":uid=" + to_string(this->uniqueId);
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
