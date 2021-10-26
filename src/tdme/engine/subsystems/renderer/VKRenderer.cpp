@@ -6248,43 +6248,144 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// textures
-	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto& boundTexture = contextTyped.bound_textures[i];
-		auto& texture = contextTyped.objects_render_command.textures[i];
-		texture.sampler = boundTexture.sampler;
-		texture.view = boundTexture.view;
-		texture.layout = boundTexture.layout;
+	// check if desc left
+	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+		return;
 	}
 
-	// ubos
-	{
-		auto shaderIdx = 0;
-		for (auto shader : contextTyped.program->shaders) {
-			if (shader->ubo_binding_idx != -1) {
-				auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-				contextTyped.objects_render_command.ubo_buffers[shader->ubo_binding_idx] = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-				auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
-				uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-				auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
-				memcpy(dst, src, uniformBuffer.size);
+	// start draw command buffer, it not yet done
+	beginDrawCommandBuffer(contextTyped.idx);
+
+	// start render pass
+	startRenderPass(contextTyped.idx);
+
+	// pipeline
+	setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
+
+	//
+	auto samplerIdx = 0;
+	for (auto shader: contextTyped.program->shaders) {
+		// sampler2D + samplerCube
+		for (auto uniform: shader->samplerUniformList) {
+			if (uniform->texture_unit == -1) {
+				switch(uniform->type) {
+					case shader_type::uniform_type::TYPE_SAMPLER2D:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_sampler2d_default->sampler,
+							.imageView = white_texture_sampler2d_default->view,
+							.imageLayout = white_texture_sampler2d_default->vkLayout
+						};
+						break;
+					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_samplercube_default->sampler,
+							.imageView = white_texture_samplercube_default->view,
+							.imageLayout = white_texture_samplercube_default->vkLayout
+						};
+						break;
+					default:
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						break;
+				}
+			} else {
+				auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+				if (boundTexture.view == VK_NULL_HANDLE) {
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
+				} else {
+					contextTyped.descriptor_image_info[samplerIdx] = {
+						.sampler = boundTexture.sampler,
+						.imageView = boundTexture.view,
+						.imageLayout = boundTexture.layout
+					};
+				}
 			}
-			shaderIdx++;
+			contextTyped.descriptor_write_set[uniform->position] = {
+				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+				.pNext = nullptr,
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstBinding = static_cast<uint32_t>(uniform->position),
+				.dstArrayElement = 0,
+				.descriptorCount = 1,
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+				.pBufferInfo = VK_NULL_HANDLE,
+				.pTexelBufferView = VK_NULL_HANDLE
+			};
+			samplerIdx++;
 		}
+
+		// uniform buffer
+		if (shader->ubo_binding_idx == -1) {
+			continue;
+		}
+
+		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
+		memcpy(dst, src, uniformBuffer.size);
+
+
+		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+			.buffer = uboBuffer,
+			.offset = 0,
+			.range = shader->ubo_size
+		};
+
+		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstArrayElement = 0,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.pImageInfo = nullptr,
+			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pTexelBufferView = nullptr
+		};
 	}
 
 	//
-	contextTyped.objects_render_command.indices_buffer = contextTyped.bound_indices_buffer;
-	for (auto i = 0; i < contextTyped.objects_render_command.vertex_buffers.size(); i++) {
-		contextTyped.objects_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
-	}
-	contextTyped.objects_render_command.count = triangles;
-	contextTyped.objects_render_command.offset = trianglesOffset;
-	contextTyped.objects_render_command.instances = instances;
+	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+
 
 	//
-	contextTyped.command_type = context_type::COMMAND_OBJECTS;
-	executeCommand(contextTyped.idx);
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
+	if (contextTyped.bound_indices_buffer != VK_NULL_HANDLE) vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.bound_indices_buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	if (contextTyped.bound_indices_buffer != VK_NULL_HANDLE) {
+		vkCmdDrawIndexed(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], triangles * 3, instances, trianglesOffset * 3, 0, 0);
+	} else {
+		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], triangles * 3, instances, trianglesOffset * 3, 0);
+	}
+
+	//
+	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.command_count[contextTyped.front_face_index]++;
+
+	//
+	requestSubmitDrawBuffers(contextTyped.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -6343,483 +6444,13 @@ inline void VKRenderer::endDrawCommands(int contextIdx) {
 	}
 }
 
-inline void VKRenderer::executeCommand(int contextIdx) {
-	//
-	finishSetupCommandBuffer(contextIdx);
 
-	//
+inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
+	// have our context typed
 	auto& contextTyped = contexts[contextIdx];
-	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
-
-	// check if desc left
-	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
-		return;
-	}
-
-	// start draw command buffer, it not yet done
-	beginDrawCommandBuffer(contextTyped.idx);
-
-	// create pipeline
-	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		startRenderPass(contextTyped.idx);
-		setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		startRenderPass(contextTyped.idx);
-		setupPointsRenderingPipeline(contextTyped.idx, contextTyped.program);
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_LINES) {
-		startRenderPass(contextTyped.idx);
-		setupLinesRenderingPipeline(contextTyped.idx, contextTyped.program);
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		endRenderPass(contextTyped.idx);
-		setupSkinningComputingPipeline(contextTyped.idx, contextTyped.program);
-	} else {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(contextTyped.program_id));
-		return;
-	}
-
-	VkDescriptorBufferInfo bufferInfos[contextTyped.program->layout_bindings];
-	VkWriteDescriptorSet descriptorSetWrites[contextTyped.program->layout_bindings];
-	VkDescriptorImageInfo texDescs[contextTyped.program->layout_bindings];
-
-	// do object render command
-	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		//
-		auto samplerIdx = 0;
-		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D + samplerCube
-			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->texture_unit == -1) {
-					switch(uniform->type) {
-						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
-							};
-							break;
-						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
-							};
-							break;
-						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-							break;
-					}
-				} else {
-					auto& texture = contextTyped.objects_render_command.textures[uniform->texture_unit];
-					if (texture.view == VK_NULL_HANDLE) {
-						switch(uniform->type) {
-							case shader_type::uniform_type::TYPE_SAMPLER2D:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_sampler2d_default->sampler,
-									.imageView = white_texture_sampler2d_default->view,
-									.imageLayout = white_texture_sampler2d_default->vkLayout
-								};
-								break;
-							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_samplercube_default->sampler,
-									.imageView = white_texture_samplercube_default->view,
-									.imageLayout = white_texture_samplercube_default->vkLayout
-								};
-								break;
-							default:
-								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-								break;
-						}
-					} else {
-						texDescs[samplerIdx] = {
-							.sampler = texture.sampler,
-							.imageView = texture.view,
-							.imageLayout = texture.layout
-						};
-					}
-				}
-				descriptorSetWrites[uniform->position] = {
-					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = nullptr,
-					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform->position),
-					.dstArrayElement = 0,
-					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &texDescs[samplerIdx],
-					.pBufferInfo = VK_NULL_HANDLE,
-					.pTexelBufferView = VK_NULL_HANDLE
-				};
-				samplerIdx++;
-			}
-
-			// uniform buffer
-			if (shader->ubo_binding_idx == -1) {
-				continue;
-			}
-
-			bufferInfos[shader->ubo_binding_idx] = {
-				.buffer = contextTyped.objects_render_command.ubo_buffers[shader->ubo_binding_idx],
-				.offset = 0,
-				.range = shader->ubo_size
-			};
-
-			descriptorSetWrites[shader->ubo_binding_idx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = nullptr,
-				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = nullptr
-			};
-		}
-
-		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
-
-		//
-		#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	10
-		VkBuffer vertexBuffersBuffer[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
-			contextTyped.objects_render_command.vertex_buffers[0],
-			contextTyped.objects_render_command.vertex_buffers[1],
-			contextTyped.objects_render_command.vertex_buffers[2],
-			contextTyped.objects_render_command.vertex_buffers[3],
-			contextTyped.objects_render_command.vertex_buffers[4],
-			contextTyped.objects_render_command.vertex_buffers[5],
-			contextTyped.objects_render_command.vertex_buffers[6],
-			contextTyped.objects_render_command.vertex_buffers[7],
-			contextTyped.objects_render_command.vertex_buffers[8],
-			contextTyped.objects_render_command.vertex_buffers[9]
-		};
-		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.objects_render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) {
-			vkCmdDrawIndexed(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0, 0);
-		} else {
-			vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0);
-		}
-
-		//
-		contextTyped.program->desc_idxs[contextTyped.idx]++;
-		contextTyped.command_count[contextTyped.front_face_index]++;
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		// do points render command
-		auto samplerIdx = 0;
-		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D + samplerCube
-			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->texture_unit == -1) {
-					switch(uniform->type) {
-						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
-							};
-							break;
-						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
-							};
-							break;
-						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-							break;
-					}
-				} else {
-					auto& texture = contextTyped.points_render_command.textures[uniform->texture_unit];
-					if (texture.view == VK_NULL_HANDLE) {
-						switch(uniform->type) {
-							case shader_type::uniform_type::TYPE_SAMPLER2D:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_sampler2d_default->sampler,
-									.imageView = white_texture_sampler2d_default->view,
-									.imageLayout = white_texture_sampler2d_default->vkLayout
-								};
-								break;
-							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_samplercube_default->sampler,
-									.imageView = white_texture_samplercube_default->view,
-									.imageLayout = white_texture_samplercube_default->vkLayout
-								};
-								break;
-							default:
-								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-								break;
-						}
-					} else {
-						texDescs[samplerIdx] = {
-							.sampler = texture.sampler,
-							.imageView = texture.view,
-							.imageLayout = texture.layout
-						};
-					}
-				}
-				descriptorSetWrites[uniform->position] = {
-					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = nullptr,
-					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform->position),
-					.dstArrayElement = 0,
-					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &texDescs[samplerIdx],
-					.pBufferInfo = VK_NULL_HANDLE,
-					.pTexelBufferView = VK_NULL_HANDLE
-				};
-				samplerIdx++;
-			}
-
-			// uniform buffer
-			if (shader->ubo_binding_idx == -1) {
-				continue;
-			}
-
-			bufferInfos[shader->ubo_binding_idx] = {
-				.buffer = contextTyped.points_render_command.ubo_buffers[shader->ubo_binding_idx],
-				.offset = 0,
-				.range = shader->ubo_size
-			};
-
-			descriptorSetWrites[shader->ubo_binding_idx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = nullptr,
-				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = nullptr
-			};
-		}
-
-		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
-
-		//
-		#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	9
-		VkBuffer vertexBuffersBuffer[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
-			contextTyped.points_render_command.vertex_buffers[0],
-			contextTyped.points_render_command.vertex_buffers[1],
-			contextTyped.points_render_command.vertex_buffers[2],
-			contextTyped.points_render_command.vertex_buffers[3],
-			contextTyped.points_render_command.vertex_buffers[4],
-			contextTyped.points_render_command.vertex_buffers[5],
-			contextTyped.points_render_command.vertex_buffers[6],
-			contextTyped.points_render_command.vertex_buffers[7],
-			contextTyped.points_render_command.vertex_buffers[8],
-		};
-
-		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.points_render_command.count, 1, contextTyped.points_render_command.offset, 0);
-
-		//
-		contextTyped.program->desc_idxs[contextTyped.idx]++;
-		contextTyped.command_count[contextTyped.front_face_index]++;
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_LINES) {
-		// do lines render command
-		auto samplerIdx = 0;
-		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D + samplerCube
-			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->texture_unit == -1) {
-					switch(uniform->type) {
-						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
-							};
-							break;
-						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							texDescs[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
-							};
-							break;
-						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-							break;
-					}
-				} else {
-					auto& texture = contextTyped.lines_render_command.textures[uniform->texture_unit];
-					if (texture.view == VK_NULL_HANDLE) {
-						switch(uniform->type) {
-							case shader_type::uniform_type::TYPE_SAMPLER2D:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_sampler2d_default->sampler,
-									.imageView = white_texture_sampler2d_default->view,
-									.imageLayout = white_texture_sampler2d_default->vkLayout
-								};
-								break;
-							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-								texDescs[samplerIdx] = {
-									.sampler = white_texture_samplercube_default->sampler,
-									.imageView = white_texture_samplercube_default->view,
-									.imageLayout = white_texture_samplercube_default->vkLayout
-								};
-								break;
-							default:
-								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-								break;
-						}
-					} else {
-						texDescs[samplerIdx] = {
-							.sampler = texture.sampler,
-							.imageView = texture.view,
-							.imageLayout = texture.layout
-						};
-					}
-				}
-				descriptorSetWrites[uniform->position] = {
-					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = nullptr,
-					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(uniform->position),
-					.dstArrayElement = 0,
-					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &texDescs[samplerIdx],
-					.pBufferInfo = VK_NULL_HANDLE,
-					.pTexelBufferView = VK_NULL_HANDLE
-				};
-				samplerIdx++;
-			}
-
-			// uniform buffer
-			if (shader->ubo_binding_idx == -1) {
-				continue;
-			}
-
-			bufferInfos[shader->ubo_binding_idx] = {
-				.buffer = contextTyped.lines_render_command.ubo_buffers[shader->ubo_binding_idx],
-				.offset = 0,
-				.range = shader->ubo_size
-			};
-
-			descriptorSetWrites[shader->ubo_binding_idx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = nullptr,
-				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = nullptr
-			};
-		}
-
-		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
-
-		//
-		#define LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
-		VkBuffer vertexBuffersBuffer[LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
-			contextTyped.lines_render_command.vertex_buffers[0],
-			contextTyped.lines_render_command.vertex_buffers[1],
-			contextTyped.lines_render_command.vertex_buffers[2],
-			contextTyped.lines_render_command.vertex_buffers[3]
-		};
-
-		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		VkDeviceSize vertexBuffersOffsets[LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
-		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		vkCmdSetLineWidth(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], line_width);
-		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.lines_render_command.count, 1, contextTyped.lines_render_command.offset, 0);
-
-		//
-		contextTyped.program->desc_idxs[contextTyped.idx]++;
-		contextTyped.command_count[contextTyped.front_face_index]++;
-	} else
-	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		// do compute command
-		for (auto shader: contextTyped.program->shaders) {
-			for (int i = 0; i <= shader->binding_max; i++) {
-				bufferInfos[i] = {
-					.buffer = contextTyped.compute_command.storage_buffers[i],
-					.offset = 0,
-					.range = contextTyped.compute_command.storage_buffer_sizes[i]
-				};
-				descriptorSetWrites[i] = {
-					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = nullptr,
-					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-					.dstBinding = static_cast<uint32_t>(i),
-					.dstArrayElement = 0,
-					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-					.pImageInfo = nullptr,
-					.pBufferInfo = &bufferInfos[i],
-					.pTexelBufferView = nullptr
-				};
-			}
-
-			// uniform buffer
-			if (shader->ubo_binding_idx == -1) {
-				continue;
-			}
-
-			bufferInfos[shader->ubo_binding_idx] = {
-				.buffer = contextTyped.compute_command.ubo_buffers[0],
-				.offset = 0,
-				.range = shader->ubo_size
-			};
-
-			descriptorSetWrites[shader->ubo_binding_idx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = nullptr,
-				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = nullptr,
-			};
-		}
-
-		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
-
-		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
-		vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], contextTyped.compute_command.num_groups_x, contextTyped.compute_command.num_groups_y, contextTyped.compute_command.num_groups_z);
-
-		//
-		contextTyped.program->desc_idxs[contextTyped.idx]++;
-		contextTyped.command_count[contextTyped.front_face_index]++;
-	}
 
 	//
-	auto commandsMax = contextTyped.command_type == context_type::COMMAND_COMPUTE?COMMANDS_MAX_COMPUTE:COMMANDS_MAX_GRAPHICS;
-	contextTyped.command_type = context_type::COMMAND_NONE;
+	auto commandsMax = COMMANDS_MAX_GRAPHICS;
 	auto haveOk = false;
 	auto haveTooLess = false;
 	auto haveTooMuch = false;
@@ -6859,37 +6490,137 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// textures
-	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto& boundTexture = contextTyped.bound_textures[i];
-		auto& texture = contextTyped.points_render_command.textures[i];
-		texture.sampler = boundTexture.sampler;
-		texture.view = boundTexture.view;
-		texture.layout = boundTexture.layout;
+	// check if desc left
+	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+		return;
 	}
 
-	// ubos
-	for (auto shader : contextTyped.program->shaders) {
-		if (shader->ubo_binding_idx != -1) {
-			auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-			contextTyped.points_render_command.ubo_buffers[shader->ubo_binding_idx] = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-			auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
-			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-			auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
-			memcpy(dst, src, uniformBuffer.size);
+	// start draw command buffer, it not yet done
+	beginDrawCommandBuffer(contextTyped.idx);
+
+	// render pass
+	startRenderPass(contextTyped.idx);
+
+	// pipeline
+	setupPointsRenderingPipeline(contextTyped.idx, contextTyped.program);
+
+	// do points render command
+	auto samplerIdx = 0;
+	for (auto shader: contextTyped.program->shaders) {
+		// sampler2D + samplerCube
+		for (auto uniform: shader->samplerUniformList) {
+			if (uniform->texture_unit == -1) {
+				switch(uniform->type) {
+					case shader_type::uniform_type::TYPE_SAMPLER2D:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_sampler2d_default->sampler,
+							.imageView = white_texture_sampler2d_default->view,
+							.imageLayout = white_texture_sampler2d_default->vkLayout
+						};
+						break;
+					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_samplercube_default->sampler,
+							.imageView = white_texture_samplercube_default->view,
+							.imageLayout = white_texture_samplercube_default->vkLayout
+						};
+						break;
+					default:
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						break;
+				}
+			} else {
+				auto& texture = contextTyped.bound_textures[uniform->texture_unit];
+				if (texture.view == VK_NULL_HANDLE) {
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
+				} else {
+					contextTyped.descriptor_image_info[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
+				}
+			}
+			contextTyped.descriptor_write_set[uniform->position] = {
+				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+				.pNext = nullptr,
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstBinding = static_cast<uint32_t>(uniform->position),
+				.dstArrayElement = 0,
+				.descriptorCount = 1,
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+				.pBufferInfo = VK_NULL_HANDLE,
+				.pTexelBufferView = VK_NULL_HANDLE
+			};
+			samplerIdx++;
 		}
+
+		// uniform buffer
+		if (shader->ubo_binding_idx == -1) {
+			continue;
+		}
+
+		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
+		memcpy(dst, src, uniformBuffer.size);
+
+		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+			.buffer = uboBuffer,
+			.offset = 0,
+			.range = shader->ubo_size
+		};
+
+		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstArrayElement = 0,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.pImageInfo = nullptr,
+			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pTexelBufferView = nullptr
+		};
 	}
 
 	//
-	for (auto i = 0; i < contextTyped.points_render_command.vertex_buffers.size(); i++) {
-		contextTyped.points_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
-	}
-	contextTyped.points_render_command.count = points;
-	contextTyped.points_render_command.offset = pointsOffset;
+	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	contextTyped.command_type = context_type::COMMAND_POINTS;
-	executeCommand(contextTyped.idx);
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
+	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, POINTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], points, 1, pointsOffset, 0);
+
+	//
+	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.command_count[contextTyped.front_face_index]++;
+
+	//
+	requestSubmitDrawBuffers(contextTyped.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -6905,44 +6636,141 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	//
+	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// textures
-	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto& boundTexture = contextTyped.bound_textures[i];
-		auto& texture = contextTyped.lines_render_command.textures[i];
-		texture.sampler = boundTexture.sampler;
-		texture.view = boundTexture.view;
-		texture.layout = boundTexture.layout;
+	// check if desc left
+	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+		return;
 	}
 
-	// ubos
-	{
-		auto shaderIdx = 0;
-		for (auto shader : contextTyped.program->shaders) {
-			if (shader->ubo_binding_idx != -1) {
-				auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-				contextTyped.lines_render_command.ubo_buffers[shader->ubo_binding_idx] = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-				auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
-				uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-				auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
-				memcpy(dst, src, uniformBuffer.size);
+	// start draw command buffer, it not yet done
+	beginDrawCommandBuffer(contextTyped.idx);
+
+	// render pass
+	startRenderPass(contextTyped.idx);
+
+	// lines
+	setupLinesRenderingPipeline(contextTyped.idx, contextTyped.program);
+
+	// do lines render command
+	auto samplerIdx = 0;
+	for (auto shader: contextTyped.program->shaders) {
+		// sampler2D + samplerCube
+		for (auto uniform: shader->samplerUniformList) {
+			if (uniform->texture_unit == -1) {
+				switch(uniform->type) {
+					case shader_type::uniform_type::TYPE_SAMPLER2D:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_sampler2d_default->sampler,
+							.imageView = white_texture_sampler2d_default->view,
+							.imageLayout = white_texture_sampler2d_default->vkLayout
+						};
+						break;
+					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = white_texture_samplercube_default->sampler,
+							.imageView = white_texture_samplercube_default->view,
+							.imageLayout = white_texture_samplercube_default->vkLayout
+						};
+						break;
+					default:
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						break;
+				}
+			} else {
+				auto& texture = contextTyped.bound_textures[uniform->texture_unit];
+				if (texture.view == VK_NULL_HANDLE) {
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							contextTyped.descriptor_image_info[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
+				} else {
+					contextTyped.descriptor_image_info[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
+				}
 			}
-			shaderIdx++;
+			contextTyped.descriptor_write_set[uniform->position] = {
+				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+				.pNext = nullptr,
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstBinding = static_cast<uint32_t>(uniform->position),
+				.dstArrayElement = 0,
+				.descriptorCount = 1,
+				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+				.pBufferInfo = VK_NULL_HANDLE,
+				.pTexelBufferView = VK_NULL_HANDLE
+			};
+			samplerIdx++;
 		}
+
+		// uniform buffer
+		if (shader->ubo_binding_idx == -1) {
+			continue;
+		}
+
+		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
+		memcpy(dst, src, uniformBuffer.size);
+
+		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+			.buffer = uboBuffer,
+			.offset = 0,
+			.range = shader->ubo_size
+		};
+
+		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstArrayElement = 0,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.pImageInfo = nullptr,
+			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pTexelBufferView = nullptr
+		};
 	}
 
 	//
-	for (auto i = 0; i < contextTyped.lines_render_command.vertex_buffers.size(); i++) {
-		contextTyped.lines_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i];
-	}
-	contextTyped.lines_render_command.count = points;
-	contextTyped.lines_render_command.offset = pointsOffset;
+	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	contextTyped.command_type = context_type::COMMAND_LINES;
-	executeCommand(contextTyped.idx);
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
+	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, LINES_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdSetLineWidth(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], line_width);
+	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], points, 1, pointsOffset, 0);
+
+	//
+	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.command_count[contextTyped.front_face_index]++;
+
+	//
+	requestSubmitDrawBuffers(contextTyped.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -7009,36 +6837,86 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// ubos
-	{
-		auto shaderIdx = 0;
-		for (auto shader : contextTyped.program->shaders) {
-			if (shader->ubo_binding_idx != -1) {
-				auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-				contextTyped.compute_command.ubo_buffers[0] = uniformBuffer.buffers[uniformBuffer.bufferIdx]; // TODO: do not use static 0 ubo buffer
-				auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
-				uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-				auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
-				memcpy(dst, src, uniformBuffer.size);
-				//
-				break;
-			}
-			shaderIdx++;
+	// check if desc left
+	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+		return;
+	}
+
+	// start draw command buffer, it not yet done
+	beginDrawCommandBuffer(contextTyped.idx);
+	// render pass
+	endRenderPass(contextTyped.idx);
+	// pipeline
+	setupSkinningComputingPipeline(contextTyped.idx, contextTyped.program);
+
+	// do compute command
+	for (auto shader: contextTyped.program->shaders) {
+		for (int i = 0; i <= shader->binding_max; i++) {
+			contextTyped.descriptor_buffer_infos[i] = {
+				.buffer = contextTyped.bound_buffers[i],
+				.offset = 0,
+				.range = contextTyped.bound_buffer_sizes[i]
+			};
+			contextTyped.descriptor_write_set[i] = {
+				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+				.pNext = nullptr,
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstBinding = static_cast<uint32_t>(i),
+				.dstArrayElement = 0,
+				.descriptorCount = 1,
+				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.pImageInfo = nullptr,
+				.pBufferInfo = &contextTyped.descriptor_buffer_infos[i],
+				.pTexelBufferView = nullptr
+			};
 		}
+
+		// uniform buffer
+		if (shader->ubo_binding_idx == -1) {
+			continue;
+		}
+
+		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx]; // TODO: do not use static 0 ubo buffer
+		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
+		memcpy(dst, src, uniformBuffer.size);
+
+		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+			.buffer = uboBuffer,
+			.offset = 0,
+			.range = shader->ubo_size
+		};
+
+		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstArrayElement = 0,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.pImageInfo = nullptr,
+			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pTexelBufferView = nullptr,
+		};
 	}
 
 	//
-	for (auto i = 0; i < contextTyped.compute_command.storage_buffers.size(); i++) {
-		contextTyped.compute_command.storage_buffers[i] = contextTyped.bound_buffers[i];
-		contextTyped.compute_command.storage_buffer_sizes[i] = contextTyped.bound_buffer_sizes[i];
-	}
-	contextTyped.compute_command.num_groups_x = numGroupsX;
-	contextTyped.compute_command.num_groups_y = numGroupsY;
-	contextTyped.compute_command.num_groups_z = numGroupsZ;
+	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	contextTyped.command_type = context_type::COMMAND_COMPUTE;
-	executeCommand(contextTyped.idx);
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
+	vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], numGroupsX, numGroupsY, numGroupsZ);
+
+	//
+	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.command_count[contextTyped.front_face_index]++;
+
+	//
+	requestSubmitDrawBuffers(contextTyped.idx);
 
 	//
 	AtomicOperations::increment(statistics.computeCalls);

@@ -64,6 +64,10 @@ private:
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
 	static constexpr int DESC_MAX { 4096 };
+	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
+	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
+	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
+	static constexpr int COMPUTE_STORAGE_BUFFER_COUNT { 8 };
 
 	static constexpr int CUBEMAPTEXTUREINDEX_MIN { 1 };
 
@@ -230,11 +234,21 @@ private:
 		array<uint32_t, 3> pipeline_id;
 		array<VkPipeline, 3> pipeline;
 
+		//
+		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;
+		array<VkWriteDescriptorSet, 16 + 4> descriptor_write_set;
+		array<VkDescriptorImageInfo, 16 + 4> descriptor_image_info;
+
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
 		array<VkBuffer, 10> bound_buffers {
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE
+		};
+		array<VkDeviceSize, 10> bound_buffer_offsets {
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0
 		};
 		array<uint32_t, 10> bound_buffer_sizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<uniform_buffer_type*, 4> uniform_buffers;
@@ -247,93 +261,9 @@ private:
 		};
 		array<bound_texture, 16> bound_textures;
 
-		struct objects_render_command {
-			struct texture {
-				VkSampler sampler { VK_NULL_HANDLE };
-				VkImageView view { VK_NULL_HANDLE };
-				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
-			};
-			VkBuffer indices_buffer { VK_NULL_HANDLE };
-			array<VkBuffer, 10> vertex_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-			array<VkBuffer, 4> ubo_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-
-			array<texture, 16> textures;
-			int32_t count { 0 };
-			int32_t offset { 0 };
-			int32_t instances { 0 };
-		};
-
-		struct points_render_command {
-			struct texture {
-				VkSampler sampler { VK_NULL_HANDLE };
-				VkImageView view { VK_NULL_HANDLE };
-				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
-			};
-			array<VkBuffer, 10> vertex_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-			array<VkBuffer, 4> ubo_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-
-			array<texture, 16> textures;
-			int32_t count { 0 };
-			int32_t offset { 0 };
-		};
-
-		struct lines_render_command {
-			struct texture {
-				VkSampler sampler { VK_NULL_HANDLE };
-				VkImageView view { VK_NULL_HANDLE };
-				VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
-			};
-			array<VkBuffer, 4> vertex_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-			array<VkBuffer, 4> ubo_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-
-			array<texture, 16> textures;
-			int32_t count { 0 };
-			int32_t offset { 0 };
-		};
-
-		struct compute_command {
-			array<VkBuffer, 8> storage_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-			};
-			array<uint32_t, 8> storage_buffer_sizes = {
-				0, 0, 0, 0,
-				0, 0, 0, 0,
-			};
-			array<VkBuffer, 4> ubo_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
-			};
-
-			int32_t num_groups_x { 0 };
-			int32_t num_groups_y { 0 };
-			int32_t num_groups_z { 0 };
-		};
-
 		int32_t compute_render_barrier_buffer_count { 0 };
 		array<VkBuffer, 1024> compute_render_barrier_buffers;
 
-		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_LINES, COMMAND_COMPUTE };
-		command_type command_type { COMMAND_NONE };
-		objects_render_command objects_render_command;
-		points_render_command points_render_command;
-		lines_render_command lines_render_command;
-		compute_command compute_command;
 		array<uint32_t, 3> command_count { 0 };
 
 		string shader;
@@ -421,7 +351,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -482,7 +412,7 @@ private:
 	void initializeFrameBuffers();
 	void endDrawCommands(int contextIdx);
 	void endDrawCommandsAllContexts();
-	void executeCommand(int contextIdx);
+	void requestSubmitDrawBuffers(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
