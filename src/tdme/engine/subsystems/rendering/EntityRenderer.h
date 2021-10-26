@@ -317,11 +317,4 @@ public:
 	 */
 	void render(Entity::RenderPass renderPass, const vector<LinesObject3D*>& objects);
 
-	/**
-	 * Compare entities by distance from camera
-	 * @param entity1 entity 1
-	 * @param entity2 entity 2
-	 */
-	static bool compareParticleSystemEntities(Entity* entity1, Entity* entity2);
-
 };

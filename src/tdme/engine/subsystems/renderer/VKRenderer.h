@@ -98,6 +98,15 @@ private:
 		volatile bool uploading { false };
 	};
 
+	struct uniform_buffer_type {
+		int bufferIdx { 0 };
+		int size { -1 };
+		// TODO: make them a growing list
+		array<VkBuffer, COMMANDS_MAX_GRAPHICS * 5 * 3> buffers;
+		array<VmaAllocation, COMMANDS_MAX_GRAPHICS * 5 * 3> allocations;
+		array<uint8_t*, COMMANDS_MAX_GRAPHICS * 5 * 3> data;
+	};
+
 	struct shader_type {
 		struct uniform_type {
 			enum uniform_type_enum { TYPE_NONE, TYPE_UNIFORM, TYPE_SAMPLER2D, TYPE_SAMPLERCUBE };
@@ -114,8 +123,7 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		vector<int32_t> ubo_ids;
-		vector<buffer_object_type*> ubo;
+		vector<uniform_buffer_type> uniform_buffers;
 		int32_t ubo_binding_idx { -1 };
 		string definitions;
  		string source;
@@ -138,10 +146,6 @@ private:
 		vector<int32_t> shader_ids;
 		vector<shader_type*> shaders;
 		unordered_map<int32_t, string> uniforms;
-		vector<int32_t> uniform_buffers;
-		vector<bool> uniform_buffers_stored;
-		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
-		vector<array<bool, 4>> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
@@ -233,12 +237,7 @@ private:
 			VK_NULL_HANDLE, VK_NULL_HANDLE
 		};
 		array<uint32_t, 10> bound_buffer_sizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		struct uniform_buffer_object {
-			VkBuffer buffer;
-			int size;
-			void* data;
-		};
-		array<uniform_buffer_object, 4> uniform_buffers;
+		array<uniform_buffer_type*, 4> uniform_buffers;
 		int32_t texture_unit_active { 0 };
 		struct bound_texture {
 			int id { 0 };
@@ -421,8 +420,8 @@ private:
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
-	// enable validation layers
-	bool validate { false };
+	// enable/disable validation layers
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -464,7 +463,7 @@ private:
 
 	//
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1);
+	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1, bool submit = true);
 	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
 	uint32_t getMipLevels(Texture* texture);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
@@ -487,7 +486,6 @@ private:
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
-	void preparePipeline(int contextIdx, program_type* program);
 	void createObjectsRenderingProgram(program_type* program);
 	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);

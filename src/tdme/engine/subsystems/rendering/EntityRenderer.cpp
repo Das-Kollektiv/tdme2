@@ -1509,10 +1509,3 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObj
 	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }
-
-inline bool EntityRenderer::compareParticleSystemEntities(Entity* entity1, Entity* entity2) {
-	auto& camLookFrom = Engine::currentEngine->getCamera()->getLookFrom();
-	return
-		entity1->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camLookFrom).sub(camLookFrom).computeLengthSquared() >
-		entity2->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camLookFrom).sub(camLookFrom).computeLengthSquared();
-}
