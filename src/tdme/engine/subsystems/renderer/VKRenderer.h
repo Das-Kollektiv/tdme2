@@ -235,11 +235,14 @@ private:
 		array<VkPipeline, 3> pipeline;
 
 		//
-		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;
-		array<VkWriteDescriptorSet, 16 + 4> descriptor_write_set;
-		array<VkDescriptorImageInfo, 16 + 4> descriptor_image_info;
+		array<VkDescriptorBufferInfo, 4 * 16 + 1> descriptor_buffer_infos;
+		array<VkWriteDescriptorSet, 4 * 16 + 1> descriptor_write_set;
+		array<VkDescriptorImageInfo, 4 * 16 + 1> descriptor_image_info;
 
+		//
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
+		array<array<VkBuffer, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_indices_buffer;
+		array<array<array<VkBuffer, 10>, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_buffers;
 		array<VkBuffer, 10> bound_buffers {
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -254,7 +257,7 @@ private:
 		array<uniform_buffer_type*, 4> uniform_buffers;
 		int32_t texture_unit_active { 0 };
 		struct bound_texture {
-			int id { 0 };
+			int32_t id { 0 };
 			VkSampler sampler { VK_NULL_HANDLE };
 			VkImageView view { VK_NULL_HANDLE };
 			VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };

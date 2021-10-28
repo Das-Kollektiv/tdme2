@@ -223,53 +223,48 @@ void EntityRenderer::reset()
 
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
-	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
-	} else {
-		// determine objects by shaders to avoid too much shader changes
-		auto camera = engine->getCamera();
-		Vector3 objectCamFromAxis;
-		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-			auto object = objects[objectIdx];
-			if (object->enabledInstances == 0) continue;
-			if (object->renderPass != renderPass) continue;
-			auto objectShader = object->getDistanceShader().length() == 0?
+	// reset shader
+	auto effectPass = renderer->getEffectPass();
+	// sort objects by model
+	Vector3 objectCamFromAxis;
+	auto camera = engine->getCamera();
+	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+		auto object = objects[objectIdx];
+		if (object->enabledInstances == 0) continue;
+		if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
+		if (object->renderPass != renderPass) continue;
+		auto objectShader = object->getDistanceShader().length() == 0?
+			object->getShader():
+			objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 				object->getShader():
-				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
-					object->getShader():
-					object->getDistanceShader();
-			objectsByShaderMap[objectShader].push_back(object);
-		}
-
+				object->getDistanceShader();
+		auto& objectsByShaders = objectsByShadersAndModels[objectShader];
+		auto& objectsByModel = objectsByShaders[object->getModel()];
+		objectsByModel.push_back(object);
+	}
+	if (renderer->isSupportingMultithreadedRendering() == false) {
+		renderFunction(0, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+	} else {
+		//
 		auto elementsIssued = 0;
-		auto queueElement = new Engine::EngineThreadQueueElement();
-		queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
-		queueElement->engine = engine;
-		queueElement->rendering.renderPass = renderPass;
-		queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
-		queueElement->rendering.renderTypes = renderTypes;
-		for (auto& objectsByShaderIt: objectsByShaderMap) {
-			auto& objectsByShader = objectsByShaderIt.second;
-			for (auto i = 0; i < objectsByShader.size(); i++) {
-				queueElement->objects.push_back(objectsByShader[i]);
-				if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT) {
-					auto queueElementToSubmit = queueElement;
+		for (auto& objectsByShadersIt: objectsByShadersAndModels) {
+			for (auto& objectsByShadersAndModelsIt: objectsByShadersIt.second) {
+				auto& objectsByShadersAndModels = objectsByShadersAndModelsIt.second;
+				if (objectsByShadersAndModels.empty() == false) {
+					//if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT) {
+					auto queueElement = new Engine::EngineThreadQueueElement();
 					queueElement = new Engine::EngineThreadQueueElement();
 					queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
 					queueElement->engine = engine;
+					queueElement->objects = objectsByShadersAndModels;
 					queueElement->rendering.renderPass = renderPass;
 					queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
 					queueElement->rendering.renderTypes = renderTypes;
 					elementsIssued++;
-					engine->engineThreadsQueue->addElement(queueElementToSubmit, false);
+					engine->engineThreadsQueue->addElement(queueElement, false);
+					objectsByShadersAndModels.clear();
 				}
 			}
-		}
-		if (queueElement->objects.empty() == true) {
-			delete queueElement;
-		} else {
-			elementsIssued++;
-			engine->engineThreadsQueue->addElement(queueElement, false);
 		}
 
 		// wait until all elements have been processed
@@ -288,9 +283,6 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 			engineThread->transparentRenderFacesPool->reset();
 		}
 	}
-
-	//
-	objectsByShaderMap.clear();
 }
 
 void EntityRenderer::renderTransparentFaces() {
@@ -755,6 +747,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
 			auto faces = facesEntity->getFaces().size() * firstObject->instances;
 			auto facesToRender = facesEntity->getFaces().size() * firstObject->enabledInstances;
+
 			// material
 			auto material = facesEntity->getMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
@@ -835,6 +828,9 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				auto currentLODLevel = -1;
 				int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 				Vector3 boundEnvironmentMappingCubeMapPosition;
+				auto instances = -1;
+				auto enabledInstances = -1;
+
 				auto objectCount = object3DRenderContext.objectsToRender.size();
 
 				//
@@ -861,6 +857,17 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 							);
 						}
 						// skip to next object
+						continue;
+					}
+
+					// instance count and enabled instances count
+					if (instances == -1 && enabledInstances == -1) {
+						instances = firstObject->instances;
+						enabledInstances = firstObject->enabledInstances;
+					} else
+					if (instances != object->instances ||
+						enabledInstances != object->enabledInstances) {
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 
