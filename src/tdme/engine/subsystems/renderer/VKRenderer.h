@@ -235,9 +235,9 @@ private:
 		array<VkPipeline, 3> pipeline;
 
 		//
-		array<VkDescriptorBufferInfo, 4 * 16 + 1> descriptor_buffer_infos;
-		array<VkWriteDescriptorSet, 4 * 16 + 1> descriptor_write_set;
-		array<VkDescriptorImageInfo, 4 * 16 + 1> descriptor_image_info;
+		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;
+		array<VkWriteDescriptorSet, 16 + 4> descriptor_write_set;
+		array<VkDescriptorImageInfo, 16 + 4> descriptor_image_info;
 
 		//
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };

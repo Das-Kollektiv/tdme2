@@ -862,8 +862,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// instance count and enabled instances count
 					if (instances == -1 && enabledInstances == -1) {
-						instances = firstObject->instances;
-						enabledInstances = firstObject->enabledInstances;
+						instances = object->instances;
+						enabledInstances = object->enabledInstances;
 					} else
 					if (instances != object->instances ||
 						enabledInstances != object->enabledInstances) {

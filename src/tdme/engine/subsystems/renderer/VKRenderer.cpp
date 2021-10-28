@@ -6891,7 +6891,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 			contextTyped.descriptor_write_set[i] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstSet = desc_set,
 				.dstBinding = static_cast<uint32_t>(i),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6923,7 +6923,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstSet = desc_set,
 			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
