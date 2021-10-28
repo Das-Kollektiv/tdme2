@@ -76,6 +76,8 @@ private:
 		Matrix4x4Negative matrix4x4Negative;
 		vector<Object3D*> objectsToRender;
 		vector<Object3D*> objectsNotRendered;
+		vector<Object3D*> objectsByModelToRender;
+		vector<Object3D*> objectsByModelNotRendered;
 	};
 
 	Engine* engine { nullptr };
@@ -91,6 +93,7 @@ private:
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	int threadCount;
 	vector<Object3DRenderContext> contexts;
+	unordered_map<string, vector<Object3D*>> objectsByShaderMap;
 
 	/**
 	 * Renders transparent faces
@@ -175,18 +178,41 @@ private:
 	/**
 	 * Render function
 	 * @param threadIdx thread index
-	 * @param objectsByShadersAndModels objects by shaders and models
+	 * @param objects objects
+	 * @param visibleObjectsByModels objects by models storage
 	 * @param renderTransparentFaces render transparent faces
 	 * @param renderTypes render types
 	 */
 	inline void renderFunction(
 		int threadIdx,
+		Entity::RenderPass renderPass,
+		const vector<Object3D*>& objects,
 		unordered_map<string, unordered_map<Model*, vector<Object3D*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
-		// render objects
+		// reset shader
 		renderer->setShader(renderer->getContext(threadIdx), string());
+		auto effectPass = renderer->getEffectPass();
+		// sort objects by model
+		Vector3 objectCamFromAxis;
+		auto camera = engine->getCamera();
+		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+			auto object = objects[objectIdx];
+			if (object->enabledInstances == 0) continue;
+			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
+			if (object->renderPass != renderPass) continue;
+			auto objectShader = object->getDistanceShader().length() == 0?
+				object->getShader():
+				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+					object->getShader():
+					object->getDistanceShader();
+			auto& objectsByShaders = objectsByShadersAndModels[objectShader];
+			auto& objectsByModel = objectsByShaders[object->getModel()];
+			objectsByModel.push_back(object);
+		}
+
+		// render objects
 		auto& context = contexts[threadIdx];
 		for (auto& objectsByShaderAndModelIt: objectsByShadersAndModels) {
 			auto& objectsByModels = objectsByShaderAndModelIt.second;
@@ -196,9 +222,23 @@ private:
 					continue;
 				} else
 				if (objectsByModel.size() > 0) {
-					renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
-					objectsByModel.clear();
+					do {
+						for (auto object: objectsByModel) {
+							if (context.objectsByModelToRender.size() == 0 ||
+								(object->instances == context.objectsByModelToRender[0]->instances &&
+								object->enabledInstances == context.objectsByModelToRender[0]->enabledInstances)) {
+								context.objectsByModelToRender.push_back(object);
+							} else {
+								context.objectsByModelNotRendered.push_back(object);
+							}
+						}
+						renderObjectsOfSameType(threadIdx, context.objectsByModelToRender, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+						objectsByModel = context.objectsByModelNotRendered;
+						context.objectsByModelToRender.clear();
+						context.objectsByModelNotRendered.clear();
+					} while (objectsByModel.size() > 0);
 				}
+				objectsByModel.clear();
 			}
 		}
 	}

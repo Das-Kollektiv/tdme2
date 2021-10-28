@@ -237,10 +237,11 @@ void Engine::EngineThread::run() {
 				elementsProcessed++;
 				break;
 			case EngineThreadQueueElement::TYPE_RENDERING:
-				element->engine->renderer->setShader(element->engine->renderer->getContext(idx), string());
-				element->engine->entityRenderer->renderObjectsOfSameType(
+				element->engine->entityRenderer->renderFunction(
 					idx,
+					element->rendering.renderPass,
 					element->objects,
+					objectsByShadersAndModels,
 					element->rendering.collectTransparentFaces,
 					element->rendering.renderTypes,
 					transparentRenderFacesPool
