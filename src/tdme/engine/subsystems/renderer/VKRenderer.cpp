@@ -1303,33 +1303,53 @@ void VKRenderer::initialize()
 	// swap chain
 	initializeSwapChain();
 
-	// create descriptor pool
-	const VkDescriptorPoolSize types_count[3] = {
-		[0] = {
-			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = static_cast<uint32_t>(32 * 4 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 4 image sampler
-		},
-		[1] = {
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = static_cast<uint32_t>(32 * 4 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 4 uniform buffer
-		},
-		[2] = {
-			.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.descriptorCount = static_cast<uint32_t>(32 * 10 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 10 storage buffer
-		}
-	};
-	const VkDescriptorPoolCreateInfo descriptor_pool = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32), // 32 shader
-		.poolSizeCount = 3,
-		.pPoolSizes = types_count,
-	};
+	// create descriptor pool 1
+	{
+		const VkDescriptorPoolSize desc1_types_count[2] = {
+			[0] = {
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2 * 2 * 1) // 2 shader stages * 1 uniform buffers
+			},
+			[1] = {
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 2 * 1 * 10) // 1 shader stage * 10 storage buffers
+			}
+		};
+		const VkDescriptorPoolCreateInfo descriptor_pool = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2), // 32 shader
+			.poolSizeCount = 2,
+			.pPoolSizes = desc1_types_count,
+		};
+		//
+		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool1);
+		assert(!err);
+	}
 
-	err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool);
-	assert(!err);
+	// create descriptor pool 2
+	{
+		const VkDescriptorPoolSize desc2_types_count[1] = {
+			[0] = {
+				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
+			}
+		};
+		const VkDescriptorPoolCreateInfo descriptor_pool = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2), // 32 shader
+			.poolSizeCount = 1,
+			.pPoolSizes = desc2_types_count,
+		};
+		//
+		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool2);
+		assert(!err);
+	}
 
+	//
 	contexts.resize(Engine::getThreadCount());
 	// create set up command buffers
 	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
@@ -1906,7 +1926,8 @@ void VKRenderer::finishFrame()
 	// reset desc index
 	for (auto program: programList) {
 		if (program == nullptr) continue;
-		for (auto i = 0; i < program->desc_idxs.size(); i++) program->desc_idxs[i] = 0;
+		for (auto i = 0; i < program->desc_idxs1.size(); i++) program->desc_idxs1[i] = 0;
+		for (auto i = 0; i < program->desc_idxs2.size(); i++) program->desc_idxs2[i] = 0;
 	}
 
 	//
@@ -2391,7 +2412,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						}
 						for (auto i = 0; i < arraySize; i++) {
 							auto suffix = isArray == true?"_" + to_string(i):"";
-							newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
+							newShaderSourceLines.push_back("layout(set = 1, binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
 						}
 						shader.samplers++;
 					} else
@@ -2413,7 +2434,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						}
 						for (auto i = 0; i < arraySize; i++) {
 							auto suffix = isArray == true?"_" + to_string(i):"";
-							newShaderSourceLines.push_back("layout(binding = {$SAMPLERCUBE_BINDING_" + uniformName + suffix + "_IDX}) uniform samplerCube " + uniformName + suffix + ";");
+							newShaderSourceLines.push_back("layout(set = 1, binding = {$SAMPLERCUBE_BINDING_" + uniformName + suffix + "_IDX}) uniform samplerCube " + uniformName + suffix + ";");
 						}
 						shader.samplers++;
 					} else {
@@ -2461,7 +2482,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		// replace uniforms to use ubo
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(std140, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(set = 0, std140, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
@@ -2612,18 +2633,19 @@ inline uint32_t VKRenderer::createPipelineId(program_type* program, int contextI
 		((depth_function & 0x7) << 23);
 }
 
-void VKRenderer::createObjectsRenderingProgram(program_type* program) {
+void VKRenderer::createRenderProgram(program_type* program) {
 	VkResult err;
-
-	//
-	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
-	memset(layout_bindings, 0, sizeof(layout_bindings));
+	VkDescriptorSetLayoutBinding layout_bindings1[program->layout_bindings];
+	VkDescriptorSetLayoutBinding layout_bindings2[program->layout_bindings];
+	memset(layout_bindings1, 0, sizeof(layout_bindings1));
+	memset(layout_bindings2, 0, sizeof(layout_bindings2));
 
 	// ubos, samplers
-	auto shaderIdx = 0;
+	auto samplerIdx = 0;
+	auto uboIdx = 0;
 	for (auto shader: program->shaders) {
 		if (shader->ubo_binding_idx != -1) {
-			layout_bindings[shader->ubo_binding_idx] = {
+			layout_bindings1[uboIdx++] = {
 				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
@@ -2633,7 +2655,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 		}
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			layout_bindings[uniform->position] = {
+			layout_bindings2[samplerIdx++] = {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				.descriptorCount = 1,
@@ -2641,42 +2663,75 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		shaderIdx++;
 	}
 
-	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = program->layout_bindings,
-		.pBindings = layout_bindings,
-	};
+	{
+		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.bindingCount = static_cast<uint32_t>(uboIdx),
+			.pBindings = layout_bindings1,
+		};
+		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout1);
+		assert(!err);
+	}
+	{
+		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.bindingCount = static_cast<uint32_t>(samplerIdx),
+			.pBindings = layout_bindings2,
+		};
+		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout2);
+		assert(!err);
+	}
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
-	assert(!err);
-
+	//
+	array<VkDescriptorSetLayout, 2> desc_layouts { program->desc_layout1, program->desc_layout2 };
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.setLayoutCount = 1,
-		.pSetLayouts = &program->desc_layout,
+		.setLayoutCount = desc_layouts.size(),
+		.pSetLayouts = desc_layouts.data()
 	};
-
-	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
-	VkDescriptorSetAllocateInfo alloc_info = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = desc_pool,
-		.descriptorSetCount = DESC_MAX,
-		.pSetLayouts = desc_layouts
-	};
-	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
-		assert(!err);
+	{
+		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts1;
+		desc_layouts1.fill(program->desc_layout1);
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = nullptr,
+			.descriptorPool = desc_pool1,
+			.descriptorSetCount = DESC_MAX,
+			.pSetLayouts = desc_layouts1.data()
+		};
+		for (auto& context: contexts) {
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets1[context.idx].data());
+			assert(!err);
+		}
+	}
+
+	//
+	{
+		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts2;
+		desc_layouts2.fill(program->desc_layout2);
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = nullptr,
+			.descriptorPool = desc_pool2,
+			.descriptorSetCount = DESC_MAX,
+			.pSetLayouts = desc_layouts2.data()
+		};
+		for (auto& context: contexts) {
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets2[context.idx].data());
+			assert(!err);
+		}
 	}
 
 	//
@@ -2945,78 +3000,6 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 	}
 }
 
-void VKRenderer::createPointsRenderingProgram(program_type* program) {
-	VkResult err;
-
-	//
-	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
-	memset(layout_bindings, 0, sizeof(layout_bindings));
-
-	// ubos, samplers
-	auto shaderIdx = 0;
-	for (auto shader: program->shaders) {
-		if (shader->ubo_binding_idx != -1) {
-			layout_bindings[shader->ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = 1,
-				.stageFlags = shader->type,
-				.pImmutableSamplers = nullptr
-			};
-		}
-		// sampler2D + samplerCube
-		for (auto uniform: shader->samplerUniformList) {
-			layout_bindings[uniform->position] = {
-				.binding = static_cast<uint32_t>(uniform->position),
-				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = 1,
-				.stageFlags = shader->type,
-				.pImmutableSamplers = nullptr
-			};
-		}
-		shaderIdx++;
-	}
-
-	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = program->layout_bindings,
-		.pBindings = layout_bindings,
-	};
-
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
-	assert(!err);
-
-	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.setLayoutCount = 1,
-		.pSetLayouts = &program->desc_layout,
-	};
-
-	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
-
-	//
-	VkDescriptorSetAllocateInfo alloc_info = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = desc_pool,
-		.descriptorSetCount = DESC_MAX,
-		.pSetLayouts = desc_layouts
-	};
-	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
-		assert(!err);
-	}
-
-	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
-	assert(!err);
-}
-
 VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	auto pipelinesIt = program->pipelines.find(context.pipeline_id[context.front_face_index]);
@@ -3254,78 +3237,6 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 	}
 }
 
-void VKRenderer::createLinesRenderingProgram(program_type* program) {
-	VkResult err;
-
-	//
-	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
-	memset(layout_bindings, 0, sizeof(layout_bindings));
-
-	// ubos, samplers
-	auto shaderIdx = 0;
-	for (auto shader: program->shaders) {
-		if (shader->ubo_binding_idx != -1) {
-			layout_bindings[shader->ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = 1,
-				.stageFlags = shader->type,
-				.pImmutableSamplers = nullptr
-			};
-		}
-		// sampler2D + samplerCube
-		for (auto uniform: shader->samplerUniformList) {
-			layout_bindings[uniform->position] = {
-				.binding = static_cast<uint32_t>(uniform->position),
-				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = 1,
-				.stageFlags = shader->type,
-				.pImmutableSamplers = nullptr
-			};
-		}
-		shaderIdx++;
-	}
-
-	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = program->layout_bindings,
-		.pBindings = layout_bindings,
-	};
-
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
-	assert(!err);
-
-	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.setLayoutCount = 1,
-		.pSetLayouts = &program->desc_layout,
-	};
-
-	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
-
-	//
-	VkDescriptorSetAllocateInfo alloc_info = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = desc_pool,
-		.descriptorSetCount = DESC_MAX,
-		.pSetLayouts = desc_layouts
-	};
-	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
-		assert(!err);
-	}
-
-	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
-	assert(!err);
-}
-
 VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	auto pipelinesIt = program->pipelines.find(context.pipeline_id[context.front_face_index]);
@@ -3529,8 +3440,8 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	programPipeline.id = 1;
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
-	memset(layout_bindings, 0, sizeof(layout_bindings));
+	VkDescriptorSetLayoutBinding layout_bindings1[program->layout_bindings];
+	memset(layout_bindings1, 0, sizeof(layout_bindings1));
 
 	// Stages
 	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
@@ -3544,7 +3455,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		shaderStages[shaderIdx].pName = "main";
 
 		for (int i = 0; i <= shader->binding_max; i++) {
-			layout_bindings[i] = {
+			layout_bindings1[i] = {
 				.binding = static_cast<uint32_t>(i),
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = 1,
@@ -3554,7 +3465,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		}
 
 		if (shader->ubo_binding_idx != -1) {
-			layout_bindings[shader->ubo_binding_idx] = {
+			layout_bindings1[shader->ubo_binding_idx] = {
 				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
@@ -3569,34 +3480,37 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		.pNext = nullptr,
 		.flags = 0,
 		.bindingCount = program->layout_bindings,
-		.pBindings = layout_bindings,
+		.pBindings = layout_bindings1,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout1);
 	assert(!err);
 
+	//
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program->desc_layout,
+		.pSetLayouts = &program->desc_layout1
 	};
-
-	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
-	VkDescriptorSetAllocateInfo alloc_info = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = desc_pool,
-		.descriptorSetCount = DESC_MAX,
-		.pSetLayouts = desc_layouts
-	};
-	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
-		assert(!err);
+	{
+		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts1;
+		desc_layouts1.fill(program->desc_layout1);
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = nullptr,
+			.descriptorPool = desc_pool1,
+			.descriptorSetCount = DESC_MAX,
+			.pSetLayouts = desc_layouts1.data()
+		};
+		for (auto& context: contexts) {
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets1[context.idx].data());
+			assert(!err);
+		}
 	}
 
 	//
@@ -3627,9 +3541,11 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 
 	};
 
+	//
 	err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
+	//
 	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
 }
 
@@ -3718,9 +3634,12 @@ int32_t VKRenderer::createProgram(int type)
 	auto& program = *programPtr;
 	program.type = type;
 	program.id = programList.size();
-	program.desc_sets.resize(Engine::getThreadCount());
-	program.desc_idxs.resize(Engine::getThreadCount());
-	for (auto i = 0; i < program.desc_idxs.size(); i++) program.desc_idxs[i] = 0;
+	program.desc_sets1.resize(Engine::getThreadCount());
+	program.desc_sets2.resize(Engine::getThreadCount());
+	program.desc_idxs1.resize(Engine::getThreadCount());
+	program.desc_idxs2.resize(Engine::getThreadCount());
+	for (auto i = 0; i < program.desc_idxs1.size(); i++) program.desc_idxs1[i] = 0;
+	for (auto i = 0; i < program.desc_idxs2.size(); i++) program.desc_idxs2[i] = 0;
 	programList.push_back(programPtr);
 	Console::println("new program: " + to_string(program.id));
 	return program.id;
@@ -3957,14 +3876,8 @@ bool VKRenderer::linkProgram(int32_t programId)
 	program->layout_bindings = bindingIdx;
 
 	// create programs in terms of ubos and so on
-	if (program->type == PROGRAM_OBJECTS) {
-		createObjectsRenderingProgram(program);
-	} else
-	if (program->type == PROGRAM_POINTS) {
-		createPointsRenderingProgram(program);
-	} else
-	if (program->type == PROGRAM_LINES) {
-		createLinesRenderingProgram(program);
+	if (program->type == PROGRAM_OBJECTS || program->type == PROGRAM_POINTS || program->type == PROGRAM_LINES) {
+		createRenderProgram(program);
 	} else
 	if (program->type == PROGRAM_COMPUTE) {
 		createSkinningComputingProgram(program);
@@ -6252,12 +6165,19 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// check if desc left
-	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+	// check if desc1 left
+	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
-	auto desc_set = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]];
+	// check if desc2 left
+	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		return;
+	}
+	//
+	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
+	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6326,7 +6246,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			contextTyped.descriptor_write_set[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+				.dstSet = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(uniform->position),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6350,7 +6270,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
 		memcpy(dst, src, uniformBuffer.size);
 
-
 		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
@@ -6360,7 +6279,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
+			.dstSet = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]],
 			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
@@ -6375,7 +6294,8 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	// descriptor sets
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &desc_set, 0, nullptr);
+	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
 
 	// index buffer
 	if (indicesBuffer != VK_NULL_HANDLE) {
@@ -6408,7 +6328,8 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	}
 
 	//
-	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.program->desc_idxs1[contextTyped.idx]++;
+	contextTyped.program->desc_idxs2[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//
@@ -6518,11 +6439,18 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	// check if desc left
-	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
-	auto desc_set = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]];
+	// check if desc2 left
+	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		return;
+	}
+	//
+	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
+	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6591,7 +6519,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 			contextTyped.descriptor_write_set[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set,
+				.dstSet = desc_set2,
 				.dstBinding = static_cast<uint32_t>(uniform->position),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6624,7 +6552,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = desc_set,
+			.dstSet = desc_set1,
 			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
@@ -6639,12 +6567,14 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &desc_set, 0, nullptr);
+	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
 	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, POINTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
 	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], points, 1, pointsOffset, 0);
 
 	//
-	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.program->desc_idxs1[contextTyped.idx]++;
+	contextTyped.program->desc_idxs2[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//
@@ -6668,11 +6598,18 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	// check if desc left
-	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
-	auto desc_set = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]];
+	// check if desc2 left
+	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		return;
+	}
+	//
+	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
+	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6741,7 +6678,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 			contextTyped.descriptor_write_set[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set,
+				.dstSet = desc_set2,
 				.dstBinding = static_cast<uint32_t>(uniform->position),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6774,7 +6711,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = desc_set,
+			.dstSet = desc_set1,
 			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
@@ -6789,13 +6726,15 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &desc_set, 0, nullptr);
+	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
 	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], 0, LINES_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
 	vkCmdSetLineWidth(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], line_width);
 	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], points, 1, pointsOffset, 0);
 
 	//
-	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.program->desc_idxs1[contextTyped.idx]++;
+	contextTyped.program->desc_idxs2[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//
@@ -6867,11 +6806,11 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	// check if desc left
-	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
-	auto desc_set = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]];
+	auto desc_set = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6938,11 +6877,11 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
+	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]], 0, nullptr);
 	vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], numGroupsX, numGroupsY, numGroupsZ);
 
 	//
-	contextTyped.program->desc_idxs[contextTyped.idx]++;
+	contextTyped.program->desc_idxs1[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//

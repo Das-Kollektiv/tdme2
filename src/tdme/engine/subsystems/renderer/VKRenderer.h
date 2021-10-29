@@ -63,7 +63,7 @@ private:
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
-	static constexpr int DESC_MAX { 4096 };
+	static constexpr int DESC_MAX { 2048 };
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
@@ -152,9 +152,12 @@ private:
 		unordered_map<int32_t, string> uniforms;
 		uint32_t layout_bindings { 0 };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
-		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
-		vector<uint32_t> desc_idxs;
+		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets1;
+		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2;
+		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };
+		vector<uint32_t> desc_idxs1;
+		vector<uint32_t> desc_idxs2;
 		int32_t id { 0 };
 	};
 
@@ -351,10 +354,11 @@ private:
 	int white_texture_samplercube_default_id { 0 };
 	texture_type* white_texture_samplercube_default { nullptr };
 
-	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
+	VkDescriptorPool desc_pool1 { VK_NULL_HANDLE };
+	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -419,13 +423,11 @@ private:
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
-	void createObjectsRenderingProgram(program_type* program);
+	void createRenderProgram(program_type* program);
 	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
-	void createPointsRenderingProgram(program_type* program);
 	pipeline_type* createPointsRenderingPipeline(int contextIdx, program_type* program);
 	void setupPointsRenderingPipeline(int contextIdx, program_type* program);
-	void createLinesRenderingProgram(program_type* program);
 	pipeline_type* createLinesRenderingPipeline(int contextIdx, program_type* program);
 	void setupLinesRenderingPipeline(int contextIdx, program_type* program);
 	void createSkinningComputingProgram(program_type* program);

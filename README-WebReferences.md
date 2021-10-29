@@ -46,6 +46,7 @@
   - https://jogamp.org/joal-demos/www/
   - https://jogamp.org/wiki/index.php/Jogl_Tutorial
   - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+  - https://www.reddit.com/r/vulkan/comments/4u7z7w/multiple_vkdescriptorsetlayouts_in_the/d5nkyht/
   - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
   - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
   - https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
@@ -56,6 +57,7 @@
   - https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
   - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
   - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
+  - https://vkguide.dev/docs/chapter-4/storage_buffers/
   - https://vulkan-tutorial.com
   - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
