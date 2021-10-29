@@ -1864,7 +1864,7 @@ void VKRenderer::finishFrame()
 			textures.erase(textureObjectIt);
 			delete texture;
 			for (auto& context: contexts) context.texture_vector[textureId] = nullptr;
-			free_texture_ids.push_back(textureId);
+			// free_texture_ids.push_back(textureId); // TODO: enable me again if texture descriptors sets are fixes
 		}
 		textures_rwlock.unlock();
 		dispose_textures.clear();
@@ -1927,7 +1927,7 @@ void VKRenderer::finishFrame()
 	for (auto program: programList) {
 		if (program == nullptr) continue;
 		for (auto i = 0; i < program->desc_idxs1.size(); i++) program->desc_idxs1[i] = 0;
-		for (auto i = 0; i < program->desc_idxs2.size(); i++) program->desc_idxs2[i] = 0;
+		//for (auto i = 0; i < program->desc_idxs2.size(); i++) program->desc_idxs2[i] = 0; // TODO: enable me again if texture descriptors sets are fixes
 	}
 
 	//
@@ -3636,6 +3636,7 @@ int32_t VKRenderer::createProgram(int type)
 	program.id = programList.size();
 	program.desc_sets1.resize(Engine::getThreadCount());
 	program.desc_sets2.resize(Engine::getThreadCount());
+	program.desc_sets2_cache.resize(Engine::getThreadCount());
 	program.desc_idxs1.resize(Engine::getThreadCount());
 	program.desc_idxs2.resize(Engine::getThreadCount());
 	for (auto i = 0; i < program.desc_idxs1.size(); i++) program.desc_idxs1[i] = 0;
@@ -6190,6 +6191,8 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	auto samplerIdx = 0;
+	auto uboIdx = 0;
+	uint64_t desc_set2_cache_id = 0LL;
 	for (auto shader: contextTyped.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
@@ -6241,6 +6244,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 						.imageView = boundTexture.view,
 						.imageLayout = boundTexture.layout
 					};
+					desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
 				}
 			}
 			contextTyped.descriptor_write_set[uniform->position] = {
@@ -6263,6 +6267,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			continue;
 		}
 
+		//
 		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
 		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
@@ -6288,10 +6293,26 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
 			.pTexelBufferView = nullptr
 		};
+
+		//
+		uboIdx++;
+	}
+
+	// find desc2_set from cache or update it
+	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
+	auto desc_set2_cache_it = desc_set2_cache.find(desc_set2_cache_id);
+	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
+	if (desc_set2_cache_hit == false) {
+		contextTyped.program->desc_idxs2[contextTyped.idx]++;
+	} else {
+		desc_set2 = desc_set2_cache_it->second;
 	}
 
 	//
-	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+	vkUpdateDescriptorSets(device, desc_set2_cache_hit == true?uboIdx:contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+
+	//
+	if (desc_set2_cache_hit == false) desc_set2_cache[desc_set2_cache_id] = desc_set2;
 
 	// descriptor sets
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
@@ -6329,7 +6350,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	contextTyped.program->desc_idxs1[contextTyped.idx]++;
-	contextTyped.program->desc_idxs2[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//

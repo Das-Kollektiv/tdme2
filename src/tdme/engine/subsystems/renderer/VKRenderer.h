@@ -154,6 +154,7 @@ private:
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets1;
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2;
+		vector<unordered_map<uint64_t, VkDescriptorSet>> desc_sets2_cache;
 		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };
 		vector<uint32_t> desc_idxs1;
@@ -358,7 +359,7 @@ private:
 	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
