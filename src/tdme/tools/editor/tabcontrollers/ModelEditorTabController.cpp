@@ -35,6 +35,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -87,6 +88,7 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::misc::GenerateBillboardLOD;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -1824,6 +1826,71 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				ModelEditorTabController* modelEditorTabController;
 			};
 			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
+
+			// generate billboard lod
+			class OnModelGenerateBillboardLodAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = modelEditorTabController->getView()->getPrototype();
+					if (prototype == nullptr) return;
+					auto model = prototype->getModel();
+					auto fileName = prototype->getModelFileName();
+					try {
+						if (prototype->getLODLevel2() != nullptr && prototype->getLODLevel3() != nullptr) {
+							throw ExceptionBase("All 3 LOD levels are in use");
+						}
+						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+						auto billboardModelPathName = Tools::getPathName(fileName);
+						auto billboardModelFileName = Tools::removeFileEnding(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+						auto billboardLODModel = GenerateBillboardLOD::generateBillboardLOD(
+							model,
+							billboardModelPathName,
+							billboardModelFileName
+						);
+						if (prototype->getLODLevel2() == nullptr) {
+							prototype->setLODLevel2(
+								new PrototypeLODLevel(
+									LODObject3D::LODLEVELTYPE_MODEL,
+									billboardModelPathName + "/" + billboardModelFileName,
+									billboardLODModel,
+									75.0f
+								)
+							);
+						} else
+						if (prototype->getLODLevel2() == nullptr) {
+							prototype->setLODLevel3(
+								new PrototypeLODLevel(
+									LODObject3D::LODLEVELTYPE_MODEL,
+									billboardModelPathName + "/" + billboardModelFileName,
+									billboardLODModel,
+									150.0f
+								)
+							);
+						}
+						modelEditorTabController->getView()->reloadPrototype();
+					} catch (Exception& exception) {
+						modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+					}
+				}
+				OnModelGenerateBillboardLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+
+			class EnqueueOnModelGenerateBillboardLodAction: public virtual Action {
+				public:
+					void performAction() override {
+						Engine::getInstance()->enqueueAction(new OnModelGenerateBillboardLodAction(modelEditorTabController));
+					}
+					EnqueueOnModelGenerateBillboardLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+			};
+
+			popUps->getContextMenuScreenController()->addMenuItem("Generate billboard LOD", "contextmenu_generatebillboardlod", new EnqueueOnModelGenerateBillboardLodAction(this));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);

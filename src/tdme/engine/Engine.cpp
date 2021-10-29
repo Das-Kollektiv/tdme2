@@ -1210,18 +1210,18 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 
 void Engine::display()
 {
-	// finish last frame
-	if (this == Engine::instance) Engine::renderer->finishFrame();
-
-	// set current engine
-	currentEngine = this;
-
 	// execute enqueued actions
 	for (auto action: actions) {
 		action->performAction();
 		delete action;
 	}
 	actions.clear();
+
+	// finish last frame
+	if (this == Engine::instance) Engine::renderer->finishFrame();
+
+	// set current engine
+	currentEngine = this;
 
 	// init frame
 	if (this == Engine::instance) Engine::renderer->initializeFrame();
@@ -1946,7 +1946,7 @@ void Engine::doneGUIMode()
 		FrameBuffer::disableFrameBuffer();
 }
 
-bool Engine::makeScreenshot(const string& pathName, const string& fileName)
+bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool removeAlphaChannel)
 {
 	// use framebuffer if we have one
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
@@ -1969,7 +1969,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 		pixels
 	);
 	texture->acquireReference();
-	PNGTextureWriter::write(texture, pathName, fileName);
+	PNGTextureWriter::write(texture, pathName, fileName, removeAlphaChannel);
 	texture->releaseReference();
 
 	// unuse framebuffer if we have one

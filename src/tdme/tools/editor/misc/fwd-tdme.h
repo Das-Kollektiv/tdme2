@@ -9,6 +9,7 @@ namespace misc {
 	struct CameraInputHandlerEventHandler;
 	class CameraRotationInputHandler;
 	struct CameraRotationInputHandlerEventHandler;
+	class GenerateBillboardLOD;
 	class GenerateConvexMeshes;
 	class Gizmo;
 	class PopUps;
