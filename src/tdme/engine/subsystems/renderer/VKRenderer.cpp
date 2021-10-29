@@ -6172,7 +6172,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	}
 	// check if desc2 left
 	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
 		return;
 	}
 	//
@@ -6440,12 +6440,12 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	// check if desc left
 	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
 	// check if desc2 left
 	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
 		return;
 	}
 	//
@@ -6599,12 +6599,12 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	// check if desc left
 	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
 		return;
 	}
 	// check if desc2 left
 	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
 		return;
 	}
 	//
