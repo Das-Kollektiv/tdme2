@@ -292,7 +292,8 @@ void ModelEditorTabController::setOutlinerAddDropDownContent() {
 		string("<dropdown-option text=\"BV\" value=\"boundingvolume\" />\n") +
 		string("<dropdown-option text=\"Sound\" value=\"sound\" />\n") +
 		string("<dropdown-option text=\"Animation\" value=\"animation\" />\n") +
-		string("<dropdown-option text=\"LOD\" value=\"lod\" />\n")
+		string("<dropdown-option text=\"LOD\" value=\"lod\" />\n") +
+		string("<dropdown-option text=\"LOD None\" value=\"lod_none\" />\n")
 	);
 }
 
@@ -1506,12 +1507,15 @@ void ModelEditorTabController::createLOD() {
 	{
 	public:
 		void performAction() override {
+			auto lodLevelIdx = -1;
 			PrototypeLODLevel* lodLevel = nullptr;
 			if (modelEditorTabController->view->getPrototype()->getLODLevel2() == nullptr) {
 				lodLevel = modelEditorTabController->getLODLevel(2);
+				lodLevelIdx = 2;
 			} else
 			if (modelEditorTabController->view->getPrototype()->getLODLevel3() == nullptr) {
 				lodLevel = modelEditorTabController->getLODLevel(3);
+				lodLevelIdx = 3;
 			}
 			if (lodLevel == nullptr) return;
 
@@ -1534,7 +1538,7 @@ void ModelEditorTabController::createLOD() {
 				Console::println(string("OnLoadLODModel::performAction(): An error occurred: ") + exception.what());;
 				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
-			modelEditorTabController->view->getEditorView()->reloadTabOutliner();
+			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevelIdx) + ".model");
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1566,6 +1570,21 @@ void ModelEditorTabController::createLOD() {
 		true,
 		new OnLoadLODModel(this)
 	);
+}
+
+void ModelEditorTabController::createLODNone() {
+	PrototypeLODLevel* lodLevel = nullptr;
+	if (view->getPrototype()->getLODLevel2() == nullptr) {
+		lodLevel = getLODLevel(2);
+	} else
+	if (view->getPrototype()->getLODLevel3() == nullptr) {
+		lodLevel = getLODLevel(3);
+	}
+	if (lodLevel == nullptr) return;
+
+	lodLevel->setType(LODObject3D::LODLEVELTYPE_IGNORE);
+	view->getEditorView()->reloadTabOutliner();
+	view->getPopUps()->getFileDialogScreenController()->close();
 }
 
 void ModelEditorTabController::setLODDetails(int lodLevel) {
@@ -1686,6 +1705,9 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		} else
 		if (addOutlinerType == "lod") {
 			createLOD();
+		} else
+		if (addOutlinerType == "lod_none") {
+			createLODNone();
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {

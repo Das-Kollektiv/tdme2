@@ -415,6 +415,11 @@ public:
 	void createLOD();
 
 	/**
+	 * Create LOD none
+	 */
+	void createLODNone();
+
+	/**
 	 * Set LOD details
 	 * @param lodLevel lod level
 	 */

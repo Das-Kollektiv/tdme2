@@ -168,10 +168,10 @@ void LODTest::initialize()
 			"tree." + to_string(treeIdx++),
 			treePine,
 			LODObject3D::LODLEVELTYPE_MODEL,
-			100.0f,
+			125.0f,
 			treePineLOD2,
-			LODObject3D::LODLEVELTYPE_NONE,
-			0.0f,
+			LODObject3D::LODLEVELTYPE_IGNORE,
+			250.0f,
 			nullptr
 		);
 		// try to fix missing/different lighting of LOD2 object plane

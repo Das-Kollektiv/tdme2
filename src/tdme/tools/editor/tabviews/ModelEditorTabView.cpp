@@ -248,7 +248,7 @@ int ModelEditorTabView::getLODLevel() const {
 void ModelEditorTabView::setLODLevel(int lodLevel) {
 	if (this->lodLevel != lodLevel) {
 		this->lodLevel = lodLevel;
-		reloadPrototype();
+		initModel(false);
 	}
 }
 
