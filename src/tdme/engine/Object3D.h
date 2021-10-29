@@ -72,7 +72,9 @@ private:
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
+	uint8_t uniqueShaderId { 0 };
 	string distanceShaderId { "" };
+	uint8_t uniqueDistanceShaderId { 0 };
 	float distanceShaderDistance { 50.0f };
 	string reflectionEnvironmentMappingId;
 	bool reflectionEnvironmentMappingPositionSet { false };
@@ -320,10 +322,24 @@ public:
 	void setShader(const string& id);
 
 	/**
+	 * @return unique shader id
+	 */
+	inline uint8_t getUniqueShaderId() {
+		return uniqueShaderId;
+	}
+
+	/**
 	 * @return distance shader id
 	 */
 	inline const string& getDistanceShader() {
 		return distanceShaderId;
+	}
+
+	/**
+	 * @return unique distance shader id
+	 */
+	inline uint8_t getUniqueDistanceShaderId() {
+		return uniqueDistanceShaderId;
 	}
 
 	/**

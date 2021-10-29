@@ -233,12 +233,12 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
 			if (object->renderPass != renderPass) continue;
-			auto objectShader = object->getDistanceShader().length() == 0?
-				object->getShader():
+			auto objectUniqueShaderId = object->getDistanceShader().empty() == true?
+				object->getUniqueShaderId():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
-					object->getShader():
-					object->getDistanceShader();
-			objectsByShaderMap[objectShader].push_back(object);
+					object->getUniqueShaderId():
+					object->getUniqueDistanceShaderId();
+			objectsByShaderMap[objectUniqueShaderId].push_back(object);
 		}
 
 		auto elementsIssued = 0;
@@ -538,7 +538,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				// shader
 				auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 				auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
-				auto objectShader =
+				auto& objectShader =
 					distanceShader == false?
 						object->getShader():
 						object->getDistanceShader();
@@ -880,7 +880,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					// shader
 					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 					auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
-					auto objectShader =
+					auto& objectShader =
 						distanceShader == false?
 							object->getShader():
 							object->getDistanceShader();

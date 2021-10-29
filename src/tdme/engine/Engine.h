@@ -225,6 +225,8 @@ private:
 		vector<Object3D*> ezrObjects;
 	};
 
+	static unordered_map<string, uint8_t> uniqueShaderIds;
+
 	int32_t width { -1 };
 	int32_t height { -1 };
 	int32_t scaledWidth { -1 };
@@ -296,7 +298,7 @@ private:
 		int idx;
 		RealtimeQueue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
-		unordered_map<string, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
+		unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
 		volatile int elementsProcessed { 0 };
 
 	private:
@@ -666,6 +668,19 @@ public:
 	 */
 	inline static void setTransformationsComputingReduction2Distance(float transformationsComputingReduction2Distance) {
 		Engine::transformationsComputingReduction2Distance = transformationsComputingReduction2Distance;
+	}
+
+	/**
+	 * @return unique shader id
+	 */
+	static uint8_t getUniqueShaderId(const string& shaderId) {
+		auto uniqueShaderIdIt = uniqueShaderIds.find(shaderId);
+		if (uniqueShaderIdIt == uniqueShaderIds.end()) {
+			auto uniqueShaderId = uniqueShaderIds.size() + 1;
+			uniqueShaderIds[shaderId] = uniqueShaderId;
+			return uniqueShaderId;
+		}
+		return uniqueShaderIdIt->second;
 	}
 
 	/**

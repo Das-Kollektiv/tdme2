@@ -84,7 +84,7 @@ private:
 	Renderer* renderer { nullptr };
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<string, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
+	unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -93,7 +93,7 @@ private:
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	int threadCount;
 	vector<Object3DRenderContext> contexts;
-	unordered_map<string, vector<Object3D*>> objectsByShaderMap;
+	unordered_map<uint8_t, vector<Object3D*>> objectsByShaderMap;
 
 	/**
 	 * Renders transparent faces
@@ -187,7 +187,7 @@ private:
 		int threadIdx,
 		Entity::RenderPass renderPass,
 		const vector<Object3D*>& objects,
-		unordered_map<string, unordered_map<Model*, vector<Object3D*>>>& objectsByShadersAndModels,
+		unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
@@ -202,12 +202,12 @@ private:
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
 			if (object->renderPass != renderPass) continue;
-			auto objectShader = object->getDistanceShader().length() == 0?
-				object->getShader():
+			auto objectUniqueShaderId = object->getDistanceShader().empty() == true?
+				object->getUniqueShaderId():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
-					object->getShader():
-					object->getDistanceShader();
-			auto& objectsByShaders = objectsByShadersAndModels[objectShader];
+					object->getUniqueShaderId():
+					object->getUniqueDistanceShaderId();
+			auto& objectsByShaders = objectsByShadersAndModels[objectUniqueShaderId];
 			auto& objectsByModel = objectsByShaders[object->getModel()];
 			objectsByModel.push_back(object);
 		}

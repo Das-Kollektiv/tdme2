@@ -208,6 +208,7 @@ int32_t Engine::environmentMappingHeight = 2048;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 map<string, Engine::Shader> Engine::shaders;
+unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
 RealtimeQueue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;

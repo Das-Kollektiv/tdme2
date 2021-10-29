@@ -25,10 +25,12 @@ using tdme::utilities::StringTools;
 
 Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances)
 {
+	setShader("default");
 }
 
 Object3D::Object3D(const string& id, Model* model): Object3DInternal(id, model, 1)
 {
+	setShader("default");
 }
 
 void Object3D::setEngine(Engine* engine)
@@ -115,6 +117,7 @@ void Object3D::setShader(const string& id) {
 		shaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
 		shaderParameters.setShader(shaderId);
 	}
+	uniqueShaderId = Engine::getUniqueShaderId(shaderId);
 }
 
 void Object3D::setDistanceShader(const string& id) {
@@ -126,4 +129,5 @@ void Object3D::setDistanceShader(const string& id) {
 		distanceShaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
 		distanceShaderParameters.setShader(distanceShaderId);
 	}
+	uniqueDistanceShaderId = Engine::getUniqueShaderId(distanceShaderId);
 }
