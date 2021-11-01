@@ -652,6 +652,7 @@ all: \
 	init-mains \
 	AngleTest \
 	AudioTest \
+	ContainerTest \
 	CrashTest \
 	EngineTest \
 	EntityHierarchyTest \
@@ -717,19 +718,22 @@ clean:
 clean-mains: 
 	rmdir /s /q $(OBJ)
 
-AngleTest: 
+AngleTest:
 	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 	
-AudioTest: 
+AudioTest:
 	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-CrashTest: 
+ContainerTest:
+	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+CrashTest:
 	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-EngineTest: 
+EngineTest:
 	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-EntityHierarchyTest: 
+EntityHierarchyTest:
 	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 HTTPClientTest:
@@ -738,7 +742,7 @@ HTTPClientTest:
 HTTPDownloadClientTest:
     cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-LODTest: 
+LODTest:
 	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 FlowMapTest:
@@ -747,7 +751,7 @@ FlowMapTest:
 FlowMapTest2:
 	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-FoliageTest: 
+FoliageTest:
 	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 MathOperatorTest:
@@ -756,31 +760,31 @@ MathOperatorTest:
 MiniScriptTest:
 	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-PathFindingTest: 
+PathFindingTest:
 	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-PhysicsTest1: 
+PhysicsTest1:
 	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-PhysicsTest2: 
+PhysicsTest2:
 	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-PhysicsTest3: 
+PhysicsTest3:
 	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-PhysicsTest4: 
+PhysicsTest4:
 	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-RayTracingTest: 
+RayTracingTest:
 	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-SkinningTest: 
+SkinningTest:
 	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 ThreadingTest:
 	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-TreeTest: 
+TreeTest:
     cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 UDPClientTest:
@@ -789,7 +793,7 @@ UDPClientTest:
 UDPServerTest:
 	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-WaterTest: 
+WaterTest:
 	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 archive:

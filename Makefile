@@ -850,6 +850,7 @@ endif
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/ContainerTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/EntityHierarchyTest-main.cpp \
