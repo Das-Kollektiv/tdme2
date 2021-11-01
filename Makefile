@@ -256,12 +256,12 @@ SRCS = \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/Object3DRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystem.cpp \
+	src/tdme/engine/OctTreePartition.cpp \
 	src/tdme/engine/ParticleSystemGroup.cpp \
-	src/tdme/engine/PartitionNone.cpp \
-	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PointsParticleSystem.cpp \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/SceneConnector.cpp \
+	src/tdme/engine/SimplePartition.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \

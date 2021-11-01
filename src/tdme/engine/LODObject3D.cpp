@@ -23,7 +23,8 @@ LODObject3D::LODObject3D(
 	Model* modelLOD2,
 	LODLevelType levelTypeLOD3,
 	float modelLOD3MinDistance,
-	Model* modelLOD3
+	Model* modelLOD3,
+	float lodNoneMinDistance
 ):
 	id(id),
 	modelLOD1(modelLOD1),
@@ -32,7 +33,8 @@ LODObject3D::LODObject3D(
 	modelLOD2(modelLOD2),
 	levelTypeLOD3(levelTypeLOD3),
 	modelLOD3MinDistance(modelLOD3MinDistance),
-	modelLOD3(modelLOD3)
+	modelLOD3(modelLOD3),
+	lodNoneMinDistance(lodNoneMinDistance)
 {
 	this->enabled = true;
 	this->pickable = false;

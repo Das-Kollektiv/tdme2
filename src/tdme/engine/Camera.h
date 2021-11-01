@@ -45,12 +45,6 @@ private:
 	Matrix4x4 mvpMatrix;
 	Matrix4x4 mvpInvertedMatrix;
 	Frustum* frustum { nullptr };
-	float lastZNear;
-	float lastZFar;
-	Vector3 lastForwardVector;
-	Vector3 lastSideVector;
-	Vector3 lastLookFrom;
-	bool frustumChanged;
 	bool viewPortEnabled;
 	int viewPortLeft;
 	int viewPortTop;
@@ -343,13 +337,6 @@ public:
 	 */
 	inline int getViewPortHeight() {
 		return viewPortHeight;
-	}
-
-	/**
-	 * @return if frustum has changed
-	 */
-	inline bool hasFrustumChanged() {
-		return frustumChanged;
 	}
 
 	/**

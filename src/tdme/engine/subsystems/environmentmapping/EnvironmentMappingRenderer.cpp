@@ -135,6 +135,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 		camera->setSideVector(sideVectors[i]);
 		camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
 		camera->update(engine->renderer->getDefaultContext(), width, height);
+		camera->getFrustum()->update();
 
 		// set up clear color
 		Engine::renderer->setClearColor(
@@ -148,7 +149,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 		Engine::renderer->clear(engine->renderer->CLEAR_DEPTH_BUFFER_BIT | engine->renderer->CLEAR_COLOR_BUFFER_BIT);
 
 		//
-		engine->computeTransformations(camera->getFrustum(), visibleDecomposedEntities, false, false);
+		engine->computeTransformations(camera, visibleDecomposedEntities, false, false);
 
 		// do a render pass
 		engine->render(

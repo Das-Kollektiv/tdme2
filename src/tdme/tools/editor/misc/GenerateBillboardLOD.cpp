@@ -18,7 +18,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SimplePartition.h>
 #include <tdme/math/Math.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
@@ -46,7 +46,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::Engine;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
-using tdme::engine::PartitionNone;
+using tdme::engine::SimplePartition;
 using tdme::math::Math;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
@@ -60,7 +60,7 @@ Model* GenerateBillboardLOD::generateBillboardLOD(
 	const string& fileName
 ) {
 	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true);
-	osEngine->setPartition(new PartitionNone());
+	osEngine->setPartition(new SimplePartition());
 	osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 	//
 	auto light = osEngine->getLightAt(0);
@@ -82,7 +82,7 @@ Model* GenerateBillboardLOD::generateBillboardLOD(
 	//
 	auto camera = osEngine->getCamera();
 	camera->setLookAt(boundingBox->getCenter());
-	camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, maxAxisDimension * 0.5f)));
+	camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, boundingBox->getCenter().getZ() + maxAxisDimension * 1.25f)));
 	//
 	osEngine->addEntity(new Object3D("model", model));
 	//

@@ -162,17 +162,18 @@ void LODTest::initialize()
 	auto treePine = modelDeleter.add(ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.tm"));
 	auto treePineLOD2 = modelDeleter.add(ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.tm"));
 	int treeIdx = 0;
-	for (float z = -240.0f; z < 240.0f; z+= 5.0f)
-	for (float x = -240.0f; x < 240.0f; x+= 5.0f) {
+	for (float z = -960.0f; z < 960.0f; z+= 5.0f)
+	for (float x = -960.0f; x < 960.0f; x+= 5.0f) {
 		auto entity = new LODObject3D(
 			"tree." + to_string(treeIdx++),
 			treePine,
 			LODObject3D::LODLEVELTYPE_MODEL,
-			125.0f,
+			75.0f,
 			treePineLOD2,
 			LODObject3D::LODLEVELTYPE_IGNORE,
 			250.0f,
-			nullptr
+			nullptr,
+			250.0f
 		);
 		// try to fix missing/different lighting of LOD2 object plane
 		entity->setEffectColorMulLOD2(Color4(3.7f, 3.7f, 3.7f, 1.0f));

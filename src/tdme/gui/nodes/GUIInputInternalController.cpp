@@ -179,8 +179,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	} else
 	if (mouseDraggingInit == true || mouseDraggingSlideValueActive == true || mouseDraggingSelectionActive == true) {
 		if (mouseDraggingInit == true &&
-			(Math::abs(mouseDragPosition[0] - event->getXUnscaled()) >= 5 ||
-			Math::abs(mouseDragPosition[1] - event->getYUnscaled()) >= 5)) {
+			Math::abs(mouseDragPosition[0] - event->getXUnscaled()) >= 10) {
 			mouseDraggingInit = false;
 			if (editMode == false) {
 				mouseDraggingSlideValueActive = true;

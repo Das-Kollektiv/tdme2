@@ -1,27 +1,29 @@
-#include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SimplePartition.h>
 
+#include <algorithm>
 #include <vector>
 
 #include <tdme/engine/Entity.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
+using std::find;
 using std::vector;
 
 using tdme::engine::Entity;
-using tdme::engine::PartitionNone;
+using tdme::engine::SimplePartition;
 using tdme::utilities::VectorIteratorMultiple;
 
-PartitionNone::PartitionNone()
+SimplePartition::SimplePartition()
 {
 	arrayListIteratorMultiple.addVector(&entities);
 }
 
-void PartitionNone::reset()
+void SimplePartition::reset()
 {
 	entities.clear();
 }
 
-void PartitionNone::addEntity(Entity* entity)
+void SimplePartition::addEntity(Entity* entity)
 {
 	for (int i = 0; i < entities.size(); i++) {
 		if (entities[i] == entity) return;
@@ -30,11 +32,11 @@ void PartitionNone::addEntity(Entity* entity)
 	entities.push_back(entity);
 }
 
-void PartitionNone::updateEntity(Entity* entity)
+void SimplePartition::updateEntity(Entity* entity)
 {
 }
 
-void PartitionNone::removeEntity(Entity* entity)
+void SimplePartition::removeEntity(Entity* entity)
 {
 	for (int i = 0; i < entities.size(); i++) {
 		if (entities[i] == entity) {
@@ -44,7 +46,11 @@ void PartitionNone::removeEntity(Entity* entity)
 	}
 }
 
-const vector<Entity*>& PartitionNone::getVisibleEntities(Frustum* frustum)
+const vector<Entity*>& SimplePartition::getVisibleEntities(Frustum* frustum)
 {
 	return entities;
+}
+
+bool SimplePartition::isVisibleEntity(Entity* entity) {
+	return find(entities.begin(), entities.end(), entity) != entities.end();
 }

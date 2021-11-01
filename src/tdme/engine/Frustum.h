@@ -61,7 +61,7 @@ public:
 	/**
 	 * Setups frustum, should be called if frustum did change
 	 */
-	void updateFrustum();
+	void update();
 
 	/**
 	 * Checks if given vertex is in frustum

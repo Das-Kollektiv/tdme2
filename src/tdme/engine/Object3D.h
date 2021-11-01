@@ -86,27 +86,33 @@ private:
 	int64_t timeTransformationsLast { -1LL };
 	EntityShaderParameters shaderParameters;
 	EntityShaderParameters distanceShaderParameters;
+	bool needsPreRender { false };
+
+	/**
+	 * @return if this object3d instance needs a computeTransformations() call each frame
+	 */
+	inline bool isNeedsComputeTransformations() {
+		return model->hasSkinning() == true || model->hasAnimations() == true;
+	}
 
 	/**
 	 * Compute animations
 	 * @param context context
 	 */
 	inline void computeTransformations(void* context) {
-		if (getModel()->hasSkinning() == true || getModel()->hasAnimations() == true) {
-			auto timing = engine->getTiming();
-			auto currentFrameAtTime = timing->getCurrentFrameAtTime();
-			auto currentFrame = timing->getFrame();
-			auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
-			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
-				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
-			} else
-			if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
-				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
-			}
-			computeTransformations(context, timeTransformationsLast, currentFrameAtTime);
-			frameTransformationsLast = timing->getFrame();
-			timeTransformationsLast = currentFrameAtTime;
+		auto timing = engine->getTiming();
+		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
+		auto currentFrame = timing->getFrame();
+		auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
+		if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
+			if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
+		} else
+		if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
+			if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
 		}
+		computeTransformations(context, timeTransformationsLast, currentFrameAtTime);
+		frameTransformationsLast = timing->getFrame();
+		timeTransformationsLast = currentFrameAtTime;
 	}
 
 	/**
@@ -117,6 +123,15 @@ private:
 	 */
 	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
 		Object3DInternal::computeTransformations(context, lastFrameAtTime, currentFrameAtTime);
+	}
+
+	/**
+	 * @return if this object3d instance needs a preRender() call each frame
+	 */
+	inline bool isNeedsPreRender() {
+		return
+			needsPreRender == true ||
+			(Engine::animationProcessingTarget != Engine::GPU && model->hasSkinning() == true);
 	}
 
 	/**
@@ -159,6 +174,13 @@ public:
 	 * @param model model
 	 */
 	Object3D(const string& id, Model* model);
+
+	/**
+	 * Set up if this object3d instance needs a preRender() call each frame
+	 */
+	inline void setNeedsPreRender(bool needsPreRender) {
+		this->needsPreRender = needsPreRender;
+	}
 
 	// overridden methods
 	inline EntityType getEntityType() override {

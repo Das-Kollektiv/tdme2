@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -13,13 +14,13 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
+using std::list;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -32,7 +33,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Partition;
-using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
@@ -42,20 +42,43 @@ using tdme::utilities::VectorIteratorMultiple;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::PartitionOctTree final
-	: public Partition
+class tdme::engine::OctTreePartition final: public Partition
 {
-	friend class PartitionOctTree_PartitionTreeNode;
-
 private:
+	struct PartitionTreeNode
+	{
+		// partition size
+		float partitionSize;
+
+		// x, y, z position
+		int32_t x;
+		int32_t y;
+		int32_t z;
+
+		// parent node
+		PartitionTreeNode* parent { nullptr };
+
+		// node bounding volume
+		BoundingBox bv;
+
+		// sub nodes of oct tree nodes
+		list<PartitionTreeNode> subNodes;
+
+		// sub nodes of oct tree nodes by partition coordinate, only used in root node
+		unordered_map<string, PartitionTreeNode*> subNodesByCoordinate;
+
+		// or finally our partition entities
+		vector<Entity*> partitionEntities;
+	};
+
 	static constexpr float PARTITION_SIZE_MIN { 64.0f };
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator;
-	unordered_map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes;
+	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
-	unordered_set<void*> visibleEntitiesSet;
-	PartitionOctTree_PartitionTreeNode treeRoot;
+	unordered_set<Entity*> visibleEntitiesSet;
+	PartitionTreeNode treeRoot;
 
 	// overridden methods
 	void reset() override;
@@ -74,7 +97,7 @@ private:
 	 * @param partitionSize partition size
 	 * @param entity entity
 	 */
-	inline void updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity) {
+	inline void updatePartitionTree(PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity) {
 		// key
 		string key = to_string(x) + "," + to_string(y) + "," + to_string(z);
 		auto storedNodeIt = parent->subNodesByCoordinate.find(key);
@@ -83,7 +106,7 @@ private:
 		// check if exists
 		if (storedNode == nullptr) {
 			// if not add
-			PartitionOctTree_PartitionTreeNode node;
+			PartitionTreeNode node;
 			node.partitionSize = partitionSize;
 			node.x = x;
 			node.y = y;
@@ -146,7 +169,7 @@ private:
 	 * @param node node
 	 * @return partition empty
 	 */
-	inline bool isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* node) {
+	inline bool isPartitionNodeEmpty(PartitionTreeNode* node) {
 		// lowest level node has objects attached?
 		if (node->partitionEntities.size() > 0) {
 			return false;
@@ -164,10 +187,10 @@ private:
 	 * Remove partition node, should be empty
 	 * @param node node
 	 */
-	inline void removePartitionNode(PartitionOctTree_PartitionTreeNode* node) {
+	inline void removePartitionNode(PartitionTreeNode* node) {
 		// lowest level node has objects attached?
 		if (node->partitionEntities.size() > 0) {
-			Console::println("PartitionOctTree::removePartitionNode(): partition has objects attached!!!");
+			Console::println("OctTreePartition::removePartitionNode(): partition has objects attached!!!");
 			node->partitionEntities.clear();
 		} else {
 			// otherwise check top level node sub nodes
@@ -185,7 +208,7 @@ private:
 	 * @param node node
 	 * @return number of look ups
 	 */
-	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node) {
+	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionTreeNode* node) {
 		auto lookUps = 1;
 		// check if given cbv collides with partition node bv
 		if (frustum->isVisible(&node->bv) == false) {
@@ -226,23 +249,26 @@ private:
 	 * @param node node
 	 * @param indent indent
 	 */
-	void dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent);
+	void dumpNode(PartitionTreeNode* node, int indent);
 
 	/**
 	 * Find entity
 	 * @param node node
 	 * @param entity entity
 	 */
-	void findEntity(PartitionOctTree_PartitionTreeNode* node, Entity* entity);
+	void findEntity(PartitionTreeNode* node, Entity* entity);
 
 public:
 	/**
 	 * Public constructor
 	 */
-	PartitionOctTree();
+	OctTreePartition();
 
 	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
+	inline bool isVisibleEntity(Entity* entity) override {
+		return visibleEntitiesSet.count(entity) == 1;
+	}
 
 	/**
 	 * Dump oct tree to console

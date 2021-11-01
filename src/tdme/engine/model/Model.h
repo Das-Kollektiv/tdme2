@@ -279,10 +279,12 @@ public:
 	 * @return if model has animations
 	 */
 	inline bool hasAnimations() {
+		// no registered animation
+		if (animationSetups.size() == 0) return false;
+		// default animation with frames > 0
 		return
-			animationSetups.size() == 0 ||
-			(getAnimationSetup(ANIMATIONSETUP_DEFAULT) != nullptr &&
-			getAnimationSetup(ANIMATIONSETUP_DEFAULT)->getFrames() > 0);
+			getAnimationSetup(ANIMATIONSETUP_DEFAULT) != nullptr &&
+			getAnimationSetup(ANIMATIONSETUP_DEFAULT)->getFrames() > 1;
 	}
 
 	/**

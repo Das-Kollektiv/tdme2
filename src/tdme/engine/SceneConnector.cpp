@@ -605,7 +605,6 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									}
 									foliagePartitionObject3DRenderGroup->setPickable(false);
 									foliagePartitionObject3DRenderGroup->setEnabled(enable);
-									engine->addEntity(foliagePartitionObject3DRenderGroup);
 									object3DRenderGroupByShaderParameters[hash] = foliagePartitionObject3DRenderGroup;
 								}
 
@@ -623,6 +622,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 							foliagePartitionObject3DRenderGroup->updateRenderGroup();
 							foliagePartitionObject3DRenderGroup->setTranslation(translation);
 							foliagePartitionObject3DRenderGroup->update();
+							engine->addEntity(foliagePartitionObject3DRenderGroup);
 						}
 					}
 					partitionIdx++;

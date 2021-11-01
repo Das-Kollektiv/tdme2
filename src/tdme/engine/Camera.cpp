@@ -32,9 +32,6 @@ Camera::Camera(Renderer* renderer)
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
 	frustum = new Frustum(renderer);
-	lastZFar = -1.0f;
-	lastZNear = -1.0f;
-	frustumChanged = true;
 	viewPortEnabled = false;
 	viewPortLeft = 0;
 	viewPortTop = 0;
@@ -209,25 +206,6 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	//
 	mvpInvertedMatrix.set(modelViewMatrix).multiply(projectionMatrix).invert();
 	mvpMatrix.set(modelViewMatrix).multiply(projectionMatrix);
-
-	frustumChanged =
-		reshaped == true ||
-		lastZNear != zNear ||
-		lastZFar != zFar ||
-		lastForwardVector.equals(forwardVector) == false ||
-		lastSideVector.equals(sideVector) == false ||
-		lastLookFrom.equals(lookFrom) == false;
-
-	if (frustumChanged == true) {
-		// update frustum
-		frustum->updateFrustum(); // TODO: do frustum updating manually
-	}
-
-	lastZNear = zNear;
-	lastZFar = zFar;
-	lastForwardVector.set(forwardVector);
-	lastSideVector.set(sideVector);
-	lastLookFrom.set(lookFrom);
 
 	// viewport
 	#if defined(VULKAN)

@@ -1,4 +1,4 @@
-#include <tdme/engine/PartitionOctTree.h>
+#include <tdme/engine/OctTreePartition.h>
 
 #include <algorithm>
 #include <list>
@@ -12,7 +12,6 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
-#include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -31,23 +30,18 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
-using tdme::engine::PartitionOctTree;
-using tdme::engine::PartitionOctTree_PartitionTreeNode;
+using tdme::engine::OctTreePartition;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
 
-constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
-
-constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
-
-PartitionOctTree::PartitionOctTree()
+OctTreePartition::OctTreePartition()
 {
 	reset();
 }
 
-void PartitionOctTree::reset()
+void OctTreePartition::reset()
 {
 	this->entityPartitionNodes.clear();
 	this->visibleEntities.clear();
@@ -58,10 +52,10 @@ void PartitionOctTree::reset()
 	this->treeRoot.parent = nullptr;
 }
 
-void PartitionOctTree::addEntity(Entity* entity)
+void OctTreePartition::addEntity(Entity* entity)
 {
 	// update if already exists
-	vector<PartitionOctTree_PartitionTreeNode*>* thisEntityPartitions = nullptr;
+	vector<PartitionTreeNode*>* thisEntityPartitions = nullptr;
 	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId());
 	if (thisEntityPartitionsIt != entityPartitionNodes.end()) {
 		thisEntityPartitions = &thisEntityPartitionsIt->second;
@@ -85,17 +79,17 @@ void PartitionOctTree::addEntity(Entity* entity)
 	}
 }
 
-void PartitionOctTree::removeEntity(Entity* entity)
+void OctTreePartition::removeEntity(Entity* entity)
 {
 	// check if we have entity in oct tree
-	vector<PartitionOctTree_PartitionTreeNode*>* objectPartitionsVector = nullptr;
+	vector<PartitionTreeNode*>* objectPartitionsVector = nullptr;
 	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId());
 	if (objectPartitionsVectorIt != entityPartitionNodes.end()) {
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
 	if (objectPartitionsVector == nullptr || objectPartitionsVector->empty() == true) {
 		Console::println(
-			"PartitionOctTree::removeEntity(): '" +
+			"OctTreePartition::removeEntity(): '" +
 			entity->getId() +
 			"' not registered"
 		);
@@ -130,7 +124,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 	entityPartitionNodes.erase(objectPartitionsVectorIt);
 }
 
-const vector<Entity*>& PartitionOctTree::getVisibleEntities(Frustum* frustum)
+const vector<Entity*>& OctTreePartition::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
 	visibleEntitiesSet.clear();
@@ -141,7 +135,7 @@ const vector<Entity*>& PartitionOctTree::getVisibleEntities(Frustum* frustum)
 	return visibleEntities;
 }
 
-void PartitionOctTree::dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent) {
+void OctTreePartition::dumpNode(PartitionTreeNode* node, int indent) {
 	for (auto i = 0; i < indent; i++) Console::print("\t");
 	Console::println(to_string(node->x) + "/" + to_string(node->y) + "/" + to_string(node->z) + ": ");
 	for (auto entity: node->partitionEntities) {
@@ -151,13 +145,13 @@ void PartitionOctTree::dumpNode(PartitionOctTree_PartitionTreeNode* node, int in
 	for (auto subNode: node->subNodes) dumpNode(&subNode, indent + 1);
 }
 
-void PartitionOctTree::findEntity(PartitionOctTree_PartitionTreeNode* node, Entity* entity) {
+void OctTreePartition::findEntity(PartitionTreeNode* node, Entity* entity) {
 	for (auto nodeEntity: node->partitionEntities) {
-		if (nodeEntity == entity) Console::println("PartitionOctTree::findEntity(): found entity: " + entity->getId());
+		if (nodeEntity == entity) Console::println("OctTreePartition::findEntity(): found entity: " + entity->getId());
 	}
 	for (auto subNode: node->subNodes) findEntity(&subNode, entity);
 }
 
-void PartitionOctTree::dump() {
+void OctTreePartition::dump() {
 	dumpNode(&treeRoot, 0);
 }

@@ -26,15 +26,14 @@ namespace engine {
 	class Object3DModel;
 	class Object3DRenderGroup;
 	class ObjectParticleSystem;
+	class OctTreePartition;
 	class ParticleSystemEntity;
 	class ParticleSystemGroup;
 	class Partition;
-	class PartitionNone;
-	class PartitionOctTree;
-	class PartitionOctTree_PartitionTreeNode;
 	class PointsParticleSystem;
 	class Rotation;
 	class SceneConnector;
+	class SimplePartition;
 	class ShaderParameter;
 	class Timing;
 	class Transformations;

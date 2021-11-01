@@ -5,7 +5,7 @@
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -31,7 +31,7 @@ using std::string;
 using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::PartitionNone;
+using tdme::engine::SimplePartition;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -148,7 +148,7 @@ void EditorView::initialize()
 void EditorView::activate()
 {
 	engine->reset();
-	engine->setPartition(new PartitionNone());
+	engine->setPartition(new SimplePartition());
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(editorScreenController->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getColorPickerScreenController()->getScreenNode()->getId());

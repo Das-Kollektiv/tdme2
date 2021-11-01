@@ -73,10 +73,10 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/OctTreePartition.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
@@ -152,10 +152,10 @@ using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::OctTreePartition;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
-using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
@@ -229,11 +229,17 @@ void Engine::EngineThread::run() {
 		switch(element->type) {
 			case EngineThreadQueueElement::TYPE_NONE:
 				break;
+			case EngineThreadQueueElement::TYPE_PRERENDER:
+				element->engine->preRenderFunction(
+					element->objects,
+					idx
+				);
+				elementsProcessed++;
+				break;
 			case EngineThreadQueueElement::TYPE_TRANSFORMATIONS:
 				element->engine->computeTransformationsFunction(
 					element->objects,
-					idx,
-					element->transformations.computeTransformations
+					idx
 				);
 				elementsProcessed++;
 				break;
@@ -331,7 +337,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
 	offScreenEngine->camera = new Camera(renderer);
-	offScreenEngine->partition = new PartitionOctTree();
+	offScreenEngine->partition = new OctTreePartition();
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
 		offScreenEngine->lights[i] = Light(renderer, i);
@@ -381,26 +387,22 @@ void Engine::addEntity(Entity* entity)
 }
 
 void Engine::deregisterEntity(Entity* entity) {
-	auto hierarchicalId = entity->getId();
-	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
-
 	//
-	noFrustumCullingEntitiesById.erase(hierarchicalId);
+	noFrustumCullingEntities.erase(entity);
 	visibleDecomposedEntities.noFrustumCullingEntities.erase(
 		remove(
 			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
 			visibleDecomposedEntities.noFrustumCullingEntities.end(), entity
 		),
 		visibleDecomposedEntities.noFrustumCullingEntities.end());
-	autoEmitParticleSystemEntities.erase(hierarchicalId);
+	autoEmitParticleSystemEntities.erase(entity);
+	needsComputeTransformationsEntities.erase(entity);
+	needsPreRenderEntities.erase(entity);
 }
 
 void Engine::registerEntity(Entity* entity) {
-	auto hierarchicalId = entity->getId();
-	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
-
 	//
-	noFrustumCullingEntitiesById.erase(hierarchicalId);
+	noFrustumCullingEntities.erase(entity);
 	visibleDecomposedEntities.noFrustumCullingEntities.erase(
 		remove(
 			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
@@ -409,19 +411,44 @@ void Engine::registerEntity(Entity* entity) {
 		),
 		visibleDecomposedEntities.noFrustumCullingEntities.end()
 	);
-	autoEmitParticleSystemEntities.erase(hierarchicalId);
+	autoEmitParticleSystemEntities.erase(entity);
 
 	// add to no frustum culling
 	if (entity->isFrustumCulling() == false && entity->getParentEntity() == nullptr) {
 		// otherwise add to no frustum culling entities
-		noFrustumCullingEntitiesById[hierarchicalId] = entity;
+		noFrustumCullingEntities.insert(entity);
 		visibleDecomposedEntities.noFrustumCullingEntities.push_back(entity);
 	}
 
 	// add to auto emit particle system entities
 	auto particleSystemEntity = dynamic_cast<ParticleSystemEntity*>(entity);
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == true) {
-		autoEmitParticleSystemEntities[hierarchicalId] = particleSystemEntity;
+		autoEmitParticleSystemEntities.insert(particleSystemEntity);
+	}
+
+	// decompose to Object3D instances to do pre render
+	auto defaultContext = renderer->getDefaultContext();
+	DecomposedEntities decomposedEntities;
+	decomposeEntityType(entity, decomposedEntities, true);
+	for (auto object3D: decomposedEntities.ezrObjects) {
+		object3D->preRender(defaultContext);
+		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
+		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+	}
+	for (auto object3D: decomposedEntities.objects) {
+		object3D->preRender(defaultContext);
+		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
+		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+	}
+	for (auto object3D: decomposedEntities.objectsNoDepthTest) {
+		object3D->preRender(defaultContext);
+		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
+		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+	}
+	for (auto object3D: decomposedEntities.objectsPostPostProcessing) {
+		object3D->preRender(defaultContext);
+		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
+		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
 	}
 }
 
@@ -435,13 +462,11 @@ bool Engine::removeEntity(const string& id)
 	auto entity = entityByIdIt->second;
 
 	//
-	auto hierarchicalId = entity->getId();
-	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
-
-	//
 	entitiesById.erase(entityByIdIt);
-	autoEmitParticleSystemEntities.erase(hierarchicalId);
-	noFrustumCullingEntitiesById.erase(hierarchicalId);
+	autoEmitParticleSystemEntities.erase(entity);
+	noFrustumCullingEntities.erase(entity);
+	needsPreRenderEntities.erase(entity);
+	needsComputeTransformationsEntities.erase(entity);
 
 	// remove from partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
@@ -564,6 +589,22 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 			entity
 		),
 		decomposedEntities.environmentMappingEntities.end()
+	);
+	decomposedEntities.needsPreRenderEntities.erase(
+		remove(
+			decomposedEntities.needsPreRenderEntities.begin(),
+			decomposedEntities.needsPreRenderEntities.end(),
+			entity
+		),
+		decomposedEntities.needsPreRenderEntities.end()
+	);
+	decomposedEntities.needsComputeTransformationsEntities.erase(
+		remove(
+			decomposedEntities.needsComputeTransformationsEntities.begin(),
+			decomposedEntities.needsComputeTransformationsEntities.end(),
+			entity
+		),
+		decomposedEntities.needsComputeTransformationsEntities.end()
 	);
 }
 
@@ -723,7 +764,7 @@ void Engine::initialize()
 	}
 
 	// create partition
-	partition = new PartitionOctTree();
+	partition = new OctTreePartition();
 
 	// create lighting shader
 	lightingShader = new LightingShader(renderer);
@@ -933,6 +974,8 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.ezrObjects.clear();
 	decomposedEntites.noFrustumCullingEntities.clear();
 	decomposedEntites.environmentMappingEntities.clear();
+	decomposedEntites.needsPreRenderEntities.clear();
+	decomposedEntites.needsComputeTransformationsEntities.clear();
 }
 
 void Engine::initRendering()
@@ -947,15 +990,17 @@ void Engine::initRendering()
 	renderingInitiated = true;
 }
 
-void Engine::computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx, bool computeTransformations) {
+void Engine::preRenderFunction(vector<Object3D*>& objects, int threadIdx) {
 	auto context = renderer->getContext(threadIdx);
-	for (auto object: objects) {
-		object->preRender(context);
-		if (computeTransformations == true) object->computeTransformations(context);
-	}
+	for (auto object: objects) object->preRender(context);
 }
 
-inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities) {
+void Engine::computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx) {
+	auto context = renderer->getContext(threadIdx);
+	for (auto object: objects) object->computeTransformations(context);
+}
+
+inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities, bool decomposeAllEntities) {
 	switch (entity->getEntityType()) {
 		case Entity::ENTITYTYPE_OBJECT3D:
 			{
@@ -976,35 +1021,26 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 		case Entity::ENTITYTYPE_LODOBJECT3D:
 			{
 				auto lodObject = static_cast<LODObject3D*>(entity);
-				auto object = lodObject->determineLODObject(camera); /* TODO: use a variable camera */
-				if (object != nullptr) {
-					decomposedEntities.lodObjects.push_back(lodObject);
-					if (object->isDisableDepthTest() == true) {
-						decomposedEntities.objectsNoDepthTest.push_back(object);
-					} else
-					if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) {
-						decomposedEntities.objectsPostPostProcessing.push_back(object);
-					} else {
-						decomposedEntities.objects.push_back(object);
-					}
-					if (object->isEnableEarlyZRejection() == true) {
-						decomposedEntities.ezrObjects.push_back(object);
-					};
+				if (decomposeAllEntities == true) {
+					auto lod1Object = lodObject->getLOD1Object();
+					auto lod2Object = lodObject->getLOD2Object();
+					auto lod3Object = lodObject->getLOD3Object();
+					if (lod1Object != nullptr) decomposeEntityType(lod1Object, decomposedEntities);
+					if (lod2Object != nullptr) decomposeEntityType(lod2Object, decomposedEntities);
+					if (lod3Object != nullptr) decomposeEntityType(lod3Object, decomposedEntities);
+				} else {
+					auto object = lodObject->determineLODObject(camera);
+					if (object != nullptr) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
 				}
 			}
 			break;
 		case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
 			{
 				auto opse = static_cast<ObjectParticleSystem*>(entity);
-				for (auto object: opse->getEnabledObjects()) {
-					if (object->isDisableDepthTest() == true) {
-						decomposedEntities.objectsNoDepthTest.push_back(object);
-					} else
-					if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) {
-						decomposedEntities.objectsPostPostProcessing.push_back(object);
-					} else {
-						decomposedEntities.objects.push_back(object);
-					}
+				if (decomposeAllEntities == true) {
+					for (auto object: opse->getObjects()) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
+				} else {
+					for (auto object: opse->getEnabledObjects()) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
 				}
 				decomposedEntities.opses.push_back(opse);
 			}
@@ -1033,71 +1069,48 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.environmentMappingEntities.push_back(eme);
 			}
 			break;
+		case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
+			{
+				auto org = static_cast<Object3DRenderGroup*>(entity);
+				decomposedEntities.objectRenderGroups.push_back(org);
+				auto subEntity = org->getEntity();
+				if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities, decomposeAllEntities);
+			}
+			break;
+		case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+			{
+				auto psg = static_cast<ParticleSystemGroup*>(entity);
+				decomposedEntities.psgs.push_back(psg); \
+				for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities, decomposeAllEntities);
+			}
+			break;
+		case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+			{
+				auto eh = static_cast<EntityHierarchy*>(entity);
+				decomposedEntities.entityHierarchies.push_back(eh);
+				for (auto entityEh: eh->getEntities()) {
+					if (entityEh->isEnabled() == false && decomposeAllEntities == false) continue;
+					decomposeEntityType(entityEh, decomposedEntities, decomposeAllEntities);
+				}
+			}
+
 		default:
 			break;
 	}
 }
 
-inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, DecomposedEntities& decomposedEntities) {
-	// add visible entities to related lists by querying frustum
+inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, DecomposedEntities& decomposedEntities, bool decomposeAllEntities) {
 	for (auto entity: entities) {
-		switch (entity->getEntityType()) {
-			case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
-				{
-					auto org = static_cast<Object3DRenderGroup*>(entity);
-					decomposedEntities.objectRenderGroups.push_back(org);
-					auto subEntity = org->getEntity();
-					if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
-				}
-				break;
-			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
-				{
-					auto psg = static_cast<ParticleSystemGroup*>(entity);
-					decomposedEntities.psgs.push_back(psg); \
-					for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities);
-				}
-				break;
-			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
-				{
-					auto eh = static_cast<EntityHierarchy*>(entity);
-					decomposedEntities.entityHierarchies.push_back(eh);
-					for (auto entityEh: eh->getEntities()) {
-						if (entityEh->isEnabled() == false) continue;
-						// compute transformations and add to lists
-						switch (entityEh->getEntityType()) {
-							case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
-								{
-									auto org = static_cast<Object3DRenderGroup*>(entityEh);
-									decomposedEntities.objectRenderGroups.push_back(org);
-									auto subEntity = org->getEntity();
-									if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
-								}
-								break;
-							case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
-								{
-									auto psg = static_cast<ParticleSystemGroup*>(entityEh);
-									decomposedEntities.psgs.push_back(psg);
-									for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities);
-								}
-								break;
-							default:
-								decomposeEntityType(entityEh, decomposedEntities);
-						}
-					}
-				}
-				break;
-			default:
-				decomposeEntityType(entity, decomposedEntities);
-		}
+		decomposeEntityType(entity, decomposedEntities, decomposeAllEntities);
 	}
 }
 
-void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransformations)
+void Engine::computeTransformations(Camera* camera, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransformations)
 {
 	// do particle systems auto emit
 	if (autoEmit == true) {
-		for (auto it: autoEmitParticleSystemEntities) {
-			auto pse = it.second;
+		for (auto entity: autoEmitParticleSystemEntities) {
+			auto pse = static_cast<ParticleSystemEntity*>(entity);
 
 			// skip on disabled entities
 			if (pse->isEnabled() == false) continue;
@@ -1110,14 +1123,30 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 
 	// determine entity types and store them
 	decomposeEntityTypes(
-		partition->getVisibleEntities(frustum),
+		partition->getVisibleEntities(camera->getFrustum()),
 		decomposedEntities
 	);
 
-	// collect entities that do not have frustum culling enabled
-	for (auto it: noFrustumCullingEntitiesById) {
-		auto entity = it.second;
+	// pre render
+	for (auto entity: needsPreRenderEntities) {
+		// skip on disabled entities
+		if (partition->isVisibleEntity(entity) == false) continue;
+		//
+		decomposedEntities.needsPreRenderEntities.push_back(static_cast<Object3D*>(entity));
+	}
 
+	// compute transformations
+	if (computeTransformations == true) {
+		for (auto entity: needsComputeTransformationsEntities) {
+			// skip on disabled entities
+			if (partition->isVisibleEntity(entity) == false) continue;
+			//
+			decomposedEntities.needsComputeTransformationsEntities.push_back(static_cast<Object3D*>(entity));
+		}
+	}
+
+	// collect entities that do not have frustum culling enabled
+	for (auto entity: noFrustumCullingEntities) {
 		// skip on disabled entities
 		if (entity->isEnabled() == false) continue;
 
@@ -1134,9 +1163,9 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 	//
 	if (skinningShaderEnabled == true) skinningShader->useProgram();
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		computeTransformationsFunction(decomposedEntities.objects, 0, computeTransformations);
-		computeTransformationsFunction(decomposedEntities.objectsPostPostProcessing, 0, computeTransformations);
-		computeTransformationsFunction(decomposedEntities.objectsNoDepthTest, 0, computeTransformations);
+		//
+		preRenderFunction(decomposedEntities.needsPreRenderEntities, 0);
+		computeTransformationsFunction(decomposedEntities.needsComputeTransformationsEntities, 0);
 	} else {
 		auto elementsIssued = 0;
 		Engine::EngineThreadQueueElement* queueElementToSubmit = nullptr;
@@ -1236,13 +1265,14 @@ void Engine::display()
 
 	// camera
 	camera->update(context, _width, _height);
+	// frustum
+	camera->getFrustum()->update();
 
 	// clear pre render states
 	renderingComputedTransformations = false;
 
 	// do pre rendering steps
-	resetLists(visibleDecomposedEntities);
-	computeTransformations(camera->getFrustum(), visibleDecomposedEntities, true, true);
+	computeTransformations(camera, visibleDecomposedEntities, true, true);
 
 	// render environment maps
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
@@ -1656,7 +1686,7 @@ Entity* Engine::getEntityByMousePosition(
 		}
 	}
 
-	// iterate visible entity hierarches, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	// iterate visible entity hierarchies, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: decomposedEntities.entityHierarchies) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
@@ -1832,7 +1862,7 @@ Entity* Engine::doRayCasting(
 		}
 	}
 
-	// iterate visible entity hierarches, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	// iterate visible entity hierarchies, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: decomposedEntities.entityHierarchies) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;

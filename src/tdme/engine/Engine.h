@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -49,6 +50,7 @@ using std::remove;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::model::Color4;
@@ -223,6 +225,8 @@ private:
 		vector<EntityHierarchy*> entityHierarchies;
 		vector<EnvironmentMapping*> environmentMappingEntities;
 		vector<Object3D*> ezrObjects;
+		vector<Object3D*> needsPreRenderEntities;
+		vector<Object3D*> needsComputeTransformationsEntities;
 	};
 
 	static unordered_map<string, uint8_t> uniqueShaderIds;
@@ -249,8 +253,11 @@ private:
 	float shadowMapLightEyeDistanceScale { 1.0f };
 
 	unordered_map<string, Entity*> entitiesById;
-	unordered_map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
-	unordered_map<string, Entity*> noFrustumCullingEntitiesById;
+
+	unordered_set<Entity*> autoEmitParticleSystemEntities;
+	unordered_set<Entity*> noFrustumCullingEntities;
+	unordered_set<Entity*> needsPreRenderEntities;
+	unordered_set<Entity*> needsComputeTransformationsEntities;
 
 	DecomposedEntities visibleDecomposedEntities;
 
@@ -272,7 +279,7 @@ private:
 	vector<Action*> actions;
 
 	struct EngineThreadQueueElement {
-		enum Type { TYPE_NONE, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
+		enum Type { TYPE_NONE, TYPE_PRERENDER, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
 
 		Type type { TYPE_NONE };
 
@@ -433,35 +440,44 @@ private:
 	 * Decompose entity type
 	 * @param entity entity to decompose
 	 * @param decomposedEntities decomposed entities
+	 * @param decomposeAllEntities decompose all entities, also those who are not rendered right now
 	 */
-	void decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
+	void decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities, bool decomposeAllEntities = false);
 
 	/**
 	 * Decompose entity types
 	 * @param entities given entities to decompose
 	 * @param decomposedEntities decomposed entities
+	 * @param decomposeAllEntities decompose all entities, also those who are not rendered right now
 	 */
 	void decomposeEntityTypes(
 		const vector<Entity*>& entities,
-		DecomposedEntities& decomposedEntities
+		DecomposedEntities& decomposedEntities,
+		bool decomposeAllEntities = false
 	);
+
+	/**
+	 * Update vertex buffers and such before rendering
+	 * @param objects objects
+	 * @param threadIdx thread index
+	 */
+	void preRenderFunction(vector<Object3D*>& objects, int threadIdx);
 
 	/**
 	 * Computes visibility and transformations
 	 * @param objects objects
 	 * @param threadIdx thread index
-	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx, bool computeTransformations);
+	void computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx);
 
 	/**
 	 * Computes visibility and transformations
-	 * @param frustum frustum
+	 * @param camera camera
 	 * @param decomposedEntities decomposed entities
 	 * @param autoEmit auto emit particle systems
 	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformations(Frustum* frustum, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeTransformations);
+	void computeTransformations(Camera* camera, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeTransformations);
 
 	/**
 	 * Set up GUI mode rendering

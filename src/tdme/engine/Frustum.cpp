@@ -26,14 +26,7 @@ Frustum::Frustum(Renderer* renderer)
 	this->renderer = renderer;
 }
 
-constexpr int32_t Frustum::PLANE_RIGHT;
-constexpr int32_t Frustum::PLANE_LEFT;
-constexpr int32_t Frustum::PLANE_BOTTOM;
-constexpr int32_t Frustum::PLANE_TOP;
-constexpr int32_t Frustum::PLANE_FAR;
-constexpr int32_t Frustum::PLANE_NEAR;
-
-void Frustum::updateFrustum()
+void Frustum::update()
 {
 	// see: http://www.crownandcutlass.com/features/technicaldetails/frustum.html
 	projectionMatrixTransposed.set(renderer->getProjectionMatrix()).transpose();

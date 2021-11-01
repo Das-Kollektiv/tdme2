@@ -193,6 +193,7 @@ void ShadowMap::createShadowMap(Light* light)
 	lightCamera->setSideVector(lightCameraSideVector);
 	lightCamera->setUpVector(lightCameraUpVector);
 	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
+	lightCamera->getFrustum()->update();
 
 	// clear visible objects
 	visibleObjects.clear();
@@ -210,7 +211,6 @@ void ShadowMap::createShadowMap(Light* light)
 							case Entity::ENTITYTYPE_OBJECT3D:
 								{
 									auto object = static_cast<Object3D*>(orgEntity);
-									object->preRender(context);
 									visibleObjects.push_back(object);
 								}
 								break;
@@ -220,7 +220,6 @@ void ShadowMap::createShadowMap(Light* light)
 									if (lodObject->isContributesShadows() == false) continue;
 									auto object = lodObject->getLODObject();
 									if (object != nullptr) {
-										object->preRender(context);
 										visibleObjects.push_back(object);
 									}
 								}
@@ -235,7 +234,6 @@ void ShadowMap::createShadowMap(Light* light)
 				{
 					auto object = static_cast<Object3D*>(entity);
 					if (object->isContributesShadows() == false) continue;
-					object->preRender(context);
 					visibleObjects.push_back(object);
 				}
 				break;
@@ -244,20 +242,14 @@ void ShadowMap::createShadowMap(Light* light)
 					auto lodObject = static_cast<LODObject3D*>(entity);
 					if (lodObject->isContributesShadows() == false) continue;
 					auto object = lodObject->getLODObject();
-					if (object != nullptr) {
-						object->preRender(context);
-						visibleObjects.push_back(object);
-					}
+					if (object != nullptr) visibleObjects.push_back(object);
 				}
 				break;
 			case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
 				{
 					auto opse = static_cast<ObjectParticleSystem*>(entity);
 					if (opse->isContributesShadows() == false) continue;
-					for (auto object: opse->getEnabledObjects()) {
-						object->preRender(context);
-						visibleObjects.push_back(object);
-					}
+					for (auto object: opse->getEnabledObjects()) visibleObjects.push_back(object);
 				}
 				break;
 			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
@@ -267,10 +259,7 @@ void ShadowMap::createShadowMap(Light* light)
 						if (ps->getEntityType() != Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) continue;
 						auto opse = static_cast<ObjectParticleSystem*>(ps);
 						if (opse->isContributesShadows() == false) continue;
-						for (auto object: opse->getEnabledObjects()) {
-							object->preRender(context);
-							visibleObjects.push_back(object);
-						}
+						for (auto object: opse->getEnabledObjects()) visibleObjects.push_back(object);
 					}
 				}
 				break;
@@ -282,7 +271,6 @@ void ShadowMap::createShadowMap(Light* light)
 						if (entity->getEntityType() != Entity::ENTITYTYPE_OBJECT3D) continue;
 						auto object = static_cast<Object3D*>(entity);
 						if (object->isEnabled() == false) continue;
-						object->preRender(context);
 						visibleObjects.push_back(object);
 					}
 				}

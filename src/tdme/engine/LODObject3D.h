@@ -60,6 +60,7 @@ private:
 	Model* modelLOD3 { nullptr };
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
+	float lodNoneMinDistance;
 	LODLevelType levelTypeLOD2;
 	LODLevelType levelTypeLOD3;
 
@@ -123,7 +124,7 @@ public:
 	 * @param levelTypeLOD3 LOD level type LOD3
 	 * @param modelLOD3MinDistance model LOD 3 min distance
 	 * @param modelLOD3 model LOD 3
-	 * @param planeRotationYLOD2 model LOD2 plane rotation around Y axis
+	 * @param lodNoneMinDistance LOD None min distance
 	 * @param planeRotationYLOD3 model LOD3 plane rotation around Y axis
 	 */
 	LODObject3D(
@@ -134,7 +135,8 @@ public:
 		Model* modelLOD2,
 		LODLevelType levelTypeLOD3,
 		float modelLOD3MinDistance,
-		Model* modelLOD3
+		Model* modelLOD3,
+		float lodNoneMinDistance = 150.0f
 	);
 
 	/**
@@ -206,27 +208,29 @@ public:
 	 * @return LOD object to render
 	 */
 	inline Object3D* determineLODObject(Camera* camera) {
-		if (objectLOD == nullptr || camera->hasFrustumChanged() == true) {
+		//if (objectLOD == nullptr || camera->hasFrustumChanged() == true) {
 			LODObject3D::LODLevelType lodLevelType = LODObject3D::LODLEVELTYPE_NONE;
-			Vector3 objectCamFromAxis;
-			float objectCamFromLengthSquared;
-			float planeRotationYLOD;
+			auto objectCamFromLengthSquared = getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
 
 			// determine LOD object and level type
+			if (objectCamFromLengthSquared >= Math::square(lodNoneMinDistance)) {
+				objectLOD = nullptr;
+				levelLOD = 4;
+			} else
 			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
+				objectCamFromLengthSquared >= Math::square(modelLOD3MinDistance)) {
 				objectLOD = objectLOD3;
 				levelLOD = 3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
+				objectCamFromLengthSquared >= Math::square(modelLOD2MinDistance)) {
 				objectLOD = objectLOD2;
 				levelLOD = 2;
 			} else {
 				objectLOD = objectLOD1;
 				levelLOD = 1;
 			}
-		}
+		//}
 
 		// set effect colors
 		if (objectLOD != nullptr) {

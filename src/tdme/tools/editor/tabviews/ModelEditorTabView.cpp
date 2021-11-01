@@ -19,7 +19,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
@@ -66,7 +66,7 @@ using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Object3D;
-using tdme::engine::PartitionNone;
+using tdme::engine::SimplePartition;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
@@ -101,7 +101,7 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, true, true);
-	engine->setPartition(new PartitionNone());
+	engine->setPartition(new SimplePartition());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	audio = Audio::getInstance();

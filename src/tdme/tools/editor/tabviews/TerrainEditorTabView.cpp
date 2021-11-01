@@ -428,6 +428,7 @@ void TerrainEditorTabView::initializeTerrain() {
 		auto idx = 0;
 		for (auto terrainModel: terrainModels) {
 			auto terrainObject3D = new Object3D("terrain." + to_string(idx), terrainModel);
+			terrainObject3D->setNeedsPreRender(true);
 			terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
 			terrainObject3D->setShader("terraineditor");
 			terrainObject3D->setContributesShadows(true);

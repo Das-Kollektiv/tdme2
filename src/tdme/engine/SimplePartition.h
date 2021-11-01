@@ -21,12 +21,11 @@ using tdme::math::Vector3;
 using tdme::utilities::VectorIteratorMultiple;
 
 /**
- * Bogus partition implementation
+ * Bogus/Simple partition implementation
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::PartitionNone final
-	: public Partition
+class tdme::engine::SimplePartition final: public Partition
 {
 private:
 	vector<Entity*> entities;
@@ -43,9 +42,10 @@ public:
 	/**
 	 * Public constructor
 	 */
-	PartitionNone();
+	SimplePartition();
 
 	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
+	bool isVisibleEntity(Entity* entity) override;
 
 };
