@@ -227,19 +227,19 @@ private:
 		VkCommandBuffer setup_cmd;
 		VkFence setup_fence;
 
-		array<bool, 3> render_pass_started;
+		bool render_pass_started;
 
 		VkCommandPool cmd_draw_pool;
 		uint32_t draw_cmd_current;
-		array<array<VkCommandBuffer, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmds;
-		array<array<VkFence, 3>, DRAW_COMMANDBUFFER_MAX> draw_fences;
+		array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmds;
+		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
 		VkFence draw_fence { VK_NULL_HANDLE };
-		array<array<bool, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
+		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
 
 		program_type* program { nullptr };
 
-		array<uint32_t, 3> pipeline_id;
-		array<VkPipeline, 3> pipeline;
+		uint32_t pipeline_id;
+		VkPipeline pipeline;
 
 		//
 		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;
@@ -248,8 +248,8 @@ private:
 
 		//
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
-		array<array<VkBuffer, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_indices_buffer;
-		array<array<array<VkBuffer, 10>, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_buffers;
+		array<VkBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_indices_buffer;
+		array<array<VkBuffer, 10>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_buffers;
 		array<VkBuffer, 10> bound_buffers {
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -274,7 +274,7 @@ private:
 		int32_t compute_render_barrier_buffer_count { 0 };
 		array<VkBuffer, 1024> compute_render_barrier_buffers;
 
-		array<uint32_t, 3> command_count { 0 };
+		uint32_t command_count { 0 };
 
 		string shader;
 		EntityShaderParameters shaderParameters;
@@ -427,6 +427,7 @@ private:
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
+	void finishPipeline(int contextIdx);
 	void createRenderProgram(program_type* program);
 	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
@@ -437,7 +438,7 @@ private:
 	void createSkinningComputingProgram(program_type* program);
 	pipeline_type* createSkinningComputingPipeline(int contextIdx, program_type* program);
 	void setupSkinningComputingPipeline(int contextIdx, program_type* program);
-	void finishPipeline(int contextIdx);
+	void unsetPipeline(int contextIdx);
 	void prepareSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffers();
@@ -462,7 +463,7 @@ private:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
-	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
+	VkCommandBuffer endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void recreateContextFences(int contextIdx);
 	void uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
