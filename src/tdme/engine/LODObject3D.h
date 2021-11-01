@@ -208,29 +208,26 @@ public:
 	 * @return LOD object to render
 	 */
 	inline Object3D* determineLODObject(Camera* camera) {
-		//if (objectLOD == nullptr || camera->hasFrustumChanged() == true) {
-			LODObject3D::LODLevelType lodLevelType = LODObject3D::LODLEVELTYPE_NONE;
-			auto objectCamFromLengthSquared = getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
-
-			// determine LOD object and level type
-			if (objectCamFromLengthSquared >= Math::square(lodNoneMinDistance)) {
-				objectLOD = nullptr;
-				levelLOD = 4;
-			} else
-			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
-				objectCamFromLengthSquared >= Math::square(modelLOD3MinDistance)) {
-				objectLOD = objectLOD3;
-				levelLOD = 3;
-			} else
-			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
-				objectCamFromLengthSquared >= Math::square(modelLOD2MinDistance)) {
-				objectLOD = objectLOD2;
-				levelLOD = 2;
-			} else {
-				objectLOD = objectLOD1;
-				levelLOD = 1;
-			}
-		//}
+		LODObject3D::LODLevelType lodLevelType = LODObject3D::LODLEVELTYPE_NONE;
+		// determine LOD object and level type
+		auto objectCamFromLengthSquared = getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
+		if (objectCamFromLengthSquared >= Math::square(lodNoneMinDistance)) {
+			objectLOD = nullptr;
+			levelLOD = 4;
+		} else
+		if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
+			objectCamFromLengthSquared >= Math::square(modelLOD3MinDistance)) {
+			objectLOD = objectLOD3;
+			levelLOD = 3;
+		} else
+		if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
+			objectCamFromLengthSquared >= Math::square(modelLOD2MinDistance)) {
+			objectLOD = objectLOD2;
+			levelLOD = 2;
+		} else {
+			objectLOD = objectLOD1;
+			levelLOD = 1;
+		}
 
 		// set effect colors
 		if (objectLOD != nullptr) {
