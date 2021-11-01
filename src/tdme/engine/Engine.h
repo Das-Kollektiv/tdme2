@@ -164,6 +164,7 @@ public:
 	static constexpr int LIGHTS_MAX { 8 };
 	// TODO: make sure one can set up this parameter also
 	static constexpr int ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT { 200 };
+	static constexpr int ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT { 5 };
 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
 protected:

@@ -1173,32 +1173,20 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 		queueElement->engine = this;
 		queueElement->transformations.computeTransformations = computeTransformations;
-		for (auto i = 0; i < decomposedEntities.objects.size(); i++) {
-			queueElement->objects.push_back(decomposedEntities.objects[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
+		for (auto i = 0; i < decomposedEntities.needsPreRenderEntities.size(); i++) {
+			queueElement->objects.push_back(decomposedEntities.needsPreRenderEntities[i]);
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
-				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
+				queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
 				elementsIssued++;
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
-		for (auto i = 0; i < decomposedEntities.objectsPostPostProcessing.size(); i++) {
-			queueElement->objects.push_back(decomposedEntities.objectsPostPostProcessing[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
-				auto queueElementToSubmit = queueElement;
-				queueElement = new Engine::EngineThreadQueueElement();
-				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
-				queueElement->engine = this;
-				queueElement->transformations.computeTransformations = computeTransformations;
-				elementsIssued++;
-				engineThreadsQueue->addElement(queueElementToSubmit, false);
-			}
-		}
-		for (auto i = 0; i < decomposedEntities.objectsNoDepthTest.size(); i++) {
-			queueElement->objects.push_back(decomposedEntities.objectsNoDepthTest[i]);
+		for (auto i = 0; i < decomposedEntities.needsComputeTransformationsEntities.size(); i++) {
+			queueElement->objects.push_back(decomposedEntities.needsComputeTransformationsEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
