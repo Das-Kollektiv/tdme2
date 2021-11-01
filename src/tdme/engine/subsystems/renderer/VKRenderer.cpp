@@ -1333,14 +1333,14 @@ void VKRenderer::initialize()
 		const VkDescriptorPoolSize desc2_types_count[1] = {
 			[0] = {
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
 			}
 		};
 		const VkDescriptorPoolCreateInfo descriptor_pool = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2), // 32 shader
+			.maxSets = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2), // 32 shader
 			.poolSizeCount = 1,
 			.pPoolSizes = desc2_types_count,
 		};
@@ -1863,8 +1863,23 @@ void VKRenderer::finishFrame()
 			//
 			textures.erase(textureObjectIt);
 			delete texture;
-			for (auto& context: contexts) context.texture_vector[textureId] = nullptr;
-			// free_texture_ids.push_back(textureId); // TODO: enable me again if texture descriptors sets are fixes
+			// delete desc2 bound texture caches from programs with removed texture
+			for (auto& context: contexts) {
+				context.texture_vector[textureId] = nullptr;
+				for (auto program: programList) {
+					if (program == nullptr || program->desc_sets2_cache_textureids.empty() == true) continue;
+					auto& desc_sets2_cache_textureids = program->desc_sets2_cache_textureids[context.idx];
+					auto desc_sets2_cache_textureids_it = desc_sets2_cache_textureids.find(textureId);
+					if (desc_sets2_cache_textureids_it != desc_sets2_cache_textureids.end()) {
+						auto& desc_sets2_cache = program->desc_sets2_cache[context.idx];
+						for (auto& desc_sets2_cache_hash: desc_sets2_cache_textureids_it->second) {
+							desc_sets2_cache.erase(desc_sets2_cache_hash);
+						}
+						desc_sets2_cache_textureids.erase(desc_sets2_cache_textureids_it);
+					}
+				}
+			}
+			free_texture_ids.push_back(textureId);
 		}
 		textures_rwlock.unlock();
 		dispose_textures.clear();
@@ -1927,7 +1942,7 @@ void VKRenderer::finishFrame()
 	for (auto program: programList) {
 		if (program == nullptr) continue;
 		for (auto i = 0; i < program->desc_idxs1.size(); i++) program->desc_idxs1[i] = 0;
-		//for (auto i = 0; i < program->desc_idxs2.size(); i++) program->desc_idxs2[i] = 0; // TODO: enable me again if texture descriptors sets are fixes
+		for (auto i = 0; i < program->desc_idxs2plus.size(); i++) program->desc_idxs2plus[i] = 0;
 	}
 
 	//
@@ -2730,6 +2745,24 @@ void VKRenderer::createRenderProgram(program_type* program) {
 		};
 		for (auto& context: contexts) {
 			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets2[context.idx].data());
+			assert(!err);
+		}
+	}
+
+	//
+	{
+		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts2;
+		desc_layouts2.fill(program->desc_layout2);
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = nullptr,
+			.descriptorPool = desc_pool2,
+			.descriptorSetCount = DESC_MAX,
+			.pSetLayouts = desc_layouts2.data()
+		};
+		for (auto& context: contexts) {
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets2plus[context.idx].data());
 			assert(!err);
 		}
 	}
@@ -3637,10 +3670,14 @@ int32_t VKRenderer::createProgram(int type)
 	program.desc_sets1.resize(Engine::getThreadCount());
 	program.desc_sets2.resize(Engine::getThreadCount());
 	program.desc_sets2_cache.resize(Engine::getThreadCount());
+	program.desc_sets2_cache_textureids.resize(Engine::getThreadCount());
+	program.desc_sets2plus.resize(Engine::getThreadCount());
 	program.desc_idxs1.resize(Engine::getThreadCount());
 	program.desc_idxs2.resize(Engine::getThreadCount());
+	program.desc_idxs2plus.resize(Engine::getThreadCount());
 	for (auto i = 0; i < program.desc_idxs1.size(); i++) program.desc_idxs1[i] = 0;
 	for (auto i = 0; i < program.desc_idxs2.size(); i++) program.desc_idxs2[i] = 0;
+	for (auto i = 0; i < program.desc_idxs2plus.size(); i++) program.desc_idxs2plus[i] = 0;
 	programList.push_back(programPtr);
 	Console::println("new program: " + to_string(program.id));
 	return program.id;
@@ -6193,10 +6230,12 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	auto samplerIdx = 0;
 	auto uboIdx = 0;
 	uint64_t desc_set2_cache_id = 0LL;
+	array<int, 4> texture_ids;
 	for (auto shader: contextTyped.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
 			if (uniform->texture_unit == -1) {
+				texture_ids[samplerIdx] = ID_NONE;
 				switch(uniform->type) {
 					case shader_type::uniform_type::TYPE_SAMPLER2D:
 						contextTyped.descriptor_image_info[samplerIdx] = {
@@ -6219,6 +6258,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			} else {
 				auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
 				if (boundTexture.view == VK_NULL_HANDLE) {
+					texture_ids[samplerIdx] = ID_NONE;
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
 							contextTyped.descriptor_image_info[samplerIdx] = {
@@ -6239,6 +6279,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 							break;
 					}
 				} else {
+					texture_ids[samplerIdx] = boundTexture.id;
 					contextTyped.descriptor_image_info[samplerIdx] = {
 						.sampler = boundTexture.sampler,
 						.imageView = boundTexture.view,
@@ -6302,17 +6343,19 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
 	auto desc_set2_cache_it = desc_set2_cache.find(desc_set2_cache_id);
 	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
-	if (desc_set2_cache_hit == false) {
-		contextTyped.program->desc_idxs2[contextTyped.idx]++;
-	} else {
-		desc_set2 = desc_set2_cache_it->second;
+	if (desc_set2_cache_hit == true) {
+		desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][desc_set2_cache_it->second];
 	}
 
 	//
 	vkUpdateDescriptorSets(device, desc_set2_cache_hit == true?uboIdx:contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	if (desc_set2_cache_hit == false) desc_set2_cache[desc_set2_cache_id] = desc_set2;
+	if (desc_set2_cache_hit == false) {
+		desc_set2_cache[desc_set2_cache_id] = contextTyped.program->desc_idxs2[contextTyped.idx];
+		for (auto texture_id: texture_ids) contextTyped.program->desc_sets2_cache_textureids[contextTyped.idx][texture_id].insert(desc_set2_cache_id);
+		contextTyped.program->desc_idxs2[contextTyped.idx]++;
+	}
 
 	// descriptor sets
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
@@ -6464,13 +6507,13 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		return;
 	}
 	// check if desc2 left
-	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs2plus[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2plus[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2plus[contextTyped.idx]));
 		return;
 	}
 	//
 	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
-	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
+	auto desc_set2 = contextTyped.program->desc_sets2plus[contextTyped.idx][contextTyped.program->desc_idxs2plus[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6594,7 +6637,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	//
 	contextTyped.program->desc_idxs1[contextTyped.idx]++;
-	contextTyped.program->desc_idxs2[contextTyped.idx]++;
+	contextTyped.program->desc_idxs2plus[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//
@@ -6623,13 +6666,13 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 		return;
 	}
 	// check if desc2 left
-	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs2plus[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2plus[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2plus[contextTyped.idx]));
 		return;
 	}
 	//
 	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
-	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
+	auto desc_set2 = contextTyped.program->desc_sets2plus[contextTyped.idx][contextTyped.program->desc_idxs2plus[contextTyped.idx]];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6754,7 +6797,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	//
 	contextTyped.program->desc_idxs1[contextTyped.idx]++;
-	contextTyped.program->desc_idxs2[contextTyped.idx]++;
+	contextTyped.program->desc_idxs2plus[contextTyped.idx]++;
 	contextTyped.command_count[contextTyped.front_face_index]++;
 
 	//

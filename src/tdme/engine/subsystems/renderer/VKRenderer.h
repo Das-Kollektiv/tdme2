@@ -63,7 +63,7 @@ private:
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
-	static constexpr int DESC_MAX { 2048 };
+	static constexpr int DESC_MAX { 1024 };
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
@@ -154,11 +154,14 @@ private:
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets1;
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2;
-		vector<unordered_map<uint64_t, VkDescriptorSet>> desc_sets2_cache;
+		vector<unordered_map<uint64_t, int>> desc_sets2_cache;
+		vector<unordered_map<int32_t, unordered_set<uint64_t>>> desc_sets2_cache_textureids;
+		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2plus;
 		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };
 		vector<uint32_t> desc_idxs1;
 		vector<uint32_t> desc_idxs2;
+		vector<uint32_t> desc_idxs2plus;
 		int32_t id { 0 };
 	};
 
