@@ -182,7 +182,7 @@
     - UDP server
         - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
         - supports safe messages with acknowledgment and automatic resending
-        - support fast messages
+        - supports fast messages
         - can be used in a heavy multithreaded environment (the networking module is thread safe)
         - IPV6 ready
     - UDP client
@@ -266,7 +266,7 @@
     - HTTP download client has its own thread
     - physics or game mechanics can also run in a separate thread(s)
 - uses 3rd party libraries
-	- need to be installed 
+    - needs to be installed 
         - GLUT(Haiku)
         - OpenGL
         - OpenAL
