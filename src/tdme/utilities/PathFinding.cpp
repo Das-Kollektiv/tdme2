@@ -309,24 +309,18 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 	openNodes.erase(nodeId);
 }
 
-bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, int maxTriesOverride, PathFindingCustomTest* customTest) {
+bool PathFinding::findPathCustom(
+	const Vector3& startPosition,
+	const Vector3& endPosition,
+	float stepSize,
+	float scaleActorBoundingVolumes,
+	const uint16_t collisionTypeIds,
+	vector<Vector3>& path,
+	int alternativeEndSteps,
+	int maxTriesOverride,
+	PathFindingCustomTest* customTest) {
 	// clear path
 	path.clear();
-
-	// equal start and end position?
-	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
-		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
-		path.push_back(startPosition);
-		path.push_back(endPosition);
-		return true;
-	} else
-	// equal start and end position?
-	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
-		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
-		path.push_back(startPosition);
-		path.push_back(endPosition);
-		return true;
-	}
 
 	//
 	auto now = Time::getCurrentMillis();
@@ -368,285 +362,329 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
 	//
-	auto forcedAlternativeEndSteps = 0;
+	bool success = false;
 
-	// compute possible end positions
-	vector<Vector3> startPositionCandidates;
-	vector<Vector3> endPositionCandidates;
-	{
-		auto forwardVector = endPosition.clone().sub(startPosition).setY(0.0f).normalize();
-		auto sideVector = Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f)).setY(0.0f).normalize();
-		if (Float::isNaN(sideVector.getX()) ||
-			Float::isNaN(sideVector.getY()) ||
-			Float::isNaN(sideVector.getZ())) {
-			if (VERBOSE == true) Console::println("PathFinding::findPath(): side vector = NaN!");
-			endPositionCandidates.push_back(endPosition);
-			startPositionCandidates.push_back(startPosition);
-		} else {
-			{
-				auto sideDistance = stepSize;
-				auto forwardDistance = 0.0f;
-				auto i = 0;
-				while (true == true) {
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= alternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= alternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= alternativeEndSteps) break;
-					forwardDistance+= stepSize;
-				}
-				forwardDistance = 0.0f;
-				forwardVector.scale(-1.0f);
-				sideVector.scale(-1.0f);
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				forwardDistance+= stepSize;
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				forwardDistance+= stepSize;
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
-			}
-			if (currentMaxTries == 0) {
-				forcedAlternativeEndSteps = 27 * 2;
-				auto forwardDistance = 0.0f;
-				auto i = 0;
-				while (true == true) {
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-					i++; if (i >= forcedAlternativeEndSteps) break;
-					forwardDistance+= 0.1f;
-				}
-			}
-		}
-	}
-
-	Vector3 startPositionComputed = startPosition;
-	for (auto& startPositionCandidate: startPositionCandidates) {
-		float startYHeight = startPositionCandidate.getY();
+	// equal start and end position?
+	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
+		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
+		path.push_back(startPosition);
+		float endYHeight = endPosition.getY();
 		if (isWalkableInternal(
-			startPositionCandidate.getX(),
-			startPositionCandidate.getY(),
-			startPositionCandidate.getZ(),
-			startYHeight,
+			endPosition.getX(),
+			endPosition.getY(),
+			endPosition.getZ(),
+			endYHeight,
 			stepSize,
 			scaleActorBoundingVolumes,
 			false
 		) == false) {
-			if (VERBOSE == true) {
-				Console::println(
-					"PathFinding::findPath(): Start position not walkable: " +
-					to_string(startPositionCandidate.getX()) + ", " +
-					to_string(startPositionCandidate.getY()) + ", " +
-					to_string(startPositionCandidate.getZ()) + " / " +
-					to_string(startYHeight)
-				);
-			}
-			//
-			continue;
-		} else {
-			startPositionComputed = startPositionCandidate;
-			startPositionComputed.setY(startYHeight);
-			break;
+			path.push_back(endPosition);
+			success = true;
+		}
+	} else
+	// equal start and end position?
+	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
+		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
+		path.push_back(startPosition);
+		float endYHeight = endPosition.getY();
+		if (isWalkableInternal(
+			endPosition.getX(),
+			endPosition.getY(),
+			endPosition.getZ(),
+			endYHeight,
+			stepSize,
+			scaleActorBoundingVolumes,
+			false
+		) == false) {
+			path.push_back(endPosition);
+			success = true;
 		}
 	}
 
+	//
 	auto tries = 0;
 	auto endPositionIdx = 0;
-	bool success = false;
-	for (auto& endPositionCandidate: endPositionCandidates) {
-		Vector3 endPositionComputed = endPositionCandidate;
-		float endYHeight = endPositionComputed.getY();
-		if (alternativeEndSteps > 0 &&
-			isWalkableInternal(
-				endPositionComputed.getX(),
-				endPositionComputed.getY(),
-				endPositionComputed.getZ(),
-				endYHeight,
+
+	//
+	if (success == false) {
+		//
+		auto forcedAlternativeEndSteps = 0;
+
+		// compute possible end positions
+		vector<Vector3> startPositionCandidates;
+		vector<Vector3> endPositionCandidates;
+		{
+			auto forwardVector = endPosition.clone().sub(startPosition).setY(0.0f).normalize();
+			auto sideVector = Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f)).setY(0.0f).normalize();
+			if (Float::isNaN(sideVector.getX()) ||
+				Float::isNaN(sideVector.getY()) ||
+				Float::isNaN(sideVector.getZ())) {
+				if (VERBOSE == true) Console::println("PathFinding::findPath(): side vector = NaN!");
+				endPositionCandidates.push_back(endPosition);
+				startPositionCandidates.push_back(startPosition);
+			} else {
+				{
+					auto sideDistance = stepSize;
+					auto forwardDistance = 0.0f;
+					auto i = 0;
+					while (true == true) {
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= alternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= alternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= alternativeEndSteps) break;
+						forwardDistance+= stepSize;
+					}
+					forwardDistance = 0.0f;
+					forwardVector.scale(-1.0f);
+					sideVector.scale(-1.0f);
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					forwardDistance+= stepSize;
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					forwardDistance+= stepSize;
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+					startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(forwardDistance)).add(startPosition));
+				}
+				if (currentMaxTries == 0) {
+					forcedAlternativeEndSteps = 27 * 2;
+					auto forwardDistance = 0.0f;
+					auto i = 0;
+					while (true == true) {
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+						i++; if (i >= forcedAlternativeEndSteps) break;
+						forwardDistance+= 0.1f;
+					}
+				}
+			}
+		}
+
+		Vector3 startPositionComputed = startPosition;
+		for (auto& startPositionCandidate: startPositionCandidates) {
+			float startYHeight = startPositionCandidate.getY();
+			if (isWalkableInternal(
+				startPositionCandidate.getX(),
+				startPositionCandidate.getY(),
+				startPositionCandidate.getZ(),
+				startYHeight,
 				stepSize,
 				scaleActorBoundingVolumes,
 				false
 			) == false) {
+				if (VERBOSE == true) {
+					Console::println(
+						"PathFinding::findPath(): Start position not walkable: " +
+						to_string(startPositionCandidate.getX()) + ", " +
+						to_string(startPositionCandidate.getY()) + ", " +
+						to_string(startPositionCandidate.getZ()) + " / " +
+						to_string(startYHeight)
+					);
+				}
+				//
+				continue;
+			} else {
+				startPositionComputed = startPositionCandidate;
+				startPositionComputed.setY(startYHeight);
+				break;
+			}
+		}
+
+		for (auto& endPositionCandidate: endPositionCandidates) {
+			Vector3 endPositionComputed = endPositionCandidate;
+			float endYHeight = endPositionComputed.getY();
+			if (alternativeEndSteps > 0 &&
+				isWalkableInternal(
+					endPositionComputed.getX(),
+					endPositionComputed.getY(),
+					endPositionComputed.getZ(),
+					endYHeight,
+					stepSize,
+					scaleActorBoundingVolumes,
+					false
+				) == false) {
+				if (VERBOSE == true) {
+					Console::println(
+						"PathFinding::findPath(): End position not walkable: " +
+						to_string(endPositionComputed.getX()) + ", " +
+						to_string(endPositionComputed.getY()) + ", " +
+						to_string(endPositionComputed.getZ()) + " / " +
+						to_string(endYHeight)
+					);
+				}
+				//
+				continue;
+			} else {
+				endPositionComputed.setY(endYHeight);
+			}
+
 			if (VERBOSE == true) {
 				Console::println(
-					"PathFinding::findPath(): End position not walkable: " +
+					"Finding path: " +
+					to_string(startPositionComputed.getX()) + ", " +
+					to_string(startPositionComputed.getY()) + ", " +
+					to_string(startPositionComputed.getZ()) + " --> " +
 					to_string(endPositionComputed.getX()) + ", " +
 					to_string(endPositionComputed.getY()) + ", " +
-					to_string(endPositionComputed.getZ()) + " / " +
-					to_string(endYHeight)
+					to_string(endPositionComputed.getZ())
 				);
 			}
-			//
-			continue;
-		} else {
-			endPositionComputed.setY(endYHeight);
-		}
 
-		if (VERBOSE == true) {
-			Console::println(
-				"Finding path: " +
-				to_string(startPositionComputed.getX()) + ", " +
-				to_string(startPositionComputed.getY()) + ", " +
-				to_string(startPositionComputed.getZ()) + " --> " +
-				to_string(endPositionComputed.getX()) + ", " +
-				to_string(endPositionComputed.getY()) + ", " +
-				to_string(endPositionComputed.getZ())
-			);
-		}
+			// end node + start node
+			{
+				// start node
+				PathFindingNode start;
+				start.position = startPositionComputed;
+				start.costsAll = 0.0f;
+				start.costsReachPoint = 0.0f;
+				start.costsEstimated = 0.0f;
+				start.x = getIntegerPositionComponent(start.position.getX(), stepSize);
+				start.y = 0;
+				start.z = getIntegerPositionComponent(start.position.getZ(), stepSize);
+				start.id = toId(
+					start.position.getX(),
+					start.position.getY(),
+					start.position.getZ(),
+					stepSize
+				);
 
-		// end node + start node
-		{
-			// start node
-			PathFindingNode start;
-			start.position = startPositionComputed;
-			start.costsAll = 0.0f;
-			start.costsReachPoint = 0.0f;
-			start.costsEstimated = 0.0f;
-			start.x = getIntegerPositionComponent(start.position.getX(), stepSize);
-			start.y = 0;
-			start.z = getIntegerPositionComponent(start.position.getZ(), stepSize);
-			start.id = toId(
-				start.position.getX(),
-				start.position.getY(),
-				start.position.getZ(),
-				stepSize
-			);
+				// end node
+				end.position = endPositionComputed;
+				end.costsAll = 0.0f;
+				end.costsReachPoint = 0.0f;
+				end.costsEstimated = 0.0f;
+				end.x = getIntegerPositionComponent(end.position.getX(), stepSize);
+				end.y = 0;
+				end.z = getIntegerPositionComponent(end.position.getZ(), stepSize);
+				end.id = toId(
+					end.position.getX(),
+					end.position.getY(),
+					end.position.getZ(),
+					stepSize
+				);
 
-			// end node
-			end.position = endPositionComputed;
-			end.costsAll = 0.0f;
-			end.costsReachPoint = 0.0f;
-			end.costsEstimated = 0.0f;
-			end.x = getIntegerPositionComponent(end.position.getX(), stepSize);
-			end.y = 0;
-			end.z = getIntegerPositionComponent(end.position.getZ(), stepSize);
-			end.id = toId(
-				end.position.getX(),
-				end.position.getY(),
-				end.position.getZ(),
-				stepSize
-			);
+				// set up start node costs
+				start.costsEstimated = computeDistanceToEnd(start);
+				start.costsAll = start.costsEstimated;
 
-			// set up start node costs
-			start.costsEstimated = computeDistanceToEnd(start);
-			start.costsAll = start.costsEstimated;
-
-			// put to open nodes
-			openNodes[start.id] = start;
-		}
-
-		// do the steps
-		bool done = false;
-		for (auto stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
-			// check if there are still open nodes available
-			if (openNodes.size() == 0) {
-				done = true;
-				break;
+				// put to open nodes
+				openNodes[start.id] = start;
 			}
 
-			// Choose node from open nodes thats least expensive to check its successors
-			PathFindingNode* nodePtr = nullptr;
-			PathFindingNode* endNodePtr = nullptr;
-			for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-				if (equalsLastNode(nodeIt->second, end) == true && (endNodePtr == nullptr || nodeIt->second.costsAll < endNodePtr->costsAll)) endNodePtr = &nodeIt->second;
-				if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
-			}
+			// do the steps
+			bool done = false;
+			for (auto stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
+				// check if there are still open nodes available
+				if (openNodes.size() == 0) {
+					done = true;
+					break;
+				}
 
-			//
-			if (nodePtr == nullptr) {
-				done = true;
-				break;
-			}
+				// Choose node from open nodes thats least expensive to check its successors
+				PathFindingNode* nodePtr = nullptr;
+				PathFindingNode* endNodePtr = nullptr;
+				for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
+					if (equalsLastNode(nodeIt->second, end) == true && (endNodePtr == nullptr || nodeIt->second.costsAll < endNodePtr->costsAll)) endNodePtr = &nodeIt->second;
+					if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
+				}
 
-			//
-			if (endNodePtr != nullptr) {
-				const auto& node = *endNodePtr;
-				end.previousNodeId = node.previousNodeId;
-				// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
-				int nodesCount = 0;
-				unordered_map<string, PathFindingNode>::iterator nodeIt;
-				for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeId)) != closedNodes.end()?&nodeIt->second:nullptr) {
-					nodesCount++;
-					// if (nodesCount > 0 && nodesCount % 100 == 0) {
-					//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
-					// }
-					if (Float::isNaN(nodePtr->position.getX()) ||
-						Float::isNaN(nodePtr->position.getY()) ||
-						Float::isNaN(nodePtr->position.getZ())) {
-						Console::println("PathFinding::findPath(): compute path: step: NaN");
-						done = true;
-						break;
+				//
+				if (nodePtr == nullptr) {
+					done = true;
+					break;
+				}
+
+				//
+				if (endNodePtr != nullptr) {
+					const auto& node = *endNodePtr;
+					end.previousNodeId = node.previousNodeId;
+					// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					int nodesCount = 0;
+					unordered_map<string, PathFindingNode>::iterator nodeIt;
+					for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeId)) != closedNodes.end()?&nodeIt->second:nullptr) {
+						nodesCount++;
+						// if (nodesCount > 0 && nodesCount % 100 == 0) {
+						//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
+						// }
+						if (Float::isNaN(nodePtr->position.getX()) ||
+							Float::isNaN(nodePtr->position.getY()) ||
+							Float::isNaN(nodePtr->position.getZ())) {
+							Console::println("PathFinding::findPath(): compute path: step: NaN");
+							done = true;
+							break;
+						}
+						path.push_back(nodePtr->position);
 					}
-					path.push_back(nodePtr->position);
+					reverse(path.begin(), path.end());
+					if (path.size() > 1) path.erase(path.begin());
+					if (path.size() == 0) {
+						// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
+						path.push_back(endPositionComputed);
+					}
+					done = true;
+					success = true;
+					break;
+				} else {
+					const auto& node = *nodePtr;
+					// do a step
+					step(node, stepSize, scaleActorBoundingVolumes, nullptr, false);
 				}
-				reverse(path.begin(), path.end());
-				if (path.size() > 1) path.erase(path.begin());
-				if (path.size() == 0) {
-					// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
-					path.push_back(endPositionComputed);
-				}
-				done = true;
-				success = true;
-				break;
-			} else {
-				const auto& node = *nodePtr;
-				// do a step
-				step(node, stepSize, scaleActorBoundingVolumes, nullptr, false);
 			}
+
+			// reset
+			openNodes.clear();
+			closedNodes.clear();
+
+			//
+			tries++;
+
+			//
+			if (success == true || tries >= currentMaxTries + forcedAlternativeEndSteps) break;
 		}
 
-		// reset
-		openNodes.clear();
-		closedNodes.clear();
-
 		//
-		tries++;
-
-		//
-		if (success == true || tries >= currentMaxTries + forcedAlternativeEndSteps) break;
-	}
-
-	//
-	if (tries == 0) {
-		Console::println("PathFinding::findPath(): end position were not walkable!");
+		if (tries == 0) {
+			Console::println("PathFinding::findPath(): end position were not walkable!");
+		}
 	}
 
 	//
@@ -665,7 +703,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	actorBoundingVolumeSlopeTest = nullptr;
 
 	//
-	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries");
+	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries, success = " + to_string(success) + ", path steps: " + to_string(path.size()));
 
 	// dispose custom test
 	if (this->customTest != nullptr) {
