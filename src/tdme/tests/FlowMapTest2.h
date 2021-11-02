@@ -58,6 +58,7 @@ private:
 		float rotationY;
 		Object3D* object { nullptr };
 		Body* rigidBody { nullptr };
+		bool finished { false };
 	};
 	World* world { nullptr };
 	Engine* engine { nullptr };
