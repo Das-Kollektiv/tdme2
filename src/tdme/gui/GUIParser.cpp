@@ -149,7 +149,8 @@ using tinyxml::TiXmlElement;
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
-Properties* GUIParser::themeProperties = new Properties();
+Properties* GUIParser::engineThemeProperties = new Properties();
+Properties* GUIParser::projectThemeProperties = new Properties();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
@@ -158,6 +159,10 @@ GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, 
 
 GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName)
 {
+	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
+	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
+	auto themeProperties = applicationSubPathName == "project"?projectThemeProperties:engineThemeProperties;
+
 	// replace with parameters
 	auto newXML = xml;
 	for (auto& parameterIt: parameters) {
@@ -182,8 +187,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		throw GUIParserException("XML root node must be <screen>");
 	}
 
-	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
-	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
+	//
 	guiScreenNode = new GUIScreenNode(
 		(pathName.empty() == false?pathName + "/":"") + fileName,
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
@@ -269,6 +273,8 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& pathName, const s
 
 void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 {
+	//
+	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 	// replace with parameters
 	auto newXML = xml;
 	// replace with theme properties
@@ -289,6 +295,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 
 void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* xmlParentNode, GUIElement* guiElement)
 {
+	auto themeProperties = guiParentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
 	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
@@ -1566,6 +1573,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
 	auto newGuiElementTemplateXML = templateXML;
 
+	//
+	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
+
 	// replace with theme properties
 	for (auto& themePropertyIt: themeProperties->getProperties()) {
 		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
@@ -1611,6 +1621,9 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& innerXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
 	auto newInnerXML = innerXML;
 	auto newParentElementId = parentElementId;
+
+	//
+	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
 	for (auto& themePropertyIt: themeProperties->getProperties()) {
@@ -1725,7 +1738,13 @@ void GUIParser::addElement(GUIElement* guiElement)
 void GUIParser::initialize()
 {
 	try {
-		themeProperties->load("./resources/engine/gui/themes", "theme_default.properties");
+		engineThemeProperties->load("./resources/engine/gui/themes", "theme_default.properties");
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		projectThemeProperties->load("./resources/project/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -1920,4 +1939,13 @@ void GUIParser::dispose() {
 	}
 	elements->clear();
 	delete elements;
+}
+
+void GUIParser::loadProjectThemeProperties(const string& pathName) {
+	try {
+		projectThemeProperties->load(pathName + "/resources/project/gui/themes", "theme_default.properties");
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::loadProjectThemeProperties(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 }

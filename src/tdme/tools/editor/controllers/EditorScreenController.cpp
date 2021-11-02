@@ -367,6 +367,8 @@ void EditorScreenController::openProject(const string& path) {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
+	//
+	GUIParser::loadProjectThemeProperties(projectPath);
 }
 
 void EditorScreenController::onOpenProject() {

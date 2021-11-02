@@ -37,7 +37,8 @@ class tdme::gui::GUIParser final
 
 private:
 	static map<string, GUIElement*>* elements;
-	static Properties* themeProperties;
+	static Properties* engineThemeProperties;
+	static Properties* projectThemeProperties;
 
 public:
 
@@ -174,4 +175,11 @@ public:
 	 * Dispose GUI elements
 	 */
 	static void dispose();
+
+	/**
+	 * Load project theme properties
+	 * @param pathName path name
+	 */
+	static void loadProjectThemeProperties(const string& pathName);
+
 };
