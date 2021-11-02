@@ -212,6 +212,7 @@ unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
 RealtimeQueue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+Engine::EngineThreadQueueElementPool Engine::engineThreadQueueElementPool;
 
 Engine::EngineThread::EngineThread(int idx, RealtimeQueue<EngineThreadQueueElement>* queue):
 	Thread("enginethread"),
@@ -256,7 +257,7 @@ void Engine::EngineThread::run() {
 				elementsProcessed++;
 				break;
 		}
-		delete element;
+		element->objects.clear();
 	}
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 }
@@ -649,6 +650,7 @@ void Engine::reset()
 	partition->reset();
 	entityRenderer->reset();
 	if (skinningShaderEnabled == true) skinningShader->reset();
+	// TODO: reset engine thread queue element pool
 }
 
 void Engine::initialize()
@@ -1169,15 +1171,15 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 	} else {
 		auto elementsIssued = 0;
 		Engine::EngineThreadQueueElement* queueElementToSubmit = nullptr;
-		auto queueElement = new Engine::EngineThreadQueueElement();
-		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
+		auto queueElement = engineThreadQueueElementPool.allocate();
+		queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 		queueElement->engine = this;
 		queueElement->transformations.computeTransformations = computeTransformations;
 		for (auto i = 0; i < decomposedEntities.needsPreRenderEntities.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.needsPreRenderEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
-				queueElement = new Engine::EngineThreadQueueElement();
+				queueElement = engineThreadQueueElementPool.allocate();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
@@ -1185,11 +1187,19 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
+		if (queueElement->objects.empty() == false) {
+			elementsIssued++;
+			engineThreadsQueue->addElement(queueElement, false);
+			queueElement = engineThreadQueueElementPool.allocate();
+		}
+		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
+		queueElement->engine = this;
+		queueElement->transformations.computeTransformations = computeTransformations;
 		for (auto i = 0; i < decomposedEntities.needsComputeTransformationsEntities.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.needsComputeTransformationsEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
-				queueElement = new Engine::EngineThreadQueueElement();
+				queueElement = engineThreadQueueElementPool.allocate();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
@@ -1197,9 +1207,7 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
-		if (queueElement->objects.empty() == true) {
-			delete queueElement;
-		} else {
+		if (queueElement->objects.empty() == false) {
 			elementsIssued++;
 			engineThreadsQueue->addElement(queueElement, false);
 			queueElement = nullptr;
@@ -1215,6 +1223,9 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 			}
 		}
 	}
+
+	// reset pool
+	engineThreadQueueElementPool.reset();
 
 	//
 	if (skinningShaderEnabled == true) {

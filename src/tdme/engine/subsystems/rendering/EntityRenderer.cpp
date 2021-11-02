@@ -242,7 +242,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 		}
 
 		auto elementsIssued = 0;
-		auto queueElement = new Engine::EngineThreadQueueElement();
+		auto queueElement = Engine::engineThreadQueueElementPool.allocate();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
 		queueElement->engine = engine;
 		queueElement->rendering.renderPass = renderPass;
@@ -254,7 +254,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 				queueElement->objects.push_back(objectsByShader[i]);
 				if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT) {
 					auto queueElementToSubmit = queueElement;
-					queueElement = new Engine::EngineThreadQueueElement();
+					queueElement = Engine::engineThreadQueueElementPool.allocate();
 					queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
 					queueElement->engine = engine;
 					queueElement->rendering.renderPass = renderPass;
@@ -265,9 +265,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 				}
 			}
 		}
-		if (queueElement->objects.empty() == true) {
-			delete queueElement;
-		} else {
+		if (queueElement->objects.empty() == false) {
 			elementsIssued++;
 			engine->engineThreadsQueue->addElement(queueElement, false);
 		}
@@ -281,6 +279,9 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 				break;
 			}
 		}
+
+		//
+		Engine::engineThreadQueueElementPool.reset();
 
 		//
 		for (auto engineThread: Engine::engineThreads) {

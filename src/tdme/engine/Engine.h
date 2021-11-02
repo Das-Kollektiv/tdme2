@@ -43,6 +43,7 @@
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Pool.h>
 
 using std::array;
 using std::map;
@@ -107,6 +108,7 @@ using tdme::os::threading::RealtimeQueue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
+using tdme::utilities::Pool;
 
 /**
  * Engine main class
@@ -345,8 +347,27 @@ private:
 
 	};
 
+	class EngineThreadQueueElementPool: public Pool<EngineThreadQueueElement*> {
+	public:
+		/**
+		 * Public constructor
+		 */
+		inline EngineThreadQueueElementPool() {
+		}
+
+	protected:
+		/**
+		 * Instantiate a transparent render face
+		 */
+		inline EngineThreadQueueElement* instantiate() override {
+			return new EngineThreadQueueElement();
+		}
+
+	};
+
 	static vector<EngineThread*> engineThreads;
 	static RealtimeQueue<EngineThreadQueueElement>* engineThreadsQueue;
+	static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**
 	 * @return mesh manager
