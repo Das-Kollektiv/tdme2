@@ -827,31 +827,35 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 				pathB.push_back(path[i]);
 			}
 		}
+		Console::println("Creating flowmap 1");
 		flowMap = pathFinding->createFlowMap(
 			{
 				pathA[pathA.size() - 1]
 			},
 			center,
-			12.0f,
-			12.0f,
+			10.0f,
+			10.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathA,
 			false
 		);
+		Console::println("Creating flowmap 2");
 		auto flowMap2 = pathFinding->createFlowMap(
 			{
 				path[path.size() - 1]
 			},
 			center,
-			12.0f,
-			12.0f,
+			10.0f,
+			10.0f,
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			pathB,
 			true
 		);
+		Console::println("Creating flowmap done");
 		flowMap->merge(flowMap2);
 		flowMap2->releaseReference();
 	} else {
+		Console::println("Creating flowmap 1");
 		flowMap = pathFinding->createFlowMap(
 			{
 				path[path.size() - 1]
@@ -863,6 +867,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			path,
 			true
 		);
+		Console::println("Creating flowmap done");
 	}
 	{
 		auto i = 0;
