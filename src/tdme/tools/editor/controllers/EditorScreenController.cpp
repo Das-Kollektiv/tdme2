@@ -1064,6 +1064,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 						);
 						tabType = EditorTabView::TABTYPE_UIEDITOR;
 						tabView = new UIEditorTabView(view, tabId, screenNode);
+						viewPortTemplate = "template_viewport_ui.xml";
 					} catch (Exception &exception) {
 						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
 						icon = "{$icon.type_script}";
@@ -1083,8 +1084,8 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 						);
 						tabType = EditorTabView::TABTYPE_TEXT;
 						tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
+						viewPortTemplate = "template_viewport_plain.xml";
 					}
-					viewPortTemplate = "template_viewport_ui.xml";
 					break;
 				}
 			case FILETYPE_SOUND:
