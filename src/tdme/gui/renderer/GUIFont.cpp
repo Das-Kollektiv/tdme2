@@ -61,6 +61,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 	font->texture = TextureReader::read(
 		pathName,
 		StringTools::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),
+		false,
 		false
 	);
 	auto done = false;
