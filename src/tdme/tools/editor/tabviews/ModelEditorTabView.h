@@ -244,6 +244,8 @@ public:
 	void reloadOutliner() override;
 	void playSound(const string& soundId) override;
 	void stopSound() override;
+	void updateRendering() override;
+	inline bool hasFixedSize() override{ return false; };
 
 	/**
 	 * Play animation
@@ -260,9 +262,6 @@ public:
 	 * @param attachmentModelFile attachment model mile
 	 */
 	void addAttachment1(const string& nodeId, const string& attachmentModelFile);
-
-	// overridden methods
-	void updateRendering() override;
 
 	/**
 	 * Update shader parameters

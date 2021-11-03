@@ -198,6 +198,7 @@ public:
 	void onCameraTranslation() override;
 	void onCameraRotation() override;
 	void onCameraScale() override;
+	inline bool hasFixedSize() override{ return false; };
 	void updateRendering() override;
 
 	/**

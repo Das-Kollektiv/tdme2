@@ -31,10 +31,10 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->uiScreenNode = screenNode;
-	engine = Engine::createOffScreenInstance(512, 512, false, false);
+	engine = Engine::createOffScreenInstance(1920, 1080, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
-	// screenNode->getSizeConstraints().minWidth = -1;
-	// screenNode->getSizeConstraints().minHeight = -1;
+	screenNode->getSizeConstraints().minWidth = -1;
+	screenNode->getSizeConstraints().minHeight = -1;
 	screenNode->getSizeConstraints().maxWidth = -1;
 	screenNode->getSizeConstraints().maxHeight = -1;
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);

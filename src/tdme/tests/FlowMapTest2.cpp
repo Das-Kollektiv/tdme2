@@ -114,7 +114,7 @@ void FlowMapTest2::display()
 	*/
 	auto cam = engine->getCamera();
 	cam->setLookAt(combatUnits[0].object->getTransformations().getTranslation());
-	cam->setLookFrom(cam->getLookAt() + Vector3(0.0f, 60.0f, 0.0f));
+	cam->setLookFrom(cam->getLookAt() + Vector3(0.0f, 80.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	if (mouseClicked == true) {
 		mouseClicked = false;
@@ -434,6 +434,8 @@ void FlowMapTest2::dispose()
 
 void FlowMapTest2::initialize()
 {
+	Engine::setTransformationsComputingReduction1Distance(175.0f);
+	Engine::setTransformationsComputingReduction2Distance(250.0f);
 	engine->initialize();
 	scene = SceneReader::read("../MedievalSurvivors/resources/project/maps", "Map_TEST_SquadMovement.tscene");
 	SceneConnector::setLights(engine, scene);

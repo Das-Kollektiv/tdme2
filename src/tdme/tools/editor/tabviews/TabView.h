@@ -86,6 +86,11 @@ struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 	virtual void reloadOutliner() = 0;
 
 	/**
+	 * If this viewport framebuffer has a fixed size
+	 */
+	virtual bool hasFixedSize() = 0;
+
+	/**
 	 * Destructor
 	 */
 	virtual ~TabView() {}

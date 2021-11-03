@@ -72,54 +72,53 @@ PopUps* EditorView::getPopUps()
 
 void EditorView::handleInputEvents()
 {
-	auto selectedTabId = editorScreenController->getSelectedTabId();
-	auto& tabViews = editorScreenController->getTabViews();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
+	auto tabView = editorScreenController->getSelectedTab();
+	if (tabView != nullptr){
+		auto xScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
+		auto yScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
-		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
-		if (lastSelectedTabId != selectedTabId) {
-			auto lastTabViewIt = tabViews.find(lastSelectedTabId);
-			if (lastTabViewIt != tabViews.end()) {
-				lastTabViewIt->second.getTabView()->deactivate();
-			}
-			tab.getTabView()->activate();
+		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
+		if (tabView->getId() != lastSelectedTabId) {
+			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
+			if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
+			tabView->getTabView()->activate();
 		}
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
-			auto eventX = event.getXUnscaled() - left;
-			auto eventY = event.getYUnscaled() - top;
+			auto eventX = (event.getXUnscaled() - left) / xScale;
+			auto eventY = (event.getYUnscaled() - top) / yScale;
 			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) continue;
 			event.setX(eventX);
 			event.setY(eventY);
 			event.setXUnscaled(eventX);
 			event.setYUnscaled(eventY);
-			tab.getEngine()->getGUI()->getMouseEvents().push_back(event);
+			tabView->getEngine()->getGUI()->getMouseEvents().push_back(event);
 		}
 		for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
-			tab.getEngine()->getGUI()->getKeyboardEvents().push_back(event);
+			tabView->getEngine()->getGUI()->getKeyboardEvents().push_back(event);
 		}
-		tab.getTabView()->handleInputEvents();
-		tab.getEngine()->getGUI()->getMouseEvents().clear();
-		tab.getEngine()->getGUI()->getKeyboardEvents().clear();
+		tabView->getTabView()->handleInputEvents();
+		tabView->getEngine()->getGUI()->getMouseEvents().clear();
+		tabView->getEngine()->getGUI()->getKeyboardEvents().clear();
+		lastSelectedTabId = tabView->getId();
+	} else {
+		auto lastTabView = editorScreenController->getTab(lastSelectedTabId);
+		if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
+		lastSelectedTabId.clear();
 	}
-	lastSelectedTabId = selectedTabId;
 }
 
 void EditorView::display()
 {
-	auto selectedTabId = editorScreenController->getSelectedTabId();
-	auto& tabViews = editorScreenController->getTabViews();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
+	auto tabView = editorScreenController->getSelectedTab();
+	if (tabView != nullptr){
 		int left, top, width, height;
-		getViewPort(tab.getFrameBufferNode(), left, top, width, height);
-		if (tab.getEngine()->getWidth() != width || tab.getEngine()->getHeight() != height) {
-			tab.getEngine()->reshape(width, height);
+		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
+		if (tabView->getTabView()->hasFixedSize() == false &&
+			(tabView->getEngine()->getWidth() != width || tabView->getEngine()->getHeight() != height)) {
+			tabView->getEngine()->reshape(width, height);
 		}
-		tab.getTabView()->display();
-		tab.getFrameBufferNode()->setFrameBuffer(tab.getEngine()->getFrameBuffer());
+		tabView->getTabView()->display();
+		tabView->getFrameBufferNode()->setFrameBuffer(tabView->getEngine()->getFrameBuffer());
 	}
 	//
 	Audio::getInstance()->update();
@@ -196,11 +195,11 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 }
 
 void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
-	auto xScale = (float)engine->getWidth() / (float)editorScreenController->getScreenNode()->getScreenWidth();
-	auto yScale = (float)engine->getHeight() / (float)editorScreenController->getScreenNode()->getScreenHeight();
+	auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
+	auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 	editorScreenController->getViewPort(viewPortNode, left, top, width, height);
-	left*= xScale;
-	top*= yScale;
-	width*= xScale;
-	height*= yScale;
+	left = static_cast<int>(static_cast<float>(left) * xScale);
+	top = static_cast<int>(static_cast<float>(top) * yScale);
+	width = static_cast<int>(static_cast<float>(width) * xScale);
+	height = static_cast<int>(static_cast<float>(height) * yScale);
 }

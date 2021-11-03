@@ -89,8 +89,7 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void reloadOutliner() override;
-
-	// overridden methods
 	void updateRendering() override;
+	inline bool hasFixedSize() override{ return false; };
 
 };

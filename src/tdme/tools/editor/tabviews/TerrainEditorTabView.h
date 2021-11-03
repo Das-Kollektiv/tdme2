@@ -142,8 +142,7 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void reloadOutliner() override;
-
-	// overridden methods
+	inline bool hasFixedSize() override{ return false; };
 	void updateRendering() override;
 
 	/**

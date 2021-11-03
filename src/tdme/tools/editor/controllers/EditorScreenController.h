@@ -163,7 +163,6 @@ private:
 	GUIElementNode* outlinerAddDropDown { nullptr };
 	string projectPath;
 	unordered_map<string, EditorTabView> tabViews;
-	string selectedTabId;
 	unordered_map<string, Texture*> fileNameTextureMapping;
 	map<string, string> fileNameButtonXMLMapping;
 	int thumbnailIdx { 0 };
@@ -374,15 +373,23 @@ public:
 	}
 
 	/**
-	 * @return selected tab
+	 * Returns editor tab view by given tab id
+	 * @param tabId editor tab id
+	 * @return tab
 	 */
-	inline EditorTabView* getSelectedTab() {
-		auto selectedTabId = getSelectedTabId();
-		auto tabViewIt = tabViews.find(selectedTabId);
+	inline EditorTabView* getTab(const string& tabId) {
+		auto tabViewIt = tabViews.find(tabId);
 		if (tabViewIt != tabViews.end()){
 			return &tabViewIt->second;
 		}
 		return nullptr;
+	}
+
+	/**
+	 * @return selected tab
+	 */
+	inline EditorTabView* getSelectedTab() {
+		return getTab(getSelectedTabId());
 	}
 
 	/**
