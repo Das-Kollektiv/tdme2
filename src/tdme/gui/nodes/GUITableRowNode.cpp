@@ -15,6 +15,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUITableRowNode;
@@ -34,6 +35,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITableNode;
 using tdme::gui::GUI;
+using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 GUITableRowNode::GUITableRowNode(
@@ -164,21 +166,21 @@ void GUITableRowNode::layoutSubNodes()
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
 			}
 		} else
 		if (v2 == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left + ((width - finalNodesWidth) / 2);
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
 			}
 		} else
 		if (v2 == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = (width - finalNodesWidth);
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, (width - finalNodesWidth));
 			}
 		}
 

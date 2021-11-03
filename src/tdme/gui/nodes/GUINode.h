@@ -279,16 +279,6 @@ protected:
 	bool checkConditions();
 
 	/**
-	 * @return compute parent children render offset X total
-	 */
-	float computeParentChildrenRenderOffsetXTotal();
-
-	/**
-	 * @return compute children render offset Y total
-	 */
-	float computeParentChildrenRenderOffsetYTotal();
-
-	/**
 	 * On set condition
 	 * @param conditions conditions
 	 */
@@ -504,6 +494,16 @@ public:
 	 * @param floatingNodes floating nodes
 	 */
 	virtual void render(GUIRenderer* guiRenderer);
+
+	/**
+	 * @return compute parent children render offset X total
+	 */
+	float computeParentChildrenRenderOffsetXTotal();
+
+	/**
+	 * @return compute children render offset Y total
+	 */
+	float computeParentChildrenRenderOffsetYTotal();
 
 	/**
 	 * Is event belonging to node

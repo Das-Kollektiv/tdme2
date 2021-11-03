@@ -78,14 +78,16 @@ void EditorView::handleInputEvents()
 		auto yScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
 		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
+		auto offsetX = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetXTotal();
+		auto offsetY = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetYTotal();
 		if (tabView->getId() != lastSelectedTabId) {
 			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
 			if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
 			tabView->getTabView()->activate();
 		}
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
-			auto eventX = (event.getXUnscaled() - left) / xScale;
-			auto eventY = (event.getYUnscaled() - top) / yScale;
+			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
+			auto eventY = (event.getYUnscaled() - top + offsetY) / yScale;
 			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) continue;
 			event.setX(eventX);
 			event.setY(eventY);

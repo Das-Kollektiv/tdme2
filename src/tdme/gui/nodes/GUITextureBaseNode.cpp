@@ -100,24 +100,6 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 
 	GUINode::render(guiRenderer);
 
-	{
-		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
-		auto screenWidth = screenNode->getScreenWidth();
-		auto screenHeight = screenNode->getScreenHeight();
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left + clipping.left;
-		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top + clipping.top;
-		float width = getContentWidth() - padding.left - padding.right - clipping.left - clipping.right;
-		float height = getContentHeight() - padding.top - padding.bottom - clipping.top - clipping.bottom;
-		auto renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
-		auto renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-		auto renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
-		auto renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-		guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
-		guiRenderer->setSubRenderAreaTop(renderAreaTop);
-		guiRenderer->setSubRenderAreaRight(renderAreaRight);
-		guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
-	}
-
 	// render texture if required
 	if (textureId != 0) {
 		if (maskTextureId != 0) {

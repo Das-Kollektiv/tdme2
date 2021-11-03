@@ -25,6 +25,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
@@ -54,6 +55,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
+using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 GUIParentNode::GUIParentNode(
@@ -347,21 +349,21 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
 			}
 		} else
 		if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, (computedConstraints.width - guiSubNode->computedConstraints.width) / 2);
 			}
 		} else
 		if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right - padding.right);
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, (computedConstraints.width - guiSubNode->computedConstraints.width - border.right - padding.right));
 			}
 		}
 	}
@@ -374,21 +376,21 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
 			}
 		} else
 		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, (computedConstraints.height - guiSubNode->computedConstraints.height) / 2);
 			}
 		} else
 		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom - padding.bottom);
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom - padding.bottom));
 			}
 		}
 	}

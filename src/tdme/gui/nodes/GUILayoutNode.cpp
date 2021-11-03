@@ -15,6 +15,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUILayoutNode;
@@ -34,6 +35,7 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 GUILayoutNode::GUILayoutNode(
@@ -186,21 +188,21 @@ void GUILayoutNode::layoutSubNodes()
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
+					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
 				}
 			} else
 			if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = border.top + padding.top + ((height - finalNodesHeight) / 2);
+					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top + ((height - finalNodesHeight) / 2));
 				}
 			} else
 			if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = (height - finalNodesHeight);
+					guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight);
 				}
 			}
 
@@ -257,21 +259,21 @@ void GUILayoutNode::layoutSubNodes()
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
+					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
 				}
 			} else
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left + ((width - finalNodesWidth) / 2);
+					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
 				}
 			} else
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = (width - finalNodesWidth);
+					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth);
 				}
 			}
 
