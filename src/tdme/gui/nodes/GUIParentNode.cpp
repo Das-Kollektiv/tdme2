@@ -481,6 +481,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 
 	//
+	if (hasEffects() == true) applyEffects(guiRenderer);
+
+	//
 	if (computeViewportCache == true) {
 		for (auto i = 0; i < subNodes.size(); i++) {
 			auto guiSubNode = subNodes[i];
@@ -543,6 +546,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
 	guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
+
+	//
+	if (hasEffects() == true) undoEffects(guiRenderer);
 }
 
 void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)

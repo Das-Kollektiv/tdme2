@@ -23,8 +23,6 @@ private:
 	GUIColor colorAddEnd { 0.0f, 0.0f, 0.0f, 0.0f };
 	GUIColor colorMulStart { 1.0f, 1.0f, 1.0f, 1.0f };
 	GUIColor colorMulEnd { 1.0f, 1.0f, 1.0f, 1.0f };
-	GUIColor colorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
-	GUIColor colorMul { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
 	/**
@@ -33,66 +31,37 @@ public:
 	GUIColorEffect();
 
 	/**
-	 * @return color add start
+	 * @return color add
 	 */
-	inline virtual const GUIColor& getColorAddStart() const {
-		return colorAddStart;
-	}
-
-	/**
-	 * Set color add start
-	 * @param colorAddStart color add start
-	 */
-	inline virtual void setColorAddStart(const GUIColor& colorAddStart) {
-		this->colorAddStart = colorAddStart;
-	}
-
-	/**
-	 * @return color add end
-	 */
-	inline virtual const GUIColor& getColorAddEnd() const {
+	inline virtual const GUIColor& getColorAdd() const {
 		return colorAddEnd;
 	}
 
 	/**
-	 * Set color add end
-	 * @param colorAddEnd color add end
+	 * Set color add
+	 * @param colorAdd color add
 	 */
-	inline virtual void setColorAddEnd(const GUIColor& colorAddEnd) {
-		this->colorAddEnd = colorAddEnd;
+	inline virtual void setColorAdd(const GUIColor& colorAdd) {
+		this->colorAddEnd = colorAdd;
 	}
 
 	/**
-	 * @return color mul start
+	 * @return color mul
 	 */
-	inline virtual const GUIColor& getColorMulStart() const {
-		return colorMulStart;
-	}
-
-	/**
-	 * Set color mul start
-	 * @param colorMulStart color mul start
-	 */
-	inline virtual void setColorMulStart(const GUIColor& colorMulStart) {
-		this->colorMulStart = colorMulStart;
-	}
-
-	/**
-	 * @return color mul end
-	 */
-	inline virtual const GUIColor& getColorMulEnd() const {
+	inline virtual const GUIColor& getColorMul() const {
 		return colorMulEnd;
 	}
 
 	/**
-	 * Set color mul end
-	 * @param colorMulEnd color mul end
+	 * Set color mul
+	 * @param colorMul color mul
 	 */
-	inline virtual void setColorMulEnd(const GUIColor& colorMulEnd) {
-		this->colorMulEnd = colorMulEnd;
+	inline virtual void setColorMul(const GUIColor& colorMul) {
+		this->colorMulEnd = colorMul;
 	}
 
 	// overridden methods
+	void applyState(const EffectState& state) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
 };

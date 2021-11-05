@@ -17,12 +17,10 @@ class tdme::gui::effects::GUIPositionEffect final: public GUIEffect
 {
 
 private:
-	float positionXStart { 0.0f };
-	float positionXEnd { 0.0f };
+	float positionXStart{ 0.0f };
 	float positionYStart { 0.0f };
+	float positionXEnd { 0.0f };
 	float positionYEnd { 0.0f };
-	float positionX { 0.0f };
-	float positionY { 0.0f };
 
 public:
 	/**
@@ -31,66 +29,37 @@ public:
 	GUIPositionEffect();
 
 	/**
-	 * @return position X start
+	 * @return position X
 	 */
-	inline virtual float getPositionXStart() const {
-		return positionXStart;
-	}
-
-	/**
-	 * Set position X start
-	 * @param positionXStart position X start
-	 */
-	inline virtual void setPositionXStart(float positionXStart) {
-		this->positionXStart = positionXStart;
-	}
-
-	/**
-	 * @return position X end
-	 */
-	inline virtual float getPositionXEnd() const {
+	inline virtual float getPositionX() const {
 		return positionXEnd;
 	}
 
 	/**
-	 * Set position X end
-	 * @param positionXEnd position X end
+	 * Set position X
+	 * @param positionX position X
 	 */
-	inline virtual void setPositionXEnd(float positionXEnd) {
-		this->positionXEnd = positionXEnd;
+	inline virtual void setPositionX(float positionX) {
+		this->positionXEnd = positionX;
 	}
 
 	/**
-	 * @return position Y start
+	 * @return position Y
 	 */
-	inline virtual float getPositionYStart() const {
-		return positionYStart;
-	}
-
-	/**
-	 * Set position Y start
-	 * @param positionYStart position Y start
-	 */
-	inline virtual void setPositionYStart(float positionYStart) {
-		this->positionYStart = positionYStart;
-	}
-
-	/**
-	 * @return get position Y end
-	 */
-	inline virtual float getPositionYEnd() const {
+	inline virtual float getPositionY() const {
 		return positionYEnd;
 	}
 
 	/**
-	 * Set position Y end
-	 * @param positionYEnd position Y end
+	 * Set position Y
+	 * @param positionX position Y
 	 */
-	inline virtual void setPositionYEnd(float positionYEnd) {
-		this->positionYEnd = positionYEnd;
+	inline virtual void setPositionY(float positionY) {
+		this->positionYEnd = positionY;
 	}
 
 	// override methods
+	void applyState(const EffectState& state) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
 };

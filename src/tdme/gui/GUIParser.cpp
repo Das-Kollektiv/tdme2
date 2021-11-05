@@ -307,8 +307,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
 				if (type == "color") {
 					effect = new GUIColorEffect();
-					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
-					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+					static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
+					static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
 					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
@@ -317,10 +318,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				} else
 				if (type == "position") {
 					effect = new GUIPositionEffect();
-					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+					static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
 					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
@@ -349,8 +349,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
 				if (type == "color") {
 					effect = new GUIColorEffect();
-					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
-					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+					static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
+					static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
 					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
@@ -359,10 +360,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				} else
 				if (type == "position") {
 					effect = new GUIPositionEffect();
-					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+					static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
 					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),

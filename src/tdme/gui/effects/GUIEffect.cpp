@@ -43,8 +43,11 @@ bool GUIEffect::update(GUIRenderer* guiRenderer)
 	timeLeft -= timePassed;
 	if (timeLeft < 0.0f) {
 		timeLeft = 0.0f;
-		active = false;
-		return true;
+		if (persistant == false) {
+			active = false;
+			return true;
+		}
 	}
 	return false;
 }
+

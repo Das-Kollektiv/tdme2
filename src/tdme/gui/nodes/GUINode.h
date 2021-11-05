@@ -165,6 +165,7 @@ protected:
 	bool conditionsMet;
 	bool layouted;
 	bool haveOutEffect;
+	vector<string> lastConditions;
 
 	/**
 	 * Public constructor
@@ -487,6 +488,25 @@ public:
 	 * Layout on demand
 	 */
 	virtual void layoutOnDemand();
+
+	/**
+	 * @return if node has effects
+	 */
+	inline bool hasEffects() {
+		return effects.empty() == false;
+	}
+
+	/**
+	 * Apply effects
+	 * @param guiRenderer gui renderer
+	 */
+	virtual void applyEffects(GUIRenderer* guiRenderer);
+
+	/**
+	 * Undo effects
+	 * @param guiRenderer gui renderer
+	 */
+	virtual void undoEffects(GUIRenderer* guiRenderer);
 
 	/**
 	 * Render

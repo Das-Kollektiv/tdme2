@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUINode.h>
 
+#include <algorithm>
 #include <array>
 #include <string>
 #include <unordered_set>
@@ -37,6 +38,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::find;
 using std::string;
 using std::to_string;
 using std::unordered_set;
@@ -455,6 +457,27 @@ void GUINode::layoutOnDemand() {
 	}
 }
 
+void GUINode::applyEffects(GUIRenderer* guiRenderer) {
+	if (effects.empty() == true) return;
+	vector<Action*> actions;
+	for (auto& effectIt: effects) {
+		auto effect = effectIt.second;
+		if (effect->isActive() == true) {
+			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
+			effect->apply(guiRenderer);
+		}
+	}
+	for (auto action: actions) action->performAction();
+}
+
+void GUINode::undoEffects(GUIRenderer* guiRenderer) {
+	if (effects.empty() == true) return;
+	guiRenderer->setGUIEffectOffsetX(0.0f);
+	guiRenderer->setGUIEffectOffsetY(0.0f);
+	guiRenderer->setGUIEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+	guiRenderer->setGUIEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
 void GUINode::render(GUIRenderer* guiRenderer)
 {
 	layoutOnDemand();
@@ -478,15 +501,8 @@ void GUINode::render(GUIRenderer* guiRenderer)
 		}
 	}
 
-	vector<Action*> actions;
-	for (auto& effectIt: effects) {
-		auto effect = effectIt.second;
-		if (effect->isActive() == true) {
-			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
-			effect->apply(guiRenderer);
-		}
-	}
-	for (auto action: actions) action->performAction();
+	//
+	if (hasEffects() == true) applyEffects(guiRenderer);
 
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
@@ -905,6 +921,9 @@ void GUINode::render(GUIRenderer* guiRenderer)
 		}
 		guiRenderer->render();
 	}
+
+	//
+	if (hasEffects() == true) undoEffects(guiRenderer);
 }
 
 float GUINode::computeParentChildrenRenderOffsetXTotal()
@@ -1316,12 +1335,27 @@ void GUINode::removeEffect(const string& id)
 }
 
 void GUINode::onSetConditions(const vector<string>& conditions) {
+	// no op if no effects
+	if (hasEffects() == false) return;
+
+	//
 	auto haveInEffect = false;
+	// store old effect states
+	vector<GUIEffect::EffectState> effectStates;
+	GUIEffect::EffectState resetEffectState;
+	effectStates.push_back(resetEffectState);
+	for (auto& effectIt: effects) {
+		auto effect = effectIt.second;
+		if (effect->isActive() == true) {
+			effectStates.push_back(effect->getState());
+		}
+	}
 	for (auto& condition: conditions) {
 		{
 			auto effect = getEffect("tdme.xmleffect.in.color.on." + condition);
 			if (effect != nullptr && effect->isActive() == false) {
 				haveInEffect = true;
+				for (auto& effectState: effectStates) effect->applyState(effectState);
 				effect->start();
 			}
 		}
@@ -1329,6 +1363,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			auto effect = getEffect("tdme.xmleffect.in.position.on." + condition);
 			if (effect != nullptr && effect->isActive() == false) {
 				haveInEffect = true;
+				for (auto& effectState: effectStates) effect->applyState(effectState);
 				effect->start();
 			}
 		}
@@ -1341,12 +1376,14 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 		}
 	} else {
 		auto issuedOutEffect = false;
-		for (auto& condition: conditions) {
+		for (auto& condition: lastConditions) {
+			if (find(conditions.begin(), conditions.end(), condition) != conditions.end()) continue;
 			{
 				auto effect = getEffect("tdme.xmleffect.out.color.on." + condition);
 				if (effect != nullptr && effect->isActive() == false) {
 					issuedOutEffect = true;
 					haveOutEffect = true;
+					for (auto& effectState: effectStates) effect->applyState(effectState);
 					effect->start();
 				}
 			}
@@ -1355,18 +1392,21 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 				if (effect != nullptr && effect->isActive() == false) {
 					issuedOutEffect = true;
 					haveOutEffect = true;
+					for (auto& effectState: effectStates) effect->applyState(effectState);
 					effect->start();
 				}
 			}
 		}
 		if (issuedOutEffect == true) {
 			for (auto& effectIt: effects) {
+				auto effect = effectIt.second;
 				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true) {
-					effectIt.second->stop();
+					effect->stop();
 				}
 			}
 		}
 	}
+	lastConditions = conditions;
 }
 
 bool GUINode::haveActiveOutEffect() {
