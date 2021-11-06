@@ -1398,8 +1398,6 @@ void VKRenderer::initialize()
 		context.draw_cmd_current = 0;
 		context.pipeline = VK_NULL_HANDLE;
 		context.draw_cmd_started.fill(false);
-		context.draw_cmd_bound_indices_buffer.fill(VK_NULL_HANDLE);
-		context.draw_cmd_bound_buffers.fill({VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE});
 		context.render_pass_started = false;
 
 		// set up lights
@@ -1454,6 +1452,9 @@ void VKRenderer::initialize()
 		getDefaultContext()
 	);
 	white_texture_samplercube_default = textures.find(white_texture_samplercube_default_id)->second;
+
+	//
+	for (auto& context: contexts) unbindBufferObjects(&context);
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -3598,22 +3599,6 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	//
 	finishPipeline(contextTyped.idx);
 
-	// reset bound buffers
-	/*
-	uint32_t bufferSize;
-	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
-	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
-	contextTyped.bound_buffer_sizes.fill(bufferSize);
-	contextTyped.draw_cmd_bound_indices_buffer.fill(VK_NULL_HANDLE);
-	contextTyped.draw_cmd_bound_buffers.fill(
-		{
-		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-		VK_NULL_HANDLE, VK_NULL_HANDLE
-		}
-	);
-	*/
-
 	//
 	contextTyped.program_id = 0;
 	contextTyped.program = nullptr;
@@ -5048,12 +5033,12 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 						.layerCount = 1
 					},
 					.srcOffsets = {
-						[0] = {
+						{
 							.x = 0,
 							.y = 0,
 							.z = 0
 						},
-						[1] = {
+						{
 							.x = textureWidth,
 							.y = textureHeight,
 							.z = 1
@@ -5066,12 +5051,12 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 						.layerCount = 1
 					},
 					.dstOffsets = {
-						[0] = {
+						{
 							.x = 0,
 							.y = 0,
 							.z = 0
 						},
-						[1] = {
+						{
 							.x = int32_t(textureWidth >> i),
 							.y = int32_t(textureHeight >> i),
 							.z = 1
@@ -6215,7 +6200,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	auto samplerIdx = 0;
 	auto uboIdx = 0;
 	uint64_t desc_set2_cache_id = 0LL;
-	array<int, 4> texture_ids;
+	array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
 	for (auto shader: contextTyped.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
@@ -6348,26 +6333,11 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	// index buffer
 	if (indicesBuffer != VK_NULL_HANDLE) {
-		if (contextTyped.draw_cmd_bound_indices_buffer[contextTyped.draw_cmd_current] != indicesBuffer) {
-			vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current], indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
-			contextTyped.draw_cmd_bound_indices_buffer[contextTyped.draw_cmd_current] = indicesBuffer;
-		}
+		vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current], indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	// buffers
-	auto equalsBufferCount = 0;
-	auto& previousBoundBuffers = contextTyped.draw_cmd_bound_buffers[contextTyped.draw_cmd_current];
-	for (auto i = 0; i < contextTyped.bound_buffers.size(); i++) {
-		if (previousBoundBuffers[i] == contextTyped.bound_buffers[i]) {
-			equalsBufferCount++;
-		} else {
-			vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], i, 1, &contextTyped.bound_buffers[i], contextTyped.bound_buffer_offsets.data());
-		}
-	}
-	if (equalsBufferCount == 0) {
-		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
-	}
-	contextTyped.draw_cmd_bound_buffers[contextTyped.draw_cmd_current] = contextTyped.bound_buffers;
+	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
 
 	// draw
 	if (indicesBuffer != VK_NULL_HANDLE) {
@@ -6412,30 +6382,6 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 		unsetPipeline(contextTyped.idx);
     }
 }
-
-inline void VKRenderer::endDrawCommands(int contextIdx) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	VkResult err;
-
-	// end render passes
-	finishSetupCommandBuffer(contextIdx);
-	endRenderPass(contextIdx);
-
-	//
-	auto submitted_command_buffers_count = 0;
-	VkCommandBuffer submitted_command_buffers[DRAW_COMMANDBUFFER_MAX * 3];
-	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-		auto command_buffer = endDrawCommandBuffer(contextIdx, j, false);
-		if (command_buffer != VK_NULL_HANDLE) {
-			submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
-		}
-	}
-	if (submitted_command_buffers_count > 0) {
-		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, contexts[contextIdx].draw_fence, true, true);
-		recreateContextFences(contextIdx);
-	}
-}
-
 
 inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 	// have our context typed
@@ -6780,17 +6726,10 @@ void VKRenderer::unbindBufferObjects(void* context)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	uint32_t bufferSize = 0;
+	auto defaultBuffer = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
 	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
-	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
+	contextTyped.bound_buffers.fill(defaultBuffer);
 	contextTyped.bound_buffer_sizes.fill(bufferSize);
-	contextTyped.draw_cmd_bound_indices_buffer.fill(VK_NULL_HANDLE);
-	contextTyped.draw_cmd_bound_buffers.fill(
-		{
-		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-		VK_NULL_HANDLE, VK_NULL_HANDLE
-		}
-	);
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)

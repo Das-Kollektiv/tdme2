@@ -247,8 +247,6 @@ private:
 
 		//
 		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
-		array<VkBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_indices_buffer;
-		array<array<VkBuffer, 10>, DRAW_COMMANDBUFFER_MAX> draw_cmd_bound_buffers;
 		array<VkBuffer, 10> bound_buffers {
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -420,7 +418,6 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void endDrawCommands(int contextIdx);
 	void endDrawCommandsAllContexts();
 	void requestSubmitDrawBuffers(int contextIdx);
 	void initializeRenderPass();
