@@ -569,8 +569,8 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 				} else {
 					if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
 					if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+					event->setProcessed(true);
 				}
-				event->setProcessed(true);
 				invalidateRenderCaches();
 				return;
 			}
@@ -584,8 +584,8 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 				} else {
 					if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
 					if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+					event->setProcessed(true);
 				}
-				event->setProcessed(true);
 				invalidateRenderCaches();
 				return;
 			}
