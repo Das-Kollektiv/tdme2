@@ -458,24 +458,26 @@ void GUINode::layoutOnDemand() {
 }
 
 void GUINode::applyEffects(GUIRenderer* guiRenderer) {
-	if (effects.empty() == true) return;
+	if (hasEffects() == false) return;
 	vector<Action*> actions;
+	vector<GUIEffect*> activeEffects;
 	for (auto& effectIt: effects) {
 		auto effect = effectIt.second;
 		if (effect->isActive() == true) {
-			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
-			effect->apply(guiRenderer);
+			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) {
+				actions.push_back(effect->getAction());
+			} else {
+				activeEffects.push_back(effect);
+			}
 		}
 	}
 	for (auto action: actions) action->performAction();
+	guiRenderer->pushEffects(activeEffects);
 }
 
 void GUINode::undoEffects(GUIRenderer* guiRenderer) {
-	if (effects.empty() == true) return;
-	guiRenderer->setGUIEffectOffsetX(0.0f);
-	guiRenderer->setGUIEffectOffsetY(0.0f);
-	guiRenderer->setGUIEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-	guiRenderer->setGUIEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	if (hasEffects() == false) return;
+	guiRenderer->popEffects();
 }
 
 void GUINode::render(GUIRenderer* guiRenderer)
@@ -502,8 +504,6 @@ void GUINode::render(GUIRenderer* guiRenderer)
 	}
 
 	//
-	if (hasEffects() == true) applyEffects(guiRenderer);
-
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
 	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;
@@ -921,9 +921,6 @@ void GUINode::render(GUIRenderer* guiRenderer)
 		}
 		guiRenderer->render();
 	}
-
-	//
-	if (hasEffects() == true) undoEffects(guiRenderer);
 }
 
 float GUINode::computeParentChildrenRenderOffsetXTotal()
@@ -1339,7 +1336,13 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	if (hasEffects() == false) return;
 
 	//
+	auto defaultEffect = getEffect("tdme.xmleffect.default");
+	if (defaultEffect != nullptr) defaultEffect->stop();
+
+	//
 	auto haveInEffect = false;
+	auto issuedOutEffect = false;
+
 	// store old effect states
 	vector<GUIEffect::EffectState> effectStates;
 	GUIEffect::EffectState resetEffectState;
@@ -1375,7 +1378,6 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			}
 		}
 	} else {
-		auto issuedOutEffect = false;
 		for (auto& condition: lastConditions) {
 			if (find(conditions.begin(), conditions.end(), condition) != conditions.end()) continue;
 			{
@@ -1407,6 +1409,22 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 		}
 	}
 	lastConditions = conditions;
+
+	// check if we need to start default effect
+	if (defaultEffect != nullptr) {
+		auto haveEffect = false;
+		for (auto& effectIt: effects) {
+			auto effect = effectIt.second;
+			if (effect->isActive() == true) {
+				haveEffect = true;
+				break;
+			}
+		}
+		if (haveEffect == false) {
+			for (auto& effectState: effectStates) defaultEffect->applyState(effectState);
+			defaultEffect->start();
+		}
+	}
 }
 
 bool GUINode::haveActiveOutEffect() {

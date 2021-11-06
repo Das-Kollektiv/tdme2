@@ -20,8 +20,33 @@ void GUIColorEffect::applyState(const EffectState& state) {
 
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 {
-	effectState.colorMul.set(colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));
-	guiRenderer->setGUIEffectColorMul(effectState.colorMul);
-	effectState.colorAdd.set(colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));
-	guiRenderer->setGUIEffectColorAdd(effectState.colorAdd);
+	effectState.colorMul.set(
+		colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) * (timeTotal - timeLeft) / timeTotal),
+		colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) * (timeTotal - timeLeft) / timeTotal),
+		colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) * (timeTotal - timeLeft) / timeTotal),
+		colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) * (timeTotal - timeLeft) / timeTotal)
+	);
+	auto& effectColorMul = guiRenderer->getGUIEffectColorMul();
+	auto& effectColorAdd = guiRenderer->getGUIEffectColorAdd();
+	guiRenderer->setGUIEffectColorMul(
+		GUIColor(
+			effectColorMul.getRed() * effectState.colorMul.getRed(),
+			effectColorMul.getGreen() * effectState.colorMul.getGreen(),
+			effectColorMul.getBlue() * effectState.colorMul.getBlue(),
+			effectColorMul.getAlpha() * effectState.colorMul.getAlpha()
+		)
+	);
+	effectState.colorAdd.set(
+		colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) * (timeTotal - timeLeft) / timeTotal),
+		colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) * (timeTotal - timeLeft) / timeTotal),
+		colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) * (timeTotal - timeLeft) / timeTotal),
+		colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) * (timeTotal - timeLeft) / timeTotal));
+	guiRenderer->setGUIEffectColorAdd(
+		GUIColor(
+			effectColorAdd.getRed() + effectState.colorAdd.getRed(),
+			effectColorAdd.getGreen() + effectState.colorAdd.getGreen(),
+			effectColorAdd.getBlue() + effectState.colorAdd.getBlue(),
+			effectColorAdd.getAlpha() + effectState.colorAdd.getAlpha()
+		)
+	);
 }

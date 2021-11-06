@@ -41,7 +41,7 @@ void main(void) {
 		float colorStartNext = gradientColorIdx < gradientColorCount - 1?gradientColorStarts[gradientColorIdx + 1]:gradientColorStarts[gradientColorIdx];
 		float colorNextBlend = clamp((vsFragGradientTextureUV.x - colorStart) / (colorStartNext - colorStart), 0.0, 1.0);
 		float colorBlend = clamp(1.0 - colorNextBlend, 0.0, 1.0);
-		outColor = color * colorBlend + colorNext * colorNextBlend;
+		outColor = clamp(effectColorAdd + (color * colorBlend + colorNext * colorNextBlend) * effectColorMul, 0.0, 1.0);
 	} else
 	if (diffuseTextureAvailable == 1) {
 		outColor = clamp((effectColorAdd + texture(diffuseTextureUnit, vsFragTextureUV) * vsFragColor * effectColorMul), 0.0, 1.0);

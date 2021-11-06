@@ -207,10 +207,6 @@ protected:
 	 * Destructor
 	 */
 	virtual ~GUINode();
-	/**
-	 * @return node type
-	 */
-	virtual const string getNodeType() = 0;
 
 	/**
 	 * @return is content node
@@ -331,6 +327,11 @@ public:
 	inline const string& getId() {
 		return id;
 	}
+
+	/**
+	 * @return node type
+	 */
+	virtual const string getNodeType() = 0;
 
 	/**
 	 * @return content width including border, margin

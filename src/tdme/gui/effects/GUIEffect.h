@@ -30,6 +30,7 @@ public:
 
 protected:
 	bool active { false };
+	int64_t timeLast { -1LL };
 	float timeTotal { 0.0 };
 	float timeLeft { 0.0 };
 	float timePassed { 0.0 };

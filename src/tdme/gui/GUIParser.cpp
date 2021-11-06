@@ -293,98 +293,81 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 	parseGUINode(parentNode, string(), xmlNode, nullptr);
 }
 
+void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool requiresCondition, TiXmlElement* node) {
+	GUIEffect* effect = nullptr;
+	auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
+	if (type == "color") {
+		effect = new GUIColorEffect();
+		static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+		static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
+		static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
+		static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+		guiNode->addEffect(
+			effectPrefix + (requiresCondition == true?string(".") + type + ".on." + AVOID_NULLPTR_STRING(node->Attribute("on")):string()),
+			effect
+		);
+	} else
+	if (type == "position") {
+		effect = new GUIPositionEffect();
+		static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
+		static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
+		static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
+		static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+		guiNode->addEffect(
+			effectPrefix + (requiresCondition == true?string(".") + type + ".on." + AVOID_NULLPTR_STRING(node->Attribute("on")):string()),
+			effect
+		);
+	}
+	auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
+	if (effect != nullptr && action.empty() == false) {
+		class EffectAction: public virtual Action
+		{
+		public:
+			EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
+			}
+			void performAction() override {
+				GUIElementNode::executeExpression(guiScreenNode, expression);
+			}
+		private:
+			GUIScreenNode* guiScreenNode;
+			string expression;
+		};
+		effect->setAction(new EffectAction(guiNode->getScreenNode(), action));
+	}
+}
+
+void GUIParser::parseEffects(GUINode* guiNode, TiXmlElement* xmlParentNode) {
+	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+		string nodeTagName = string(node->Value());
+		if (nodeTagName == "effect-in") {
+			parseEffect(guiNode, "tdme.xmleffect.in", true, node);
+		} else
+		if (nodeTagName == "effect-out") {
+			parseEffect(guiNode, "tdme.xmleffect.out", true, node);
+		} else
+		if (nodeTagName == "effect-default") {
+			parseEffect(guiNode, "tdme.xmleffect.default", false, node);
+		}
+	}
+}
+
 void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* xmlParentNode, GUIElement* guiElement)
 {
 	auto themeProperties = guiParentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
+	parseEffects(guiParentNode, xmlParentNode);
 	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
 			if (nodeTagName == "effect-in") {
-				// TODO: Refactor this and next sub block into a method
-				GUIEffect* effect = nullptr;
-				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
-				if (type == "color") {
-					effect = new GUIColorEffect();
-					static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
-					static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
-					static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
-					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
-					guiParentNode->addEffect(
-						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
-						effect
-					);
-				} else
-				if (type == "position") {
-					effect = new GUIPositionEffect();
-					static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
-					static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
-					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
-					guiParentNode->addEffect(
-						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
-						effect
-					);
-				}
-				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
-				if (effect != nullptr && action.empty() == false) {
-					class EffectAction: public virtual Action
-					{
-					public:
-						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
-						}
-						void performAction() override {
-							GUIElementNode::executeExpression(guiScreenNode, expression);
-						}
-					private:
-						GUIScreenNode* guiScreenNode;
-						string expression;
-					};
-					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
-				}
+				parseEffect(guiParentNode, "tdme.xmleffect.in", true, node);
 			} else
 			if (nodeTagName == "effect-out") {
-				GUIEffect* effect = nullptr;
-				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
-				if (type == "color") {
-					effect = new GUIColorEffect();
-					static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
-					static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
-					static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
-					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
-					guiParentNode->addEffect(
-						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
-						effect
-					);
-				} else
-				if (type == "position") {
-					effect = new GUIPositionEffect();
-					static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
-					static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
-					static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
-					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
-					guiParentNode->addEffect(
-						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
-						effect
-					);
-				}
-				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
-				if (effect != nullptr && action.empty() == false) {
-					class EffectAction: public virtual Action
-					{
-					public:
-						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
-						}
-						void performAction() override {
-							GUIElementNode::executeExpression(guiScreenNode, expression);
-						}
-					private:
-						GUIScreenNode* guiScreenNode;
-						string expression;
-					};
-					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
-				}
+				parseEffect(guiParentNode, "tdme.xmleffect.out", true, node);
+			} else
+			if (nodeTagName == "effect-default") {
+				parseEffect(guiParentNode, "tdme.xmleffect.default", false, node);
 			} else
 			if (nodeTagName == "panel") {
 				auto guiPanelNode = new GUIPanelNode(
@@ -632,6 +615,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiSpaceNode, node);
 			} else
 			if (nodeTagName == "element") {
 				auto guiElementNode = new GUIElementNode(
@@ -787,6 +771,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiImageNode, node);
 			} else
 			if (nodeTagName == "frame-buffer") {
 				auto guiFrameBufferNode = new GUIFrameBufferNode(
@@ -865,6 +850,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiFrameBufferNode, node);
 			} else
 			if (nodeTagName == "texture") {
 				auto guiTextureNode = new GUITextureNode(
@@ -943,6 +929,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiTextureNode, node);
 			} else
 			if (nodeTagName == "gradient") {
 				auto guiGradientNode = new GUIGradientNode(
@@ -1014,6 +1001,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiGradientNode, node);
 			} else
 			if (nodeTagName == "text") {
 				auto guiTextNode = new GUITextNode(
@@ -1076,6 +1064,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiTextNode, node);
 			} else
 			if (nodeTagName == "multiline-text") {
 				auto guiTextNode = new GUIMultilineTextNode(
@@ -1138,6 +1127,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiTextNode, node);
 			} else
 			if (nodeTagName == "table") {
 				auto guiTableNode = new GUITableNode(
@@ -1389,6 +1379,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiInputInternalNode, node);
 			} else
 			if (nodeTagName == "vertical-scrollbar-internal") {
 				auto guiVerticalScrollbarInternalNode = new GUIVerticalScrollbarInternalNode(
@@ -1451,6 +1442,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiVerticalScrollbarInternalNode, node);
 			} else
 			if (nodeTagName == "horizontal-scrollbar-internal") {
 				auto guiHorizontalScrollbarInternalNode = new GUIHorizontalScrollbarInternalNode(
@@ -1513,6 +1505,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					}
 					guiElementControllerInstalled = true;
 				}
+				parseEffects(guiHorizontalScrollbarInternalNode, node);
 			} else
 			if (nodeTagName == "inner-xml") {
 				unordered_map<string, string> attributes;

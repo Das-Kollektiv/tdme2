@@ -370,7 +370,9 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
 	GUIParentNode::layoutOnDemand();
+	if (hasEffects() == true) applyEffects(guiRenderer);
 	GUIParentNode::render(guiRenderer);
+	if (hasEffects() == true) undoEffects(guiRenderer);
 	guiRenderer->doneScreen();
 }
 

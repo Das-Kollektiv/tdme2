@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -18,7 +19,9 @@ using std::map;
 using std::unordered_map;
 using std::vector;
 
+using tdme::gui::effects::GUIEffect;
 using tdme::gui::elements::GUIElement;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
@@ -85,6 +88,26 @@ public:
 	static void parse(GUIParentNode* parentNode, const string& xml);
 
 private:
+
+	/**
+	 * Parse GUI effect
+	 * @param guiNode GUI node
+	 * @param effectPrefix effect prefix
+	 * @param requiresCondition requires condition
+	 * @param node node
+	 * @return GUI effect
+	 */
+	static void parseEffect(GUINode* guiNode, const string& effectPrefix, bool requiresCondition, TiXmlElement* node);
+
+	/**
+	 * Parse GUI effect
+	 * @param guiNode GUI node
+	 * @param effectPrefix effect prefix
+	 * @param requiresCondition requires condition
+	 * @param xmlParentNode xml parent node
+	 * @return GUI effect
+	 */
+	static void parseEffects(GUINode* guiNode, TiXmlElement* xmlParentNode);
 
 	/**
 	 * Parse GUI node

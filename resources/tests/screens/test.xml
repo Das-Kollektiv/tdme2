@@ -280,7 +280,7 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 						/>
 						<space height="*" />
 						<gradient 
-							width="50%" 
+							width="50%"
 							height="50%"
 							colors="0%=red,50%=green,100%=blue"
 							rotation="45"

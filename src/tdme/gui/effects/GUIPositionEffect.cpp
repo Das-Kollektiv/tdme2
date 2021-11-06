@@ -22,8 +22,8 @@ void GUIPositionEffect::apply(GUIRenderer* guiRenderer)
 {
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
-	effectState.positionX = positionXStart + ((positionXEnd - positionXStart) / timeTotal * (timeTotal - timeLeft));
-	effectState.positionY = positionYStart + ((positionYEnd - positionYStart) / timeTotal * (timeTotal - timeLeft));
-	guiRenderer->setGUIEffectOffsetX(-effectState.positionX / screenWidth * 2.0f);
-	guiRenderer->setGUIEffectOffsetY(-effectState.positionY / screenHeight * 2.0f);
+	effectState.positionX = positionXStart + ((positionXEnd - positionXStart) * (timeTotal - timeLeft) / timeTotal);
+	effectState.positionY = positionYStart + ((positionYEnd - positionYStart) * (timeTotal - timeLeft) / timeTotal);
+	guiRenderer->setGUIEffectOffsetX(guiRenderer->getGUIEffectOffsetX() + -effectState.positionX / screenWidth * 2.0f);
+	guiRenderer->setGUIEffectOffsetY(guiRenderer->getGUIEffectOffsetY() + -effectState.positionY / screenHeight * 2.0f);
 }

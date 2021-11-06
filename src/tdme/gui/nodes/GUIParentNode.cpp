@@ -478,10 +478,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
-	GUINode::render(guiRenderer);
 
 	//
-	if (hasEffects() == true) applyEffects(guiRenderer);
+	GUINode::render(guiRenderer);
 
 	//
 	if (computeViewportCache == true) {
@@ -517,7 +516,10 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 				((left) / (screenWidth / 2.0f)) - 1.0f,
 				((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
 				//
+				//
+				if (guiSubNode->hasEffects() == true) guiSubNode->applyEffects(guiRenderer);
 				guiSubNode->render(guiRenderer);
+				if (guiSubNode->hasEffects() == true) guiSubNode->undoEffects(guiRenderer);
 				vieportSubNodesCache.push_back(guiSubNode);
 			}
 		}
@@ -535,7 +537,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 			guiRenderer->setRenderOffsetX(renderOffsetX);
 			guiRenderer->setRenderOffsetY(renderOffsetY);
+			if (guiSubNode->hasEffects() == true) guiSubNode->applyEffects(guiRenderer);
 			guiSubNode->render(guiRenderer);
+			if (guiSubNode->hasEffects() == true) guiSubNode->undoEffects(guiRenderer);
 		}
 	}
 
@@ -546,9 +550,6 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
 	guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-
-	//
-	if (hasEffects() == true) undoEffects(guiRenderer);
 }
 
 void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)

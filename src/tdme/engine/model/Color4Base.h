@@ -221,6 +221,24 @@ public:
 	}
 
 	/**
+	 * Array access operator
+	 * @param i index
+	 * @return vector3 component
+	 */
+    inline float& operator[](int i) {
+		return data[i];
+    }
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return vector3 component
+	 */
+    inline const float& operator[](int i) const {
+		return data[i];
+    }
+
+	/**
 	 * Compares this color with given color
 	 * @return equality
 	 */

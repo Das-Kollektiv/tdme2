@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/effects/GUIEffect.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -19,6 +20,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -46,6 +48,14 @@ public:
 private:
 	static constexpr int QUAD_COUNT { 1024 };
 
+	struct GUIEffectStackEntity {
+		GUIColor guiEffectColorMul;
+		GUIColor guiEffectColorAdd;
+		float guiEffectOffsetX;
+		float guiEffectOffsetY;
+		vector<GUIEffect*> effects;
+	};
+
 	GUI* gui { nullptr };
 	Renderer* renderer { nullptr };
 	vector<int32_t>* vboIds { nullptr };
@@ -64,15 +74,16 @@ private:
 	float renderOffsetX;
 	float renderOffsetY;
 	GUIScreenNode* screenNode { nullptr };
+	GUIColor guiEffectColorMul;
+	GUIColor guiEffectColorAdd;
 	array<float, 4> fontColor;
 	array<float, 4> effectColorMul;
 	array<float, 4> effectColorAdd;
-	array<float, 4> guiEffectColorMul;
-	array<float, 4> guiEffectColorAdd;
 	array<float, 4> effectColorMulFinal;
 	array<float, 4> effectColorAddFinal;
 	float guiEffectOffsetX;
 	float guiEffectOffsetY;
+	vector<GUIEffectStackEntity> stackedEffects;
 
 public:
 	/**
@@ -152,7 +163,14 @@ public:
 	 * @param color color
 	 */
 	inline void setEffectColorAdd(const GUIColor& color) {
-		effectColorAdd = color.getArray();
+		effectColorAdd = color.getArray();;
+	}
+
+	/**
+	 * @return effect color mul
+	 */
+	inline const GUIColor& getGUIEffectColorMul() {
+		return guiEffectColorMul;
 	}
 
 	/**
@@ -160,7 +178,14 @@ public:
 	 * @param color color
 	 */
 	void setGUIEffectColorMul(const GUIColor& color) {
-		guiEffectColorMul = color.getArray();
+		guiEffectColorMul = color;
+	}
+
+	/**
+	 * @return effect color add
+	 */
+	inline const GUIColor& getGUIEffectColorAdd() {
+		return guiEffectColorAdd;
 	}
 
 	/**
@@ -168,13 +193,13 @@ public:
 	 * @param color color
 	 */
 	inline void setGUIEffectColorAdd(const GUIColor& color) {
-		guiEffectColorAdd = color.getArray();
+		guiEffectColorAdd = color;
 	}
 
 	/**
 	 * @return GUI effect offset X
 	 */
-	inline float getGuiEffectOffsetX() {
+	inline float getGUIEffectOffsetX() {
 		return guiEffectOffsetX;
 	}
 
@@ -187,7 +212,7 @@ public:
 	/**
 	 * @return GUI effect offset Y
 	 */
-	inline float getGuiEffectOffsetY() {
+	inline float getGUIEffectOffsetY() {
 		return guiEffectOffsetY;
 	}
 
@@ -317,6 +342,43 @@ public:
 	 */
 	inline void setRenderOffsetY(float renderOffsetY) {
 		this->renderOffsetY = renderOffsetY;
+	}
+
+	/**
+	 * Push effects
+	 * @oaran effects effects
+	 */
+	inline void pushEffects(const vector<GUIEffect*>& effects) {
+		this->stackedEffects.push_back(
+			{
+				.guiEffectColorMul = guiEffectColorMul,
+				.guiEffectColorAdd = guiEffectColorAdd,
+				.guiEffectOffsetX = guiEffectOffsetX,
+				.guiEffectOffsetY = guiEffectOffsetY,
+				.effects = effects
+			}
+		);
+		for (auto effect: effects) effect->apply(this);
+	}
+
+	/**
+	 * Pop effects
+	 */
+	inline void popEffects() {
+		if (stackedEffects.empty() == true) {
+			guiEffectColorMul = GUIColor(1.0f, 1.0f, 1.0f, 1.0f);
+			guiEffectColorAdd = GUIColor(0.0f, 0.0f, 0.0f, 0.0f);
+			guiEffectOffsetX = 0.0f;
+			guiEffectOffsetY = 0.0f;
+		} else {
+			auto effectsIndex = stackedEffects.size() - 1;
+			auto& effectStackEntity = stackedEffects[effectsIndex];
+			guiEffectColorMul = effectStackEntity.guiEffectColorMul;
+			guiEffectColorAdd = effectStackEntity.guiEffectColorAdd;
+			guiEffectOffsetX = effectStackEntity.guiEffectOffsetX;
+			guiEffectOffsetY = effectStackEntity.guiEffectOffsetY;
+			stackedEffects.erase(stackedEffects.begin() + effectsIndex);
+		}
 	}
 
 	/**

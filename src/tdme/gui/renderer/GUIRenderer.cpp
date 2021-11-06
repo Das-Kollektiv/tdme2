@@ -131,8 +131,8 @@ void GUIRenderer::initScreen(GUIScreenNode* screenNode)
 void GUIRenderer::doneScreen()
 {
 	this->screenNode = nullptr;
-	guiEffectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
-	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
+	guiEffectColorMul = GUIColor::GUICOLOR_WHITE;
+	guiEffectColorAdd = GUIColor::GUICOLOR_BLACK;
 }
 
 void GUIRenderer::setGUIEffectOffsetX(float guiEffectOffsetX)
