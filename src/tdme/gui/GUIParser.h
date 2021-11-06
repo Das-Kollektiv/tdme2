@@ -95,17 +95,13 @@ private:
 	 * @param effectPrefix effect prefix
 	 * @param requiresCondition requires condition
 	 * @param node node
-	 * @return GUI effect
 	 */
 	static void parseEffect(GUINode* guiNode, const string& effectPrefix, bool requiresCondition, TiXmlElement* node);
 
 	/**
 	 * Parse GUI effect
 	 * @param guiNode GUI node
-	 * @param effectPrefix effect prefix
-	 * @param requiresCondition requires condition
 	 * @param xmlParentNode xml parent node
-	 * @return GUI effect
 	 */
 	static void parseEffects(GUINode* guiNode, TiXmlElement* xmlParentNode);
 
