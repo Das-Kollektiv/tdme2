@@ -211,7 +211,6 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 		err = vkEndCommandBuffer(context.setup_cmd_inuse);
 		assert(!err);
 
-		const VkCommandBuffer cmd_bufs[] = { context.setup_cmd_inuse };
 		VkFence nullFence = { VK_NULL_HANDLE };
 		VkSubmitInfo submit_info = {
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -220,7 +219,7 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 			.pWaitSemaphores = nullptr,
 			.pWaitDstStageMask = nullptr,
 			.commandBufferCount = 1,
-			.pCommandBuffers = cmd_bufs,
+			.pCommandBuffers = &context.setup_cmd_inuse,
 			.signalSemaphoreCount = 0,
 			.pSignalSemaphores = nullptr
 		};
@@ -339,12 +338,11 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	//
 	if (bufferId == -1) bufferId = context.draw_cmd_current;
 
+	//
 	context.pipeline = VK_NULL_HANDLE;
 
 	//
-	if (context.draw_cmd_started[bufferId] == false) {
-		return VK_NULL_HANDLE;
-	}
+	if (context.draw_cmd_started[bufferId] == false) return VK_NULL_HANDLE;
 
 	//
 	VkResult err;
@@ -356,8 +354,6 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 
 	//
 	context.draw_cmd_started[bufferId] = false;
-	context.draw_cmd_bound_indices_buffer[bufferId] = VK_NULL_HANDLE;
-	context.draw_cmd_bound_buffers[bufferId].fill(VK_NULL_HANDLE);
 
 	//
 	if (cycleBuffers == true) context.draw_cmd_current = (context.draw_cmd_current + 1) % DRAW_COMMANDBUFFER_MAX;
@@ -621,7 +617,8 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		THSVS_IMAGE_LAYOUT_OPTIMAL,
 		false,
 		baseLevel,
-		levelCount
+		levelCount,
+		true
 	);
 }
 
@@ -761,9 +758,8 @@ void VKRenderer::initializeSwapChain() {
 	uint32_t presentModeCount;
 	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, nullptr);
 	assert(err == VK_SUCCESS);
-	VkPresentModeKHR *presentModes = new VkPresentModeKHR[presentModeCount];
-	assert(presentModes);
-	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, presentModes);
+	vector<VkPresentModeKHR> presentModes(presentModeCount);
+	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, presentModes.data());
 	assert(err == VK_SUCCESS);
 
 	VkExtent2D swapchainExtent;
@@ -834,7 +830,6 @@ void VKRenderer::initializeSwapChain() {
 		.clipped = true,
 		.oldSwapchain = oldSwapchain,
 	};
-	uint32_t i;
 
 	err = fpCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain);
 	assert(!err);
@@ -855,10 +850,9 @@ void VKRenderer::initializeSwapChain() {
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, swapchainImages);
 	assert(err == VK_SUCCESS);
 
-	swapchain_buffers = new swapchain_buffer_type[swapchain_image_count];
-	assert(swapchain_buffers != nullptr);
-
-	for (i = 0; i < swapchain_image_count; i++) {
+	//
+	swapchain_buffers.resize(swapchain_image_count);
+	for (auto i = 0; i < swapchain_image_count; i++) {
 		VkImageViewCreateInfo color_attachment_view = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
@@ -886,8 +880,6 @@ void VKRenderer::initializeSwapChain() {
 	}
 
 	current_buffer = 0;
-
-	if (nullptr != presentModes) delete [] presentModes;
 }
 
 const string VKRenderer::getShaderVersion()
@@ -941,8 +933,8 @@ void VKRenderer::initialize()
 
 	uint32_t enabled_extension_count = 0;
 	uint32_t enabled_layer_count = 0;
-	const char *extension_names[64];
-	const char *enabled_layers[64];
+	const char* extension_names[64];
+	const char* enabled_layers[64];
 
 	char* instance_validation_layers_alt1[] = {
 		"VK_LAYER_KHRONOS_validation"
@@ -1078,12 +1070,10 @@ void VKRenderer::initialize()
 	assert(!err && gpu_count > 0);
 
 	if (gpu_count > 0) {
-		VkPhysicalDevice* physical_devices = new VkPhysicalDevice[gpu_count];
-		err = vkEnumeratePhysicalDevices(inst, &gpu_count, physical_devices);
+		vector<VkPhysicalDevice> physical_devices(gpu_count);
+		err = vkEnumeratePhysicalDevices(inst, &gpu_count, physical_devices.data());
 		assert(!err);
-		// For tri demo we just grab the first physical device
 		gpu = physical_devices[0];
-		delete [] physical_devices;
 	} else {
 		ERR_EXIT(
 			"vkEnumeratePhysicalDevices reported zero accessible devices."
@@ -1103,10 +1093,9 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	if (device_extension_count > 0) {
-		VkExtensionProperties* device_extensions = new VkExtensionProperties[device_extension_count];
-		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, device_extensions);
+		vector<VkExtensionProperties> device_extensions(device_extension_count);
+		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, device_extensions.data());
 		assert(!err);
-
 		for (i = 0; i < device_extension_count; i++) {
 			if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, device_extensions[i].extensionName)) {
 				swapchainExtFound = 1;
@@ -1114,8 +1103,6 @@ void VKRenderer::initialize()
 			}
 			assert(enabled_extension_count < 64);
 		}
-
-		delete [] device_extensions;
 	}
 
 	if (!swapchainExtFound) {
@@ -1152,7 +1139,7 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
-	VkBool32 *supportsPresent = new VkBool32[queue_count];
+	vector<VkBool32> supportsPresent(queue_count);
 	for (i = 0; i < queue_count; i++) {
 		fpGetPhysicalDeviceSurfaceSupportKHR(gpu, i, surface, &supportsPresent[i]);
 	}
@@ -1166,7 +1153,6 @@ void VKRenderer::initialize()
 			if (graphicsQueueNodeIndex == UINT32_MAX) {
 				graphicsQueueNodeIndex = i;
 			}
-
 			if (supportsPresent[i] == VK_TRUE) {
 				graphicsQueueNodeIndex = i;
 				presentQueueNodeIndex = i;
@@ -1184,7 +1170,6 @@ void VKRenderer::initialize()
 			}
 		}
 	}
-	delete [] supportsPresent;
 
 	// Generate error if could not find both a graphics and a present queue
 	if (graphicsQueueNodeIndex == UINT32_MAX || presentQueueNodeIndex == UINT32_MAX) {
@@ -1209,14 +1194,14 @@ void VKRenderer::initialize()
 	graphics_queue_node_index = graphicsQueueNodeIndex;
 
 	// init_device
-	float queue_priorities[1] = { 0.0f };
+	array<float, 1> queuePriorities { 0.0f };
 	const VkDeviceQueueCreateInfo queueCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.queueFamilyIndex = graphics_queue_node_index,
-		.queueCount = 1,
-		.pQueuePriorities = queue_priorities
+		.queueCount = queuePriorities.size(),
+		.pQueuePriorities = queuePriorities.data()
 	};
 
 	VkPhysicalDeviceFeatures features;
@@ -1249,25 +1234,25 @@ void VKRenderer::initialize()
 	vkGetDeviceQueue(device, graphics_queue_node_index, 0, &queue);
 
 	// Get the list of VkFormat's that are supported:
-	uint32_t formatCount;
-	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, nullptr);
+	uint32_t surfaceFormatCount;
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &surfaceFormatCount, nullptr);
 	assert(!err);
-	VkSurfaceFormatKHR *surfFormats = new VkSurfaceFormatKHR[formatCount];
-	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, surfFormats);
+	vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &surfaceFormatCount, surfaceFormats.data());
+	assert(!err);
 
-	assert(!err);
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
 	// the surface has no preferred format.  Otherwise, at least one
 	// supported format will be returned.
 	// We for now only support VK_FORMAT_R8G8B8A8_UNORM
-	if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
+	if (surfaceFormatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {
 		format = VK_FORMAT_B8G8R8A8_UNORM;
-		color_space = surfFormats[0].colorSpace;
+		color_space = surfaceFormats[0].colorSpace;
 	} else {
-		for (auto i = 0; i < formatCount; i++) {
-			if (surfFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) {
+		for (auto i = 0; i < surfaceFormatCount; i++) {
+			if (surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) {
 				format = VK_FORMAT_B8G8R8A8_UNORM;
-				color_space = surfFormats[i].colorSpace;
+				color_space = surfaceFormats[i].colorSpace;
 				break;
 			}
 		}
@@ -1298,23 +1283,23 @@ void VKRenderer::initialize()
 
 	// create descriptor pool 1
 	{
-		const VkDescriptorPoolSize desc1_types_count[2] = {
-			[0] = {
+		array<VkDescriptorPoolSize, 2> desc1_types_count = {{
+			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2 * 2 * 1) // 2 shader stages * 1 uniform buffers
 			},
-			[1] = {
+			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 2 * 1 * 10) // 1 shader stage * 10 storage buffers
 			}
-		};
+		}};
 		const VkDescriptorPoolCreateInfo descriptor_pool = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2), // 32 shader
-			.poolSizeCount = 2,
-			.pPoolSizes = desc1_types_count,
+			.poolSizeCount = desc1_types_count.size(),
+			.pPoolSizes = desc1_types_count.data(),
 		};
 		//
 		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool1);
@@ -1323,11 +1308,9 @@ void VKRenderer::initialize()
 
 	// create descriptor pool 2
 	{
-		const VkDescriptorPoolSize desc2_types_count[1] = {
-			[0] = {
-				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
-			}
+		const VkDescriptorPoolSize desc2_types_count = {
+			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.descriptorCount = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
 		};
 		const VkDescriptorPoolCreateInfo descriptor_pool = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -1335,7 +1318,7 @@ void VKRenderer::initialize()
 			.flags = 0,
 			.maxSets = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2), // 32 shader
 			.poolSizeCount = 1,
-			.pPoolSizes = desc2_types_count,
+			.pPoolSizes = &desc2_types_count,
 		};
 		//
 		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool2);
@@ -1483,6 +1466,8 @@ void VKRenderer::initializeRenderPass() {
 	if (depth_buffer_default != ID_NONE) disposeTexture(depth_buffer_default);
 	depth_buffer_default = createDepthBufferTexture(width, height, ID_NONE, ID_NONE);
 	auto depth_buffer_texture = textures.find(depth_buffer_default)->second;
+
+	//
 	setImageLayout(
 		0,
 		depth_buffer_texture,
@@ -1492,8 +1477,8 @@ void VKRenderer::initializeRenderPass() {
 	);
 
 	// render pass
-	const VkAttachmentDescription attachments[2] = {
-		[0] = {
+	array<VkAttachmentDescription, 2> attachments = {{
+		{
 			.flags = 0,
 			.format = format,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
@@ -1504,7 +1489,7 @@ void VKRenderer::initializeRenderPass() {
 			.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		},
-		[1] = {
+		{
 			.flags = 0,
 			.format = VK_FORMAT_D32_SFLOAT,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
@@ -1514,8 +1499,8 @@ void VKRenderer::initializeRenderPass() {
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 			.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-		},
-	};
+		}
+	}};
 	const VkAttachmentReference color_reference = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -1541,7 +1526,7 @@ void VKRenderer::initializeRenderPass() {
 		.pNext = nullptr,
 		.flags = 0,
 		.attachmentCount = 2,
-		.pAttachments = attachments,
+		.pAttachments = attachments.data(),
 		.subpassCount = 1,
 		.pSubpasses = &subpass,
 		.dependencyCount = 0,
@@ -1592,7 +1577,7 @@ inline void VKRenderer::endRenderPass(int contextIdx) {
 }
 
 void VKRenderer::initializeFrameBuffers() {
-	VkImageView attachments[2];
+	array<VkImageView, 2> attachments;
 	auto depthBufferIt = textures.find(depth_buffer_default);
 	assert(depthBufferIt != textures.end());
 	attachments[1] = depthBufferIt->second->view;
@@ -1603,21 +1588,17 @@ void VKRenderer::initializeFrameBuffers() {
 		.flags = 0,
 		.renderPass = render_pass,
 		.attachmentCount = 2,
-		.pAttachments = attachments,
+		.pAttachments = attachments.data(),
 		.width = width,
 		.height = height,
 		.layers = 1
 	};
 
-	VkResult err;
-	uint32_t i;
+	window_framebuffers.resize(swapchain_image_count);
 
-	window_framebuffers = new VkFramebuffer[swapchain_image_count];
-	assert(window_framebuffers);
-
-	for (i = 0; i < swapchain_image_count; i++) {
+	for (auto i = 0; i < window_framebuffers.size(); i++) {
 		attachments[0] = swapchain_buffers[i].view;
-		err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
+		auto err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
 		assert(!err);
 	}
 }
@@ -1631,9 +1612,6 @@ void VKRenderer::reshape() {
 	//
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + " x " + to_string(height));
 
-	//
-	auto frame_buffers_last = window_framebuffers;
-
 	// reinit swapchain, renderpass and framebuffers
 	initializeSwapChain();
 	initializeRenderPass();
@@ -1641,8 +1619,8 @@ void VKRenderer::reshape() {
 	current_buffer = 0;
 
 	// dispose old frame buffers
-	for (auto i = 0; i < swapchain_image_count; i++) vkDestroyFramebuffer(device, frame_buffers_last[i], nullptr);
-	delete [] frame_buffers_last;
+	for (auto i = 0; i < window_framebuffers.size(); i++) vkDestroyFramebuffer(device, window_framebuffers[i], nullptr);
+	window_framebuffers.clear();
 
 	//
 	Engine::getInstance()->reshape(width, height);
@@ -2792,7 +2770,9 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	memset(&pipeline, 0, sizeof(pipeline));
 
 	// create pipepine
-	VkPipelineCacheCreateInfo pipelineCache;
+	VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
+	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
 	VkPipelineVertexInputStateCreateInfo vi;
 	VkPipelineInputAssemblyStateCreateInfo ia;
@@ -2801,14 +2781,14 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	VkDynamicState dynamicStateEnables[2];
+	array<VkDynamicState, 2> dynamicStateEnables;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
 
-	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
-	memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
+	memset(shaderStages.data(), 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	// shader stages
 	auto shaderIdx = 0;
@@ -2820,10 +2800,10 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 		shaderIdx++;
 	}
 
-	memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
+	memset(dynamicStateEnables.data(), 0, sizeof(VkDynamicState) * dynamicStateEnables.size());
 	memset(&dynamicState, 0, sizeof dynamicState);
 	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables;
+	dynamicState.pDynamicStates = dynamicStateEnables.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
@@ -2854,10 +2834,10 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkVertexInputBindingDescription vi_bindings[10];
-	memset(vi_bindings, 0, sizeof(vi_bindings));
-	VkVertexInputAttributeDescription vi_attrs[13];
-	memset(vi_attrs, 0, sizeof(vi_attrs));
+	array<VkVertexInputBindingDescription, 10> vi_bindings;
+	memset(vi_bindings.data(), 0, sizeof(VkVertexInputBindingDescription) * vi_bindings.size());
+	array<VkVertexInputAttributeDescription, 13> vi_attrs;
+	memset(vi_attrs.data(), 0, sizeof(VkVertexInputAttributeDescription) * vi_attrs.size());
 
 	// vertices
 	vi_bindings[0].binding = 0;
@@ -2970,10 +2950,10 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = 10;
-	vi.pVertexBindingDescriptions = vi_bindings;
-	vi.vertexAttributeDescriptionCount = 13;
-	vi.pVertexAttributeDescriptions = vi_attrs;
+	vi.vertexBindingDescriptionCount = vi_bindings.size();
+	vi.pVertexBindingDescriptions = vi_bindings.data();
+	vi.vertexAttributeDescriptionCount = vi_attrs.size();
+	vi.pVertexAttributeDescriptions = vi_attrs.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -2982,20 +2962,20 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
-	pipeline.pStages = shaderStages;
+	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = renderPass;
 	pipeline.pDynamicState = &dynamicState;
 
-	memset(&pipelineCache, 0, sizeof(pipelineCache));
-	pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
+	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-	err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
+	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
 	assert(!err);
 
-	err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
+	err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
-	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
+	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 
 	//
 	return programPipelinePtr;
@@ -3053,8 +3033,8 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	memset(&pipeline, 0, sizeof(pipeline));
 
 	// Stages
-	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
-	memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
+	memset(shaderStages.data(), 0, shaderStages.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	// shader stages
 	auto shaderIdx = 0;
@@ -3067,7 +3047,9 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	}
 
 	// create pipepine
-	VkPipelineCacheCreateInfo pipelineCache;
+	VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
+	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
 	VkPipelineVertexInputStateCreateInfo vi;
 	VkPipelineInputAssemblyStateCreateInfo ia;
@@ -3076,16 +3058,16 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	VkDynamicState dynamicStateEnables[2];
+	array<VkDynamicState, 2> dynamicStateEnables;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
 
-	memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
+	memset(dynamicStateEnables.data(), 0, sizeof(VkDynamicState) * dynamicStateEnables.size());
 	memset(&dynamicState, 0, sizeof dynamicState);
 	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables;
+	dynamicState.pDynamicStates = dynamicStateEnables.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
@@ -3116,10 +3098,10 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkVertexInputBindingDescription vi_bindings[9];
-	memset(vi_bindings, 0, sizeof(vi_bindings));
-	VkVertexInputAttributeDescription vi_attrs[9];
-	memset(vi_attrs, 0, sizeof(vi_attrs));
+	array<VkVertexInputBindingDescription, 9> vi_bindings;
+	memset(vi_bindings.data(), 0, vi_bindings.size() * sizeof(VkVertexInputBindingDescription));
+	array<VkVertexInputAttributeDescription, 9> vi_attrs;
+	memset(vi_attrs.data(), 0, vi_attrs.size() * sizeof(VkVertexInputAttributeDescription));
 
 	// vertices
 	vi_bindings[0].binding = 0;
@@ -3206,10 +3188,10 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = 9;
-	vi.pVertexBindingDescriptions = vi_bindings;
-	vi.vertexAttributeDescriptionCount = 9;
-	vi.pVertexAttributeDescriptions = vi_attrs;
+	vi.vertexBindingDescriptionCount = vi_bindings.size();
+	vi.pVertexBindingDescriptions = vi_bindings.data();
+	vi.vertexAttributeDescriptionCount = vi_attrs.size();
+	vi.pVertexAttributeDescriptions = vi_attrs.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -3218,21 +3200,21 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
-	pipeline.pStages = shaderStages;
+	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = renderPass;
 	pipeline.pDynamicState = &dynamicState;
 
-	memset(&pipelineCache, 0, sizeof(pipelineCache));
-	pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
+	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-	err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
+	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
 	assert(!err);
 
-	err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
+	err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
 	//
-	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
+	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 
 	//
 	return programPipelinePtr;
@@ -3288,10 +3270,11 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	//
 	VkGraphicsPipelineCreateInfo pipeline;
 	memset(&pipeline, 0, sizeof(pipeline));
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
 	// Stages
-	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
-	memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
+	memset(shaderStages.data(), 0, shaderStages.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	// shader stages
 	auto shaderIdx = 0;
@@ -3304,7 +3287,7 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	}
 
 	// create pipepine
-	VkPipelineCacheCreateInfo pipelineCache;
+	VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
 
 	VkPipelineVertexInputStateCreateInfo vi;
 	VkPipelineInputAssemblyStateCreateInfo ia;
@@ -3313,17 +3296,17 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	VkDynamicState dynamicStateEnables[3];
+	array<VkDynamicState, 2> dynamicStateEnables;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
 
-	memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
+	memset(dynamicStateEnables.data(), 0, dynamicStateEnables.size() * sizeof(VkDynamicState));
 	memset(&dynamicState, 0, sizeof dynamicState);
 	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_LINE_WIDTH;
 	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables;
+	dynamicState.pDynamicStates = dynamicStateEnables.data();
 
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -3355,10 +3338,10 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkVertexInputBindingDescription vi_bindings[4];
-	memset(vi_bindings, 0, sizeof(vi_bindings));
-	VkVertexInputAttributeDescription vi_attrs[4];
-	memset(vi_attrs, 0, sizeof(vi_attrs));
+	array<VkVertexInputBindingDescription, 4> vi_bindings;
+	memset(vi_bindings.data(), 0, vi_bindings.size() * sizeof(VkVertexInputBindingDescription));
+	array<VkVertexInputAttributeDescription, 4> vi_attrs;
+	memset(vi_attrs.data(), 0, vi_attrs.size() * sizeof(VkVertexInputAttributeDescription));
 
 	// vertices
 	vi_bindings[0].binding = 0;
@@ -3400,10 +3383,10 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = 4;
-	vi.pVertexBindingDescriptions = vi_bindings;
-	vi.vertexAttributeDescriptionCount = 4;
-	vi.pVertexAttributeDescriptions = vi_attrs;
+	vi.vertexBindingDescriptionCount = vi_bindings.size();
+	vi.pVertexBindingDescriptions = vi_bindings.data();
+	vi.vertexAttributeDescriptionCount = vi_attrs.size();
+	vi.pVertexAttributeDescriptions = vi_attrs.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -3412,21 +3395,21 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
-	pipeline.pStages = shaderStages;
+	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = renderPass;
 	pipeline.pDynamicState = &dynamicState;
 
-	memset(&pipelineCache, 0, sizeof(pipelineCache));
-	pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
+	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-	err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
+	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
 	assert(!err);
 
-	err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
+	err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
 	//
-	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
+	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 
 	//
 	return programPipelinePtr;
@@ -3466,8 +3449,8 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	memset(layout_bindings1, 0, sizeof(layout_bindings1));
 
 	// Stages
-	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
-	memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
+	memset(shaderStages.data(), 0, shaderStages.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	auto shaderIdx = 0;
 	for (auto shader: program->shaders) {
@@ -3540,15 +3523,16 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	assert(!err);
 
 	// create pipepine
-	VkPipelineCacheCreateInfo pipelineCache = {
+	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.initialDataSize = 0,
 		.pInitialData = nullptr
 	};
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
-	err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
+	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
 	assert(!err);
 
 	// create pipepine
@@ -3560,15 +3544,14 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		.layout = program->pipeline_layout,
 		.basePipelineHandle = nullptr,
 		.basePipelineIndex = 0
-
 	};
 
 	//
-	err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
+	err = vkCreateComputePipelines(device, pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
 	//
-	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
+	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 }
 
 inline VKRenderer::pipeline_type* VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
@@ -3616,10 +3599,20 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	finishPipeline(contextTyped.idx);
 
 	// reset bound buffers
+	/*
 	uint32_t bufferSize;
 	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
 	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
 	contextTyped.bound_buffer_sizes.fill(bufferSize);
+	contextTyped.draw_cmd_bound_indices_buffer.fill(VK_NULL_HANDLE);
+	contextTyped.draw_cmd_bound_buffers.fill(
+		{
+		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+		VK_NULL_HANDLE, VK_NULL_HANDLE
+		}
+	);
+	*/
 
 	//
 	contextTyped.program_id = 0;
@@ -5107,7 +5100,8 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			THSVS_IMAGE_LAYOUT_OPTIMAL,
 			false,
 			0,
-			mipLevels
+			mipLevels,
+			true
 		);
 
 		// mark for deletion
@@ -5308,9 +5302,6 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 			}
 		);
 		delete_mutex.unlock();
-
-		//
-		finishSetupCommandBuffer(contextTyped.idx);
 	} else
 	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// TODO: not sure if I should ever support this
@@ -5452,7 +5443,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
 
 		auto attachmentIdx = 0;
-		VkAttachmentDescription attachments[2];
+		array<VkAttachmentDescription, 2> attachments;
 		if (colorBufferTexture != nullptr) {
 			attachments[attachmentIdx++] = {
 				.flags = 0,
@@ -5504,7 +5495,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.pNext = nullptr,
 			.flags = 0,
 			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
-			.pAttachments = attachments,
+			.pAttachments = attachments.data(),
 			.subpassCount = 1,
 			.pSubpasses = &subpass,
 			.dependencyCount = 0,
@@ -5517,7 +5508,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 	{
 		if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
 		auto attachmentIdx = 0;
-		VkImageView attachments[2];
+		array<VkImageView,  2> attachments;
 		if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
 		if (depthBufferTexture != nullptr) attachments[attachmentIdx++] = depthBufferTexture->view;
 		const VkFramebufferCreateInfo fb_info = {
@@ -5526,7 +5517,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.flags = 0,
 			.renderPass = frameBufferStruct.render_pass,
 			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
-			.pAttachments = attachments,
+			.pAttachments = attachments.data(),
 			.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
 			.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
 			.layers = 1
@@ -5666,6 +5657,9 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 
 	//
 	finishSetupCommandBuffer(0);
+
+	//
+	for (auto& context: contexts) context.bound_textures.fill(context_type::bound_texture());
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -6416,7 +6410,7 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.draw_fences[currentBufferIdx], false, false);
 		}
 		unsetPipeline(contextTyped.idx);
-	}
+    }
 }
 
 inline void VKRenderer::endDrawCommands(int contextIdx) {
@@ -6789,6 +6783,14 @@ void VKRenderer::unbindBufferObjects(void* context)
 	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
 	contextTyped.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
 	contextTyped.bound_buffer_sizes.fill(bufferSize);
+	contextTyped.draw_cmd_bound_indices_buffer.fill(VK_NULL_HANDLE);
+	contextTyped.draw_cmd_bound_buffers.fill(
+		{
+		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+		VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+		VK_NULL_HANDLE, VK_NULL_HANDLE
+		}
+	);
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
@@ -6968,6 +6970,7 @@ void VKRenderer::finishRendering() {
 void VKRenderer::memoryBarrier() {
 	VkResult err;
 
+	// TODO: pass multiple buffer barriers to vkCmdPipelineBarrier
 	//
 	auto prevAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
 	auto nextAccesses = THSVS_ACCESS_VERTEX_BUFFER;

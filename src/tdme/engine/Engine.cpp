@@ -235,6 +235,7 @@ void Engine::EngineThread::run() {
 					element->objects,
 					idx
 				);
+				element->objects.clear();
 				elementsProcessed++;
 				break;
 			case EngineThreadQueueElement::TYPE_TRANSFORMATIONS:
@@ -242,6 +243,7 @@ void Engine::EngineThread::run() {
 					element->objects,
 					idx
 				);
+				element->objects.clear();
 				elementsProcessed++;
 				break;
 			case EngineThreadQueueElement::TYPE_RENDERING:
@@ -254,10 +256,10 @@ void Engine::EngineThread::run() {
 					element->rendering.renderTypes,
 					transparentRenderFacesPool
 				);
+				element->objects.clear();
 				elementsProcessed++;
 				break;
 		}
-		element->objects.clear();
 	}
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 }
@@ -1170,7 +1172,6 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 		computeTransformationsFunction(decomposedEntities.needsComputeTransformationsEntities, 0);
 	} else {
 		auto elementsIssued = 0;
-		Engine::EngineThreadQueueElement* queueElementToSubmit = nullptr;
 		auto queueElement = engineThreadQueueElementPool.allocate();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 		queueElement->engine = this;
@@ -1222,10 +1223,9 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 				break;
 			}
 		}
+		// reset pool
+		engineThreadQueueElementPool.reset();
 	}
-
-	// reset pool
-	engineThreadQueueElementPool.reset();
 
 	//
 	if (skinningShaderEnabled == true) {

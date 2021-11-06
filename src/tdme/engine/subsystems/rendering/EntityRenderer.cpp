@@ -739,7 +739,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	//
 	auto camera = engine->camera;
 	auto frontFace = -1;
-	auto cullingMode = -1;
+	auto cullingMode = 1;
 
 	// render faces entities
 	auto firstObject = objects[0];

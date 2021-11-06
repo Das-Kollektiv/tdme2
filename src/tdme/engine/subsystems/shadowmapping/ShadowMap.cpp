@@ -112,7 +112,6 @@ Camera* ShadowMap::getCamera()
 void ShadowMap::createShadowMap(Light* light)
 {
 	// use default context
-	// TODO: object->preRender only uses default context, lets see how to make this multithreaded
 	auto context = shadowMapping->renderer->getDefaultContext();
 
 	//

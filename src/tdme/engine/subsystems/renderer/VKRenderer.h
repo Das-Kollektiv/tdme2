@@ -140,7 +140,6 @@ private:
 
 	struct pipeline_type {
 		uint32_t id;
-		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 		VkPipeline pipeline { VK_NULL_HANDLE };
 	};
 
@@ -322,8 +321,8 @@ private:
 
 	uint32_t swapchain_image_count { 0 };
 	VkSwapchainKHR swapchain { VK_NULL_HANDLE };
-	swapchain_buffer_type* swapchain_buffers { nullptr };
-	VkFramebuffer* window_framebuffers { nullptr };
+	vector<swapchain_buffer_type> swapchain_buffers;
+	vector<VkFramebuffer> window_framebuffers;
 
 	VkFence memorybarrier_fence { VK_NULL_HANDLE };
 
@@ -362,7 +361,7 @@ private:
 	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
