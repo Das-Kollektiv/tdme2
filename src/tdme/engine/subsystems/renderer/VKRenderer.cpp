@@ -1613,15 +1613,15 @@ void VKRenderer::reshape() {
 	//
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + " x " + to_string(height));
 
+	// dispose old frame buffers
+	for (auto i = 0; i < window_framebuffers.size(); i++) vkDestroyFramebuffer(device, window_framebuffers[i], nullptr);
+	window_framebuffers.clear();
+
 	// reinit swapchain, renderpass and framebuffers
 	initializeSwapChain();
 	initializeRenderPass();
 	initializeFrameBuffers();
 	current_buffer = 0;
-
-	// dispose old frame buffers
-	for (auto i = 0; i < window_framebuffers.size(); i++) vkDestroyFramebuffer(device, window_framebuffers[i], nullptr);
-	window_framebuffers.clear();
 
 	//
 	Engine::getInstance()->reshape(width, height);
