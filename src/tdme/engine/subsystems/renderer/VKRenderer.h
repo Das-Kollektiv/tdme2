@@ -359,7 +359,7 @@ private:
 	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };

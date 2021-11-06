@@ -3297,7 +3297,7 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 2> dynamicStateEnables;
+	array<VkDynamicState, 3> dynamicStateEnables;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
