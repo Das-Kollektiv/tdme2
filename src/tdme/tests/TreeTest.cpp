@@ -129,7 +129,9 @@ void TreeTest::display()
 		"texture up: " + to_string(rendererStatistics.textureUploads) + ", " +
 		"render passes: " + to_string(rendererStatistics.renderPasses) + ", " +
 		"draw cmds: " + to_string(rendererStatistics.drawCommands) + ", " +
-		"submits: " + to_string(rendererStatistics.submits)
+		"submits: " + to_string(rendererStatistics.submits) + ", " +
+		"dis.tex: " + to_string(rendererStatistics.disposedTextures) + ", " +
+		"dis.buf: " + to_string(rendererStatistics.disposedBuffers)
 	);
 }
 
