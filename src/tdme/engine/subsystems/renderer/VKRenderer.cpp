@@ -852,7 +852,7 @@ void VKRenderer::initializeSwapChain() {
 
 	//
 	swapchain_buffers.resize(swapchain_image_count);
-	for (auto i = 0; i < swapchain_image_count; i++) {
+	for (auto i = 0; i < swapchain_buffers.size(); i++) {
 		VkImageViewCreateInfo color_attachment_view = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
@@ -2788,7 +2788,7 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	createDepthStencilStateCreateInfo(ds);
 
 	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
-	memset(shaderStages.data(), 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	memset(shaderStages.data(), 0, shaderStages.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	// shader stages
 	auto shaderIdx = 0;
