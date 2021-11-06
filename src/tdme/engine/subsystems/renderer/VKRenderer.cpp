@@ -6203,38 +6203,77 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
 
 	//
-	auto samplerIdx = 0;
 	auto uboIdx = 0;
 	uint64_t desc_set2_cache_id = 0LL;
 	array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
-	for (auto shader: contextTyped.program->shaders) {
-		// sampler2D + samplerCube
-		for (auto uniform: shader->samplerUniformList) {
-			if (uniform->texture_unit == -1) {
-				texture_ids[samplerIdx] = ID_NONE;
-				switch(uniform->type) {
-					case shader_type::uniform_type::TYPE_SAMPLER2D:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_sampler2d_default->sampler,
-							.imageView = white_texture_sampler2d_default->view,
-							.imageLayout = white_texture_sampler2d_default->vkLayout
-						};
-						break;
-					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_samplercube_default->sampler,
-							.imageView = white_texture_samplercube_default->view,
-							.imageLayout = white_texture_samplercube_default->vkLayout
-						};
-						break;
-					default:
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-						break;
-				}
-			} else {
-				auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
-				if (boundTexture.view == VK_NULL_HANDLE) {
+
+	// get texture set cache id
+	{
+		auto samplerIdx = 0;
+		for (auto shader: contextTyped.program->shaders) {
+			// sampler2D + samplerCube
+			for (auto uniform: shader->samplerUniformList) {
+				if (uniform->texture_unit == -1) {
 					texture_ids[samplerIdx] = ID_NONE;
+				} else {
+					auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+					if (boundTexture.view == VK_NULL_HANDLE) {
+						texture_ids[samplerIdx] = ID_NONE;
+					} else {
+						texture_ids[samplerIdx] = boundTexture.id;
+						desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
+					}
+				}
+				samplerIdx++;
+			}
+
+			// uniform buffer
+			if (shader->ubo_binding_idx == -1) {
+				continue;
+			}
+
+			//
+			auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+			auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+			auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
+			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+			auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
+			memcpy(dst, src, uniformBuffer.size);
+
+			contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+				.buffer = uboBuffer,
+				.offset = 0,
+				.range = shader->ubo_size
+			};
+
+			contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+				.pNext = nullptr,
+				.dstSet = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]],
+				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+				.dstArrayElement = 0,
+				.descriptorCount = 1,
+				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.pImageInfo = nullptr,
+				.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+				.pTexelBufferView = nullptr
+			};
+
+			//
+			uboIdx++;
+		}
+	}
+
+	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
+	auto desc_set2_cache_it = desc_set2_cache.find(desc_set2_cache_id);
+	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
+
+	if (desc_set2_cache_hit == false) {
+		auto samplerIdx = 0;
+		for (auto shader: contextTyped.program->shaders) {
+			// sampler2D + samplerCube
+			for (auto uniform: shader->samplerUniformList) {
+				if (uniform->texture_unit == -1) {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
 							contextTyped.descriptor_image_info[samplerIdx] = {
@@ -6255,70 +6294,53 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 							break;
 					}
 				} else {
-					texture_ids[samplerIdx] = boundTexture.id;
-					contextTyped.descriptor_image_info[samplerIdx] = {
-						.sampler = boundTexture.sampler,
-						.imageView = boundTexture.view,
-						.imageLayout = boundTexture.layout
-					};
-					desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
+					auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+					if (boundTexture.view == VK_NULL_HANDLE) {
+						switch(uniform->type) {
+							case shader_type::uniform_type::TYPE_SAMPLER2D:
+								contextTyped.descriptor_image_info[samplerIdx] = {
+									.sampler = white_texture_sampler2d_default->sampler,
+									.imageView = white_texture_sampler2d_default->view,
+									.imageLayout = white_texture_sampler2d_default->vkLayout
+								};
+								break;
+							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+								contextTyped.descriptor_image_info[samplerIdx] = {
+									.sampler = white_texture_samplercube_default->sampler,
+									.imageView = white_texture_samplercube_default->view,
+									.imageLayout = white_texture_samplercube_default->vkLayout
+								};
+								break;
+							default:
+								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+								break;
+						}
+					} else {
+						contextTyped.descriptor_image_info[samplerIdx] = {
+							.sampler = boundTexture.sampler,
+							.imageView = boundTexture.view,
+							.imageLayout = boundTexture.layout
+						};
+					}
 				}
+				contextTyped.descriptor_write_set[uniform->position] = {
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.pNext = nullptr,
+					.dstSet = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]],
+					.dstBinding = static_cast<uint32_t>(uniform->position),
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+					.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+					.pBufferInfo = VK_NULL_HANDLE,
+					.pTexelBufferView = VK_NULL_HANDLE
+				};
+				samplerIdx++;
 			}
-			contextTyped.descriptor_write_set[uniform->position] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(uniform->position),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
-				.pBufferInfo = VK_NULL_HANDLE,
-				.pTexelBufferView = VK_NULL_HANDLE
-			};
-			samplerIdx++;
 		}
-
-		// uniform buffer
-		if (shader->ubo_binding_idx == -1) {
-			continue;
-		}
-
-		//
-		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-		auto src = uniformBuffer.data[uniformBuffer.bufferIdx];
-		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto dst = uniformBuffer.data[uniformBuffer.bufferIdx];
-		memcpy(dst, src, uniformBuffer.size);
-
-		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
-			.buffer = uboBuffer,
-			.offset = 0,
-			.range = shader->ubo_size
-		};
-
-		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
-			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = nullptr,
-			.dstSet = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]],
-			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
-			.dstArrayElement = 0,
-			.descriptorCount = 1,
-			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.pImageInfo = nullptr,
-			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
-			.pTexelBufferView = nullptr
-		};
-
-		//
-		uboIdx++;
 	}
 
 	// find desc2_set from cache or update it
-	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
-	auto desc_set2_cache_it = desc_set2_cache.find(desc_set2_cache_id);
-	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
 	if (desc_set2_cache_hit == true) {
 		desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][desc_set2_cache_it->second];
 	}
