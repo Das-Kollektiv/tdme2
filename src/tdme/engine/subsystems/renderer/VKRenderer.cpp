@@ -1881,16 +1881,20 @@ void VKRenderer::finishFrame()
 		dispose_mutex.unlock();
 
 		// remove marked vulkan resources
+		//	buffers
 		for (auto& delete_buffer: delete_buffers) {
 			vmaUnmapMemory(allocator, delete_buffer.allocation);
 			vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
 		}
+		AtomicOperations::increment(statistics.disposedBuffers, delete_buffers.size());
 		delete_buffers.clear();
+		//	textures
 		for (auto& delete_image: delete_images) {
 			if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
 			if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
 			if (delete_image.image != VK_NULL_HANDLE) vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
 		}
+		AtomicOperations::increment(statistics.disposedTextures, delete_images.size());
 		delete_images.clear();
 
 		//
@@ -5900,6 +5904,8 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			buffer->buffer_count--;
 		}
 		buffer->frame_cleaned_last = frame;
+		//
+		AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
 	}
 
 	//
@@ -7213,5 +7219,7 @@ const Renderer::Renderer_Statistics VKRenderer::getStatistics() {
 	statistics.renderPasses = 0;
 	statistics.drawCommands = 0;
 	statistics.submits = 0;
+	statistics.disposedTextures = 0;
+	statistics.disposedBuffers = 0;
 	return stats;
 }

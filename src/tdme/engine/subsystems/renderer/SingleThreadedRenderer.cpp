@@ -104,5 +104,7 @@ const Renderer::Renderer_Statistics SingleThreadedRenderer::getStatistics() {
 	statistics.renderPasses = 0;
 	statistics.drawCommands = 0;
 	statistics.submits = 0;
+	statistics.disposedTextures = 0;
+	statistics.disposedBuffers = 0;
 	return stats;
 }

@@ -727,6 +727,7 @@ void GL2Renderer::bindCubeMapTexture(void* context, int32_t textureId) {
 void GL2Renderer::disposeTexture(int32_t textureId)
 {
 	glDeleteTextures(1, (const uint32_t*)&textureId);
+	statistics.disposedTextures++;
 }
 
 int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
@@ -967,6 +968,7 @@ void GL2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
 	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
+	statistics.disposedBuffers+= bufferObjectIds.size();
 }
 
 int32_t GL2Renderer::getTextureUnit(void* context)

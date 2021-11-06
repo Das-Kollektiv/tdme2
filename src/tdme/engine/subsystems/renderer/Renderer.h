@@ -108,6 +108,8 @@ public:
 		uint32_t renderPasses { 0 };
 		uint32_t drawCommands { 0 };
 		uint32_t submits { 0 };
+		uint32_t disposedTextures { 0 };
+		uint32_t disposedBuffers { 0 };
 	};
 
 	int32_t ID_NONE;
