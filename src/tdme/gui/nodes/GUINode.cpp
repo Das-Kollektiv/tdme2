@@ -472,6 +472,13 @@ void GUINode::applyEffects(GUIRenderer* guiRenderer) {
 		}
 	}
 	for (auto action: actions) action->performAction();
+	if (activeEffects.empty() == true) {
+		auto defaultEffect = getEffect("tdme.xmleffect.default");
+		if (defaultEffect != nullptr) {
+			defaultEffect->start();
+			activeEffects.push_back(defaultEffect);
+		}
+	}
 	guiRenderer->pushEffects(activeEffects);
 }
 
@@ -1337,7 +1344,6 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 
 	//
 	auto defaultEffect = getEffect("tdme.xmleffect.default");
-	if (defaultEffect != nullptr) defaultEffect->stop();
 
 	//
 	auto haveInEffect = false;
@@ -1347,6 +1353,12 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	vector<GUIEffect::EffectState> effectStates;
 	GUIEffect::EffectState resetEffectState;
 	effectStates.push_back(resetEffectState);
+	if (defaultEffect != nullptr) {
+		effectStates.push_back(defaultEffect->getState());
+		defaultEffect->stop();
+	}
+
+	//
 	for (auto& effectIt: effects) {
 		auto effect = effectIt.second;
 		if (effect->isActive() == true) {

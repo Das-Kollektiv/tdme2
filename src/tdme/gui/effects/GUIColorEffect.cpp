@@ -2,10 +2,12 @@
 
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/math/Math.h>
 
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Math;
 
 GUIColorEffect::GUIColorEffect(): GUIEffect()
 {
@@ -20,11 +22,12 @@ void GUIColorEffect::applyState(const EffectState& state) {
 
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 {
+	auto t = Math::abs(timeTotal) < Math::EPSILON?1.0f:(timeTotal - timeLeft) / timeTotal;
 	effectState.colorMul.set(
-		colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) * (timeTotal - timeLeft) / timeTotal),
-		colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) * (timeTotal - timeLeft) / timeTotal),
-		colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) * (timeTotal - timeLeft) / timeTotal),
-		colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) * (timeTotal - timeLeft) / timeTotal)
+		colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) * t),
+		colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) * t),
+		colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) * t),
+		colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) * t)
 	);
 	auto& effectColorMul = guiRenderer->getGUIEffectColorMul();
 	auto& effectColorAdd = guiRenderer->getGUIEffectColorAdd();
@@ -37,10 +40,11 @@ void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 		)
 	);
 	effectState.colorAdd.set(
-		colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) * (timeTotal - timeLeft) / timeTotal),
-		colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) * (timeTotal - timeLeft) / timeTotal),
-		colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) * (timeTotal - timeLeft) / timeTotal),
-		colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) * (timeTotal - timeLeft) / timeTotal));
+		colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) * t),
+		colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) * t),
+		colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) * t),
+		colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) * t)
+	);
 	guiRenderer->setGUIEffectColorAdd(
 		GUIColor(
 			effectColorAdd.getRed() + effectState.colorAdd.getRed(),

@@ -53,7 +53,6 @@ private:
 		GUIColor guiEffectColorAdd;
 		float guiEffectOffsetX;
 		float guiEffectOffsetY;
-		vector<GUIEffect*> effects;
 	};
 
 	GUI* gui { nullptr };
@@ -355,7 +354,6 @@ public:
 				.guiEffectColorAdd = guiEffectColorAdd,
 				.guiEffectOffsetX = guiEffectOffsetX,
 				.guiEffectOffsetY = guiEffectOffsetY,
-				.effects = effects
 			}
 		);
 		for (auto effect: effects) effect->apply(this);
