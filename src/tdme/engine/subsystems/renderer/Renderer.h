@@ -282,6 +282,11 @@ public:
 	virtual bool isUsingShortIndices() = 0;
 
 	/**
+	 * @return If deferred shading is available
+	 */
+	virtual bool isDeferredShadingAvailable() = 0;
+
+	/**
 	 * @return number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;
@@ -641,6 +646,22 @@ public:
 	virtual int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) = 0;
 
 	/**
+	 * Creates a geometry buffer geometry texture
+	 * @param width width
+	 * @param height height
+	 * @return geometry buffer geometry texture id
+	 */
+	virtual int32_t createGBufferGeometryTexture(int32_t width, int32_t height) = 0;
+
+	/**
+	 * Creates a geometry buffer color RGBA texture
+	 * @param width width
+	 * @param height height
+	 * @return geometry buffer color RGBA texture id
+	 */
+	virtual int32_t createGBufferColorTexture(int32_t width, int32_t height) = 0;
+
+	/**
 	 * Uploads texture data to current bound texture
 	 * @param context context
 	 * @param texture texture
@@ -720,6 +741,39 @@ public:
 	 * @return frame buffer object id
 	 */
 	virtual int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) = 0;
+
+	/**
+	 * Creates a geometry frame buffer object
+	 * @param depthBufferTextureId depth buffer texture id
+	 * @param geometryTextureId1 geometry texture id 1
+	 * @param geometryTextureId2 geometry texture id 2
+	 * @param geometryTextureId3 geometry texture id 3
+	 * @param geometryTextureId4 geometry texture id 4
+	 * @param geometryTextureId5 geometry texture id 5
+	 * @param geometryTextureId6 geometry texture id 6
+	 * @param colorBufferTextureId1 color buffer texture id 1
+	 * @param colorBufferTextureId2 color buffer texture id 2
+	 * @param colorBufferTextureId3 color buffer texture id 3
+	 * @param colorBufferTextureId4 color buffer texture id 4
+	 * @param colorBufferTextureId5 color buffer texture id 5
+	 * @param colorBufferTextureId6 color buffer texture id 6
+	 * @return frame buffer object id
+	 */
+	virtual int32_t createGeometryBufferObject(
+		int32_t depthBufferTextureId,
+		int32_t geometryTextureId1,
+		int32_t geometryTextureId2,
+		int32_t geometryTextureId3,
+		int32_t geometryTextureId4,
+		int32_t geometryTextureId5,
+		int32_t geometryTextureId6,
+		int32_t colorBufferTextureId1,
+		int32_t colorBufferTextureId2,
+		int32_t colorBufferTextureId3,
+		int32_t colorBufferTextureId4,
+		int32_t colorBufferTextureId5,
+		int32_t colorBufferTextureId6
+	) = 0;
 
 	/**
 	 * Enables a framebuffer to be rendered

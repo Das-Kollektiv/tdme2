@@ -169,6 +169,10 @@ bool GLES2Renderer::isUsingShortIndices() {
 	return true;
 }
 
+bool GLES2Renderer::isDeferredShadingAvailable() {
+	return false;
+}
+
 int32_t GLES2Renderer::getTextureUnits()
 {
 	return -1;
@@ -458,6 +462,16 @@ int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height, i
 	return colorBufferTextureId;
 }
 
+int32_t GLES2Renderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
+	Console::println("GLES2Renderer::createGBufferGeometryTexture(): Not implemented");
+	return ID_NONE;
+}
+
+int32_t GLES2Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
+	Console::println("GLES2Renderer::createGBufferColorTexture(): Not implemented");
+	return ID_NONE;
+}
+
 void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 {
 	glTexImage2D(
@@ -708,6 +722,25 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureId, int
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferId;
+}
+
+int32_t GLES2Renderer::createGeometryBufferObject(
+	int32_t depthBufferTextureId,
+	int32_t geometryTextureId1,
+	int32_t geometryTextureId2,
+	int32_t geometryTextureId3,
+	int32_t geometryTextureId4,
+	int32_t geometryTextureId5,
+	int32_t geometryTextureId6,
+	int32_t colorBufferTextureId1,
+	int32_t colorBufferTextureId2,
+	int32_t colorBufferTextureId3,
+	int32_t colorBufferTextureId4,
+	int32_t colorBufferTextureId5,
+	int32_t colorBufferTextureId6
+) {
+	Console::println(string("GLES2Renderer::createGeometryBufferObject()::not implemented yet"));
+	return ID_NONE;
 }
 
 void GLES2Renderer::bindFrameBuffer(int32_t frameBufferId)

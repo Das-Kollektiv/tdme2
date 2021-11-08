@@ -247,6 +247,10 @@ bool GL3Renderer::isUsingShortIndices() {
 	return false;
 }
 
+bool GL3Renderer::isDeferredShadingAvailable() {
+	return true;
+}
+
 int32_t GL3Renderer::getTextureUnits()
 {
 	return activeTextureUnit;
@@ -559,6 +563,28 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height, int
 	return colorBufferTextureId;
 }
 
+int32_t GL3Renderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
+	uint32_t gBufferGeometryTextureId;
+	glGenTextures(1, &gBufferGeometryTextureId);
+	glBindTexture(GL_TEXTURE_2D, gBufferGeometryTextureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	return gBufferGeometryTextureId;
+}
+
+int32_t GL3Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
+	uint32_t gBufferColorTextureId;
+	glGenTextures(1, &gBufferColorTextureId);
+	glBindTexture(GL_TEXTURE_2D, gBufferColorTextureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	return gBufferColorTextureId;
+}
+
 void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
 	glTexImage2D(
@@ -822,6 +848,93 @@ int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureId, int32
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferId;
+}
+
+int32_t GL3Renderer::createGeometryBufferObject(
+	int32_t depthBufferTextureId,
+	int32_t geometryTextureId1,
+	int32_t geometryTextureId2,
+	int32_t geometryTextureId3,
+	int32_t geometryTextureId4,
+	int32_t geometryTextureId5,
+	int32_t geometryTextureId6,
+	int32_t colorBufferTextureId1,
+	int32_t colorBufferTextureId2,
+	int32_t colorBufferTextureId3,
+	int32_t colorBufferTextureId4,
+	int32_t colorBufferTextureId5,
+	int32_t colorBufferTextureId6
+) {
+	uint32_t frameBufferId;
+	// create a frame buffer object
+	glGenFramebuffers(1, &frameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
+	// attach the depth buffer texture to FBO
+	if (depthBufferTextureId != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureId, 0);
+	}
+	vector<uint32_t> drawBuffers;
+	// attach geometry textures
+	if (geometryTextureId1 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, geometryTextureId1, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT0);
+	}
+	if (geometryTextureId2 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, geometryTextureId2, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT1);
+	}
+	if (geometryTextureId3 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, geometryTextureId3, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT2);
+	}
+	if (geometryTextureId4 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, geometryTextureId4, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT3);
+	}
+	if (geometryTextureId5 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, geometryTextureId5, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT4);
+	}
+	if (geometryTextureId6 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, geometryTextureId6, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT5);
+	}
+	// attach color textures
+	if (colorBufferTextureId1 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, colorBufferTextureId1, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT6);
+	}
+	if (colorBufferTextureId2 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT7, colorBufferTextureId2, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT7);
+	}
+	if (colorBufferTextureId3 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT8, colorBufferTextureId3, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT8);
+	}
+	if (colorBufferTextureId4 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT9, colorBufferTextureId4, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT9);
+	}
+	if (colorBufferTextureId5 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT10, colorBufferTextureId5, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT10);
+	}
+	if (colorBufferTextureId6 != ID_NONE) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT11, colorBufferTextureId6, 0);
+		drawBuffers.push_back(GL_COLOR_ATTACHMENT11);
+	}
+	//
+	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
+	// check FBO status
+	int32_t fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
+		Console::println(string("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO: "+ to_string(fboStatus)));
+	}
+	// switch back to window-system-provided framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	return frameBufferId;
+	return ID_NONE;
 }
 
 void GL3Renderer::bindFrameBuffer(int32_t frameBufferId)
