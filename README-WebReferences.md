@@ -46,6 +46,7 @@
   - https://jogamp.org/joal-demos/www/
   - https://jogamp.org/wiki/index.php/Jogl_Tutorial
   - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+  - https://learnopengl.com/Advanced-Lighting/Deferred-Shading
   - https://www.reddit.com/r/vulkan/comments/4u7z7w/multiple_vkdescriptorsetlayouts_in_the/d5nkyht/
   - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
   - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
