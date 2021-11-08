@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
+#include <tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
@@ -16,6 +17,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
+using tdme::engine::subsystems::lighting::DeferredLightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
@@ -47,6 +49,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 		// TODO: VUlkan
 		if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	#endif
+	if (DeferredLightingShaderDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }

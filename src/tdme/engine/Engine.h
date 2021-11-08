@@ -59,6 +59,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
+using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -85,6 +86,7 @@ using tdme::engine::EntityPickingFilter;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
+using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::LODObject3D;
@@ -125,15 +127,17 @@ class tdme::engine::Engine final
 	friend class EnvironmentMapping;
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
-	friend class Object3D;
-	friend class Object3DRenderGroup;
+	friend class GeometryBuffer;
 	friend class LinesObject3D;
 	friend class LODObject3D;
+	friend class Object3D;
+	friend class Object3DRenderGroup;
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class tdme::application::Application;
 	friend class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
+	friend class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -192,6 +196,7 @@ private:
 	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
 	static FrameBufferRenderShader* frameBufferRenderShader;
+	static DeferredLightingRenderShader* deferredLightingRenderShader;
 	static PostProcessing* postProcessing;
 	static PostProcessingShader* postProcessingShader;
 	static Texture2DRenderShader* texture2DRenderShader;
@@ -246,6 +251,7 @@ private:
 
 	array<Light, LIGHTS_MAX> lights;
 	Color4 sceneColor;
+	GeometryBuffer* geometryBuffer { nullptr };
 	FrameBuffer* frameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
@@ -437,6 +443,13 @@ private:
 	 */
 	inline static FrameBufferRenderShader* getFrameBufferRenderShader() {
 		return frameBufferRenderShader;
+	}
+
+	/**
+	 * @return deferred lighting render shader
+	 */
+	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
+		return deferredLightingRenderShader;
 	}
 
 	/**

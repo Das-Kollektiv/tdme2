@@ -5,6 +5,7 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace lighting {
+	class DeferredLightingShaderDefaultImplementation;
 	class LightingShader;
 	struct LightingShaderConstants;
 	struct LightingShaderImplementation;

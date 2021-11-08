@@ -29,10 +29,6 @@ FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t
 	this->cubeMapTextureIndex = cubeMapTextureIndex;
 }
 
-constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
-
-constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
-
 void FrameBuffer::initialize()
 {
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)

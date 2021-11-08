@@ -121,18 +121,14 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
 	int32_t createGeometryBufferObject(
 		int32_t depthBufferTextureId,
-		int32_t geometryTextureId1,
-		int32_t geometryTextureId2,
-		int32_t geometryTextureId3,
-		int32_t geometryTextureId4,
-		int32_t geometryTextureId5,
-		int32_t geometryTextureId6,
+		int32_t geometryBufferTextureId1,
+		int32_t geometryBufferTextureId2,
+		int32_t geometryBufferTextureId3,
 		int32_t colorBufferTextureId1,
 		int32_t colorBufferTextureId2,
 		int32_t colorBufferTextureId3,
 		int32_t colorBufferTextureId4,
-		int32_t colorBufferTextureId5,
-		int32_t colorBufferTextureId6
+		int32_t colorBufferTextureId5
 	) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;

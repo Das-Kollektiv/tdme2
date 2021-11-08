@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 // based on http://fabiensanglard.net/shadowmapping/index.php, modified by me
 

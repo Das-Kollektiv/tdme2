@@ -37,6 +37,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
+#include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -67,6 +68,7 @@
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/GeometryBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/LODObject3D.h>
@@ -114,6 +116,8 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
+using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
+using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -146,6 +150,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
+using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::LODObject3D;
@@ -183,6 +188,7 @@ VBOManager* Engine::vboManager = nullptr;
 MeshManager* Engine::meshManager = nullptr;
 GUIRenderer* Engine::guiRenderer = nullptr;
 FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
+DeferredLightingRenderShader* Engine::deferredLightingRenderShader = nullptr;
 PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
@@ -309,6 +315,7 @@ Engine::~Engine() {
 		delete particlesShader;
 		delete linesShader;
 		delete frameBufferRenderShader;
+		delete deferredLightingRenderShader;
 		delete postProcessing;
 		delete postProcessingShader;
 		delete texture2DRenderShader;
@@ -335,6 +342,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create object 3d vbo renderer
 	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
 	offScreenEngine->entityRenderer->initialize();
+	// TODO: geometry buffer
 	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
@@ -790,6 +798,10 @@ void Engine::initialize()
 	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
 	frameBufferRenderShader->initialize();
 
+	// deferred lighting render shader
+	deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
+	deferredLightingRenderShader->initialize();
+
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
 	postProcessingShader->initialize();
@@ -852,6 +864,7 @@ void Engine::initialize()
 	CHECK_INITIALIZED("LinesShader", linesShader);
 	CHECK_INITIALIZED("GUIShader", guiShader);
 	CHECK_INITIALIZED("FrameBufferRenderShader", frameBufferRenderShader);
+	CHECK_INITIALIZED("DeferredLightingRenderShader", deferredLightingRenderShader);
 	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
 	CHECK_INITIALIZED("Texture2DRenderShader", texture2DRenderShader);
 
@@ -865,6 +878,7 @@ void Engine::initialize()
 	initialized &= linesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
+	initialized &= deferredLightingRenderShader->isInitialized();
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
 
@@ -879,6 +893,12 @@ void Engine::initialize()
 			);
 			engineThreads[i]->start();
 		}
+	}
+
+	// create geometry buffer if available
+	if (renderer->isDeferredShadingAvailable() == true) {
+		geometryBuffer = new GeometryBuffer(width, height);
+		geometryBuffer->initialize();
 	}
 
 	//
@@ -918,19 +938,22 @@ void Engine::reshape(int32_t width, int32_t height)
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
 
 	// unset scaling frame buffer if width and height matches scaling
-	if (this == Engine::instance && scaledWidth != -1 && scaledHeight != -1) {
-		if (this->width == scaledWidth && this->height == scaledHeight) {
+	if (this == Engine::instance && ((scaledWidth != -1 && scaledHeight != -1) || geometryBuffer != nullptr)) {
+		if (this->width == scaledWidth && this->height == scaledHeight && geometryBuffer == nullptr) {
 			if (frameBuffer != nullptr) frameBuffer->dispose();
 			frameBuffer = nullptr;
 		} else {
 			if (frameBuffer == nullptr) {
-				frameBuffer = new FrameBuffer(scaledWidth, scaledHeight, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+				frameBuffer = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 				frameBuffer->initialize();
 			} else {
-				frameBuffer->reshape(scaledWidth, scaledHeight);
+				frameBuffer->reshape(_width, _height);
 			}
 		}
 	}
+
+	//
+	if (geometryBuffer != nullptr) geometryBuffer->reshape(_width, _height);
 
 	// update GUI system
 	gui->reshape(width, height);
@@ -1384,6 +1407,9 @@ void Engine::display()
 		}
 	}
 
+	// TODO: integrate me properly
+	if (geometryBuffer != nullptr) geometryBuffer->enableGeometryBuffer();
+
 	// clear previous frame values
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
@@ -1395,7 +1421,7 @@ void Engine::display()
 		visibleDecomposedEntities,
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
-		string(),
+		geometryBuffer != nullptr?"defer_":string(), // TODO: integrate me properly
 		true,
 		true,
 		true,
@@ -1411,6 +1437,9 @@ void Engine::display()
 			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_LIGHTS
 	);
+
+	// TODO: integrate me properly
+	if (geometryBuffer != nullptr) geometryBuffer->disableGeometryBuffer();
 
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
@@ -1430,6 +1459,11 @@ void Engine::display()
 
 	// camera
 	camera->update(context, _width, _height);
+
+	// TODO: integrate me properly
+	if (geometryBuffer != nullptr) {
+		geometryBuffer->renderToScreen(this);
+	}
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)

@@ -249,6 +249,7 @@ SRCS = \
 	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
+	src/tdme/engine/GeometryBuffer.cpp \
 	src/tdme/engine/Light.cpp \
 	src/tdme/engine/LinesObject3D.cpp \
 	src/tdme/engine/LODObject3D.cpp \
@@ -334,7 +335,9 @@ SRCS = \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.cpp \
+	src/tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
+	src/tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \

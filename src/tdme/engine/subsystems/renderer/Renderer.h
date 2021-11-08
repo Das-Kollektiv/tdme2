@@ -745,34 +745,26 @@ public:
 	/**
 	 * Creates a geometry frame buffer object
 	 * @param depthBufferTextureId depth buffer texture id
-	 * @param geometryTextureId1 geometry texture id 1
-	 * @param geometryTextureId2 geometry texture id 2
-	 * @param geometryTextureId3 geometry texture id 3
-	 * @param geometryTextureId4 geometry texture id 4
-	 * @param geometryTextureId5 geometry texture id 5
-	 * @param geometryTextureId6 geometry texture id 6
+	 * @param geometryBufferTextureId1 geometry texture id 1
+	 * @param geometryBufferTextureId2 geometry texture id 2
+	 * @param geometryBufferTextureId3 geometry texture id 3
 	 * @param colorBufferTextureId1 color buffer texture id 1
 	 * @param colorBufferTextureId2 color buffer texture id 2
 	 * @param colorBufferTextureId3 color buffer texture id 3
 	 * @param colorBufferTextureId4 color buffer texture id 4
 	 * @param colorBufferTextureId5 color buffer texture id 5
-	 * @param colorBufferTextureId6 color buffer texture id 6
 	 * @return frame buffer object id
 	 */
 	virtual int32_t createGeometryBufferObject(
 		int32_t depthBufferTextureId,
-		int32_t geometryTextureId1,
-		int32_t geometryTextureId2,
-		int32_t geometryTextureId3,
-		int32_t geometryTextureId4,
-		int32_t geometryTextureId5,
-		int32_t geometryTextureId6,
+		int32_t geometryBufferTextureId1,
+		int32_t geometryBufferTextureId2,
+		int32_t geometryBufferTextureId3,
 		int32_t colorBufferTextureId1,
 		int32_t colorBufferTextureId2,
 		int32_t colorBufferTextureId3,
 		int32_t colorBufferTextureId4,
-		int32_t colorBufferTextureId5,
-		int32_t colorBufferTextureId6
+		int32_t colorBufferTextureId5
 	) = 0;
 
 	/**

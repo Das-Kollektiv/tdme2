@@ -16,6 +16,7 @@ namespace engine {
 	struct EntityPickingFilter;
 	class EnvironmentMapping;
 	class FrameBuffer;
+	class GeometryBuffer;
 	class Frustum;
 	class FogParticleSystem;
 	class Light;

@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 // passed from geometry shader
 in vec2 vsFragTextureUV;

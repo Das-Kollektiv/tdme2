@@ -2,7 +2,7 @@
 //	http://theorangeduck.com/page/pure-depth-ssao
 //	https://hub.jmonkeyengine.org/t/depth-only-ssao/37749
 
-#version 330
+#version 330 core
 
 #define strength		0.25
 #define area			0.0075

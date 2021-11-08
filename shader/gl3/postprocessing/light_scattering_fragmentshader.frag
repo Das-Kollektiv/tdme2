@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 // based on: https://fabiensanglard.net/lightScattering/index.php
 

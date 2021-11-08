@@ -5,6 +5,7 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace framebuffer {
+	class DeferredLightingRenderShader;
 	class FrameBufferRenderShader;
 }  // namespace framebuffer
 }  // namespace subsystems

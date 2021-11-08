@@ -726,18 +726,14 @@ int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureId, int
 
 int32_t GLES2Renderer::createGeometryBufferObject(
 	int32_t depthBufferTextureId,
-	int32_t geometryTextureId1,
-	int32_t geometryTextureId2,
-	int32_t geometryTextureId3,
-	int32_t geometryTextureId4,
-	int32_t geometryTextureId5,
-	int32_t geometryTextureId6,
+	int32_t geometryBufferTextureId1,
+	int32_t geometryBufferTextureId2,
+	int32_t geometryBufferTextureId3,
 	int32_t colorBufferTextureId1,
 	int32_t colorBufferTextureId2,
 	int32_t colorBufferTextureId3,
 	int32_t colorBufferTextureId4,
-	int32_t colorBufferTextureId5,
-	int32_t colorBufferTextureId6
+	int32_t colorBufferTextureId5
 ) {
 	Console::println(string("GLES2Renderer::createGeometryBufferObject()::not implemented yet"));
 	return ID_NONE;

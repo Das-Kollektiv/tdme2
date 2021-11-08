@@ -241,6 +241,7 @@
 - documentation
 
 # 5. What is WIP or planned
+- Deferred shading for specular lighting and later also for PBR lighting
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
