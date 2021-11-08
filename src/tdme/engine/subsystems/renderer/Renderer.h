@@ -713,13 +713,13 @@ public:
 
 	/**
 	 * Creates a frame buffer object with depth texture attached
-	 * @param depthBufferTextureGlId colorBufferTextureGlId TODO
-	 * @param colorBufferTextureGlId depth texture gl id
+	 * @param depthBufferTextureId depth buffer texture id
+	 * @param colorBufferTextureId color buffer texture id
 	 * @param cubeMapTextureId cube map texture id
 	 * @param cubeMapTextureIndex cube map texture index
 	 * @return frame buffer object id
 	 */
-	virtual int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) = 0;
+	virtual int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) = 0;
 
 	/**
 	 * Enables a framebuffer to be rendered

@@ -463,10 +463,10 @@ int32_t GL2Renderer::createTexture()
 
 int32_t GL2Renderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	uint32_t depthTextureGlId;
+	uint32_t depthTextureId;
 	// create depth texture
-	glGenTextures(1, &depthTextureGlId);
-	glBindTexture(GL_TEXTURE_2D, depthTextureGlId);
+	glGenTextures(1, &depthTextureId);
+	glBindTexture(GL_TEXTURE_2D, depthTextureId);
 	// create depth texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	// depth texture parameter
@@ -476,15 +476,15 @@ int32_t GL2Renderer::createDepthBufferTexture(int32_t width, int32_t height, int
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
-	return depthTextureGlId;
+	return depthTextureId;
 }
 
 int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	uint32_t colorBufferTextureGlId;
+	uint32_t colorBufferTextureId;
 	// create color texture
-	glGenTextures(1, &colorBufferTextureGlId);
-	glBindTexture(GL_TEXTURE_2D, colorBufferTextureGlId);
+	glGenTextures(1, &colorBufferTextureId);
+	glBindTexture(GL_TEXTURE_2D, colorBufferTextureId);
 	// create color texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
 	// color texture parameter
@@ -494,7 +494,7 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height, int
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
-	return colorBufferTextureGlId;
+	return colorBufferTextureId;
 }
 
 void GL2Renderer::uploadTexture(void* context, Texture* texture)
@@ -730,26 +730,26 @@ void GL2Renderer::disposeTexture(int32_t textureId)
 	statistics.disposedTextures++;
 }
 
-int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
+int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	// create a frame buffer object
-	uint32_t frameBufferGlId;
-	glGenFramebuffers(1, &frameBufferGlId);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferGlId);
+	uint32_t frameBufferId;
+	glGenFramebuffers(1, &frameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 	// attach the depth buffer texture to FBO
-	if (depthBufferTextureGlId != ID_NONE) {
+	if (depthBufferTextureId != ID_NONE) {
 		#ifdef __APPLE__
-			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureGlId, 0);
+			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthBufferTextureId, 0);
 		#else
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferTextureGlId, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferTextureId, 0);
 		#endif
 	}
 	// attach the color buffer texture to FBO
-	if (colorBufferTextureGlId != ID_NONE) {
+	if (colorBufferTextureId != ID_NONE) {
 		#ifdef __APPLE__
-			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
+			glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureId, 0);
 		#else
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferTextureGlId, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferTextureId, 0);
 		#endif
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -767,7 +767,7 @@ int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 	}
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	return frameBufferGlId;
+	return frameBufferId;
 }
 
 void GL2Renderer::bindFrameBuffer(int32_t frameBufferId)

@@ -106,7 +106,7 @@ public:
 	void bindTexture(void* context, int32_t textureId) override;
 	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
-	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
+	int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) override;
