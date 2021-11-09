@@ -10,6 +10,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/GeometryBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
@@ -45,6 +46,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Time;
 
+GeometryBuffer* EnvironmentMappingRenderer::geometryBuffer = nullptr;
+
 EnvironmentMappingRenderer::EnvironmentMappingRenderer(Engine* engine, int32_t width, int32_t height)
 {
 	this->engine = engine;
@@ -75,6 +78,11 @@ void EnvironmentMappingRenderer::initialize()
 			frameBuffers[i]->initialize();
 		}
 	#endif
+	// deferred shading
+	if (engine->renderer->isDeferredShadingAvailable() == true && geometryBuffer == nullptr) {
+		geometryBuffer = new GeometryBuffer(width, height);
+		geometryBuffer->initialize();
+	}
 }
 
 void EnvironmentMappingRenderer::reshape(int32_t width, int32_t height)
@@ -153,6 +161,8 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 
 		// do a render pass
 		engine->render(
+			frameBuffers[i],
+			geometryBuffer,
 			visibleDecomposedEntities,
 			Engine::EFFECTPASS_NONE,
 			renderPassMask,

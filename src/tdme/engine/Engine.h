@@ -1222,6 +1222,8 @@ private:
 
 	/**
 	 * Do a render/effect pass
+	 * @param renderFrameBuffer render frame buffer
+	 * @param renderGeometryBuffer render geometry buffer
 	 * @param visibleDecomposedEntities visible decomposed entities
 	 * @param effectPass effect pass
 	 * @param renderPassMask render pass mask
@@ -1233,7 +1235,7 @@ private:
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light sources

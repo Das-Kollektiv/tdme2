@@ -938,8 +938,8 @@ void Engine::reshape(int32_t width, int32_t height)
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
 
 	// unset scaling frame buffer if width and height matches scaling
-	if (this == Engine::instance && ((scaledWidth != -1 && scaledHeight != -1) || geometryBuffer != nullptr)) {
-		if (this->width == scaledWidth && this->height == scaledHeight && geometryBuffer == nullptr) {
+	if (this == Engine::instance && scaledWidth != -1 && scaledHeight != -1) {
+		if (this->width == scaledWidth && this->height == scaledHeight) {
 			if (frameBuffer != nullptr) frameBuffer->dispose();
 			frameBuffer = nullptr;
 		} else {
@@ -1348,6 +1348,8 @@ void Engine::display()
 			} else {
 				// Do the effect render pass
 				render(
+					effectPassFrameBuffers[frameBufferIdx],
+					nullptr, // TODO: we might want to use a deferred shading here for further effects
 					visibleDecomposedEntities,
 					effectPassIdx,
 					Entity::RENDERPASS_ALL,
@@ -1374,10 +1376,8 @@ void Engine::display()
 		}
 	}
 
-	// set up clear color
-	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-
 	// create post processing frame buffers if having post processing
+	FrameBuffer* renderFrameBuffer = nullptr;
 	if (postProcessingPrograms.size() > 0) {
 		if (postProcessingFrameBuffer1 == nullptr) {
 			postProcessingFrameBuffer1 = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
@@ -1388,6 +1388,7 @@ void Engine::display()
 			postProcessingFrameBuffer2->initialize();
 		}
 		postProcessingFrameBuffer1->enableFrameBuffer();
+		renderFrameBuffer = postProcessingFrameBuffer1;
 	} else {
 		if (postProcessingFrameBuffer1 != nullptr) {
 			postProcessingFrameBuffer1->dispose();
@@ -1402,26 +1403,27 @@ void Engine::display()
 		// render objects to target frame buffer or screen
 		if (frameBuffer != nullptr) {
 			frameBuffer->enableFrameBuffer();
+			renderFrameBuffer = frameBuffer;
 		} else {
 			FrameBuffer::disableFrameBuffer();
 		}
 	}
 
-	// TODO: integrate me properly
-	if (geometryBuffer != nullptr) geometryBuffer->enableGeometryBuffer();
-
-	// clear previous frame values
-	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
-
 	// camera
 	camera->update(context, _width, _height);
 
+	// clear previous frame values
+	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+
 	// do rendering
 	render(
+		renderFrameBuffer,
+		geometryBuffer,
 		visibleDecomposedEntities,
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
-		geometryBuffer != nullptr?"defer_":string(), // TODO: integrate me properly
+		string(),
 		true,
 		true,
 		true,
@@ -1437,9 +1439,6 @@ void Engine::display()
 			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_LIGHTS
 	);
-
-	// TODO: integrate me properly
-	if (geometryBuffer != nullptr) geometryBuffer->disableGeometryBuffer();
 
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
@@ -1459,11 +1458,6 @@ void Engine::display()
 
 	// camera
 	camera->update(context, _width, _height);
-
-	// TODO: integrate me properly
-	if (geometryBuffer != nullptr) {
-		geometryBuffer->renderToScreen(this);
-	}
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
@@ -2181,7 +2175,7 @@ const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const stri
 	return shaderIt->second.parameterDefaults;
 }
 
-void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
+void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
@@ -2189,23 +2183,8 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 	// default context
 	auto context = Engine::renderer->getDefaultContext();
 
-	// render lines objects
-	if (visibleDecomposedEntities.linesObjects.size() > 0) {
-		// use particle shader
-		if (linesShader != nullptr) linesShader->useProgram(context);
-
-		// render points based particle systems
-		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
-			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.linesObjects);
-		}
-
-		// unuse particle shader
-		if (linesShader != nullptr) linesShader->unUseProgram(context);
-	}
-
 	// do depth buffer writing aka early z rejection
-	if (useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
+	if (renderGeometryBuffer == nullptr && useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
 		// disable color rendering, we only want to write to the Z-Buffer
 		renderer->setColorMask(false, false, false, false);
 		// render
@@ -2238,6 +2217,14 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
+				if (renderPass == Entity::RENDERPASS_TERRAIN) {
+					if (renderGeometryBuffer != nullptr) {
+						renderGeometryBuffer->enableGeometryBuffer();
+						renderer->setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+						renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+						Engine::renderer->setShaderPrefix("defer_");
+					}
+				} else
 				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
 				entityRenderer->render(
 					renderPass,
@@ -2253,6 +2240,16 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
+				if (renderPass == Entity::RENDERPASS_STANDARD) {
+					if (renderGeometryBuffer != nullptr) {
+						renderGeometryBuffer->disableGeometryBuffer();
+						Engine::renderer->setShaderPrefix(shaderPrefix);
+						if (renderFrameBuffer != nullptr) {
+							renderFrameBuffer->enableFrameBuffer();
+						}
+						renderGeometryBuffer->renderToScreen(this);
+					}
+				} else
 				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
 			}
 		}
@@ -2274,6 +2271,21 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 			doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, postProcessingFrameBuffer1);
 			postProcessingFrameBuffer1->enableFrameBuffer();
 		}
+	}
+
+	// render lines objects
+	if (visibleDecomposedEntities.linesObjects.size() > 0) {
+		// use particle shader
+		if (linesShader != nullptr) linesShader->useProgram(context);
+
+		// render points based particle systems
+		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
+			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
+			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.linesObjects);
+		}
+
+		// unuse particle shader
+		if (linesShader != nullptr) linesShader->unUseProgram(context);
 	}
 
 	// render point particle systems

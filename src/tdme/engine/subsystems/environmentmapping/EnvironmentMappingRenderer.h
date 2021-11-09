@@ -17,6 +17,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
+using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::math::Matrix4x4;
@@ -82,6 +83,7 @@ private:
 		int32_t cubeMapTextureId { 0 };
 		int64_t timeRenderLast { -1LL };
 	#endif
+	static GeometryBuffer* geometryBuffer;
 	int64_t timeRenderUpdateFrequency { 100LL };
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	Engine::DecomposedEntities visibleDecomposedEntities;
