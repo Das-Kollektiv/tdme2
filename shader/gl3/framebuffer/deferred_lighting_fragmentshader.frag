@@ -1,5 +1,7 @@
 #version 330 core
 
+{$DEFINITIONS}
+
 #define FALSE		0
 #define MAX_LIGHTS	8
 
@@ -45,6 +47,14 @@ in vec2 vsFragTextureUV;
 
 // passed out
 out vec4 outColor;
+
+#if defined(HAVE_DEPTH_FOG)
+	#define FOG_DISTANCE_NEAR			100.0
+	#define FOG_DISTANCE_MAX				250.0
+	#define FOG_RED						(255.0 / 255.0)
+	#define FOG_GREEN					(255.0 / 255.0)
+	#define FOG_BLUE						(255.0 / 255.0)
+#endif
 
 //
 vec4 computeLight(in int i, in vec3 normal, in vec3 position, in Material material) {
@@ -100,12 +110,12 @@ void main(void) {
 	Material material;
 	material.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
 	if (material.diffuse.a < 0.001) discard;
-	vec2 shininessReflection = texture(geometryBufferTextureId3, vsFragTextureUV).xy;
+	vec3 shininessReflectionFragDepth = texture(geometryBufferTextureId3, vsFragTextureUV).xyz;
 	material.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
 	material.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
 	material.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
-	material.shininess = shininessReflection.x;
-	material.reflection = shininessReflection.y;
+	material.shininess = shininessReflectionFragDepth.x;
+	material.reflection = shininessReflectionFragDepth.y;
 	vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 	vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
 	vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
@@ -113,4 +123,18 @@ void main(void) {
 	outColor = clamp(fragColor * diffuse, 0.0, 1.0);
 	outColor.a = material.diffuse.a;
 	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
+	float fragDepth = shininessReflectionFragDepth.z;
+	#if defined(HAVE_DEPTH_FOG)
+		float fogStrength = 0.0;
+		if (fragDepth > FOG_DISTANCE_NEAR) {
+			fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
+		}
+		if (fogStrength > 0.0) {
+			outColor = vec4(
+				(outColor.rgb * (1.0 - fogStrength)) +
+				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+				1.0
+			);
+		}
+	#endif
 }

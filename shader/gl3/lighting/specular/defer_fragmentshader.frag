@@ -35,10 +35,14 @@ in vec4 vsEffectColorMul;
 in vec4 vsEffectColorAdd;
 in vec3 vsEyeDirection;
 
+#if defined(HAVE_DEPTH_FOG)
+	in float fragDepth;
+#endif
+
 // out
 layout (location = 0) out vec3 outPosition;
 layout (location = 1) out vec3 outNormal;
-layout (location = 2) out vec2 outMaterialShininessReflection;
+layout (location = 2) out vec3 outMaterialShininessReflectionFragDepth;
 layout (location = 3) out vec4 outMaterialAmbient;
 layout (location = 4) out vec4 outMaterialDiffuse;
 layout (location = 5) out vec4 outMaterialSpecular;
@@ -104,7 +108,11 @@ void main(void) {
 	//
 	outPosition = vsPosition;
 	outNormal = normal;
-	outMaterialShininessReflection = vec2(materialShininess, material.reflection);
+	#if defined(HAVE_DEPTH_FOG)
+		outMaterialShininessReflectionFragDepth = vec3(materialShininess, material.reflection, fragDepth);
+	#else
+		outMaterialShininessReflectionFragDepth = vec3(materialShininess, material.reflection, 0.0);
+	#endif
 	outMaterialAmbient = material.ambient;
 	outMaterialDiffuse = material.diffuse * vsEffectColorMul;
 	outMaterialSpecular = material.specular; 

@@ -38,14 +38,16 @@ void DeferredLightingRenderShader::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
-		"render_vertexshader.vert"
+		"render_vertexshader.vert",
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (vertexShaderId == 0) return;
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
-		"deferred_lighting_fragmentshader.frag"
+		"deferred_lighting_fragmentshader.frag",
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (fragmentShaderId == 0) return;
 

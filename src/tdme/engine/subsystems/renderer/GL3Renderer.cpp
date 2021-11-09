@@ -249,7 +249,7 @@ bool GL3Renderer::isUsingShortIndices() {
 
 bool GL3Renderer::isDeferredShadingAvailable() {
 	// TODO: disabled until completed
-	return true;
+	return false;
 }
 
 int32_t GL3Renderer::getTextureUnits()

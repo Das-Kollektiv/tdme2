@@ -38,7 +38,8 @@ void DeferredLightingShaderDefaultImplementation::initialize()
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"defer_fragmentshader.frag"
+		"defer_fragmentshader.frag",
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
@@ -46,7 +47,8 @@ void DeferredLightingShaderDefaultImplementation::initialize()
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_vertexshader.vert"
+		"render_vertexshader.vert",
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 
