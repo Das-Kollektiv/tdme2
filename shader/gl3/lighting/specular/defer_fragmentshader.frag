@@ -114,8 +114,8 @@ void main(void) {
 		outMaterialShininessReflectionFragDepth = vec3(materialShininess, material.reflection, 0.0);
 	#endif
 	outMaterialAmbient = material.ambient;
-	outMaterialDiffuse = material.diffuse * vsEffectColorMul;
+	outMaterialDiffuse = material.diffuse;
 	outMaterialSpecular = material.specular; 
 	outMaterialEmission = material.emission + vsEffectColorAdd;
-	outDiffuse = diffuseTextureColor;
+	outDiffuse = diffuseTextureColor * vsEffectColorMul;
 }
