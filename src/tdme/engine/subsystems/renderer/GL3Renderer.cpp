@@ -927,7 +927,6 @@ int32_t GL3Renderer::createGeometryBufferObject(
 	// switch back to window-system-provided framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return frameBufferId;
-	return ID_NONE;
 }
 
 void GL3Renderer::bindFrameBuffer(int32_t frameBufferId)

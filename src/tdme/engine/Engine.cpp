@@ -2220,7 +2220,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 				if (renderPass == Entity::RENDERPASS_TERRAIN) {
 					if (renderGeometryBuffer != nullptr) {
 						renderGeometryBuffer->enableGeometryBuffer();
-						renderer->setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+						renderer->setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 						renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 						Engine::renderer->setShaderPrefix("defer_");
 					}
@@ -2242,12 +2242,12 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 				);
 				if (renderPass == Entity::RENDERPASS_STANDARD) {
 					if (renderGeometryBuffer != nullptr) {
+						if (lightingShader != nullptr) lightingShader->unUseProgram();
 						renderGeometryBuffer->disableGeometryBuffer();
 						Engine::renderer->setShaderPrefix(shaderPrefix);
-						if (renderFrameBuffer != nullptr) {
-							renderFrameBuffer->enableFrameBuffer();
-						}
+						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
 						renderGeometryBuffer->renderToScreen(this);
+						if (lightingShader != nullptr) lightingShader->useProgram(this);
 					}
 				} else
 				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
