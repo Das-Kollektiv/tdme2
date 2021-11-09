@@ -675,6 +675,14 @@ void GLES2Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, i
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void GLES2Renderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
+	Console::println("GLES2Renderer::resizeGBufferGeometryTexture(): Not implemented");
+}
+
+void GL2RendGLES2Renderererer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
+	Console::println("GLES2Renderer::resizeGBufferColorTexture(): Not implemented");
+}
+
 void GLES2Renderer::bindTexture(void* context, int32_t textureId)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);

@@ -106,8 +106,8 @@ void main(void) {
 	outNormal = normal;
 	outMaterialShininessReflection = vec2(materialShininess, material.reflection);
 	outMaterialAmbient = material.ambient;
-	outMaterialDiffuse = material.diffuse; 
+	outMaterialDiffuse = material.diffuse * vsEffectColorMul;
 	outMaterialSpecular = material.specular; 
-	outMaterialEmission = material.emission;
+	outMaterialEmission = material.emission + vsEffectColorAdd;
 	outDiffuse = diffuseTextureColor;
 }

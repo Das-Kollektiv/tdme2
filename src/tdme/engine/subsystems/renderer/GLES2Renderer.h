@@ -106,6 +106,8 @@ public:
 	int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
+	void resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) override;
+	void resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;
 	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;

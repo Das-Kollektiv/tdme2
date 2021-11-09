@@ -69,8 +69,7 @@ public:
 	}
 
 	/**
-	 * Init the frame buffer
-	 * currently only depth buffer rendering is enabled, can be extended to color buffer easily
+	 * Initialize the frame buffer
 	 */
 	void initialize();
 

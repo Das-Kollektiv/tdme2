@@ -48,25 +48,24 @@ public:
 	}
 
 	/**
-	 * Init the frame buffer
-	 * currently only depth buffer rendering is enabled, can be extended to color buffer easily
+	 * Initialize the geometry buffer
 	 */
 	void initialize();
 
 	/**
-	 * Resize the frame buffer
+	 * Resize the geometry buffer
 	 * @param width width
 	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
 	/**
-	 * Disposes this frame buffer
+	 * Disposes this geometry buffer
 	 */
 	void dispose();
 
 	/**
-	 * Enables this frame buffer to be rendered
+	 * Enables this geometry buffer to be rendered
 	 */
 	void enableGeometryBuffer();
 
@@ -76,25 +75,7 @@ public:
 	static void disableGeometryBuffer();
 
 	/**
-	 * Bind depth texture
-	 * @param context context
-	 */
-	void bindDepthBufferTexture(void* context);
-
-	/**
-	 * Bind geometry buffer textures
-	 * @param context context
-	 */
-	void bindGeometryBufferTextures(void* context);
-
-	/**
-	 * Bind color buffer textures
-	 * @param context context
-	 */
-	void bindColorBufferTextures(void* context);
-
-	/**
-	 * Render to screen or bound frame buffer
+	 * Render to screen or bound geometry buffer
 	 * @engine engine
 	 */
 	void renderToScreen(Engine* engine);

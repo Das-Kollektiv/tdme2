@@ -97,16 +97,17 @@ vec4 computeLights(in vec3 normal, in vec3 position, in Material material) {
 
 // main
 void main(void) {
-	vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
-	vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
-	vec2 shininessReflection = texture(geometryBufferTextureId3, vsFragTextureUV).xy;
 	Material material;
-	material.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
 	material.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
+	if (material.diffuse.a < 0.001) discard;
+	vec2 shininessReflection = texture(geometryBufferTextureId3, vsFragTextureUV).xy;
+	material.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
 	material.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
 	material.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
 	material.shininess = shininessReflection.x;
 	material.reflection = shininessReflection.y;
+	vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
+	vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
 	vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
 	vec4 fragColor = material.emission + computeLights(normal, position, material);
 	outColor = clamp(fragColor * diffuse, 0.0, 1.0);

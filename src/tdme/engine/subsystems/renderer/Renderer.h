@@ -706,6 +706,24 @@ public:
 	virtual void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) = 0;
 
 	/**
+	 * Resizes a geometry buffer geometry texture
+	 * @param textureId texture id
+	 * @param width width
+	 * @param height height
+	 * @return geometry buffer geometry texture id
+	 */
+	virtual void resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) = 0;
+
+	/**
+	 * Resizes a geometry buffer color RGBA texture
+	 * @param textureId texture id
+	 * @param width width
+	 * @param height height
+	 * @return geometry buffer color RGBA texture id
+	 */
+	virtual void resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) = 0;
+
+	/**
 	 * Binds a texture with given id or unbinds when using ID_NONE
 	 * @param context context
 	 * @param textureId textureId

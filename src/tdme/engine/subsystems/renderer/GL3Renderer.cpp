@@ -249,7 +249,7 @@ bool GL3Renderer::isUsingShortIndices() {
 
 bool GL3Renderer::isDeferredShadingAvailable() {
 	// TODO: disabled until completed
-	return false;
+	return true;
 }
 
 int32_t GL3Renderer::getTextureUnits()
@@ -797,6 +797,18 @@ void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int
 
 void GL3Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void GL3Renderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void GL3Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);

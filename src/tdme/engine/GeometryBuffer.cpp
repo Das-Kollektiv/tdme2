@@ -21,9 +21,8 @@ using tdme::utilities::Float;
 
 GeometryBuffer::GeometryBuffer(int32_t width, int32_t height)
 {
-	Console::println("GeometryBuffer::GeometryBuffer(): " + to_string(width) + " x " + to_string(height));
-	this->width = 1024; // width;
-	this->height = 768; // height;
+	this->width = width;
+	this->height = height;
 	this->frameBufferId = -1;
 	this->depthBufferTextureId = Engine::renderer->ID_NONE;
 	this->geometryBufferTextureId1 = Engine::renderer->ID_NONE;
@@ -58,18 +57,21 @@ void GeometryBuffer::initialize()
 		colorBufferTextureId4,
 		colorBufferTextureId5
 	);
-
 }
 
 void GeometryBuffer::reshape(int32_t width, int32_t height)
 {
-	Console::println("GeometryBuffer::reshape(): " + to_string(width) + " x " + to_string(height));
-
-	// TODO: resizing
 	this->width = width;
 	this->height = height;
-	//
-	Console::println("GeometryBuffer::reshape(): Not yet implemented.");
+	Engine::renderer->resizeDepthBufferTexture(depthBufferTextureId, width, height);
+	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId1, width, height);
+	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId2, width, height);
+	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId3, width, height);
+	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId1, width, height);
+	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId2, width, height);
+	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId3, width, height);
+	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId4, width, height);
+	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId5, width, height);
 }
 
 void GeometryBuffer::dispose()
@@ -83,7 +85,8 @@ void GeometryBuffer::dispose()
 	Engine::renderer->disposeTexture(colorBufferTextureId3);
 	Engine::renderer->disposeTexture(colorBufferTextureId4);
 	Engine::renderer->disposeTexture(colorBufferTextureId5);
-	Engine::renderer->disposeFrameBufferObject(frameBufferId); // TODO: Vulkan might need a extra method here
+	// TODO: Vulkan might need a extra method here
+	Engine::renderer->disposeFrameBufferObject(frameBufferId);
 }
 
 void GeometryBuffer::enableGeometryBuffer()
@@ -98,19 +101,6 @@ void GeometryBuffer::disableGeometryBuffer()
 	Engine::renderer->bindFrameBuffer(Engine::renderer->FRAMEBUFFER_DEFAULT);
 	Engine::renderer->setViewPort(0, 0, Engine::instance->width, Engine::instance->height);
 	Engine::renderer->updateViewPort();
-}
-
-void GeometryBuffer::bindDepthBufferTexture(void* context)
-{
-	Engine::renderer->bindTexture(context, depthBufferTextureId);
-}
-
-void GeometryBuffer::bindGeometryBufferTextures(void* context) {
-	Console::println("GeometryBuffer::bindGeometryBufferTextures(): Not yet implemented.");
-}
-
-void GeometryBuffer::bindColorBufferTextures(void* context) {
-	Console::println("GeometryBuffer::bindColorBufferTextures(): Not yet implemented.");
 }
 
 void GeometryBuffer::renderToScreen(Engine* engine)
