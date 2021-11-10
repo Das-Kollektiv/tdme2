@@ -49,6 +49,16 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightRadius;
 	int32_t uniformCameraMatrix { -1 };
+
+	int32_t uniformGrasTextureUnit { -1 };
+	int32_t uniformDirtTextureUnit { -1 };
+	int32_t uniformSnowTextureUnit { -1 };
+	int32_t uniformStoneTextureUnit { -1 };
+	int32_t grasTextureId { 0 };
+	int32_t dirtTextureId { 0 };
+	int32_t snowTextureId { 0 };
+	int32_t stoneTextureId { 0 };
+
 	bool initialized;
 	bool isRunning;
 

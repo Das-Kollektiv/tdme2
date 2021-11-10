@@ -73,7 +73,6 @@ void LightingShaderBaseImplementation::initialize()
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
-	if (uniformTextureMatrix == -1) return;
 
 	// matrices as uniform only if not using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {

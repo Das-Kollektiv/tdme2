@@ -108,10 +108,10 @@ void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* conte
 	renderer->bindTexture(context, grasTextureId);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
 	renderer->bindTexture(context, dirtTextureId);
-	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
-	renderer->bindTexture(context, stoneTextureId);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
 	renderer->bindTexture(context, snowTextureId);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
+	renderer->bindTexture(context, stoneTextureId);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
 	renderer->setTextureUnit(context, currentTextureUnit);
 
@@ -129,9 +129,9 @@ void LightingShaderTerrainImplementation::unUseProgram(void* context) {
 	renderer->bindTexture(context, renderer->ID_NONE);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
 	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
-	renderer->bindTexture(context, renderer->ID_NONE);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
 	renderer->bindTexture(context, renderer->ID_NONE);
 	renderer->setTextureUnit(context, currentTextureUnit);
 

@@ -49,6 +49,54 @@ in vec2 vsFragTextureUV;
 // passed out
 out vec4 outColor;
 
+// terrain
+#define TERRAIN_UV_SCALE			0.2
+#define TERRAIN_LEVEL_0				-4.0
+#define TERRAIN_LEVEL_1				10.0
+#define TERRAIN_HEIGHT_BLEND			4.0
+#define TERRAIN_SLOPE_BLEND			5.0
+
+uniform sampler2D grasTextureUnit;
+uniform sampler2D dirtTextureUnit;
+uniform sampler2D stoneTextureUnit;
+uniform sampler2D snowTextureUnit;
+
+vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
+	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+	vec4 xAxis = texture(grasTextureUnit, coords.yz * scale);
+	vec4 yAxis = texture(grasTextureUnit, coords.xz * scale);
+	vec4 zAxis = texture(grasTextureUnit, coords.xy * scale);
+	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+	return result;
+}
+
+vec4 readTerrainTextureDirt(vec3 coords, vec3 blending, float scale) {
+	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+	vec4 xAxis = texture(dirtTextureUnit, coords.yz * scale);
+	vec4 yAxis = texture(dirtTextureUnit, coords.xz * scale);
+	vec4 zAxis = texture(dirtTextureUnit, coords.xy * scale);
+	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+	return result;
+}
+
+vec4 readTerrainTextureStone(vec3 coords, vec3 blending, float scale) {
+	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+	vec4 xAxis = texture(stoneTextureUnit, coords.yz * scale);
+	vec4 yAxis = texture(stoneTextureUnit, coords.xz * scale);
+	vec4 zAxis = texture(stoneTextureUnit, coords.xy * scale);
+	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+	return result;
+}
+
+vec4 readTerrainTextureSnow(vec3 coords, vec3 blending, float scale) {
+	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+	vec4 xAxis = texture(snowTextureUnit, coords.yz * scale);
+	vec4 yAxis = texture(snowTextureUnit, coords.xz * scale);
+	vec4 zAxis = texture(snowTextureUnit, coords.xy * scale);
+	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+	return result;
+}
+
 #if defined(HAVE_DEPTH_FOG)
 	#define FOG_DISTANCE_NEAR			100.0
 	#define FOG_DISTANCE_MAX				250.0
@@ -108,28 +156,111 @@ vec4 computeLights(in vec3 normal, in vec3 position, in Material material) {
 
 // main
 void main(void) {
+	outColor = vec4(1.0, 0.0, 0.0, 1.0);
 	Material material;
 	material.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
 	if (material.diffuse.a < 0.001) discard;
-	vec3 shininessReflectionFragDepth = texture(geometryBufferTextureId3, vsFragTextureUV).xyz;
+	vec4 shininessReflectionFragDepthType = texture(geometryBufferTextureId3, vsFragTextureUV).xyzw;
+	float fragDepth = shininessReflectionFragDepthType.z;
 	material.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
 	material.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
 	material.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
-	material.shininess = shininessReflectionFragDepth.x;
-	material.reflection = shininessReflectionFragDepth.y;
 	vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 	vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
+	int type = int(shininessReflectionFragDepthType.w);
 	vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
-	vec4 fragColor = material.emission + computeLights(normal, position, material);
-	outColor = clamp(fragColor * diffuse, 0.0, 1.0);
-	outColor.a = material.diffuse.a;
-	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
-	float fragDepth = shininessReflectionFragDepth.z;
 	#if defined(HAVE_DEPTH_FOG)
 		float fogStrength = 0.0;
 		if (fragDepth > FOG_DISTANCE_NEAR) {
 			fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
 		}
+	#endif
+	if (type == 0) {
+		material.shininess = shininessReflectionFragDepthType.x;
+		material.reflection = shininessReflectionFragDepthType.y;
+	} else
+	if (type == 1) {
+		//
+		material.shininess = 0.0;
+		material.reflection = 0.0;
+		//
+		float terrainHeight = shininessReflectionFragDepthType.x;
+		float terrainSlope = shininessReflectionFragDepthType.y;
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec3 uvMappingBlending = abs(normal);
+		uvMappingBlending = normalize(max(uvMappingBlending, 0.00001)); // Force weights to sum to 1.0
+		float b = (uvMappingBlending.x + uvMappingBlending.y + uvMappingBlending.z);
+		uvMappingBlending /= vec3(b, b, b);
+		//
+		vec4 terrainColor = vec4(0.0, 0.0, 0.0, 1.0);
+		#if defined(HAVE_DEPTH_FOG)
+			if (fogStrength < 1.0) {
+		#endif
+			vec4 terrainBlending = vec4(0.0, 0.0, 0.0, 0.0); // gras, dirt, stone, snow
+
+			// terrainHeight
+			if (terrainHeight > TERRAIN_LEVEL_1) {
+				float blendFactorHeight = clamp((terrainHeight - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				if (terrainSlope >= 45.0) {
+					terrainBlending[2]+= blendFactorHeight; // stone
+				} else
+				if (terrainSlope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[2]+= blendFactorHeight * ((terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+					terrainBlending[3]+= blendFactorHeight * (1.0 - (terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // snow
+				} else {
+					terrainBlending[3]+= blendFactorHeight; // snow
+				}
+			}
+			if (terrainHeight >= TERRAIN_LEVEL_0 && terrainHeight < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
+				float blendFactorHeight = 1.0;
+				if (terrainHeight > TERRAIN_LEVEL_1) {
+					blendFactorHeight = 1.0 - clamp((terrainHeight - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				} else
+				if (terrainHeight < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+					blendFactorHeight = clamp((terrainHeight - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				}
+
+				if (terrainSlope >= 45.0) {
+					terrainBlending[2]+= blendFactorHeight; // stone
+				} else
+				if (terrainSlope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[2]+= blendFactorHeight * ((terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+					terrainBlending[1]+= blendFactorHeight * (1.0 - (terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+				} else
+				if (terrainSlope >= 26.0) {
+					terrainBlending[1]+= blendFactorHeight; // dirt
+				} else
+				if (terrainSlope >= 26.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[1]+= blendFactorHeight * ((terrainSlope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+					terrainBlending[0]+= blendFactorHeight * (1.0 - (terrainSlope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // gras
+				} else {
+					terrainBlending[0]+= blendFactorHeight; // gras
+				}
+			}
+			if (terrainHeight < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+				float blendFactorHeight = 1.0;
+				if (terrainHeight > TERRAIN_LEVEL_0) {
+					blendFactorHeight = 1.0 - clamp((terrainHeight - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				}
+				// 0- meter
+				terrainBlending[1]+= blendFactorHeight; // dirt
+			}
+
+			//
+			if (terrainBlending[0] > 0.001) terrainColor+= readTerrainTextureGras(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[0];
+			if (terrainBlending[1] > 0.001) terrainColor+= readTerrainTextureDirt(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[1];
+			if (terrainBlending[2] > 0.001) terrainColor+= readTerrainTextureStone(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
+			if (terrainBlending[3] > 0.001) terrainColor+= readTerrainTextureSnow(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
+			diffuse*= terrainColor;
+		#if defined(HAVE_DEPTH_FOG)
+			}
+		#endif
+	}
+	vec4 fragColor = material.emission + computeLights(normal, position, material);
+	outColor = clamp(fragColor * diffuse, 0.0, 1.0);
+	outColor.a = material.diffuse.a;
+	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
+	#if defined(HAVE_DEPTH_FOG)
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +

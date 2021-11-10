@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Math.h>
@@ -7,6 +9,9 @@
 #include <tdme/utilities/FloatBuffer.h>
 
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
+
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -115,6 +120,25 @@ void DeferredLightingRenderShader::initialize()
 	uniformCameraMatrix = renderer->getProgramUniformLocation(programId, "cameraMatrix");
 	if (uniformCameraMatrix == -1) return;
 
+	// terrain
+	uniformGrasTextureUnit = renderer->getProgramUniformLocation(programId, "grasTextureUnit");
+	if (uniformGrasTextureUnit == -1) return;
+
+	uniformDirtTextureUnit = renderer->getProgramUniformLocation(programId, "dirtTextureUnit");
+	if (uniformDirtTextureUnit == -1) return;
+
+	uniformSnowTextureUnit = renderer->getProgramUniformLocation(programId, "snowTextureUnit");
+	if (uniformSnowTextureUnit == -1) return;
+
+	uniformStoneTextureUnit = renderer->getProgramUniformLocation(programId, "stoneTextureUnit");
+	if (uniformStoneTextureUnit == -1) return;
+
+	//
+	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_gras.png"), renderer->getDefaultContext());
+	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_dirt.png"), renderer->getDefaultContext());
+	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_snow.png"), renderer->getDefaultContext());
+	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_stone.png"), renderer->getDefaultContext());
+
 	//
 	auto context = renderer->getDefaultContext();
 
@@ -154,10 +178,39 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 		}
 	}
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
+	renderer->setProgramUniformInteger(context, uniformGrasTextureUnit, 9);
+	renderer->setProgramUniformInteger(context, uniformDirtTextureUnit, 10);
+	renderer->setProgramUniformInteger(context, uniformSnowTextureUnit, 11);
+	renderer->setProgramUniformInteger(context, uniformStoneTextureUnit, 12);
+	auto currentTextureUnit = renderer->getTextureUnit(context);
+	renderer->setTextureUnit(context, 9);
+	renderer->bindTexture(context, grasTextureId);
+	renderer->setTextureUnit(context, 10);
+	renderer->bindTexture(context, dirtTextureId);
+	renderer->setTextureUnit(context, 11);
+	renderer->bindTexture(context, snowTextureId);
+	renderer->setTextureUnit(context, 12);
+	renderer->bindTexture(context, stoneTextureId);
+	renderer->setTextureUnit(context, currentTextureUnit);
+
+	//
 	isRunning = true;
 }
 
 void DeferredLightingRenderShader::unUseProgram()
 {
+	auto context = renderer->getDefaultContext();
+	auto currentTextureUnit = renderer->getTextureUnit(context);
+	renderer->setTextureUnit(context, 9);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 10);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 11);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 12);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, currentTextureUnit);
+
+	//
 	isRunning = false;
 }
