@@ -62,7 +62,6 @@ void DeferredLightingShaderDefaultImplementation::initialize()
 }
 
 void DeferredLightingShaderDefaultImplementation::registerShader() {
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
 
 void DeferredLightingShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {

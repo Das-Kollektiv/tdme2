@@ -6,6 +6,8 @@ namespace engine {
 namespace subsystems {
 namespace lighting {
 	class DeferredLightingShaderDefaultImplementation;
+	class DeferredLightingShaderFoliageImplementation;
+	class DeferredLightingShaderTreeImplementation;
 	class LightingShader;
 	struct LightingShaderConstants;
 	struct LightingShaderImplementation;
