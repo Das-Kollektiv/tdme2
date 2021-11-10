@@ -1,20 +1,27 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utilities/Console.h>
+
+using std::to_string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Console;
 
 /**
  * Light representation
@@ -224,6 +231,20 @@ public:
 	 */
 	inline void setQuadraticAttenuation(float quadraticAttenuation) {
 		this->quadraticAttenuation = quadraticAttenuation;
+	}
+
+	/**
+	 * @return radius
+	 */
+	inline float getRadius() {
+		// see: https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+		float ambientLightMax = Math::max(Math::max(ambient.getRed(), ambient.getGreen()), ambient.getBlue());
+		if (ambientLightMax > Math::EPSILON) return 0.0f;
+		auto diffuseLightMax = Math::max(Math::max(diffuse.getRed(), diffuse.getGreen()), diffuse.getBlue());
+		if (diffuseLightMax < Math::EPSILON) return 0.0f;
+		if (linearAttenuation > Math::EPSILON || quadraticAttenuation > Math::EPSILON)
+			return (-linearAttenuation + Math::sqrt(linearAttenuation * linearAttenuation - 4.0f * quadraticAttenuation * (constantAttenuation - (256.0f / 5.0f) * diffuseLightMax))) / (quadraticAttenuation < Math::EPSILON?1.0f:2.0f * quadraticAttenuation);
+		return 0.0f;
 	}
 
 	/**

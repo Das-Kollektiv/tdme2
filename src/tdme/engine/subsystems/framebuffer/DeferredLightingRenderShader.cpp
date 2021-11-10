@@ -107,6 +107,8 @@ void DeferredLightingRenderShader::initialize()
 		if (uniformLightLinearAttenuation[i] == -1) return;
 		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
 		if (uniformLightQuadraticAttenuation[i] == -1) return;
+		uniformLightRadius[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].radius");
+		if (uniformLightRadius[i] == -1) return;
 	}
 
 	//	camera matrix
@@ -148,6 +150,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 			renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], light->getConstantAttenuation());
 			renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], light->getLinearAttenuation());
 			renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
+			renderer->setProgramUniformFloat(context, uniformLightRadius[lightId], light->getRadius());
 		}
 	}
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());

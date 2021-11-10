@@ -47,6 +47,7 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightRadius;
 	int32_t uniformCameraMatrix { -1 };
 	bool initialized;
 	bool isRunning;

@@ -26,6 +26,7 @@ struct Light {
 	float constantAttenuation;
 	float linearAttenuation;
 	float quadraticAttenuation;
+	float radius;
 };
 
 uniform Light lights[MAX_LIGHTS];
@@ -96,7 +97,7 @@ vec4 computeLights(in vec3 normal, in vec3 position, in Material material) {
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		// skip on disabled lights
-		if (lights[i].enabled == FALSE) continue;
+		if (lights[i].enabled == FALSE || (lights[i].radius > 0.0 && length(lights[i].position.xyz - position.xyz) > lights[i].radius)) continue;
 
 		// compute light
 		fragColor+= computeLight(i, normal, position, material);

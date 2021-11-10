@@ -675,7 +675,6 @@ void Engine::initialize()
 	#if defined(VULKAN)
 		renderer = new EngineVKRenderer(this);
 		Console::println(string("TDME2::Using Vulkan"));
-		// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -684,8 +683,7 @@ void Engine::initialize()
 		#if defined(__APPLE__)
 		{
 			renderer = new EngineGL3Renderer(this);
-			Console::println(string("TDME2::Using GL3+/CORE"));
-			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			Console::println("TDME2::Using GL3+/CORE");
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -815,18 +813,18 @@ void Engine::initialize()
 
 	// check if VBOs are available
 	if (renderer->isBufferObjectsAvailable()) {
-		Console::println(string("TDME2::VBOs are available."));
+		Console::println("TDME2::VBOs are available.");
 	} else {
-		Console::println(string("TDME2::VBOs are not available! Engine will not work!"));
+		Console::println("TDME2::VBOs are not available! Engine will not work!");
 		initialized = false;
 	}
 
 	// check FBO support
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println(string("TDME2::Basic FBOs are not available!"));
+		Console::println("TDME2::Basic FBOs are not available!");
 		shadowMappingEnabled = false;
 	} else {
-		Console::println(string("TDME2::Basic FBOs are available."));
+		Console::println("TDME2::Basic FBOs are available.");
 	}
 
 	// TODO: make this configurable
@@ -835,23 +833,23 @@ void Engine::initialize()
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
-		Console::println(string("TDME2::Using shadow mapping"));
+		Console::println("TDME2::Using shadow mapping");
 		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
-		Console::println(string("TDME2::Not using shadow mapping"));
+		Console::println("TDME2::Not using shadow mapping");
 	}
 
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
-		Console::println(string("TDME2::Using skinning compute shader"));
+		Console::println("TDME2::Using skinning compute shader");
 		skinningShader = new SkinningShader(renderer);
 		skinningShader->initialize();
 	} else {
-		Console::println(string("TDME2::Not using skinning compute shader"));
+		Console::println("TDME2::Not using skinning compute shader");
 	}
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
@@ -897,8 +895,11 @@ void Engine::initialize()
 
 	// create geometry buffer if available
 	if (renderer->isDeferredShadingAvailable() == true) {
+		Console::println("TDME2::Using deferred shading");
 		geometryBuffer = new GeometryBuffer(width, height);
 		geometryBuffer->initialize();
+	} else {
+		Console::println("TDME2::Not using deferred shading");
 	}
 
 	//

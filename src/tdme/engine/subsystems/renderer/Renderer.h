@@ -55,6 +55,7 @@ public:
 		float constantAttenuation { 1.0f };
 		float linearAttenuation { 0.0f };
 		float quadraticAttenuation { 0.0f };
+		float radius { 0.0f };
 	};
 
 	/**

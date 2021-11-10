@@ -115,6 +115,7 @@ void LightingShaderBaseImplementation::initialize()
 		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].constantAttenuation");
 		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].linearAttenuation");
 		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
+		uniformLightRadius[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].radius");
 	}
 
 	uniformMaterialReflectionFragmentShader = renderer->getProgramUniformLocation(programId, "materialReflection");
@@ -242,6 +243,7 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 		if (uniformLightConstantAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], light.constantAttenuation);
 		if (uniformLightLinearAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], light.linearAttenuation);
 		if (uniformLightQuadraticAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], light.quadraticAttenuation);
+		if (uniformLightRadius[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], light.radius);
 	}
 }
 

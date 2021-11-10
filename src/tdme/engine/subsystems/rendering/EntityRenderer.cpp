@@ -1054,6 +1054,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					// reflection source
 					if (object->getReflectionEnvironmentMappingId().empty() == false) {
 						EnvironmentMapping* environmentMappingEntity = nullptr;
+						// some note: engine->getEntity() is not thread safe if having multithreaded renderer, but at this time there should be no other access anyways
 						auto environmentMappingEntityCandidate = engine->getEntity(object->getReflectionEnvironmentMappingId());
 						if (environmentMappingEntityCandidate != nullptr) {
 							if (environmentMappingEntityCandidate->getEntityType() == Entity::ENTITYTYPE_ENVIRONMENTMAPPING) {

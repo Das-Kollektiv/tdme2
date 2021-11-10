@@ -87,6 +87,7 @@ void Light::update(void* context) {
 		light.constantAttenuation = constantAttenuation;
 		light.linearAttenuation = linearAttenuation;
 		light.quadraticAttenuation = quadraticAttenuation;
+		light.radius = getRadius();
 		renderer->onUpdateLight(context, id);
 	} else {
 		auto& light = renderer->getLight(context, id);

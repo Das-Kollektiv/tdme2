@@ -74,6 +74,7 @@ protected:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightRadius;
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool initialized { false };
 	Renderer* renderer { nullptr };
