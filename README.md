@@ -90,6 +90,8 @@
         - supports diffuse mapping on GLES2, GL2, GL3+/CORE, Vulkan
         - supports specular shininess mapping on GL3+/CORE, Vulkan
         - supports normal mapping on GL3+/CORE, Vulkan
+        - supports reflection mapping from cube maps on GLES2, GL2, GL3+/CORE, Vulkan (WIP)
+        - supports deferred shading and forward shading on GL3+/CORE (Vulkan is planned)
     - custum shaders that currently include
       - specular lighting + depth fog
       - specular lighting + foliage + depth fog
@@ -97,7 +99,7 @@
       - specular lighting + terrain + depth fog
       - specular lighting + water + depth fog
       - sky(no lighting + no depth fog + fragment depth at maximum)
-      - PBR lighting(WIP)
+      - PBR lighting(WIP, no deferred shading yet)
     - shadow mapping
     - early z rejection
     - post processing
