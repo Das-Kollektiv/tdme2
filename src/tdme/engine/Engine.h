@@ -222,6 +222,7 @@ private:
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
 		vector<Object3D*> objects;
+		vector<Object3D*> objectsForwardShading;
 		vector<Object3D*> objectsPostPostProcessing;
 		vector<Object3D*> objectsNoDepthTest;
 		vector<LODObject3D*> lodObjects;

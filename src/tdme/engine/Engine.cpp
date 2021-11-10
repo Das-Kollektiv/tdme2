@@ -441,25 +441,19 @@ void Engine::registerEntity(Entity* entity) {
 	auto defaultContext = renderer->getDefaultContext();
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	for (auto object3D: decomposedEntities.ezrObjects) {
-		object3D->preRender(defaultContext);
-		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
-		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
-	}
-	for (auto object3D: decomposedEntities.objects) {
-		object3D->preRender(defaultContext);
-		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
-		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
-	}
-	for (auto object3D: decomposedEntities.objectsNoDepthTest) {
-		object3D->preRender(defaultContext);
-		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
-		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
-	}
-	for (auto object3D: decomposedEntities.objectsPostPostProcessing) {
-		object3D->preRender(defaultContext);
-		if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
-		if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+	array<vector<Object3D*>, 5> objectsArray = {
+		decomposedEntities.ezrObjects,
+		decomposedEntities.objects,
+		decomposedEntities.objectsForwardShading,
+		decomposedEntities.objectsNoDepthTest,
+		decomposedEntities.objectsPostPostProcessing,
+	};
+	for (auto& objects: objectsArray) {
+		for (auto object3D: objects) {
+			object3D->preRender(defaultContext);
+			if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
+			if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+		}
 	}
 }
 
@@ -504,6 +498,14 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 			entity
 		),
 		decomposedEntities.objects.end()
+	);
+	decomposedEntities.objectsForwardShading.erase(
+		remove(
+			decomposedEntities.objectsForwardShading.begin(),
+			decomposedEntities.objectsForwardShading.end(),
+			entity
+		),
+		decomposedEntities.objectsForwardShading.end()
 	);
 	decomposedEntities.objectsPostPostProcessing.erase(
 		remove(
@@ -990,6 +992,7 @@ void Engine::renderToScreen() {
 void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	// clear lists of visible objects
 	decomposedEntites.objects.clear();
+	decomposedEntites.objectsForwardShading.clear();
 	decomposedEntites.objectsPostPostProcessing.clear();
 	decomposedEntites.objectsNoDepthTest.clear();
 	decomposedEntites.lodObjects.clear();
@@ -1038,12 +1041,17 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				} else
 				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) {
 					decomposedEntities.objectsPostPostProcessing.push_back(object);
+				} else
+				if (object->getReflectionEnvironmentMappingId().empty() == false &&
+					(object->getRenderPass() == Entity::RENDERPASS_TERRAIN || object->getRenderPass() == Entity::RENDERPASS_STANDARD) &&
+					renderer->isDeferredShadingAvailable() == true) {
+					decomposedEntities.objectsForwardShading.push_back(object);
 				} else {
 					decomposedEntities.objects.push_back(object);
 				}
 				if (object->isEnableEarlyZRejection() == true) {
 					decomposedEntities.ezrObjects.push_back(object);
-				};
+				}
 			}
 			break;
 		case Entity::ENTITYTYPE_LODOBJECT3D:
@@ -1643,45 +1651,25 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: decomposedEntities.objects) {
-		// skip if not pickable or ignored by filter
-		if (forcePicking == false && entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
-					// check if match or better match
-					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-						selectedEntity = entity;
-						selectedEntityDistance = entityDistance;
-						selectedObject3DNode = it->getNode();
-						selectedParticleSystem = nullptr;
-					}
-				}
-			}
-		}
-	}
-
-	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: decomposedEntities.objectsPostPostProcessing) {
-		// skip if not pickable or ignored by filter
-		if (forcePicking == false && entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
-					// check if match or better match
-					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-						selectedEntity = entity;
-						selectedEntityDistance = entityDistance;
-						selectedObject3DNode = it->getNode();
-						selectedParticleSystem = nullptr;
+	array<vector<Object3D*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	for (auto& objects: objectsArray) {
+		for (auto entity: objects) {
+			// skip if not pickable or ignored by filter
+			if (forcePicking == false && entity->isPickable() == false) continue;
+			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+			// do the collision test
+			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto& vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							selectedObject3DNode = it->getNode();
+							selectedParticleSystem = nullptr;
+						}
 					}
 				}
 			}
@@ -1822,43 +1810,24 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: decomposedEntities.objects) {
-		// skip if not pickable or ignored by filter
-		if (forcePicking == false && entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
-			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
-					// check if match or better match
-					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-						selectedEntity = entity;
-						selectedEntityDistance = entityDistance;
-						contactPoint = tmpVector3e;
-					}
-				}
-			}
-		}
-	}
-
-	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: decomposedEntities.objectsPostPostProcessing) {
-		// skip if not pickable or ignored by filter
-		if (forcePicking == false && entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
-			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
-					// check if match or better match
-					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-						selectedEntity = entity;
-						selectedEntityDistance = entityDistance;
-						contactPoint = tmpVector3e;
+	array<vector<Object3D*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	for (auto& objects: objectsArray) {
+		for (auto entity: objects) {
+			// skip if not pickable or ignored by filter
+			if (forcePicking == false && entity->isPickable() == false) continue;
+			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+			// do the collision test
+			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto& vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							contactPoint = tmpVector3e;
+						}
 					}
 				}
 			}
@@ -2249,6 +2218,22 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
 						renderGeometryBuffer->renderToScreen(this);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
+						if (visibleDecomposedEntities.objectsForwardShading.empty() == false) {
+							entityRenderer->render(
+								renderPass,
+								visibleDecomposedEntities.objectsForwardShading,
+								true,
+								((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_EFFECTCOLORS) == EntityRenderer::RENDERTYPE_EFFECTCOLORS?EntityRenderer::RENDERTYPE_EFFECTCOLORS:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS) == EntityRenderer::RENDERTYPE_MATERIALS?EntityRenderer::RENDERTYPE_MATERIALS:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES) == EntityRenderer::RENDERTYPE_TEXTURES?EntityRenderer::RENDERTYPE_TEXTURES:0) |
+								((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
+								((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
+							);
+						}
 					}
 				} else
 				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
