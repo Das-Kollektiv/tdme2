@@ -71,10 +71,17 @@ void main(void) {
 		#else
 			outMaterialShininessReflectionFragDepthType = vec4(terrainHeight, terrainSlope, 0.0, 1.0);
 		#endif
-		outMaterialAmbient = material.ambient;
-		outMaterialDiffuse = material.diffuse;
-		outMaterialSpecular = material.specular;
-		outMaterialEmission = material.emission + vsEffectColorAdd;
+		#if defined(HAVE_SOLID_SHADING)
+			outMaterialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+			outMaterialDiffuse = vec4(0.0, 0.0, 0.0, 1.0);
+			outMaterialSpecular = vec4(0.0, 0.0, 0.0, 1.0);;
+			outMaterialEmission = vsEffectColorAdd;
+		#else
+			outMaterialAmbient = material.ambient;
+			outMaterialDiffuse = material.diffuse;
+			outMaterialSpecular = material.specular;
+			outMaterialEmission = material.emission + vsEffectColorAdd;
+		#endif
 		outDiffuse = vsEffectColorMul;
 	#else
 		// texture coordinate, also take atlas into account
@@ -135,10 +142,23 @@ void main(void) {
 		#else
 			outMaterialShininessReflectionFragDepthType = vec4(materialShininess, material.reflection, 0.0, 0.0);
 		#endif
-		outMaterialAmbient = material.ambient;
-		outMaterialDiffuse = material.diffuse;
-		outMaterialSpecular = material.specular;
-		outMaterialEmission = material.emission + vsEffectColorAdd;
+		#if defined(HAVE_SOLID_SHADING)
+			outMaterialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+			outMaterialDiffuse = vec4(0.0, 0.0, 0.0, 1.0);
+			outMaterialSpecular = vec4(0.0, 0.0, 0.0, 1.0);;
+			outMaterialEmission = vsEffectColorAdd;
+		#else
+			outMaterialAmbient = material.ambient;
+			outMaterialDiffuse = material.diffuse;
+			outMaterialSpecular = material.specular;
+			outMaterialEmission = material.emission + vsEffectColorAdd;
+		#endif
 		outDiffuse = diffuseTextureColor * vsEffectColorMul;
+	#endif
+	#if defined(HAVE_BACK)
+		gl_FragDepth = 1.0;
+	#endif
+	#if defined(HAVE_FRONT)
+		gl_FragDepth = 0.0;
 	#endif
 }
