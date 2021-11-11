@@ -36,6 +36,8 @@ private:
 	int32_t uniformColorBufferTextureUnit4 { -1 };
 	int32_t uniformColorBufferTextureUnit5 { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
+	int32_t uniformBufferTexturePixelWidth { -1 };
+	int32_t uniformBufferTexturePixelHeight { -1 };
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;

@@ -4,6 +4,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/GeometryBuffer.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
@@ -17,6 +18,7 @@ using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
+using tdme::engine::GeometryBuffer;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -87,6 +89,12 @@ void DeferredLightingRenderShader::initialize()
 	//	depth buffer
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
 	if (uniformDepthBufferTextureUnit == -1) return;
+
+	// pixel dimensions
+	uniformBufferTexturePixelWidth = renderer->getProgramUniformLocation(programId, "bufferTexturePixelWidth");
+	if (uniformBufferTexturePixelWidth == -1) return;
+	uniformBufferTexturePixelHeight = renderer->getProgramUniformLocation(programId, "bufferTexturePixelHeight");
+	if (uniformBufferTexturePixelHeight == -1) return;
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
@@ -160,6 +168,8 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit4, 6);
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit5, 7);
 	renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 8);
+	renderer->setProgramUniformFloat(context, uniformBufferTexturePixelWidth, 1.0f / static_cast<float>(engine->getGeometryBuffer()->getWidth()));
+	renderer->setProgramUniformFloat(context, uniformBufferTexturePixelHeight, 1.0f / static_cast<float>(engine->getGeometryBuffer()->getHeight()));
 	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
 		auto light = engine->getLightAt(lightId);
 		renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light->isEnabled() == true?1:0);

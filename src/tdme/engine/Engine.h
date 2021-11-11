@@ -907,6 +907,13 @@ public:
 	}
 
 	/**
+	 * @return geometry buffer or nullptr
+	 */
+	inline GeometryBuffer* getGeometryBuffer() {
+		return geometryBuffer;
+	}
+
+	/**
 	 * @return count of lights
 	 */
 	inline int32_t getLightCount() {

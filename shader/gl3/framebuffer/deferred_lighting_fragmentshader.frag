@@ -43,6 +43,9 @@ uniform sampler2D colorBufferTextureUnit4;
 uniform sampler2D colorBufferTextureUnit5;
 uniform sampler2D depthBufferTextureUnit;
 
+uniform float bufferTexturePixelWidth;
+uniform float bufferTexturePixelHeight;
+
 // passed from vertex shader
 in vec2 vsFragTextureUV;
 
@@ -61,40 +64,48 @@ uniform sampler2D dirtTextureUnit;
 uniform sampler2D stoneTextureUnit;
 uniform sampler2D snowTextureUnit;
 
-vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
+vec4 readTerrainTextureGras(vec3 coords, vec3 blending, vec2 dPdx1, vec2 dPdy1, vec2 dPdx2, vec2 dPdy2, vec2 dPdx3, vec2 dPdy3) {
 	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-	vec4 xAxis = texture(grasTextureUnit, coords.yz * scale);
-	vec4 yAxis = texture(grasTextureUnit, coords.xz * scale);
-	vec4 zAxis = texture(grasTextureUnit, coords.xy * scale);
+	vec4 xAxis = textureGrad(grasTextureUnit, coords.yz, dPdx1, dPdy1);
+	vec4 yAxis = textureGrad(grasTextureUnit, coords.xz, dPdx2, dPdy2);
+	vec4 zAxis = textureGrad(grasTextureUnit, coords.xy, dPdx3, dPdy3);
 	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 	return result;
 }
 
-vec4 readTerrainTextureDirt(vec3 coords, vec3 blending, float scale) {
+vec4 readTerrainTextureDirt(vec3 coords, vec3 blending, vec2 dPdx1, vec2 dPdy1, vec2 dPdx2, vec2 dPdy2, vec2 dPdx3, vec2 dPdy3) {
 	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-	vec4 xAxis = texture(dirtTextureUnit, coords.yz * scale);
-	vec4 yAxis = texture(dirtTextureUnit, coords.xz * scale);
-	vec4 zAxis = texture(dirtTextureUnit, coords.xy * scale);
+	vec4 xAxis = textureGrad(dirtTextureUnit, coords.yz, dPdx1, dPdy1);
+	vec4 yAxis = textureGrad(dirtTextureUnit, coords.xz, dPdx2, dPdy2);
+	vec4 zAxis = textureGrad(dirtTextureUnit, coords.xy, dPdx3, dPdy3);
 	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 	return result;
 }
 
-vec4 readTerrainTextureStone(vec3 coords, vec3 blending, float scale) {
+vec4 readTerrainTextureStone(vec3 coords, vec3 blending, vec2 dPdx1, vec2 dPdy1, vec2 dPdx2, vec2 dPdy2, vec2 dPdx3, vec2 dPdy3) {
 	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-	vec4 xAxis = texture(stoneTextureUnit, coords.yz * scale);
-	vec4 yAxis = texture(stoneTextureUnit, coords.xz * scale);
-	vec4 zAxis = texture(stoneTextureUnit, coords.xy * scale);
+	vec4 xAxis = textureGrad(stoneTextureUnit, coords.yz, dPdx1, dPdy1);
+	vec4 yAxis = textureGrad(stoneTextureUnit, coords.xz, dPdx2, dPdy2);
+	vec4 zAxis = textureGrad(stoneTextureUnit, coords.xy, dPdx3, dPdy3);
 	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 	return result;
 }
 
-vec4 readTerrainTextureSnow(vec3 coords, vec3 blending, float scale) {
+vec4 readTerrainTextureSnow(vec3 coords, vec3 blending, vec2 dPdx1, vec2 dPdy1, vec2 dPdx2, vec2 dPdy2, vec2 dPdx3, vec2 dPdy3) {
 	// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-	vec4 xAxis = texture(snowTextureUnit, coords.yz * scale);
-	vec4 yAxis = texture(snowTextureUnit, coords.xz * scale);
-	vec4 zAxis = texture(snowTextureUnit, coords.xy * scale);
+	vec4 xAxis = textureGrad(snowTextureUnit, coords.yz, dPdx1, dPdy1);
+	vec4 yAxis = textureGrad(snowTextureUnit, coords.xz, dPdx2, dPdy2);
+	vec4 zAxis = textureGrad(snowTextureUnit, coords.xy, dPdx3, dPdy3);
 	vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 	return result;
+}
+
+vec3 getTerrainUVMappingBlending(vec3 normal) {
+	vec3 uvMappingBlending = abs(normal);
+	uvMappingBlending = normalize(max(uvMappingBlending, 0.00001)); // Force weights to sum to 1.0
+	float b = (uvMappingBlending.x + uvMappingBlending.y + uvMappingBlending.z);
+	uvMappingBlending /= vec3(b, b, b);
+	return uvMappingBlending;
 }
 
 #if defined(HAVE_DEPTH_FOG)
@@ -187,10 +198,9 @@ void main(void) {
 		float terrainHeight = shininessReflectionFragDepthType.x;
 		float terrainSlope = shininessReflectionFragDepthType.y;
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-		vec3 uvMappingBlending = abs(normal);
-		uvMappingBlending = normalize(max(uvMappingBlending, 0.00001)); // Force weights to sum to 1.0
-		float b = (uvMappingBlending.x + uvMappingBlending.y + uvMappingBlending.z);
-		uvMappingBlending /= vec3(b, b, b);
+		vec3 uvMappingBlending = getTerrainUVMappingBlending(normal);
+		vec3 nxPosition = texture(geometryBufferTextureId1, vsFragTextureUV + vec2(bufferTexturePixelWidth, 0.0)).xyz;
+		vec3 nyPosition = texture(geometryBufferTextureId1, vsFragTextureUV + vec2(0.0, bufferTexturePixelHeight)).xyz;
 		//
 		vec4 terrainColor = vec4(0.0, 0.0, 0.0, 1.0);
 		#if defined(HAVE_DEPTH_FOG)
@@ -247,10 +257,16 @@ void main(void) {
 			}
 
 			//
-			if (terrainBlending[0] > 0.001) terrainColor+= readTerrainTextureGras(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[0];
-			if (terrainBlending[1] > 0.001) terrainColor+= readTerrainTextureDirt(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[1];
-			if (terrainBlending[2] > 0.001) terrainColor+= readTerrainTextureStone(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
-			if (terrainBlending[3] > 0.001) terrainColor+= readTerrainTextureSnow(position, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
+			vec2 dPdx1 = (nxPosition.yz - position.yz) * TERRAIN_UV_SCALE;
+			vec2 dPdy1 = (nyPosition.yz - position.yz) * TERRAIN_UV_SCALE;
+			vec2 dPdx2 = (nxPosition.xz - position.xz) * TERRAIN_UV_SCALE;
+			vec2 dPdy2 = (nyPosition.xz - position.xz) * TERRAIN_UV_SCALE;
+			vec2 dPdx3 = (nxPosition.xy - position.xy) * TERRAIN_UV_SCALE;
+			vec2 dPdy3 = (nyPosition.xy - position.xy) * TERRAIN_UV_SCALE;
+			if (terrainBlending[0] > 0.001) terrainColor+= readTerrainTextureGras(position * TERRAIN_UV_SCALE, uvMappingBlending, dPdx1, dPdy1, dPdx2, dPdy2, dPdx3, dPdy3) * terrainBlending[0];
+			if (terrainBlending[1] > 0.001) terrainColor+= readTerrainTextureDirt(position * TERRAIN_UV_SCALE, uvMappingBlending, dPdx1, dPdy1, dPdx2, dPdy2, dPdx3, dPdy3) * terrainBlending[1];
+			if (terrainBlending[2] > 0.001) terrainColor+= readTerrainTextureStone(position * TERRAIN_UV_SCALE, uvMappingBlending, dPdx1, dPdy1, dPdx2, dPdy2, dPdx3, dPdy3) * terrainBlending[2];
+			if (terrainBlending[3] > 0.001) terrainColor+= readTerrainTextureSnow(position * TERRAIN_UV_SCALE, uvMappingBlending, dPdx1, dPdy1, dPdx2, dPdy2, dPdx3, dPdy3) * terrainBlending[3];
 			diffuse*= terrainColor;
 		#if defined(HAVE_DEPTH_FOG)
 			}
