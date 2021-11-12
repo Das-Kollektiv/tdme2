@@ -178,6 +178,12 @@ void GL3Renderer::initialize()
 		auto clBuildInfo = clGetProgramBuildInfo(clSkinningKernelProgram, clDeviceId, CL_PROGRAM_BUILD_STATUS, 0, nullptr, &clSize);
 		clSkinningKernel = clCreateKernel(clSkinningKernelProgram, "computeSkinning", &clError);
 	#endif
+	// check if deferred shading is available
+	int glMaxColorAttachments = 0;
+	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments);
+	int glMaxDrawBuffers = 0;
+	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
+	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
 }
 
 void GL3Renderer::initializeFrame()
@@ -248,8 +254,7 @@ bool GL3Renderer::isUsingShortIndices() {
 }
 
 bool GL3Renderer::isDeferredShadingAvailable() {
-	// TODO: disabled until completed
-	return false;
+	return deferredShadingAvailable;
 }
 
 int32_t GL3Renderer::getTextureUnits()

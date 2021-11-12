@@ -689,14 +689,6 @@ void Engine::initialize()
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-			/*
-			int glMaxColorAttachments = 0;
-			glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments);
-			Console::println(string("TDME2::Max color attachments: ") + to_string(glMaxColorAttachments));
-			int glMaxDrawBuffers = 0;
-			glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
-			Console::println(string("TDME2::Max draw buffers: ") + to_string(glMaxDrawBuffers));
-			*/
 		}
 		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -715,12 +707,6 @@ void Engine::initialize()
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-			int glMaxColorAttachments = 0;
-			glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments);
-			Console::println(string("TDME2::Max color attachments: ") + to_string(glMaxColorAttachments));
-			int glMaxDrawBuffers = 0;
-			glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
-			Console::println(string("TDME2::Max draw buffers: ") + to_string(glMaxDrawBuffers));
 		}
 		// GLES2 on Linux
 		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && defined(GLES2)

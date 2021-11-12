@@ -9,6 +9,7 @@ namespace lighting {
 	class DeferredLightingShaderFoliageImplementation;
 	class DeferredLightingShaderSkyImplementation;
 	class DeferredLightingShaderTerrainImplementation;
+	class DeferredLightingShaderTerrainEditorImplementation;
 	class DeferredLightingShaderTreeImplementation;
 	class LightingShader;
 	struct LightingShaderConstants;

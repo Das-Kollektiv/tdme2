@@ -341,6 +341,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainEditorImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \

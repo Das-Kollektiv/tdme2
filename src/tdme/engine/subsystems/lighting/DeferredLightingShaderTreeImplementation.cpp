@@ -40,7 +40,7 @@ void DeferredLightingShaderTreeImplementation::initialize()
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_fragmentshader.frag",
+		"defer_fragmentshader.frag",
 		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingFragmentShaderId == 0) return;

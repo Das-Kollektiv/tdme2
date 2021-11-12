@@ -73,6 +73,7 @@ private:
 		static void clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData);
 	#endif
 
+	bool deferredShadingAvailable;
 public:
 	/**
 	 * Public constructor

@@ -10,6 +10,7 @@
 
 using std::array;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -36,8 +37,7 @@ private:
 	int32_t uniformColorBufferTextureUnit4 { -1 };
 	int32_t uniformColorBufferTextureUnit5 { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
-	int32_t uniformBufferTexturePixelWidth { -1 };
-	int32_t uniformBufferTexturePixelHeight { -1 };
+
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;
@@ -51,15 +51,6 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightRadius;
 	int32_t uniformCameraMatrix { -1 };
-
-	int32_t uniformGrasTextureUnit { -1 };
-	int32_t uniformDirtTextureUnit { -1 };
-	int32_t uniformSnowTextureUnit { -1 };
-	int32_t uniformStoneTextureUnit { -1 };
-	int32_t grasTextureId { 0 };
-	int32_t dirtTextureId { 0 };
-	int32_t snowTextureId { 0 };
-	int32_t stoneTextureId { 0 };
 
 	bool initialized;
 	bool isRunning;

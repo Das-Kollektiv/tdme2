@@ -62,7 +62,6 @@ void DeferredLightingShaderSkyImplementation::initialize()
 }
 
 void DeferredLightingShaderSkyImplementation::registerShader() {
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
 
 

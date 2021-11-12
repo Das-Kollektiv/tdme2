@@ -34,9 +34,23 @@ public:
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void registerShader() override;
+	virtual void useProgram(Engine* engine, void* context) override;
+	virtual void unUseProgram(void* context) override;
+	virtual void updateMatrices(Renderer* renderer, void* context) override;
 	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 private:
 	int32_t uniformModelMatrix { -1 };
+	int32_t uniformGrasTextureUnit { -1 };
+	int32_t uniformDirtTextureUnit { -1 };
+	int32_t uniformSnowTextureUnit { -1 };
+	int32_t uniformStoneTextureUnit { -1 };
+	int32_t grasTextureId { 0 };
+	int32_t dirtTextureId { 0 };
+	int32_t snowTextureId { 0 };
+	int32_t stoneTextureId { 0 };
+
+protected:
+	string additionalDefinitions;
 
 };
