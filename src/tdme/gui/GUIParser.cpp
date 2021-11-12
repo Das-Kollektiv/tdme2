@@ -301,7 +301,11 @@ void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool r
 		static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
 		static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
 		static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
+		static_cast<GUIColorEffect*>(effect)->setStartColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("start-effect-color-mul"))));
+		static_cast<GUIColorEffect*>(effect)->setStartColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("start-effect-color-add"))));
 		static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+		static_cast<GUIColorEffect*>(effect)->setRepeat(node->Attribute("repeat") == nullptr?0:Integer::parseInt(node->Attribute("repeat")));
+		static_cast<GUIColorEffect*>(effect)->setYoyo(node->Attribute("yoyo") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("yoyo"))) == "true");
 		guiNode->addEffect(
 			effectPrefix + (requiresCondition == true?string(".") + type + ".on." + AVOID_NULLPTR_STRING(node->Attribute("on")):string()),
 			effect
@@ -312,7 +316,11 @@ void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool r
 		static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
 		static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
 		static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));
+		static_cast<GUIPositionEffect*>(effect)->setStartPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("start-effect-position-x"))));
+		static_cast<GUIPositionEffect*>(effect)->setStartPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("start-effect-position-y"))));
 		static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+		static_cast<GUIPositionEffect*>(effect)->setRepeat(node->Attribute("repeat") == nullptr?0:Integer::parseInt(node->Attribute("repeat")));
+		static_cast<GUIPositionEffect*>(effect)->setYoyo(node->Attribute("yoyo") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("yoyo"))) == "true");
 		guiNode->addEffect(
 			effectPrefix + (requiresCondition == true?string(".") + type + ".on." + AVOID_NULLPTR_STRING(node->Attribute("on")):string()),
 			effect

@@ -16,12 +16,6 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::effects::GUIPositionEffect final: public GUIEffect
 {
 
-private:
-	float positionXStart{ 0.0f };
-	float positionYStart { 0.0f };
-	float positionXEnd { 0.0f };
-	float positionYEnd { 0.0f };
-
 public:
 	/**
 	 *  Public constructor
@@ -31,31 +25,61 @@ public:
 	/**
 	 * @return position X
 	 */
-	inline virtual float getPositionX() const {
-		return positionXEnd;
+	inline float getPositionX() const {
+		return originalEndState.positionX;
 	}
 
 	/**
 	 * Set position X
 	 * @param positionX position X
 	 */
-	inline virtual void setPositionX(float positionX) {
-		this->positionXEnd = positionX;
+	inline void setPositionX(float positionX) {
+		originalEndState.positionX = positionX;
 	}
 
 	/**
 	 * @return position Y
 	 */
-	inline virtual float getPositionY() const {
-		return positionYEnd;
+	inline float getPositionY() const {
+		return originalEndState.positionY;
 	}
 
 	/**
 	 * Set position Y
 	 * @param positionX position Y
 	 */
-	inline virtual void setPositionY(float positionY) {
-		this->positionYEnd = positionY;
+	inline void setPositionY(float positionY) {
+		originalEndState.positionY = positionY;
+	}
+
+	/**
+	 * @return start position X
+	 */
+	inline float getStartPositionX() const {
+		return originalStartState.positionX;
+	}
+
+	/**
+	 * Set start position X
+	 * @param positionX start position X
+	 */
+	inline void setStartPositionX(float positionX) {
+		originalStartState.positionX = positionX;
+	}
+
+	/**
+	 * @return start position Y
+	 */
+	inline float getStartPositionY() const {
+		return originalStartState.positionY;
+	}
+
+	/**
+	 * Set start position Y
+	 * @param positionX start position Y
+	 */
+	inline void setStartPositionY(float positionY) {
+		originalStartState.positionY = positionY;
 	}
 
 	// override methods

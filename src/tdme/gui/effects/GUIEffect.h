@@ -19,6 +19,8 @@ using tdme::utilities::Action;
 class tdme::gui::effects::GUIEffect
 {
 public:
+	static constexpr int REPEAT_UNLIMITED { -1 };
+
 	struct EffectState {
 		enum Type { TYPE_RESET, TYPE_COLOR, TYPE_POSITION };
 		Type type { TYPE_RESET };
@@ -34,8 +36,16 @@ protected:
 	float timeTotal { 0.0 };
 	float timeLeft { 0.0 };
 	float timePassed { 0.0 };
+	int repeat { 0 };
+	int repeatLeft { 0 };
+	bool yoyo { false };
+	int yoyoLeft { 0 };
 	bool persistant { false };
 	Action* action { nullptr };
+	EffectState originalStartState;
+	EffectState originalEndState;
+	EffectState startState;
+	EffectState endState;
 	EffectState effectState;
 
 public:
@@ -52,14 +62,14 @@ public:
 	/**
 	 * @return active
 	 */
-	inline virtual bool isActive() const {
+	inline bool isActive() const {
 		return active;
 	}
 
 	/**
 	 * @return time total
 	 */
-	inline virtual float getTimeTotal() const {
+	inline float getTimeTotal() const {
 		return timeTotal;
 	}
 
@@ -67,14 +77,44 @@ public:
 	 * Set time total
 	 * @param timeTotal time total
 	 */
-	inline virtual void setTimeTotal(float timeTotal) {
+	inline void setTimeTotal(float timeTotal) {
 		this->timeTotal = timeTotal;
+	}
+
+	/**
+	 * @return repeat count or -1 for unlimited repeating
+	 */
+	inline int getRepeat() const {
+		return repeat;
+	}
+
+	/**
+	 * Set repeat count or -1 for unlimited repeating
+	 * @param repeat repeat
+	 */
+	inline void setRepeat(int repeat) {
+		this->repeat = repeat;
+	}
+
+	/**
+	 * @return yoyo
+	 */
+	inline float isYoyo() const {
+		return yoyo;
+	}
+
+	/**
+	 * Set yoyo
+	 * @param yoyo yoyo
+	 */
+	inline void setYoyo(bool yoyo) {
+		this->yoyo = yoyo;
 	}
 
 	/**
 	 * @return if this effect is persistant, means if duration is reached this effect will still remain until removal
 	 */
-	inline virtual float isPersistant() const {
+	inline float isPersistant() const {
 		return persistant;
 	}
 
@@ -82,14 +122,14 @@ public:
 	 * Set persistant, means if duration is reached this effect will still remain until removal
 	 * @param persistant persistant
 	 */
-	inline virtual void setPersistant(bool persistant) {
+	inline void setPersistant(bool persistant) {
 		this->persistant = persistant;
 	}
 
 	/**
 	 * @return action to be performed on effect end
 	 */
-	inline virtual Action* getAction() const {
+	inline Action* getAction() const {
 		return action;
 	}
 
@@ -97,7 +137,7 @@ public:
 	 * Set action to be performed on effect end
 	 * @param action action
 	 */
-	inline virtual void setAction(Action* action) {
+	inline void setAction(Action* action) {
 		this->action = action;
 	}
 

@@ -3,24 +3,30 @@
 		<space height="*"/>
 		<element id="aaa">
 			<text font="resources/engine/fonts/Roboto_20.fnt" text="aaa" color="#000000" />
-			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" />
+			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" repeat="2" yoyo="true" />
 			<effect-out type="position" effect-position-x="0" time="1.0" on="mouseover" />
 		</element>
 		<space height="10"/>
 		<element id="bbb">
 			<text font="resources/engine/fonts/Roboto_20.fnt" text="bbb" color="#000000" />
-			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" />
+			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" repeat="2" yoyo="true" />
 			<effect-out type="position" effect-position-x="0" time="1.0" on="mouseover" />
 		</element>
 		<space height="10"/>
 		<element id="ccc">
-			<text font="resources/engine/fonts/Roboto_20.fnt" text="ccc" color="#000000">
+			<text font="resources/engine/fonts/Roboto_20.fnt" text="ccc" color="#000000" />
+			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" yoyo="true" />
+			<effect-out type="position" effect-position-x="0" time="1.0" on="mouseover" />
+		</element>
+		<space height="10"/>
+		<element id="ddd">
+			<text font="resources/engine/fonts/Roboto_20.fnt" text="ddd" color="#000000">
 				<effect-default type="color" effect-color-mul="#00000000" effect-color-add="#00000000" time="0.0" persistant="true" />
-				<effect-in type="color" effect-color-mul="#ffffffff" effect-color-add="#00000000" time="1.0" on="mouseover" persistant="true" />
+				<effect-in type="color" effect-color-mul="#ffffffff" effect-color-add="#00000000" start-effect-color-mul="#00000000" start-effect-color-add="#00000000" time="1.0" on="mouseover" persistant="true" repeat="2" yoyo="true" />
 				<effect-out type="color" effect-color-mul="#00000000" effect-color-add="#00000000" time="1.0" on="mouseover" persistant="false" />
 			</text>
 		</element>
-		<space height="*"/>				
+		<space height="*"/>
 		<space height="*"/>
 	</layout>
 </screen>

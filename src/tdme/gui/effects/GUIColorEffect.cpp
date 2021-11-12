@@ -11,23 +11,27 @@ using tdme::math::Math;
 
 GUIColorEffect::GUIColorEffect(): GUIEffect()
 {
+	originalStartState.type = EffectState::TYPE_COLOR;
+	originalEndState.type = EffectState::TYPE_COLOR;
+	startState.type = EffectState::TYPE_COLOR;
+	endState.type = EffectState::TYPE_COLOR;
 	effectState.type = EffectState::TYPE_COLOR;
 }
 
 void GUIColorEffect::applyState(const EffectState& state) {
 	if (state.type != EffectState::TYPE_RESET && state.type != EffectState::TYPE_COLOR) return;
-	this->colorAddStart = state.colorAdd;
-	this->colorMulStart = state.colorMul;
+	startState.colorAdd = state.colorAdd;
+	startState.colorMul = state.colorMul;
 }
 
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 {
 	auto t = Math::abs(timeTotal) < Math::EPSILON?1.0f:(timeTotal - timeLeft) / timeTotal;
 	effectState.colorMul.set(
-		colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) * t),
-		colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) * t),
-		colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) * t),
-		colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) * t)
+		startState.colorMul.getRed() + ((endState.colorMul.getRed() - startState.colorMul.getRed()) * t),
+		startState.colorMul.getGreen() + ((endState.colorMul.getGreen() - startState.colorMul.getGreen()) * t),
+		startState.colorMul.getBlue() + ((endState.colorMul.getBlue() - startState.colorMul.getBlue()) * t),
+		startState.colorMul.getAlpha() + ((endState.colorMul.getAlpha() - startState.colorMul.getAlpha()) * t)
 	);
 	auto& effectColorMul = guiRenderer->getGUIEffectColorMul();
 	auto& effectColorAdd = guiRenderer->getGUIEffectColorAdd();
@@ -40,10 +44,10 @@ void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 		)
 	);
 	effectState.colorAdd.set(
-		colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) * t),
-		colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) * t),
-		colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) * t),
-		colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) * t)
+		startState.colorAdd.getRed() + ((endState.colorAdd.getRed() - startState.colorAdd.getRed()) * t),
+		startState.colorAdd.getGreen() + ((endState.colorAdd.getGreen() - startState.colorAdd.getGreen()) * t),
+		startState.colorAdd.getBlue() + ((endState.colorAdd.getBlue() - startState.colorAdd.getBlue()) * t),
+		startState.colorAdd.getAlpha() + ((endState.colorAdd.getAlpha() - startState.colorAdd.getAlpha()) * t)
 	);
 	guiRenderer->setGUIEffectColorAdd(
 		GUIColor(

@@ -17,13 +17,6 @@ using tdme::gui::renderer::GUIRenderer;
  */
 class tdme::gui::effects::GUIColorEffect final: public GUIEffect
 {
-
-private:
-	GUIColor colorAddStart { 0.0f, 0.0f, 0.0f, 0.0f };
-	GUIColor colorAddEnd { 0.0f, 0.0f, 0.0f, 0.0f };
-	GUIColor colorMulStart { 1.0f, 1.0f, 1.0f, 1.0f };
-	GUIColor colorMulEnd { 1.0f, 1.0f, 1.0f, 1.0f };
-
 public:
 	/**
 	 * Public constructor
@@ -33,31 +26,61 @@ public:
 	/**
 	 * @return color add
 	 */
-	inline virtual const GUIColor& getColorAdd() const {
-		return colorAddEnd;
+	inline const GUIColor& getColorAdd() const {
+		return originalEndState.colorAdd;
 	}
 
 	/**
 	 * Set color add
 	 * @param colorAdd color add
 	 */
-	inline virtual void setColorAdd(const GUIColor& colorAdd) {
-		this->colorAddEnd = colorAdd;
+	inline void setColorAdd(const GUIColor& colorAdd) {
+		originalEndState.colorAdd = colorAdd;
 	}
 
 	/**
 	 * @return color mul
 	 */
-	inline virtual const GUIColor& getColorMul() const {
-		return colorMulEnd;
+	inline const GUIColor& getColorMul() const {
+		return originalEndState.colorMul;
 	}
 
 	/**
 	 * Set color mul
 	 * @param colorMul color mul
 	 */
-	inline virtual void setColorMul(const GUIColor& colorMul) {
-		this->colorMulEnd = colorMul;
+	inline void setColorMul(const GUIColor& colorMul) {
+		originalEndState.colorMul = colorMul;
+	}
+
+	/**
+	 * @return start color add
+	 */
+	inline const GUIColor& getStartColorAdd() const {
+		return originalStartState.colorAdd;
+	}
+
+	/**
+	 * Set start color add
+	 * @param colorAdd start color add
+	 */
+	inline void setStartColorAdd(const GUIColor& colorAdd) {
+		originalStartState.colorAdd = colorAdd;
+	}
+
+	/**
+	 * @return start color mul
+	 */
+	inline const GUIColor& getStartColorMul() const {
+		return originalStartState.colorMul;
+	}
+
+	/**
+	 * Set start color mul
+	 * @param colorMul start color mul
+	 */
+	inline void setStartColorMul(const GUIColor& colorMul) {
+		originalStartState.colorMul = colorMul;
 	}
 
 	// overridden methods

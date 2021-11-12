@@ -11,11 +11,6 @@ using tdme::utilities::Action;
 
 GUIEffect::GUIEffect()
 {
-	active = false;
-	timeTotal = 0.0f;
-	timeLeft = timeTotal;
-	timePassed = 0.0f;
-	timeLast = -1LL;
 }
 
 GUIEffect::~GUIEffect() {
@@ -24,18 +19,20 @@ GUIEffect::~GUIEffect() {
 
 void GUIEffect::start()
 {
-	active = true;
+	startState = effectState;
+	endState = originalEndState;
 	timeLeft = timeTotal;
 	timePassed = 0.0f;
 	timeLast = -1LL;
+	repeatLeft = repeat;
+	yoyoLeft = yoyo == true?1:0;
+	active = true;
 }
 
 void GUIEffect::stop()
 {
 	active = false;
-	timeLeft = timeTotal;
-	timePassed = 0.0f;
-	timeLast = -1LL;
+	effectState = originalStartState;
 }
 
 bool GUIEffect::update(GUIRenderer* guiRenderer)
@@ -47,6 +44,21 @@ bool GUIEffect::update(GUIRenderer* guiRenderer)
 	timeLast = Engine::getInstance()->getTiming()->getCurrentFrameAtTime();
 	if (timeLeft < 0.0f) {
 		timeLeft = 0.0f;
+		if (yoyoLeft > 0) {
+			timeLeft = timeTotal;
+			timePassed = 0.0f;
+			yoyoLeft--;
+			endState = originalStartState;
+			startState = originalEndState;
+		} else
+		if (repeat == -1 || repeatLeft > 0) {
+			timeLeft = timeTotal;
+			timePassed = 0.0f;
+			if (repeat != -1) repeatLeft--;
+			yoyoLeft = yoyo == true?1:0;
+			startState = originalStartState;
+			endState = originalEndState;
+		} else
 		if (persistant == false) {
 			active = false;
 			return true;
