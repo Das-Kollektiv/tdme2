@@ -622,6 +622,11 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 	node->setTextureCoordinates(textureCoordinates);
 	node->setFacesEntities(facesEntities);
 
+	// create tangents and bitangets, as they seem not be delivered in GLTF files but needed for PBR
+	if (vertices.empty() == false && normals.empty() == false) {
+		ModelTools::createTangentsAndBitangents(node);
+	};
+
 	//
 	return node;
 }

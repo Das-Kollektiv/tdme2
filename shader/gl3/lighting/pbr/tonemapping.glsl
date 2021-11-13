@@ -1,5 +1,3 @@
-uniform float u_Exposure;
-
 const float GAMMA = 2.2;
 const float INV_GAMMA = 1.0 / GAMMA;
 
@@ -58,9 +56,9 @@ vec3 toneMapACES(vec3 color)
     return LINEARtoSRGB(clamp((color * (A * color + B)) / (color * (C * color + D) + E), 0.0, 1.0));
 }
 
-vec3 toneMap(vec3 color)
+vec3 toneMap(vec3 color, float exposure)
 {
-    color *= u_Exposure;
+    color *= exposure;
 
 #ifdef TONEMAP_UNCHARTED
     return toneMapUncharted(color);

@@ -5,13 +5,7 @@ const float c_MinReflectance = 0.04;
 
 in vec3 v_Position;
 
-#ifdef HAS_NORMALS
-#ifdef HAS_TANGENTS
 in mat3 v_TBN;
-#else
-in vec3 v_Normal;
-#endif
-#endif
 
 #ifdef HAS_VERTEX_COLOR_VEC3
 in vec3 v_Color;
@@ -53,25 +47,7 @@ vec3 getNormal()
     vec2 UV = getNormalUV();
 
     // Retrieve the tangent space matrix
-#ifndef HAS_TANGENTS
-    vec3 pos_dx = dFdx(v_Position);
-    vec3 pos_dy = dFdy(v_Position);
-    vec3 tex_dx = dFdx(vec3(UV, 0.0));
-    vec3 tex_dy = dFdy(vec3(UV, 0.0));
-    vec3 t = (tex_dy.t * pos_dx - tex_dx.t * pos_dy) / (tex_dx.s * tex_dy.t - tex_dy.s * tex_dx.t);
-
-#ifdef HAS_NORMALS
-    vec3 ng = normalize(v_Normal);
-#else
-    vec3 ng = cross(pos_dx, pos_dy);
-#endif
-
-    t = normalize(t - ng * dot(ng, t));
-    vec3 b = normalize(cross(ng, t));
-    mat3 tbn = mat3(t, b, ng);
-#else // HAS_TANGENTS
     mat3 tbn = v_TBN;
-#endif
 
     vec3 n;
     if (u_NormalSamplerAvailable == 1) {

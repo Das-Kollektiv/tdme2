@@ -1342,3 +1342,92 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// done
 	return optimizedModel;
 }
+
+void ModelTools::createTangentsAndBitangents(Node* node)
+{
+	// see: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+	// what we need
+	vector<Vector3> tangents;
+	vector<Vector3> bitangents;
+	// temporary variables
+	Vector2 uv0;
+	Vector2 uv1;
+	Vector2 uv2;
+	Vector3 deltaPos1;
+	Vector3 deltaPos2;
+	Vector2 deltaUV1;
+	Vector2 deltaUV2;
+	Vector3 tmpVector3;
+	// create it
+	auto facesEntities = node->getFacesEntities();
+	auto& vertices = node->getVertices();
+	auto& normals = node->getNormals();
+	auto textureCoordinates = node->getTextureCoordinates();
+	for (auto& faceEntity: facesEntities) {
+		auto faces = faceEntity.getFaces();
+		for (auto& face: faces) {
+			// Shortcuts for vertices
+			auto verticesIndexes = face.getVertexIndices();
+			auto v0 = vertices[verticesIndexes[0]];
+			auto v1 = vertices[verticesIndexes[1]];
+			auto v2 = vertices[verticesIndexes[2]];
+			// shortcuts for UVs
+			auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
+			uv0.set(textureCoordinates[textureCoordinatesIndexes[0]].getArray());
+			uv0.setY(1.0f - uv0.getY());
+			uv1.set(textureCoordinates[textureCoordinatesIndexes[1]].getArray());
+			uv1.setY(1.0f - uv1.getY());
+			uv2.set(textureCoordinates[textureCoordinatesIndexes[2]].getArray());
+			uv2.setY(1.0f - uv2.getY());
+			// edges of the triangle : position delta
+			deltaPos1.set(v1).sub(v0);
+			deltaPos2.set(v2).sub(v0);
+			// UV delta
+			deltaUV1.set(uv1).sub(uv0);
+			deltaUV2.set(uv2).sub(uv0);
+			// compute tangent and bitangent
+			auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
+			auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(tmpVector3.set(deltaPos2).scale(deltaUV1.getY())).scale(r);
+			auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(tmpVector3.set(deltaPos1).scale(deltaUV2.getX())).scale(r);
+			// set up tangent face indices
+			face.setTangentIndices(tangents.size() + 0, tangents.size() + 1, tangents.size() + 2);
+			// set up bitangent face indices
+			face.setBitangentIndices(bitangents.size() + 0, bitangents.size() + 1, bitangents.size() + 2);
+			// add to group tangents, bitangents
+			tangents.push_back(tangent);
+			tangents.push_back(tangent);
+			tangents.push_back(tangent);
+			bitangents.push_back(bitangent);
+			bitangents.push_back(bitangent);
+			bitangents.push_back(bitangent);
+		}
+		faceEntity.setFaces(faces);
+	}
+	node->setFacesEntities(facesEntities);
+
+	// set up tangents and bitangents if we have any
+	if (tangents.size() > 0 && bitangents.size() > 0) {
+		// going further
+		auto facesEntities = node->getFacesEntities();
+		for (auto& faceEntity: facesEntities) {
+			auto faces = faceEntity.getFaces();
+			for (auto& face: faces) {
+				for (auto i = 0; i < 3; i++) {
+					auto normal = normals[face.getNormalIndices()[i]];
+					auto& tangent = tangents[face.getTangentIndices()[i]];
+					auto& bitangent = bitangents[face.getBitangentIndices()[i]];
+					tangent.sub(tmpVector3.set(normal).scale(Vector3::computeDotProduct(normal, tangent))).normalize();
+					if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent), bitangent) < 0.0f) {
+						tangent.scale(-1.0f);
+					}
+					bitangent.normalize();
+				}
+			}
+			faceEntity.setFaces(faces);
+		}
+		node->setFacesEntities(facesEntities);
+		//
+		node->setTangents(tangents);
+		node->setBitangents(bitangents);
+	}
+}

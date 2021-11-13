@@ -66,15 +66,13 @@ uniform Light u_Lights[LIGHT_COUNT];
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
+uniform float u_Exposure;
+uniform float u_AlphaCutoff;
 
 #ifdef MATERIAL_SPECULARGLOSSINESS
 uniform vec3 u_SpecularFactor;
 uniform vec4 u_DiffuseFactor;
 uniform float u_GlossinessFactor;
-#endif
-
-#ifdef ALPHAMODE_MASK
-uniform float u_AlphaCutoff;
 #endif
 
 uniform vec3 u_Camera;
@@ -324,17 +322,11 @@ void main()
 
 #endif // ! MATERIAL_METALLICROUGHNESS
 
-#ifdef ALPHAMODE_MASK
     if(baseColor.a < u_AlphaCutoff)
     {
         discard;
     }
     baseColor.a = 1.0;
-#endif
-
-#ifdef ALPHAMODE_OPAQUE
-    baseColor.a = 1.0;
-#endif
 
 #ifdef MATERIAL_UNLIT
     outColor = vec4(LINEARtoSRGB(baseColor.rgb), baseColor.a);
@@ -413,7 +405,7 @@ void main()
 #ifndef DEBUG_OUTPUT // no debug
 
    // regular shading
-    outColor = vec4(toneMap(color), baseColor.a);
+    outColor = vec4(toneMap(color, u_Exposure), baseColor.a);
 
 #else // debug output
 
