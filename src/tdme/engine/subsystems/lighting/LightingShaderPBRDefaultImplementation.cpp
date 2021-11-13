@@ -39,11 +39,7 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"metallic-roughness.frag",
-		#if !defined (__APPLE__)
-			"#define LIGHT_COUNT	8\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBLn",
-		#else
-			"#define LIGHT_COUNT	8\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n",
-		#endif
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/lighting/pbr",
 			"tonemapping.glsl"
