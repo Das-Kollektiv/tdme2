@@ -68,6 +68,7 @@ uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
 uniform float u_Exposure;
 uniform float u_AlphaCutoff;
+uniform int u_AlphaCutoffEnabled;
 
 #ifdef MATERIAL_SPECULARGLOSSINESS
 uniform vec3 u_SpecularFactor;
@@ -322,11 +323,10 @@ void main()
 
 #endif // ! MATERIAL_METALLICROUGHNESS
 
-    if(baseColor.a < u_AlphaCutoff)
-    {
-        discard;
+    if (u_AlphaCutoffEnabled == 1) {
+		if (baseColor.a < u_AlphaCutoff) discard;
+		baseColor.a = 1.0;
     }
-    baseColor.a = 1.0;
 
 #ifdef MATERIAL_UNLIT
     outColor = vec4(LINEARtoSRGB(baseColor.rgb), baseColor.a);

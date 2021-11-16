@@ -52,6 +52,8 @@ void LightingShaderPBRBaseImplementation::initialize()
 	if (uniformBaseColorSampler == -1) return;
 	uniformBaseColorSamplerAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "u_BaseColorSamplerAvailable");
 	if (uniformBaseColorSamplerAvailable == -1) return;
+	uniformAlphaCutoffEnabled = renderer->getProgramUniformLocation(renderLightingProgramId, "u_AlphaCutoffEnabled");
+	if (uniformAlphaCutoffEnabled == -1) return;
 	uniformAlphaCutoff = renderer->getProgramUniformLocation(renderLightingProgramId, "u_AlphaCutoff");
 	if (uniformAlphaCutoff == -1) return;
 	uniformCamera = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Camera");
@@ -178,7 +180,8 @@ void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, voi
 	renderer->setProgramUniformFloat(context, uniformMetallicFactor, material.metallicFactor);
 	renderer->setProgramUniformFloat(context, uniformRoughnessFactor, material.roughnessFactor);
 	renderer->setProgramUniformFloat(context, uniformNormalScale, material.normalScale);
-	renderer->setProgramUniformFloat(context, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 1?Float::MIN_VALUE:material.baseColorTextureMaskedTransparencyThreshold);
+	renderer->setProgramUniformInteger(context, uniformAlphaCutoffEnabled, material.baseColorTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(context, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 0?0.0f:material.baseColorTextureMaskedTransparencyThreshold);
 }
 
 void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
