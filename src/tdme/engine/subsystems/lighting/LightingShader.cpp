@@ -13,6 +13,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.h>
@@ -35,6 +36,7 @@ using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderPBRFoliageImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementation;
@@ -60,6 +62,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 	#if !defined(VULKAN)
 		// TODO: VUlkan
 		if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+		if (LightingShaderPBRFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 		if (LightingShaderPBRTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	#endif
 	if (DeferredLightingShaderDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
