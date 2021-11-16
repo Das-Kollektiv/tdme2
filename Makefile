@@ -352,6 +352,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \

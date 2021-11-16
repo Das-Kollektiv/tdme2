@@ -28,9 +28,9 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation: public LightingShaderImplementation
 {
 protected:
-	int32_t renderLightingProgramId { -1 };
-	int32_t renderLightingFragmentShaderId { -1 };
-	int32_t renderLightingVertexShaderId { -1 };
+	int32_t programId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t vertexShaderId { -1 };
 	int32_t uniformBaseColorFactor { -1 };
 	int32_t uniformBaseColorSampler { -1 };
 	int32_t uniformBaseColorSamplerAvailable { -1 };

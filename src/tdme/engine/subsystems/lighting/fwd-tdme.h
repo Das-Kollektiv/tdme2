@@ -22,6 +22,8 @@ namespace lighting {
 	class LightingShaderLightScatteringTreeImplementation;
 	class LightingShaderPBRBaseImplementation;
 	class LightingShaderPBRDefaultImplementation;
+	class LightingShaderPBRFoliageImplementation;
+	class LightingShaderPBRTreeImplementation;
 	class LightingShaderSkyImplementation;
 	class LightingShaderTerrainImplementation;
 	class LightingShaderTerrainEditorImplementation;

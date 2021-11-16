@@ -157,7 +157,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
 	}
 
-	// frame
+	// time
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 

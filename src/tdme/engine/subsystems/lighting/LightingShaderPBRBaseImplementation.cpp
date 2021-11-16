@@ -43,65 +43,65 @@ void LightingShaderPBRBaseImplementation::initialize()
 {
 
 	// link program
-	if (renderer->linkProgram(renderLightingProgramId) == false) return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	// uniforms
-	uniformBaseColorFactor = renderer->getProgramUniformLocation(renderLightingProgramId, "u_BaseColorFactor");
+	uniformBaseColorFactor = renderer->getProgramUniformLocation(programId, "u_BaseColorFactor");
 	if (uniformBaseColorFactor == -1) return;
-	uniformBaseColorSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_BaseColorSampler");
+	uniformBaseColorSampler = renderer->getProgramUniformLocation(programId, "u_BaseColorSampler");
 	if (uniformBaseColorSampler == -1) return;
-	uniformBaseColorSamplerAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "u_BaseColorSamplerAvailable");
+	uniformBaseColorSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_BaseColorSamplerAvailable");
 	if (uniformBaseColorSamplerAvailable == -1) return;
-	uniformAlphaCutoffEnabled = renderer->getProgramUniformLocation(renderLightingProgramId, "u_AlphaCutoffEnabled");
+	uniformAlphaCutoffEnabled = renderer->getProgramUniformLocation(programId, "u_AlphaCutoffEnabled");
 	if (uniformAlphaCutoffEnabled == -1) return;
-	uniformAlphaCutoff = renderer->getProgramUniformLocation(renderLightingProgramId, "u_AlphaCutoff");
+	uniformAlphaCutoff = renderer->getProgramUniformLocation(programId, "u_AlphaCutoff");
 	if (uniformAlphaCutoff == -1) return;
-	uniformCamera = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Camera");
+	uniformCamera = renderer->getProgramUniformLocation(programId, "u_Camera");
 	if (uniformCamera == -1) return;
-	uniformExposure = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Exposure");
+	uniformExposure = renderer->getProgramUniformLocation(programId, "u_Exposure");
 	if (uniformExposure == -1) return;
-	uniformMetallicFactor = renderer->getProgramUniformLocation(renderLightingProgramId, "u_MetallicFactor");
+	uniformMetallicFactor = renderer->getProgramUniformLocation(programId, "u_MetallicFactor");
 	if (uniformMetallicFactor == -1) return;
-	uniformMetallicRoughnessSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_MetallicRoughnessSampler");
+	uniformMetallicRoughnessSampler = renderer->getProgramUniformLocation(programId, "u_MetallicRoughnessSampler");
 	if (uniformMetallicRoughnessSampler == -1) return;
-	uniformMetallicRoughnessSamplerAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "u_MetallicRoughnessSamplerAvailable");
+	uniformMetallicRoughnessSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_MetallicRoughnessSamplerAvailable");
 	if (uniformMetallicRoughnessSamplerAvailable == -1) return;
-	uniformNormalSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_NormalSampler");
+	uniformNormalSampler = renderer->getProgramUniformLocation(programId, "u_NormalSampler");
 	if (uniformNormalSampler == -1) return;
-	uniformNormalSamplerAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "u_NormalSamplerAvailable");
+	uniformNormalSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_NormalSamplerAvailable");
 	if (uniformNormalSamplerAvailable == -1) return;
-	uniformNormalScale = renderer->getProgramUniformLocation(renderLightingProgramId, "u_NormalScale");
+	uniformNormalScale = renderer->getProgramUniformLocation(programId, "u_NormalScale");
 	if (uniformNormalScale == -1) return;
-	uniformRoughnessFactor = renderer->getProgramUniformLocation(renderLightingProgramId, "u_RoughnessFactor");
+	uniformRoughnessFactor = renderer->getProgramUniformLocation(programId, "u_RoughnessFactor");
 	if (uniformRoughnessFactor == -1) return;
-	uniformViewProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "u_ViewProjectionMatrix");
+	uniformViewProjectionMatrix = renderer->getProgramUniformLocation(programId, "u_ViewProjectionMatrix");
 	if (uniformViewProjectionMatrix == -1) return;
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].enabled");
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].enabled");
 		if (uniformLightEnabled[i] == -1) return;
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].ambient");
-		uniformLightDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].direction");
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].ambient");
+		uniformLightDirection[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].direction");
 		if (uniformLightDirection[i] == -1) return;
-		uniformLightRange[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].range");
+		uniformLightRange[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].range");
 		if (uniformLightRange[i] == -1) return;
-		uniformLightColor[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].color");
+		uniformLightColor[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].color");
 		if (uniformLightColor[i] == -1) return;
-		uniformLightIntensity[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].intensity");
+		uniformLightIntensity[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].intensity");
 		if (uniformLightIntensity[i] == -1) return;
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].position");
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].position");
 		if (uniformLightPosition[i] == -1) return;
-		uniformLightInnerConeCos[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].innerConeCos");
+		uniformLightInnerConeCos[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].innerConeCos");
 		if (uniformLightInnerConeCos[i] == -1) return;
-		uniformLightOuterConeCos[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].outerConeCos");
+		uniformLightOuterConeCos[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].outerConeCos");
 		if (uniformLightOuterConeCos[i] == -1) return;
-		uniformLightType[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].type");
+		uniformLightType[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].type");
 		if (uniformLightType[i] == -1) return;
 	}
 
 	// IBL
-	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_DiffuseEnvSampler");
-	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_SpecularEnvSampler");
-	uniformbrdfLUT = renderer->getProgramUniformLocation(renderLightingProgramId, "u_brdfLUT");
+	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
+	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
+	uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
 
 	string environmentType = "studio_grey";
 	textureDiffuseEnvSampler =
@@ -134,7 +134,7 @@ void LightingShaderPBRBaseImplementation::initialize()
 
 void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	renderer->useProgram(context, renderLightingProgramId);
+	renderer->useProgram(context, programId);
 	renderer->setLighting(context, renderer->LIGHTING_PBR);
 	renderer->setProgramUniformInteger(context, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 	renderer->setProgramUniformInteger(context, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);

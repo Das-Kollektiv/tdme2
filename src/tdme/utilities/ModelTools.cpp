@@ -713,7 +713,7 @@ int ModelTools::determineFaceCount(Node* node) {
 }
 
 void ModelTools::prepareForShader(Model* model, const string& shader) {
-	if (shader == "foliage" || shader == "tree") {
+	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
 		model->setImportTransformationsMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
@@ -744,7 +744,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 		auto vertexIdx = 0;
 		for (auto& vertex: vertices) {
 			vertex = transformationsMatrix.multiply(vertex);
-			if (shader == "tree") objectOrigins[vertexIdx].set(0.0f, vertex.getY(), 0.0f);
+			if (shader == "tree" || shader == "pbr-tree") objectOrigins[vertexIdx].set(0.0f, vertex.getY(), 0.0f);
 			vertexIdx++;
 		}
 		node->setVertices(vertices);

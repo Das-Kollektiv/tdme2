@@ -35,7 +35,7 @@ void LightingShaderPBRDefaultImplementation::initialize()
 
 	// lighting
 	//	fragment shader
-	renderLightingFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"metallic-roughness.frag",
@@ -55,21 +55,21 @@ void LightingShaderPBRDefaultImplementation::initialize()
 			"functions.glsl"
 		)
 	);
-	if (renderLightingFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	//	vertex shader
-	renderLightingVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"primitive.vert",
 		"#define LIGHT_COUNT	8\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
 	);
-	if (renderLightingVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderPBRBaseImplementation::initialize();
