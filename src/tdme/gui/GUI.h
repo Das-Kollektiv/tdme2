@@ -191,16 +191,6 @@ public:
 	void dispose();
 
 	/**
-	 * Lock mouse events
-	 */
-	void lockEvents();
-
-	/**
-	 * Unlock events
-	 */
-	void unlockEvents();
-
-	/**
 	 * @return mouse events
 	 */
 	vector<GUIMouseEvent>& getMouseEvents();

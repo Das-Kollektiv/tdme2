@@ -114,14 +114,6 @@ void GUI::dispose()
 	reset();
 }
 
-void GUI::lockEvents()
-{
-}
-
-void GUI::unlockEvents()
-{
-}
-
 vector<GUIMouseEvent>& GUI::getMouseEvents()
 {
 	return mouseEvents;
@@ -612,8 +604,6 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 
 void GUI::handleEvents()
 {
-	lockEvents();
-
 	unordered_map<string, unordered_set<string>> _mouseOutCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> _mouseOutClickCandidateEventNodeIds;
 
@@ -720,7 +710,6 @@ void GUI::handleEvents()
 	//
 	mouseEvents.clear();
 	keyboardEvents.clear();
-	unlockEvents();
 
 	// invalidate layouts
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
@@ -732,7 +721,6 @@ void GUI::handleEvents()
 
 void GUI::onChar(unsigned int key, int x, int y) {
 	fakeMouseMovedEvent();
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED);
@@ -744,12 +732,10 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::onKeyDown (unsigned char key, int x, int y) {
 	fakeMouseMovedEvent();
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
@@ -761,12 +747,10 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::onKeyUp(unsigned char key, int x, int y) {
 	fakeMouseMovedEvent();
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
@@ -778,12 +762,10 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::onSpecialKeyDown (int key, int x, int y) {
 	fakeMouseMovedEvent();
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
@@ -795,12 +777,10 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::onSpecialKeyUp(int key, int x, int y) {
 	fakeMouseMovedEvent();
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
@@ -812,13 +792,11 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::onMouseDragged(int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_DRAGGED);
@@ -841,13 +819,11 @@ void GUI::onMouseDragged(int x, int y) {
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
-	unlockEvents();
 }
 
 void GUI::onMouseMoved(int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
@@ -870,13 +846,11 @@ void GUI::onMouseMoved(int x, int y) {
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
-	unlockEvents();
 }
 
 void GUI::onMouseButton(int button, int state, int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	lockEvents();
 	mouseButtonLast = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
@@ -900,14 +874,6 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
-	// TODO: not 100% sure, lets see if it does some sort of trouble, otherwise I see no problem with this solution
-	// fake mouse moved after releasing a button
-	if (guiMouseEvent.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-		guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
-		guiMouseEvent.setButton(-1);;
-		mouseEvents.push_back(guiMouseEvent);
-	}
-	unlockEvents();
 }
 
 void GUI::onMouseWheel(int button, int direction, int x, int y) {
