@@ -169,9 +169,7 @@ void main(void) {
 	//
 	#if defined(HAVE_TERRAIN_SHADER)
 		if (fogStrength < 1.0) {
-			outColor = vsEffectColorAdd;
-			outColor+= computeTerrainTexture(terrainVertex, terrainNormal);
-			outColor*= fragColor;
+			outColor = vsEffectColorAdd + computeTerrainTexture(terrainVertex, terrainNormal) * fragColor; 
 			#if defined(HAVE_TERRAIN_SHADER_EDITOR)
 				if (brushEnabled == 1) {
 					vec2 brushTextureUV = vec2(brushTextureMatrix * vec3(((vsPosition.xz - brushPosition) / brushTextureDimension), 1.0));
