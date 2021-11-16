@@ -99,6 +99,9 @@
       - specular lighting + terrain + depth fog
       - specular lighting + water + depth fog
       - sky(no lighting + no depth fog + fragment depth at maximum)
+      - PBR lighting
+      - PBR lighting + foliage
+      - PBR lighting + tree
       - PBR lighting(WIP, no deferred shading yet)
     - shadow mapping
     - early z rejection
