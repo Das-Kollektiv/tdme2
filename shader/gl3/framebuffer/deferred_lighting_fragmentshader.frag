@@ -2,6 +2,16 @@
 
 {$DEFINITIONS}
 
+// TODO: maybe move me into definitions
+struct Material {
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 emission;
+	float shininess;
+	float reflection;
+};
+
 // uniforms
 uniform mat4 cameraMatrix;
 uniform sampler2D geometryBufferTextureId1;
