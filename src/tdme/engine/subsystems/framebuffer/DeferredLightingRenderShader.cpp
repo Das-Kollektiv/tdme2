@@ -4,6 +4,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/GeometryBuffer.h>
 #include <tdme/math/Math.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
 
@@ -19,6 +21,8 @@ using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
 using tdme::engine::GeometryBuffer;
 using tdme::math::Math;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 
@@ -53,7 +57,11 @@ void DeferredLightingRenderShader::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
 		"deferred_lighting_fragmentshader.frag",
-		"#define HAVE_DEPTH_FOG"
+		"#define HAVE_DEPTH_FOG",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"specular_lighting.inc.glsl"
+		)
 	);
 	if (fragmentShaderId == 0) return;
 

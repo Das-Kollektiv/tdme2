@@ -41,37 +41,11 @@
 
 #version 330 core
 
-#define FALSE		0
-#define MAX_LIGHTS	8
-
 {$DEFINITIONS}
 
-struct Material {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 emission;
-	float shininess;
-	float reflection;
-};
-
-struct Light {
-	int enabled;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 position;
-	vec3 spotDirection;
-	float spotExponent;
-	float spotCosCutoff;
-	float constantAttenuation;
-	float linearAttenuation;
-	float quadraticAttenuation;
-	float radius;
-};
+{$FUNCTIONS}
 
 uniform Material material;
-uniform Light lights[MAX_LIGHTS];
 
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
@@ -186,52 +160,6 @@ vec4 fragColor;
 	in float fragDepth;
 #endif
 
-#if defined(HAVE_SOLID_SHADING)
-#else
-	void computeLight(in int i, in vec3 normal, in vec3 position) {
-		vec3 lightDirection = lights[i].position.xyz - position.xyz;
-		float lightDistance = length(lightDirection);
-		lightDirection = normalize(lightDirection);
-		vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
-
-		// compute attenuation
-		float lightAttenuation =
-			1.0 /
-			(
-				lights[i].constantAttenuation +
-				lights[i].linearAttenuation * lightDistance +
-				lights[i].quadraticAttenuation * lightDistance * lightDistance
-			);
-
-		// see if point on surface is inside cone of illumination
-		float lightSpotDot = dot(-lightDirection, normalize(lights[i].spotDirection));
-		float lightSpotAttenuation = 0.0;
-		if (lightSpotDot >= lights[i].spotCosCutoff) {
-			lightSpotAttenuation = pow(lightSpotDot, lights[i].spotExponent);
-		}
-
-		// Combine the spotlight and distance attenuation.
-		lightAttenuation *= lightSpotAttenuation;
-
-		// add color components to fragment color
-		fragColor+=
-			clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
-			clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-			clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, vsEyeDirection), 0.0), 0.3 * materialShininess) * lightAttenuation, 0.0, 1.0);
-	}
-
-	void computeLights(in vec3 normal, in vec3 position) {
-		// process each light
-		for (int i = 0; i < MAX_LIGHTS; i++) {
-			// skip on disabled lights
-			if (lights[i].enabled == FALSE || (lights[i].radius > 0.0 && length(lights[i].position.xyz - position.xyz) > lights[i].radius)) continue;
-
-			// compute light
-			computeLight(i, normal, position);
-		}
-	}
-#endif
-
 void main(void) {
 	// texture coordinate, also take atlas into account
 	vec2 fragTextureUV;
@@ -300,7 +228,7 @@ void main(void) {
 		}
 
 		// compute lights
-		computeLights(normal, vsPosition);
+		fragColor+= computeSpecularLights(normal, vsPosition, vsEyeDirection, material);
 
 		// reflection
 		#if defined(HAVE_WATER_SHADER)

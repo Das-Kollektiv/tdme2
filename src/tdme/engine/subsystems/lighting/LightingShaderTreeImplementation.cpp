@@ -36,15 +36,6 @@ void LightingShaderTreeImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
-	//	fragment shader
-	renderLightingFragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + shaderVersion + "/lighting/specular",
-		"render_fragmentshader.frag",
-		"#define HAVE_DEPTH_FOG"
-	);
-	if (renderLightingFragmentShaderId == 0) return;
-
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
@@ -67,6 +58,19 @@ void LightingShaderTreeImplementation::initialize()
 		)
 	);
 	if (renderLightingVertexShaderId == 0) return;
+
+	//	fragment shader
+	renderLightingFragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		"shader/" + shaderVersion + "/lighting/specular",
+		"render_fragmentshader.frag",
+		"#define HAVE_DEPTH_FOG",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"specular_lighting.inc.glsl"
+		)
+	);
+	if (renderLightingFragmentShaderId == 0) return;
 
 	// create, attach and link program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
