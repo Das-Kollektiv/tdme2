@@ -157,7 +157,9 @@ void LightingShader::updateTextureMatrix(void* context) {
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 	auto shaderId = id;
-	if (renderer->isPBRAvailable() == false && StringTools::startsWith(id, "pbr-") == true) {
+	// TODO: find a better solution to remove pbr from lightscattering pass
+	if ((renderer->isPBRAvailable() == false || renderer->getShaderPrefix() == "ls_") &&
+		StringTools::startsWith(id, "pbr-") == true) {
 		shaderId = StringTools::substring(id, 4, id.size());
 	}
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
