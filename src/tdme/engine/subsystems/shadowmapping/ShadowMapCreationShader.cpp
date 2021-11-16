@@ -7,6 +7,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
@@ -17,7 +18,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementa
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
-using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 ShadowMapCreationShader::ShadowMapCreationShader(Renderer* renderer): renderer(renderer)
 {
@@ -104,9 +105,18 @@ void ShadowMapCreationShader::bindTexture(void* context, int32_t textureId)
 }
 
 void ShadowMapCreationShader::setShader(void* context, const string& id) {
+	// TODO: find a better solution for removing PBR- lighing prefix
+	string shaderId;
+	if (StringTools::startsWith(id, string("pbr-")) == true) {
+		shaderId = StringTools::substring(id, 4);
+	} else {
+		shaderId = id;
+	}
+
+	//
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderPreContext.implementation;
-	auto shaderIt = shader.find(id);
+	auto shaderIt = shader.find(shaderId);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}

@@ -5,6 +5,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 
@@ -15,6 +16,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 EZRShader::EZRShader(Renderer* renderer): renderer(renderer)
 {
@@ -101,9 +103,18 @@ void EZRShader::updateShaderParameters(void* context) {
 void EZRShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 
+	// TODO: find a better solution for removing PBR- lighing prefix
+	string shaderId;
+	if (StringTools::startsWith(id, string("pbr-")) == true) {
+		shaderId = StringTools::substring(id, 4);
+	} else {
+		shaderId = id;
+	}
+
+	//
 	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = ezrShaderContext.implementation;
-	auto shaderIt = shader.find(id);
+	auto shaderIt = shader.find(shaderId);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}

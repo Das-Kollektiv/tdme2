@@ -8,6 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
@@ -18,6 +19,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderTreeImplemen
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
+using tdme::utilities::StringTools;
 
 ShadowMapRenderShader::ShadowMapRenderShader(Renderer* renderer): renderer(renderer)
 {
@@ -123,9 +125,18 @@ void ShadowMapRenderShader::setRenderLightId(int32_t lightId) {
 }
 
 void ShadowMapRenderShader::setShader(void* context, const string& id) {
+	// TODO: find a better solution for removing PBR- lighing prefix
+	string shaderId;
+	if (StringTools::startsWith(id, string("pbr-")) == true) {
+		shaderId = StringTools::substring(id, 4);
+	} else {
+		shaderId = id;
+	}
+
+	//
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderRenderContext.implementation;
-	auto shaderIt = shader.find(id);
+	auto shaderIt = shader.find(shaderId);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
