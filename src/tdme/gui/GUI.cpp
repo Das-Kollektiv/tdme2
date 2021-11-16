@@ -879,7 +879,6 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	lockEvents();
 	mouseButtonLast = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
@@ -903,12 +902,10 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
-	unlockEvents();
 }
 
 void GUI::fakeMouseMovedEvent()
 {
-	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
@@ -922,7 +919,6 @@ void GUI::fakeMouseMovedEvent()
 	guiMouseEvent.setWheelZ(0.0f);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
-	unlockEvents();
 }
 
 void GUI::fakeKeyboardModifierEvent() {
@@ -953,7 +949,6 @@ void GUI::fakeKeyboardModifierEvent() {
 		return;
 	}
 
-	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
@@ -965,7 +960,6 @@ void GUI::fakeKeyboardModifierEvent() {
 	guiKeyboardEvent.setShiftDown(isShiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
-	unlockEvents();
 }
 
 void GUI::reshapeScreen(GUIScreenNode* screenNode) {
