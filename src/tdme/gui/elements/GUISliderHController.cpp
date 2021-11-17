@@ -135,6 +135,6 @@ void GUISliderHController::setValue(const MutableString& value) {
 
 void GUISliderHController::updateSlider() {
 	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth()));
-	sliderNode->getComputedConstraints().contentAlignmentTop = (node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight()) / 2;
-	sliderNode->getComputedConstraints().contentAlignmentLeft = sliderPosition;
+	sliderNode->getComputedConstraints().additionalAlignmentTop = (node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight()) / 2;
+	sliderNode->getComputedConstraints().additionalAlignmentLeft = sliderPosition;
 }

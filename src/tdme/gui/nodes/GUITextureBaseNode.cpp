@@ -105,8 +105,8 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left + clipping.left;
-		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top + clipping.top;
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + computedConstraints.additionalAlignmentLeft + padding.left + clipping.left;
+		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + computedConstraints.additionalAlignmentTop + padding.top + clipping.top;
 		float width = getContentWidth() - padding.left - padding.right - clipping.left - clipping.right;
 		float height = getContentHeight() - padding.top - padding.bottom - clipping.top - clipping.bottom;
 		auto renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
@@ -135,8 +135,8 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 			scale9Grid.right == 0 &&
 			scale9Grid.top == 0 &&
 			scale9Grid.bottom == 0) {
-			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left;
-			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top;
+			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + computedConstraints.additionalAlignmentLeft + padding.left;
+			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + computedConstraints.additionalAlignmentTop + padding.top;
 			float width = getContentWidth() - padding.left - padding.right;
 			float height = getContentHeight() - padding.top - padding.bottom;
 			guiRenderer->addQuad(
@@ -190,8 +190,8 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 			scaledScale9Grid.right = static_cast<int>(scale9Grid.right * scaleX);
 			scaledScale9Grid.top = static_cast<int>(scale9Grid.top * scaleY);
 			scaledScale9Grid.bottom = static_cast<int>(scale9Grid.bottom * scaleY);
-			float imageScreenLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-			float imageScreenTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
+			float imageScreenLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + computedConstraints.additionalAlignmentLeft;
+			float imageScreenTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + computedConstraints.additionalAlignmentTop;
 			float imageScreenScale9Left = imageScreenLeft + scaledScale9Grid.left;
 			float imageScreenScale9Top = imageScreenTop + scaledScale9Grid.top;
 			float imageScreenWidth = getContentWidth();

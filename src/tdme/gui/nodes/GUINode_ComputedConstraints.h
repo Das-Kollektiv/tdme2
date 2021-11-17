@@ -28,4 +28,6 @@ struct tdme::gui::nodes::GUINode_ComputedConstraints
 	int alignmentTop { 0 };
 	int contentAlignmentLeft { 0 };
 	int contentAlignmentTop { 0 };
+	int additionalAlignmentLeft { 0 };
+	int additionalAlignmentTop { 0 };
 };

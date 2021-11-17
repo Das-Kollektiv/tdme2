@@ -98,6 +98,7 @@ void GUIProgressBarController::setValue(const MutableString& value) {
 }
 
 void GUIProgressBarController::updateBar() {
-	auto barWidth = this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right;
+	auto barParentNode = barNode->getParentNode();
+	auto barWidth = barParentNode->getComputedConstraints().width - barParentNode->getPadding().left - barParentNode->getPadding().right;
 	barNode->getClipping().right = barWidth - (int)((float)barWidth * valueFloat);
 }
