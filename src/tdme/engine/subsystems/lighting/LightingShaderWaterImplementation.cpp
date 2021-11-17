@@ -52,7 +52,7 @@ void LightingShaderWaterImplementation::initialize()
 		"#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"render_water.inc.glsl"
+			"water.inc.glsl"
 		)
 	);
 	if (renderLightingVertexShaderId == 0) return;
