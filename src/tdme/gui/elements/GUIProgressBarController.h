@@ -23,7 +23,6 @@ class tdme::gui::elements::GUIProgressBarController final: public GUIElementCont
 	friend class GUIProgressBar;
 
 private:
-	GUIImageNode* backgroundNode { nullptr };
 	GUIImageNode* barNode { nullptr };
 	GUITextNode* textNode { nullptr };
 	bool disabled { false };
