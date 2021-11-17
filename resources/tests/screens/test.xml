@@ -257,9 +257,9 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
 						<progress-bar width="300" name="progressbar-test" id="progressbar-test" text-on="true" value="0.5" />
 						<space width="25" />
-						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" on-change="progressbar-test.value=sliderh-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
+						<slider-horizontal width="100" name="sliderh-test" id="sliderh-test" value="0.5" on-change="progressbar-test.value=sliderh-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
 						<space width="25" />
-						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" on-change="progressbar-test.value=sliderv-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
+						<slider-vertical height="100" name="sliderv-test" id="sliderv-test" value="0.5" on-change="progressbar-test.value=sliderv-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
 						<space width="25" />
 						<knob name="knob-test" id="knob-test" value="0.5" on-change="progressbar-test.value=knob-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value;masktest.maskmaxvalue=progressbar-test.value" />
 						<space width="25" />

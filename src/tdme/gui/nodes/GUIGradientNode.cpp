@@ -139,6 +139,7 @@ void GUIGradientNode::render(GUIRenderer* guiRenderer)
 
 	GUINode::render(guiRenderer);
 
+	// clipping
 	{
 		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
 		auto screenWidth = screenNode->getScreenWidth();
