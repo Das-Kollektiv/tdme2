@@ -1,11 +1,11 @@
-<element id="{$id}" width="auto" height="auto" focusable="true">
+<element id="{$id}" width="auto" height="auto" border="1" border-color="{$color.element_frame}" focusable="true">
 	<layout alignment="horizontal" width="auto" height="auto">
 		<button id="{$id}_left" width="25" height="25" image="resources/engine/images/arrow_left.png" />
-		<space width="5" />
+		<space width="10" />
 		<layer width="auto" height="auto">
 			{__InnerXML__}
 		</layer>
-		<space width="5" />
+		<space width="10" />
 		<button id="{$id}_right" width="25" height="25" image="resources/engine/images/arrow_right.png" />
 	</layout>
 </element>

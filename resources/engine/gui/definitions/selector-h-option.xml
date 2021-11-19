@@ -7,7 +7,6 @@
 		color="{$color.font_highlight}"
 		width="auto"
 		height="25"
-		padding-left="5"
 		vertical-align="center"		
 	/>
 </element>

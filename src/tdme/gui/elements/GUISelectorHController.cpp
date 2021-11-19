@@ -209,6 +209,16 @@ void GUISelectorHController::selectPrevious()
 void GUISelectorHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
+	if (disabled == true) return;
+	auto elementNode  = required_dynamic_cast<GUIElementNode*>(this->node);
+	if (event->getButton() == MOUSE_BUTTON_LEFT) {
+		if (node == this->node && node->isEventBelongingToNode(event) == true) {
+			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
+				selectNext();
+			}
+		}
+	}
 }
 
 void GUISelectorHController::handleKeyboardEvent(GUIKeyboardEvent* event)
