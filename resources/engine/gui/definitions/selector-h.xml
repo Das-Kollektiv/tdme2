@@ -2,7 +2,7 @@
 	<layout alignment="horizontal" width="auto" height="auto">
 		<button id="{$id}_left" width="25" height="25" image="resources/engine/images/arrow_left.png" />
 		<space width="10" />
-		<layer width="auto" height="auto">
+		<layer id="{$id}_inner" width="auto" height="auto">
 			{__InnerXML__}
 		</layer>
 		<space width="10" />

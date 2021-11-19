@@ -43,6 +43,7 @@ private:
 	string search;
 	int selectedHOptionControllerIdx { -1 };
 	GUIActionListener* actionListener { nullptr };
+	GUIParentNode* innerNode { nullptr };
 
 private:
 	/**

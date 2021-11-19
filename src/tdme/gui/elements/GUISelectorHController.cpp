@@ -68,6 +68,9 @@ void GUISelectorHController::initialize()
 	determineSelectorHOptionControllers();
 
 	//
+	innerNode  = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getInnerNodeById(node->getId()));
+
+	//
 	class GUISelectorHControllerActionListener: public virtual GUIActionListener
 	{
 	public:
@@ -210,10 +213,10 @@ void GUISelectorHController::handleMouseEvent(GUINode* node, GUIMouseEvent* even
 {
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == true) return;
-	auto elementNode  = required_dynamic_cast<GUIElementNode*>(this->node);
 	if (event->getButton() == MOUSE_BUTTON_LEFT) {
-		if (node == this->node && node->isEventBelongingToNode(event) == true) {
+		if (node == innerNode && innerNode->isEventBelongingToNode(event) == true) {
 			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				auto elementNode  = required_dynamic_cast<GUIElementNode*>(this->node);
 				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
 				selectNext();
 			}
