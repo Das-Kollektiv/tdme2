@@ -220,6 +220,12 @@
 								<text show-on="g" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected G" color="#FF0000" />
 								<text show-on="h" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected H" color="#FF0000" />
 							</element>
+							<space height="20" />
+							<selector-horizontal>
+								<selector-horizontal-option text="Option A" value="0" />
+								<selector-horizontal-option text="Option B" value="1" />
+								<selector-horizontal-option text="Option C" value="2" />
+							</selector-horizontal>
 						</layout>
 					</layout>
 				</tab-content>

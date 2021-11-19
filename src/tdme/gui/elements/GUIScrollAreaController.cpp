@@ -32,7 +32,6 @@ void GUIScrollAreaController::setDisabled(bool disabled)
 
 void GUIScrollAreaController::initialize()
 {
-
 	class GUIScrollAreaControllerActionListener: public virtual GUIActionListener
 	{
 

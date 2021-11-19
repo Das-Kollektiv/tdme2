@@ -456,6 +456,10 @@ SRCS = \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \
 	src/tdme/gui/elements/GUIRadioButtonController.cpp \
+	src/tdme/gui/elements/GUISelectorH.cpp \
+	src/tdme/gui/elements/GUISelectorHController.cpp \
+	src/tdme/gui/elements/GUISelectorHOption.cpp \
+	src/tdme/gui/elements/GUISelectorHOptionController.cpp \
 	src/tdme/gui/elements/GUIScrollArea.cpp \
 	src/tdme/gui/elements/GUIScrollAreaController.cpp \
 	src/tdme/gui/elements/GUISelectBox.cpp \

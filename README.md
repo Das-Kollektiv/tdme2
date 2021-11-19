@@ -173,6 +173,7 @@
             - radio button
             - scrollarea
             - selectbox including tree view
+            - selector horizontal
             - slider horizontal
             - slider vertical
             - tabs
