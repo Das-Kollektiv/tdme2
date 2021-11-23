@@ -63,6 +63,36 @@ const int LightType_Spot = 2;
 uniform Light u_Lights[LIGHT_COUNT];
 #endif
 
+struct MaterialProperties {
+	float metallicFactor;
+	float roughnessFactor;
+	vec4 baseColorFactor;
+	float exposure;
+	float alphaCutoff;
+	int alphaCutoffEnabled;
+	#ifdef MATERIAL_SPECULARGLOSSINESS
+		vec3 specularFactor;
+		vec4 diffuseFactor;
+		float glossinessFactor;
+	#endif
+	int normalSamplerAvailable;
+	int baseColorSamplerAvailable;
+	int metallicRoughnessSamplerAvailable;
+	vec3 normal;
+	#ifdef MATERIAL_SPECULARGLOSSINESS
+		vec4 specularGlossinessColor
+	#endif
+	#ifdef HAS_DIFFUSE_MAP
+		vec4 diffuseColor;
+	#endif
+	vec4 vertexColor;
+	vec4 metallicRoughnessColor;
+	vec4 baseColor;
+	#ifdef DEBUG_NORMAL
+		vec3 normalColor;
+	#endif
+};
+
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
@@ -253,8 +283,11 @@ vec3 applySpotLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 vi
     return rangeAttenuation * spotAttenuation * light.intensity * light.color * shade;
 }
 
-void main()
+vec4 computePBRLighting(in MaterialProperties materialProperties)
 {
+    // resulting fragment color
+    vec4 outColor = vec4(0.0, 0.0, 0.0, 1.0);
+
     // Metallic and Roughness material properties are packed together
     // In glTF, these factors can be specified by fixed scalar values
     // or from a metallic-roughness map
@@ -268,21 +301,21 @@ void main()
 #ifdef MATERIAL_SPECULARGLOSSINESS
 
 #ifdef HAS_SPECULAR_GLOSSINESS_MAP
-    vec4 sgSample = SRGBtoLINEAR(getSpecularGlossinessColor());
-    perceptualRoughness = (1.0 - sgSample.a * u_GlossinessFactor); // glossiness to roughness
-    f0 = sgSample.rgb * u_SpecularFactor; // specular
+    vec4 sgSample = SRGBtoLINEAR(materialProperties.specularGlossinessColor);
+    perceptualRoughness = (1.0 - sgSample.a * materialProperties.glossinessFactor); // glossiness to roughness
+    f0 = sgSample.rgb * materialProperties.specularFactor; // specular
 #else
-    f0 = u_SpecularFactor;
-    perceptualRoughness = 1.0 - u_GlossinessFactor;
+    f0 = materialProperties.specularFactor;
+    perceptualRoughness = 1.0 - materialProperties.glossinessFactor;
 #endif // ! HAS_SPECULAR_GLOSSINESS_MAP
 
 #ifdef HAS_DIFFUSE_MAP
-    baseColor = SRGBtoLINEAR(getDiffuseColor()) * u_DiffuseFactor;
+    baseColor = SRGBtoLINEAR(materialProperties.diffuseColor) * materialProperties.diffuseFactor;
 #else
-    baseColor = u_DiffuseFactor;
+    baseColor = materialProperties.diffuseFactor;
 #endif // !HAS_DIFFUSE_MAP
 
-    baseColor *= getVertexColor();
+    baseColor *= materialProperties.vertexColor;
 
     // f0 = specular
     specularColor = f0;
@@ -297,25 +330,16 @@ void main()
 #endif // ! MATERIAL_SPECULARGLOSSINESS
 
 #ifdef MATERIAL_METALLICROUGHNESS
-    if (u_MetallicRoughnessSamplerAvailable == 1) {
-        // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
-        // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-        vec4 mrSample = getMetallicRoughnessColor();
-        perceptualRoughness = mrSample.g * u_RoughnessFactor;
-        metallic = mrSample.b * u_MetallicFactor;
-    } else {
-        metallic = u_MetallicFactor;
-        perceptualRoughness = u_RoughnessFactor;
-    }
+    // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
+    // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
+    vec4 mrSample = materialProperties.metallicRoughnessColor;
+    perceptualRoughness = mrSample.g * materialProperties.roughnessFactor;
+    metallic = mrSample.b * materialProperties.metallicFactor;
 
     // The albedo may be defined from a base texture or a flat color
-    if (u_BaseColorSamplerAvailable == 1) {
-        baseColor = SRGBtoLINEAR(getBaseColor()) * u_BaseColorFactor;
-    } else {
-        baseColor = u_BaseColorFactor;
-    }
+    baseColor = SRGBtoLINEAR(materialProperties.baseColor) * materialProperties.baseColorFactor;
 
-    baseColor *= getVertexColor();
+    baseColor *= materialProperties.vertexColor;
 
     diffuseColor = baseColor.rgb * (vec3(1.0) - f0) * (1.0 - metallic);
 
@@ -323,8 +347,8 @@ void main()
 
 #endif // ! MATERIAL_METALLICROUGHNESS
 
-    if (u_AlphaCutoffEnabled == 1) {
-		if (baseColor.a < u_AlphaCutoff) discard;
+    if (materialProperties.alphaCutoffEnabled == 1) {
+		if (baseColor.a < materialProperties.alphaCutoff) discard;
 		baseColor.a = 1.0;
     }
 
@@ -359,7 +383,7 @@ void main()
     // LIGHTING
 
     vec3 color = vec3(0.0, 0.0, 0.0);
-    vec3 normal = getNormal();
+    vec3 normal = materialProperties.normal;
     vec3 view = normalize(u_Camera - v_Position);
 
 #ifdef USE_PUNCTUAL
@@ -392,20 +416,20 @@ void main()
     float ao = 1.0;
     // Apply optional PBR terms for additional (optional) shading
 #ifdef HAS_OCCLUSION_MAP
-    ao = getOcclusionColor().r;
-    color = mix(color, color * ao, u_OcclusionStrength);
+    ao = materialProperties.occlusionColor.r;
+    color = mix(color, color * ao, materialProperties.occlusionStrength);
 #endif
 
     vec3 emissive = vec3(0);
 #ifdef HAS_EMISSIVE_MAP
-    emissive = SRGBtoLINEAR(getEmissiveColor()).rgb * u_EmissiveFactor;
+    emissive = SRGBtoLINEAR(materialProperties.emissiveColor).rgb * materialProperties.emissiveFactor;
     color += emissive;
 #endif
 
 #ifndef DEBUG_OUTPUT // no debug
 
    // regular shading
-    outColor = vec4(toneMap(color, u_Exposure), baseColor.a);
+    outColor = vec4(toneMap(color, materialProperties.exposure), baseColor.a);
 
 #else // debug output
 
@@ -418,8 +442,8 @@ void main()
     #endif
 
     #ifdef DEBUG_NORMAL
-        if (u_NormalSamplerAvailable == 1) {
-            outColor.rgb = getNormalColor().rgb;
+        if (materialProperties.normalSamplerAvailable == 1) {
+            outColor.rgb = materialProperties.normalColor.rgb;
         } else {
             outColor.rgb = vec3(0.5, 0.5, 1.0);
         }
@@ -446,6 +470,44 @@ void main()
     #endif
 
     outColor.a = 1.0;
-
 #endif // !DEBUG_OUTPUT
+
+    //
+    return outColor;
 }
+
+void main()
+{
+	MaterialProperties materialProperties;
+	materialProperties.metallicFactor = u_MetallicFactor;
+	materialProperties.roughnessFactor = u_RoughnessFactor;
+	materialProperties.baseColorFactor = u_BaseColorFactor;
+	materialProperties.exposure = u_Exposure;
+	materialProperties.alphaCutoff = u_AlphaCutoff;
+	materialProperties.alphaCutoffEnabled = u_AlphaCutoffEnabled;
+	#ifdef MATERIAL_SPECULARGLOSSINESS
+		materialProperties.specularFactor = u_SpecularFactor;
+		materialProperties.diffuseFactor = u_DiffuseFactor;
+		materialProperties.glossinessFactor = u_GlossinessFactor;
+	#endif
+	materialProperties.normalSamplerAvailable = u_NormalSamplerAvailable;
+	materialProperties.baseColorSamplerAvailable = u_BaseColorSamplerAvailable;
+	materialProperties.metallicRoughnessSamplerAvailable = u_MetallicRoughnessSamplerAvailable;
+	materialProperties.normal = getNormal();
+	#ifdef MATERIAL_SPECULARGLOSSINESS
+		materialProperties.specularGlossinessColor = getSpecularGlossinessColor();
+	#endif
+	#ifdef HAS_DIFFUSE_MAP
+		materialProperties.diffuseColor = getDiffuseColor();
+	#endif
+	materialProperties.vertexColor = getVertexColor();
+	materialProperties.metallicRoughnessColor = materialProperties.metallicRoughnessSamplerAvailable == 1?getMetallicRoughnessColor():vec4(0.0, 1.0, 1.0, 0.0);
+	materialProperties.baseColor = materialProperties.baseColorSamplerAvailable == 1?getBaseColor():vec4(1.0, 1.0, 1.0, 1.0);
+	#ifdef DEBUG_NORMAL
+		materialProperties.normalColor = getNormalColor().rgb;
+	#endif
+
+	//
+	outColor = computePBRLighting(materialProperties);
+};
+
