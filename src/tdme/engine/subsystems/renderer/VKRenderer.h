@@ -447,7 +447,7 @@ private:
 		const unordered_map<string, vector<string>>& structs,
 		const vector<string>& uniforms,
 		const string& prefix,
-		unordered_set<string>& uniformArrays,
+		unordered_set<string>& uniformStructsArrays,
 		string& uniformsBlock
 	);
 	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs);

@@ -2045,7 +2045,7 @@ int VKRenderer::align(int alignment, int offset) {
 	return alignRemainder == 0?offset:offset + (alignment - alignRemainder);
 }
 
-bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unordered_map<string, string>& definitionValues, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformArrays, string& uniformsBlock) {
+bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unordered_map<string, string>& definitionValues, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformStructsArrays, string& uniformsBlock) {
 	StringTokenizer t;
 	for (auto uniform: uniforms) {
 		t.tokenize(uniform, "\t ;");
@@ -2061,7 +2061,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
 			arraySize = Integer::parseInt(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
-			if (uniformType != "sampler2D" && uniformType != "samplerCube") uniformArrays.insert(uniformName);
+			if (uniformType != "sampler2D" && uniformType != "samplerCube") uniformStructsArrays.insert(uniformName);
 		}
 		if (uniformType == "int") {
 			for (auto i = 0; i < arraySize; i++) {
@@ -2227,10 +2227,10 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					string uniformsBlockIgnore;
 					auto alignment = Math::max(16, determineAlignment(structs, structs.find(uniformType)->second));
 					shader.ubo_size = align(alignment, shader.ubo_size);
-					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformArrays, uniformsBlockIgnore);
+					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
 					shader.ubo_size = align(alignment, shader.ubo_size);
 					if (success == false) return false;
-					if (isArray == false) uniformArrays.insert(uniformName);
+					if (isArray == false) uniformStructsArrays.insert(uniformName);
 				}
 			} else {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
@@ -2468,7 +2468,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		}
 
 		// generate new uniform block
-		unordered_set<string> uniformArrays;
+		unordered_set<string> uniformStructsArrays;
 		string uniformsBlock = "";
 
 		// replace uniforms to use ubo
@@ -2478,7 +2478,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
-			addToShaderUniformBufferObject(shader, definitionValues, structs, uniforms, "", uniformArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
+			addToShaderUniformBufferObject(shader, definitionValues, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.ubo_size));
 		}
@@ -2534,7 +2534,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					}
 				}
 				// rename arrays and structs to ubo uniforms
-				for (auto& uniformName: uniformArrays) {
+				for (auto& uniformName: uniformStructsArrays) {
 					line = StringTools::regexReplace(
 						line,
 						"(\\b)" + uniformName + "(\\b)",
