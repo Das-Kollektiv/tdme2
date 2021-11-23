@@ -268,7 +268,7 @@ void main()
 #ifdef MATERIAL_SPECULARGLOSSINESS
 
 #ifdef HAS_SPECULAR_GLOSSINESS_MAP
-    vec4 sgSample = SRGBtoLINEAR(texture(u_SpecularGlossinessSampler, getSpecularGlossinessUV()));
+    vec4 sgSample = SRGBtoLINEAR(getSpecularGlossinessColor());
     perceptualRoughness = (1.0 - sgSample.a * u_GlossinessFactor); // glossiness to roughness
     f0 = sgSample.rgb * u_SpecularFactor; // specular
 #else
@@ -277,7 +277,7 @@ void main()
 #endif // ! HAS_SPECULAR_GLOSSINESS_MAP
 
 #ifdef HAS_DIFFUSE_MAP
-    baseColor = SRGBtoLINEAR(texture(u_DiffuseSampler, getDiffuseUV())) * u_DiffuseFactor;
+    baseColor = SRGBtoLINEAR(getDiffuseColor()) * u_DiffuseFactor;
 #else
     baseColor = u_DiffuseFactor;
 #endif // !HAS_DIFFUSE_MAP
@@ -300,7 +300,7 @@ void main()
     if (u_MetallicRoughnessSamplerAvailable == 1) {
         // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
         // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-        vec4 mrSample = texture(u_MetallicRoughnessSampler, getMetallicRoughnessUV());
+        vec4 mrSample = getMetallicRoughnessColor();
         perceptualRoughness = mrSample.g * u_RoughnessFactor;
         metallic = mrSample.b * u_MetallicFactor;
     } else {
@@ -310,7 +310,7 @@ void main()
 
     // The albedo may be defined from a base texture or a flat color
     if (u_BaseColorSamplerAvailable == 1) {
-        baseColor = SRGBtoLINEAR(texture(u_BaseColorSampler, getBaseColorUV())) * u_BaseColorFactor;
+        baseColor = SRGBtoLINEAR(getBaseColor()) * u_BaseColorFactor;
     } else {
         baseColor = u_BaseColorFactor;
     }
@@ -392,13 +392,13 @@ void main()
     float ao = 1.0;
     // Apply optional PBR terms for additional (optional) shading
 #ifdef HAS_OCCLUSION_MAP
-    ao = texture(u_OcclusionSampler,  getOcclusionUV()).r;
+    ao = getOcclusionColor().r;
     color = mix(color, color * ao, u_OcclusionStrength);
 #endif
 
     vec3 emissive = vec3(0);
 #ifdef HAS_EMISSIVE_MAP
-    emissive = SRGBtoLINEAR(texture(u_EmissiveSampler, getEmissiveUV())).rgb * u_EmissiveFactor;
+    emissive = SRGBtoLINEAR(getEmissiveColor()).rgb * u_EmissiveFactor;
     color += emissive;
 #endif
 
@@ -419,7 +419,7 @@ void main()
 
     #ifdef DEBUG_NORMAL
         if (u_NormalSamplerAvailable == 1) {
-            outColor.rgb = texture(u_NormalSampler, getNormalUV()).rgb;
+            outColor.rgb = getNormalColor().rgb;
         } else {
             outColor.rgb = vec3(0.5, 0.5, 1.0);
         }
