@@ -140,7 +140,7 @@ void main(void) {
 		}
 
 		// compute lights
-		fragColor+= computeSpecularLights(normal, vsPosition, vsEyeDirection, material);
+		fragColor+= computeSpecularLighting(normal, vsPosition, vsEyeDirection, material);
 
 		// reflection
 		#if defined(HAVE_WATER_SHADER)

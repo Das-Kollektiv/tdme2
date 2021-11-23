@@ -93,7 +93,7 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 }
 
 //
-vec4 computeSpecularLights(in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
+vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
 	vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {

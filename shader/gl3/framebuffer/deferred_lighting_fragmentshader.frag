@@ -68,7 +68,7 @@ void main(void) {
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 		vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
 		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
-		vec4 fragColor = material.emission + computeSpecularLights(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), material);
+		vec4 fragColor = material.emission + computeSpecularLighting(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), material);
 		outColor = clamp(fragColor * diffuse, 0.0, 1.0);
 		outColor.a = material.diffuse.a;
 		#if defined(HAVE_DEPTH_FOG)
