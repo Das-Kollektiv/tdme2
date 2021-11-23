@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 // standard layouts
 layout (location = 0) in vec3 inVertex;

@@ -12,7 +12,7 @@
 // [4] "An Inexpensive BRDF Model for Physically based Rendering" by Christophe Schlick
 //     https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
 
-#version 330
+#version 330 core
 
 {$DEFINITIONS}
 

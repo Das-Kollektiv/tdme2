@@ -161,7 +161,11 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 
 		// do a render pass
 		engine->render(
-			frameBuffers[i],
+			#if defined(VULKAN)
+				frameBuffers[renderCubeMapTextureIdx][i],
+			#else
+				frameBuffers[i],
+			#endif
 			geometryBuffer,
 			visibleDecomposedEntities,
 			Engine::EFFECTPASS_NONE,

@@ -493,6 +493,7 @@ public:
 	bool isComputeShaderAvailable() override;
 	bool isGLCLAvailable() override;
 	bool isUsingShortIndices() override;
+	bool isDeferredShadingAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(void* context, int32_t programId) override;
@@ -531,15 +532,30 @@ public:
 	int32_t createTexture() override;
 	int32_t createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
 	int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
+	int32_t createGBufferGeometryTexture(int32_t width, int32_t height) override;
+	int32_t createGBufferColorTexture(int32_t width, int32_t height) override;
 	void uploadTexture(void* context, Texture* texture) override;
 	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
 	int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
+	void resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) override;
+	void resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;
 	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
+	int32_t createGeometryBufferObject(
+		int32_t depthBufferTextureId,
+		int32_t geometryBufferTextureId1,
+		int32_t geometryBufferTextureId2,
+		int32_t geometryBufferTextureId3,
+		int32_t colorBufferTextureId1,
+		int32_t colorBufferTextureId2,
+		int32_t colorBufferTextureId3,
+		int32_t colorBufferTextureId4,
+		int32_t colorBufferTextureId5
+	) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared) override;

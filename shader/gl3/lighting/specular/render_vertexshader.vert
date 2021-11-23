@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 // standard layouts
 layout (location = 0) in vec3 inVertex;
@@ -27,16 +27,6 @@ uniform float time;
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
 
-// will be passed to fragment shader
-out vec2 vsFragTextureUV;
-out vec3 vsNormal;
-out vec3 vsPosition;
-out vec3 vsTangent;
-out vec3 vsBitangent;
-out vec4 vsEffectColorMul;
-out vec4 vsEffectColorAdd;
-out vec3 vsEyeDirection;
-
 #if defined(HAVE_TERRAIN_SHADER)
 	out vec3 terrainVertex;
 	out vec3 terrainNormal;
@@ -57,6 +47,16 @@ out vec3 vsEyeDirection;
 #elif defined(HAVE_TREE)
 	uniform float speed;
 #endif
+
+// will be passed to fragment shader
+out vec2 vsFragTextureUV;
+out vec3 vsNormal;
+out vec3 vsPosition;
+out vec3 vsTangent;
+out vec3 vsBitangent;
+out vec4 vsEffectColorMul;
+out vec4 vsEffectColorAdd;
+out vec3 vsEyeDirection;
 
 #if defined(HAVE_DEPTH_FOG)
 	out float fragDepth;

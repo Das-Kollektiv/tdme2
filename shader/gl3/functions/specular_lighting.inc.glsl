@@ -60,7 +60,7 @@ struct Light {
 uniform Light lights[MAX_LIGHTS];
 
 //
-vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material material) {
+vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
 	float lightDistance = length(lightDirection);
 	lightDirection = normalize(lightDirection);
@@ -87,13 +87,13 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 
 	// add color components to fragment color
 	return
-		clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
-		clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-		clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * material.shininess) * lightAttenuation, 0.0, 1.0);
+		clamp(lights[i].ambient * inMaterial.ambient, 0.0, 1.0) +
+		clamp(lights[i].diffuse * inMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
+		clamp(lights[i].specular * inMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * inMaterial.shininess) * lightAttenuation, 0.0, 1.0);
 }
 
 //
-vec4 computeSpecularLights(in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material material) {
+vec4 computeSpecularLights(in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
 	vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -101,7 +101,7 @@ vec4 computeSpecularLights(in vec3 normal, in vec3 position, in vec3 eyeDirectio
 		if (lights[i].enabled == FALSE || (lights[i].radius > 0.0 && length(lights[i].position.xyz - position.xyz) > lights[i].radius)) continue;
 
 		// compute light
-		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, material);
+		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, inMaterial);
 	}
 	//
 	return fragColor;

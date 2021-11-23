@@ -1972,6 +1972,10 @@ bool VKRenderer::isUsingShortIndices() {
 	return false;
 }
 
+bool VKRenderer::isDeferredShadingAvailable() {
+	return false;
+}
+
 int32_t VKRenderer::getTextureUnits()
 {
 	return -1;
@@ -2051,7 +2055,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 		auto arraySize = 1;
 		if (t.hasMoreTokens() == true) uniformType = t.nextToken();
 		while (t.hasMoreTokens() == true) uniformName = t.nextToken();
-		if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+		if (uniformName.find('[') != -1 && uniformName.find(']') != string::npos) {
 			isArray = true;
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
@@ -2226,6 +2230,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformArrays, uniformsBlockIgnore);
 					shader.ubo_size = align(alignment, shader.ubo_size);
 					if (success == false) return false;
+					if (isArray == false) uniformArrays.insert(uniformName);
 				}
 			} else {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
@@ -2254,7 +2259,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			"#define __VULKAN__\n\n" + definitions + "\n\n"
+			"#define HAVE_VULKAN\n\n" + definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
 		functions + "\n\n"
@@ -2267,8 +2272,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		vector<string> uniforms;
 		shaderSource = StringTools::replace(shaderSource, "\r", "");
 		shaderSource = StringTools::replace(shaderSource, "\t", " ");
-		shaderSource = StringTools::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
-		shaderSource = StringTools::replace(shaderSource, "#version 430 core", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
+		shaderSource = StringTools::replace(shaderSource, "#version 430 core", "#version 430 core\n#extension GL_EXT_scalar_block_layout: require\n\n");
+		shaderSource = StringTools::replace(shaderSource, "#version 330 core", "#version 430 core\n#extension GL_EXT_scalar_block_layout: require\n\n");
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
 		StringTokenizer t2;
@@ -2524,15 +2529,19 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 							"(\\b)" + uniformName + "(\\b)",
 							"$1ubo_generated." + uniformName + "$2"
 						);
+						// TODO: this is a workaround until we have a better shader parser/adapt code
+						line = StringTools::replace(line, "ubo_generated.ubo_generated.", "ubo_generated.");
 					}
 				}
-				// rename arrays to ubo uniforms
+				// rename arrays and structs to ubo uniforms
 				for (auto& uniformName: uniformArrays) {
 					line = StringTools::regexReplace(
 						line,
 						"(\\b)" + uniformName + "(\\b)",
 						"$1ubo_generated." + uniformName + "$2"
 					);
+					// TODO: this is a workaround until we have a better shader parser/adapt code
+					line = StringTools::replace(line, "ubo_generated.ubo_generated.", "ubo_generated.");
 				}
 				// inject gl_Position flip before last } from main
 				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringTools::startsWith(line, "}") == true) {
@@ -3768,6 +3777,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 					to_string(shader->id) +
 					string("]") +
 					string(": parsing failed: ") +
+					shader->file + ": " +
 					glslShader.getInfoLog() + ": " +
 					glslShader.getInfoDebugLog()
 				 )
@@ -3787,6 +3797,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 					to_string(shader->id) +
 					string("]") +
 					string(": linking failed: ") +
+					shader->file + ": " +
 					glslShader.getInfoLog() + ": " +
 					glslShader.getInfoDebugLog()
 				)
@@ -4557,6 +4568,16 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	};
 	err = vkCreateImageView(device, &view, nullptr, &colorBufferTexture.view);
 	assert(!err);
+}
+
+int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
+	Console::println("VKRenderer::createGBufferGeometryTexture(): Not implemented");
+	return ID_NONE;
+}
+
+int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
+	Console::println("VKRenderer::createGBufferColorTexture(): Not implemented");
+	return ID_NONE;
 }
 
 void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
@@ -5342,6 +5363,14 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
+void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
+	Console::println("VKRenderer::resizeGBufferGeometryTexture(): Not implemented");
+}
+
+void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
+	Console::println("VKRenderer::resizeGBufferColorTexture(): Not implemented");
+}
+
 void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
 	bindTexture(context, textureId);
 }
@@ -5548,6 +5577,21 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 	createFramebufferObject(frameBuffer.id);
 	Console::println("new framebuffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
+}
+
+int32_t VKRenderer::createGeometryBufferObject(
+	int32_t depthBufferTextureId,
+	int32_t geometryBufferTextureId1,
+	int32_t geometryBufferTextureId2,
+	int32_t geometryBufferTextureId3,
+	int32_t colorBufferTextureId1,
+	int32_t colorBufferTextureId2,
+	int32_t colorBufferTextureId3,
+	int32_t colorBufferTextureId4,
+	int32_t colorBufferTextureId5
+) {
+	Console::println(string("VKRenderer::createGeometryBufferObject()::not implemented yet"));
+	return ID_NONE;
 }
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)

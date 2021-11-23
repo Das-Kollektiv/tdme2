@@ -1,7 +1,5 @@
 #version 330 core
 
-{$DEFINITIONS}
-
 // TODO: maybe move me into definitions
 struct Material {
 	vec4 ambient;
@@ -11,6 +9,8 @@ struct Material {
 	float shininess;
 	float reflection;
 };
+
+{$DEFINITIONS}
 
 {$FUNCTIONS}
 
@@ -147,7 +147,7 @@ void main(void) {
 		#else
 			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
 				vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normal);
-				#if defined(__VULKAN__)
+				#if defined(HAVE_VULKAN)
 					reflectionVector*= vec3(1.0, -1.0, 1.0);
 				#endif
 				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
@@ -198,7 +198,7 @@ void main(void) {
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
 			vec3 reflectionVector = reflect(normalize(vsPosition - cameraPosition), normalize(normal * vec3(0.01, 1.0, 0.01)));
-			#if defined(__VULKAN__)
+			#if defined(HAVE_VULKAN)
 				reflectionVector*= vec3(1.0, -1.0, 1.0);
 			#endif
 			envColor = texture(environmentMappingTextureUnit, reflectionVector);
