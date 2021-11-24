@@ -38,6 +38,7 @@ private:
 	int32_t uniformColorBufferTextureUnit5 { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
 
+	// specular lighting
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightDiffuse;
@@ -51,6 +52,27 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightQuadraticAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightRadius;
 	int32_t uniformCameraMatrix { -1 };
+
+	// pbr
+	int32_t uniformCamera { -1 };
+	int32_t uniformDiffuseEnvSampler { -1 };
+	int32_t uniformSpecularEnvSampler { -1 };
+	int32_t uniformbrdfLUT { -1 };
+	int32_t textureDiffuseEnvSampler { -1 };
+	int32_t textureSpecularEnvSampler { -1 };
+	int32_t texturebrdfLUT { -1 };
+
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightAmbient;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightDirection;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightRange;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightColor;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightIntensity;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightPosition;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightInnerConeCos;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightOuterConeCos;
+	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightType;
+
 
 	bool initialized;
 	bool isRunning;

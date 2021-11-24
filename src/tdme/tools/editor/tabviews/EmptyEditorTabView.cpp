@@ -38,7 +38,7 @@ EmptyEditorTabView::EmptyEditorTabView(EditorView* editorView, const string& tab
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true);
+	engine = Engine::createOffScreenInstance(512, 512, true, true, false);
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	Vector3 objectScale;

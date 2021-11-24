@@ -5,8 +5,6 @@ const float c_MinReflectance = 0.04;
 
 in vec3 v_Position;
 
-in mat3 v_TBN;
-
 #ifdef HAS_VERTEX_COLOR_VEC3
 in vec3 v_Color;
 #endif
@@ -38,26 +36,6 @@ vec4 getVertexColor()
 #endif
 
    return color;
-}
-
-// Find the normal for this fragment, pulling either from a predefined normal map
-// or from the interpolated mesh normal and tangent attributes.
-vec3 getNormal()
-{
-    vec2 UV = getNormalUV();
-
-    // Retrieve the tangent space matrix
-    mat3 tbn = v_TBN;
-
-    vec3 n;
-    if (u_NormalSamplerAvailable == 1) {
-        n = texture(u_NormalSampler, UV).rgb;
-        n = normalize(tbn * ((2.0 * n - 1.0) * vec3(u_NormalScale, u_NormalScale, 1.0)));
-    } else {
-        // The tbn matrix is linearly interpolated, so we need to re-normalize
-        n = normalize(tbn[2].xyz);
-    }
-    return n;
 }
 
 float getPerceivedBrightness(vec3 vector)

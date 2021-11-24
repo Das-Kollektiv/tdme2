@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 
 /**

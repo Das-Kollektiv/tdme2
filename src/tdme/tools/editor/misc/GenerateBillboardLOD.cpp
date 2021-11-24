@@ -59,7 +59,7 @@ Model* GenerateBillboardLOD::generateBillboardLOD(
 	const string& pathName,
 	const string& fileName
 ) {
-	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true);
+	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true, false);
 	osEngine->setPartition(new SimplePartition());
 	osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 	//

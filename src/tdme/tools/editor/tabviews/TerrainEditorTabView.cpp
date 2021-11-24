@@ -73,7 +73,7 @@ TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string&
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true);
+	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	{

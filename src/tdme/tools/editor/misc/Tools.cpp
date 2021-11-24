@@ -136,7 +136,7 @@ void Tools::setDefaultLight(Light* light)
 void Tools::oseInit()
 {
 	if (osEngine != nullptr) return;
-	osEngine = Engine::createOffScreenInstance(128, 128, false, true);
+	osEngine = Engine::createOffScreenInstance(128, 128, false, true, false);
 	osEngine->setPartition(new SimplePartition());
 	setDefaultLight(osEngine->getLightAt(0));
 }

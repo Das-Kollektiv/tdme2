@@ -1,5 +1,8 @@
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/GeometryBuffer.h>
@@ -57,11 +60,29 @@ void DeferredLightingRenderShader::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
 		"deferred_lighting_fragmentshader.frag",
-		"#define HAVE_DEPTH_FOG",
+		string() +
+		"#define HAVE_DEPTH_FOG" + "\n" +
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
-		)
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"tonemapping.inc.glsl"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"functions.inc.glsl"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"pbr_lighting.inc.glsl"
+		) +
+		"\n\n"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -97,7 +118,7 @@ void DeferredLightingRenderShader::initialize()
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
 	if (uniformDepthBufferTextureUnit == -1) return;
 
-	//	lights
+	//	specular lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		uniformSpecularLightEnabled[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) +"].enabled");
 		if (uniformSpecularLightEnabled[i] == -1) return;
@@ -129,6 +150,68 @@ void DeferredLightingRenderShader::initialize()
 	uniformCameraMatrix = renderer->getProgramUniformLocation(programId, "cameraMatrix");
 	if (uniformCameraMatrix == -1) return;
 
+	// PBR
+	uniformCamera = renderer->getProgramUniformLocation(programId, "u_Camera");
+	if (uniformCamera == -1) return;
+
+	//	lights
+	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
+		uniformPBRLightEnabled[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].enabled");
+		if (uniformPBRLightEnabled[i] == -1) return;
+		//uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].ambient");
+		//if (uniformLightAmbient[i] == -1) return;
+		uniformPBRLightDirection[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].direction");
+		if (uniformPBRLightDirection[i] == -1) return;
+		uniformPBRLightRange[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].range");
+		if (uniformPBRLightRange[i] == -1) return;
+		uniformPBRLightColor[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].color");
+		if (uniformPBRLightColor[i] == -1) return;
+		uniformPBRLightIntensity[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].intensity");
+		if (uniformPBRLightIntensity[i] == -1) return;
+		uniformPBRLightPosition[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].position");
+		if (uniformPBRLightPosition[i] == -1) return;
+		uniformPBRLightInnerConeCos[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].innerConeCos");
+		if (uniformPBRLightInnerConeCos[i] == -1) return;
+		uniformPBRLightOuterConeCos[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].outerConeCos");
+		if (uniformPBRLightOuterConeCos[i] == -1) return;
+		uniformPBRLightType[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].type");
+		if (uniformPBRLightType[i] == -1) return;
+	}
+
+	// 	IBL
+	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
+	if (uniformDiffuseEnvSampler == -1) return;
+	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
+	if (uniformSpecularEnvSampler == -1) return;
+	uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
+	if (uniformbrdfLUT == -1) return;
+
+	//
+	string environmentType = "studio_grey";
+	textureDiffuseEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-diffuse",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			renderer->getDefaultContext()
+		);
+	textureSpecularEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-specular",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			renderer->getDefaultContext()
+		);
+	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->getDefaultContext());
+
 	//
 	initialized = true;
 }
@@ -147,26 +230,56 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit4, 6);
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit5, 7);
 	renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 8);
-	int32_t uniformTerrainsTexturePixelWidth { -1 };
-	int32_t uniformTerrainsTexturePixelHeight { -1 };
+
+	// Specular
 	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
 		auto light = engine->getLightAt(lightId);
 		renderer->setProgramUniformInteger(context, uniformSpecularLightEnabled[lightId], light->isEnabled() == true?1:0);
-		if (light->isEnabled() == true) {
-			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightAmbient[lightId], light->getAmbient().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightDiffuse[lightId], light->getDiffuse().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightSpecular[lightId], light->getSpecular().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightPosition[lightId], light->getPosition().getArray());
-			renderer->setProgramUniformFloatVec3(context, uniformSpecularLightSpotDirection[lightId], light->getSpotDirection().getArray());
-			renderer->setProgramUniformFloat(context, uniformSpecularLightSpotExponent[lightId], light->getSpotExponent());
-			renderer->setProgramUniformFloat(context, uniformSpecularLightSpotCosCutoff[lightId], static_cast<float>(Math::cos(Math::PI / 180.0f * light->getSpotCutOff())));
-			renderer->setProgramUniformFloat(context, uniformSpecularLightConstantAttenuation[lightId], light->getConstantAttenuation());
-			renderer->setProgramUniformFloat(context, uniformSpecularLightLinearAttenuation[lightId], light->getLinearAttenuation());
-			renderer->setProgramUniformFloat(context, uniformSpecularLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
-			renderer->setProgramUniformFloat(context, uniformSpecularLightRadius[lightId], light->getRadius());
-		}
+		if (light->isEnabled() == false) continue;
+		renderer->setProgramUniformFloatVec4(context, uniformSpecularLightAmbient[lightId], light->getAmbient().getArray());
+		renderer->setProgramUniformFloatVec4(context, uniformSpecularLightDiffuse[lightId], light->getDiffuse().getArray());
+		renderer->setProgramUniformFloatVec4(context, uniformSpecularLightSpecular[lightId], light->getSpecular().getArray());
+		renderer->setProgramUniformFloatVec4(context, uniformSpecularLightPosition[lightId], light->getPosition().getArray());
+		renderer->setProgramUniformFloatVec3(context, uniformSpecularLightSpotDirection[lightId], light->getSpotDirection().getArray());
+		renderer->setProgramUniformFloat(context, uniformSpecularLightSpotExponent[lightId], light->getSpotExponent());
+		renderer->setProgramUniformFloat(context, uniformSpecularLightSpotCosCutoff[lightId], static_cast<float>(Math::cos(Math::PI / 180.0f * light->getSpotCutOff())));
+		renderer->setProgramUniformFloat(context, uniformSpecularLightConstantAttenuation[lightId], light->getConstantAttenuation());
+		renderer->setProgramUniformFloat(context, uniformSpecularLightLinearAttenuation[lightId], light->getLinearAttenuation());
+		renderer->setProgramUniformFloat(context, uniformSpecularLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
+		renderer->setProgramUniformFloat(context, uniformSpecularLightRadius[lightId], light->getRadius());
 	}
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
+
+	// PBR
+	renderer->setProgramUniformFloatVec3(context, uniformCamera, renderer->getCameraPosition().getArray());
+
+	//	IBL
+	renderer->setProgramUniformInteger(context, uniformDiffuseEnvSampler, 9);
+	renderer->setProgramUniformInteger(context, uniformSpecularEnvSampler, 10);
+	renderer->setProgramUniformInteger(context, uniformbrdfLUT, 11);
+	renderer->setTextureUnit(context, 9);
+	renderer->bindCubeMapTexture(context, textureDiffuseEnvSampler);
+	renderer->setTextureUnit(context, 10);
+	renderer->bindCubeMapTexture(context, textureSpecularEnvSampler);
+	renderer->setTextureUnit(context, 11);
+	renderer->bindCubeMapTexture(context, texturebrdfLUT);
+
+	//	lights
+	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
+		auto light = engine->getLightAt(lightId);
+		if (uniformPBRLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(context, uniformPBRLightEnabled[lightId], light->isEnabled() == true?1:0);
+		if (light->isEnabled() == false) continue;
+		auto& ambient = light->getAmbient().getArray();
+		auto& diffuse = light->getDiffuse().getArray();
+		auto& position = light->getPosition().getArray();
+		// renderer->setProgramUniformFloatVec3(context, uniformLightAmbient[lightId], {{ ambient[0], ambient[1], ambient[2] }});
+		renderer->setProgramUniformFloatVec3(context, uniformPBRLightDirection[lightId], light->getSpotDirection().getArray());
+		renderer->setProgramUniformFloat(context, uniformPBRLightRange[lightId], 0.0f);
+		renderer->setProgramUniformFloatVec3(context, uniformPBRLightColor[lightId], {{ diffuse[0], diffuse[1], diffuse[2] }});
+		renderer->setProgramUniformFloat(context, uniformPBRLightIntensity[lightId], 1.0f);
+		renderer->setProgramUniformFloatVec3(context, uniformPBRLightPosition[lightId],{{ position[0], position[1], position[2] }});
+		if (uniformPBRLightType[lightId] != -1) renderer->setProgramUniformInteger(context, uniformPBRLightType[lightId], 0);
+	}
 
 	//
 	isRunning = true;
@@ -174,6 +287,18 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 
 void DeferredLightingRenderShader::unUseProgram()
 {
+	auto context = renderer->getDefaultContext();
+	auto textureUnit = renderer->getTextureUnit(context);
+	// PBR
+	//	IBL
+	renderer->setTextureUnit(context, 9);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 10);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 11);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, textureUnit);
+
 	//
 	isRunning = false;
 }

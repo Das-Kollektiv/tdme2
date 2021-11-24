@@ -68,6 +68,6 @@ void main()
 	#endif
 
 	//
-	outColor = computePBRLighting(pbrMaterial);
+	outColor = computePBRLighting(v_Position, pbrMaterial);
 };
 

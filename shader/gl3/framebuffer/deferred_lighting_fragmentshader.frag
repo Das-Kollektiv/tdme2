@@ -33,31 +33,31 @@ out vec4 outColor;
 // main
 void main(void) {
 	outColor = vec4(1.0, 0.0, 0.0, 1.0);
-	vec4 shininessReflectionFragDepthType = texture(geometryBufferTextureId3, vsFragTextureUV).xyzw;
-	int type = int(shininessReflectionFragDepthType.w);
+	vec4 fragmentParameters = texture(geometryBufferTextureId3, vsFragTextureUV);
+	int type = int(fragmentParameters[3]);
 	#if defined(HAVE_DEPTH_FOG)
-		float fragDepth = shininessReflectionFragDepthType.z;
+		float fragDepth = fragmentParameters[2];
 		float fogStrength = 0.0;
 		if (fragDepth > FOG_DISTANCE_NEAR) {
 			fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
 		}
 	#endif
 	if (type == 0) {
+		// specular
 		#if defined(HAVE_DEPTH_FOG)
 			if (fogStrength < 1.0) {
 		#endif
 		SpecularMaterial specularMaterial;
-		specularMaterial.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
+		specularMaterial.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV);
 		if (specularMaterial.diffuse.a < 0.001) discard;
-		float fragDepth = shininessReflectionFragDepthType.z;
-		specularMaterial.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
-		specularMaterial.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
-		specularMaterial.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
-		specularMaterial.shininess = shininessReflectionFragDepthType.x;
-		specularMaterial.reflection = shininessReflectionFragDepthType.y;
+		specularMaterial.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV);
+		specularMaterial.specular = texture(colorBufferTextureUnit3, vsFragTextureUV);
+		specularMaterial.emission = texture(colorBufferTextureUnit4, vsFragTextureUV);
+		specularMaterial.shininess = fragmentParameters[0];
+		specularMaterial.reflection = fragmentParameters[1];
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 		vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
-		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
+		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV);
 		vec4 fragColor = specularMaterial.emission + computeSpecularLighting(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), specularMaterial);
 		outColor = clamp(fragColor * diffuse, 0.0, 1.0);
 		outColor.a = specularMaterial.diffuse.a;
@@ -66,7 +66,40 @@ void main(void) {
 		#endif
 	} else
 	if (type == 1) {
+		fogStrength = 0.00001; // TODO: fog
 		// pbr
+		PBRMaterial pbrMaterial;
+		pbrMaterial.metallicFactor = fragmentParameters[0];
+		pbrMaterial.roughnessFactor = fragmentParameters[1];
+		pbrMaterial.baseColorFactor = texture(colorBufferTextureUnit3, vsFragTextureUV);
+		pbrMaterial.exposure = fragmentParameters[2];
+		pbrMaterial.alphaCutoff = -1;
+		pbrMaterial.alphaCutoffEnabled = -1;
+		#ifdef MATERIAL_SPECULARGLOSSINESS
+			pbrMaterial.specularFactor = ...
+			pbrMaterial.diffuseFactor = ...
+			pbrMaterial.glossinessFactor = ...
+		#endif
+		pbrMaterial.normalSamplerAvailable = -1;
+		pbrMaterial.baseColorSamplerAvailable = -1;
+		pbrMaterial.metallicRoughnessSamplerAvailable = -1;
+		pbrMaterial.normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
+		#ifdef MATERIAL_SPECULARGLOSSINESS
+			pbrMaterial.specularGlossinessColor = ...
+		#endif
+		#ifdef HAS_DIFFUSE_MAP
+			pbrMaterial.diffuseColor = ...
+		#endif
+		pbrMaterial.vertexColor = vec4(1.0, 1.0, 1.0, 1.0);
+		pbrMaterial.metallicRoughnessColor = texture(colorBufferTextureUnit2, vsFragTextureUV);
+		pbrMaterial.baseColor = texture(colorBufferTextureUnit1, vsFragTextureUV);
+		#ifdef DEBUG_NORMAL
+			pbrMaterial.normalColor = ...
+		#endif
+
+		//
+		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
+		outColor = computePBRLighting(position, pbrMaterial);
 	}
 	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	#if defined(HAVE_DEPTH_FOG)

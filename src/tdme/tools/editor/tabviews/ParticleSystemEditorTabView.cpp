@@ -98,7 +98,7 @@ ParticleSystemEditorTabView::ParticleSystemEditorTabView(EditorView* editorView,
 	this->popUps = editorView->getPopUps();
 	this->prototype = prototype;
 	this->audio = Audio::getInstance();
-	this->engine = Engine::createOffScreenInstance(512, 512, true, true);
+	this->engine = Engine::createOffScreenInstance(512, 512, true, true, true);
 	this->engine->setShadowMapLightEyeDistanceScale(0.1f);
 	this->engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	this->cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);

@@ -11,6 +11,7 @@ namespace lighting {
 	class DeferredLightingShaderTerrainImplementation;
 	class DeferredLightingShaderTerrainEditorImplementation;
 	class DeferredLightingShaderTreeImplementation;
+	class DeferredLightingShaderPBRDefaultImplementation;
 	class LightingShader;
 	struct LightingShaderConstants;
 	struct LightingShaderImplementation;

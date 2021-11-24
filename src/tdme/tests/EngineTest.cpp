@@ -230,7 +230,7 @@ void EngineTest::initialize()
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
 	if (osEngine == nullptr) {
-		osEngine = Engine::createOffScreenInstance(512, 512, false, true);
+		osEngine = Engine::createOffScreenInstance(512, 512, false, true, false);
 		auto osLight0 = osEngine->getLightAt(0);
 		osLight0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		osLight0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));

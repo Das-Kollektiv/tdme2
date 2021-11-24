@@ -90,6 +90,10 @@ struct MaterialInfo
 // Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
 // See our README.md on Environment Maps [3] for additional discussion.
 #ifdef USE_IBL
+uniform samplerCube u_DiffuseEnvSampler;
+uniform samplerCube u_SpecularEnvSampler;
+uniform sampler2D u_brdfLUT;
+
 vec3 getIBLContribution(MaterialInfo materialInfo, vec3 n, vec3 v)
 {
     float NdotV = clamp(dot(n, v), 0.0, 1.0);
@@ -226,18 +230,18 @@ vec3 applyDirectionalLight(PBRLight light, MaterialInfo materialInfo, vec3 norma
     return light.intensity * light.color * shade;
 }
 
-vec3 applyPointLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3 view)
+vec3 applyPointLight(PBRLight light, MaterialInfo materialInfo, vec3 position, vec3 normal, vec3 view)
 {
-    vec3 pointToLight = light.position - v_Position;
+    vec3 pointToLight = light.position - position;
     float distance = length(pointToLight);
     float attenuation = getRangeAttenuation(light.range, distance);
     vec3 shade = getPointShade(pointToLight, materialInfo, normal, view);
     return attenuation * light.intensity * light.color * shade;
 }
 
-vec3 applySpotLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3 view)
+vec3 applySpotLight(PBRLight light, MaterialInfo materialInfo, vec3 position, vec3 normal, vec3 view)
 {
-    vec3 pointToLight = light.position - v_Position;
+    vec3 pointToLight = light.position - position;
     float distance = length(pointToLight);
     float rangeAttenuation = getRangeAttenuation(light.range, distance);
     float spotAttenuation = getSpotAttenuation(pointToLight, light.direction, light.outerConeCos, light.innerConeCos);
@@ -245,7 +249,7 @@ vec3 applySpotLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3
     return rangeAttenuation * spotAttenuation * light.intensity * light.color * shade;
 }
 
-vec4 computePBRLighting(in PBRMaterial pbrMaterial)
+vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
 {
     // resulting fragment color
     vec4 outColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -346,7 +350,7 @@ vec4 computePBRLighting(in PBRMaterial pbrMaterial)
 
     vec3 color = vec3(0.0, 0.0, 0.0);
     vec3 normal = pbrMaterial.normal;
-    vec3 view = normalize(u_Camera - v_Position);
+    vec3 view = normalize(u_Camera - position);
 
 #ifdef USE_PUNCTUAL
     for (int i = 0; i < LIGHT_COUNT; ++i)
@@ -361,11 +365,11 @@ vec4 computePBRLighting(in PBRMaterial pbrMaterial)
         }
         else if (light.type == LightType_Point)
         {
-            color += applyPointLight(light, materialInfo, normal, view);
+            color += applyPointLight(light, materialInfo, position, normal, view);
         }
         else if (light.type == LightType_Spot)
         {
-            color += applySpotLight(light, materialInfo, normal, view);
+            color += applySpotLight(light, materialInfo, position, normal, view);
         }
     }
 #endif

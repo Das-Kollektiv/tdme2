@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
@@ -13,7 +14,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::EntityShaderParameters;

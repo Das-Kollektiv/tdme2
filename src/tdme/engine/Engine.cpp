@@ -328,7 +328,7 @@ Engine::~Engine() {
 	if (currentEngine == this) currentEngine = nullptr;
 }
 
-Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer)
+Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer)
 {
 	if (instance == nullptr || instance->initialized == false) {
 		Console::println(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
@@ -357,6 +357,11 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
+	}
+	// geometry buffer
+	if (enableGeometryBuffer == true) {
+		offScreenEngine->geometryBuffer = new GeometryBuffer(width, height);
+		offScreenEngine->geometryBuffer->initialize();
 	}
 	//
 	offScreenEngine->reshape(width, height);

@@ -826,9 +826,10 @@ public:
 	 * @param height height
 	 * @param enableShadowMapping enable shadow mapping
 	 * @param enableDepthBuffer enable depth buffer
+	 * @param enableDepthBuffer enable geometry buffer
 	 * @return off screen engine
 	 */
-	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer = true);
+	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer);
 
 	/**
 	 * @return if initialized and ready to be used

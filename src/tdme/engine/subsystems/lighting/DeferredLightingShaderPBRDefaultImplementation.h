@@ -15,14 +15,14 @@ using tdme::engine::subsystems::renderer::Renderer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation: public LightingShaderPBRBaseImplementation
+class tdme::engine::subsystems::lighting::DeferredLightingShaderPBRDefaultImplementation: public LightingShaderPBRBaseImplementation
 {
 public:
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	LightingShaderPBRDefaultImplementation(Renderer* renderer);
+	DeferredLightingShaderPBRDefaultImplementation(Renderer* renderer);
 
 	/**
 	 * @return if supported by renderer
