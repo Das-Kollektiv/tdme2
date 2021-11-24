@@ -2,16 +2,6 @@
 
 {$DEFINITIONS}
 
-// TODO: maybe move me into definitions
-struct Material {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 emission;
-	float shininess;
-	float reflection;
-};
-
 // uniforms
 uniform mat4 cameraMatrix;
 uniform sampler2D geometryBufferTextureId1;
@@ -56,21 +46,21 @@ void main(void) {
 		#if defined(HAVE_DEPTH_FOG)
 			if (fogStrength < 1.0) {
 		#endif
-		Material material;
-		material.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
-		if (material.diffuse.a < 0.001) discard;
+		SpecularMaterial specularMaterial;
+		specularMaterial.diffuse = texture(colorBufferTextureUnit2, vsFragTextureUV).rgba;
+		if (specularMaterial.diffuse.a < 0.001) discard;
 		float fragDepth = shininessReflectionFragDepthType.z;
-		material.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
-		material.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
-		material.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
-		material.shininess = shininessReflectionFragDepthType.x;
-		material.reflection = shininessReflectionFragDepthType.y;
+		specularMaterial.ambient = texture(colorBufferTextureUnit1, vsFragTextureUV).rgba;
+		specularMaterial.specular = texture(colorBufferTextureUnit3, vsFragTextureUV).rgba;
+		specularMaterial.emission = texture(colorBufferTextureUnit4, vsFragTextureUV).rgba;
+		specularMaterial.shininess = shininessReflectionFragDepthType.x;
+		specularMaterial.reflection = shininessReflectionFragDepthType.y;
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 		vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
 		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV).rgba;
-		vec4 fragColor = material.emission + computeSpecularLighting(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), material);
+		vec4 fragColor = specularMaterial.emission + computeSpecularLighting(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), specularMaterial);
 		outColor = clamp(fragColor * diffuse, 0.0, 1.0);
-		outColor.a = material.diffuse.a;
+		outColor.a = specularMaterial.diffuse.a;
 		#if defined(HAVE_DEPTH_FOG)
 			}
 		#endif

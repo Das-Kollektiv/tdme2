@@ -94,27 +94,27 @@ void LightingShaderBaseImplementation::initialize()
 	uniformCameraPosition = renderer->getProgramUniformLocation(programId, "cameraPosition");
 
 	//	material
-	uniformMaterialAmbient = renderer->getProgramUniformLocation(programId, "material.ambient");
-	uniformMaterialDiffuse = renderer->getProgramUniformLocation(programId, "material.diffuse");
-	uniformMaterialSpecular = renderer->getProgramUniformLocation(programId, "material.specular");
-	uniformMaterialEmission = renderer->getProgramUniformLocation(programId, "material.emission");
-	uniformMaterialShininess = renderer->getProgramUniformLocation(programId, "material.shininess");
-	uniformMaterialReflection = renderer->getProgramUniformLocation(programId, "material.reflection");
+	uniformMaterialAmbient = renderer->getProgramUniformLocation(programId, "specularMaterial.ambient");
+	uniformMaterialDiffuse = renderer->getProgramUniformLocation(programId, "specularMaterial.diffuse");
+	uniformMaterialSpecular = renderer->getProgramUniformLocation(programId, "specularMaterial.specular");
+	uniformMaterialEmission = renderer->getProgramUniformLocation(programId, "specularMaterial.emission");
+	uniformMaterialShininess = renderer->getProgramUniformLocation(programId, "specularMaterial.shininess");
+	uniformMaterialReflection = renderer->getProgramUniformLocation(programId, "specularMaterial.reflection");
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId,"lights[" + to_string(i) + "].ambient");
-		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].diffuse");
-		uniformLightSpecular[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].specular");
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].position");
-		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotDirection");
-		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotExponent");
-		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotCosCutoff");
-		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].constantAttenuation");
-		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].linearAttenuation");
-		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
-		uniformLightRadius[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].radius");
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) +"].enabled");
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId,"specularLights[" + to_string(i) + "].ambient");
+		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].diffuse");
+		uniformLightSpecular[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].specular");
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].position");
+		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotDirection");
+		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotExponent");
+		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotCosCutoff");
+		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].constantAttenuation");
+		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].linearAttenuation");
+		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].quadraticAttenuation");
+		uniformLightRadius[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].radius");
 	}
 
 	uniformMaterialReflectionFragmentShader = renderer->getProgramUniformLocation(programId, "materialReflection");

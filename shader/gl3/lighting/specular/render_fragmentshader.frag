@@ -1,20 +1,10 @@
 #version 330 core
 
-// TODO: maybe move me into definitions
-struct Material {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 emission;
-	float shininess;
-	float reflection;
-};
-
 {$DEFINITIONS}
 
 {$FUNCTIONS}
 
-uniform Material material;
+uniform SpecularMaterial specularMaterial;
 
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
@@ -33,7 +23,7 @@ uniform vec3 cameraPosition;
 	uniform sampler2D normalTextureUnit;
 	uniform int normalTextureAvailable;
 
-	// material shininess
+	// specularMaterial shininess
 	float materialShininess;
 #endif
 
@@ -112,16 +102,16 @@ void main(void) {
 
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
-	fragColor+= clamp(material.emission, 0.0, 1.0);
+	fragColor+= clamp(specularMaterial.emission, 0.0, 1.0);
 
 	#if defined(HAVE_SOLID_SHADING)
-		fragColor+= material.ambient;
+		fragColor+= specularMaterial.ambient;
 		// no op
 	#else
 		vec3 normal = vsNormal;
 
 		// specular
-		materialShininess = material.shininess;
+		materialShininess = specularMaterial.shininess;
 		if (specularTextureAvailable == 1) {
 			vec3 specularTextureValue = texture(specularTextureUnit, fragTextureUV).rgb;
 			materialShininess =
@@ -140,24 +130,24 @@ void main(void) {
 		}
 
 		// compute lights
-		fragColor+= computeSpecularLighting(normal, vsPosition, vsEyeDirection, material);
+		fragColor+= computeSpecularLighting(normal, vsPosition, vsEyeDirection, specularMaterial);
 
 		// reflection
 		#if defined(HAVE_WATER_SHADER)
 		#else
-			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+			if (specularMaterial.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
 				vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normal);
 				#if defined(HAVE_VULKAN)
 					reflectionVector*= vec3(1.0, -1.0, 1.0);
 				#endif
-				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
+				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * specularMaterial.reflection;
 			}
 		#endif
 	#endif
 
 	// take effect colors into account
 	fragColor*= vsEffectColorMul;
-	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
+	fragColor.a = specularMaterial.diffuse.a * vsEffectColorMul.a;
 
 	#if defined(HAVE_DEPTH_FOG)
 		float fogStrength = 0.0;

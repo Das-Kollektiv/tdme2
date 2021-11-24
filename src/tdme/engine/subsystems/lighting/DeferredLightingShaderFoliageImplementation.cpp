@@ -38,16 +38,16 @@ void DeferredLightingShaderFoliageImplementation::initialize()
 
 	// lighting
 	//	fragment shader
-	renderLightingFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"defer_fragmentshader.frag",
 		"#define HAVE_DEPTH_FOG"
 	);
-	if (renderLightingFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	//	vertex shader
-	renderLightingVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
@@ -67,12 +67,12 @@ void DeferredLightingShaderFoliageImplementation::initialize()
 			"create_foliage_transform_matrix.inc.glsl"
 		)
 	);
-	if (renderLightingVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();

@@ -2,8 +2,10 @@
 
 {$DEFINITIONS}
 
+{$FUNCTIONS}
+
 // TODO: maybe move me into definitions
-struct Material {
+struct SpecularMaterial {
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
@@ -12,9 +14,7 @@ struct Material {
 	float reflection;
 };
 
-{$FUNCTIONS}
-
-uniform Material material;
+uniform SpecularMaterial specularMaterial;
 
 // passed from vertex shader
 in vec2 vsFragTextureUV;
@@ -49,7 +49,7 @@ in vec3 vsEyeDirection;
 	uniform sampler2D normalTextureUnit;
 	uniform int normalTextureAvailable;
 
-	// material shininess
+	// specularMaterial shininess
 	float materialShininess;
 #endif
 
@@ -76,7 +76,7 @@ void main(void) {
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 diffuseTextureColor = vec4(0.0, 0.0, 0.0, 1.0);
 		#define normal terrainNormal
-		#define materialShininess material.shininess
+		#define materialShininess specularMaterial.shininess
 		#if defined(HAVE_DEPTH_FOG)
 			float fogStrength = 0.0;
 			if (fragDepth > FOG_DISTANCE_NEAR) {
@@ -129,7 +129,7 @@ void main(void) {
 		}
 
 		// specular
-		materialShininess = material.shininess;
+		materialShininess = specularMaterial.shininess;
 		if (specularTextureAvailable == 1) {
 			vec3 specularTextureValue = texture(specularTextureUnit, fragTextureUV).rgb;
 			materialShininess =
@@ -153,9 +153,9 @@ void main(void) {
 	outPosition = vsPosition;
 	outNormal = normal;
 	#if defined(HAVE_DEPTH_FOG)
-		outMaterialShininessReflectionFragDepthType = vec4(materialShininess, material.reflection, fragDepth, 0.0);
+		outMaterialShininessReflectionFragDepthType = vec4(materialShininess, specularMaterial.reflection, fragDepth, 0.0);
 	#else
-		outMaterialShininessReflectionFragDepthType = vec4(materialShininess, material.reflection, 0.0, 0.0);
+		outMaterialShininessReflectionFragDepthType = vec4(materialShininess, specularMaterial.reflection, 0.0, 0.0);
 	#endif
 	#if defined(HAVE_SOLID_SHADING)
 		outMaterialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
@@ -163,10 +163,10 @@ void main(void) {
 		outMaterialSpecular = vec4(0.0, 0.0, 0.0, 1.0);;
 		outMaterialEmission = vsEffectColorAdd;
 	#else
-		outMaterialAmbient = material.ambient;
-		outMaterialDiffuse = material.diffuse;
-		outMaterialSpecular = material.specular;
-		outMaterialEmission = material.emission + vsEffectColorAdd;
+		outMaterialAmbient = specularMaterial.ambient;
+		outMaterialDiffuse = specularMaterial.diffuse;
+		outMaterialSpecular = specularMaterial.specular;
+		outMaterialEmission = specularMaterial.emission + vsEffectColorAdd;
 	#endif
 	outDiffuse = diffuseTextureColor * vsEffectColorMul;
 

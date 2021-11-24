@@ -38,18 +38,18 @@ private:
 	int32_t uniformColorBufferTextureUnit5 { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
 
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpecular;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotDirection;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotExponent;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotCosCutoff;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightRadius;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightAmbient;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightDiffuse;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightSpecular;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightPosition;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightSpotDirection;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightSpotExponent;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightSpotCosCutoff;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightConstantAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightLinearAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightQuadraticAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightRadius;
 	int32_t uniformCameraMatrix { -1 };
 
 	bool initialized;

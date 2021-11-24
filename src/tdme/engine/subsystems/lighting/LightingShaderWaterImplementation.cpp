@@ -45,7 +45,7 @@ void LightingShaderWaterImplementation::initialize()
 
 	// lighting
 	//	vertex shader
-	renderLightingVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
@@ -55,10 +55,10 @@ void LightingShaderWaterImplementation::initialize()
 			"water.inc.glsl"
 		)
 	);
-	if (renderLightingVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
 	//	fragment shader
-	renderLightingFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.frag",
@@ -68,12 +68,12 @@ void LightingShaderWaterImplementation::initialize()
 			"specular_lighting.inc.glsl"
 		)
 	);
-	if (renderLightingFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();

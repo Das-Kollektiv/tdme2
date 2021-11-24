@@ -99,30 +99,30 @@ void DeferredLightingRenderShader::initialize()
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
-		if (uniformLightEnabled[i] == -1) return;
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId,"lights[" + to_string(i) + "].ambient");
-		if (uniformLightAmbient[i] == -1) return;
-		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].diffuse");
-		if (uniformLightDiffuse[i] == -1) return;
-		uniformLightSpecular[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].specular");
-		if (uniformLightSpecular[i] == -1) return;
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].position");
-		if (uniformLightPosition[i] == -1) return;
-		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotDirection");
-		if (uniformLightSpotDirection[i] == -1) return;
-		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotExponent");
-		if (uniformLightSpotExponent[i] == -1) return;
-		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotCosCutoff");
-		if (uniformLightSpotCosCutoff[i] == -1) return;
-		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].constantAttenuation");
-		if (uniformLightConstantAttenuation[i] == -1) return;
-		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].linearAttenuation");
-		if (uniformLightLinearAttenuation[i] == -1) return;
-		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
-		if (uniformLightQuadraticAttenuation[i] == -1) return;
-		uniformLightRadius[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].radius");
-		if (uniformLightRadius[i] == -1) return;
+		uniformSpecularLightEnabled[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) +"].enabled");
+		if (uniformSpecularLightEnabled[i] == -1) return;
+		uniformSpecularLightAmbient[i] = renderer->getProgramUniformLocation(programId,"specularLights[" + to_string(i) + "].ambient");
+		if (uniformSpecularLightAmbient[i] == -1) return;
+		uniformSpecularLightDiffuse[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].diffuse");
+		if (uniformSpecularLightDiffuse[i] == -1) return;
+		uniformSpecularLightSpecular[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].specular");
+		if (uniformSpecularLightSpecular[i] == -1) return;
+		uniformSpecularLightPosition[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].position");
+		if (uniformSpecularLightPosition[i] == -1) return;
+		uniformSpecularLightSpotDirection[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotDirection");
+		if (uniformSpecularLightSpotDirection[i] == -1) return;
+		uniformSpecularLightSpotExponent[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotExponent");
+		if (uniformSpecularLightSpotExponent[i] == -1) return;
+		uniformSpecularLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].spotCosCutoff");
+		if (uniformSpecularLightSpotCosCutoff[i] == -1) return;
+		uniformSpecularLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].constantAttenuation");
+		if (uniformSpecularLightConstantAttenuation[i] == -1) return;
+		uniformSpecularLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].linearAttenuation");
+		if (uniformSpecularLightLinearAttenuation[i] == -1) return;
+		uniformSpecularLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].quadraticAttenuation");
+		if (uniformSpecularLightQuadraticAttenuation[i] == -1) return;
+		uniformSpecularLightRadius[i] = renderer->getProgramUniformLocation(programId, "specularLights[" + to_string(i) + "].radius");
+		if (uniformSpecularLightRadius[i] == -1) return;
 	}
 
 	//	camera matrix
@@ -151,19 +151,19 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 	int32_t uniformTerrainsTexturePixelHeight { -1 };
 	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
 		auto light = engine->getLightAt(lightId);
-		renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light->isEnabled() == true?1:0);
+		renderer->setProgramUniformInteger(context, uniformSpecularLightEnabled[lightId], light->isEnabled() == true?1:0);
 		if (light->isEnabled() == true) {
-			renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light->getAmbient().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformLightDiffuse[lightId], light->getDiffuse().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformLightSpecular[lightId], light->getSpecular().getArray());
-			renderer->setProgramUniformFloatVec4(context, uniformLightPosition[lightId], light->getPosition().getArray());
-			renderer->setProgramUniformFloatVec3(context, uniformLightSpotDirection[lightId], light->getSpotDirection().getArray());
-			renderer->setProgramUniformFloat(context, uniformLightSpotExponent[lightId], light->getSpotExponent());
-			renderer->setProgramUniformFloat(context, uniformLightSpotCosCutoff[lightId], static_cast<float>(Math::cos(Math::PI / 180.0f * light->getSpotCutOff())));
-			renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], light->getConstantAttenuation());
-			renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], light->getLinearAttenuation());
-			renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
-			renderer->setProgramUniformFloat(context, uniformLightRadius[lightId], light->getRadius());
+			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightAmbient[lightId], light->getAmbient().getArray());
+			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightDiffuse[lightId], light->getDiffuse().getArray());
+			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightSpecular[lightId], light->getSpecular().getArray());
+			renderer->setProgramUniformFloatVec4(context, uniformSpecularLightPosition[lightId], light->getPosition().getArray());
+			renderer->setProgramUniformFloatVec3(context, uniformSpecularLightSpotDirection[lightId], light->getSpotDirection().getArray());
+			renderer->setProgramUniformFloat(context, uniformSpecularLightSpotExponent[lightId], light->getSpotExponent());
+			renderer->setProgramUniformFloat(context, uniformSpecularLightSpotCosCutoff[lightId], static_cast<float>(Math::cos(Math::PI / 180.0f * light->getSpotCutOff())));
+			renderer->setProgramUniformFloat(context, uniformSpecularLightConstantAttenuation[lightId], light->getConstantAttenuation());
+			renderer->setProgramUniformFloat(context, uniformSpecularLightLinearAttenuation[lightId], light->getLinearAttenuation());
+			renderer->setProgramUniformFloat(context, uniformSpecularLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
+			renderer->setProgramUniformFloat(context, uniformSpecularLightRadius[lightId], light->getRadius());
 		}
 	}
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());

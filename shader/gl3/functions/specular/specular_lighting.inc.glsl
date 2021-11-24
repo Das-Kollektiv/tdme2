@@ -39,7 +39,16 @@
 *                                                                       *
 ************************************************************************/
 
-struct Light {
+struct SpecularMaterial {
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 emission;
+	float shininess;
+	float reflection;
+};
+
+struct SpecularLight {
 	int enabled;
 	vec4 ambient;
 	vec4 diffuse;
@@ -57,11 +66,11 @@ struct Light {
 #define FALSE		0
 #define MAX_LIGHTS	8
 
-uniform Light lights[MAX_LIGHTS];
+uniform SpecularLight specularLights[MAX_LIGHTS];
 
 //
-vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
-	vec3 lightDirection = lights[i].position.xyz - position.xyz;
+vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial specularMaterial) {
+	vec3 lightDirection = specularLights[i].position.xyz - position.xyz;
 	float lightDistance = length(lightDirection);
 	lightDirection = normalize(lightDirection);
 	vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
@@ -70,16 +79,16 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 	float lightAttenuation =
 		1.0 /
 		(
-			lights[i].constantAttenuation +
-			lights[i].linearAttenuation * lightDistance +
-			lights[i].quadraticAttenuation * lightDistance * lightDistance
+			specularLights[i].constantAttenuation +
+			specularLights[i].linearAttenuation * lightDistance +
+			specularLights[i].quadraticAttenuation * lightDistance * lightDistance
 		);
 
 	// see if point on surface is inside cone of illumination
-	float lightSpotDot = dot(-lightDirection, normalize(lights[i].spotDirection));
+	float lightSpotDot = dot(-lightDirection, normalize(specularLights[i].spotDirection));
 	float lightSpotAttenuation = 0.0;
-	if (lightSpotDot >= lights[i].spotCosCutoff) {
-		lightSpotAttenuation = pow(lightSpotDot, lights[i].spotExponent);
+	if (lightSpotDot >= specularLights[i].spotCosCutoff) {
+		lightSpotAttenuation = pow(lightSpotDot, specularLights[i].spotExponent);
 	}
 
 	// Combine the spotlight and distance attenuation.
@@ -87,21 +96,21 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 
 	// add color components to fragment color
 	return
-		clamp(lights[i].ambient * inMaterial.ambient, 0.0, 1.0) +
-		clamp(lights[i].diffuse * inMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-		clamp(lights[i].specular * inMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * inMaterial.shininess) * lightAttenuation, 0.0, 1.0);
+		clamp(specularLights[i].ambient * specularMaterial.ambient, 0.0, 1.0) +
+		clamp(specularLights[i].diffuse * specularMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
+		clamp(specularLights[i].specular * specularMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * specularMaterial.shininess) * lightAttenuation, 0.0, 1.0);
 }
 
 //
-vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in Material inMaterial) {
+vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial specularMaterial) {
 	vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		// skip on disabled lights
-		if (lights[i].enabled == FALSE || (lights[i].radius > 0.0 && length(lights[i].position.xyz - position.xyz) > lights[i].radius)) continue;
+		// skip on disabled specularLights
+		if (specularLights[i].enabled == FALSE || (specularLights[i].radius > 0.0 && length(specularLights[i].position.xyz - position.xyz) > specularLights[i].radius)) continue;
 
 		// compute light
-		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, inMaterial);
+		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, specularMaterial);
 	}
 	//
 	return fragColor;
