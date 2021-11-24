@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.h>
+#include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.h>
 
 #include <string>
 
@@ -6,47 +6,48 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::string;
 using std::to_string;
 
+using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRFoliageImplementation;
+
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderPBRTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
-using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderPBRTreeImplementation::isSupported(Renderer* renderer) {
-	return renderer->isPBRAvailable();
+bool DeferredLightingShaderPBRFoliageImplementation::isSupported(Renderer* renderer) {
+	return renderer->isDeferredShadingAvailable() == true;
 }
 
-LightingShaderPBRTreeImplementation::LightingShaderPBRTreeImplementation(Renderer* renderer): LightingShaderPBRBaseImplementation(renderer)
+DeferredLightingShaderPBRFoliageImplementation::DeferredLightingShaderPBRFoliageImplementation(Renderer* renderer): LightingShaderPBRBaseImplementation(renderer)
 {
 }
 
-const string LightingShaderPBRTreeImplementation::getId() {
-	return "pbr-tree";
+const string DeferredLightingShaderPBRFoliageImplementation::getId() {
+	return "defer_pbr-foliage";
 }
 
-void LightingShaderPBRTreeImplementation::initialize()
+void DeferredLightingShaderPBRFoliageImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
-	//	vertex shader
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
-		"#define HAVE_TREE\n",
+		string() +
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n" +
+		"#define HAVE_FOLIAGE\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"
@@ -59,8 +60,8 @@ void LightingShaderPBRTreeImplementation::initialize()
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_tree_transform_matrix.inc.glsl"
-		) + "\n\n"
+			"create_foliage_transform_matrix.inc.glsl"
+		)
 	);
 	if (vertexShaderId == 0) return;
 
@@ -68,7 +69,7 @@ void LightingShaderPBRTreeImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
-		"render_fragmentshader.frag",
+		"defer_fragmentshader.frag",
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/pbr",
@@ -90,7 +91,6 @@ void LightingShaderPBRTreeImplementation::initialize()
 			"pbr_lighting.inc.glsl"
 		) +
 		"\n\n"
-
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -105,28 +105,17 @@ void LightingShaderPBRTreeImplementation::initialize()
 	//
 	if (initialized == false) return;
 
-	//
-	initialized = false;
-
 	// uniforms
-	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
-	if (uniformSpeed == -1) return;
 	uniformTime = renderer->getProgramUniformLocation(programId, "time");
-	if (uniformTime == -1) return;
-
-	//
-	initialized = true;
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
+	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
 }
 
-void LightingShaderPBRTreeImplementation::registerShader() {
-	Engine::registerShader(
-		Engine::ShaderType::SHADERTYPE_OBJECT3D,
-		getId(),
-		{{ "speed", ShaderParameter(1.0f) }}
-	);
+void DeferredLightingShaderPBRFoliageImplementation::registerShader() {
 }
 
-void LightingShaderPBRTreeImplementation::useProgram(Engine* engine, void* context)
+void DeferredLightingShaderPBRFoliageImplementation::useProgram(Engine* engine, void* context)
 {
 	LightingShaderPBRBaseImplementation::useProgram(engine, context);
 
@@ -134,7 +123,9 @@ void LightingShaderPBRTreeImplementation::useProgram(Engine* engine, void* conte
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
-void LightingShaderPBRTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void DeferredLightingShaderPBRFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 	auto& shaderParameters = renderer->getShaderParameters(context);
 	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
 }

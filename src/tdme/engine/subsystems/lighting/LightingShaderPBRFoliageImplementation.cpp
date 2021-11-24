@@ -102,6 +102,9 @@ void LightingShaderPBRFoliageImplementation::initialize()
 	LightingShaderPBRBaseImplementation::initialize();
 
 	//
+	if (initialized == false) return;
+
+	//
 	initialized = false;
 
 	// uniforms

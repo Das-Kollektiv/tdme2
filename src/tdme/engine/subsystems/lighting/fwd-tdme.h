@@ -7,11 +7,13 @@ namespace subsystems {
 namespace lighting {
 	class DeferredLightingShaderDefaultImplementation;
 	class DeferredLightingShaderFoliageImplementation;
+	class DeferredLightingShaderPBRDefaultImplementation;
+	class DeferredLightingShaderPBRFoliageImplementation;
+	class DeferredLightingShaderPBRTreeImplementation;
 	class DeferredLightingShaderSkyImplementation;
 	class DeferredLightingShaderTerrainImplementation;
 	class DeferredLightingShaderTerrainEditorImplementation;
 	class DeferredLightingShaderTreeImplementation;
-	class DeferredLightingShaderPBRDefaultImplementation;
 	class LightingShader;
 	struct LightingShaderConstants;
 	struct LightingShaderImplementation;
