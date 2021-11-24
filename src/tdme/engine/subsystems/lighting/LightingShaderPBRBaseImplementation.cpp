@@ -77,24 +77,24 @@ void LightingShaderPBRBaseImplementation::initialize()
 	uniformViewProjectionMatrix = renderer->getProgramUniformLocation(programId, "u_ViewProjectionMatrix");
 	if (uniformViewProjectionMatrix == -1) return;
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].enabled");
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].enabled");
 		if (uniformLightEnabled[i] == -1) return;
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].ambient");
-		uniformLightDirection[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].direction");
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].ambient");
+		uniformLightDirection[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].direction");
 		if (uniformLightDirection[i] == -1) return;
-		uniformLightRange[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].range");
+		uniformLightRange[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].range");
 		if (uniformLightRange[i] == -1) return;
-		uniformLightColor[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].color");
+		uniformLightColor[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].color");
 		if (uniformLightColor[i] == -1) return;
-		uniformLightIntensity[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].intensity");
+		uniformLightIntensity[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].intensity");
 		if (uniformLightIntensity[i] == -1) return;
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].position");
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].position");
 		if (uniformLightPosition[i] == -1) return;
-		uniformLightInnerConeCos[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].innerConeCos");
+		uniformLightInnerConeCos[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].innerConeCos");
 		if (uniformLightInnerConeCos[i] == -1) return;
-		uniformLightOuterConeCos[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].outerConeCos");
+		uniformLightOuterConeCos[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].outerConeCos");
 		if (uniformLightOuterConeCos[i] == -1) return;
-		uniformLightType[i] = renderer->getProgramUniformLocation(programId, "u_Lights[" + to_string(i) + "].type");
+		uniformLightType[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].type");
 		if (uniformLightType[i] == -1) return;
 	}
 

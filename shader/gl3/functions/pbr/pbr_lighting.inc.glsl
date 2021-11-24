@@ -15,7 +15,7 @@
 // KHR_lights_punctual extension.
 // see https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
 
-struct Light
+struct PBRLight
 {
     int enabled;
 
@@ -37,10 +37,10 @@ const int LightType_Point = 1;
 const int LightType_Spot = 2;
 
 #ifdef USE_PUNCTUAL
-uniform Light u_Lights[LIGHT_COUNT];
+uniform PBRLight u_PBRLights[LIGHT_COUNT];
 #endif
 
-struct MaterialProperties {
+struct PBRMaterial {
 	float metallicFactor;
 	float roughnessFactor;
 	vec4 baseColorFactor;
@@ -86,7 +86,7 @@ struct MaterialInfo
     vec3 specularColor;           // color contribution from specular lighting
 };
 
-// Calculation of the lighting contribution from an optional Image Based Light source.
+// Calculation of the lighting contribution from an optional Image Based PBRLight source.
 // Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
 // See our README.md on Environment Maps [3] for additional discussion.
 #ifdef USE_IBL
@@ -219,14 +219,14 @@ float getSpotAttenuation(vec3 pointToLight, vec3 spotDirection, float outerConeC
     return 0.0;
 }
 
-vec3 applyDirectionalLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 view)
+vec3 applyDirectionalLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3 view)
 {
     vec3 pointToLight = -light.direction;
     vec3 shade = getPointShade(pointToLight, materialInfo, normal, view);
     return light.intensity * light.color * shade;
 }
 
-vec3 applyPointLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 view)
+vec3 applyPointLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3 view)
 {
     vec3 pointToLight = light.position - v_Position;
     float distance = length(pointToLight);
@@ -235,7 +235,7 @@ vec3 applyPointLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 v
     return attenuation * light.intensity * light.color * shade;
 }
 
-vec3 applySpotLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 view)
+vec3 applySpotLight(PBRLight light, MaterialInfo materialInfo, vec3 normal, vec3 view)
 {
     vec3 pointToLight = light.position - v_Position;
     float distance = length(pointToLight);
@@ -245,7 +245,7 @@ vec3 applySpotLight(Light light, MaterialInfo materialInfo, vec3 normal, vec3 vi
     return rangeAttenuation * spotAttenuation * light.intensity * light.color * shade;
 }
 
-vec4 computePBRLighting(in MaterialProperties materialProperties)
+vec4 computePBRLighting(in PBRMaterial pbrMaterial)
 {
     // resulting fragment color
     vec4 outColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -263,21 +263,21 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
 #ifdef MATERIAL_SPECULARGLOSSINESS
 
 #ifdef HAS_SPECULAR_GLOSSINESS_MAP
-    vec4 sgSample = SRGBtoLINEAR(materialProperties.specularGlossinessColor);
-    perceptualRoughness = (1.0 - sgSample.a * materialProperties.glossinessFactor); // glossiness to roughness
-    f0 = sgSample.rgb * materialProperties.specularFactor; // specular
+    vec4 sgSample = SRGBtoLINEAR(pbrMaterial.specularGlossinessColor);
+    perceptualRoughness = (1.0 - sgSample.a * pbrMaterial.glossinessFactor); // glossiness to roughness
+    f0 = sgSample.rgb * pbrMaterial.specularFactor; // specular
 #else
-    f0 = materialProperties.specularFactor;
-    perceptualRoughness = 1.0 - materialProperties.glossinessFactor;
+    f0 = pbrMaterial.specularFactor;
+    perceptualRoughness = 1.0 - pbrMaterial.glossinessFactor;
 #endif // ! HAS_SPECULAR_GLOSSINESS_MAP
 
 #ifdef HAS_DIFFUSE_MAP
-    baseColor = SRGBtoLINEAR(materialProperties.diffuseColor) * materialProperties.diffuseFactor;
+    baseColor = SRGBtoLINEAR(pbrMaterial.diffuseColor) * pbrMaterial.diffuseFactor;
 #else
-    baseColor = materialProperties.diffuseFactor;
+    baseColor = pbrMaterial.diffuseFactor;
 #endif // !HAS_DIFFUSE_MAP
 
-    baseColor *= materialProperties.vertexColor;
+    baseColor *= pbrMaterial.vertexColor;
 
     // f0 = specular
     specularColor = f0;
@@ -294,14 +294,14 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
 #ifdef MATERIAL_METALLICROUGHNESS
     // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
     // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-    vec4 mrSample = materialProperties.metallicRoughnessColor;
-    perceptualRoughness = mrSample.g * materialProperties.roughnessFactor;
-    metallic = mrSample.b * materialProperties.metallicFactor;
+    vec4 mrSample = pbrMaterial.metallicRoughnessColor;
+    perceptualRoughness = mrSample.g * pbrMaterial.roughnessFactor;
+    metallic = mrSample.b * pbrMaterial.metallicFactor;
 
     // The albedo may be defined from a base texture or a flat color
-    baseColor = SRGBtoLINEAR(materialProperties.baseColor) * materialProperties.baseColorFactor;
+    baseColor = SRGBtoLINEAR(pbrMaterial.baseColor) * pbrMaterial.baseColorFactor;
 
-    baseColor *= materialProperties.vertexColor;
+    baseColor *= pbrMaterial.vertexColor;
 
     diffuseColor = baseColor.rgb * (vec3(1.0) - f0) * (1.0 - metallic);
 
@@ -309,8 +309,8 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
 
 #endif // ! MATERIAL_METALLICROUGHNESS
 
-    if (materialProperties.alphaCutoffEnabled == 1) {
-		if (baseColor.a < materialProperties.alphaCutoff) discard;
+    if (pbrMaterial.alphaCutoffEnabled == 1) {
+		if (baseColor.a < pbrMaterial.alphaCutoff) discard;
 		baseColor.a = 1.0;
     }
 
@@ -345,13 +345,13 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
     // LIGHTING
 
     vec3 color = vec3(0.0, 0.0, 0.0);
-    vec3 normal = materialProperties.normal;
+    vec3 normal = pbrMaterial.normal;
     vec3 view = normalize(u_Camera - v_Position);
 
 #ifdef USE_PUNCTUAL
     for (int i = 0; i < LIGHT_COUNT; ++i)
     {
-        Light light = u_Lights[i];
+        PBRLight light = u_PBRLights[i];
 
         if (light.enabled == 0) continue;
 
@@ -378,20 +378,20 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
     float ao = 1.0;
     // Apply optional PBR terms for additional (optional) shading
 #ifdef HAS_OCCLUSION_MAP
-    ao = materialProperties.occlusionColor.r;
-    color = mix(color, color * ao, materialProperties.occlusionStrength);
+    ao = pbrMaterial.occlusionColor.r;
+    color = mix(color, color * ao, pbrMaterial.occlusionStrength);
 #endif
 
     vec3 emissive = vec3(0);
 #ifdef HAS_EMISSIVE_MAP
-    emissive = SRGBtoLINEAR(materialProperties.emissiveColor).rgb * materialProperties.emissiveFactor;
+    emissive = SRGBtoLINEAR(pbrMaterial.emissiveColor).rgb * pbrMaterial.emissiveFactor;
     color += emissive;
 #endif
 
 #ifndef DEBUG_OUTPUT // no debug
 
    // regular shading
-    outColor = vec4(toneMap(color, materialProperties.exposure), baseColor.a);
+    outColor = vec4(toneMap(color, pbrMaterial.exposure), baseColor.a);
 
 #else // debug output
 
@@ -404,8 +404,8 @@ vec4 computePBRLighting(in MaterialProperties materialProperties)
     #endif
 
     #ifdef DEBUG_NORMAL
-        if (materialProperties.normalSamplerAvailable == 1) {
-            outColor.rgb = materialProperties.normalColor.rgb;
+        if (pbrMaterial.normalSamplerAvailable == 1) {
+            outColor.rgb = pbrMaterial.normalColor.rgb;
         } else {
             outColor.rgb = vec3(0.5, 0.5, 1.0);
         }
