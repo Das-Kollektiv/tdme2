@@ -36,15 +36,6 @@ void DeferredLightingShaderTreeImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
-	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + shaderVersion + "/lighting/specular",
-		"defer_fragmentshader.frag",
-		"#define HAVE_DEPTH_FOG"
-	);
-	if (fragmentShaderId == 0) return;
-
 	//	vertex shader
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
@@ -67,6 +58,15 @@ void DeferredLightingShaderTreeImplementation::initialize()
 		)
 	);
 	if (vertexShaderId == 0) return;
+
+	//	fragment shader
+	fragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		"shader/" + shaderVersion + "/lighting/specular",
+		"defer_fragmentshader.frag",
+		"#define HAVE_DEPTH_FOG"
+	);
+	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
