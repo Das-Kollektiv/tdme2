@@ -84,25 +84,26 @@
         - color addition
         - color multiplication
     - lighting
-        - supports phong lighting
-        - supports phong shading on GL2, GL3+/CORE, 
-        - supports gouraud shading on GLES2
-        - supports diffuse mapping on GLES2, GL2, GL3+/CORE, Vulkan
-        - supports specular shininess mapping on GL3+/CORE, Vulkan
-        - supports normal mapping on GL3+/CORE, Vulkan
-        - supports reflection mapping from cube maps on GLES2, GL2, GL3+/CORE, Vulkan (WIP)
+    	- supports specular lighting
+        	- supports phong lighting
+        	- supports phong shading on GL2, GL3+/CORE, Vulkan
+        	- supports gouraud shading on GLES2
+        	- supports diffuse mapping on GLES2, GL2, GL3+/CORE, Vulkan
+        	- supports specular shininess mapping on GL3+/CORE, Vulkan
+        	- supports normal mapping on GL3+/CORE, Vulkan
+        	- supports reflection mapping from cube maps on GLES2, GL2, GL3+/CORE, Vulkan
+        - supports PBR lighting with IBL
         - supports deferred shading and forward shading on GL3+/CORE (Vulkan is planned)
     - custum shaders that currently include
-      - specular lighting + depth fog
-      - specular lighting + foliage + depth fog
-      - specular lighting + tree + depth fog
-      - specular lighting + terrain + depth fog
-      - specular lighting + water + depth fog
-      - sky(no lighting + no depth fog + fragment depth at maximum)
+      - specular lighting
+      - specular lighting + foliage
+      - specular lighting + tree
+      - specular lighting + terrain
+      - specular lighting + water
+      - sky(no lighting + fragment depth at maximum)
       - PBR lighting
       - PBR lighting + foliage
       - PBR lighting + tree
-      - PBR lighting(WIP, no deferred shading yet)
     - shadow mapping
     - early z rejection
     - post processing
@@ -247,7 +248,6 @@
 - documentation
 
 # 5. What is WIP or planned
-- Deferred shading for PBR lighting
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
