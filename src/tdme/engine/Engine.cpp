@@ -1042,7 +1042,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) {
 					decomposedEntities.objectsPostPostProcessing.push_back(object);
 				} else
-				if (object->getReflectionEnvironmentMappingId().empty() == false &&
+				if (object->isNeedsForwardShading() == true &&
 					(object->getRenderPass() == Entity::RENDERPASS_TERRAIN || object->getRenderPass() == Entity::RENDERPASS_STANDARD) &&
 					renderer->isDeferredShadingAvailable() == true) {
 					decomposedEntities.objectsForwardShading.push_back(object);

@@ -147,6 +147,13 @@ private:
 		}
 	}
 
+	/**
+	 * @return if this object3d needs forward shading
+	 */
+	inline bool isNeedsForwardShading() {
+		return reflectionEnvironmentMappingId.empty() == false;
+	}
+
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
