@@ -2084,8 +2084,8 @@ Third party library licenses:
          POSSIBILITY OF SUCH DAMAGE.
 
 
-    shader/gl3/lighting/pbr/LICENSE
-    ---------------------------------
+    shader/gl3/functions/pbr/LICENSE
+    ----------------------------------
 
 
                                          Apache License
@@ -2291,8 +2291,8 @@ Third party library licenses:
            limitations under the License.
 
 
-    shader/gl3/lighting/specular/LICENSE
-    --------------------------------------
+    shader/gl3/functions/specular/LICENSE
+    ---------------------------------------
 
                     Copyright (C) 2002-2004  3Dlabs Inc. Ltd.
 

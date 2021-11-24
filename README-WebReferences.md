@@ -31,6 +31,7 @@
   - https://gist.github.com/Youka/4153f12cf2e17a77314c
   - https://github.com/floooh/sokol/blob/master/sokol_app.h
   - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+  - https://github.com/KhronosGroup/glTF-WebGL-PBR/
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/#environment-maps
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#inner-and-outer-cone-angles
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#range-property

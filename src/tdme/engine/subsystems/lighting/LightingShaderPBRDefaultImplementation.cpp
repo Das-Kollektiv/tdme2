@@ -34,37 +34,43 @@ void LightingShaderPBRDefaultImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
-	//	fragment shader
-	fragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + shaderVersion + "/lighting/pbr",
-		"metallic-roughness.frag",
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting/pbr",
-			"tonemapping.glsl"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting/pbr",
-			"textures.glsl"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting/pbr",
-			"functions.glsl"
-		)
-	);
-	if (fragmentShaderId == 0) return;
-
 	//	vertex shader
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
-		"primitive.vert",
+		"render_vertexshader.vert",
 		"#define LIGHT_COUNT	8\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
 	);
 	if (vertexShaderId == 0) return;
+
+	//	fragment shader
+	fragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		"shader/" + shaderVersion + "/lighting/pbr",
+		"render_fragmentshader.frag",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"tonemapping.inc.glsl"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"textures.inc.glsl"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"functions.inc.glsl"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions/pbr",
+			"pbr_lighting.inc.glsl"
+		) +
+		"\n\n"
+	);
+	if (fragmentShaderId == 0) return;
 
 	// create, attach and link program
 	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);

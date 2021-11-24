@@ -67,7 +67,7 @@ void LightingShaderFoliageImplementation::initialize()
 		"render_fragmentshader.frag",
 		"#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/functions",
+			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
 		)
 	);

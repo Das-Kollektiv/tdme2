@@ -57,7 +57,7 @@ void LightingShaderTerrainImplementation::initialize()
 		"render_fragmentshader.frag",
 		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG" + additionalDefinitions,
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/functions",
+			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
 		) + "\n" +
 		FileSystem::getInstance()->getContentAsString(

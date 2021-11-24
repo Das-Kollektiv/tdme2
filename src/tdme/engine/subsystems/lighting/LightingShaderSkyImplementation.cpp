@@ -50,7 +50,7 @@ void LightingShaderSkyImplementation::initialize()
 		"render_fragmentshader.frag",
 		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/functions",
+			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
 		)
 	);

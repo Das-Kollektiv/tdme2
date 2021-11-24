@@ -61,7 +61,7 @@ void DeferredLightingShaderTerrainImplementation::initialize()
 			"terrain.inc.glsl"
 		) + "\n" +
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/functions",
+			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
 		) + "\n"
 	);
