@@ -70,12 +70,12 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 		if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 		if (LightingShaderPBRFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 		if (LightingShaderPBRTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+		if (DeferredLightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+		if (DeferredLightingShaderPBRFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+		if (DeferredLightingShaderPBRTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	#endif
 	if (DeferredLightingShaderDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
-	if (DeferredLightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
-	if (DeferredLightingShaderPBRFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
-	if (DeferredLightingShaderPBRTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderPBRTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderSkyImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderSkyImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderTerrainImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderTerrainImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderTerrainEditorImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderTerrainEditorImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
