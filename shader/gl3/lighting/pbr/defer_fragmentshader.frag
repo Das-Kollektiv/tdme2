@@ -30,10 +30,10 @@ layout (location = 7) out vec4 outMaterialUnused3;
 void main(void) {
 	// masked transparency
 	vec4 baseColor = u_BaseColorSamplerAvailable == 1?getBaseColor():vec4(1.0, 1.0, 1.0, 1.0);
-    if (u_AlphaCutoffEnabled == 1) {
+	if (u_AlphaCutoffEnabled == 1) {
 		if (baseColor.a < u_AlphaCutoff) discard;
 		baseColor.a = 1.0;
-    }
+	}
 
 	//
 	outPosition = v_Position;
