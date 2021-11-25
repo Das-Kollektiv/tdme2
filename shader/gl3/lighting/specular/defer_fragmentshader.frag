@@ -5,6 +5,8 @@
 {$FUNCTIONS}
 
 // TODO: maybe move me into definitions
+#if !defined(HAVE_SPECULARMATERIAL_STRUCT)
+#define HAVE_SPECULARMATERIAL_STRUCT
 struct SpecularMaterial {
 	vec4 ambient;
 	vec4 diffuse;
@@ -13,6 +15,7 @@ struct SpecularMaterial {
 	float shininess;
 	float reflection;
 };
+#endif
 
 uniform SpecularMaterial specularMaterial;
 
