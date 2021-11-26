@@ -99,6 +99,7 @@ void main (void) {
 		}
 	}
 
+
 	#if defined(HAVE_TERRAIN_SHADER)
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
 		vec3 uvMappingBlending = abs(terrainNormal);

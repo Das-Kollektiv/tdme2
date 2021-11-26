@@ -46,7 +46,7 @@
 
 {$DEFINITIONS}
 
-struct Material {
+struct SpecularMaterial {
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
@@ -55,7 +55,7 @@ struct Material {
 	float reflection;
 };
 
-struct Light {
+struct SpecularLight {
 	int enabled;
 	vec4 ambient;
 	vec4 diffuse;
@@ -84,8 +84,8 @@ uniform mat3 textureMatrix;
 
 uniform vec4 sceneColor;
 uniform vec4 effectColorMul;
-uniform Material material;
-uniform Light lights[MAX_LIGHTS];
+uniform SpecularMaterial specularMaterial;
+uniform SpecularLight specularLights[MAX_LIGHTS];
 
 uniform float time;
 
@@ -121,7 +121,7 @@ varying vec4 vsFragColor;
 {$FUNCTIONS}
 
 void computeLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection) {
-	vec3 lightDirection = lights[i].position.xyz - position.xyz;
+	vec3 lightDirection = specularLights[i].position.xyz - position.xyz;
 	float lightDistance = length(lightDirection);
 	lightDirection = normalize(lightDirection);
 	vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
@@ -130,16 +130,16 @@ void computeLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirecti
 	float lightAttenuation =
 		1.0 /
 		(
-			lights[i].constantAttenuation +
-			lights[i].linearAttenuation * lightDistance +
-			lights[i].quadraticAttenuation * lightDistance * lightDistance
+			specularLights[i].constantAttenuation +
+			specularLights[i].linearAttenuation * lightDistance +
+			specularLights[i].quadraticAttenuation * lightDistance * lightDistance
 		);
  
 	// see if point on surface is inside cone of illumination
-	float lightSpotDot = dot(-lightDirection, normalize(lights[i].spotDirection));
+	float lightSpotDot = dot(-lightDirection, normalize(specularLights[i].spotDirection));
 	float lightSpotAttenuation = 0.0;
-	if (lightSpotDot >= lights[i].spotCosCutoff) {
-		lightSpotAttenuation = pow(lightSpotDot, lights[i].spotExponent);
+	if (lightSpotDot >= specularLights[i].spotCosCutoff) {
+		lightSpotAttenuation = pow(lightSpotDot, specularLights[i].spotExponent);
 	}
 
 	// Combine the spotlight and distance attenuation.
@@ -147,16 +147,16 @@ void computeLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirecti
 
 	// add color components to fragment color
 	vsFragColor+=
-		clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
-		clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-		clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * material.shininess) * lightAttenuation, 0.0, 1.0);
+		clamp(specularLights[i].ambient * specularMaterial.ambient, 0.0, 1.0) +
+		clamp(specularLights[i].diffuse * specularMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
+		clamp(specularLights[i].specular * specularMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * specularMaterial.shininess) * lightAttenuation, 0.0, 1.0);
 }
 
 void computeLights(in vec3 normal, in vec3 position, in vec3 eyeDirection) {
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
-		// skip on disabled lights
-		if (lights[i].enabled == FALSE) continue;
+		// skip on disabled specularLights
+		if (specularLights[i].enabled == FALSE) continue;
 
 		// compute light
 		computeLight(i, normal, position, eyeDirection);
@@ -217,7 +217,7 @@ void main(void) {
 	//
 	vsFragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	vsFragColor+= clamp(sceneColor, 0.0, 1.0);
-	vsFragColor+= clamp(material.emission, 0.0, 1.0);
+	vsFragColor+= clamp(specularMaterial.emission, 0.0, 1.0);
 
 	// compute gl position
 	gl_Position = projectionMatrix * cameraMatrix * _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
@@ -230,12 +230,12 @@ void main(void) {
 	position4 = cameraMatrix * _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vec3 eyeDirection = normalize(-position4.xyz / position4.w);
 
-	// compute lights
+	// compute specular lights
 	computeLights(normal, position, eyeDirection);
 
 	// take effect colors into account
 	vsFragColor*= effectColorMul;
-	vsFragColor.a = material.diffuse.a * effectColorMul.a;
+	vsFragColor.a = specularMaterial.diffuse.a * effectColorMul.a;
 
 	//
 	vsPosition = position;
