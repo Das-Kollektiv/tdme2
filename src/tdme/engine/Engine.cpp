@@ -804,8 +804,10 @@ void Engine::initialize()
 	frameBufferRenderShader->initialize();
 
 	// deferred lighting render shader
-	deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
-	deferredLightingRenderShader->initialize();
+	if (renderer->isDeferredShadingAvailable() == true) {
+		deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
+		deferredLightingRenderShader->initialize();
+	}
 
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
@@ -883,7 +885,7 @@ void Engine::initialize()
 	initialized &= linesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
-	initialized &= deferredLightingRenderShader->isInitialized();
+	initialized &= deferredLightingRenderShader != nullptr?deferredLightingRenderShader->isInitialized():true;
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
 

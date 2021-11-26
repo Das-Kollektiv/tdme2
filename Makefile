@@ -108,6 +108,7 @@ else ifeq ($(OS), OpenBSD)
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
+	EXTRAFLAGS := -DGLFW3
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -117,7 +118,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lGLEW -lGL -lopenal -lnetwork
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
