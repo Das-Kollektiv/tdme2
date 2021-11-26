@@ -34,6 +34,15 @@ PBRMaterialProperties::~PBRMaterialProperties() {
 	if (normalTexture != nullptr) normalTexture->releaseReference();
 }
 
+void PBRMaterialProperties::setBaseColorTexture(Texture* baseColorTexture) {
+	if (this->baseColorTexture != nullptr) this->baseColorTexture->releaseReference();
+	baseColorTexturePathName.clear();
+	baseColorTextureFileName = baseColorTexture->getId() + ".png";
+	baseColorTexture->acquireReference();
+	this->baseColorTexture = baseColorTexture;
+	checkBaseColorTextureTransparency();
+}
+
 void PBRMaterialProperties::setBaseColorTexture(const string& pathName, const string& fileName)
 {
 	if (baseColorTexture != nullptr) baseColorTexture->releaseReference();
@@ -43,12 +52,28 @@ void PBRMaterialProperties::setBaseColorTexture(const string& pathName, const st
 	checkBaseColorTextureTransparency();
 }
 
+void PBRMaterialProperties::setMetallicRoughnessTexture(Texture* metallicRoughnessTexture) {
+	if (this->metallicRoughnessTexture != nullptr) this->metallicRoughnessTexture->releaseReference();
+	metallicRoughnessTexturePathName.clear();
+	metallicRoughnessTextureFileName = metallicRoughnessTexture->getId() + ".png";
+	metallicRoughnessTexture->acquireReference();
+	this->metallicRoughnessTexture = metallicRoughnessTexture;
+}
+
 void PBRMaterialProperties::setMetallicRoughnessTexture(const string& pathName, const string& fileName)
 {
 	if (metallicRoughnessTexture != nullptr) metallicRoughnessTexture->releaseReference();
 	metallicRoughnessTexturePathName = pathName;
 	metallicRoughnessTextureFileName = fileName;
 	metallicRoughnessTexture = TextureReader::read(pathName, fileName);
+}
+
+void PBRMaterialProperties::setNormalTexture(Texture* normalTexture) {
+	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
+	normalTexturePathName.clear();
+	normalTextureFileName = normalTexture->getId() + ".png";
+	normalTexture->acquireReference();
+	this->normalTexture = normalTexture;
 }
 
 void PBRMaterialProperties::setNormalTexture(const string& pathName, const string& fileName)

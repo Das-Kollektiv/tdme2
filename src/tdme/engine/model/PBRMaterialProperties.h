@@ -85,6 +85,12 @@ public:
 	}
 
 	/**
+	 * Set up a base color texture by the texture itself
+	 * @param baseColorTexture base color texture
+	 */
+	void setBaseColorTexture(Texture* baseColorTexture);
+
+	/**
 	 * Set up a base color texture
 	 * @param pathName path name
 	 * @param fileName file name
@@ -187,6 +193,12 @@ public:
 	}
 
 	/**
+	 * Set up a metallic roughness texture by the texture itself
+	 * @param metallicRoughnessTexture metallic roughness texture
+	 */
+	void setMetallicRoughnessTexture(Texture* metallicRoughnessTexture);
+
+	/**
 	 * Set up a metallic roughness texture
 	 * @param pathName path name
 	 * @param fileName file name
@@ -235,6 +247,12 @@ public:
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
 	}
+
+	/**
+	 * Set up a normal texture by the texture itself
+	 * @param normalTexture normal texture
+	 */
+	void setNormalTexture(Texture* normalTexture);
 
 	/**
 	 * Set up a normal texture

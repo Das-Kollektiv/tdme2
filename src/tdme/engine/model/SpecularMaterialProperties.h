@@ -292,6 +292,12 @@ public:
 	}
 
 	/**
+	 * Set up a specular texture by the texture itself
+	 * @param specularTexture specular texture
+	 */
+	void setSpecularTexture(Texture* specularTexture);
+
+	/**
 	 * Set up a specular texture
 	 * @param pathName path name
 	 * @param fileName file name
@@ -325,6 +331,12 @@ public:
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
 	}
+
+	/**
+	 * Set up a normal texture by the texture itself
+	 * @param normalTexture normal texture
+	 */
+	void setNormalTexture(Texture* normalTexture);
 
 	/**
 	 * Set up a normal texture

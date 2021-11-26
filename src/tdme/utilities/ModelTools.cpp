@@ -290,7 +290,6 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 		clonedSpecularMaterialProperties->setShininess(specularMaterialProperties->getShininess());
 		clonedSpecularMaterialProperties->setTextureAtlasSize(specularMaterialProperties->getTextureAtlasSize());
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-			specularMaterialProperties->getDiffuseTexture()->acquireReference();
 			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
 			clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
 			clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
@@ -1148,7 +1147,6 @@ Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& te
 		textureByteBuffer
 	);
 	atlasTexture->setAtlasSize(textureAtlasSize);
-	atlasTexture->acquireReference();
 	return atlasTexture;
 }
 

@@ -46,6 +46,7 @@ void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
 	diffuseTextureFileName = diffuseTexture->getId() + ".png";
 	diffuseTransparencyTexturePathName.clear();
 	diffuseTransparencyTextureFileName.clear();
+	diffuseTexture->acquireReference();
 	this->diffuseTexture = diffuseTexture;
 	checkDiffuseTextureTransparency();
 }
@@ -96,6 +97,14 @@ void SpecularMaterialProperties::checkDiffuseTextureTransparency()
 	if (diffuseTextureMaskedTransparency == false) diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparencyTest;
 }
 
+void SpecularMaterialProperties::setSpecularTexture(Texture* specularTexture) {
+	if (this->specularTexture != nullptr) this->specularTexture->releaseReference();
+	specularTexturePathName.clear();
+	specularTextureFileName = specularTexture->getId() + ".png";
+	specularTexture->acquireReference();
+	this->specularTexture = specularTexture;
+}
+
 void SpecularMaterialProperties::setSpecularTexture(const string& pathName, const string& fileName)
 {
 	if (specularTexture != nullptr) specularTexture->releaseReference();
@@ -103,6 +112,14 @@ void SpecularMaterialProperties::setSpecularTexture(const string& pathName, cons
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
 	specularTexture = TextureReader::read(pathName, fileName);
+}
+
+void SpecularMaterialProperties::setNormalTexture(Texture* normalTexture) {
+	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
+	normalTexturePathName.clear();
+	normalTextureFileName = normalTexture->getId() + ".png";
+	normalTexture->acquireReference();
+	this->normalTexture = normalTexture;
 }
 
 void SpecularMaterialProperties::setNormalTexture(const string& pathName, const string& fileName)
