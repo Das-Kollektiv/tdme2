@@ -6,7 +6,7 @@
 		<text id="{$id}_text_unselected" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
 	</layout>
 	<!-- mouse over -->
-	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.button_normal}">
+	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,click" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.button_normal}">
 		<image src="{$image}"/>
 		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
 		<text id="{$id}_text_mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>

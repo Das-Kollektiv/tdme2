@@ -8,11 +8,13 @@
 				<vertical-scrollbar-internal id="{$id}_scrollbar_vertical_layout_bar" border="2" border-color="#00000000" width="10" height="*" color-none="{$color.button_normal}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
 			</layout>
 		</layout>
-		<layout show-on="horizontal-scrollbar" id="{$id}_scrollbar_horizontal_layout" alignment="horizontal" width="100%" height="auto">
-			<layout id="{$id}_scrollbar_horizontal_layout_inner" alignment="horizontal" width="100%" height="auto">
-				<horizontal-scrollbar-internal id="{$id}_scrollbar_horizontal_layout_bar" border="2" border-color="#00000000" width="*" height="10" color-none="{$color.button_normal}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
+		<layout show-on="horizontal-scrollbar" alignment="horizontal" width="100%" height="auto">
+			<layout id="{$id}_scrollbar_horizontal_layout" alignment="horizontal" width="*" height="auto">
+				<layout id="{$id}_scrollbar_horizontal_layout_inner" alignment="horizontal" width="100%" height="auto">
+					<horizontal-scrollbar-internal id="{$id}_scrollbar_horizontal_layout_bar" border="2" border-color="#00000000" width="*" height="10" color-none="{$color.button_normal}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
+				</layout>
 			</layout>
-			<space width="24" height="24" />
+			<space show-on="vertical-scrollbar" width="10"/>
 		</layout>
 	</layout>
 </element>

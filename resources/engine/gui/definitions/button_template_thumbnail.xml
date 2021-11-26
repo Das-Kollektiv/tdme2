@@ -21,7 +21,7 @@
 		</multiline-text>
 	</layout>
 	<!-- mouse over -->
-	<layout width="auto" height="auto" padding="10" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
+	<layout width="auto" height="auto" padding="10" hide-on="click" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
 		<layer>
 			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
 			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>

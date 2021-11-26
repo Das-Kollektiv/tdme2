@@ -10,6 +10,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
 /**
@@ -23,6 +24,7 @@ class tdme::gui::elements::GUISliderHController final: public GUIElementControll
 
 private:
 	GUINode* sliderNode { nullptr };
+	GUIParentNode* sliderParentNode { nullptr };
 	bool disabled { false };
 	float valueFloat { 0.0f };
 	MutableString value { };

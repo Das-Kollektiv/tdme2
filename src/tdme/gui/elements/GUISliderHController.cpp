@@ -49,6 +49,7 @@ void GUISliderHController::setDisabled(bool disabled) {
 
 void GUISliderHController::initialize() {
 	sliderNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_slider");
+	sliderParentNode = sliderNode->getParentNode();
 	setValue(MutableString(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 	GUIElementController::initialize();
 }
@@ -77,9 +78,9 @@ void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		auto sliderPosition = Math::clamp(
 			static_cast<int>(nodeMousePosition[0]) - sliderNode->getContentWidth() / 2 - this->node->getPadding().left,
 			0,
-			this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth()
+			sliderParentNode->getComputedConstraints().width - sliderParentNode->getPadding().left - sliderParentNode->getPadding().right - sliderNode->getContentWidth()
 		);
-		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth());
+		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(sliderParentNode->getComputedConstraints().width - sliderParentNode->getPadding().left - sliderParentNode->getPadding().right - sliderNode->getContentWidth());
 		updateSlider();
 		node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 	}
@@ -134,7 +135,7 @@ void GUISliderHController::setValue(const MutableString& value) {
 }
 
 void GUISliderHController::updateSlider() {
-	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth()));
-	sliderNode->getComputedConstraints().additionalAlignmentTop = (node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight()) / 2;
+	auto sliderPosition = static_cast<int>(valueFloat * (sliderParentNode->getComputedConstraints().width - sliderParentNode->getPadding().left - sliderParentNode->getPadding().right - sliderNode->getContentWidth()));
+	sliderNode->getComputedConstraints().additionalAlignmentTop = (sliderParentNode->getComputedConstraints().height - sliderParentNode->getPadding().top - sliderParentNode->getPadding().bottom - sliderNode->getContentHeight()) / 2;
 	sliderNode->getComputedConstraints().additionalAlignmentLeft = sliderPosition;
 }
