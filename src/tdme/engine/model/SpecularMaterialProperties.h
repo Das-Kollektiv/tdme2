@@ -302,7 +302,7 @@ public:
 
 	/**
 	 * Set specular texture path name
-	 * @param specularTexturePathName diffuse texture path name
+	 * @param specularTexturePathName specular texture path name
 	 */
 	inline void setSpecularTexturePathName(const string& specularTexturePathName) {
 		this->specularTexturePathName = specularTexturePathName;
