@@ -9,6 +9,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
@@ -23,6 +24,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
@@ -262,11 +264,23 @@ private:
 	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
+	 * @param embeddedTextures embedded textures
 	 * @param version version
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version);
+	static void readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures);
+
+	/**
+	 * Read material
+	 * @param pathName path name
+	 * @param is input stream
+	 * @param embeddedTextures embedded textures
+	 * @param version version
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return material
+	 */
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup

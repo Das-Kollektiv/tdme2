@@ -23,6 +23,7 @@ class tdme::engine::model::SpecularMaterialProperties final
 {
 
 private:
+	bool embedTextures;
 	Color4 ambientColor;
 	Color4 diffuseColor;
 	Color4 specularColor;
@@ -61,6 +62,21 @@ public:
 	 * Destructor
 	 */
 	~SpecularMaterialProperties();
+
+	/**
+	 * @return if textures will be embedded in model files
+	 */
+	inline bool hasEmbeddedTextures() const {
+		return embedTextures;
+	}
+
+	/**
+	 * Set if to embed textures
+	 * @param embedTextures embed textures
+	 */
+	inline void setEmbedTextures(bool embedTextures) {
+		this->embedTextures = embedTextures;
+	}
 
 	/**
 	 * @return ambient color
@@ -191,7 +207,7 @@ public:
 
 	/**
 	 * Set diffuse texture file name
-	 * @return diffuse texture file name
+	 * @return diffuseTextureFileName diffuse texture file name
 	 */
 	inline void setDiffuseTextureFileName(const string& diffuseTextureFileName) {
 		this->diffuseTextureFileName = diffuseTextureFileName;
@@ -285,10 +301,26 @@ public:
 	}
 
 	/**
+	 * Set specular texture path name
+	 * @param specularTexturePathName diffuse texture path name
+	 */
+	inline void setSpecularTexturePathName(const string& specularTexturePathName) {
+		this->specularTexturePathName = specularTexturePathName;
+	}
+
+	/**
 	 * @return specular texture file name
 	 */
 	inline const string& getSpecularTextureFileName() const {
 		return specularTextureFileName;
+	}
+
+	/**
+	 * Set specular texture file name
+	 * @return specularTextureFileName specular texture file name
+	 */
+	inline void setSpecularTextureFileName(const string& specularTextureFileName) {
+		this->specularTextureFileName = specularTextureFileName;
 	}
 
 	/**
@@ -326,10 +358,26 @@ public:
 	}
 
 	/**
+	 * Set normal texture path name
+	 * @param normalTexturePathName normal texture path name
+	 */
+	inline void setNormalTexturePathName(const string& normalTexturePathName) {
+		this->normalTexturePathName = normalTexturePathName;
+	}
+
+	/**
 	 * @return normal texture file name
 	 */
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
+	}
+
+	/**
+	 * Set normal texture file name
+	 * @return normalTextureFileName normal texture file name
+	 */
+	inline void setNormalTextureFileName(const string& normalTextureFileName) {
+		this->normalTextureFileName = specularTextureFileName;
 	}
 
 	/**
@@ -364,6 +412,13 @@ public:
 	 */
 	inline bool hasColorTransparency() const {
 		return diffuseColor.getAlpha() < 1.0f - Math::EPSILON;
+	}
+
+	/**
+	 * @return diffuse texture has transparency
+	 */
+	inline bool getDiffuseTextureTransparency() {
+		return diffuseTextureTransparency;
 	}
 
 	/**

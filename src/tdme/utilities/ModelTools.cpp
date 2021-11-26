@@ -6,7 +6,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
@@ -39,7 +38,6 @@ using std::to_string;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
@@ -283,6 +281,7 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties != nullptr) {
 		auto clonedSpecularMaterialProperties = new SpecularMaterialProperties();
+		clonedSpecularMaterialProperties->setEmbedTextures(specularMaterialProperties->hasEmbeddedTextures());
 		clonedSpecularMaterialProperties->setAmbientColor(specularMaterialProperties->getAmbientColor());
 		clonedSpecularMaterialProperties->setDiffuseColor(specularMaterialProperties->getDiffuseColor());
 		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
@@ -291,24 +290,27 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 		clonedSpecularMaterialProperties->setTextureAtlasSize(specularMaterialProperties->getTextureAtlasSize());
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
 			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
-			clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
-			clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
+			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
+				clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
+				clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
+			}
 		}
-		clonedSpecularMaterialProperties->setDiffuseTextureTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
+		clonedSpecularMaterialProperties->setDiffuseTextureTransparency(specularMaterialProperties->hasDiffuseTextureTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
-		// TODO: a.drewke: clone textures like diffuse texture
-		if (specularMaterialProperties->getNormalTextureFileName().length() != 0) {
-			clonedSpecularMaterialProperties->setNormalTexture(
-				specularMaterialProperties->getNormalTexturePathName(),
-				specularMaterialProperties->getNormalTextureFileName()
-			);
+		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
+			clonedSpecularMaterialProperties->setSpecularTexture(specularMaterialProperties->getSpecularTexture());
+			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
+				clonedSpecularMaterialProperties->setSpecularTexturePathName(specularMaterialProperties->getSpecularTexturePathName());
+				clonedSpecularMaterialProperties->setSpecularTextureFileName(specularMaterialProperties->getSpecularTextureFileName());
+			}
 		}
-		if (specularMaterialProperties->getSpecularTextureFileName().length() != 0) {
-			clonedSpecularMaterialProperties->setSpecularTexture(
-				specularMaterialProperties->getSpecularTexturePathName(),
-				specularMaterialProperties->getSpecularTextureFileName()
-			);
+		if (specularMaterialProperties->getNormalTexture() != nullptr) {
+			clonedSpecularMaterialProperties->setNormalTexture(specularMaterialProperties->getNormalTexture());
+			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
+				clonedSpecularMaterialProperties->setNormalTexturePathName(specularMaterialProperties->getNormalTexturePathName());
+				clonedSpecularMaterialProperties->setNormalTextureFileName(specularMaterialProperties->getNormalTextureFileName());
+			}
 		}
 		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties);
 	}
@@ -1198,7 +1200,6 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// create diffuse atlas texture
 	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas", diffuseTextureAtlasTextures);
-	//PNGTextureWriter::write(diffuseAtlasTexture, ".", diffuseAtlasTexture->getId() + ".png", false);
 
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
@@ -1224,9 +1225,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// create optimized material
 	auto optimizedMaterial = new Material("tdme.material.optimized");
 	{
+		optimizedMaterial->getSpecularMaterialProperties()->setEmbedTextures(true);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
-		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexturePathName(texturePathName);
-		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureFileName(diffuseAtlasTexture->getId() + ".png");
 		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlasTexture->getAtlasSize());
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(false);

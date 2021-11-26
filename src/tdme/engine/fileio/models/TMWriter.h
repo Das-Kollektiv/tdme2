@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
@@ -21,6 +22,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
@@ -239,6 +241,14 @@ public:
 	static void write(Model* model, vector<uint8_t>& data);
 
 private:
+
+	/**
+	 * Write embedded textures
+	 * @param os output stream
+	 * @param m model
+	 * @throws model file IO exception
+	 */
+	static void writeEmbeddedTextures(TMWriterOutputStream* os, Model* m);
 
 	/**
 	 * Write material

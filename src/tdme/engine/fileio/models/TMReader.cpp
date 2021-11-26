@@ -6,6 +6,8 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -39,6 +41,8 @@ using std::vector;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -91,9 +95,10 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 		(version[0] != 1 || version[1] != 9 || version[2] != 13) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 14) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 15) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 16)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 16) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 17)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14, 1.9.15, 1.9.16 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14, 1.9.15, 1.9.16, 1.9.17 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -107,7 +112,8 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	auto shaderModel = ShaderModel::SPECULAR;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		shaderModel = ShaderModel::valueOf(is.readString());
 	}
 	array<float, 3> boundingBoxMinXYZ;
@@ -127,9 +133,13 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	array<float, 16> importTransformationsMatrixArray;
 	is.readFloatArray(importTransformationsMatrixArray);
 	model->setImportTransformationsMatrix(importTransformationsMatrixArray);
+	map<string, Texture*> embeddedTextures;
+	if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
+		readEmbeddedTextures(&is, embeddedTextures);
+	}
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(pathName, &is, version);
+		auto material = readMaterial(pathName, &is, embeddedTextures, version);
 		model->getMaterials()[material->getId()] = material;
 	}
 	readSubNodes(&is, model, nullptr, model->getSubNodes());
@@ -139,6 +149,9 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	}
 	if (model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr) {
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
+	}
+	for (auto it: embeddedTextures) {
+		it.second->releaseReference();
 	}
 	return model;
 }
@@ -157,11 +170,33 @@ const string TMReader::getTexturePath(const string& modelPathName, const string&
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version)
+void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures) {
+	auto embeddedTextureCount = is->readInt();
+	for (auto i = 0; i < embeddedTextureCount; i++) {
+		auto embeddedTextureId = is->readString();
+		auto embeddedTextureType = is->readByte();
+		if (embeddedTextureType == 1) {
+			auto textureSize = is->readInt();
+			vector<uint8_t> pngData;
+			pngData.resize(textureSize);
+			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
+			auto embeddedTexture = TextureReader::readPNG(embeddedTextureId, pngData, true);
+			if (embeddedTexture != nullptr) {
+				embeddedTexture->acquireReference();
+				embeddedTextures[embeddedTextureId] = embeddedTexture;
+			}
+		}
+	}
+}
+
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version)
 {
 	auto id = is->readString();
 	auto m = new Material(id);
 	auto smp = new SpecularMaterialProperties();
+	if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
+		smp->setEmbedTextures(is->readBoolean());
+	}
 	array<float, 4> colorRGBAArray;
 	is->readFloatArray(colorRGBAArray);
 	smp->setAmbientColor(Color4(colorRGBAArray));
@@ -173,14 +208,15 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	smp->setEmissionColor(Color4(colorRGBAArray));
 	smp->setShininess(is->readFloat());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		smp->setTextureAtlasSize(is->readInt());
 	}
 	auto diffuseTexturePathName = is->readString();
 	auto diffuseTextureFileName = is->readString();
 	auto diffuseTransparencyTexturePathName = is->readString();
 	auto diffuseTransparencyTextureFileName = is->readString();
-	if (diffuseTextureFileName.size() != 0) {
+	if (smp->hasEmbeddedTextures() == false && diffuseTextureFileName.empty() == false) {
 		smp->setDiffuseTexture(
 			getTexturePath(pathName, diffuseTexturePathName, diffuseTextureFileName),
 			diffuseTextureFileName,
@@ -190,7 +226,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	}
 	auto specularTexturePathName = is->readString();
 	auto specularTextureFileName = is->readString();
-	if (specularTextureFileName.size() != 0) {
+	if (smp->hasEmbeddedTextures() == false && specularTextureFileName.empty() == false) {
 		smp->setSpecularTexture(
 			getTexturePath(pathName, specularTexturePathName, specularTextureFileName),
 			specularTextureFileName
@@ -198,7 +234,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	}
 	auto normalTexturePathName = is->readString();
 	auto normalTextureFileName = is->readString();
-	if (normalTextureFileName.size() != 0) {
+	if (smp->hasEmbeddedTextures() == false && normalTextureFileName.empty() == false) {
 		smp->setNormalTexture(
 			getTexturePath(pathName, normalTexturePathName, normalTextureFileName),
 			normalTextureFileName
@@ -211,7 +247,8 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		auto displacementTextureFileName = is->readString();
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		smp->setDiffuseTextureTransparency(is->readBoolean());
 	}
 	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
@@ -222,10 +259,12 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16))  {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17))  {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
-	if ((version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		m->setDoubleSided(is->readBoolean());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
@@ -234,23 +273,48 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
+	}
+	if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
+		if (smp->hasEmbeddedTextures() == true) {
+			// diffuse
+			if (diffuseTextureFileName.empty() == false) {
+				auto diffuseTextureTransparency = smp->getDiffuseTextureTransparency();
+				auto diffuseTextureMaskedTransparency = smp->getDiffuseTextureMaskedTransparencyThreshold();
+				smp->setDiffuseTexture(embeddedTextures.find(diffuseTextureFileName)->second);
+				smp->setDiffuseTextureTransparency(diffuseTextureTransparency);
+				smp->setDiffuseTextureMaskedTransparency(diffuseTextureMaskedTransparency);
+			}
+			// specular
+			if (specularTextureFileName.empty() == false) {
+				smp->setSpecularTexture(embeddedTextures.find(specularTextureFileName)->second);
+			}
+			// normal
+			if (normalTextureFileName.empty() == false) {
+				smp->setNormalTexture(embeddedTextures.find(normalTextureFileName)->second);
+			}
+		}
 	}
 	m->setSpecularMaterialProperties(smp);
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		if (is->readBoolean() == true) {
 			auto pmp = new PBRMaterialProperties();
+			if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
+				pmp->setEmbedTextures(is->readBoolean());
+			}
 			is->readFloatArray(colorRGBAArray);
 			pmp->setBaseColorFactor(Color4(colorRGBAArray));
 			auto baseColorTexturePathName = is->readString();
 			auto baseColorTextureFileName = is->readString();
-			if (baseColorTextureFileName.size() != 0) {
+			if (pmp->hasEmbeddedTextures() == false && baseColorTextureFileName.empty() == false) {
 				pmp->setBaseColorTexture(baseColorTexturePathName, baseColorTextureFileName);
 			}
 			pmp->setBaseColorTextureMaskedTransparency(is->readBoolean());
@@ -259,16 +323,36 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			pmp->setRoughnessFactor(is->readFloat());
 			auto metallicRoughnessTexturePathName = is->readString();
 			auto metallicRoughnessTextureFileName = is->readString();
-			if (metallicRoughnessTextureFileName.size() != 0) {
+			if (pmp->hasEmbeddedTextures() == false && metallicRoughnessTextureFileName.empty() == false) {
 				pmp->setMetallicRoughnessTexture(metallicRoughnessTexturePathName, metallicRoughnessTextureFileName);
 			}
 			pmp->setNormalScale(is->readFloat());
-			auto normalTexturePathName = is->readString();
-			auto normalTextureFileName = is->readString();
-			if (normalTextureFileName.size() != 0) {
-				pmp->setNormalTexture(normalTexturePathName, normalTextureFileName);
+			auto pbrNormalTexturePathName = is->readString();
+			auto pbrNormalTextureFileName = is->readString();
+			if (pmp->hasEmbeddedTextures() == false && pbrNormalTextureFileName.empty() == false) {
+				pmp->setNormalTexture(pbrNormalTexturePathName, pbrNormalTextureFileName);
 			}
 			pmp->setExposure(is->readFloat());
+			if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
+				if (pmp->hasEmbeddedTextures() == true) {
+					// base color
+					if (baseColorTextureFileName.empty() == false) {
+						auto baseColorTextureTransparency = pmp->hasBaseColorTextureTransparency();
+						auto baseColorTextureMaskedTransparency = pmp->hasBaseColorTextureMaskedTransparency();
+						pmp->setBaseColorTexture(embeddedTextures.find(baseColorTextureFileName)->second);
+						pmp->setBaseColorTextureTransparency(baseColorTextureTransparency);
+						pmp->setBaseColorTextureMaskedTransparency(baseColorTextureMaskedTransparency);
+					}
+					// metallic roughness
+					if (metallicRoughnessTextureFileName.empty() == false) {
+						pmp->setMetallicRoughnessTexture(embeddedTextures.find(metallicRoughnessTextureFileName)->second);
+					}
+					// normal
+					if (pbrNormalTextureFileName.empty() == false) {
+						pmp->setNormalTexture(embeddedTextures.find(pbrNormalTextureFileName)->second);
+					}
+				}
+			}
 			m->setPBRMaterialProperties(pmp);
 		}
 	}
@@ -287,7 +371,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 16)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 17)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromNodeId.length() == 0) {

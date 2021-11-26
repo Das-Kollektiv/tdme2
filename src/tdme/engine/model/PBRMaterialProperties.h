@@ -21,6 +21,7 @@ class tdme::engine::model::PBRMaterialProperties final
 {
 
 private:
+	bool embedTextures;
 	Color4 baseColorFactor;
 	string baseColorTexturePathName;
 	string baseColorTextureFileName;
@@ -54,6 +55,21 @@ public:
 	 * Destructor
 	 */
 	~PBRMaterialProperties();
+
+	/**
+	 * @return if textures will be embedded in model files
+	 */
+	inline bool hasEmbeddedTextures() const {
+		return embedTextures;
+	}
+
+	/**
+	 * Set if to embed textures
+	 * @param embedTextures embed textures
+	 */
+	inline void setEmbedTextures(bool embedTextures) {
+		this->embedTextures = embedTextures;
+	}
 
 	/**
 	 * @return base color factor
@@ -116,6 +132,14 @@ public:
 	 */
 	inline bool hasBaseColorTextureTransparency() const {
 		return baseColorTextureTransparency;
+	}
+
+	/**
+	 * Set if base color texture uses transparency
+	 * @param transparency transparency
+	 */
+	inline void setBaseColorTextureTransparency(bool transparency) {
+		baseColorTextureTransparency = transparency;
 	}
 
 	/**

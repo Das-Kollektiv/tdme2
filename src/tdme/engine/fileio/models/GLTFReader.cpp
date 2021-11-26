@@ -12,6 +12,7 @@
 #include <ext/libpng/png.h>
 #include <ext/tinygltf/tiny_gltf.h>
 
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -35,8 +36,10 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -47,6 +50,8 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
+
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -70,8 +75,10 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
@@ -326,7 +333,9 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 				material = new Material(gltfMaterial.name);
 				material->setDoubleSided(false/*TODO: enable me: gltfMaterial.doubleSided*/);
 				auto pbrMaterialProperties = new PBRMaterialProperties();
+				pbrMaterialProperties->setEmbedTextures(true);
 				auto specularMaterialProperties = new SpecularMaterialProperties();
+				specularMaterialProperties->setEmbedTextures(true);
 				// some adjustment, lets see if we can extract this later
 				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -337,14 +346,26 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
+						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
+						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
-							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						Console::println("GLTFReader::parseNode(): have base color texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						for (int y = image.height - 1; y >= 0; y--) {
+							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						pbrMaterialProperties->setBaseColorTexture(pathName, fileName);
+						auto texture = new Texture(
+							fileName,
+							image.bits * image.component,
+							image.width,
+							image.height,
+							image.width,
+							image.height,
+							textureData
+						);
+						pbrMaterialProperties->setBaseColorTexture(texture);
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
-						specularMaterialProperties->setDiffuseTexture(pathName, fileName);
+						specularMaterialProperties->setDiffuseTexture(texture);
 						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
@@ -356,12 +377,24 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					auto& gltfTexture = gltfModel.textures[gltfMetallicRoughnessTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
+						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
+						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
-							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						Console::println("GLTFReader::parseNode(): have metallic roughness texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						for (int y = image.height - 1; y >= 0; y--) {
+							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						pbrMaterialProperties->setMetallicRoughnessTexture(pathName, fileName);
+						auto texture = new Texture(
+							fileName,
+							image.bits * image.component,
+							image.width,
+							image.height,
+							image.width,
+							image.height,
+							textureData
+						);
+						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
@@ -372,12 +405,24 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
 					try {
+						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
+						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Writing PNG: " + fileName);
-						if (writePNG(pathName, fileName, image.component, image.bits, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
-							Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						Console::println("GLTFReader::parseNode(): have normal texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						for (int y = image.height - 1; y >= 0; y--) {
+							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						pbrMaterialProperties->setNormalTexture(pathName, fileName);
+						auto texture = new Texture(
+							fileName,
+							image.bits * image.component,
+							image.width,
+							image.height,
+							image.width,
+							image.height,
+							textureData
+						);
+						pbrMaterialProperties->setNormalTexture(texture);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}

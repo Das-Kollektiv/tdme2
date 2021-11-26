@@ -7,6 +7,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Color4.h>
@@ -45,6 +46,7 @@ using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;
@@ -85,7 +87,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(16));
+	os.writeByte(static_cast< uint8_t >(17));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -94,6 +96,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());
 	os.writeFloatArray(model->getImportTransformationsMatrix().getArray());
+	writeEmbeddedTextures(&os, model);
 	os.writeInt(model->getMaterials().size());
 	for (auto it: model->getMaterials()) {
 		Material* material = it.second;
@@ -108,22 +111,47 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
 }
 
+void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
+	map<string, Texture*> embeddedTextures;
+	for (auto it: m->getMaterials()) {
+		Material* material = it.second;
+		auto smp = material->getSpecularMaterialProperties();
+		if (smp != nullptr && smp->hasEmbeddedTextures() == true) {
+			if (smp->getDiffuseTexture() != nullptr) embeddedTextures[smp->getDiffuseTexture()->getId()] = smp->getDiffuseTexture();
+			if (smp->getSpecularTexture() != nullptr) embeddedTextures[smp->getSpecularTexture()->getId()] = smp->getSpecularTexture();
+			if (smp->getNormalTexture() != nullptr) embeddedTextures[smp->getNormalTexture()->getId()] = smp->getNormalTexture();
+		}
+		auto pmp = material->getPBRMaterialProperties();
+		if (pmp != nullptr && pmp->hasEmbeddedTextures() == true) {
+			if (pmp->getBaseColorTexture() != nullptr) embeddedTextures[pmp->getBaseColorTexture()->getId()] = pmp->getBaseColorTexture();
+			if (pmp->getMetallicRoughnessTexture() != nullptr) embeddedTextures[pmp->getMetallicRoughnessTexture()->getId()] = pmp->getMetallicRoughnessTexture();
+			if (pmp->getNormalTexture() != nullptr) embeddedTextures[pmp->getNormalTexture()->getId()] = pmp->getNormalTexture();
+		}
+	}
+	os->writeInt(embeddedTextures.size());
+	for (auto it: embeddedTextures) {
+		auto texture = it.second;
+		os->writeString(texture->getId());
+		vector<uint8_t> pngData;
+		PNGTextureWriter::write(texture, pngData, false, false);
+		os->writeByte(1); // PNG
+		os->writeInt(pngData.size());
+		os->writeUInt8tArray(pngData);
+	}
+}
+
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 {
 	auto smp = m->getSpecularMaterialProperties();
 	auto pmp = m->getPBRMaterialProperties();
 	os->writeString(m->getId());
+	os->writeBoolean(smp->hasEmbeddedTextures());
 	os->writeFloatArray(smp->getAmbientColor().getArray());
 	os->writeFloatArray(smp->getDiffuseColor().getArray());
 	os->writeFloatArray(smp->getSpecularColor().getArray());
 	os->writeFloatArray(smp->getEmissionColor().getArray());
 	os->writeFloat(smp->getShininess());
 	os->writeInt(smp->getTextureAtlasSize());
-	if (smp->getDiffuseTexture() != nullptr && smp->getTextureAtlasSize() > 1) { // TODO: use a dirty flag or something rather than atlas size
-		if (PNGTextureWriter::write(smp->getDiffuseTexture(), smp->getDiffuseTexturePathName(), smp->getDiffuseTextureFileName(), false, false) == false) {
-			Console::println("TMWriter::writeMaterial(): writing atlas texture: " + smp->getDiffuseTexturePathName() + "/" + smp->getDiffuseTextureFileName() + ": failed!");
-		}
-	}
 	os->writeString(smp->getDiffuseTexturePathName());
 	os->writeString(smp->getDiffuseTextureFileName());
 	os->writeString(smp->getDiffuseTransparencyTexturePathName());
@@ -141,6 +169,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
+		os->writeBoolean(pmp->hasEmbeddedTextures());
 		os->writeFloatArray(pmp->getBaseColorFactor().getArray());
 		os->writeString(pmp->getBaseColorTexturePathName());
 		os->writeString(pmp->getBaseColorTextureFileName());

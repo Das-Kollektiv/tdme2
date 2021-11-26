@@ -15,6 +15,7 @@ using tdme::engine::model::PBRMaterialProperties;
 
 PBRMaterialProperties::PBRMaterialProperties()
 {
+	embedTextures = false;
 	baseColorFactor.set(1.0f, 1.0f, 1.0f, 1.0f);
 	baseColorTexture = nullptr;
 	baseColorTextureTransparency = false;
@@ -37,7 +38,7 @@ PBRMaterialProperties::~PBRMaterialProperties() {
 void PBRMaterialProperties::setBaseColorTexture(Texture* baseColorTexture) {
 	if (this->baseColorTexture != nullptr) this->baseColorTexture->releaseReference();
 	baseColorTexturePathName.clear();
-	baseColorTextureFileName = baseColorTexture->getId() + ".png";
+	baseColorTextureFileName = baseColorTexture->getId();
 	baseColorTexture->acquireReference();
 	this->baseColorTexture = baseColorTexture;
 	checkBaseColorTextureTransparency();
@@ -55,7 +56,7 @@ void PBRMaterialProperties::setBaseColorTexture(const string& pathName, const st
 void PBRMaterialProperties::setMetallicRoughnessTexture(Texture* metallicRoughnessTexture) {
 	if (this->metallicRoughnessTexture != nullptr) this->metallicRoughnessTexture->releaseReference();
 	metallicRoughnessTexturePathName.clear();
-	metallicRoughnessTextureFileName = metallicRoughnessTexture->getId() + ".png";
+	metallicRoughnessTextureFileName = metallicRoughnessTexture->getId();
 	metallicRoughnessTexture->acquireReference();
 	this->metallicRoughnessTexture = metallicRoughnessTexture;
 }
@@ -71,7 +72,7 @@ void PBRMaterialProperties::setMetallicRoughnessTexture(const string& pathName, 
 void PBRMaterialProperties::setNormalTexture(Texture* normalTexture) {
 	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
 	normalTexturePathName.clear();
-	normalTextureFileName = normalTexture->getId() + ".png";
+	normalTextureFileName = normalTexture->getId();
 	normalTexture->acquireReference();
 	this->normalTexture = normalTexture;
 }

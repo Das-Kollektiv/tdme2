@@ -19,6 +19,7 @@ using tdme::utilities::ByteBuffer;
 
 SpecularMaterialProperties::SpecularMaterialProperties()
 {
+	embedTextures = false;
 	ambientColor.set(0.2f, 0.2f, 0.2f, 0.0f);
 	diffuseColor.set(0.8f, 0.8f, 0.8f, 1.0f);
 	specularColor.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -43,7 +44,7 @@ SpecularMaterialProperties::~SpecularMaterialProperties() {
 void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
 	if (this->diffuseTexture != nullptr) this->diffuseTexture->releaseReference();
 	diffuseTexturePathName.clear();
-	diffuseTextureFileName = diffuseTexture->getId() + ".png";
+	diffuseTextureFileName = diffuseTexture->getId();
 	diffuseTransparencyTexturePathName.clear();
 	diffuseTransparencyTextureFileName.clear();
 	diffuseTexture->acquireReference();
@@ -100,7 +101,7 @@ void SpecularMaterialProperties::checkDiffuseTextureTransparency()
 void SpecularMaterialProperties::setSpecularTexture(Texture* specularTexture) {
 	if (this->specularTexture != nullptr) this->specularTexture->releaseReference();
 	specularTexturePathName.clear();
-	specularTextureFileName = specularTexture->getId() + ".png";
+	specularTextureFileName = specularTexture->getId();
 	specularTexture->acquireReference();
 	this->specularTexture = specularTexture;
 }
@@ -117,7 +118,7 @@ void SpecularMaterialProperties::setSpecularTexture(const string& pathName, cons
 void SpecularMaterialProperties::setNormalTexture(Texture* normalTexture) {
 	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
 	normalTexturePathName.clear();
-	normalTextureFileName = normalTexture->getId() + ".png";
+	normalTextureFileName = normalTexture->getId();
 	normalTexture->acquireReference();
 	this->normalTexture = normalTexture;
 }
