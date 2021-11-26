@@ -359,7 +359,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
 	// geometry buffer
-	if (enableGeometryBuffer == true) {
+	if (renderer->isDeferredShadingAvailable() == true && enableGeometryBuffer == true) {
 		offScreenEngine->geometryBuffer = new GeometryBuffer(width, height);
 		offScreenEngine->geometryBuffer->initialize();
 	}
