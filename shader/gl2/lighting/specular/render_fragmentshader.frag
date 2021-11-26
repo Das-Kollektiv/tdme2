@@ -22,6 +22,8 @@ varying vec4 vsFragColor;
 
 {$DEFINITIONS}
 
+{$FUNCTIONS}
+
 #if defined(HAVE_TERRAIN_SHADER)
 	#define TERRAIN_UV_SCALE			0.2
 	#define TERRAIN_LEVEL_0				-4.0

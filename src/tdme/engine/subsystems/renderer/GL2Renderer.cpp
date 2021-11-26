@@ -258,9 +258,10 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 				"/" +
 				fileName +
 				string(": failed: ") +
-				infoLogString
+				infoLogString + "\n"
 			 )
-		 );
+		);
+		Console::println(shaderSource);
 		//
 		delete [] infoLogBuffer;
 		// remove shader
