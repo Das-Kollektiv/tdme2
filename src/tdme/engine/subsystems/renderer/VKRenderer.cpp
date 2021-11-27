@@ -2300,8 +2300,9 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (multiLineComment == true) {
 				if (StringTools::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
-			if (StringTools::startsWith(line, "#if defined(") == true) {
-				auto definition = StringTools::trim(StringTools::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+			if (StringTools::startsWith(line, "#if defined(") == true || StringTools::startsWith(line, "#if !defined(") == true) {
+				auto inverted = StringTools::startsWith(line, "#if !defined(") == true;
+				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#if defined(":"#if !defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
@@ -2311,12 +2312,14 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						break;
 					}
 				}
+				if (inverted == true) matched = !matched;
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
 				hadMatchedDefinitions.push_back(matched);
 				newShaderSourceLines.push_back("// " + line);
 			} else
-			if (StringTools::startsWith(line, "#elif defined(") == true) {
+			if (StringTools::startsWith(line, "#elif defined(") == true || StringTools::startsWith(line, "#elif !defined(") == true) {
+				auto inverted = StringTools::startsWith(line, "#elif !defined(") == true;
 				// remove old test from stack
 				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else end: invalid depth"); else {
 					testedDefinitions.pop();
@@ -2324,7 +2327,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				newShaderSourceLines.push_back("// " + line);
 				// do new test
-				auto definition = StringTools::trim(StringTools::substring(line, string("#elif defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#elif defined(":"#elif !defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
@@ -2334,6 +2337,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						break;
 					}
 				}
+				if (inverted == true) matched = !matched;
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
 				if (matched == true) hadMatchedDefinitions[hadMatchedDefinitions.size() - 1] = matched;

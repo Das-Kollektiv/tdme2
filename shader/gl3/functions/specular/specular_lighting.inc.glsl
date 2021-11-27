@@ -72,7 +72,7 @@ struct SpecularLight {
 uniform SpecularLight specularLights[MAX_LIGHTS];
 
 //
-vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial specularMaterial) {
+vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial _specularMaterial) {
 	vec3 lightDirection = specularLights[i].position.xyz - position.xyz;
 	float lightDistance = length(lightDirection);
 	lightDirection = normalize(lightDirection);
@@ -99,13 +99,13 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 
 	// add color components to fragment color
 	return
-		clamp(specularLights[i].ambient * specularMaterial.ambient, 0.0, 1.0) +
-		clamp(specularLights[i].diffuse * specularMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-		clamp(specularLights[i].specular * specularMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * specularMaterial.shininess) * lightAttenuation, 0.0, 1.0);
+		clamp(specularLights[i].ambient * _specularMaterial.ambient, 0.0, 1.0) +
+		clamp(specularLights[i].diffuse * _specularMaterial.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
+		clamp(specularLights[i].specular * _specularMaterial.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * _specularMaterial.shininess) * lightAttenuation, 0.0, 1.0);
 }
 
 //
-vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial specularMaterial) {
+vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial _specularMaterial) {
 	vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -113,7 +113,7 @@ vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirect
 		if (specularLights[i].enabled == FALSE || (specularLights[i].radius > 0.0 && length(specularLights[i].position.xyz - position.xyz) > specularLights[i].radius)) continue;
 
 		// compute light
-		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, specularMaterial);
+		fragColor+= computeSpecularLight(i, normal, position, eyeDirection, _specularMaterial);
 	}
 	//
 	return fragColor;
