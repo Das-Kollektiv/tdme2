@@ -248,6 +248,8 @@
 - documentation
 
 # 5. What is WIP or planned
+- PBR lighting shader for Vulkan
+- Deferred shading for Vulkan
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
@@ -255,7 +257,6 @@
 - Port WarStorys "Game Foundation" to TDME2, which organizes game logics, enables communcation between them and enables to do network IO and such
 - MiniScript: more engine bindings
 - MiniScript: MiniScript -> C++ transpiler
-- PBR lighting shader for GL3/CORE+, Vulkan
 - Add nmake support to makefile generator for TDME2 based projects
 - Improve on Vulkan
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
