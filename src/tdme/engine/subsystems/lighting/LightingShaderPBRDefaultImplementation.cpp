@@ -40,7 +40,11 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
+		string() +
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n"
+		#if !defined(VULKAN)
+			+ "#define USE_IBL\n"
+		#endif
 	);
 	if (vertexShaderId == 0) return;
 
@@ -49,7 +53,12 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_fragmentshader.frag",
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
+		string() +
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n"
+		#if !defined(VULKAN)
+			+ "#define USE_IBL\n"
+		#endif
+		,
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/pbr",
 			"tonemapping.inc.glsl"
