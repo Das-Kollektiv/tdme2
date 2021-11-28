@@ -108,17 +108,30 @@ else ifeq ($(OS), OpenBSD)
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
-	EXTRAFLAGS := -DGLFW3
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	# Haiku, Vulkan
+	ifeq ($(VULKAN), YES)
+		EXTRAFLAGS := -DVULKAN
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lvulkan -lGL -lopenal -lnetwork
+	else
+		# Haiku, GL
+		EXTRAFLAGS := -DGLFW3
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
-			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lGLEW -lGL -lopenal -lnetwork
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lGLEW -lGL -lopenal -lnetwork
+	endif
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
