@@ -17,6 +17,26 @@
 
 precision highp float;
 
+// TODO: maybe move me into definitions
+#ifndef HAVE_PBRLIGHT_STRUCT
+#define HAVE_PBRLIGHT_STRUCT
+struct PBRLight {
+    int enabled;
+
+    vec3 direction;
+    float range;
+
+    vec3 color;
+    float intensity;
+
+    vec3 position;
+    float innerConeCos;
+
+    float outerConeCos;
+    int type;
+};
+#endif
+
 {$DEFINITIONS}
 
 {$FUNCTIONS}
@@ -36,8 +56,7 @@ uniform float u_GlossinessFactor;
 
 out vec4 outColor;
 
-void main()
-{
+void main() {
 	PBRMaterial pbrMaterial;
 	pbrMaterial.metallicFactor = u_MetallicFactor;
 	pbrMaterial.roughnessFactor = u_RoughnessFactor;

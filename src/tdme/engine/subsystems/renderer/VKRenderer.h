@@ -112,6 +112,11 @@ private:
 	};
 
 	struct shader_type {
+		struct attribute_layout {
+			string name;
+			string type;
+			uint8_t location;
+		};
 		struct uniform_type {
 			enum uniform_type_enum { TYPE_NONE, TYPE_UNIFORM, TYPE_SAMPLER2D, TYPE_SAMPLERCUBE };
 			string name;
@@ -121,6 +126,7 @@ private:
 			uint32_t size;
 			int32_t texture_unit;
 		};
+		vector<attribute_layout> attributeLayouts;
 		unordered_map<string, uniform_type*> uniforms;
 		vector<uniform_type*> uniformList;
 		vector<uniform_type*> samplerUniformList;

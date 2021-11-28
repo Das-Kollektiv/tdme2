@@ -147,7 +147,6 @@ VKRenderer::VKRenderer():
 	SHADER_FRAGMENT_SHADER = VK_SHADER_STAGE_FRAGMENT_BIT;
 	SHADER_VERTEX_SHADER = VK_SHADER_STAGE_VERTEX_BIT;
 	SHADER_COMPUTE_SHADER = VK_SHADER_STAGE_COMPUTE_BIT;
-	SHADER_GEOMETRY_SHADER = VK_SHADER_STAGE_GEOMETRY_BIT;
 	DEPTHFUNCTION_ALWAYS = VK_COMPARE_OP_ALWAYS;
 	DEPTHFUNCTION_EQUAL = VK_COMPARE_OP_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
@@ -2233,7 +2232,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 					if (isArray == false) uniformStructsArrays.insert(uniformName);
 				}
 			} else {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType + "@" + prefix + uniform);
 				shaders.erase(shader.id);
 				return false;
 			}
@@ -2284,8 +2283,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		stack<string> testedDefinitions;
 		vector<bool> matchedDefinitions;
 		vector<bool> hadMatchedDefinitions;
-		auto inLocationCount = 0;
-		auto outLocationCount = 0;
 		auto uboUniformCount = 0;
 		auto multiLineComment = false;
 		while (t.hasMoreTokens() == true) {
@@ -2293,16 +2290,24 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
 			auto line = StringTools::trim(t.nextToken());
 			if (StringTools::startsWith(line, "//") == true) continue;
-			auto position = -1;
+			auto position = string::npos;
 			if (StringTools::startsWith(line, "/*") == true) {
 				multiLineComment = true;
 			} else
 			if (multiLineComment == true) {
 				if (StringTools::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
-			if (StringTools::startsWith(line, "#if defined(") == true || StringTools::startsWith(line, "#if !defined(") == true) {
-				auto inverted = StringTools::startsWith(line, "#if !defined(") == true;
-				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#if defined(":"#if !defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+			if (StringTools::startsWith(line, "#if defined(") == true ||
+				StringTools::startsWith(line, "#if !defined(") == true ||
+				StringTools::startsWith(line, "#ifdef ") == true ||
+				StringTools::startsWith(line, "#ifndef ") == true) {
+				auto inverted = StringTools::startsWith(line, "#if !defined(") == true || StringTools::startsWith(line, "#ifndef ") == true;
+				string definition;
+				if (StringTools::startsWith(line, "#if ") == true) {
+					definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#if defined(":"#if !defined(").size(), (position = line.find(")")) != string::npos?position:line.size()));
+				} else {
+					definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#ifdef ":"#ifndef ").size()));
+				}
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
@@ -2318,7 +2323,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				hadMatchedDefinitions.push_back(matched);
 				newShaderSourceLines.push_back("// " + line);
 			} else
-			if (StringTools::startsWith(line, "#elif defined(") == true || StringTools::startsWith(line, "#elif !defined(") == true) {
+			if (StringTools::startsWith(line, "#elif defined(") == true ||
+				StringTools::startsWith(line, "#elif !defined(") == true) {
 				auto inverted = StringTools::startsWith(line, "#elif !defined(") == true;
 				// remove old test from stack
 				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else end: invalid depth"); else {
@@ -2327,7 +2333,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				newShaderSourceLines.push_back("// " + line);
 				// do new test
-				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#elif defined(":"#elif !defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+				auto definition = StringTools::trim(StringTools::substring(line, string(inverted == false?"#elif defined(":"#elif !defined(").size(), (position = line.find(")")) != string::npos?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
@@ -2344,8 +2350,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			} else
 			if (StringTools::startsWith(line, "#define ") == true) {
 				auto definition = StringTools::trim(StringTools::substring(line, string("#define ").size()));
-				if (definition.find(' ') != -1 || definition.find('\t') != -1) {
-					t2.tokenize(definition, "\t ");
+				if (definition.find(' ') != string::npos) {
+					t2.tokenize(definition, " ");
 					definition = t2.nextToken();
 					string value;
 					while (t2.hasMoreTokens() == true) value+= t2.nextToken();
@@ -2390,16 +2396,16 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				if ((StringTools::startsWith(line, "uniform ")) == true) {
 					string uniform;
-					if (line.find("sampler2D") != -1) {
+					if (line.find("sampler2D") != string::npos) {
 						uniform = StringTools::substring(line, string("uniform").size() + 1);
-						t2.tokenize(uniform, "\t ;");
+						t2.tokenize(uniform, " ;");
 						string uniformType;
 						string uniformName;
 						if (t2.hasMoreTokens() == true) uniformType = t2.nextToken();
 						while (t2.hasMoreTokens() == true) uniformName = t2.nextToken();
 						auto isArray = false;
 						auto arraySize = 1;
-						if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
@@ -2412,16 +2418,16 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						}
 						shader.samplers++;
 					} else
-					if (line.find("samplerCube") != -1) {
+					if (line.find("samplerCube") != string::npos) {
 						uniform = StringTools::substring(line, string("uniform").size() + 1);
-						t2.tokenize(uniform, "\t ;");
+						t2.tokenize(uniform, " ;");
 						string uniformType;
 						string uniformName;
 						if (t2.hasMoreTokens() == true) uniformType = t2.nextToken();
 						while (t2.hasMoreTokens() == true) uniformName = t2.nextToken();
 						auto isArray = false;
 						auto arraySize = 1;
-						if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
@@ -2442,16 +2448,66 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
 				} else
 				if (StringTools::startsWith(line, "out ") == true || StringTools::startsWith(line, "flat out ") == true) {
-					newShaderSourceLines.push_back("layout (location = " + to_string(outLocationCount) + ") " + line);
-					if (VERBOSE == true) Console::println("layout (location = " + to_string(outLocationCount) + ") " + line);
-					outLocationCount++;
+					if (shader.type == SHADER_VERTEX_SHADER) {
+						t2.tokenize(line, " ;");
+						bool flat = false;
+						auto inOutType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						if (inOutType == "flat") {
+							flat = true;
+							auto inOutType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						}
+						auto outType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						auto outName = t2.hasMoreTokens() == true?t2.nextToken():string();
+						auto outLocation = 0;
+						for (auto& attributeLayout: shader.attributeLayouts) {
+							if (attributeLayout.type == "mat3") {
+								outLocation+= 3;
+							} else
+							if (attributeLayout.type == "mat4") {
+								outLocation+= 4;
+							} else {
+								outLocation++;
+							}
+						}
+						shader.attributeLayouts.push_back(
+							{
+								.name = outName,
+								.type = outType,
+								.location = static_cast<uint8_t>(outLocation)
+							}
+						);
+						if (VERBOSE == true) {
+							Console::println(
+								"inOutType: " + inOutType + " / " +
+								"outType: " + outType + " / " +
+								"outName: " + outName + " / " +
+								"location: " + to_string(outLocation)
+							);
+						}
+						newShaderSourceLines.push_back("layout (location = " + to_string(outLocation) + ") " + line);
+					} else
+					if (shader.type == SHADER_FRAGMENT_SHADER) {
+						newShaderSourceLines.push_back("layout (location = 0) " + line);
+					}
 				} else
 				if (StringTools::startsWith(line, "in ") == true || StringTools::startsWith(line, "flat in ") == true) {
-					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount) + ") " + line);
-					if (VERBOSE == true) Console::println("layout (location = " + to_string(inLocationCount) + ") " + line);
-					inLocationCount++;
+					if (shader.type == SHADER_FRAGMENT_SHADER) {
+						t2.tokenize(line, " ;");
+						bool flat = false;
+						auto inOutType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						if (inOutType == "flat") {
+							flat = true;
+							auto inOutType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						}
+						auto inType = t2.hasMoreTokens() == true?t2.nextToken():string();
+						auto inName = t2.hasMoreTokens() == true?t2.nextToken():string();
+						if (VERBOSE == true) {
+							Console::println("layout (location = {$IN_ATTRIBUTE_LOCATION_" + inName + "_IDX}) " + line);
+						}
+						newShaderSourceLines.push_back("layout (location = {$IN_ATTRIBUTE_LOCATION_" + inName + "_IDX}) " + line);
+					}
 				} else
-				if (StringTools::startsWith(line, "layout") == true && line.find("binding=") != -1) {
+				if (StringTools::startsWith(line, "layout") == true && line.find("binding=") != string::npos) {
 					if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have layout with binding: " + line);
 					t2.tokenize(line, "(,)= \t");
 					while (t2.hasMoreTokens() == true) {
@@ -2494,8 +2550,14 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		// inject uniform before first method
 		for (auto i = 0; i < newShaderSourceLines.size(); i++) {
 			auto line = newShaderSourceLines[i];
-			if (line.find('(') != -1 && line.find(')') != -1 && StringTools::startsWith(line, "layout") == false && line.find("defined(") == -1 && line.find("#define") == -1) {
-				injectedUniformsAt = i;
+			if (StringTools::startsWith(line, "//") == true) continue;
+			if (line.find('(') != string::npos &&
+				line.find(')') != string::npos &&
+				StringTools::startsWith(line, "struct ") == false &&
+				StringTools::startsWith(line, "layout ") == false &&
+				StringTools::startsWith(line, "layout(") == false &&
+				StringTools::startsWith(line, "#") == false) {
+				injectedUniformsAt = i - 1;
 				break;
 			}
 		}
@@ -3667,7 +3729,7 @@ int32_t VKRenderer::createProgram(int type)
 	for (auto i = 0; i < program.desc_idxs2.size(); i++) program.desc_idxs2[i] = 0;
 	for (auto i = 0; i < program.desc_idxs2plus.size(); i++) program.desc_idxs2plus[i] = 0;
 	programList.push_back(programPtr);
-	Console::println("new program: " + to_string(program.id));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program id: " + to_string(program.id));
 	return program.id;
 }
 
@@ -3740,9 +3802,10 @@ bool VKRenderer::linkProgram(int32_t programId)
 		}
 	}
 
-	// bind samplers, compile shaders
+	// bind samplers, set up ingoing attribute layout indices, compile shaders
+	shader_type* shaderLast = nullptr;
 	for (auto shader: program->shaders) {
-		//
+		// set up sampler2D and samplerCube binding indices
 		for (auto& uniformIt: shader->uniforms) {
 			auto& uniform = *uniformIt.second;
 			//
@@ -3755,6 +3818,12 @@ bool VKRenderer::linkProgram(int32_t programId)
 				uniform.position = bindingIdx++;
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
+		}
+		// set up ingoing attributes layout indices
+		if (shaderLast != nullptr) {
+			for (auto& attributeLayout: shaderLast->attributeLayouts) {
+				shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
+			}
 		}
 
 		// compile shader
@@ -3863,6 +3932,9 @@ bool VKRenderer::linkProgram(int32_t programId)
 				return false;
 			}
 	    }
+
+		//
+		shaderLast = shader;
 	}
 
 	//

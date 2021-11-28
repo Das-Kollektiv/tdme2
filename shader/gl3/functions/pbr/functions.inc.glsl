@@ -12,8 +12,7 @@ in vec3 v_Color;
 in vec4 v_Color;
 #endif
 
-struct AngularInfo
-{
+struct AngularInfo {
     float NdotL;                  // cos angle between normal and light direction
     float NdotV;                  // cos angle between normal and view direction
     float NdotH;                  // cos angle between normal and half vector

@@ -55,8 +55,7 @@ uniform mat4 u_ViewProjectionMatrix;
 
 {$FUNCTIONS}
 
-void main()
-{
+void main() {
 	mat4 _modelMatrix = a_ModelMatrix;
 	#if defined(HAVE_TREE)
 		mat4 shaderTransformMatrix = createTreeTransformMatrix(
@@ -91,7 +90,10 @@ void main()
 		v_UVCoord2 = a_UV2;
 	#endif
 
-	#if defined(HAS_VERTEX_COLOR_VEC3) || defined(HAS_VERTEX_COLOR_VEC4)
+	#if defined(HAS_VERTEX_COLOR_VEC3)
+		v_Color = a_Color;
+	#endif
+	#if defined(HAS_VERTEX_COLOR_VEC4)
 		v_Color = a_Color;
 	#endif
 

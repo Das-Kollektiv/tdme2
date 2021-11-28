@@ -15,8 +15,10 @@
 // KHR_lights_punctual extension.
 // see https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
 
-struct PBRLight
-{
+// TODO: maybe move me into definitions
+#ifndef HAVE_PBRLIGHT_STRUCT
+#define HAVE_PBRLIGHT_STRUCT
+struct PBRLight {
     int enabled;
 
     vec3 direction;
@@ -31,6 +33,7 @@ struct PBRLight
     float outerConeCos;
     int type;
 };
+#endif
 
 const int LightType_Directional = 0;
 const int LightType_Point = 1;
@@ -74,8 +77,7 @@ uniform vec3 u_Camera;
 
 uniform int u_MipCount;
 
-struct MaterialInfo
-{
+struct MaterialInfo {
     float perceptualRoughness;    // roughness value, as authored by the model creator (input to shader)
     vec3 reflectance0;            // full reflectance color (normal incidence angle)
 
