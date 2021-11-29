@@ -248,7 +248,7 @@
 - documentation
 
 # 5. What is WIP or planned
-- PBR lighting shader for Vulkan
+- PBR lighting shader for Vulkan(IBL missing)
 - Deferred shading for Vulkan
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
