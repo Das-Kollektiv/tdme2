@@ -37,8 +37,6 @@ using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
-MutableString GUIFont::LINEHEIGHT_STRING = MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
-
 GUIFont::GUIFont()
 {
 }
@@ -90,7 +88,10 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 			*/
 		}
 	}
-	font->lineHeight = font->getTextHeight(LINEHEIGHT_STRING);
+	for (auto& fontIt: font->chars) {
+		auto characterDefinition = fontIt.second;
+		if (characterDefinition->height + characterDefinition->yOffset > font->lineHeight) font->lineHeight = characterDefinition->height + characterDefinition->yOffset;
+	}
 	return font;
 }
 
@@ -132,9 +133,8 @@ void GUIFont::dispose()
 	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 }
 
-void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
+void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
 {
-	y -= yOffset == 10000?getYOffset(text) / 2:yOffset;
 	if (length == 0) length = text.size();
 	auto inSelection = false;
 	auto currentColor = color;
@@ -209,31 +209,6 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 		}
 	}
 	return index;
-}
-
-int GUIFont::getYOffset(const MutableString& text)
-{
-	auto minYOffset = 10000;
-	for (auto i = 0; i < text.size(); i++) {
-		auto characterId = text.charAt(i);
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		minYOffset = Math::min(characterDefinition->yOffset, minYOffset);
-	}
-	return minYOffset;
-}
-
-int GUIFont::getTextHeight(const MutableString& text)
-{
-	auto maxHeight = 0;
-	for (auto i = 0; i < text.size(); i++) {
-		auto characterId = text.charAt(i);
-		if (characterId == ' ') continue;
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		maxHeight = Math::max(characterDefinition->height + characterDefinition->yOffset, maxHeight);
-	}
-	return maxHeight;
 }
 
 int GUIFont::getTextWidth(const MutableString& text)

@@ -47,26 +47,9 @@ class tdme::gui::renderer::GUIFont final
 	friend class GUIFont_CharacterDefinition;
 
 private:
-	static MutableString LINEHEIGHT_STRING;
-
-	/**
-	 * The image containing the bitmap font
-	 */
 	Texture* texture { nullptr };
-
-	/**
-	 * Texture id
-	 */
 	int32_t textureId { -1 };
-
-	/**
-	 * The characters building up the font
-	 */
 	unordered_map<uint32_t, GUIFont_CharacterDefinition*> chars;
-
-	/**
-	 * The height of a line
-	 */
 	int lineHeight { 0 };
 
 	/**
@@ -125,12 +108,11 @@ public:
 	 * @param offset offset
 	 * @param length length or 0 if full length
 	 * @param color color
-	 * @param yOffset 10000 to detect it or a custom value
 	 * @param selectionStartIndex selection start index
 	 * @param selectionEndIndex selection end index
 	 * @param backgroundColor background color
 	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int yOffset = 10000, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
+	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
 
 	/**
 	 * Get text index X of given text and index
@@ -151,20 +133,6 @@ public:
 	 * @return text index
 	 */
 	int getTextIndexByX(const MutableString& text, int offset, int length, int textX);
-
-	/**
-	 * Get the offset from the draw location the font will place glyphs
-	 * @param text text The text that is to be tested
-	 * @return The yoffset from the y draw location at which text will start
-	 */
-	int getYOffset(const MutableString& text);
-
-	/**
-	 * Text height
-	 * @param text text
-	 * @return text height
-	 */
-	int getTextHeight(const MutableString& text);
 
 	/**
 	 * Text width

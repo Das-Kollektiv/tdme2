@@ -134,7 +134,6 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 			inputInternalController->getOffset(),
 			0,
 			disable == false?color:colorDisabled,
-			0,
 			selectionIndex == -1 || selectionIndex == index?-1:Math::min(selectionIndex, index),
 			selectionIndex == -1 || selectionIndex == index?-1:Math::max(selectionIndex, index),
 			inputNode->getBackgroundColor()

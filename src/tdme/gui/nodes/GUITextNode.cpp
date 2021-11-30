@@ -74,7 +74,7 @@ int GUITextNode::getContentWidth()
 
 int GUITextNode::getContentHeight()
 {
-	return font != nullptr?font->getTextHeight(text) + border.top + border.bottom + padding.top + padding.bottom:0;
+	return font != nullptr?font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom:0;
 }
 
 void GUITextNode::setText(const MutableString& text) {

@@ -342,7 +342,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							auto styleFontColor = color;
 							string textToRender;
 							auto _startTextStyleIdx = textStyleIdx;
-							auto yOffset = font->getYOffset(lineToRender) / 2;
 							for (auto l = 0; l < lineToRender.size(); l++) {
 								TextStyle* validTextStyle = nullptr;
 								if (textStyles.empty() == false) {
@@ -387,8 +386,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 										textToRender,
 										0,
 										0,
-										textStyleLast != nullptr?textStyleLast->color:color,
-										yOffset
+										textStyleLast != nullptr?textStyleLast->color:color
 									);
 									left+= font->getTextWidth(textToRender);
 									textToRender.clear();
@@ -406,8 +404,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 									textToRender,
 									0,
 									0,
-									textStyleLast != nullptr?textStyleLast->color:color,
-									yOffset
+									textStyleLast != nullptr?textStyleLast->color:color
 								);
 								left+= font->getTextWidth(textToRender);
 								textToRender.clear();
