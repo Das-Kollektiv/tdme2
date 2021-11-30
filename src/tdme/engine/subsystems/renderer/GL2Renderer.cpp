@@ -80,6 +80,16 @@ GL2Renderer::GL2Renderer()
 	bufferObjectsAvailable = true;
 }
 
+const string GL2Renderer::getVendor() {
+	auto vendor = glGetString(GL_VENDOR);
+	return string((char*)vendor);
+}
+
+const string GL2Renderer::getRenderer() {
+	auto renderer = glGetString(GL_RENDERER);
+	return string((char*)renderer);
+}
+
 const string GL2Renderer::getShaderVersion()
 {
 	return "gl2";

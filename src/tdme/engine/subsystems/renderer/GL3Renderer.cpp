@@ -92,6 +92,16 @@ GL3Renderer::GL3Renderer()
 	engineVAO = 0;
 }
 
+const string GL3Renderer::getVendor() {
+	auto vendor = (char*)glGetString(GL_VENDOR);
+	return string(vendor);
+}
+
+const string GL3Renderer::getRenderer() {
+	auto renderer = (char*)glGetString(GL_RENDERER);
+	return string(renderer);
+}
+
 const string GL3Renderer::getShaderVersion()
 {
 	return "gl3";

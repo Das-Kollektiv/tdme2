@@ -57,6 +57,8 @@ public:
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
+	const string getVendor() override;
+	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;

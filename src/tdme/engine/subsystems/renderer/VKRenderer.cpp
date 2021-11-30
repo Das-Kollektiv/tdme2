@@ -881,6 +881,14 @@ void VKRenderer::initializeSwapChain() {
 	current_buffer = 0;
 }
 
+const string VKRenderer::getVendor() {
+	return string("Vulkan Vendor"); // TODO: implement me!
+}
+
+const string VKRenderer::getRenderer() {
+	return string("Vulkan Renderer"); // TODO: implement me!
+}
+
 const string VKRenderer::getShaderVersion()
 {
 	return "gl3";

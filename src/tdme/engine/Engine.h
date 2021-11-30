@@ -832,6 +832,16 @@ public:
 	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer);
 
 	/**
+	 * @return graphics vendor
+	 */
+	const string getGraphicsVendor();
+
+	/**
+	 * @return graphics renderer
+	 */
+	const string getGraphicsRenderer();
+
+	/**
 	 * @return if initialized and ready to be used
 	 */
 	inline bool isInitialized() {

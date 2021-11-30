@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <tdme/application/Application.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -16,6 +18,8 @@
 
 using std::string;
 
+using tdme::application::Application;
+using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -49,6 +53,8 @@ void AboutDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
+		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getCPUName() + "/" + Application::getOSName()));
+		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + Engine::getInstance()->getGraphicsRenderer()));
 	} catch (Exception& exception) {
 		Console::print(string("AboutDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

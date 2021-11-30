@@ -12,6 +12,16 @@
 					
 							<image width="339" height="94" src="resources/engine/images/tdme_fontlogo_white.png"/>
 							
+							<space height="10" />
+							
+							<text id="about_platform" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Platform: " />
+							
+							<space height="5" />
+							
+							<text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Graphics: " />
+							
+							<space height="10" />					
+						
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="*">
 							
 								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
@@ -80,13 +90,9 @@
 								</layout>
 
 							</layout>
-							
-							<multiline-text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
-								<![CDATA[
-									Developed 2012-2021 by drewke.net, mindty.com
-								]]>
-							</multiline-text>
-							
+
+							<text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Developed 2012-2021 by drewke.net, mindty.com" />
+						
 						</layout>
 						
 					</tab-content>

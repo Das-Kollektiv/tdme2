@@ -204,6 +204,16 @@ public:
 	virtual void finishFrame() = 0;
 
 	/**
+	 * @return vendor
+	 */
+	virtual const string getVendor() = 0;
+
+	/**
+	 * @return renderer
+	 */
+	virtual const string getRenderer() = 0;
+
+	/**
 	 * @return shader version e.g. gl2, gl3 or gles2
 	 */
 	virtual const string getShaderVersion() = 0;

@@ -74,6 +74,16 @@ GLES2Renderer::GLES2Renderer()
 	activeTextureUnit = 0;
 }
 
+const string GLES2Renderer::getVendor() {
+	auto vendor = (char*)glGetString(GL_VENDOR);
+	return string(vendor);
+}
+
+const string GLES2Renderer::getRenderer() {
+	auto renderer = (char*)glGetString(GL_RENDERER);
+	return string(renderer);
+}
+
 const string GLES2Renderer::getShaderVersion()
 {
 	return "gl2";

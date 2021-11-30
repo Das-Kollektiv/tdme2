@@ -368,6 +368,14 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	return offScreenEngine;
 }
 
+const string Engine::getGraphicsVendor() {
+	return renderer->getVendor();
+}
+
+const string Engine::getGraphicsRenderer() {
+	return renderer->getRenderer();
+}
+
 void Engine::setPartition(Partition* partition)
 {
 	if (this->partition != nullptr && this->partition != partition) delete this->partition;

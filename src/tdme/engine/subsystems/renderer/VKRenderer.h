@@ -478,6 +478,8 @@ protected:
 	VKRenderer();
 
 public:
+	const string getVendor() override;
+	const string getRenderer() override;
 	const string getShaderVersion() override;
 	void* getDefaultContext() override;
 	void* getContext(int contextIdx) override;
