@@ -51,6 +51,7 @@ private:
 	int32_t textureId { -1 };
 	unordered_map<uint32_t, GUIFont_CharacterDefinition*> chars;
 	int lineHeight { 0 };
+	int yOffsetMin { 0 };
 
 	/**
 	 * Parse a single character line from the definition

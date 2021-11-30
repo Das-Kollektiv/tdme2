@@ -88,8 +88,10 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 			*/
 		}
 	}
+	font->yOffsetMin = 10000;
 	for (auto& fontIt: font->chars) {
 		auto characterDefinition = fontIt.second;
+		if (characterDefinition->yOffset < font->yOffsetMin) font->yOffsetMin = characterDefinition->yOffset;
 		if (characterDefinition->height + characterDefinition->yOffset > font->lineHeight) font->lineHeight = characterDefinition->height + characterDefinition->yOffset;
 	}
 	return font;
@@ -135,6 +137,7 @@ void GUIFont::dispose()
 
 void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
 {
+	y-= yOffsetMin - 1;
 	if (length == 0) length = text.size();
 	auto inSelection = false;
 	auto currentColor = color;
