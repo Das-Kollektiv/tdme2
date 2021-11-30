@@ -92,20 +92,52 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	float height = computedConstraints.height - border.top - border.bottom;
 	array<float, 4> barColorArray;
 	{
-		auto v = controller->getState();
-		if (v == GUIHorizontalScrollbarInternalController::STATE_NONE) {
+		auto state = controller->getState();
+		if (state == GUIHorizontalScrollbarInternalController::STATE_NONE) {
 			barColorArray = barColorNone.getArray();
 		} else
-		if (v == GUIHorizontalScrollbarInternalController::STATE_MOUSEOVER) {
+		if (state == GUIHorizontalScrollbarInternalController::STATE_MOUSEOVER) {
 			barColorArray = barColorMouseOver.getArray();
 		} else
-		if (v == GUIHorizontalScrollbarInternalController::STATE_DRAGGING) {
+		if (state == GUIHorizontalScrollbarInternalController::STATE_DRAGGING) {
 			barColorArray = barColorDragging.getArray();
 		}
 	}
-
 	guiRenderer->bindTexture(0);
-	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, barColorArray[0], barColorArray[1], barColorArray[2], barColorArray[3], 0.0f, 0.0f);
+	guiRenderer->addQuad(
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		barColorArray[0],
+		barColorArray[1],
+		barColorArray[2],
+		barColorArray[3],
+		0.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		barColorArray[0],
+		barColorArray[1],
+		barColorArray[2],
+		barColorArray[3],
+		1.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		barColorArray[0],
+		barColorArray[1],
+		barColorArray[2],
+		barColorArray[3],
+		1.0f,
+		0.0f,
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		barColorArray[0],
+		barColorArray[1],
+		barColorArray[2],
+		barColorArray[3],
+		0.0f,
+		0.0f
+	);
 	guiRenderer->render();
 }
 
