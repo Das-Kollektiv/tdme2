@@ -506,10 +506,13 @@ void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		} else {
+			// TODO: this feature does not seem to exist with GLES2
+			/*
 			float color[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 			if (texture->getClampMode() == Texture::CLAMPMODE_TRANSPARENTPIXEL) glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->getClampMode() == Texture::CLAMPMODE_EDGE?GL_CLAMP_TO_EDGE:GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->getClampMode() == Texture::CLAMPMODE_EDGE?GL_CLAMP_TO_EDGE:GL_CLAMP_TO_BORDER);
+			*/
 		}
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
@@ -688,7 +691,7 @@ void GLES2Renderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t widt
 	Console::println("GLES2Renderer::resizeGBufferGeometryTexture(): Not implemented");
 }
 
-void GL2RendGLES2Renderererer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
+void GLES2Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
 	Console::println("GLES2Renderer::resizeGBufferColorTexture(): Not implemented");
 }
 
