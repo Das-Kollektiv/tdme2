@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Console.h>
@@ -25,6 +26,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::utilities::Console;
@@ -53,8 +55,8 @@ void AboutDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
-		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getCPUName() + "/" + Application::getOSName()));
-		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + Engine::getInstance()->getGraphicsRenderer()));
+		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getOSName() + "/" + Application::getCPUName()));
+		required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + Engine::getInstance()->getGraphicsRenderer()));
 	} catch (Exception& exception) {
 		Console::print(string("AboutDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
