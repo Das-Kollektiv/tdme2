@@ -275,13 +275,12 @@
     - physics or game mechanics can also run in a separate thread(s)
 - uses 3rd party libraries
     - needs to be installed 
-        - GLUT(Haiku)
         - OpenGL
         - OpenAL
         - glew
         - pthreads
         - Vulkan(optional)
-        - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, NetBSD, required for Vulkan)
+        - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, NetBSD, Haiku, required for Vulkan)
     - included in TDME2 repository
         - FBXSDK
         - libpng
