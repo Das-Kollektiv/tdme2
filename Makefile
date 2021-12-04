@@ -939,8 +939,6 @@ EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.c
 EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_HL_OBJS = $(EXT_HL_SRCS:ext/$(HL)/%.c=$(OBJ)/%.o)
 
-all: $(LIBS)
-
 define cpp-command
 @mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
@@ -1039,6 +1037,8 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 endif
 
 mains: $(MAINS)
+
+all: mains
 
 # TODO make sure that always directory obj and obj-debug are removed
 clean:
