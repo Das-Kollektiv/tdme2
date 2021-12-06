@@ -1,5 +1,6 @@
 #include <tdme/gui/elements/GUICheckboxController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>

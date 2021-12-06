@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/HTTPClient.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/utilities/Console.h>

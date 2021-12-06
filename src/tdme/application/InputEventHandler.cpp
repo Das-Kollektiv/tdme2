@@ -1,3 +1,7 @@
+#include <tdme/application/InputEventHandler.h>
+
+#include <tdme/tdme.h>
+
 #if defined(VULKAN) || defined(GLFW3)
 	#include <tdme/application/Application.h>
 	using tdme::application::Application;
@@ -10,8 +14,6 @@
 		#include <GL/glut.h>
 	#endif
 #endif
-
-#include "InputEventHandler.h"
 
 using tdme::application::InputEventHandler;
 

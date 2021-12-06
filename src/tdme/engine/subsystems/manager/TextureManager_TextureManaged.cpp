@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 
 using std::string;

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/audio/decoder/VorbisDecoder.h>
 #include <tdme/os/filesystem/FileSystemException.h>

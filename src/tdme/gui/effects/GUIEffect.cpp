@@ -1,5 +1,6 @@
 #include <tdme/gui/effects/GUIEffect.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/utilities/Action.h>

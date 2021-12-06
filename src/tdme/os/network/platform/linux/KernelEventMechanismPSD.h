@@ -2,6 +2,7 @@
 
 #include <sys/epoll.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/linux/fwd-tdme.h>
 

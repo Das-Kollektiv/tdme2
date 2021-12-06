@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/FBXReader.h>
 #include <tdme/engine/fileio/models/GLTFReader.h>

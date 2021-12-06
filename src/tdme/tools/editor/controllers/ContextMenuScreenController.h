@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -35,7 +36,7 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
-#include <rapidjson/document.h>
+#include <ext/rapidjson/document.h>
 
 using std::string;
 using std::to_string;

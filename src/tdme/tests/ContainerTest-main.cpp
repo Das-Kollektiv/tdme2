@@ -1,11 +1,12 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::utilities::Console;
 

@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>

@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.h>

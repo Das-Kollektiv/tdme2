@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 

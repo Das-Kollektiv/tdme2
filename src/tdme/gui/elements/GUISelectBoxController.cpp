@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <unordered_set>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>

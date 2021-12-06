@@ -6,6 +6,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>

@@ -6,6 +6,7 @@
 #include <ext/reactphysics3d/src/collision/TriangleMesh.h>
 #include <ext/reactphysics3d/src/collision/TriangleVertexArray.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/Object3DModel.h>

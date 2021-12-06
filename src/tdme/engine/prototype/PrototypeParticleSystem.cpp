@@ -1,5 +1,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>

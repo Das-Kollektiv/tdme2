@@ -1,9 +1,7 @@
-/**
- * @version $Id: dc7188d5dbac05e6d033576a7a08e8eef01785b3 $
- */
+#include <tdme/os/threading/Condition.h>
 
-#include "Condition.h"
-#include "ThreadingError.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/ThreadingError.h>
 
 using std::string;
 using tdme::os::threading::Condition;

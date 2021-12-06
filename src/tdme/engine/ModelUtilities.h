@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 

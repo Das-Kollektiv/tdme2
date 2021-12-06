@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>

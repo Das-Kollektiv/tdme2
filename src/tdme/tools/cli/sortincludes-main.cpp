@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/Version.h>
 #include <tdme/math/Math.h>
@@ -95,6 +96,10 @@ void processFile(const string& fileName) {
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	vector<string> newFileContent;
 	string method = "";
+	auto headerFile = StringTools::endsWith(StringTools::toLowerCase(fileName), ".h");
+	auto hadTDMEHInclude = false;
+	auto firstTDMEIncludeLineIdx = -1;
+	auto secondTDMEIncludeLineIdx = -1;
 	{
 		auto startLineIdx = -1;
 		auto endLineIdx = -1;
@@ -108,14 +113,25 @@ void processFile(const string& fileName) {
 				} else {
 					endLineIdx = lineIdx;
 				}
+				if (hadTDMEHInclude == false) hadTDMEHInclude = StringTools::trim(line) == "#include <tdme/tdme.h>";
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
 				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, string_compare);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
+			if (StringTools::startsWith(StringTools::trim(line), "#include <tdme/") == true) {
+				if (firstTDMEIncludeLineIdx == -1) firstTDMEIncludeLineIdx = lineIdx; else
+				if (secondTDMEIncludeLineIdx == -1) secondTDMEIncludeLineIdx = lineIdx;
+			}
 			lineIdx++;
 		}
+	}
+	if (hadTDMEHInclude == false && firstTDMEIncludeLineIdx != -1) {
+		newFileContent.insert(
+			newFileContent.begin() + (headerFile == true?firstTDMEIncludeLineIdx:(secondTDMEIncludeLineIdx != -1?secondTDMEIncludeLineIdx:firstTDMEIncludeLineIdx)),
+			"#include <tdme/tdme.h>"
+		);
 	}
 	fileContent = newFileContent;
 	newFileContent.clear();

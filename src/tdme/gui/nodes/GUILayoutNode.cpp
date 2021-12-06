@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>

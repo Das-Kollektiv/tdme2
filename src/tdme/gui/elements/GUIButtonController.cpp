@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUIButtonController.h>
 
 using tdme::gui::elements::GUIButtonController;

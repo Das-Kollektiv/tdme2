@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 #include <unordered_map>

@@ -1,5 +1,6 @@
 #include <tdme/engine/Rotation.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>

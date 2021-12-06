@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>

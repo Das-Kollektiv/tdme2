@@ -16,7 +16,8 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 #include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
 
-#include "Body.h"
+#include <tdme/tdme.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>

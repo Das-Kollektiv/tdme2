@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>

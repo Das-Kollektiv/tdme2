@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>

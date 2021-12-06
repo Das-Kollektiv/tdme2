@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/UDPSocket.h>
 
 using std::string;

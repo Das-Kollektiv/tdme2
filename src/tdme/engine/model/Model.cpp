@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Material.h>

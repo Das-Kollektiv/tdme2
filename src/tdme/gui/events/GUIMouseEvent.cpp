@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 	#include <tdme/gui/events/GUIMouseEvent.h>
 
 using tdme::gui::events::GUIMouseEvent;

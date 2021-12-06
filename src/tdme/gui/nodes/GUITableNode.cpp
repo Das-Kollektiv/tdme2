@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUITableNode.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>

@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>

@@ -1,7 +1,8 @@
-#include "BasePropertiesSubView.h"
+#include <tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.h>
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/ScenePropertyPresets.h>

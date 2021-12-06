@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;

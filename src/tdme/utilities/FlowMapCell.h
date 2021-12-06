@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::math::Vector3;

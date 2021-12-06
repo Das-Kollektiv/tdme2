@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>

@@ -1,5 +1,6 @@
-#include "EntityRenderer_TransparentRenderFacesGroupPool.h"
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
 
 using tdme::engine::subsystems::rendering::EntityRenderer;

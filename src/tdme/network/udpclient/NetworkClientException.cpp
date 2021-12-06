@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
 
 using tdme::network::udpclient::NetworkClientException;

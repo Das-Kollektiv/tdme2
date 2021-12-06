@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
 

@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>

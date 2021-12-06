@@ -3,6 +3,7 @@
 #include <ext/reactphysics3d/src/collision/shapes/HeightFieldShape.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 

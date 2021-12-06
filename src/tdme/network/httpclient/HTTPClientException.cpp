@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
 
 using tdme::network::httpclient::HTTPClientException;

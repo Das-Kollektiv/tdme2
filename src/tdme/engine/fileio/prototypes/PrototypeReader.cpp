@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
@@ -45,7 +46,7 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain2.h>
 
-#include <rapidjson/document.h>
+#include <ext/rapidjson/document.h>
 
 using std::string;
 
@@ -297,7 +298,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		{
 			terrain->setWidth(jTerrain["w"].GetFloat());
 			terrain->setDepth(jTerrain["d"].GetFloat());
-			Value jTerrainValues = jTerrain["t"].GetArray(); // TODO: how to avoid this copy???
+			auto jTerrainValues = jTerrain["t"].GetArray();
 			for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
 		}
 		{

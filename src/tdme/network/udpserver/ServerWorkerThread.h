@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 #include <tdme/os/threading/Thread.h>
 

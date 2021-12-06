@@ -1,13 +1,14 @@
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.h>
-#include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainEditorImplementation.h>
+#include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.h>
@@ -33,8 +34,8 @@ using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRDefaultImplem
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRFoliageImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRTreeImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderSkyImplementation;
-using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainEditorImplementation;
+using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;

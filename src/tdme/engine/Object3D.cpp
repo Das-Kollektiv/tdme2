@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>

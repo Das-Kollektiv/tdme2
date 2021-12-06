@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.h>

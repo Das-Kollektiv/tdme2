@@ -1,4 +1,4 @@
-// Forward declarations for tdme.os
+// Forward declarations for tdme.os.threading
 #pragma once
 
 namespace tdme {
@@ -11,6 +11,6 @@ namespace threading {
 	class ReadWriteLock;
 	class SpinLock;
 	class Thread;
-}  // namespace filesystem
+}  // namespace threading
 }  // namespace os
 }  // namespace tdme

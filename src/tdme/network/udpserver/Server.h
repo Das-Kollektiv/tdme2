@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>

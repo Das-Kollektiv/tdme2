@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>

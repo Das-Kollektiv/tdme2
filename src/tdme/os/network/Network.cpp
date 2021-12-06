@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/NetworkException.h>
 #include <tdme/os/network/NetworkSocket.h>
 #include <tdme/utilities/Console.h>

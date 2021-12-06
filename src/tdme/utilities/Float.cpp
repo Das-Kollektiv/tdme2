@@ -4,6 +4,7 @@
 #include <cctype>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::find_if;

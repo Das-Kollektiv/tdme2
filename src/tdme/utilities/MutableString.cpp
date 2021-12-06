@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>

@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 
 using tdme::gui::events::GUIKeyboardEvent;

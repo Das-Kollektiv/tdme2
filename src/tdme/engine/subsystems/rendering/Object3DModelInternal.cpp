@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 
 using tdme::engine::subsystems::rendering::Object3DModelInternal;

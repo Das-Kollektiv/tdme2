@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>

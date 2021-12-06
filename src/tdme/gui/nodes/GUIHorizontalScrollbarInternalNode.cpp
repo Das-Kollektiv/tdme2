@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 #include <tdme/gui/nodes/GUINode_Border.h>

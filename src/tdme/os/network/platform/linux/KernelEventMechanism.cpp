@@ -8,6 +8,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/linux/fwd-tdme.h>
 #include <tdme/os/network/platform/linux/KernelEventMechanismPSD.h>

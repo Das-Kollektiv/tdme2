@@ -6,6 +6,7 @@
 #include "UDPServerTest_UDPServer.h"
 #include "UDPServerTest_UDPServerClient.h"
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>

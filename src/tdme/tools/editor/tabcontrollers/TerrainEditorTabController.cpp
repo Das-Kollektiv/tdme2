@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>

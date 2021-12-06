@@ -1,5 +1,6 @@
 #include <tdme/engine/prototype/Prototype.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/prototype/Prototype_Type.h>

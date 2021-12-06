@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>

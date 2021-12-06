@@ -1,10 +1,8 @@
-/**
- * @version $Id$
- */
-#include "ExceptionBase.h"
+#include <tdme/utilities/ExceptionBase.h>
+
+#include <tdme/tdme.h>
 
 #include <string>
-
 
 using std::string;
 

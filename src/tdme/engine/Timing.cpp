@@ -1,5 +1,6 @@
 #include <tdme/engine/Timing.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
 
 using tdme::engine::Timing;

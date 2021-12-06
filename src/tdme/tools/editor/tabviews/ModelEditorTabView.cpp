@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/engine/fileio/models/ModelReader.h>

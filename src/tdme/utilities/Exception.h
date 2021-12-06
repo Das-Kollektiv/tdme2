@@ -6,6 +6,7 @@
 
 #include <stdexcept>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 namespace tdme {

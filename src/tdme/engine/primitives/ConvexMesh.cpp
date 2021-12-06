@@ -8,6 +8,7 @@
 
 #include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>

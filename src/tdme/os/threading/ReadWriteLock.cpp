@@ -1,11 +1,9 @@
-/**
- * @version $Id: 76eca42568d4a04693701f88bbd6ec6670ba738c $
- */
+#include <tdme/os/threading/ReadWriteLock.h>
 
 #include <string>
 
-#include "ReadWriteLock.h"
-#include "ThreadingError.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/ThreadingError.h>
 
 using std::string;
 

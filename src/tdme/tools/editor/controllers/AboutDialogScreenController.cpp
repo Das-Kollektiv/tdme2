@@ -2,14 +2,15 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Console.h>
@@ -24,9 +25,9 @@ using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::utilities::Console;

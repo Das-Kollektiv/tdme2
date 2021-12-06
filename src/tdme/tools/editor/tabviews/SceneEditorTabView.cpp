@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_set>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>

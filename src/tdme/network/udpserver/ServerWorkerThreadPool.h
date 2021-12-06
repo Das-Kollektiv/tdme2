@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Queue.h>
 

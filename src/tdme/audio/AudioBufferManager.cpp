@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/utilities/Console.h>

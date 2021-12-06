@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>

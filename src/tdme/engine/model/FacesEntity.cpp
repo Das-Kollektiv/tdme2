@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Node.h>

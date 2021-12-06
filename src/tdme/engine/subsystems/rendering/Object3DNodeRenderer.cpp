@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 

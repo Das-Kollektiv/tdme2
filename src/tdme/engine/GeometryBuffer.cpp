@@ -1,5 +1,6 @@
 #include <tdme/engine/GeometryBuffer.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>

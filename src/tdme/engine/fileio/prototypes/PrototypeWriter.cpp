@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
@@ -51,9 +52,9 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
+#include <ext/rapidjson/document.h>
+#include <ext/rapidjson/stringbuffer.h>
+#include <ext/rapidjson/writer.h>
 
 using std::ostringstream;
 using std::string;

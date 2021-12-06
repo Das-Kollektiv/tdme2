@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_set>
 
+#include <tdme/tdme.h>
 #include <ext/reactphysics3d/src/collision/shapes/AABB.h>
 #include <ext/reactphysics3d/src/collision/ContactManifold.h>
 #include <ext/reactphysics3d/src/collision/OverlapCallback.h>

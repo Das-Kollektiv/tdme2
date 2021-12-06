@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/HexEncDec.h>
 
 using std::string;

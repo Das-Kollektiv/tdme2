@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/utilities/Enum.h>
 
 using tdme::utilities::Enum;

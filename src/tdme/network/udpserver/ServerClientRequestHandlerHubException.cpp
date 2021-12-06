@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/ExceptionBase.h>
 
 using std::string;

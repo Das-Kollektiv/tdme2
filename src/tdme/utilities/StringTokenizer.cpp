@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/StringTokenizer.h>
 
 using std::string;

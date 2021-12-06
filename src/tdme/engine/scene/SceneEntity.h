@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>

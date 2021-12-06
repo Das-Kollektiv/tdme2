@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>

@@ -2,6 +2,7 @@
 
 #include <ext/reactphysics3d/src/collision/shapes/SphereShape.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 

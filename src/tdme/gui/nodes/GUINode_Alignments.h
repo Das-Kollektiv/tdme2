@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 using tdme::gui::nodes::GUINode;

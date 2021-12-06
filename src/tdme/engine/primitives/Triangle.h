@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 

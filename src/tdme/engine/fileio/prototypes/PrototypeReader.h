@@ -11,7 +11,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
-#include <rapidjson/document.h>
+#include <ext/rapidjson/document.h>
 
 using std::string;
 

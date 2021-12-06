@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
 
 #include <tdme/engine/model/Color4.h>

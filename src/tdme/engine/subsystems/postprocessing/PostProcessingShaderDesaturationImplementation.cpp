@@ -1,6 +1,8 @@
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.h>
+
 #include <string>
 
-#include "PostProcessingShaderDesaturationImplementation.h"
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>

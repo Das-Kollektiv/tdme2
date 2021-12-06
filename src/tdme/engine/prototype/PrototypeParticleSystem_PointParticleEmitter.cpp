@@ -1,5 +1,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 

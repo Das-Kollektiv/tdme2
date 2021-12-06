@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector2.h>

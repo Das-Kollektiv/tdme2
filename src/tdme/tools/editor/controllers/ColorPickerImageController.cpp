@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/events/GUIActionListener.h>

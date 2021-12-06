@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>

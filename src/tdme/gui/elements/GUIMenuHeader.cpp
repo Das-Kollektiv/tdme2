@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUIMenuHeaderController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>

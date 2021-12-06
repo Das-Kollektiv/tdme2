@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 
 using tdme::os::filesystem::FileSystemInterface;

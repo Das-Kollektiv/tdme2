@@ -1,5 +1,6 @@
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>

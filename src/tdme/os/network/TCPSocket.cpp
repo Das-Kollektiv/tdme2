@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/NetworkIOException.h>
 #include <tdme/os/network/NetworkSocket.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>

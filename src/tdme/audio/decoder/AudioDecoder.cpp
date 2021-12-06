@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/audio/decoder/AudioDecoder.h>
 
 using tdme::audio::decoder::AudioDecoder;

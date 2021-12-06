@@ -1,5 +1,6 @@
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::network::udpserver::ServerWorkerThreadPool;

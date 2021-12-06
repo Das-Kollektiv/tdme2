@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Plane.h>
 #include <tdme/engine/primitives/Sphere.h>

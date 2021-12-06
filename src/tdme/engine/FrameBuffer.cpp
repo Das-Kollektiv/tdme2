@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>

@@ -6,6 +6,7 @@
 
 #include <ext/v-hacd/src/VHACD_Lib/public/VHACD.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Color4.h>

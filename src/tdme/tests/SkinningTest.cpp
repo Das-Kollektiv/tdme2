@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>

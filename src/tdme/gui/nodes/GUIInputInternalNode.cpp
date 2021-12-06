@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>

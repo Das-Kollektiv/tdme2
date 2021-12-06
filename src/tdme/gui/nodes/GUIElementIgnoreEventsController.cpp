@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>

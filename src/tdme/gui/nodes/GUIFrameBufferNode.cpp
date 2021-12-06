@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/gui/nodes/GUIColor.h>

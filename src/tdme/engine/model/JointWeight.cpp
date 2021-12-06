@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/engine/model/JointWeight.h>
 
 using tdme::engine::model::JointWeight;

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>

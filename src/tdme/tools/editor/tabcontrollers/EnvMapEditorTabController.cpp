@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/gui/events/GUIActionListener.h>

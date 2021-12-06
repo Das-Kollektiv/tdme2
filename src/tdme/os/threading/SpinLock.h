@@ -1,6 +1,7 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
 
 #include <atomic>
 #include <string>

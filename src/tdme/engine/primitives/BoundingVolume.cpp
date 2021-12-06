@@ -15,6 +15,7 @@
 #include <ext/reactphysics3d/src/mathematics/Transform.h>
 #include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 

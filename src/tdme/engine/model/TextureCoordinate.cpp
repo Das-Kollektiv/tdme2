@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 
 #include <array>

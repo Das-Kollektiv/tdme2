@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/VorbisAudioStream.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>

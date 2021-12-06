@@ -1,11 +1,9 @@
-/**
- * @version $Id: 1a286d86b29cabf8420205519e524a885c74a8d7 $
- */
+#include <tdme/os/threading/Mutex.h>
 
 #include <errno.h>
 
-#include "Mutex.h"
-#include "ThreadingError.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/ThreadingError.h>
 
 using tdme::os::threading::Mutex;
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerRequest.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/network/KernelEventMechanism.h>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/effects/GUIEffect.h>
 #include <tdme/gui/nodes/fwd-tdme.h>

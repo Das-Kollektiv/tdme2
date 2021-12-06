@@ -19,6 +19,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/FileSystem.h>

@@ -2,6 +2,7 @@
 
 #include <sys/event.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/fwd-tdme.h>
 

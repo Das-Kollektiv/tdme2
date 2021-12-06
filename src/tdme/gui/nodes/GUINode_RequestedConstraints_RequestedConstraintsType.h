@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utilities/Enum.h>
 

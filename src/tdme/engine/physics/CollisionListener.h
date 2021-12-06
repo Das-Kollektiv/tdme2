@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 
 using tdme::engine::physics::Body;

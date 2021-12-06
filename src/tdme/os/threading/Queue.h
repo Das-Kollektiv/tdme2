@@ -1,11 +1,12 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
 
 #include <queue>
 
-#include "Condition.h"
-#include "Mutex.h"
+#include <tdme/os/threading/Condition.h>
+#include <tdme/os/threading/Mutex.h>
 
 using std::queue;
 using tdme::os::threading::Condition;
@@ -18,7 +19,6 @@ namespace threading {
 /**
  * Consumer/producer queue.
  * @author Andreas Drewke
- * @version $Id: 160da968398d80de667bab6b825cdeca9dc1dd50 $
  */
 template <typename T>
 class Queue {

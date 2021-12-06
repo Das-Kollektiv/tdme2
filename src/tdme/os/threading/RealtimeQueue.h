@@ -1,10 +1,11 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
 
 #include <queue>
 
-#include "SpinLock.h"
+#include <tdme/os/threading/SpinLock.h>
 
 using std::queue;
 using tdme::os::threading::SpinLock;
@@ -16,7 +17,6 @@ namespace threading {
 /**
  * Realtime consumer/producer queue.
  * @author Andreas Drewke
- * @version $Id: 160da968398d80de667bab6b825cdeca9dc1dd50 $
  */
 template <typename T>
 class RealtimeQueue {

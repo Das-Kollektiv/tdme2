@@ -8,6 +8,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/threading/AtomicOperations.h>

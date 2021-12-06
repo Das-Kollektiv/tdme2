@@ -1,9 +1,10 @@
-#include "BasePropertiesSubController.h"
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/Engine.h>

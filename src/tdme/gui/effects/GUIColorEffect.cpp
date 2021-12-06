@@ -1,5 +1,6 @@
 #include <tdme/gui/effects/GUIColorEffect.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/math/Math.h>

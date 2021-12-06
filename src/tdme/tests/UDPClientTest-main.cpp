@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
 #include <tdme/os/network/Network.h>

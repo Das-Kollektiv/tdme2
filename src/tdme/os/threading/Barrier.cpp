@@ -1,8 +1,7 @@
-/**
- * @version $Id: a5817099da41ca9b6651ef724eeb90d29510f8e1 $
- */
-#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Barrier.h>
+
+#include <tdme/tdme.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Mutex.h>
 
 using std::string;

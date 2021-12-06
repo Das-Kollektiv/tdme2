@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 
 using tdme::gui::nodes::GUINode;

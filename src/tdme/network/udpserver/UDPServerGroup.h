@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerGroup.h>
 #include <tdme/network/udpserver/UDPServer.h>

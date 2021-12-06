@@ -1,5 +1,6 @@
 #include <tdme/engine/model/Material.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 

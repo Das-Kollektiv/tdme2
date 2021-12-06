@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 
 #include <string>

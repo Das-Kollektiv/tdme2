@@ -1,5 +1,6 @@
 #include <tdme/engine/model/AnimationSetup.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 
 using tdme::engine::model::AnimationSetup;

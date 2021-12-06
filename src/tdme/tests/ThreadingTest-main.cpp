@@ -1,5 +1,6 @@
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>

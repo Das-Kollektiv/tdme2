@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerRequest.h>
 
 using tdme::network::udpserver::ServerRequest;

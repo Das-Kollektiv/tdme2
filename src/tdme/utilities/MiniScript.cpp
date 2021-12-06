@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>

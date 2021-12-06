@@ -1,5 +1,6 @@
 #include <tdme/gui/elements/GUITabContentController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>

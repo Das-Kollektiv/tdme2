@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 
 using std::stringstream;

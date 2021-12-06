@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUIContextMenuController.h>
 #include <tdme/gui/elements/GUIContextMenuItemController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>

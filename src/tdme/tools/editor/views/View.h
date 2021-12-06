@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 /**

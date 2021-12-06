@@ -1,12 +1,10 @@
-/**
- * @version $Id: 1a286d86b29cabf8420205519e524a885c74a8d7 $
- */
+#include <tdme/os/threading/SpinLock.h>
 
 #include <errno.h>
 
 #include <atomic>
 
-#include "SpinLock.h"
+#include <tdme/tdme.h>
 
 using tdme::os::threading::SpinLock;
 

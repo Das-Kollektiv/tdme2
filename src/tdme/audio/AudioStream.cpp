@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystemException.h>

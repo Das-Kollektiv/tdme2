@@ -6,6 +6,7 @@
 	#undef min
 #endif
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 #include <limits>

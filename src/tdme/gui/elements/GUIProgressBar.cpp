@@ -1,5 +1,6 @@
 #include <tdme/gui/elements/GUIProgressBar.h>
 
+#include <tdme/tdme.h>
 #include <string>
 #include <tdme/gui/elements/GUIProgressBarController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>

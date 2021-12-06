@@ -1,5 +1,6 @@
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementController.h>

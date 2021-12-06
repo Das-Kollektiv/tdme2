@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "subcontrollers/BasePropertiesSubController.h"
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>

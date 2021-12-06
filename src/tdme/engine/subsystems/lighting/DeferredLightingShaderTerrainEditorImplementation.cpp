@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -14,8 +15,8 @@ using std::to_string;
 
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainEditorImplementation;
 
-using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Matrix2D3x3;

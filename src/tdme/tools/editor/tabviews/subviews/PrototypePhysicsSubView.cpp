@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 
 #include <tdme/engine/model/Model.h>

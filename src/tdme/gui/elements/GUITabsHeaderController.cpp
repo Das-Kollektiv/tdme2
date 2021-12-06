@@ -1,6 +1,7 @@
 
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -22,9 +23,9 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
+#include <ext/rapidjson/document.h>
+#include <ext/rapidjson/stringbuffer.h>
+#include <ext/rapidjson/writer.h>
 
 using std::ostringstream;
 using std::string;

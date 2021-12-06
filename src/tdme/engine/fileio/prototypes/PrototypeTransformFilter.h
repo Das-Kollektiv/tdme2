@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/fwd-tdme.h>
 
 #include <tdme/engine/prototype/BaseProperties.h>

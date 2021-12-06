@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -14,8 +15,8 @@
 
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.h>
 
+#include <tdme/tdme.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 
 using tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView;

@@ -1,5 +1,6 @@
 #include <tdme/utilities/Reference.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/AtomicOperations.h>
 
 using tdme::utilities::Reference;

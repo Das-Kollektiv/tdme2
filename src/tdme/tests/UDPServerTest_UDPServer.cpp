@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 

@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/tests/AudioTest.h>
 
 int main(int argc, char** argv)

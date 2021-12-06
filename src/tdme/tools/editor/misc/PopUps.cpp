@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>

@@ -1,5 +1,6 @@
 #include <tdme/engine/scene/SceneLight.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>

@@ -5,6 +5,7 @@
 #include <regex>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/StringTokenizer.h>
 
 using std::find_if;

@@ -2,6 +2,7 @@
 
 #include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>

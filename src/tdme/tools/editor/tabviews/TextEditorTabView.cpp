@@ -3,6 +3,7 @@
 #include <cctype>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>

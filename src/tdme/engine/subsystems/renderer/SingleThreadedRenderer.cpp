@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>

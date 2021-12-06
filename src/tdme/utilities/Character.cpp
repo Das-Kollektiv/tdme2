@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/utilities/Character.h>
 
 #include <cctype>

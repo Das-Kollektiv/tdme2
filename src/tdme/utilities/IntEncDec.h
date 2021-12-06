@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;

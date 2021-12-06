@@ -1,5 +1,6 @@
 #include <tdme/engine/primitives/LineSegment.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>

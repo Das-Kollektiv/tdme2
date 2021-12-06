@@ -11,6 +11,7 @@
 #include <ext/sha256/sha256.h>
 #include <ext/zlib/zlib.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/threading/Mutex.h>

@@ -1,5 +1,6 @@
 #include <tdme/engine/Camera.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/math/Math.h>

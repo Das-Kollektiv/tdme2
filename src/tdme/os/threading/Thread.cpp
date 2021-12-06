@@ -1,6 +1,5 @@
-/**
- * @version $Id: aa3465de5134eac90f5c600a66a33e052df4613d $
- */
+#include <tdme/os/threading/Thread.h>
+
 #if defined(_WIN32) && defined(_MSC_VER)
 	#include <windows.h>
 #else
@@ -11,10 +10,10 @@
 #include <string>
 #include <thread>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 
-#include "Thread.h"
-#include "ThreadingError.h"
+#include <tdme/os/threading/ThreadingError.h>
 
 using std::string;
 

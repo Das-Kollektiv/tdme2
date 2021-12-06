@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>

@@ -5,6 +5,7 @@
 
 #include <ext/reactphysics3d/src/collision/shapes/BoxShape.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>

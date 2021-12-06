@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
-#include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>

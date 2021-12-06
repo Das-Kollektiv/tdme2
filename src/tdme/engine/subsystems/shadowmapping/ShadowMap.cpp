@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>

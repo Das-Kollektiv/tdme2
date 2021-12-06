@@ -9,7 +9,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
-#include <rapidjson/document.h>
+#include <ext/rapidjson/document.h>
 
 using std::string;
 

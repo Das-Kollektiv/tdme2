@@ -5,6 +5,7 @@
 
 #include <ext/zlib/zlib.h>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileNameFilter.h>

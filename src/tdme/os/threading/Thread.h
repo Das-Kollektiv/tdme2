@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/os/threading/fwd-tdme.h>
 
 #include <tdme/tdme.h>
 
@@ -17,7 +17,6 @@
 #if !defined(_MSC_VER)
 	#include <time.h>
 #endif
-
 
 #include <string>
 

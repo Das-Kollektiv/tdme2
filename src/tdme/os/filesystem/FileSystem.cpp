@@ -1,5 +1,6 @@
 #include <tdme/os/filesystem/FileSystem.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
 

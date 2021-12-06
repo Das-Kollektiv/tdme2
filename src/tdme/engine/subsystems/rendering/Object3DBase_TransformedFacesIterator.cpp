@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Node.h>

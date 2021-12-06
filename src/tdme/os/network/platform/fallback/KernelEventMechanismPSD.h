@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/fallback/fwd-tdme.h>
 #include <tdme/os/network/NIOInterest.h>

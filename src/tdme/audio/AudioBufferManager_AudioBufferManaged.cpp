@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/audio/AudioBufferManager.h>
 
 using std::string;

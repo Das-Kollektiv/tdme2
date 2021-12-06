@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>

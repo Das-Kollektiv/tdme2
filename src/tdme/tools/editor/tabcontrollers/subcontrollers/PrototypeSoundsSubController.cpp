@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/Prototype.h>

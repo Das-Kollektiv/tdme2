@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/engine/Object3DModel.h>
 
 using tdme::engine::Object3DModel;

@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <rapidjson/document.h>
 #include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/prototypes/fwd-tdme.h>
@@ -14,6 +13,8 @@
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+
+#include <ext/rapidjson/document.h>
 
 using std::string;
 using std::vector;

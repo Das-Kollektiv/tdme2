@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>

@@ -5,6 +5,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/IntEncDec.h>

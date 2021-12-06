@@ -1,12 +1,13 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
 
 #include <pthread.h>
 #include <string>
 
-#include "Condition.h"
-#include "Mutex.h"
+#include <tdme/os/threading/Condition.h>
+#include <tdme/os/threading/Mutex.h>
 
 using std::string;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;

@@ -1,6 +1,7 @@
 #include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
 
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>

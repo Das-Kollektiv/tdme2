@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -15,9 +16,9 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;

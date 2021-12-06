@@ -1,5 +1,6 @@
 #include <tdme/engine/model/Face.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Node.h>
 
 using tdme::engine::model::Face;

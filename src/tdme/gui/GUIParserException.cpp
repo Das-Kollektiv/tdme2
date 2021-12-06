@@ -1,5 +1,6 @@
 #include <tdme/gui/GUIParserException.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/ExceptionBase.h>
 
 using tdme::gui::GUIParserException;

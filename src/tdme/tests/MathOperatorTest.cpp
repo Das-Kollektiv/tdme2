@@ -1,5 +1,6 @@
 #include <tdme/tests/MathOperatorTest.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>

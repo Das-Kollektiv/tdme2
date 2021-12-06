@@ -1,5 +1,6 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/ExceptionBase.h>
 
 using tdme::engine::fileio::models::ModelFileIOException;

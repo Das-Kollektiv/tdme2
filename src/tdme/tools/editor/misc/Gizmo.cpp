@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/Gizmo.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/primitives/LineSegment.h>

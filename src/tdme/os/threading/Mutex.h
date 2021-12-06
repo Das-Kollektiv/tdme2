@@ -1,6 +1,7 @@
 #pragma once
 
-#include "fwd-tdme.h"
+#include <tdme/tdme.h>
+#include <tdme/os/threading/fwd-tdme.h>
 
 #if defined(CPPTHREADS)
 	#include <mutex>
@@ -11,7 +12,7 @@
 
 #include <string>
 
-#include "Condition.h"
+#include <tdme/os/threading/Condition.h>
 
 using std::string;
 

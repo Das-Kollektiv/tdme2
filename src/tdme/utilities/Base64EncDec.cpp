@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Base64EncDec.h>
 
 using std::string;

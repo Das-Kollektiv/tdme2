@@ -1,4 +1,4 @@
 #pragma once
 
-#include <stdint.h>
-#include <limits>
+#include <cstdint>
+#include <climits>

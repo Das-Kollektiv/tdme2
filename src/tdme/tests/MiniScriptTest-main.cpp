@@ -1,5 +1,6 @@
 #include <tdme/utilities/MiniScript.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 

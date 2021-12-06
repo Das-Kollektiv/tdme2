@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>

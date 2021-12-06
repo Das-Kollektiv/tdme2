@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_set>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 
 using std::string;

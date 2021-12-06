@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 #include <tdme/gui/events/GUIMouseEvent.h>

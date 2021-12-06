@@ -19,6 +19,7 @@
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #if defined(VULKAN)
 	#include <tdme/engine/EngineVKRenderer.h>

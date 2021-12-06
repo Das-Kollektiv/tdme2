@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 
 using std::map;

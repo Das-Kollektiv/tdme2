@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>

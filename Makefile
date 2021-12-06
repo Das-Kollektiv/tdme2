@@ -12,9 +12,9 @@ SRCS_PLATFORM =
 EXT_GLSLANG_PLATFORM_SRCS =
 SRCS_DEBUG =
 OFLAGS =
-EXTRAFLAGS =
+EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 LDFLAGS =
-INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/ -Iext/rapidjson/include
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
 
 # set platform specific flags
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
@@ -25,8 +25,7 @@ ifeq ($(OS), Darwin)
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	# MacOSX, Metal via Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN -DHAVE_UNISTD_H
-		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN -DHAVE_UNISTD_H
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -38,7 +37,7 @@ ifeq ($(OS), Darwin)
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
 	else
 		# MacOSX, GL
-		EXTRAFLAGS := -DGLFW3 -DHAVE_UNISTD_H
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3 -DHAVE_UNISTD_H
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -54,8 +53,7 @@ else ifeq ($(OS), FreeBSD)
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
-		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -65,7 +63,7 @@ else ifeq ($(OS), FreeBSD)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		#FreeBSD, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -81,7 +79,7 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
-	EXTRAFLAGS := -DGLFW3
+	EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -95,7 +93,7 @@ else ifeq ($(OS), NetBSD)
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
-	EXTRAFLAGS := -DGLFW3
+	EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -114,7 +112,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	# Haiku, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineVKRenderer.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
@@ -123,7 +121,7 @@ else ifeq ($(OS), Haiku)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lvulkan -lGL -lopenal -lnetwork
 	else
 		# Haiku, GL
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -139,8 +137,7 @@ else ifeq ($(OS), Linux)
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	# Linux, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
-		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineVKRenderer.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
@@ -149,7 +146,7 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	# Linux, GLES2
 	else ifeq ($(GLES2), YES)
-		EXTRAFLAGS := -DGLFW3 -DGLES2
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3 -DGLES2
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
@@ -174,7 +171,6 @@ else
 	# TODO: No console flags: -Wl,-subsystem,windows
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS = -DVULKAN
-		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		#-D_GLIBCXX_DEBUG
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -183,7 +179,7 @@ else
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 				ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
-		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
+		INCLUDES := $(INCLUDES) -I/mingw64/include
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
 		EXTRAFLAGS = -DGLFW3
@@ -196,7 +192,7 @@ else
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
+		INCLUDES := $(INCLUDES) -I/mingw64/include/
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	OFLAGS := -O2

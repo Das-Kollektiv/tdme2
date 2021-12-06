@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>

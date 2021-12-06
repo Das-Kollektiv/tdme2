@@ -1,3 +1,4 @@
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>

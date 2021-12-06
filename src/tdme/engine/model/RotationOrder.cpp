@@ -1,5 +1,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Enum.h>
 

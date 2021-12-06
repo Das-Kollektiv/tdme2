@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Buffer.h>
 

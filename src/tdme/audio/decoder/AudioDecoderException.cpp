@@ -1,5 +1,6 @@
 #include <tdme/audio/decoder/AudioDecoderException.h>
 
+#include <tdme/tdme.h>
 #include <tdme/utilities/ExceptionBase.h>
 
 using tdme::audio::decoder::AudioDecoderException;

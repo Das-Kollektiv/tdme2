@@ -1,5 +1,6 @@
 #include <tdme/gui/effects/GUIPositionEffect.h>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>

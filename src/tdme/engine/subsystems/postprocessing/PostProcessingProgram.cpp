@@ -4,6 +4,7 @@
 using std::string;
 using std::vector;
 
+#include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/Engine.h>

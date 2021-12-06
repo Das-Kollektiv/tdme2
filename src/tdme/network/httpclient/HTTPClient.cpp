@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>

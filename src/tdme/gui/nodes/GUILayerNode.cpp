@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>

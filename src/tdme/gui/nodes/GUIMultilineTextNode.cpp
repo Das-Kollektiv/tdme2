@@ -3,6 +3,7 @@
 #include <list>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>

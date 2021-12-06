@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/filesystem/FileSystem.h>

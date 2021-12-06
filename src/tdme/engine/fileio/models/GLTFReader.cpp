@@ -12,6 +12,7 @@
 #include <ext/libpng/png.h>
 #include <ext/tinygltf/tiny_gltf.h>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>

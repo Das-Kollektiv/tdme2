@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/Rotation.h>

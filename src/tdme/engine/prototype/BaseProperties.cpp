@@ -1,9 +1,10 @@
-#include "BaseProperties.h"
+#include <tdme/engine/prototype/BaseProperties.h>
 
 #include <algorithm>
 #include <string>
 
-#include "BaseProperty.h"
+#include <tdme/tdme.h>
+#include <tdme/engine/prototype/BaseProperty.h>
 
 using std::remove;
 using std::string;

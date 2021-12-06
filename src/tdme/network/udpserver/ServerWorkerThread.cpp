@@ -2,6 +2,7 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/ServerGroup.h>
