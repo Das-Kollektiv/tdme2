@@ -155,7 +155,7 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
 	else
 		# Linux, GL
-		#EXTRAFLAGS = -D_GLIBCXX_DEBUG
+		#EXTRAFLAGS := $(EXTRAFLAGS) -D_GLIBCXX_DEBUG
 		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -170,7 +170,7 @@ else
 	# Windows, VULKAN
 	# TODO: No console flags: -Wl,-subsystem,windows
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS = $(EXTRAFLAGS) -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		#-D_GLIBCXX_DEBUG
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -182,7 +182,7 @@ else
 		INCLUDES := $(INCLUDES) -I/mingw64/include
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
-		EXTRAFLAGS = $(EXTRAFLAGS) -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		# Windows, GL
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
