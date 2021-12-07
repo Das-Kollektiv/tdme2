@@ -410,6 +410,8 @@ bool GUINode::checkConditions()
 	auto& showOn = this->showOn.conditions;
 	auto& hideOn = this->hideOn.conditions;
 
+	if (showOn.empty() == true && hideOn.empty() == true) return true;
+
 	for (auto i = 0; i < showOn.size(); i++) {
 		if (showOn[i] == GUIElementNode::CONDITION_ALWAYS)
 			return true;
@@ -424,7 +426,6 @@ bool GUINode::checkConditions()
 	GUIElementNode* elementNode = nullptr;
 	for (GUINode* node = parentNode; node != nullptr && (elementNode = dynamic_cast<GUIElementNode*>(node)) == nullptr; node = node->parentNode);
 
-	StringTokenizer t;
 	string function;
 	vector<string> arguments;
 	for (auto i = 0; i < hideOn.size(); i++) {
@@ -437,7 +438,7 @@ bool GUINode::checkConditions()
 		if (cfCall(elementNode, function, arguments) == true) return true;
 	}
 
-	return showOn.size() == 0;
+	return showOn.empty() == true;
 }
 
 void GUINode::dispose()

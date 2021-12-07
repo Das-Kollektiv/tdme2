@@ -161,6 +161,7 @@ void GUITabsController::setValue(const MutableString& value)
 
 void GUITabsController::onSubTreeChange()
 {
+	tabSelected = false;
 	determineTabContentControllers();
 	setTabContentSelectedInternal(value.getString());
 }

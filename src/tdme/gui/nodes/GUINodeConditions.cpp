@@ -7,7 +7,6 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utilities/Console.h>
 
 using std::find;
 using std::vector;
@@ -16,7 +15,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utilities::Console;
 
 GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(elementNode)
 {
@@ -66,9 +64,7 @@ bool GUINodeConditions::removeAll()
 }
 
 void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
-	auto conditionsMet = node->conditionsMet;
 	node->conditionsMet = node->checkConditions();
-	if (conditionsMet != node->conditionsMet) node->screenNode->invalidateLayout(node);
 	node->onSetConditions(conditions);
 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
 	if (parentNode != nullptr) {
@@ -98,7 +94,7 @@ void GUINodeConditions::updateElementNode(const vector<string>& conditions) cons
 			auto node = screenNode->getNodeById(nodeId);
 			if (node == nullptr) continue;
 			updateNode(node, conditions);
-			screenNode->invalidateLayout(node->getParentNode() != nullptr?node->getParentNode():node);
+			screenNode->invalidateLayout(node);
 		}
 	}
 }
