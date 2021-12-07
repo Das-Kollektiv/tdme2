@@ -5976,7 +5976,7 @@ int32_t VKRenderer::createGeometryBufferObject(
 
 	//
 	createFramebufferObject(frameBuffer.id);
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new gemoetry frame buffer: " + to_string(frameBuffer.id));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new geometry frame buffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
 }
 
@@ -6750,20 +6750,23 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
 
 	// get texture set cache id
+	auto samplers = -1;
 	{
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->texture_unit == -1) {
-					texture_ids[samplerIdx] = ID_NONE;
-				} else {
-					auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
-					if (boundTexture.view == VK_NULL_HANDLE) {
+				if (samplerIdx < 4) {
+					if (uniform->texture_unit == -1) {
 						texture_ids[samplerIdx] = ID_NONE;
 					} else {
-						texture_ids[samplerIdx] = boundTexture.id;
-						desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
+						auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+						if (boundTexture.view == VK_NULL_HANDLE) {
+							texture_ids[samplerIdx] = ID_NONE;
+						} else {
+							texture_ids[samplerIdx] = boundTexture.id;
+							desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
+						}
 					}
 				}
 				samplerIdx++;
@@ -6804,10 +6807,11 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			//
 			uboIdx++;
 		}
+		samplers = samplerIdx;
 	}
 
 	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
-	auto desc_set2_cache_it = desc_set2_cache.find(desc_set2_cache_id);
+	auto desc_set2_cache_it = samplers > 4?desc_set2_cache.end():desc_set2_cache.find(desc_set2_cache_id);
 	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
 
 	if (desc_set2_cache_hit == false) {
@@ -6892,8 +6896,10 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	if (desc_set2_cache_hit == false) {
-		desc_set2_cache[desc_set2_cache_id] = contextTyped.program->desc_idxs2[contextTyped.idx];
-		for (auto texture_id: texture_ids) contextTyped.program->desc_sets2_cache_textureids[contextTyped.idx][texture_id].insert(desc_set2_cache_id);
+		if (samplers <= 4) {
+			desc_set2_cache[desc_set2_cache_id] = contextTyped.program->desc_idxs2[contextTyped.idx];
+			for (auto texture_id: texture_ids) contextTyped.program->desc_sets2_cache_textureids[contextTyped.idx][texture_id].insert(desc_set2_cache_id);
+		}
 		contextTyped.program->desc_idxs2[contextTyped.idx]++;
 	}
 
