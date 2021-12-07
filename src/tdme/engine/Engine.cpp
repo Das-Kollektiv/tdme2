@@ -918,8 +918,6 @@ void Engine::initialize()
 	// create geometry buffer if available
 	if (renderer->isDeferredShadingAvailable() == true) {
 		Console::println("TDME2::Using deferred shading");
-		geometryBuffer = new GeometryBuffer(width, height);
-		geometryBuffer->initialize();
 	} else {
 		Console::println("TDME2::Not using deferred shading");
 	}
@@ -975,11 +973,18 @@ void Engine::reshape(int32_t width, int32_t height)
 		}
 	}
 
-	//
-	if (geometryBuffer != nullptr) geometryBuffer->reshape(_width, _height);
+	// create geometry buffer if available
+	if (renderer->isDeferredShadingAvailable() == true) {
+		if (geometryBuffer == nullptr) {
+			geometryBuffer = new GeometryBuffer(_width, _height);
+			geometryBuffer->initialize();
+		} else {
+			geometryBuffer->reshape(_width, _height);
+		}
+	}
 
 	// update GUI system
-	gui->reshape(width, height);
+	gui->reshape(_width, _height);
 }
 
 void Engine::scale(int32_t width, int32_t height)

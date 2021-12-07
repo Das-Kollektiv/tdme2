@@ -4365,16 +4365,28 @@ void VKRenderer::clear(int32_t mask)
 	//
 	beginDrawCommandBuffer(0);
 	startRenderPass(0);
-
+	framebuffer_object_type* frameBuffer = nullptr;
+	if (bound_frame_buffer != ID_NONE) frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 	auto attachmentIdx = 0;
-	VkClearAttachment attachments[2];
+	VkClearAttachment attachments[9];
 	if ((mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
-		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		attachments[attachmentIdx].colorAttachment = attachmentIdx;
-		attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
-		attachmentIdx++;
+		if (frameBuffer != nullptr && frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
+			for (auto i = 0; i < 8; i++) {
+				attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				attachments[attachmentIdx].colorAttachment = attachmentIdx;
+				attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
+				attachmentIdx++;
+			}
+		} else
+		if (frameBuffer == nullptr || frameBuffer->color_texture_id != ID_NONE) {
+			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			attachments[attachmentIdx].colorAttachment = attachmentIdx;
+			attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
+			attachmentIdx++;
+		}
 	}
-	if ((mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT) {
+	if ((mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT &&
+		(frameBuffer == nullptr || frameBuffer->depth_texture_id != ID_NONE)) {
 		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 		attachments[attachmentIdx].colorAttachment = attachmentIdx;
 		attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
@@ -4419,7 +4431,7 @@ int32_t VKRenderer::createTexture()
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
 	auto reuseTextureId = -1;
@@ -4437,7 +4449,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 	auto& depthBufferTexture = *textures.find(textureId)->second;
 	depthBufferTexture.format = VK_FORMAT_D32_SFLOAT;
 	depthBufferTexture.width = width;
@@ -4566,7 +4578,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *textures.find(textureId)->second;
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
@@ -4684,7 +4696,7 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 }
 
 int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
 	auto reuseTextureId = -1;
@@ -4701,7 +4713,7 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 }
 
 int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
 	auto reuseTextureId = -1;
@@ -5460,7 +5472,7 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5501,7 +5513,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5521,7 +5533,7 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 }
 
 void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5589,7 +5601,7 @@ void VKRenderer::disposeTexture(int32_t textureId)
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 	auto frameBuffer = frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 	if (frameBuffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): frame buffer not found: " + to_string(frameBufferId));
@@ -5751,7 +5763,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			depthBufferTexture->width != colorBufferTexture3->width || depthBufferTexture->height != colorBufferTexture3->height ||
 			depthBufferTexture->width != colorBufferTexture4->width || depthBufferTexture->height != colorBufferTexture4->height ||
 			depthBufferTexture->width != colorBufferTexture5->width || depthBufferTexture->height != colorBufferTexture5->height) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): attachments with different dimension found: Not creating!");
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): geometry buffer: attachments with different dimension found: Not creating!");
 			return;
 		}
 
@@ -5901,7 +5913,7 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_
 
 	//
 	createFramebufferObject(frameBuffer.id);
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new color frame buffer: " + to_string(frameBuffer.id));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new color frame buffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
 }
 
@@ -5916,18 +5928,20 @@ int32_t VKRenderer::createGeometryBufferObject(
 	int32_t colorBufferTextureId4,
 	int32_t colorBufferTextureId5
 ) {
-	Console::println(
-		"VKRenderer::" + string(__FUNCTION__) + "(): " +
-		to_string(depthBufferTextureId) + ", " +
-		to_string(geometryBufferTextureId1) + ", " +
-		to_string(geometryBufferTextureId2) + ", " +
-		to_string(geometryBufferTextureId3) + ", " +
-		to_string(colorBufferTextureId1) + ", " +
-		to_string(colorBufferTextureId2) + ", " +
-		to_string(colorBufferTextureId3) + ", " +
-		to_string(colorBufferTextureId4) + ", " +
-		to_string(colorBufferTextureId5)
-	);
+	if (VERBOSE == true) {
+		Console::println(
+			"VKRenderer::" + string(__FUNCTION__) + "(): " +
+			to_string(depthBufferTextureId) + ", " +
+			to_string(geometryBufferTextureId1) + ", " +
+			to_string(geometryBufferTextureId2) + ", " +
+			to_string(geometryBufferTextureId3) + ", " +
+			to_string(colorBufferTextureId1) + ", " +
+			to_string(colorBufferTextureId2) + ", " +
+			to_string(colorBufferTextureId3) + ", " +
+			to_string(colorBufferTextureId4) + ", " +
+			to_string(colorBufferTextureId5)
+		);
+	}
 
 	// try to reuse a frame buffer id
 	auto reuseIndex = -1;

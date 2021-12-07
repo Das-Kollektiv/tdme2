@@ -59,7 +59,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { true };
+	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
