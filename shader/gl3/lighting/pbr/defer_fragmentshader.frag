@@ -1,9 +1,39 @@
 #version 330 core
 
+// TODO: maybe move me into definitions
+#ifndef HAVE_PBRLIGHT_STRUCT
+#define HAVE_PBRLIGHT_STRUCT
+struct PBRLight {
+    int enabled;
+
+    vec3 direction;
+    float range;
+
+    vec3 color;
+    float intensity;
+
+    vec3 position;
+    float innerConeCos;
+
+    float outerConeCos;
+    int type;
+};
+#endif
+
 {$DEFINITIONS}
 
 {$FUNCTIONS}
 
+// layouts
+in vec3 v_Position;
+#ifdef HAS_VERTEX_COLOR_VEC3
+	in vec3 v_Color;
+#endif
+#ifdef HAS_VERTEX_COLOR_VEC4
+	in vec4 v_Color;
+#endif
+
+// uniforms
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;

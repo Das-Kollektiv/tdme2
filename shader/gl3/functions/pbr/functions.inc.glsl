@@ -3,15 +3,6 @@
 const float M_PI = 3.141592653589793;
 const float c_MinReflectance = 0.04;
 
-in vec3 v_Position;
-
-#ifdef HAS_VERTEX_COLOR_VEC3
-in vec3 v_Color;
-#endif
-#ifdef HAS_VERTEX_COLOR_VEC4
-in vec4 v_Color;
-#endif
-
 struct AngularInfo {
     float NdotL;                  // cos angle between normal and light direction
     float NdotV;                  // cos angle between normal and view direction

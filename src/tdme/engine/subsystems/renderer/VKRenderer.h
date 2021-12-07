@@ -59,7 +59,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { false };
+	static constexpr bool VERBOSE { true };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
@@ -204,11 +204,22 @@ private:
 	};
 
 	struct framebuffer_object_type {
+		enum type { TYPE_NONE, TYPE_COLORBUFFER, TYPE_GEOMETRYBUFFER };
 		int32_t id { 0 };
+		type type { TYPE_NONE };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
 		int32_t cubemap_texture_id { 0 };
 		int32_t cubemap_texture_index { 0 };
+		int32_t depthBufferTextureId { 0 };
+		int32_t gbuffer_geometry_buffer_texture_id1 { 0 };
+		int32_t gbuffer_geometry_buffer_texture_id2 { 0 };
+		int32_t gbuffer_geometry_buffer_texture_id3 { 0 };
+		int32_t gbuffer_color_buffer_texture_id1 { 0 };
+		int32_t gbuffer_color_buffer_texture_id2 { 0 };
+		int32_t gbuffer_color_buffer_texture_id3 { 0 };
+		int32_t gbuffer_color_buffer_texture_id4 { 0 };
+		int32_t gbuffer_color_buffer_texture_id5 { 0 };
 		VkFramebuffer frame_buffer { VK_NULL_HANDLE };
 		VkRenderPass render_pass { VK_NULL_HANDLE };
 	};
@@ -365,7 +376,7 @@ private:
 	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -457,11 +468,11 @@ private:
 		string& uniformsBlock
 	);
 	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs);
-	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
+	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blend_att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
 	uint32_t createPipelineId(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
-	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
+	void createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
@@ -552,7 +563,7 @@ public:
 	void bindTexture(void* context, int32_t textureId) override;
 	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
-	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
+	int32_t createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
 	int32_t createGeometryBufferObject(
 		int32_t depthBufferTextureId,
 		int32_t geometryBufferTextureId1,

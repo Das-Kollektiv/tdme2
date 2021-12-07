@@ -41,6 +41,16 @@ struct PBRLight {
 
 {$FUNCTIONS}
 
+// layouts
+in vec3 v_Position;
+#ifdef HAS_VERTEX_COLOR_VEC3
+	in vec3 v_Color;
+#endif
+#ifdef HAS_VERTEX_COLOR_VEC4
+	in vec4 v_Color;
+#endif
+
+//
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;

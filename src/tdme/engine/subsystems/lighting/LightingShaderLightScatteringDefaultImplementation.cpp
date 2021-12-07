@@ -39,7 +39,8 @@ void LightingShaderLightScatteringDefaultImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/light_scattering",
-		"render_fragmentshader.frag"
+		"render_fragmentshader.frag",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -47,7 +48,8 @@ void LightingShaderLightScatteringDefaultImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/light_scattering",
-		"render_vertexshader.vert"
+		"render_vertexshader.vert",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
 	);
 	if (vertexShaderId == 0) return;
 

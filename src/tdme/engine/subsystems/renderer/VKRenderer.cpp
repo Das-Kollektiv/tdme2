@@ -1981,7 +1981,7 @@ bool VKRenderer::isUsingShortIndices() {
 }
 
 bool VKRenderer::isDeferredShadingAvailable() {
-	return false;
+	return true;
 }
 
 int32_t VKRenderer::getTextureUnits()
@@ -2067,6 +2067,9 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			isArray = true;
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+			if (Integer::isInt(arraySizeString) == false) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
+			}
 			arraySize = Integer::parseInt(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 			if (uniformType != "sampler2D" && uniformType != "samplerCube") uniformStructsArrays.insert(uniformName);
@@ -2664,16 +2667,16 @@ inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPip
 	rs.lineWidth = 1.0f;
 }
 
-inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
-	memset(&att_state, 0, sizeof(att_state));
-	att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	att_state.blendEnable = blending_mode != BLENDING_NONE?VK_TRUE:VK_FALSE;
-	att_state.srcColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	att_state.dstColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	att_state.colorBlendOp = VK_BLEND_OP_ADD;
-	att_state.srcAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
-	att_state.dstAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
+inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blend_att_state) {
+	memset(&blend_att_state, 0, sizeof(blend_att_state));
+	blend_att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	blend_att_state.blendEnable = blending_mode != BLENDING_NONE?VK_TRUE:VK_FALSE;
+	blend_att_state.srcColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blend_att_state.dstColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blend_att_state.colorBlendOp = VK_BLEND_OP_ADD;
+	blend_att_state.srcAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
+	blend_att_state.dstAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blend_att_state.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 
 inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds) {
@@ -2842,11 +2845,13 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
+	auto haveGeometryBuffer = false;
 	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
 			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -2902,14 +2907,20 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
-	VkPipelineColorBlendAttachmentState att_state;
-	createColorBlendAttachmentState(att_state);
-
+	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	if (haveColorBuffer == true) {
+		createColorBlendAttachmentState(blend_att_state[0]);
+	} else
+	if (haveGeometryBuffer == true) {
+		for (auto i = 0; i < 8; i++) {
+			createColorBlendAttachmentState(blend_att_state[i]);
+		}
+	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
-	cb.attachmentCount = haveColorBuffer == true?1:0;
-	cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
+	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -3047,7 +3058,7 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
 	pipeline.pRasterizationState = &rs;
-	pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
+	pipeline.pColorBlendState = haveColorBuffer == true || haveGeometryBuffer == true?&cb:nullptr;
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
@@ -3064,6 +3075,7 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
+	//
 	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 
 	//
@@ -3105,11 +3117,13 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
+	auto haveGeometryBuffer = false;
 	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
 			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -3166,14 +3180,20 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 
-	VkPipelineColorBlendAttachmentState att_state;
-	createColorBlendAttachmentState(att_state);
-
+	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	if (haveColorBuffer == true) {
+		createColorBlendAttachmentState(blend_att_state[0]);
+	} else
+	if (haveGeometryBuffer == true) {
+		for (auto i = 0; i < 8; i++) {
+			createColorBlendAttachmentState(blend_att_state[i]);
+		}
+	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
-	cb.attachmentCount = haveColorBuffer == true?1:0;
-	cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
+	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -3285,7 +3305,7 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
 	pipeline.pRasterizationState = &rs;
-	pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
+	pipeline.pColorBlendState = haveColorBuffer == true || haveGeometryBuffer == true?&cb:nullptr;
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
@@ -3344,11 +3364,13 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
+	auto haveGeometryBuffer = false;
 	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
 			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -3406,14 +3428,20 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 
-	VkPipelineColorBlendAttachmentState att_state;
-	createColorBlendAttachmentState(att_state);
-
+	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	if (haveColorBuffer == true) {
+		createColorBlendAttachmentState(blend_att_state[0]);
+	} else
+	if (haveGeometryBuffer == true) {
+		for (auto i = 0; i < 8; i++) {
+			createColorBlendAttachmentState(blend_att_state[i]);
+		}
+	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
-	cb.attachmentCount = haveColorBuffer == true?1:0;
-	cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
+	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -3480,7 +3508,7 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
 	pipeline.pRasterizationState = &rs;
-	pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
+	pipeline.pColorBlendState = haveColorBuffer == true || haveGeometryBuffer == true?&cb:nullptr;
 	pipeline.pMultisampleState = &ms;
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
@@ -4391,7 +4419,7 @@ int32_t VKRenderer::createTexture()
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
 	auto reuseTextureId = -1;
@@ -4409,7 +4437,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 	auto& depthBufferTexture = *textures.find(textureId)->second;
 	depthBufferTexture.format = VK_FORMAT_D32_SFLOAT;
 	depthBufferTexture.width = width;
@@ -4532,13 +4560,13 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
 	textures[texture.id] = texturePtr;
 	textures_rwlock.unlock();
-	createColorBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex);
+	createBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex, format);
 	return texture.id;
 }
 
-void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
+void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *textures.find(textureId)->second;
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
@@ -4656,13 +4684,37 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
-	Console::println("VKRenderer::createGBufferGeometryTexture(): Not implemented");
-	return ID_NONE;
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	auto texturePtr = new texture_type();
+	textures_rwlock.writeLock();
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	textures[texture.id] = texturePtr;
+	textures_rwlock.unlock();
+	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
+	return texture.id;
 }
 
 int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
-	Console::println("VKRenderer::createGBufferColorTexture(): Not implemented");
-	return ID_NONE;
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+	auto texturePtr = new texture_type();
+	textures_rwlock.writeLock();
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	textures[texture.id] = texturePtr;
+	textures_rwlock.unlock();
+	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, format);
+	return texture.id;
 }
 
 void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
@@ -5408,7 +5460,7 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
@@ -5444,16 +5496,48 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	auto& texture = *textureIt->second;
 	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
-	createColorBufferTexture(textureId, width, height, ID_NONE, ID_NONE);
+	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
 	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
 void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("VKRenderer::resizeGBufferGeometryTexture(): Not implemented");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+
+	// end render passes
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
+		endRenderPass(i);
+	}
+
+	auto textureIt = textures.find(textureId);
+	if (textureIt == textures.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		return;
+	}
+	auto& texture = *textureIt->second;
+	// TODO: Cube maps
+	if (texture.width == width && texture.height == height) return;
+	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
+	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
 void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
-	Console::println("VKRenderer::resizeGBufferColorTexture(): Not implemented");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+
+	// end render passes
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
+		endRenderPass(i);
+	}
+
+	auto textureIt = textures.find(textureId);
+	if (textureIt == textures.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		return;
+	}
+	auto& texture = *textureIt->second;
+	// TODO: Cube maps
+	if (texture.width == width && texture.height == height) return;
+	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
+	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
 void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
@@ -5505,7 +5589,7 @@ void VKRenderer::disposeTexture(int32_t textureId)
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
 	auto frameBuffer = frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 	if (frameBuffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): frame buffer not found: " + to_string(frameBufferId));
@@ -5513,57 +5597,202 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 	}
 	auto& frameBufferStruct = *frameBuffer;
 
-	texture_type* depthBufferTexture = nullptr;
-	texture_type* colorBufferTexture = nullptr;
+	// color buffer
+	if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
+		texture_type* depthBufferTexture = nullptr;
+		texture_type* colorBufferTexture = nullptr;
 
-	auto depthBufferTextureIt = textures.find(frameBufferStruct.depth_texture_id);
-	if (depthBufferTextureIt == textures.end()) {
-		if (frameBufferStruct.depth_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
-	} else {
-		depthBufferTexture = depthBufferTextureIt->second;
-	}
-	auto colorBufferTextureIt = textures.find(frameBufferStruct.color_texture_id);
-	if (colorBufferTextureIt == textures.end()) {
-		if (frameBufferStruct.color_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
-	} else {
-		colorBufferTexture = colorBufferTextureIt->second;
-	}
-
-	//
-	if (depthBufferTexture != nullptr && colorBufferTexture != nullptr &&
-		(depthBufferTexture->width != colorBufferTexture->width ||
-		depthBufferTexture->height != colorBufferTexture->height)) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): attachments with different dimension found: Not creating!");
-		return;
-	}
-
-	if (depthBufferTexture != nullptr) depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
-	if (colorBufferTexture != nullptr) colorBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
-
-	VkResult err;
-
-	{
-		if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
-
-		auto attachmentIdx = 0;
-		array<VkAttachmentDescription, 2> attachments;
-		if (colorBufferTexture != nullptr) {
-			attachments[attachmentIdx++] = {
-				.flags = 0,
-				.format = format,
-				.samples = VK_SAMPLE_COUNT_1_BIT,
-				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-				.initialLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.finalLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			};
+		auto depthBufferTextureIt = textures.find(frameBufferStruct.depth_texture_id);
+		if (depthBufferTextureIt == textures.end()) {
+			if (frameBufferStruct.depth_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
+		} else {
+			depthBufferTexture = depthBufferTextureIt->second;
 		}
-		if (depthBufferTexture != nullptr) {
+		auto colorBufferTextureIt = textures.find(frameBufferStruct.color_texture_id);
+		if (colorBufferTextureIt == textures.end()) {
+			if (frameBufferStruct.color_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
+		} else {
+			colorBufferTexture = colorBufferTextureIt->second;
+		}
+
+		//
+		if (depthBufferTexture != nullptr) depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
+		if (colorBufferTexture != nullptr) colorBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
+
+		//
+		if (depthBufferTexture != nullptr && colorBufferTexture != nullptr &&
+			(depthBufferTexture->width != colorBufferTexture->width ||
+			depthBufferTexture->height != colorBufferTexture->height)) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: attachments with different dimension found: Not creating!");
+			return;
+		}
+
+		//
+		VkResult err;
+
+		//
+		{
+			if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
+
+			auto attachmentIdx = 0;
+			array<VkAttachmentDescription, 2> attachments;
+			if (colorBufferTexture != nullptr) {
+				attachments[attachmentIdx++] = {
+					.flags = 0,
+					.format = colorBufferTexture->format,
+					.samples = VK_SAMPLE_COUNT_1_BIT,
+					.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+					.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+					.initialLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+					.finalLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				};
+			}
+			if (depthBufferTexture != nullptr) {
+				attachments[attachmentIdx++] = {
+					.flags = 0,
+					.format = depthBufferTexture->format,
+					.samples = VK_SAMPLE_COUNT_1_BIT,
+					.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+					.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE,
+					.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+					.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+				};
+			}
+			const VkAttachmentReference color_reference = {
+				.attachment = 0,
+				.layout = colorBufferTexture != nullptr?(colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL):VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			};
+			const VkAttachmentReference depth_reference = {
+				.attachment = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
+				.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+			};
+			const VkSubpassDescription subpass = {
+				.flags = 0,
+				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+				.inputAttachmentCount = 0,
+				.pInputAttachments = nullptr,
+				.colorAttachmentCount = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
+				.pColorAttachments = colorBufferTexture != nullptr?&color_reference:nullptr,
+				.pResolveAttachments = nullptr,
+				.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:nullptr,
+				.preserveAttachmentCount = 0,
+				.pPreserveAttachments = nullptr
+			};
+			const VkRenderPassCreateInfo rp_info = {
+				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+				.pNext = nullptr,
+				.flags = 0,
+				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
+				.pAttachments = attachments.data(),
+				.subpassCount = 1,
+				.pSubpasses = &subpass,
+				.dependencyCount = 0,
+				.pDependencies = nullptr
+			};
+			err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
+			assert(!err);
+		}
+
+		//
+		{
+			if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
+			auto attachmentIdx = 0;
+			array<VkImageView,  2> attachments;
+			if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
+			if (depthBufferTexture != nullptr) attachments[attachmentIdx++] = depthBufferTexture->view;
+			const VkFramebufferCreateInfo fb_info = {
+				.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+				.pNext = nullptr,
+				.flags = 0,
+				.renderPass = frameBufferStruct.render_pass,
+				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
+				.pAttachments = attachments.data(),
+				.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
+				.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
+				.layers = 1
+			};
+			err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
+			assert(!err);
+		}
+	} else
+	if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
+		auto depthBufferTexture = textures.find(frameBufferStruct.depth_texture_id)->second;
+		auto geometryBufferTexture1 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id1)->second;
+		auto geometryBufferTexture2 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id2)->second;
+		auto geometryBufferTexture3 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id3)->second;
+		auto colorBufferTexture1 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id1)->second;
+		auto colorBufferTexture2 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id2)->second;
+		auto colorBufferTexture3 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id3)->second;
+		auto colorBufferTexture4 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id4)->second;
+		auto colorBufferTexture5 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id5)->second;
+
+		//
+		depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
+		geometryBufferTexture1->frame_buffer_object_id = frameBufferStruct.id;
+		geometryBufferTexture2->frame_buffer_object_id = frameBufferStruct.id;
+		geometryBufferTexture3->frame_buffer_object_id = frameBufferStruct.id;
+		colorBufferTexture1->frame_buffer_object_id = frameBufferStruct.id;
+		colorBufferTexture2->frame_buffer_object_id = frameBufferStruct.id;
+		colorBufferTexture3->frame_buffer_object_id = frameBufferStruct.id;
+		colorBufferTexture4->frame_buffer_object_id = frameBufferStruct.id;
+		colorBufferTexture5->frame_buffer_object_id = frameBufferStruct.id;
+
+		//
+		if (depthBufferTexture->width == 0 || depthBufferTexture->height == 0 ||
+			depthBufferTexture->width != geometryBufferTexture1->width || depthBufferTexture->height != geometryBufferTexture1->height ||
+			depthBufferTexture->width != geometryBufferTexture2->width || depthBufferTexture->height != geometryBufferTexture2->height ||
+			depthBufferTexture->width != geometryBufferTexture3->width || depthBufferTexture->height != geometryBufferTexture3->height ||
+			depthBufferTexture->width != colorBufferTexture1->width || depthBufferTexture->height != colorBufferTexture1->height ||
+			depthBufferTexture->width != colorBufferTexture2->width || depthBufferTexture->height != colorBufferTexture2->height ||
+			depthBufferTexture->width != colorBufferTexture3->width || depthBufferTexture->height != colorBufferTexture3->height ||
+			depthBufferTexture->width != colorBufferTexture4->width || depthBufferTexture->height != colorBufferTexture4->height ||
+			depthBufferTexture->width != colorBufferTexture5->width || depthBufferTexture->height != colorBufferTexture5->height) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): attachments with different dimension found: Not creating!");
+			return;
+		}
+
+		//
+		array<texture_type*, 8> colorBufferTextures = {
+			geometryBufferTexture1,
+			geometryBufferTexture2,
+			geometryBufferTexture3,
+			colorBufferTexture1,
+			colorBufferTexture2,
+			colorBufferTexture3,
+			colorBufferTexture4,
+			colorBufferTexture5
+		};
+
+		//
+		VkResult err;
+
+		//
+		{
+			if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
+
+			//
+			auto attachmentIdx = 0;
+			array<VkAttachmentDescription, 9> attachments;
+			for (auto colorBufferTexture: colorBufferTextures) {
+				attachments[attachmentIdx++] = {
+					.flags = 0,
+					.format = colorBufferTexture->format,
+					.samples = VK_SAMPLE_COUNT_1_BIT,
+					.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+					.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+					.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+					.initialLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+					.finalLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				};
+			}
 			attachments[attachmentIdx++] = {
 				.flags = 0,
-				.format = VK_FORMAT_D32_SFLOAT,
+				.format = depthBufferTexture->format,
 				.samples = VK_SAMPLE_COUNT_1_BIT,
 				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -5572,68 +5801,77 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 			};
+			array<VkAttachmentReference, 8> color_references;
+			{
+				auto i = 0;
+				for (auto colorBufferTexture: colorBufferTextures) {
+					color_references[i] = {
+						.attachment = static_cast<uint32_t>(i),
+						.layout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+					};
+					i++;
+				}
+			}
+			const VkAttachmentReference depth_reference = {
+				.attachment = 8,
+				.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+			};
+			const VkSubpassDescription subpass = {
+				.flags = 0,
+				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+				.inputAttachmentCount = 0,
+				.pInputAttachments = nullptr,
+				.colorAttachmentCount = 8,
+				.pColorAttachments = color_references.data(),
+				.pResolveAttachments = nullptr,
+				.pDepthStencilAttachment = &depth_reference,
+				.preserveAttachmentCount = 0,
+				.pPreserveAttachments = nullptr
+			};
+			const VkRenderPassCreateInfo rp_info = {
+				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+				.pNext = nullptr,
+				.flags = 0,
+				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
+				.pAttachments = attachments.data(),
+				.subpassCount = 1,
+				.pSubpasses = &subpass,
+				.dependencyCount = 0,
+				.pDependencies = nullptr
+			};
+			err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
+			assert(!err);
 		}
-		const VkAttachmentReference color_reference = {
-			.attachment = 0,
-			.layout = colorBufferTexture != nullptr?(colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL):VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		};
-		const VkAttachmentReference depth_reference = {
-			.attachment = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
-			.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		};
-		const VkSubpassDescription subpass = {
-			.flags = 0,
-			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-			.inputAttachmentCount = 0,
-			.pInputAttachments = nullptr,
-			.colorAttachmentCount = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
-			.pColorAttachments = colorBufferTexture != nullptr?&color_reference:nullptr,
-			.pResolveAttachments = nullptr,
-			.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:nullptr,
-			.preserveAttachmentCount = 0,
-			.pPreserveAttachments = nullptr
-		};
-		const VkRenderPassCreateInfo rp_info = {
-			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
-			.pAttachments = attachments.data(),
-			.subpassCount = 1,
-			.pSubpasses = &subpass,
-			.dependencyCount = 0,
-			.pDependencies = nullptr
-		};
-		err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
-		assert(!err);
-	}
 
-	{
-		if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
-		auto attachmentIdx = 0;
-		array<VkImageView,  2> attachments;
-		if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
-		if (depthBufferTexture != nullptr) attachments[attachmentIdx++] = depthBufferTexture->view;
-		const VkFramebufferCreateInfo fb_info = {
-			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.renderPass = frameBufferStruct.render_pass,
-			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
-			.pAttachments = attachments.data(),
-			.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
-			.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
-			.layers = 1
-		};
-		err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
-		assert(!err);
+		//
+		{
+			if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
+			auto attachmentIdx = 0;
+			array<VkImageView,  9> attachments;
+			for (auto colorBufferTexture: colorBufferTextures) {
+				attachments[attachmentIdx++] = colorBufferTexture->view;
+			}
+			attachments[attachmentIdx++] = depthBufferTexture->view;
+			const VkFramebufferCreateInfo fb_info = {
+				.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+				.pNext = nullptr,
+				.flags = 0,
+				.renderPass = frameBufferStruct.render_pass,
+				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
+				.pAttachments = attachments.data(),
+				.width = depthBufferTexture->width,
+				.height = depthBufferTexture->height,
+				.layers = 1
+			};
+			err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
+			assert(!err);
+		}
 	}
-
 }
 
-int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
+int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureGlId) + ",  " + to_string(colorBufferTextureGlId));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureId) + ", " + to_string(colorBufferTextureId));
 
 	// try to reuse a frame buffer id
 	auto reuseIndex = -1;
@@ -5644,14 +5882,17 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 		}
 	}
 
+	//
 	auto frameBufferPtr = new framebuffer_object_type();
 	auto& frameBuffer = *frameBufferPtr;
 	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
-	frameBuffer.depth_texture_id = depthBufferTextureGlId;
-	frameBuffer.color_texture_id = colorBufferTextureGlId;
+	frameBuffer.type = framebuffer_object_type::TYPE_COLORBUFFER;
+	frameBuffer.depth_texture_id = depthBufferTextureId;
+	frameBuffer.color_texture_id = colorBufferTextureId;
 	frameBuffer.cubemap_texture_id = cubeMapTextureId;
 	frameBuffer.cubemap_texture_index = cubeMapTextureIndex;
 
+	//
 	if (reuseIndex != -1) {
 		framebuffers[reuseIndex] = frameBufferPtr;
 	} else {
@@ -5660,7 +5901,7 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 
 	//
 	createFramebufferObject(frameBuffer.id);
-	Console::println("new framebuffer: " + to_string(frameBuffer.id));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new color frame buffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
 }
 
@@ -5675,8 +5916,54 @@ int32_t VKRenderer::createGeometryBufferObject(
 	int32_t colorBufferTextureId4,
 	int32_t colorBufferTextureId5
 ) {
-	Console::println(string("VKRenderer::createGeometryBufferObject()::not implemented yet"));
-	return ID_NONE;
+	Console::println(
+		"VKRenderer::" + string(__FUNCTION__) + "(): " +
+		to_string(depthBufferTextureId) + ", " +
+		to_string(geometryBufferTextureId1) + ", " +
+		to_string(geometryBufferTextureId2) + ", " +
+		to_string(geometryBufferTextureId3) + ", " +
+		to_string(colorBufferTextureId1) + ", " +
+		to_string(colorBufferTextureId2) + ", " +
+		to_string(colorBufferTextureId3) + ", " +
+		to_string(colorBufferTextureId4) + ", " +
+		to_string(colorBufferTextureId5)
+	);
+
+	// try to reuse a frame buffer id
+	auto reuseIndex = -1;
+	for (auto i = 1; i < framebuffers.size(); i++) {
+		if (framebuffers[i] == nullptr) {
+			reuseIndex = i;
+			break;
+		}
+	}
+
+	//
+	auto frameBufferPtr = new framebuffer_object_type();
+	auto& frameBuffer = *frameBufferPtr;
+	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
+	frameBuffer.type = framebuffer_object_type::TYPE_GEOMETRYBUFFER;
+	frameBuffer.depth_texture_id = depthBufferTextureId;
+	frameBuffer.gbuffer_geometry_buffer_texture_id1 = geometryBufferTextureId1;
+	frameBuffer.gbuffer_geometry_buffer_texture_id2 = geometryBufferTextureId2;
+	frameBuffer.gbuffer_geometry_buffer_texture_id3 = geometryBufferTextureId3;
+	frameBuffer.gbuffer_color_buffer_texture_id1 = colorBufferTextureId1;
+	frameBuffer.gbuffer_color_buffer_texture_id2 = colorBufferTextureId2;
+	frameBuffer.gbuffer_color_buffer_texture_id3 = colorBufferTextureId3;
+	frameBuffer.gbuffer_color_buffer_texture_id4 = colorBufferTextureId4;
+	frameBuffer.gbuffer_color_buffer_texture_id5 = colorBufferTextureId5;
+
+	//
+	if (reuseIndex != -1) {
+		framebuffers[reuseIndex] = frameBufferPtr;
+	} else {
+		framebuffers.push_back(frameBufferPtr);
+	}
+
+	//
+	createFramebufferObject(frameBuffer.id);
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new gemoetry frame buffer: " + to_string(frameBuffer.id));
+	return frameBuffer.id;
 }
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
@@ -5693,13 +5980,47 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
 		} else {
-			auto depthBufferTextureId = frameBuffer->depth_texture_id;
-			auto colorBufferTextureId = frameBuffer->color_texture_id;
-			if (depthBufferTextureId != ID_NONE) {
-				auto& depth_buffer_texture = *textures[depthBufferTextureId];
+			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
+				auto depthBufferTextureId = frameBuffer->depth_texture_id;
+				auto colorBufferTextureId = frameBuffer->color_texture_id;
+				if (depthBufferTextureId != ID_NONE) {
+					auto& depth_buffer_texture = *textures[depthBufferTextureId];
+					setImageLayout(
+						0,
+						&depth_buffer_texture,
+						{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (colorBufferTextureId != ID_NONE) {
+					auto& color_buffer_texture = *textures[colorBufferTextureId];
+					setImageLayout(
+						0,
+						&color_buffer_texture,
+						{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": color buffer: unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
+			} else
+			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
+				auto depthBufferTextureId = frameBuffer->depth_texture_id;
+				auto colorBufferTextureId1 = frameBuffer->gbuffer_color_buffer_texture_id1;
+				auto colorBufferTextureId2 = frameBuffer->gbuffer_color_buffer_texture_id2;
+				auto colorBufferTextureId3 = frameBuffer->gbuffer_color_buffer_texture_id3;
+				auto colorBufferTextureId4 = frameBuffer->gbuffer_color_buffer_texture_id4;
+				auto colorBufferTextureId5 = frameBuffer->gbuffer_color_buffer_texture_id5;
 				setImageLayout(
 					0,
-					&depth_buffer_texture,
+					textures[frameBuffer->depth_texture_id],
 					{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 					THSVS_IMAGE_LAYOUT_OPTIMAL,
 					false,
@@ -5707,21 +6028,43 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					1,
 					false
 				);
-			}
-			if (colorBufferTextureId != ID_NONE) {
-				auto& color_buffer_texture = *textures[colorBufferTextureId];
-				setImageLayout(
-					0,
-					&color_buffer_texture,
-					{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
-					THSVS_IMAGE_LAYOUT_OPTIMAL,
-					false,
-					0,
-					1,
-					false
+				array<texture_type*, 8> colorBufferTextures = {
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id1],
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id2],
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id3],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id1],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id2],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id3],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id4],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id5]
+				};
+				for (auto colorBufferTexture: colorBufferTextures) {
+					setImageLayout(
+						0,
+						colorBufferTexture,
+						{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (VERBOSE == true) Console::println(
+					"VKRenderer::" + string(__FUNCTION__) + "(): " +
+					to_string(frameBufferId) +
+					": geometry buffer: unbinding: " +
+					to_string(depthBufferTextureId) + ", " +
+					to_string(colorBufferTextures[0]->id) + ", " +
+					to_string(colorBufferTextures[1]->id) + ", " +
+					to_string(colorBufferTextures[2]->id) + ", " +
+					to_string(colorBufferTextures[3]->id) + ", " +
+					to_string(colorBufferTextures[4]->id) + ", " +
+					to_string(colorBufferTextures[5]->id) + ", " +
+					to_string(colorBufferTextures[6]->id) + ", " +
+					to_string(colorBufferTextures[7]->id)
 				);
 			}
-			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 		}
 	}
 
@@ -5741,13 +6084,47 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
 		} else {
-			auto depthBufferTextureId = frameBuffer->depth_texture_id;
-			auto colorBufferTextureId = frameBuffer->color_texture_id;
-			if (depthBufferTextureId != ID_NONE) {
-				auto& depth_buffer_texture = *textures[depthBufferTextureId];
+			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
+				auto depthBufferTextureId = frameBuffer->depth_texture_id;
+				auto colorBufferTextureId = frameBuffer->color_texture_id;
+				if (depthBufferTextureId != ID_NONE) {
+					auto& depth_buffer_texture = *textures[depthBufferTextureId];
+					setImageLayout(
+						0,
+						&depth_buffer_texture,
+						{ THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ, THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE },
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (colorBufferTextureId != ID_NONE) {
+					auto& color_buffer_texture = *textures[colorBufferTextureId];
+					setImageLayout(
+						0,
+						&color_buffer_texture,
+						{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE},
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
+			} else
+			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
+				auto depthBufferTextureId = frameBuffer->depth_texture_id;
+				auto colorBufferTextureId1 = frameBuffer->gbuffer_color_buffer_texture_id1;
+				auto colorBufferTextureId2 = frameBuffer->gbuffer_color_buffer_texture_id2;
+				auto colorBufferTextureId3 = frameBuffer->gbuffer_color_buffer_texture_id3;
+				auto colorBufferTextureId4 = frameBuffer->gbuffer_color_buffer_texture_id4;
+				auto colorBufferTextureId5 = frameBuffer->gbuffer_color_buffer_texture_id5;
 				setImageLayout(
 					0,
-					&depth_buffer_texture,
+					textures[frameBuffer->depth_texture_id],
 					{ THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ, THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE },
 					THSVS_IMAGE_LAYOUT_OPTIMAL,
 					false,
@@ -5755,21 +6132,43 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					1,
 					false
 				);
-			}
-			if (colorBufferTextureId != ID_NONE) {
-				auto& color_buffer_texture = *textures[colorBufferTextureId];
-				setImageLayout(
-					0,
-					&color_buffer_texture,
-					{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE},
-					THSVS_IMAGE_LAYOUT_OPTIMAL,
-					false,
-					0,
-					1,
-					false
+				array<texture_type*, 8> colorBufferTextures = {
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id1],
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id2],
+					textures[frameBuffer->gbuffer_geometry_buffer_texture_id3],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id1],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id2],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id3],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id4],
+					textures[frameBuffer->gbuffer_color_buffer_texture_id5]
+				};
+				for (auto colorBufferTexture: colorBufferTextures) {
+					setImageLayout(
+						0,
+						colorBufferTexture,
+						{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE},
+						THSVS_IMAGE_LAYOUT_OPTIMAL,
+						false,
+						0,
+						1,
+						false
+					);
+				}
+				if (VERBOSE == true) Console::println(
+					"VKRenderer::" + string(__FUNCTION__) + "(): " +
+					to_string(frameBufferId) +
+					": geometry buffer: binding: " +
+					to_string(depthBufferTextureId) + ", " +
+					to_string(colorBufferTextures[0]->id) + ", " +
+					to_string(colorBufferTextures[1]->id) + ", " +
+					to_string(colorBufferTextures[2]->id) + ", " +
+					to_string(colorBufferTextures[3]->id) + ", " +
+					to_string(colorBufferTextures[4]->id) + ", " +
+					to_string(colorBufferTextures[5]->id) + ", " +
+					to_string(colorBufferTextures[6]->id) + ", " +
+					to_string(colorBufferTextures[7]->id)
 				);
 			}
-			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 		}
 	}
 

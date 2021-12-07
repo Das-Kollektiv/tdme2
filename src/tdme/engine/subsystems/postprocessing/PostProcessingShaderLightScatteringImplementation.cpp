@@ -32,7 +32,8 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"light_scattering_fragmentshader.frag"
+		"light_scattering_fragmentshader.frag",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -40,7 +41,8 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"light_scattering_vertexshader.vert"
+		"light_scattering_vertexshader.vert",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
 	);
 	if (vertexShaderId == 0) return;
 

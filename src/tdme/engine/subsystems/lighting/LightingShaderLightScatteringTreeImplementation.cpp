@@ -40,7 +40,8 @@ void LightingShaderLightScatteringTreeImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/light_scattering",
-		"render_fragmentshader.frag"
+		"render_fragmentshader.frag",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -49,7 +50,7 @@ void LightingShaderLightScatteringTreeImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/light_scattering",
 		"render_vertexshader.vert",
-		"#define HAVE_TREE",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_TREE",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"

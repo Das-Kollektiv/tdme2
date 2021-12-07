@@ -1,9 +1,5 @@
 #version 330 core
 
-{$DEFINITIONS}
-
-{$FUNCTIONS}
-
 // TODO: maybe move me into definitions
 #if !defined(HAVE_SPECULARMATERIAL_STRUCT)
 #define HAVE_SPECULARMATERIAL_STRUCT
@@ -16,6 +12,28 @@ struct SpecularMaterial {
 	float reflection;
 };
 #endif
+
+#if !defined(HAVE_SPECULARLIGHT_STRUCT)
+#define HAVE_SPECULARLIGHT_STRUCT
+struct SpecularLight {
+	int enabled;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 position;
+	vec3 spotDirection;
+	float spotExponent;
+	float spotCosCutoff;
+	float constantAttenuation;
+	float linearAttenuation;
+	float quadraticAttenuation;
+	float radius;
+};
+#endif
+
+{$DEFINITIONS}
+
+{$FUNCTIONS}
 
 uniform SpecularMaterial specularMaterial;
 

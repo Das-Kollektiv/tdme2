@@ -158,9 +158,8 @@ struct SpecularLight {
 };
 
 #define FALSE		0
-#define MAX_LIGHTS	8
 
-uniform SpecularLight specularLights[MAX_LIGHTS];
+uniform SpecularLight specularLights[LIGHT_COUNT];
 uniform SpecularMaterial specularMaterial;
 
 //
@@ -200,7 +199,7 @@ vec4 computeSpecularLight(in int i, in vec3 normal, in vec3 position, in vec3 ey
 vec4 computeSpecularLighting(in vec3 normal, in vec3 position, in vec3 eyeDirection, in SpecularMaterial specularMaterial) {
 	vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	// process each light
-	for (int i = 0; i < MAX_LIGHTS; i++) {
+	for (int i = 0; i < LIGHT_COUNT; i++) {
 		// skip on disabled specularLights
 		if (specularLights[i].enabled == FALSE || (specularLights[i].radius > 0.0 && length(specularLights[i].position.xyz - position.xyz) > specularLights[i].radius)) continue;
 

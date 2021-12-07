@@ -50,7 +50,7 @@ void LightingShaderWaterImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
-		"#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"water.inc.glsl"
@@ -63,7 +63,7 @@ void LightingShaderWaterImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.frag",
-		"#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"

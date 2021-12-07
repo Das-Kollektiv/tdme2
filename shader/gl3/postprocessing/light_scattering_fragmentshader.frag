@@ -5,7 +5,6 @@
 {$DEFINITIONS}
 
 #define FALSE		0
-#define MAX_LIGHTS	8
 
 #define EXPOSURE	0.0075
 #define DECAY		1.0
@@ -21,7 +20,7 @@ struct Light {
 };
 
 // uniforms
-uniform Light lights[MAX_LIGHTS];
+uniform Light lights[LIGHT_COUNT];
 uniform sampler2D colorBufferTextureUnit;
 uniform float bufferTexturePixelWidth;
 uniform float bufferTexturePixelHeight;
@@ -35,7 +34,7 @@ out vec4 outColor;
 // main
 void main(void) {
 	outColor = vec4(0.0, 0.0, 0.0, 0.0);
-	for (int i = 0; i < MAX_LIGHTS; i++) {
+	for (int i = 0; i < LIGHT_COUNT; i++) {
 		// skip on disabled lights
 		if (lights[i].enabled == FALSE) continue;
 

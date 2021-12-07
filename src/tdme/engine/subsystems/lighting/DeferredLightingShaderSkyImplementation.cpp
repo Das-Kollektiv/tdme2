@@ -40,7 +40,7 @@ void DeferredLightingShaderSkyImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"defer_fragmentshader.frag",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK"
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_SOLID_SHADING\n#define HAVE_BACK"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -49,7 +49,7 @@ void DeferredLightingShaderSkyImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK"
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define HAVE_SOLID_SHADING\n#define HAVE_BACK"
 	);
 	if (vertexShaderId == 0) return;
 
