@@ -4004,6 +4004,24 @@ bool VKRenderer::linkProgram(int32_t programId)
 		}
 	}
 
+	// print shaders with more than 4 samplers as our hashing depends of 4 samplers max
+	for (auto shader: program->shaders) {
+		if (shader->samplerUniformList.size() > 4) {
+			Console::println(
+				string("VKRenderer::") +
+				string(__FUNCTION__) +
+				string("[") +
+				to_string(shader->id) +
+				string("]") +
+				string(": warning: more than 4 samplers @ ") +
+				shader->file
+			);
+			for (auto samplerUniform: shader->samplerUniformList) {
+				Console::println("\t" + samplerUniform->name);
+			}
+		}
+	}
+
 	//
 	for (auto shader: program->shaders) {
 		shader->samplerUniformList.shrink_to_fit();

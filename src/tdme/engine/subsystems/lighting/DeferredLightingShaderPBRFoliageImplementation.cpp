@@ -47,7 +47,7 @@ void DeferredLightingShaderPBRFoliageImplementation::initialize()
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		string() +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n" +
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n" +
 		"#define HAVE_FOLIAGE\n#define HAVE_DEPTH_FOG\n"
 		#if !defined(VULKAN)
 			+ "#define USE_IBL\n"
@@ -75,7 +75,7 @@ void DeferredLightingShaderPBRFoliageImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"defer_fragmentshader.frag",
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n"
 		#if !defined(VULKAN)
 			+ "#define USE_IBL\n"
 		#endif
