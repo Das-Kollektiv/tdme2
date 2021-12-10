@@ -903,19 +903,19 @@ MAIN_SRCS = \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
-#	src/tdme/tools/installer/Installer-main.cpp \
-#	src/tdme/tools/cli/archive-main.cpp \
-#	src/tdme/tools/cli/collectguitags-main.cpp \
-#	src/tdme/tools/cli/converttotm-main.cpp \
-#	src/tdme/tools/cli/copyanimationsetups-main.cpp \
-#	src/tdme/tools/cli/create-installer-main.cpp \
-#	src/tdme/tools/cli/fixdoxygen-main.cpp \
-#	src/tdme/tools/cli/generatelicenses-main.cpp \
-#	src/tdme/tools/cli/importtmodel-main.cpp \
-#	src/tdme/tools/cli/makefilegenerator-main.cpp \
-#	src/tdme/tools/cli/optimizemodel-main.cpp \
-#	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
-#	src/tdme/tools/cli/sortincludes-main.cpp
+	src/tdme/tools/installer/Installer-main.cpp \
+	src/tdme/tools/cli/archive-main.cpp \
+	src/tdme/tools/cli/collectguitags-main.cpp \
+	src/tdme/tools/cli/converttotm-main.cpp \
+	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+	src/tdme/tools/cli/create-installer-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
+	src/tdme/tools/cli/generatelicenses-main.cpp \
+	src/tdme/tools/cli/importtmodel-main.cpp \
+	src/tdme/tools/cli/makefilegenerator-main.cpp \
+	src/tdme/tools/cli/optimizemodel-main.cpp \
+	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
+	src/tdme/tools/cli/sortincludes-main.cpp
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)

@@ -80,6 +80,8 @@ private:
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
 	static constexpr int COMPUTE_STORAGE_BUFFER_COUNT { 8 };
+	static constexpr int BUFFERS_MAX { 65535 };
+	static constexpr int TEXTURES_MAX { 65535 };
 
 	static constexpr int CUBEMAPTEXTUREINDEX_MIN { 1 };
 
@@ -173,6 +175,7 @@ private:
 			array<VkDescriptorSet, DESC_MAX_CACHED> desc_sets2;
 			unordered_map<SAMPLER_HASH_TYPE, int> desc_sets2_cache;
 			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> desc_sets2_cache_texture_ids;
+			vector<uint32_t> free_desc_sets2_ids;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
 		};
 		int type { 0 };
@@ -399,7 +402,7 @@ private:
 	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };

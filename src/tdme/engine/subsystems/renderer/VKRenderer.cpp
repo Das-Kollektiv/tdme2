@@ -1366,8 +1366,8 @@ void VKRenderer::initialize()
 		context.command_buffer_current = 0;
 		context.pipeline = VK_NULL_HANDLE;
 		context.render_pass_started = false;
-		context.buffer_vector.resize(100000);	// FINISH ME
-		context.texture_vector.resize(100000);	// FINISH ME
+		context.buffer_vector.resize(BUFFERS_MAX);
+		context.texture_vector.resize(TEXTURES_MAX);
 
 		//
 		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
@@ -1730,12 +1730,18 @@ void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 		context.texture_vector[textureId] = nullptr;
 		for (auto program: programList) {
 			if (program == nullptr || program->contexts[context.idx].desc_sets2_cache_texture_ids.empty() == true) continue;
-			auto& desc_sets2_cache_textureids = program->contexts[context.idx].desc_sets2_cache_texture_ids;
+			auto& programContext = program->contexts[context.idx];
+			auto& desc_sets2_cache_textureids = programContext.desc_sets2_cache_texture_ids;
 			auto desc_sets2_cache_textureids_it = desc_sets2_cache_textureids.find(textureId);
 			if (desc_sets2_cache_textureids_it != desc_sets2_cache_textureids.end()) {
-				auto& desc_sets2_cache = program->contexts[context.idx].desc_sets2_cache;
+				auto& desc_sets2_cache = programContext.desc_sets2_cache;
 				for (auto& desc_sets2_cache_hash: desc_sets2_cache_textureids_it->second) {
-					desc_sets2_cache.erase(desc_sets2_cache_hash);
+					auto desc_sets2_cache_hash_it = desc_sets2_cache.find(desc_sets2_cache_hash);
+					if (desc_sets2_cache_hash_it != desc_sets2_cache.end()) {
+						auto desc_sets2_idx = desc_sets2_cache_hash_it->second;
+						programContext.free_desc_sets2_ids.push_back(desc_sets2_idx);
+						desc_sets2_cache.erase(desc_sets2_cache_hash_it);
+					}
 				}
 				desc_sets2_cache_textureids.erase(desc_sets2_cache_textureids_it);
 			}
@@ -4460,10 +4466,16 @@ int32_t VKRenderer::createTexture()
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+		auto free_texture_ids_idx = free_texture_ids.size() - 1;
+		reuseTextureId = free_texture_ids[free_texture_ids_idx];
+		free_texture_ids.erase(free_texture_ids.begin() + free_texture_ids_idx);
 	}
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
@@ -4476,6 +4488,11 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
 		reuseTextureId = free_texture_ids[0];
@@ -4605,6 +4622,11 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
 		reuseTextureId = free_texture_ids[0];
@@ -4741,6 +4763,11 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
 		reuseTextureId = free_texture_ids[0];
@@ -4758,6 +4785,11 @@ int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
 		reuseTextureId = free_texture_ids[0];
@@ -4950,6 +4982,11 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	//
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
+	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
+		textures_rwlock.unlock();
+		return ID_NONE;
+	}
 	auto reuseTextureId = -1;
 	if (free_texture_ids.empty() == false) {
 		reuseTextureId = free_texture_ids[0];
@@ -6278,6 +6315,11 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
 	buffers_rwlock.writeLock();
+	if (buffer_idx - free_buffer_ids.size() >= BUFFERS_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): coud not allocate buffer object, maximum is " + to_string(BUFFERS_MAX));
+		buffers_rwlock.unlock();
+		return bufferIds;
+	}
 	for (auto i = 0; i < bufferCount; i++) {
 		auto bufferPtr = new buffer_object_type();
 		auto& buffer = *bufferPtr;
@@ -6886,7 +6928,19 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
 	if (desc_set2_cache_hit == false) {
 		if (samplers <= SAMPLER_HASH_MAX) {
-			desc_set2 = programContext.desc_sets2[programContext.desc_sets2_idx];
+			auto desc_sets2_idx = -1;
+			if (programContext.free_desc_sets2_ids.empty() == false) {
+				auto free_desc_sets2_ids_idx = programContext.free_desc_sets2_ids.size() - 1;
+				desc_sets2_idx = programContext.free_desc_sets2_ids[free_desc_sets2_ids_idx];
+				programContext.free_desc_sets2_ids.erase(programContext.free_desc_sets2_ids.begin() + free_desc_sets2_ids_idx);
+			} else {
+				desc_sets2_idx = programContext.desc_sets2_idx++;
+			}
+			desc_set2 = programContext.desc_sets2[desc_sets2_idx];
+			desc_set2_cache[desc_set2_cache_id] = desc_sets2_idx;
+			for (auto texture_id: texture_ids) programContext.desc_sets2_cache_texture_ids[texture_id].insert(desc_set2_cache_id);
+		} else {
+			programCommandBuffer.desc_sets2_idx_uncached++;
 		}
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
@@ -6957,24 +7011,12 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 				samplerIdx++;
 			}
 		}
-	}
-
-	// find desc2_set from cache or update it
-	if (desc_set2_cache_hit == true) {
+	} else {
 		desc_set2 = programContext.desc_sets2[desc_set2_cache_it->second];
 	}
 
 	//
 	vkUpdateDescriptorSets(device, desc_set2_cache_hit == true?uboIdx:contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
-
-	//
-	if (desc_set2_cache_hit == false && samplers <= SAMPLER_HASH_MAX) {
-		desc_set2_cache[desc_set2_cache_id] = programContext.desc_sets2_idx;
-		for (auto texture_id: texture_ids) programContext.desc_sets2_cache_texture_ids[texture_id].insert(desc_set2_cache_id);
-		programContext.desc_sets2_idx++;
-	} else {
-		programCommandBuffer.desc_sets2_idx_uncached++;
-	}
 
 	// descriptor sets
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
