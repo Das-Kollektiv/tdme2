@@ -50,6 +50,14 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
+#if defined(CPU_64BIT)
+	#define SAMPLER_HASH_MAX	8
+	#define SAMPLER_HASH_TYPE __int128
+#else
+	#define SAMPLER_HASH_MAX 4
+	#define SAMPLER_HASH_TYPE __uint64_t
+#endif
+
 /**
  * Vulkan renderer
  * @author Andreas Drewke
@@ -159,8 +167,8 @@ private:
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets1;
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2;
-		vector<unordered_map<uint64_t, int>> desc_sets2_cache;
-		vector<unordered_map<int32_t, unordered_set<uint64_t>>> desc_sets2_cache_textureids;
+		vector<unordered_map<SAMPLER_HASH_TYPE, int>> desc_sets2_cache;
+		vector<unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>>> desc_sets2_cache_textureids;
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2plus;
 		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };

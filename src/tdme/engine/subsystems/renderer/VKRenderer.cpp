@@ -4006,7 +4006,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 	// print shaders with more than 4 samplers as our hashing depends of 4 samplers max
 	for (auto shader: program->shaders) {
-		if (shader->samplerUniformList.size() > 4) {
+		if (shader->samplerUniformList.size() > SAMPLER_HASH_MAX) {
 			Console::println(
 				string("VKRenderer::") +
 				string(__FUNCTION__) +
@@ -6764,9 +6764,12 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	auto uboIdx = 0;
-	uint64_t desc_set2_cache_id = 0LL;
-	array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
-
+	SAMPLER_HASH_TYPE desc_set2_cache_id = 0LL;
+	#if defined(CPU_64BIT)
+		array<int, 8> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE, ID_NONE , ID_NONE , ID_NONE , ID_NONE  };
+	#else
+		array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
+	#endif
 	// get texture set cache id
 	auto samplers = -1;
 	{
@@ -6774,7 +6777,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
-				if (samplerIdx < 4) {
+				if (samplerIdx < SAMPLER_HASH_MAX) {
 					if (uniform->texture_unit == -1) {
 						texture_ids[samplerIdx] = ID_NONE;
 					} else {
@@ -6783,7 +6786,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 							texture_ids[samplerIdx] = ID_NONE;
 						} else {
 							texture_ids[samplerIdx] = boundTexture.id;
-							desc_set2_cache_id+= (uint64_t)boundTexture.id << (uint64_t)(samplerIdx * 16);
+							desc_set2_cache_id+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
 						}
 					}
 				}
@@ -6829,9 +6832,8 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	}
 
 	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
-	auto desc_set2_cache_it = samplers > 4?desc_set2_cache.end():desc_set2_cache.find(desc_set2_cache_id);
+	auto desc_set2_cache_it = samplers > SAMPLER_HASH_MAX?desc_set2_cache.end():desc_set2_cache.find(desc_set2_cache_id);
 	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
-
 	if (desc_set2_cache_hit == false) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
@@ -6914,7 +6916,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	//
 	if (desc_set2_cache_hit == false) {
-		if (samplers <= 4) {
+		if (samplers <= SAMPLER_HASH_MAX) {
 			desc_set2_cache[desc_set2_cache_id] = contextTyped.program->desc_idxs2[contextTyped.idx];
 			for (auto texture_id: texture_ids) contextTyped.program->desc_sets2_cache_textureids[contextTyped.idx][texture_id].insert(desc_set2_cache_id);
 		}
