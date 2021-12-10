@@ -74,7 +74,7 @@ private:
 	static constexpr int COMMANDS_MAX { 16 };
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 };
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 };
-	static constexpr int DESC_MAX_UNCACHED { 512 /*COMMANDS_MAX * 2 */};
+	static constexpr int DESC_MAX_UNCACHED { COMMANDS_MAX };
 	static constexpr int DESC_MAX_CACHED { 512 };
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
