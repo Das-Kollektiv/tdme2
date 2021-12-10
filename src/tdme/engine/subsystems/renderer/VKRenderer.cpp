@@ -892,11 +892,11 @@ void VKRenderer::initializeSwapChain() {
 }
 
 const string VKRenderer::getVendor() {
-	return string("Vulkan Vendor"); // TODO: implement me!
+	return StringTools::tokenize(deviceName, " \t\n")[0];
 }
 
 const string VKRenderer::getRenderer() {
-	return string("Vulkan Renderer"); // TODO: implement me!
+	return deviceName + " [VK]";
 }
 
 const string VKRenderer::getShaderVersion()
@@ -1141,6 +1141,9 @@ void VKRenderer::initialize()
 	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfaceSupportKHR);
 
 	vkGetPhysicalDeviceProperties(gpu, &gpu_props);
+
+	//
+	deviceName = gpu_props.deviceName;
 
 	// Query with nullptr data to get count
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, nullptr);

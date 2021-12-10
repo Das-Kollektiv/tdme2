@@ -744,10 +744,6 @@ void Engine::initialize()
 		#endif
 	#endif
 
-	// graphics device
-	Console::println(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
-	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
-
 	// determine if we have the skinning compute shader or OpenCL program
 	skinningShaderEnabled = renderer->isComputeShaderAvailable() == true || renderer->isGLCLAvailable() == true;
 	animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
@@ -772,6 +768,10 @@ void Engine::initialize()
 	initialized = true;
 	renderer->initialize();
 	renderer->initializeFrame();
+
+	// graphics device
+	Console::println(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
+	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
 
 	// create object 3d renderer
 	entityRenderer = new EntityRenderer(this, renderer);

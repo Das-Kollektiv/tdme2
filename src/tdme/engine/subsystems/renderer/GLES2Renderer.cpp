@@ -82,7 +82,7 @@ const string GLES2Renderer::getVendor() {
 
 const string GLES2Renderer::getRenderer() {
 	auto renderer = (char*)glGetString(GL_RENDERER);
-	return string(renderer);
+	return string(renderer) + " [GLES2]";
 }
 
 const string GLES2Renderer::getShaderVersion()

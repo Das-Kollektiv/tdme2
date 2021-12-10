@@ -88,7 +88,7 @@ const string GL2Renderer::getVendor() {
 
 const string GL2Renderer::getRenderer() {
 	auto renderer = glGetString(GL_RENDERER);
-	return string((char*)renderer);
+	return string((char*)renderer) + " [GL2/3]";
 }
 
 const string GL2Renderer::getShaderVersion()

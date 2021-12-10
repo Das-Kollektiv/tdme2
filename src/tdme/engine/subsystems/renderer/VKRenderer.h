@@ -440,6 +440,8 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
+	string deviceName;
+
 	VkPresentModeKHR swapchainPresentMode = { VK_PRESENT_MODE_IMMEDIATE_KHR };
 
 	//
