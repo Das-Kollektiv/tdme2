@@ -69,9 +69,13 @@ class tdme::engine::subsystems::renderer::VKRenderer
 private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
-	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
-	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
-	static constexpr int DESC_MAX { 1024 };
+	static constexpr int SHADERS_MAX { 100 };
+	static constexpr int SHADERS_COMPUTE_MAX { 1 };
+	static constexpr int COMMANDS_MAX { 16 };
+	static constexpr int COMMANDS_MAX_GRAPHICS { 16 };
+	static constexpr int COMMANDS_MAX_COMPUTE { 5 };
+	static constexpr int DESC_MAX_UNCACHED { 512 /*COMMANDS_MAX * 2 */};
+	static constexpr int DESC_MAX_CACHED { 512 };
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
@@ -158,6 +162,19 @@ private:
 	};
 
 	struct program_type {
+		struct command_buffer {
+			uint32_t desc_idxs1;
+			uint32_t desc_idxs2_uncached;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets1;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets2_uncached;
+		};
+		struct context {
+			uint32_t desc_idxs2;
+			array<VkDescriptorSet, DESC_MAX_CACHED> desc_sets2;
+			unordered_map<SAMPLER_HASH_TYPE, int> desc_sets2_cache;
+			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> desc_sets2_cache_textureids;
+			array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
+		};
 		int type { 0 };
 		unordered_map<uint32_t, pipeline_type*> pipelines;
 		vector<int32_t> shader_ids;
@@ -165,17 +182,10 @@ private:
 		unordered_map<int32_t, string> uniforms;
 		uint32_t layout_bindings { 0 };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets1;
-		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2;
-		vector<unordered_map<SAMPLER_HASH_TYPE, int>> desc_sets2_cache;
-		vector<unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>>> desc_sets2_cache_textureids;
-		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets2plus;
 		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };
-		vector<uint32_t> desc_idxs1;
-		vector<uint32_t> desc_idxs2;
-		vector<uint32_t> desc_idxs2plus;
 		int32_t id { 0 };
+		vector<context> contexts;
 	};
 
 	struct texture_type {
@@ -240,6 +250,12 @@ private:
 	};
 
 	struct context_type {
+		struct command_buffer {
+			VkCommandBuffer draw_cmd;
+			VkFence draw_fence;
+			bool draw_cmd_started;
+		};
+
 		int32_t idx { 0 };
 
 		vector<pipeline_type*> pipeline_vector;
@@ -254,16 +270,15 @@ private:
 		bool render_pass_started;
 
 		VkCommandPool cmd_draw_pool;
-		uint32_t draw_cmd_current;
-		array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmds;
-		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
+		uint32_t command_buffer_current;
 		VkFence draw_fence { VK_NULL_HANDLE };
-		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
-
 		program_type* program { nullptr };
 
 		uint32_t pipeline_id;
-		VkPipeline pipeline;
+		VkPipeline pipeline { VK_NULL_HANDLE };
+
+		//
+		array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
 
 		//
 		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;

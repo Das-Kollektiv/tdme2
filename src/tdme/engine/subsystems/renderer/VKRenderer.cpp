@@ -251,17 +251,18 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	auto& context = contexts[contextIdx];
 
 	//
-	if (bufferId == -1) bufferId = context.draw_cmd_current;
+	if (bufferId == -1) bufferId = context.command_buffer_current;
 
 	//
-	if (context.draw_cmd_started[bufferId] == true) return false;
+	auto& command_buffer = context.command_buffers[bufferId];
+	if (command_buffer.draw_cmd_started == true) return false;
 
 	//
 	VkResult fence_result;
 	do {
-		fence_result = vkWaitForFences(device, 1, &context.draw_fences[bufferId], VK_TRUE, 100000000);
+		fence_result = vkWaitForFences(device, 1, &command_buffer.draw_fence, VK_TRUE, 100000000);
 	} while (fence_result == VK_TIMEOUT);
-	vkResetFences(device, 1, &context.draw_fences[bufferId]);
+	vkResetFences(device, 1, &command_buffer.draw_fence);
 
 	//
 	const VkCommandBufferBeginInfo cmd_buf_info = {
@@ -273,7 +274,8 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	//
 	VkResult err;
-	err = vkBeginCommandBuffer(context.draw_cmds[bufferId], &cmd_buf_info);
+	Console::println(to_string((uint64_t)command_buffer.draw_cmd));
+	err = vkBeginCommandBuffer(command_buffer.draw_cmd, &cmd_buf_info);
 	assert(!err);
 
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_COLOR_ATTACHMENT_WRITE, THSVS_ACCESS_NONE };
@@ -315,7 +317,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		VkResult err;
 
 		//
-		vkCmdPipelineBarrier(context.draw_cmds[bufferId], srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+		vkCmdPipelineBarrier(command_buffer.draw_cmd, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 
 		//
 		swapchain_buffers[current_buffer].access_types = nextAccessTypes;
@@ -323,7 +325,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	}
 
 	//
-	context.draw_cmd_started[bufferId] = true;
+	command_buffer.draw_cmd_started = true;
 
 	//
 	AtomicOperations::increment(statistics.drawCommands);
@@ -336,27 +338,28 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	auto& context = contexts[contextIdx];
 
 	//
-	if (bufferId == -1) bufferId = context.draw_cmd_current;
+	if (bufferId == -1) bufferId = context.command_buffer_current;
+	auto& command_buffer = context.command_buffers[bufferId];
 
 	//
 	context.pipeline = VK_NULL_HANDLE;
 
 	//
-	if (context.draw_cmd_started[bufferId] == false) return VK_NULL_HANDLE;
+	if (command_buffer.draw_cmd_started == false) return VK_NULL_HANDLE;
 
 	//
 	VkResult err;
-	err = vkEndCommandBuffer(context.draw_cmds[bufferId]);
+	err = vkEndCommandBuffer(command_buffer.draw_cmd);
 	assert(!err);
 
 
-	auto commandBuffer = context.draw_cmds[bufferId];
+	auto commandBuffer = command_buffer.draw_cmd;
 
 	//
-	context.draw_cmd_started[bufferId] = false;
+	command_buffer.draw_cmd_started = false;
 
 	//
-	if (cycleBuffers == true) context.draw_cmd_current = (context.draw_cmd_current + 1) % DRAW_COMMANDBUFFER_MAX;
+	if (cycleBuffers == true) context.command_buffer_current = (context.command_buffer_current + 1) % DRAW_COMMANDBUFFER_MAX;
 
 	//
 	return commandBuffer;
@@ -378,8 +381,8 @@ inline void VKRenderer::recreateContextFences(int contextIdx) {
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
 	};
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		if (context.draw_fences[i] != VK_NULL_HANDLE) vkDestroyFence(device, context.draw_fences[i], nullptr);
-		vkCreateFence(device, &fence_create_info_signaled, nullptr, &context.draw_fences[i]);
+		if (context.command_buffers[i].draw_fence != VK_NULL_HANDLE) vkDestroyFence(device, context.command_buffers[i].draw_fence, nullptr);
+		vkCreateFence(device, &fence_create_info_signaled, nullptr, &context.command_buffers[i].draw_fence);
 	}
 }
 
@@ -1289,23 +1292,34 @@ void VKRenderer::initialize()
 	// swap chain
 	initializeSwapChain();
 
+	/*
+	aaa: 96000
+	bbb: 4800
+	ccc: 32000
+	000: 4352000
+	111: 544000
+	*/
+
 	// create descriptor pool 1
 	{
 		array<VkDescriptorPoolSize, 2> desc1_types_count = {{
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2 * 2 * 1) // 2 shader stages * 1 uniform buffers
+				// 100 shaders * 3 command buffers * 2 shader stages * 1 uniform buffers
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_MAX * DRAW_COMMANDBUFFER_MAX * 2 * 1)
 			},
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 2 * 1 * 10) // 1 shader stage * 10 storage buffers
+				// 1 shader * 3 command buffers * 1 shader stage * 10 storage buffers
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_COMPUTE_MAX * DRAW_COMMANDBUFFER_MAX * 1 * 10)
 			}
 		}};
 		const VkDescriptorPoolCreateInfo descriptor_pool = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32 * 2), // 32 shader
+			// 100 shaders * 2 stages
+			.maxSets = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * 100 * 2),
 			.poolSizeCount = desc1_types_count.size(),
 			.pPoolSizes = desc1_types_count.data(),
 		};
@@ -1318,13 +1332,15 @@ void VKRenderer::initialize()
 	{
 		const VkDescriptorPoolSize desc2_types_count = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2 * 2 * 4) // 2 stages * 4 image sampler
+			// 100 shaders * 2 stages * 8 image sampler
+			.descriptorCount = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2 * 8)
 		};
 		const VkDescriptorPoolCreateInfo descriptor_pool = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.maxSets = static_cast<uint32_t>(DESC_MAX * 2 * Engine::getThreadCount() * 32 * 2), // 32 shader
+			// 100 shaders * 2 stages
+			.maxSets = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2),
 			.poolSizeCount = 1,
 			.pPoolSizes = &desc2_types_count,
 		};
@@ -1338,11 +1354,22 @@ void VKRenderer::initialize()
 	// create set up command buffers
 	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		auto& context = contexts[contextIdx];
-		{
-			// TODO: a.drewke
-			context.buffer_vector.resize(100000);
-			context.texture_vector.resize(100000);
+		//
+		context.idx = contextIdx;
+		context.setup_cmd_inuse = VK_NULL_HANDLE;
+		context.command_buffer_current = 0;
+		context.pipeline = VK_NULL_HANDLE;
+		context.render_pass_started = false;
+		context.buffer_vector.resize(100000);	// FINISH ME
+		context.texture_vector.resize(100000);	// FINISH ME
+
+		//
+		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+			context.command_buffers[i].draw_fence = VK_NULL_HANDLE;
+			context.command_buffers[i].draw_cmd_started = false;
 		}
+
+		//
 		{
 			// command pool
 			const VkCommandPoolCreateInfo cmd_pool_info = {
@@ -1386,7 +1413,7 @@ void VKRenderer::initialize()
 				.commandBufferCount = 1
 			};
 			for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-				err = vkAllocateCommandBuffers(device, &cmd, &context.draw_cmds[i]);
+				err = vkAllocateCommandBuffers(device, &cmd, &context.command_buffers[i].draw_cmd);
 				assert(!err);
 			}
 		}
@@ -1400,14 +1427,6 @@ void VKRenderer::initialize()
 			vkCreateFence(device, &fence_create_info, nullptr, &context.setup_fence);
 		}
 
-		//
-		context.idx = contextIdx;
-		context.setup_cmd_inuse = VK_NULL_HANDLE;
-		context.draw_cmd_current = 0;
-		context.pipeline = VK_NULL_HANDLE;
-		context.draw_cmd_started.fill(false);
-		context.render_pass_started = false;
-
 		// set up lights
 		for (auto i = 0; i < context.lights.size(); i++) {
 			context.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
@@ -1415,7 +1434,6 @@ void VKRenderer::initialize()
 		context.texture_matrix.identity();
 
 		//
-		context.draw_fences.fill(VK_NULL_HANDLE);
 		recreateContextFences(context.idx);
 	}
 
@@ -1572,7 +1590,7 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 		.clearValueCount = 0,
 		.pClearValues = nullptr
 	};
-	vkCmdBeginRenderPass(context.draw_cmds[context.draw_cmd_current], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(context.command_buffers[context.command_buffer_current].draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 
 	//
 	AtomicOperations::increment(statistics.renderPasses);
@@ -1582,7 +1600,7 @@ inline void VKRenderer::endRenderPass(int contextIdx) {
 	auto& context = contexts[contextIdx];
 	if (context.render_pass_started == false) return;
 	context.render_pass_started = false;
-	vkCmdEndRenderPass(context.draw_cmds[context.draw_cmd_current]);
+	vkCmdEndRenderPass(context.command_buffers[context.command_buffer_current].draw_cmd);
 }
 
 void VKRenderer::initializeFrameBuffers() {
@@ -1843,11 +1861,11 @@ void VKRenderer::finishFrame()
 			for (auto& context: contexts) {
 				context.texture_vector[textureId] = nullptr;
 				for (auto program: programList) {
-					if (program == nullptr || program->desc_sets2_cache_textureids.empty() == true) continue;
-					auto& desc_sets2_cache_textureids = program->desc_sets2_cache_textureids[context.idx];
+					if (program == nullptr || program->contexts[context.idx].desc_sets2_cache_textureids.empty() == true) continue;
+					auto& desc_sets2_cache_textureids = program->contexts[context.idx].desc_sets2_cache_textureids;
 					auto desc_sets2_cache_textureids_it = desc_sets2_cache_textureids.find(textureId);
 					if (desc_sets2_cache_textureids_it != desc_sets2_cache_textureids.end()) {
-						auto& desc_sets2_cache = program->desc_sets2_cache[context.idx];
+						auto& desc_sets2_cache = program->contexts[context.idx].desc_sets2_cache;
 						for (auto& desc_sets2_cache_hash: desc_sets2_cache_textureids_it->second) {
 							desc_sets2_cache.erase(desc_sets2_cache_hash);
 						}
@@ -1916,13 +1934,6 @@ void VKRenderer::finishFrame()
 		context.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
 		context.bound_buffer_sizes.fill(bufferSize);
 		context.bound_textures.fill(context_type::bound_texture());
-	}
-
-	// reset desc index
-	for (auto program: programList) {
-		if (program == nullptr) continue;
-		for (auto i = 0; i < program->desc_idxs1.size(); i++) program->desc_idxs1[i] = 0;
-		for (auto i = 0; i < program->desc_idxs2plus.size(); i++) program->desc_idxs2plus[i] = 0;
 	}
 
 	//
@@ -2773,55 +2784,55 @@ void VKRenderer::createRenderProgram(program_type* program) {
 	};
 
 	//
-	{
-		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts1;
+	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts1;
 		desc_layouts1.fill(program->desc_layout1);
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
 			.descriptorPool = desc_pool1,
-			.descriptorSetCount = DESC_MAX,
+			.descriptorSetCount = DESC_MAX_UNCACHED,
 			.pSetLayouts = desc_layouts1.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets1[context.idx].data());
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets1.data());
 			assert(!err);
 		}
 	}
 
 	//
-	{
-		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts2;
+	if (program->type == PROGRAM_OBJECTS) {
+		array<VkDescriptorSetLayout, DESC_MAX_CACHED> desc_layouts2;
 		desc_layouts2.fill(program->desc_layout2);
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
 			.descriptorPool = desc_pool2,
-			.descriptorSetCount = DESC_MAX,
+			.descriptorSetCount = DESC_MAX_CACHED,
 			.pSetLayouts = desc_layouts2.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets2[context.idx].data());
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].desc_sets2.data());
 			assert(!err);
 		}
 	}
 
 	//
-	{
-		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts2;
+	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts2;
 		desc_layouts2.fill(program->desc_layout2);
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
 			.descriptorPool = desc_pool2,
-			.descriptorSetCount = DESC_MAX,
+			.descriptorSetCount = DESC_MAX_UNCACHED,
 			.pSetLayouts = desc_layouts2.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets2plus[context.idx].data());
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets2_uncached.data());
 			assert(!err);
 		}
 	}
@@ -3095,9 +3106,10 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 
 		//
 		if (pipeline->pipeline != context.pipeline) {
-			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(context.draw_cmds[context.draw_cmd_current], 0, 1, &viewport);
-			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
+			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
+			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
 			context.pipeline = pipeline->pipeline;
 		}
 	}
@@ -3342,9 +3354,10 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 
 		//
 		if (pipeline->pipeline != context.pipeline) {
-			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(context.draw_cmds[context.draw_cmd_current], 0, 1, &viewport);
-			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
+			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
+			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
 			context.pipeline = pipeline->pipeline;
 		}
 	}
@@ -3545,9 +3558,10 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 
 		//
 		if (pipeline->pipeline != context.pipeline) {
-			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(context.draw_cmds[context.draw_cmd_current], 0, 1, &viewport);
-			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
+			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
+			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
 			context.pipeline = pipeline->pipeline;
 		}
 	}
@@ -3618,19 +3632,19 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	};
 
 	//
-	{
-		array<VkDescriptorSetLayout, DESC_MAX> desc_layouts1;
+	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts1;
 		desc_layouts1.fill(program->desc_layout1);
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
 			.descriptorPool = desc_pool1,
-			.descriptorSetCount = DESC_MAX,
+			.descriptorSetCount = DESC_MAX_UNCACHED,
 			.pSetLayouts = desc_layouts1.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets1[context.idx].data());
+			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets1.data());
 			assert(!err);
 		}
 	}
@@ -3688,7 +3702,7 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
 
 		//
 		if (pipeline->pipeline != context.pipeline) {
-			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+			vkCmdBindPipeline(context.command_buffers[context.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
 			context.pipeline = pipeline->pipeline;
 		}
 	}
@@ -3699,10 +3713,10 @@ inline void VKRenderer::finishPipeline(int contextIdx) {
 	// if unsetting program flush command buffers
 	if (contextTyped.program_id != ID_NONE) {
 		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.draw_cmd_current;
+		auto currentBufferIdx = contextTyped.command_buffer_current;
 		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.draw_fences[currentBufferIdx], false, false);
+			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
 		}
 		unsetPipeline(contextTyped.idx);
 	}
@@ -3754,17 +3768,7 @@ int32_t VKRenderer::createProgram(int type)
 	auto& program = *programPtr;
 	program.type = type;
 	program.id = programList.size();
-	program.desc_sets1.resize(Engine::getThreadCount());
-	program.desc_sets2.resize(Engine::getThreadCount());
-	program.desc_sets2_cache.resize(Engine::getThreadCount());
-	program.desc_sets2_cache_textureids.resize(Engine::getThreadCount());
-	program.desc_sets2plus.resize(Engine::getThreadCount());
-	program.desc_idxs1.resize(Engine::getThreadCount());
-	program.desc_idxs2.resize(Engine::getThreadCount());
-	program.desc_idxs2plus.resize(Engine::getThreadCount());
-	for (auto i = 0; i < program.desc_idxs1.size(); i++) program.desc_idxs1[i] = 0;
-	for (auto i = 0; i < program.desc_idxs2.size(); i++) program.desc_idxs2[i] = 0;
-	for (auto i = 0; i < program.desc_idxs2plus.size(); i++) program.desc_idxs2plus[i] = 0;
+	program.contexts.resize(Engine::getThreadCount());
 	programList.push_back(programPtr);
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program id: " + to_string(program.id));
 	return program.id;
@@ -4416,17 +4420,17 @@ void VKRenderer::clear(int32_t mask)
 		.layerCount = 1
 	};
 	vkCmdClearAttachments(
-		contexts[0].draw_cmds[contexts[0].draw_cmd_current],
+		contexts[0].command_buffers[contexts[0].command_buffer_current].draw_cmd,
 		attachmentIdx,
 		attachments,
 		1,
 		&clearRect
 	);
 	endRenderPass(0);
-	auto currentBufferIdx = contexts[0].draw_cmd_current;
+	auto currentBufferIdx = contexts[0].command_buffer_current;
 	auto commandBuffer = endDrawCommandBuffer(0, currentBufferIdx, true);
 	if (commandBuffer != VK_NULL_HANDLE) {
-		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].draw_fences[currentBufferIdx], false, false);
+		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].command_buffers[currentBufferIdx].draw_fence, false, false);
 	}
 	AtomicOperations::increment(statistics.clearCalls);
 }
@@ -6738,20 +6742,21 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, i
 inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& commandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
 
 	// check if desc1 left
-	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+	if (commandBuffer.desc_idxs1 == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs1));
 		return;
 	}
 	// check if desc2 left
-	if (contextTyped.program->desc_idxs2[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2[contextTyped.idx]));
+	if (commandBuffer.desc_idxs2_uncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs2_uncached));
 		return;
 	}
 	//
-	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
-	auto desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]];
+	auto desc_set1 = commandBuffer.desc_sets1[commandBuffer.desc_idxs1];
+	auto desc_set2 = commandBuffer.desc_sets2_uncached[commandBuffer.desc_idxs2_uncached];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -6815,7 +6820,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]],
+				.dstSet = desc_set1,
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6831,7 +6836,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		samplers = samplerIdx;
 	}
 
-	auto& desc_set2_cache = contextTyped.program->desc_sets2_cache[contextTyped.idx];
+	auto& desc_set2_cache = contextTyped.program->contexts[contextTyped.idx].desc_sets2_cache;
 	auto desc_set2_cache_it = samplers > SAMPLER_HASH_MAX?desc_set2_cache.end():desc_set2_cache.find(desc_set2_cache_id);
 	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
 	if (desc_set2_cache_hit == false) {
@@ -6892,7 +6897,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 				contextTyped.descriptor_write_set[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = nullptr,
-					.dstSet = contextTyped.program->desc_sets2[contextTyped.idx][contextTyped.program->desc_idxs2[contextTyped.idx]],
+					.dstSet = desc_set2,
 					.dstBinding = static_cast<uint32_t>(uniform->position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -6908,7 +6913,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	// find desc2_set from cache or update it
 	if (desc_set2_cache_hit == true) {
-		desc_set2 = contextTyped.program->desc_sets2[contextTyped.idx][desc_set2_cache_it->second];
+		desc_set2 = contextTyped.program->contexts[contextTyped.idx].desc_sets2[desc_set2_cache_it->second];
 	}
 
 	//
@@ -6917,33 +6922,33 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	//
 	if (desc_set2_cache_hit == false) {
 		if (samplers <= SAMPLER_HASH_MAX) {
-			desc_set2_cache[desc_set2_cache_id] = contextTyped.program->desc_idxs2[contextTyped.idx];
-			for (auto texture_id: texture_ids) contextTyped.program->desc_sets2_cache_textureids[contextTyped.idx][texture_id].insert(desc_set2_cache_id);
+			desc_set2_cache[desc_set2_cache_id] = contextTyped.program->contexts[contextTyped.idx].desc_idxs2;
+			for (auto texture_id: texture_ids) contextTyped.program->contexts[contextTyped.idx].desc_sets2_cache_textureids[texture_id].insert(desc_set2_cache_id);
 		}
-		contextTyped.program->desc_idxs2[contextTyped.idx]++;
+		contextTyped.program->contexts[contextTyped.idx].desc_idxs2++;
 	}
 
 	// descriptor sets
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
+	vkCmdBindDescriptorSets(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
 
 	// index buffer
 	if (indicesBuffer != VK_NULL_HANDLE) {
-		vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current], indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	// buffers
-	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdBindVertexBuffers(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
 
 	// draw
 	if (indicesBuffer != VK_NULL_HANDLE) {
-		vkCmdDrawIndexed(contextTyped.draw_cmds[contextTyped.draw_cmd_current], triangles * 3, instances, trianglesOffset * 3, 0, 0);
+		vkCmdDrawIndexed(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, triangles * 3, instances, trianglesOffset * 3, 0, 0);
 	} else {
-		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current], triangles * 3, instances, trianglesOffset * 3, 0);
+		vkCmdDraw(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, triangles * 3, instances, trianglesOffset * 3, 0);
 	}
 
 	//
-	contextTyped.program->desc_idxs1[contextTyped.idx]++;
+	commandBuffer.desc_idxs1++;
 	contextTyped.command_count++;
 
 	//
@@ -6970,10 +6975,10 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		auto& contextTyped = contexts[i];
 		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.draw_cmd_current;
+		auto currentBufferIdx = contextTyped.command_buffer_current;
 		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.draw_fences[currentBufferIdx], false, false);
+			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
 		}
 		unsetPipeline(contextTyped.idx);
     }
@@ -6987,9 +6992,9 @@ inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 	auto commandsMax = COMMANDS_MAX_GRAPHICS;
 	if (contextTyped.command_count >= commandsMax) {
 		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.draw_cmd_current;
+		auto currentBufferIdx = contextTyped.command_buffer_current;
 		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
-		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, contextTyped.draw_fences[currentBufferIdx], false, false);
+		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
 		contextTyped.command_count = 0;
 	}
 }
@@ -7010,20 +7015,21 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& commandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
 
-	// check if desc left
-	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+	// check if desc1 left
+	if (commandBuffer.desc_idxs1 == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs1));
 		return;
 	}
 	// check if desc2 left
-	if (contextTyped.program->desc_idxs2plus[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2plus[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2plus[contextTyped.idx]));
+	if (commandBuffer.desc_idxs2_uncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs2_uncached));
 		return;
 	}
 	//
-	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
-	auto desc_set2 = contextTyped.program->desc_sets2plus[contextTyped.idx][contextTyped.program->desc_idxs2plus[contextTyped.idx]];
+	auto desc_set1 = commandBuffer.desc_sets1[commandBuffer.desc_idxs1];
+	auto desc_set2 = commandBuffer.desc_sets2_uncached[commandBuffer.desc_idxs2_uncached];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -7141,13 +7147,13 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	//
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
-	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, POINTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
-	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current], points, 1, pointsOffset, 0);
+	vkCmdBindDescriptorSets(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
+	vkCmdBindVertexBuffers(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, 0, POINTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdDraw(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, points, 1, pointsOffset, 0);
 
 	//
-	contextTyped.program->desc_idxs1[contextTyped.idx]++;
-	contextTyped.program->desc_idxs2plus[contextTyped.idx]++;
+	commandBuffer.desc_idxs1++;
+	commandBuffer.desc_idxs2_uncached++;
 	contextTyped.command_count++;
 
 	//
@@ -7169,20 +7175,21 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& commandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
 
-	// check if desc left
-	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+	// check if desc1 left
+	if (commandBuffer.desc_idxs1 == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs1));
 		return;
 	}
 	// check if desc2 left
-	if (contextTyped.program->desc_idxs2plus[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2plus[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs2plus[contextTyped.idx]));
+	if (commandBuffer.desc_idxs2_uncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs2_uncached));
 		return;
 	}
 	//
-	auto desc_set1 = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
-	auto desc_set2 = contextTyped.program->desc_sets2plus[contextTyped.idx][contextTyped.program->desc_idxs2plus[contextTyped.idx]];
+	auto desc_set1 = commandBuffer.desc_sets1[commandBuffer.desc_idxs1];
+	auto desc_set2 = commandBuffer.desc_sets2_uncached[commandBuffer.desc_idxs2_uncached];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -7300,14 +7307,14 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	//
 	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
-	vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, LINES_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
-	vkCmdSetLineWidth(contextTyped.draw_cmds[contextTyped.draw_cmd_current], line_width);
-	vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current], points, 1, pointsOffset, 0);
+	vkCmdBindDescriptorSets(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
+	vkCmdBindVertexBuffers(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, 0, LINES_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdSetLineWidth(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, line_width);
+	vkCmdDraw(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, points, 1, pointsOffset, 0);
 
 	//
-	contextTyped.program->desc_idxs1[contextTyped.idx]++;
-	contextTyped.program->desc_idxs2plus[contextTyped.idx]++;
+	commandBuffer.desc_idxs1++;
+	commandBuffer.desc_idxs2_uncached++;
 	contextTyped.command_count++;
 
 	//
@@ -7378,13 +7385,15 @@ void VKRenderer::doneGuiMode()
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& commandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
 
-	// check if desc left
-	if (contextTyped.program->desc_idxs1[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs1[contextTyped.idx]));
+	// check if desc1 left
+	if (commandBuffer.desc_idxs1 == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(commandBuffer.desc_idxs1));
 		return;
 	}
-	auto desc_set = contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]];
+	//
+	auto desc_set = commandBuffer.desc_sets1[commandBuffer.desc_idxs1];
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(contextTyped.idx);
@@ -7451,11 +7460,11 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
 
 	//
-	vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets1[contextTyped.idx][contextTyped.program->desc_idxs1[contextTyped.idx]], 0, nullptr);
-	vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current], numGroupsX, numGroupsY, numGroupsZ);
+	vkCmdBindDescriptorSets(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &desc_set, 0, nullptr);
+	vkCmdDispatch(contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd, numGroupsX, numGroupsY, numGroupsZ);
 
 	//
-	contextTyped.program->desc_idxs1[contextTyped.idx]++;
+	commandBuffer.desc_idxs1++;
 	contextTyped.command_count++;
 
 	//
