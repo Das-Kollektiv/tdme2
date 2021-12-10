@@ -163,16 +163,16 @@ private:
 
 	struct program_type {
 		struct command_buffer {
-			uint32_t desc_idxs1;
-			uint32_t desc_idxs2_uncached;
+			uint32_t desc_sets1_idx;
+			uint32_t desc_sets2_idx_uncached;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets1;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets2_uncached;
 		};
 		struct context {
-			uint32_t desc_idxs2;
+			uint32_t desc_sets2_idx;
 			array<VkDescriptorSet, DESC_MAX_CACHED> desc_sets2;
 			unordered_map<SAMPLER_HASH_TYPE, int> desc_sets2_cache;
-			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> desc_sets2_cache_textureids;
+			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> desc_sets2_cache_texture_ids;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
 		};
 		int type { 0 };
@@ -504,6 +504,7 @@ private:
 	void recreateContextFences(int contextIdx);
 	void uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
 	void finishRendering();
+	void removeTextureFromDescriptorCaches(int textureId);
 
 protected:
 	/**
