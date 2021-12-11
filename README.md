@@ -93,7 +93,7 @@
         	- supports normal mapping on GL3+/CORE, Vulkan
         	- supports reflection mapping from cube maps on GLES2, GL2, GL3+/CORE, Vulkan
         - supports PBR lighting with IBL
-        - supports deferred shading and forward shading on GL3+/CORE/Vulkan
+        - supports deferred shading and forward shading on GL3+/CORE, Vulkan
     - custum shaders that currently include
       - specular lighting
       - specular lighting + foliage
