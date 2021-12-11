@@ -612,8 +612,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 				row[x * 4 + 3] = bytesPerPixel == 4?textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
 			}
 		}
-		err = vmaFlushAllocation(allocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
-		assert(!err);
+		vmaFlushAllocation(allocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
 		vmaUnmapMemory(allocator, textureObject->allocation);
 	}
 
@@ -6328,8 +6327,9 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 		auto& buffer = *bufferPtr;
 		auto reuseBufferId = -1;
 		if (free_buffer_ids.empty() == false) {
-			reuseBufferId = free_buffer_ids[0];
-			free_buffer_ids.erase(free_buffer_ids.begin());
+			auto reuseBufferIdIdx = free_buffer_ids.size() - 1;
+			reuseBufferId = free_buffer_ids[reuseBufferIdIdx];
+			free_buffer_ids.erase(free_buffer_ids.begin() + reuseBufferIdIdx);
 		}
 		buffer.id = reuseBufferId != -1?reuseBufferId:buffer_idx++;
 		buffer.useGPUMemory = useGPUMemory;
@@ -6537,6 +6537,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	reusableBuffer->frame_used_last = frame;
 	buffer->current_buffer = reusableBuffer;
 
+	/*
 	// clean up
 	vector<int> buffersToRemove;
 	if (buffer->buffer_count > 1 && frame >= buffer->frame_cleaned_last + 60) {
@@ -6560,6 +6561,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		//
 		AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
 	}
+	*/
 
 	//
 	buffer->uploading = false;
