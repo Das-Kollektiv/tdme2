@@ -117,12 +117,15 @@ private:
 	};
 
 	struct uniform_buffer_type {
+		struct buffer {
+			VkBuffer buffer { VK_NULL_HANDLE };
+			VmaAllocation allocation { VK_NULL_HANDLE };
+			uint8_t* data { nullptr };
+		};
 		int bufferIdx { 0 };
 		int size { -1 };
 		// TODO: make them a growing list
-		array<VkBuffer, COMMANDS_MAX_GRAPHICS * 5 * 3> buffers;
-		array<VmaAllocation, COMMANDS_MAX_GRAPHICS * 5 * 3> allocations;
-		array<uint8_t*, COMMANDS_MAX_GRAPHICS * 5 * 3> data;
+		array<buffer, COMMANDS_MAX_GRAPHICS * DRAW_COMMANDBUFFER_MAX * 5> buffers;
 	};
 
 	struct shader_type {
