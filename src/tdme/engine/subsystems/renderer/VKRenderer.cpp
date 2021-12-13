@@ -6423,8 +6423,10 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 	alloc_info.requiredFlags = properties;
 
 	//
+	vma_spinlock.lock();
 	err = vmaCreateBuffer(allocator, &buf_info, &alloc_info, &buffer, &allocation, &allocationInfo);
 	assert(!err);
+	vma_spinlock.unlock();
 }
 
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
@@ -6453,6 +6455,7 @@ inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, VmaAllocation all
 	vma_spinlock.unlock();
 }
 inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
+	// TODO: have uniforms on CPU mem and copy the final to mmapped memory
 	vma_spinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
