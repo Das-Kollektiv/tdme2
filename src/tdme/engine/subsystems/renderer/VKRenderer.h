@@ -66,6 +66,7 @@ using tdme::utilities::ShortBuffer;
 class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
+	friend class VKGL3CoreShaderProgram;
 private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
@@ -463,8 +464,6 @@ private:
 	texture_type* getTextureInternal(int contextIdx, int32_t textureId);
 	pipeline_type* getPipelineInternal(int contextIdx, program_type* program, uint32_t pipelineId);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
-	void shaderInitResources(TBuiltInResource &resources);
-	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
 	void endDrawCommandsAllContexts();

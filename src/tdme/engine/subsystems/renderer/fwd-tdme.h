@@ -11,6 +11,7 @@ namespace renderer {
 	class Renderer;
 	class SingleThreadedRenderer;
 	class VKRenderer;
+	class VKGL3CoreShaderProgram;
 }  // namespace renderer
 }  // namespace subsystems
 }  // namespace engine

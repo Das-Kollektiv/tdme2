@@ -29,6 +29,7 @@ ifeq ($(OS), Darwin)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 				src/tdme/engine/fileio/models/FBXReader.cpp \
 				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
@@ -57,6 +58,7 @@ else ifeq ($(OS), FreeBSD)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
@@ -115,6 +117,7 @@ else ifeq ($(OS), Haiku)
 		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
@@ -140,6 +143,7 @@ else ifeq ($(OS), Linux)
 		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
@@ -175,6 +179,7 @@ else
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \

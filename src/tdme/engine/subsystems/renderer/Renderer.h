@@ -312,7 +312,7 @@ public:
 	virtual int32_t getViewPortHeight();
 
 	/**
-	 * Loads a shader into open gl stack
+	 * Loads a shader
 	 * @param type type
 	 * @param pathName path name
 	 * @param fileName file name
