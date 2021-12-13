@@ -9,7 +9,6 @@
 
 #include <array>
 #include <list>
-#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -29,7 +28,6 @@
 
 using std::array;
 using std::list;
-using std::map;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
