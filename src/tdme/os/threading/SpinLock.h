@@ -29,17 +29,24 @@ public:
 	/**
 	 * @brief Tries to locks the spin lock
 	 */
-	bool tryLock();
+	inline bool tryLock() {
+		if (locked.test_and_set(std::memory_order_acquire) == false) return true;
+		return false;
+	}
 
 	/**
 	 * @brief Locks the spin lock, additionally spin lock locks will block until other locks have been unlocked.
 	 */
-	void lock();
+	inline void lock() {
+		while (locked.test_and_set(std::memory_order_acquire));
+	}
 
 	/**
 	 * @brief Unlocks this spin lock
 	 */
-	void unlock();
+	inline void unlock() {
+		locked.clear(std::memory_order_release);
+	}
 
 private:
 	string name;

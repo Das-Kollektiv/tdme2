@@ -104,7 +104,6 @@ private:
 			VkBuffer buf { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 			uint32_t size { 0 };
-			void* data { nullptr };
 		};
 		int32_t id { 0 };
 		bool useGPUMemory { false };
@@ -120,7 +119,6 @@ private:
 		struct buffer {
 			VkBuffer buffer { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
-			uint8_t* data { nullptr };
 		};
 		int bufferIdx { 0 };
 		int size { -1 };
@@ -442,6 +440,7 @@ private:
 
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
+	SpinLock vma_spinlock;
 
 	string deviceName;
 
@@ -457,6 +456,8 @@ private:
 	VkBuffer getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	buffer_object_type* getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId);
+	void vmaMemCpy(VmaAllocation allocationDst, VmaAllocation allocationSrc, uint32_t size);
+	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int contextIdx, int32_t textureId);

@@ -4,7 +4,7 @@ OFLAGS =
 LDFLAGS =
 INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/reactphysics3d/src/ -Iext/rapidjson/include
 CPPVERSION = -std=gnu++11
-EXTRAFLAGS =
+EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 
 #EXTRAFLAGS := -D_GLIBCXX_DEBUG
 
@@ -15,11 +15,11 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# MacOSX, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -ltdme2 -ltdme2-ext -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -pthread
 	else
 		# MacOSX, GL
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -ltdme2 -ltdme2-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework OpenCL -framework IOKit -framework Carbon -framework OpenAL -pthread
 	endif
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
@@ -27,11 +27,11 @@ ifeq ($(OS), Darwin)
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
 		# FreeBSD, GL
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	endif
 	INCLUDES := $(INCLUDES) -I/usr/local/include
@@ -39,25 +39,25 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), Linux)
 	# Linux, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	else ifeq ($(GLES2), YES)
 		# Linux, GLES2
-		EXTRAFLAGS := -DGLFW3 -DGLES2
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3 -DGLES2
 		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/lib64 -lGLESv2 -lEGL -lglfw -lopenal -pthread 
 	else
 		# Linux, GL
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		EXTRA_LIBS := -ltdme2 -ltdme2-ext -L/usr/lib64 -lGLEW -lGL -lglfw -lopenal -pthread
 	endif
 	OFLAGS := -O2
 else
     INCLUDES := $(INCLUDES) -I/mingw64/include/
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
 		EXTRA_LIBS := -L/mingw64/lib -ltdme2 -ltdme2-ext -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp
 	else
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		EXTRA_LIBS := -L/mingw64/lib -ltdme2 -ltdme2-ext -lws2_32 -lglew32 -lopengl32 -lglfw3 -lopenal -ldbghelp
 	endif 
 	OFLAGS := -O2

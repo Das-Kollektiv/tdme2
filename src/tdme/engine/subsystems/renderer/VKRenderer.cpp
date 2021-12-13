@@ -135,7 +135,8 @@ VKRenderer::VKRenderer():
 	textures_rwlock("textures_rwlock"),
 	delete_mutex("delete_mutex"),
 	dispose_mutex("dispose_mutex"),
-	pipeline_rwlock("pipeline_rwlock")
+	pipeline_rwlock("pipeline_rwlock"),
+	vma_spinlock("vma_spinlock")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -3855,11 +3856,9 @@ bool VKRenderer::linkProgram(int32_t programId)
 					);
 					VkMemoryPropertyFlags mem_flags;
 					vmaGetMemoryTypeProperties(allocator, allocation_info.memoryType, &mem_flags);
-					auto memoryMappable = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-					if (memoryMappable == false) {
+					auto memoryMapped = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+					if (memoryMapped == false) {
 						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable uniform buffer");
-					} else {
-						uniform_buffer_buffer.data = static_cast<uint8_t*>(allocation_info.pMappedData);
 					}
 				}
 			};
@@ -4189,7 +4188,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 				shaderIdx++;
 				continue;
 			}
-			memcpy(&contextTyped.uniform_buffers[shaderIdx]->buffers[contextTyped.uniform_buffers[shaderIdx]->bufferIdx].data[shaderUniform.position], data, size);
+			vmaMemCpy(contextTyped.uniform_buffers[shaderIdx]->buffers[contextTyped.uniform_buffers[shaderIdx]->bufferIdx].allocation, data, size, shaderUniform.position);
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -6444,6 +6443,23 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	if (buffer->shared == true) buffers_rwlock.unlock();
 }
 
+inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, VmaAllocation allocationSrc, uint32_t size) {
+	vma_spinlock.lock();
+	VmaAllocationInfo dstAllocationInfo {};
+	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
+	VmaAllocationInfo srcAllocationInfo {};
+	vmaGetAllocationInfo(allocator, allocationSrc, &srcAllocationInfo);
+	memcpy(dstAllocationInfo.pMappedData, srcAllocationInfo.pMappedData, size);
+	vma_spinlock.unlock();
+}
+inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
+	vma_spinlock.lock();
+	VmaAllocationInfo dstAllocationInfo {};
+	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
+	memcpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData) + offset, src, size);
+	vma_spinlock.unlock();
+}
+
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
@@ -6480,14 +6496,15 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		vmaGetMemoryTypeProperties(allocator, allocation_info.memoryType, &mem_flags);
 		reusableBuffer->memoryMappable = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 		if (reusableBuffer->memoryMappable == true) {
-			reusableBuffer->data = allocation_info.pMappedData;
+			void* mmData;
+			vmaMapMemory(allocator, reusableBuffer->allocation, &mmData);
 		}
 	}
 
 	// create buffer
 	if (reusableBuffer->memoryMappable == true) {
 		// copy to buffer
-		memcpy(reusableBuffer->data, data, size);
+		vmaMemCpy(reusableBuffer->allocation, data, size);
 	} else {
 		prepareSetupCommandBuffer(contextIdx);
 
@@ -6507,18 +6524,11 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		);
 		delete_mutex.unlock();
 
-
-		// map memory
-		vmaMapMemory(allocator, stagingBufferAllocation, &stagingData);
-
-		// copy to staging buffer
-		memcpy(stagingData, data, size);
-
-		// unmap
-		vmaUnmapMemory(allocator, stagingBufferAllocation);
+		void* mmData;
+		vmaMapMemory(allocator, stagingBufferAllocation, &mmData);
 
 		//
-		vmaFlushAllocation(allocator, stagingBufferAllocation, 0, VK_WHOLE_SIZE);
+		vmaMemCpy(stagingBufferAllocation, data, size);
 
 		// copy to GPU buffer
 		VkBufferCopy copyRegion = {
@@ -6536,7 +6546,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	reusableBuffer->frame_used_last = frame;
 	buffer->current_buffer = reusableBuffer;
 
-	/*
 	// clean up
 	vector<int> buffersToRemove;
 	if (buffer->buffer_count > 1 && frame >= buffer->frame_cleaned_last + 60) {
@@ -6560,7 +6569,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		//
 		AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
 	}
-	*/
 
 	//
 	buffer->uploading = false;
@@ -6896,11 +6904,11 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 			//
 			auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-			auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx].buffer;
-			auto src = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
+			auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+			auto uboBuffer = src.buffer;
 			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-			auto dst = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
-			memcpy(dst, src, uniformBuffer.size);
+			auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+			vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
 			contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
 				.buffer = uboBuffer,
@@ -7214,11 +7222,11 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		}
 
 		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx].buffer;
-		auto src = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
+		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto dst = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
-		memcpy(dst, src, uniformBuffer.size);
+		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
 		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
 			.buffer = uboBuffer,
@@ -7375,11 +7383,11 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 		}
 
 		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx].buffer;
-		auto src = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
+		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto dst = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
-		memcpy(dst, src, uniformBuffer.size);
+		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
 		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
 			.buffer = uboBuffer,
@@ -7530,11 +7538,11 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 		}
 
 		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
-		auto uboBuffer = uniformBuffer.buffers[uniformBuffer.bufferIdx].buffer;
-		auto src = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
+		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		auto uboBuffer = src .buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto dst = uniformBuffer.buffers[uniformBuffer.bufferIdx].data;
-		memcpy(dst, src, uniformBuffer.size);
+		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
 		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
 			.buffer = uboBuffer,

@@ -1,7 +1,5 @@
 #include <tdme/os/threading/SpinLock.h>
 
-#include <errno.h>
-
 #include <atomic>
 
 #include <tdme/tdme.h>
@@ -15,17 +13,4 @@ SpinLock::SpinLock(const string& name) {
 }
 
 SpinLock::~SpinLock() {
-}
-
-bool SpinLock::tryLock() {
-	if (locked.test_and_set(std::memory_order_acquire) == false) return true;
-	return false;
-}
-
-void SpinLock::lock() {
-	while (locked.test_and_set(std::memory_order_acquire));
-}
-
-void SpinLock::unlock() {
-	locked.clear(std::memory_order_release);
 }
