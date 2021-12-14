@@ -130,7 +130,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
-	queue_spinlock("queue-spinlock"),
+	queueSpinlock("queue-spinlock"),
 	buffersRWlock("buffers_rwlock"),
 	texturesRWlock("textures_rwlock"),
 	deleteMutex("delete_mutex"),
@@ -225,13 +225,13 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 			.pSignalSemaphores = nullptr
 		};
 
-		queue_spinlock.lock();
+		queueSpinlock.lock();
 
 		err = vkQueueSubmit(queue, 1, &submitInfo, currentContext.setupFence);
 		assert(!err);
 
 		//
-		queue_spinlock.unlock();
+		queueSpinlock.unlock();
 
 		//
 		AtomicOperations::increment(statistics.submits);
@@ -410,12 +410,12 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 	};
 
 	//
-	queue_spinlock.lock();
+	queueSpinlock.lock();
 
 	err = vkQueueSubmit(queue, 1, &submitInfo, fence);
 	assert(!err);
 
-	queue_spinlock.unlock();
+	queueSpinlock.unlock();
 
 	//
 	AtomicOperations::increment(statistics.submits);
@@ -1344,7 +1344,7 @@ void VKRenderer::initialize()
 	whiteTextureSampler2dDefault = textures.find(whiteTextureSampler2dDefaultId)->second;
 
 	// fallback cube map texture white
-	whiteTextureSamplercubeDefaultId = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+	whiteTextureSamplerCubeDefaultId = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
 		"cubemap-default-white",
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
@@ -1354,7 +1354,7 @@ void VKRenderer::initialize()
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		getDefaultContext()
 	);
-	whiteTextureSamplercubeDefault = textures.find(whiteTextureSamplercubeDefaultId)->second;
+	whiteTextureSamplerCubeDefault = textures.find(whiteTextureSamplerCubeDefaultId)->second;
 
 	//
 	for (auto& context: contexts) unbindBufferObjects(&context);
@@ -6054,9 +6054,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSamplercubeDefault->sampler,
-								.imageView = whiteTextureSamplercubeDefault->view,
-								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+								.sampler = whiteTextureSamplerCubeDefault->sampler,
+								.imageView = whiteTextureSamplerCubeDefault->view,
+								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 							};
 							break;
 						default:
@@ -6076,9 +6076,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 								break;
 							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 								currentContext.descriptorImageInfos[samplerIdx] = {
-									.sampler = whiteTextureSamplercubeDefault->sampler,
-									.imageView = whiteTextureSamplercubeDefault->view,
-									.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+									.sampler = whiteTextureSamplerCubeDefault->sampler,
+									.imageView = whiteTextureSamplerCubeDefault->view,
+									.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 								};
 								break;
 							default:
@@ -6247,9 +6247,9 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 						break;
 					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSamplercubeDefault->sampler,
-							.imageView = whiteTextureSamplercubeDefault->view,
-							.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+							.sampler = whiteTextureSamplerCubeDefault->sampler,
+							.imageView = whiteTextureSamplerCubeDefault->view,
+							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 						};
 						break;
 					default:
@@ -6269,9 +6269,9 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSamplercubeDefault->sampler,
-								.imageView = whiteTextureSamplercubeDefault->view,
-								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+								.sampler = whiteTextureSamplerCubeDefault->sampler,
+								.imageView = whiteTextureSamplerCubeDefault->view,
+								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 							};
 							break;
 						default:
@@ -6408,9 +6408,9 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 						break;
 					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSamplercubeDefault->sampler,
-							.imageView = whiteTextureSamplercubeDefault->view,
-							.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+							.sampler = whiteTextureSamplerCubeDefault->sampler,
+							.imageView = whiteTextureSamplerCubeDefault->view,
+							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 						};
 						break;
 					default:
@@ -6430,9 +6430,9 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
 							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSamplercubeDefault->sampler,
-								.imageView = whiteTextureSamplercubeDefault->view,
-								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
+								.sampler = whiteTextureSamplerCubeDefault->sampler,
+								.imageView = whiteTextureSamplerCubeDefault->view,
+								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
 							};
 							break;
 						default:

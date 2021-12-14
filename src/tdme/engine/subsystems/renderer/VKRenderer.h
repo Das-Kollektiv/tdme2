@@ -342,7 +342,7 @@ private:
 	VkInstance inst { VK_NULL_HANDLE };
 	VkPhysicalDevice gpu { VK_NULL_HANDLE };
 	VkDevice device { VK_NULL_HANDLE };
-	SpinLock queue_spinlock;
+	SpinLock queueSpinlock;
 	VkQueue queue { VK_NULL_HANDLE };
 	VkPhysicalDeviceProperties gpuProperties;
 	VkPhysicalDeviceFeatures gpuFeatures;
@@ -395,8 +395,8 @@ private:
 	int depthBufferDefault { 0 };
 	int whiteTextureSampler2dDefaultId { 0 };
 	texture_type* whiteTextureSampler2dDefault { nullptr };
-	int whiteTextureSamplercubeDefaultId { 0 };
-	texture_type* whiteTextureSamplercubeDefault { nullptr };
+	int whiteTextureSamplerCubeDefaultId { 0 };
+	texture_type* whiteTextureSamplerCubeDefault { nullptr };
 
 	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
 	VkDescriptorPool descriptorPool2{ VK_NULL_HANDLE };
