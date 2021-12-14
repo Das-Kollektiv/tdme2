@@ -1641,6 +1641,8 @@ void VKRenderer::finishFrame()
 		context.program = nullptr;
 		context.programId = 0;
 		context.uniformBuffers.fill(nullptr);
+		for (auto& uniformBufferData: context.uniformBufferData) uniformBufferData.resize(0);
+
 	}
 
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_PRESENT, THSVS_ACCESS_NONE };
@@ -2979,6 +2981,7 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	currentContext.programId = 0;
 	currentContext.program = nullptr;
 	currentContext.uniformBuffers.fill(nullptr);
+	for (auto& uniformBufferData: currentContext.uniformBufferData) uniformBufferData.resize(0);
 
 	if (programId == ID_NONE) return;
 
@@ -3003,6 +3006,7 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 				continue;
 			}
 			currentContext.uniformBuffers[shaderIdx] = &shader->uniformBuffers[currentContext.idx];
+			currentContext.uniformBufferData[shaderIdx].resize(shader->uboSize);
 			shaderIdx++;
 		}
 	}
@@ -3266,7 +3270,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 				shaderIdx++;
 				continue;
 			}
-			vmaMemCpy(contextTyped.uniformBuffers[shaderIdx]->buffers[contextTyped.uniformBuffers[shaderIdx]->bufferIdx].allocation, data, size, shaderUniform.position);
+			memcpy(&contextTyped.uniformBufferData[shaderIdx][shaderUniform.position], data, size);
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -5517,18 +5521,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	if (buffer->shared == true) buffersRWlock.unlock();
 }
 
-inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, VmaAllocation allocationSrc, uint32_t size) {
-	vmaSpinlock.lock();
-	VmaAllocationInfo dstAllocationInfo {};
-	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
-	VmaAllocationInfo srcAllocationInfo {};
-	vmaGetAllocationInfo(allocator, allocationSrc, &srcAllocationInfo);
-	memcpy(dstAllocationInfo.pMappedData, srcAllocationInfo.pMappedData, size);
-	vmaSpinlock.unlock();
-}
-
 inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
-	// TODO: have uniforms on CPU mem and copy the final to mmapped memory
 	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
@@ -5946,6 +5939,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	// get texture set cache id
 	auto samplers = -1;
 	{
+		auto shaderIdx = 0;
 		auto samplerIdx = 0;
 		for (auto shader: currentContext.program->shaders) {
 			// sampler2D + samplerCube
@@ -5968,6 +5962,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 			// uniform buffer
 			if (shader->uboBindingIdx == -1) {
+				shaderIdx++;
 				continue;
 			}
 
@@ -5976,15 +5971,16 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 			auto uboBuffer = src.buffer;
 			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-			auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-			vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
+			vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
 
+			//
 			currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 				.buffer = uboBuffer,
 				.offset = 0,
 				.range = shader->uboSize
 			};
 
+			//
 			currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
@@ -5999,6 +5995,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			};
 
 			//
+			shaderIdx++;
 			uboIdx++;
 		}
 		samplers = samplerIdx;
@@ -6216,6 +6213,8 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	setupPointsRenderingPipeline(currentContext.idx, currentContext.program);
 
 	// do points render command
+	auto shaderIdx = 0;
+	auto uboIdx = 0;
 	auto samplerIdx = 0;
 	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
@@ -6287,22 +6286,25 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 		// uniform buffer
 		if (shader->uboBindingIdx == -1) {
+			shaderIdx++;
 			continue;
 		}
 
+		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
+		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
 
+		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
 			.range = shader->uboSize
 		};
 
+		//
 		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
@@ -6315,6 +6317,10 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr
 		};
+
+		//
+		shaderIdx++;
+		uboIdx++;
 	}
 
 	//
@@ -6377,6 +6383,8 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	setupLinesRenderingPipeline(currentContext.idx, currentContext.program);
 
 	// do lines render command
+	auto shaderIdx = 0;
+	auto uboIdx = 0;
 	auto samplerIdx = 0;
 	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
@@ -6448,22 +6456,25 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 		// uniform buffer
 		if (shader->uboBindingIdx == -1) {
+			shaderIdx++;
 			continue;
 		}
 
+		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
+		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
 
+		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
 			.range = shader->uboSize
 		};
 
+		//
 		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
@@ -6476,6 +6487,10 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr
 		};
+
+		//
+		shaderIdx++;
+		uboIdx++;
 	}
 
 	//
@@ -6580,6 +6595,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	setupSkinningComputingPipeline(currentContext.idx, currentContext.program);
 
 	// do compute command
+	auto shaderIdx = 0;
 	for (auto shader: currentContext.program->shaders) {
 		for (int i = 0; i <= shader->maxBindings; i++) {
 			currentContext.descriptorBufferInfos[i] = {
@@ -6603,22 +6619,26 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 
 		// uniform buffer
 		if (shader->uboBindingIdx == -1) {
+			shaderIdx++;
 			continue;
 		}
 
+		//
+		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-		auto uboBuffer = src .buffer;
+		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
+		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
 
+		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
 			.range = shader->uboSize
 		};
 
+		//
 		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
@@ -6631,6 +6651,9 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr,
 		};
+
+		//
+		shaderIdx++;
 	}
 
 	//

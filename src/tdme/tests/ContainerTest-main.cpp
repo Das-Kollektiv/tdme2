@@ -18,5 +18,13 @@ int main(int argc, char** argv)
 	Console::println("v.clear(), capacity = " + to_string(v.capacity()));
 	v = { 1, 2, 3 };
 	Console::println("v = { 1, 2, 3 }, capacity = " + to_string(v.capacity()));
+	v.resize(2);
+	Console::println("v.resize(2), capacity = " + to_string(v.capacity()));
+	v.resize(6);
+	Console::println("v.resize(6), capacity = " + to_string(v.capacity()));
+	v.resize(12);
+	Console::println("v.resize(12), capacity = " + to_string(v.capacity()));
+	v.resize(3);
+	Console::println("v.resize(3), capacity = " + to_string(v.capacity()));
     return 0;
 }

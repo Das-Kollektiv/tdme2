@@ -303,6 +303,7 @@ private:
 		};
 		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<uniform_buffer_type*, 4> uniformBuffers;
+		array<vector<uint8_t>, 4> uniformBufferData;
 		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };
@@ -400,7 +401,7 @@ private:
 	texture_type* whiteTextureSamplerCubeDefault { nullptr };
 
 	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
-	VkDescriptorPool descriptorPool2{ VK_NULL_HANDLE };
+	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
 
 	// enable/disable validation layers
 	bool validate { false };
@@ -456,7 +457,6 @@ private:
 	VkBuffer getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	buffer_object_type* getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId);
-	void vmaMemCpy(VmaAllocation allocationDst, VmaAllocation allocationSrc, uint32_t size);
 	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
