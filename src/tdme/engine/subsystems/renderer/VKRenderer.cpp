@@ -131,12 +131,12 @@ using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
 	queue_spinlock("queue-spinlock"),
-	buffers_rwlock("buffers_rwlock"),
-	textures_rwlock("textures_rwlock"),
-	delete_mutex("delete_mutex"),
-	dispose_mutex("dispose_mutex"),
-	pipeline_rwlock("pipeline_rwlock"),
-	vma_spinlock("vma_spinlock")
+	buffersRWlock("buffers_rwlock"),
+	texturesRWlock("textures_rwlock"),
+	deleteMutex("delete_mutex"),
+	disposeMutex("dispose_mutex"),
+	pipelineRWlock("pipeline_rwlock"),
+	vmaSpinlock("vma_spinlock")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -162,18 +162,18 @@ VKRenderer::VKRenderer():
 	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = 6;
 }
 
-inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
+inline VkBool32 VKRenderer::checkLayers(uint32_t checkCount, const char **checkNames, uint32_t layerCount, VkLayerProperties *layers) {
 	uint32_t i, j;
-	for (i = 0; i < check_count; i++) {
+	for (i = 0; i < checkCount; i++) {
 		VkBool32 found = 0;
-		for (j = 0; j < layer_count; j++) {
-			if (!strcmp(check_names[i], layers[j].layerName)) {
+		for (j = 0; j < layerCount; j++) {
+			if (!strcmp(checkNames[i], layers[j].layerName)) {
 				found = 1;
 				break;
 			}
 		}
 		if (!found) {
-			fprintf(stderr, "Cannot find layer: %s\n", check_names[i]);
+			fprintf(stderr, "Cannot find layer: %s\n", checkNames[i]);
 			return 0;
 		}
 	}
@@ -181,12 +181,12 @@ inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check
 }
 
 inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
-	auto& context = contexts[contextIdx];
-	if (context.setup_cmd_inuse == VK_NULL_HANDLE) {
-		context.setup_cmd_inuse = context.setup_cmd;
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.setupCommandInUse == VK_NULL_HANDLE) {
+		currentContext.setupCommandInUse = currentContext.setupCommand;
 
 		//
-		const VkCommandBufferBeginInfo cmd_buf_info = {
+		const VkCommandBufferBeginInfo cmdBufInfo = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = nullptr,
 			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
@@ -194,7 +194,7 @@ inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
 		};
 
 		VkResult err;
-		err = vkBeginCommandBuffer(context.setup_cmd_inuse, &cmd_buf_info);
+		err = vkBeginCommandBuffer(currentContext.setupCommandInUse, &cmdBufInfo);
 		assert(!err);
 
 		//
@@ -203,31 +203,31 @@ inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
 }
 
 inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	//
-	if (context.setup_cmd_inuse != VK_NULL_HANDLE) {
+	if (currentContext.setupCommandInUse != VK_NULL_HANDLE) {
 		//
 		VkResult err;
-		err = vkEndCommandBuffer(context.setup_cmd_inuse);
+		err = vkEndCommandBuffer(currentContext.setupCommandInUse);
 		assert(!err);
 
 		VkFence nullFence = { VK_NULL_HANDLE };
-		VkSubmitInfo submit_info = {
+		VkSubmitInfo submitInfo = {
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 			.pNext = nullptr,
 			.waitSemaphoreCount = 0,
 			.pWaitSemaphores = nullptr,
 			.pWaitDstStageMask = nullptr,
 			.commandBufferCount = 1,
-			.pCommandBuffers = &context.setup_cmd_inuse,
+			.pCommandBuffers = &currentContext.setupCommandInUse,
 			.signalSemaphoreCount = 0,
 			.pSignalSemaphores = nullptr
 		};
 
 		queue_spinlock.lock();
 
-		err = vkQueueSubmit(queue, 1, &submit_info, context.setup_fence);
+		err = vkQueueSubmit(queue, 1, &submitInfo, currentContext.setupFence);
 		assert(!err);
 
 		//
@@ -237,36 +237,36 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 		AtomicOperations::increment(statistics.submits);
 
 		//
-		VkResult fence_result;
+		VkResult fenceResult;
 		do {
-			fence_result = vkWaitForFences(device, 1, &context.setup_fence, VK_TRUE, 100000000);
-		} while (fence_result == VK_TIMEOUT);
-		vkResetFences(device, 1, &context.setup_fence);
+			fenceResult = vkWaitForFences(device, 1, &currentContext.setupFence, VK_TRUE, 100000000);
+		} while (fenceResult == VK_TIMEOUT);
+		vkResetFences(device, 1, &currentContext.setupFence);
 
 		//
-		context.setup_cmd_inuse = VK_NULL_HANDLE;
+		currentContext.setupCommandInUse = VK_NULL_HANDLE;
 	}
 }
 
 inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	//
-	if (bufferId == -1) bufferId = context.command_buffer_current;
+	if (bufferId == -1) bufferId = currentContext.currentCommandBuffer;
 
 	//
-	auto& command_buffer = context.command_buffers[bufferId];
-	if (command_buffer.draw_cmd_started == true) return false;
+	auto& commandBuffer = currentContext.commandBuffers[bufferId];
+	if (commandBuffer.drawCmdStarted == true) return false;
 
 	//
-	VkResult fence_result;
+	VkResult fenceResult;
 	do {
-		fence_result = vkWaitForFences(device, 1, &command_buffer.draw_fence, VK_TRUE, 100000000);
-	} while (fence_result == VK_TIMEOUT);
-	vkResetFences(device, 1, &command_buffer.draw_fence);
+		fenceResult = vkWaitForFences(device, 1, &commandBuffer.drawFence, VK_TRUE, 100000000);
+	} while (fenceResult == VK_TIMEOUT);
+	vkResetFences(device, 1, &commandBuffer.drawFence);
 
 	//
-	const VkCommandBufferBeginInfo cmd_buf_info = {
+	const VkCommandBufferBeginInfo cmdBufInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
 		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
@@ -275,26 +275,26 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	//
 	VkResult err;
-	err = vkBeginCommandBuffer(command_buffer.draw_cmd, &cmd_buf_info);
+	err = vkBeginCommandBuffer(commandBuffer.drawCommand, &cmdBufInfo);
 	assert(!err);
 
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_COLOR_ATTACHMENT_WRITE, THSVS_ACCESS_NONE };
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (bound_frame_buffer == ID_NONE &&
-		(swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout)) {
+	if (boundFrameBuffer == ID_NONE &&
+		(swapchainBuffers[currentFrameBuffer].accessTypes != nextAccessTypes || swapchainBuffers[currentFrameBuffer].svsLayout != nextLayout)) {
 		ThsvsImageBarrier svsImageBarrier = {
-			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
-			.pPrevAccesses = swapchain_buffers[current_buffer].access_types.data(),
+			.prevAccessCount = static_cast<uint32_t>(swapchainBuffers[currentFrameBuffer].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = swapchainBuffers[currentFrameBuffer].accessTypes.data(),
 			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 			.pNextAccesses = nextAccessTypes.data(),
-			.prevLayout = swapchain_buffers[current_buffer].svsLayout,
+			.prevLayout = swapchainBuffers[currentFrameBuffer].svsLayout,
 			.nextLayout = nextLayout,
 			.discardContents = true,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
-			.image = swapchain_buffers[current_buffer].image,
+			.image = swapchainBuffers[currentFrameBuffer].image,
 			.subresourceRange = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 				.baseMipLevel = 0,
@@ -317,15 +317,15 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		VkResult err;
 
 		//
-		vkCmdPipelineBarrier(command_buffer.draw_cmd, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+		vkCmdPipelineBarrier(commandBuffer.drawCommand, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 
 		//
-		swapchain_buffers[current_buffer].access_types = nextAccessTypes;
-		swapchain_buffers[current_buffer].svsLayout = nextLayout;
+		swapchainBuffers[currentFrameBuffer].accessTypes = nextAccessTypes;
+		swapchainBuffers[currentFrameBuffer].svsLayout = nextLayout;
 	}
 
 	//
-	command_buffer.draw_cmd_started = true;
+	commandBuffer.drawCmdStarted = true;
 
 	//
 	AtomicOperations::increment(statistics.drawCommands);
@@ -335,74 +335,74 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 }
 
 inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool cycleBuffers) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	//
-	if (bufferId == -1) bufferId = context.command_buffer_current;
-	auto& command_buffer = context.command_buffers[bufferId];
+	if (bufferId == -1) bufferId = currentContext.currentCommandBuffer;
+	auto& commandBuffer = currentContext.commandBuffers[bufferId];
 
 	//
-	context.pipeline = VK_NULL_HANDLE;
+	currentContext.pipeline = VK_NULL_HANDLE;
 
 	//
-	if (command_buffer.draw_cmd_started == false) return VK_NULL_HANDLE;
+	if (commandBuffer.drawCmdStarted == false) return VK_NULL_HANDLE;
 
 	//
 	VkResult err;
-	err = vkEndCommandBuffer(command_buffer.draw_cmd);
+	err = vkEndCommandBuffer(commandBuffer.drawCommand);
 	assert(!err);
 
 	//
-	if (context.program != nullptr) {
-		auto& programContextCommandBuffer = context.program->contexts[contextIdx].command_buffers[bufferId];
-		programContextCommandBuffer.desc_sets1_idx = 0;
-		programContextCommandBuffer.desc_sets2_idx_uncached = 0;
+	if (currentContext.program != nullptr) {
+		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[bufferId];
+		programContextCommandBuffer.descriptorSets1Idx = 0;
+		programContextCommandBuffer.descriptorSets2IdxUncached = 0;
 	}
 
 	//
-	auto commandBuffer = command_buffer.draw_cmd;
+	auto endedCommandBuffer = commandBuffer.drawCommand;
 
 	//
-	command_buffer.draw_cmd_started = false;
+	commandBuffer.drawCmdStarted = false;
 
 	//
-	if (cycleBuffers == true) context.command_buffer_current = (context.command_buffer_current + 1) % DRAW_COMMANDBUFFER_MAX;
+	if (cycleBuffers == true) currentContext.currentCommandBuffer = (currentContext.currentCommandBuffer + 1) % DRAW_COMMANDBUFFER_MAX;
 
 	//
-	return commandBuffer;
+	return endedCommandBuffer;
 }
 
 inline void VKRenderer::recreateContextFences(int contextIdx) {
-	auto& context = contexts[contextIdx];
-	if (context.draw_fence == VK_NULL_HANDLE) {
-		VkFenceCreateInfo fence_create_info_unsignaled = {
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.draw_fence == VK_NULL_HANDLE) {
+		VkFenceCreateInfo fenceCreateInfoUnsignaled = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0
 		};
-		vkCreateFence(device, &fence_create_info_unsignaled, nullptr, &context.draw_fence);
+		vkCreateFence(device, &fenceCreateInfoUnsignaled, nullptr, &currentContext.draw_fence);
 	}
-	VkFenceCreateInfo fence_create_info_signaled = {
+	VkFenceCreateInfo fenceCreateInfoSignaled = {
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
 	};
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		if (context.command_buffers[i].draw_fence != VK_NULL_HANDLE) vkDestroyFence(device, context.command_buffers[i].draw_fence, nullptr);
-		vkCreateFence(device, &fence_create_info_signaled, nullptr, &context.command_buffers[i].draw_fence);
+		if (currentContext.commandBuffers[i].drawFence != VK_NULL_HANDLE) vkDestroyFence(device, currentContext.commandBuffers[i].drawFence, nullptr);
+		vkCreateFence(device, &fenceCreateInfoSignaled, nullptr, &currentContext.commandBuffers[i].drawFence);
 	}
 }
 
 inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted, bool resetFence) {
 	//
 	VkResult err;
-	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	VkSubmitInfo submit_info = {
+	VkPipelineStageFlags pipeStageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	VkSubmitInfo submitInfo = {
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 0,
 		.pWaitSemaphores = nullptr,
-		.pWaitDstStageMask = &pipe_stage_flags,
+		.pWaitDstStageMask = &pipeStageFlags,
 		.commandBufferCount = static_cast<uint32_t>(commandBufferCount),
 		.pCommandBuffers = commandBuffers,
 		.signalSemaphoreCount = 0,
@@ -412,7 +412,7 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 	//
 	queue_spinlock.lock();
 
-	err = vkQueueSubmit(queue, 1, &submit_info, fence);
+	err = vkQueueSubmit(queue, 1, &submitInfo, fence);
 	assert(!err);
 
 	queue_spinlock.unlock();
@@ -436,10 +436,10 @@ inline void VKRenderer::finishSetupCommandBuffers() {
 }
 
 inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, bool submit) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	// does this texture object point to a cube map color/depth buffer texture?
-	auto _textureObject = textureObject->cubemap_buffer_texture != nullptr?textureObject->cubemap_buffer_texture:textureObject;
+	auto _textureObject = textureObject->cubemapBufferTexture != nullptr?textureObject->cubemapBufferTexture:textureObject;
 
 	// do not change a VK_IMAGE_LAYOUT_GENERAL
 	if (_textureObject->vkLayout == VK_IMAGE_LAYOUT_GENERAL) {
@@ -447,14 +447,14 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 	}
 
 	// base array layer that applies to cube maps only
-	auto baseArrayLayer = static_cast<uint32_t>(textureObject->cubemap_buffer_texture != nullptr?textureObject->cubemap_texture_index - CUBEMAPTEXTUREINDEX_MIN:0);
+	auto baseArrayLayer = static_cast<uint32_t>(textureObject->cubemapBufferTexture != nullptr?textureObject->cubemapTextureIndex - CUBEMAPTEXTUREINDEX_MIN:0);
 
 	// check if we need a change at all
-	if (_textureObject->access_types[baseArrayLayer] == nextAccessTypes && _textureObject->svsLayout == nextLayout) return;
+	if (_textureObject->accessTypes[baseArrayLayer] == nextAccessTypes && _textureObject->svsLayout == nextLayout) return;
 
 	ThsvsImageBarrier svsImageBarrier = {
-		.prevAccessCount = static_cast<uint32_t>(_textureObject->access_types[baseArrayLayer][1] != THSVS_ACCESS_NONE?2:1),
-		.pPrevAccesses = _textureObject->access_types[baseArrayLayer].data(),
+		.prevAccessCount = static_cast<uint32_t>(_textureObject->accessTypes[baseArrayLayer][1] != THSVS_ACCESS_NONE?2:1),
+		.pPrevAccesses = _textureObject->accessTypes[baseArrayLayer].data(),
 		.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 		.pNextAccesses = nextAccessTypes.data(),
 		.prevLayout = _textureObject->svsLayout,
@@ -464,7 +464,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 		.dstQueueFamilyIndex = 0,
 		.image = _textureObject->image,
 		.subresourceRange = {
-			.aspectMask = _textureObject->aspect_mask,
+			.aspectMask = _textureObject->aspectMask,
 			.baseMipLevel = baseMipLevel,
 			.levelCount = levelCount,
 			.baseArrayLayer = baseArrayLayer,
@@ -486,17 +486,17 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 
 	//
 	prepareSetupCommandBuffer(contextIdx);
-	vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+	vkCmdPipelineBarrier(currentContext.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 	if (submit == true) finishSetupCommandBuffer(contextIdx);
 
 	//
-	_textureObject->access_types[baseArrayLayer] = nextAccessTypes;
+	_textureObject->accessTypes[baseArrayLayer] = nextAccessTypes;
 	_textureObject->svsLayout = nextLayout;
 	_textureObject->vkLayout = vkImageMemoryBarrier.newLayout;
 }
 
 void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	ThsvsImageBarrier svsImageBarrier = {
 		.prevAccessCount = static_cast<uint32_t>(accessTypes[1] != THSVS_ACCESS_NONE?2:1),
@@ -510,7 +510,7 @@ void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, co
 		.dstQueueFamilyIndex = 0,
 		.image = textureObject->image,
 		.subresourceRange = {
-			.aspectMask = textureObject->aspect_mask,
+			.aspectMask = textureObject->aspectMask,
 			.baseMipLevel = baseMipLevel,
 			.levelCount = levelCount,
 			.baseArrayLayer = baseArrayLayer,
@@ -532,7 +532,7 @@ void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, co
 
 	//
 	prepareSetupCommandBuffer(contextIdx);
-	vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+	vkCmdPipelineBarrier(currentContext.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 	finishSetupCommandBuffer(contextIdx);
 }
 
@@ -558,7 +558,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 	auto textureWidth = static_cast<uint32_t>(texture->getTextureWidth());
 	auto textureHeight = static_cast<uint32_t>(texture->getTextureHeight());
 
-	const VkImageCreateInfo image_create_info = {
+	const VkImageCreateInfo imageCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -580,13 +580,12 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
 	};
 
-	VmaAllocationCreateInfo image_alloc_create_info = {};
-	image_alloc_create_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
-	image_alloc_create_info.requiredFlags = requiredFlags;
+	VmaAllocationCreateInfo imageAllocCreateInfo = {};
+	imageAllocCreateInfo.usage = VMA_MEMORY_USAGE_UNKNOWN;
+	imageAllocCreateInfo.requiredFlags = requiredFlags;
 
-
-	VmaAllocationInfo allocation_info = {};
-	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &textureObject->image, &textureObject->allocation, &allocation_info);
+	VmaAllocationInfo allocationInfo = {};
+	err = vmaCreateImage(allocator, &imageCreateInfo, &imageAllocCreateInfo, &textureObject->image, &textureObject->allocation, &allocationInfo);
 	assert(!err);
 
 	if ((requiredFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
@@ -618,7 +617,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 	}
 
 	//
-	textureObject->access_types = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
+	textureObject->accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
 	setImageLayout(
 		contextIdx,
 		textureObject,
@@ -700,7 +699,7 @@ void VKRenderer::initializeSwapChain() {
 		.surface = surface,
 		.minImageCount = desiredNumOfSwapchainImages,
 		.imageFormat = format,
-		.imageColorSpace = color_space,
+		.imageColorSpace = colorSpace,
 		.imageExtent = {
 			.width = swapchainExtent.width,
 			.height = swapchainExtent.height
@@ -728,18 +727,18 @@ void VKRenderer::initializeSwapChain() {
 		fpDestroySwapchainKHR(device, oldSwapchain, nullptr);
 	}
 
-	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, nullptr);
+	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr);
 	assert(err == VK_SUCCESS);
 
-	VkImage* swapchainImages = new VkImage[swapchain_image_count];
+	VkImage* swapchainImages = new VkImage[swapchainImageCount];
 	assert(swapchainImages != nullptr);
-	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, swapchainImages);
+	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages);
 	assert(err == VK_SUCCESS);
 
 	//
-	swapchain_buffers.resize(swapchain_image_count);
-	for (auto i = 0; i < swapchain_buffers.size(); i++) {
-		VkImageViewCreateInfo color_attachment_view = {
+	swapchainBuffers.resize(swapchainImageCount);
+	for (auto i = 0; i < swapchainBuffers.size(); i++) {
+		VkImageViewCreateInfo colorAttachmentView = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
@@ -760,12 +759,12 @@ void VKRenderer::initializeSwapChain() {
 				.layerCount = 1
 			}
 		};
-		swapchain_buffers[i].image = swapchainImages[i];
-		err = vkCreateImageView(device, &color_attachment_view, nullptr, &swapchain_buffers[i].view);
+		swapchainBuffers[i].image = swapchainImages[i];
+		err = vkCreateImageView(device, &colorAttachmentView, nullptr, &swapchainBuffers[i].view);
 		assert(err == VK_SUCCESS);
 	}
 
-	current_buffer = 0;
+	currentFrameBuffer = 0;
 }
 
 const string VKRenderer::getVendor() {
@@ -790,8 +789,8 @@ void* VKRenderer::getContext(int contextIdx) {
 }
 
 int VKRenderer::getContextIndex(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.idx;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.idx;
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
@@ -818,66 +817,67 @@ void VKRenderer::initialize()
 
 	VkResult err;
 	uint32_t i = 0;
-	uint32_t required_extension_count = 0;
-	uint32_t instance_extension_count = 0;
-	uint32_t instance_layer_count = 0;
-	uint32_t validation_layer_count = 0;
-	const char **required_extensions = nullptr;
-	const char **instance_validation_layers = nullptr;
+	uint32_t requiredExtensionCount = 0;
+	uint32_t instanceExtensionCount = 0;
+	uint32_t instanceLayerCount = 0;
+	uint32_t validationLayerCount = 0;
+	const char** requiredExtensions = nullptr;
+	const char** instanceValidationLayers = nullptr;
 
-	uint32_t enabled_extension_count = 0;
-	uint32_t enabled_layer_count = 0;
-	const char* extension_names[64];
-	const char* enabled_layers[64];
+	uint32_t enabledExtensionCount = 0;
+	uint32_t enabledLayerCount = 0;
+	const char* extensionNames[64];
+	const char* enabledLayers[64];
 
-	char* instance_validation_layers_alt1[] = {
+	char* instanceValidationLayersAlt1[] = {
 		"VK_LAYER_KHRONOS_validation"
 	};
-	char* instance_validation_layers_alt2[] = {
+	char* instanceValidationLayersAlt2[] = {
 		"VK_LAYER_LUNARG_standard_validation"
 	};
 
 	// Look for validation layers
 	if (validate == true) {
-		VkBool32 validation_found = 0;
-		err = vkEnumerateInstanceLayerProperties(&instance_layer_count, nullptr);
+		VkBool32 validationFound = 0;
+		err = vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
 		assert(!err);
 
-		instance_validation_layers = (const char**) instance_validation_layers_alt1;
-		if (instance_layer_count > 0) {
-			VkLayerProperties* instance_layers = new VkLayerProperties[instance_layer_count];
-			err = vkEnumerateInstanceLayerProperties(&instance_layer_count, instance_layers);
+		instanceValidationLayers = (const char**)instanceValidationLayersAlt1;
+		if (instanceLayerCount > 0) {
+			// TODO: replace with proper C++ code
+			VkLayerProperties* instanceLayers = new VkLayerProperties[instanceLayerCount];
+			err = vkEnumerateInstanceLayerProperties(&instanceLayerCount, instanceLayers);
 			assert(!err);
 
-			validation_found = checkLayers(
-				ARRAY_SIZE(instance_validation_layers_alt1),
-				instance_validation_layers,
-				instance_layer_count,
-				instance_layers
+			validationFound = checkLayers(
+				ARRAY_SIZE(instanceValidationLayersAlt1),
+				instanceValidationLayers,
+				instanceLayerCount,
+				instanceLayers
 			);
-			if (validation_found) {
-				enabled_layer_count = ARRAY_SIZE(instance_validation_layers_alt1);
-				enabled_layers[0] = "VK_LAYER_LUNARG_standard_validation";
-				validation_layer_count = 1;
+			if (validationFound) {
+				enabledLayerCount = ARRAY_SIZE(instanceValidationLayersAlt1);
+				enabledLayers[0] = "VK_LAYER_LUNARG_standard_validation";
+				validationLayerCount = 1;
 			} else {
 				// use alternative set of validation layers
-				instance_validation_layers = (const char**) instance_validation_layers_alt2;
-				enabled_layer_count = ARRAY_SIZE(instance_validation_layers_alt2);
-				validation_found = checkLayers(
-					ARRAY_SIZE(instance_validation_layers_alt2),
-					instance_validation_layers,
-					instance_layer_count,
-					instance_layers
+				instanceValidationLayers = (const char**) instanceValidationLayersAlt2;
+				enabledLayerCount = ARRAY_SIZE(instanceValidationLayersAlt2);
+				validationFound = checkLayers(
+					ARRAY_SIZE(instanceValidationLayersAlt2),
+					instanceValidationLayers,
+					instanceLayerCount,
+					instanceLayers
 				);
-				validation_layer_count = ARRAY_SIZE(instance_validation_layers_alt2);
-				for (i = 0; i < validation_layer_count; i++) {
-					enabled_layers[i] = instance_validation_layers[i];
+				validationLayerCount = ARRAY_SIZE(instanceValidationLayersAlt2);
+				for (i = 0; i < validationLayerCount; i++) {
+					enabledLayers[i] = instanceValidationLayers[i];
 				}
 			}
-			delete [] instance_layers;
+			delete [] instanceLayers;
 		}
 
-		if (!validation_found) {
+		if (!validationFound) {
 			ERR_EXIT("vkEnumerateInstanceLayerProperties failed to find "
 					"required validation layer.\n\n"
 					"Please look at the Getting Started guide for additional "
@@ -886,8 +886,8 @@ void VKRenderer::initialize()
 	}
 
 	// Look for instance extensions
-	required_extensions = glfwGetRequiredInstanceExtensions(&required_extension_count);
-	if (!required_extensions) {
+	requiredExtensions = glfwGetRequiredInstanceExtensions(&requiredExtensionCount);
+	if (!requiredExtensions) {
 		ERR_EXIT("glfwGetRequiredInstanceExtensions failed to find the "
 			"platform surface extensions.\n\nDo you have a compatible "
 			"Vulkan installable client driver (ICD) installed?\nPlease "
@@ -896,31 +896,32 @@ void VKRenderer::initialize()
 		);
 	}
 
-	for (i = 0; i < required_extension_count; i++) {
-		extension_names[enabled_extension_count++] = required_extensions[i];
-		assert(enabled_extension_count < 64);
+	for (i = 0; i < requiredExtensionCount; i++) {
+		extensionNames[enabledExtensionCount++] = requiredExtensions[i];
+		assert(enabledExtensionCount < 64);
 	}
 
 	err = vkEnumerateInstanceExtensionProperties(
-	nullptr, &instance_extension_count, nullptr);
+	nullptr, &instanceExtensionCount, nullptr);
 	assert(!err);
 
-	if (instance_extension_count > 0) {
-		VkExtensionProperties* instance_extensions = new VkExtensionProperties[instance_extension_count];
-		err = vkEnumerateInstanceExtensionProperties(nullptr, &instance_extension_count, instance_extensions);
+	if (instanceExtensionCount > 0) {
+		// TODO: replace with proper C++
+		VkExtensionProperties* instanceExtensions = new VkExtensionProperties[instanceExtensionCount];
+		err = vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, instanceExtensions);
 		assert(!err);
-		for (i = 0; i < instance_extension_count; i++) {
-			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+		for (i = 0; i < instanceExtensionCount; i++) {
+			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instanceExtensions[i].extensionName)) {
 				if (validate == true) {
-					extension_names[enabled_extension_count++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
+					extensionNames[enabledExtensionCount++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 				}
 			}
-			assert(enabled_extension_count < 64);
+			assert(enabledExtensionCount < 64);
 		}
-		delete [] instance_extensions;
+		delete [] instanceExtensions;
 	}
 
-	const VkApplicationInfo app = {
+	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
 		.pApplicationName = "TDME2 based application",
@@ -929,19 +930,19 @@ void VKRenderer::initialize()
 		.engineVersion = 0,
 		.apiVersion = VK_API_VERSION_1_0,
 	};
-	VkInstanceCreateInfo inst_info = {
+	VkInstanceCreateInfo instanceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.pApplicationInfo = &app,
-		.enabledLayerCount = enabled_layer_count,
-		.ppEnabledLayerNames = (const char * const *)instance_validation_layers,
-		.enabledExtensionCount = enabled_extension_count,
-		.ppEnabledExtensionNames = (const char * const *)extension_names,
+		.pApplicationInfo = &applicationInfo,
+		.enabledLayerCount = enabledLayerCount,
+		.ppEnabledLayerNames = (const char * const *)instanceValidationLayers,
+		.enabledExtensionCount = enabledExtensionCount,
+		.ppEnabledExtensionNames = (const char * const *)extensionNames,
 	};
-	uint32_t gpu_count;
+	uint32_t gpuCount;
 
-	err = vkCreateInstance(&inst_info, nullptr, &inst);
+	err = vkCreateInstance(&instanceCreateInfo, nullptr, &inst);
 	if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
 		ERR_EXIT("Cannot find a compatible Vulkan installable client driver "
 				"(ICD).\n\nPlease look at the Getting Started guide for "
@@ -960,14 +961,14 @@ void VKRenderer::initialize()
 	}
 
 	// Make initial call to query gpu_count, then second call for gpu info
-	err = vkEnumeratePhysicalDevices(inst, &gpu_count, nullptr);
-	assert(!err && gpu_count > 0);
+	err = vkEnumeratePhysicalDevices(inst, &gpuCount, nullptr);
+	assert(!err && gpuCount > 0);
 
-	if (gpu_count > 0) {
-		vector<VkPhysicalDevice> physical_devices(gpu_count);
-		err = vkEnumeratePhysicalDevices(inst, &gpu_count, physical_devices.data());
+	if (gpuCount > 0) {
+		vector<VkPhysicalDevice> physicalDevices(gpuCount);
+		err = vkEnumeratePhysicalDevices(inst, &gpuCount, physicalDevices.data());
 		assert(!err);
-		gpu = physical_devices[0];
+		gpu = physicalDevices[0];
 	} else {
 		ERR_EXIT(
 			"vkEnumeratePhysicalDevices reported zero accessible devices."
@@ -979,23 +980,23 @@ void VKRenderer::initialize()
 	}
 
 	// Look for device extensions
-	uint32_t device_extension_count = 0;
+	uint32_t deviceExtensionCount = 0;
 	VkBool32 swapchainExtFound = 0;
-	enabled_extension_count = 0;
+	enabledExtensionCount = 0;
 
-	err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, nullptr);
+	err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &deviceExtensionCount, nullptr);
 	assert(!err);
 
-	if (device_extension_count > 0) {
-		vector<VkExtensionProperties> device_extensions(device_extension_count);
-		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, device_extensions.data());
+	if (deviceExtensionCount > 0) {
+		vector<VkExtensionProperties> deviceExtensions(deviceExtensionCount);
+		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &deviceExtensionCount, deviceExtensions.data());
 		assert(!err);
-		for (i = 0; i < device_extension_count; i++) {
-			if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, device_extensions[i].extensionName)) {
+		for (i = 0; i < deviceExtensionCount; i++) {
+			if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, deviceExtensions[i].extensionName)) {
 				swapchainExtFound = 1;
-				extension_names[enabled_extension_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+				extensionNames[enabledExtensionCount++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 			}
-			assert(enabled_extension_count < 64);
+			assert(enabledExtensionCount < 64);
 		}
 	}
 
@@ -1017,36 +1018,36 @@ void VKRenderer::initialize()
 	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfacePresentModesKHR);
 	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfaceSupportKHR);
 
-	vkGetPhysicalDeviceProperties(gpu, &gpu_props);
+	vkGetPhysicalDeviceProperties(gpu, &gpuProperties);
 
 	//
-	deviceName = gpu_props.deviceName;
+	deviceName = gpuProperties.deviceName;
 
 	// Query with nullptr data to get count
-	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, nullptr);
+	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queueCount, nullptr);
 
-	queue_props = new VkQueueFamilyProperties[queue_count];
-	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, queue_props);
-	assert(queue_count >= 1);
+	queueProperties = new VkQueueFamilyProperties[queueCount];
+	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queueCount, queueProperties);
+	assert(queueCount >= 1);
 
-	vkGetPhysicalDeviceFeatures(gpu, &gpu_features);
+	vkGetPhysicalDeviceFeatures(gpu, &gpuFeatures);
 
 	// Create a WSI surface for the window:
 	err = glfwCreateWindowSurface(inst, Application::glfwWindow, nullptr, &surface);
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
-	vector<VkBool32> supportsPresent(queue_count);
-	for (i = 0; i < queue_count; i++) {
+	vector<VkBool32> supportsPresent(queueCount);
+	for (i = 0; i < queueCount; i++) {
 		fpGetPhysicalDeviceSurfaceSupportKHR(gpu, i, surface, &supportsPresent[i]);
 	}
 
 	// Search for a graphics and a present queue in the array of queue
 	// families, try to find one that supports both
-	uint32_t graphicsQueueNodeIndex = UINT32_MAX;
+	graphicsQueueNodeIndex = UINT32_MAX;
 	uint32_t presentQueueNodeIndex = UINT32_MAX;
-	for (i = 0; i < queue_count; i++) {
-		if ((queue_props[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
+	for (i = 0; i < queueCount; i++) {
+		if ((queueProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
 			if (graphicsQueueNodeIndex == UINT32_MAX) {
 				graphicsQueueNodeIndex = i;
 			}
@@ -1060,7 +1061,7 @@ void VKRenderer::initialize()
 	if (presentQueueNodeIndex == UINT32_MAX) {
 		// If didn't find a queue that supports both graphics and present, then
 		// find a separate present queue.
-		for (i = 0; i < queue_count; ++i) {
+		for (i = 0; i < queueCount; ++i) {
 			if (supportsPresent[i] == VK_TRUE) {
 				presentQueueNodeIndex = i;
 				break;
@@ -1088,23 +1089,21 @@ void VKRenderer::initialize()
 		);
 	}
 
-	graphics_queue_node_index = graphicsQueueNodeIndex;
-
 	// init_device
 	array<float, 1> queuePriorities { 0.0f };
 	const VkDeviceQueueCreateInfo queueCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.queueFamilyIndex = graphics_queue_node_index,
+		.queueFamilyIndex = graphicsQueueNodeIndex,
 		.queueCount = queuePriorities.size(),
 		.pQueuePriorities = queuePriorities.data()
 	};
 
 	VkPhysicalDeviceFeatures features;
 	memset(&features, 0, sizeof(features));
-	if (gpu_features.shaderClipDistance) features.shaderClipDistance = VK_TRUE;
-	if (gpu_features.wideLines) features.wideLines = VK_TRUE; // TODO: a.drewke, store enabled GPU features and check them on rendering if available
+	if (gpuFeatures.shaderClipDistance) features.shaderClipDistance = VK_TRUE;
+	if (gpuFeatures.wideLines) features.wideLines = VK_TRUE; // TODO: a.drewke, store enabled GPU features and check them on rendering if available
 
 	VkDeviceCreateInfo deviceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -1114,8 +1113,8 @@ void VKRenderer::initialize()
 		.pQueueCreateInfos = &queueCreateInfo,
 		.enabledLayerCount = 0,
 		.ppEnabledLayerNames = nullptr,
-		.enabledExtensionCount = enabled_extension_count,
-		.ppEnabledExtensionNames = (const char * const *) extension_names,
+		.enabledExtensionCount = enabledExtensionCount,
+		.ppEnabledExtensionNames = (const char * const *) extensionNames,
 		.pEnabledFeatures = &features
 	};
 
@@ -1128,7 +1127,7 @@ void VKRenderer::initialize()
 	GET_DEVICE_PROC_ADDR(device, AcquireNextImageKHR);
 	GET_DEVICE_PROC_ADDR(device, QueuePresentKHR);
 
-	vkGetDeviceQueue(device, graphics_queue_node_index, 0, &queue);
+	vkGetDeviceQueue(device, graphicsQueueNodeIndex, 0, &queue);
 
 	// Get the list of VkFormat's that are supported:
 	uint32_t surfaceFormatCount;
@@ -1144,12 +1143,12 @@ void VKRenderer::initialize()
 	// We for now only support VK_FORMAT_R8G8B8A8_UNORM
 	if (surfaceFormatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {
 		format = VK_FORMAT_B8G8R8A8_UNORM;
-		color_space = surfaceFormats[0].colorSpace;
+		colorSpace = surfaceFormats[0].colorSpace;
 	} else {
 		for (auto i = 0; i < surfaceFormatCount; i++) {
 			if (surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) {
 				format = VK_FORMAT_B8G8R8A8_UNORM;
-				color_space = surfaceFormats[i].colorSpace;
+				colorSpace = surfaceFormats[i].colorSpace;
 				break;
 			}
 		}
@@ -1163,32 +1162,24 @@ void VKRenderer::initialize()
 	}
 
 	// Get Memory information and properties
-	vkGetPhysicalDeviceMemoryProperties(gpu, &memory_properties);
+	vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
 
 	// initialize allocator
-	VmaAllocatorCreateInfo allocator_info = {};
-	allocator_info.physicalDevice = gpu;
-	allocator_info.device = device;
-	allocator_info.instance = inst;
-	allocator_info.vulkanApiVersion = VK_API_VERSION_1_0;
+	VmaAllocatorCreateInfo allocatorCreateInfo = {};
+	allocatorCreateInfo.physicalDevice = gpu;
+	allocatorCreateInfo.device = device;
+	allocatorCreateInfo.instance = inst;
+	allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_0;
 
     //
-	vmaCreateAllocator(&allocator_info, &allocator);
+	vmaCreateAllocator(&allocatorCreateInfo, &allocator);
 
 	// swap chain
 	initializeSwapChain();
 
-	/*
-	aaa: 96000
-	bbb: 4800
-	ccc: 32000
-	000: 4352000
-	111: 544000
-	*/
-
 	// create descriptor pool 1
 	{
-		array<VkDescriptorPoolSize, 2> desc1_types_count = {{
+		array<VkDescriptorPoolSize, 2> desc1TypesCount = {{
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				// 100 shaders * 3 command buffers * 2 shader stages * 1 uniform buffers
@@ -1200,38 +1191,38 @@ void VKRenderer::initialize()
 				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_COMPUTE_MAX * DRAW_COMMANDBUFFER_MAX * 1 * 10)
 			}
 		}};
-		const VkDescriptorPoolCreateInfo descriptor_pool = {
+		const VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			// 100 shaders * 2 stages
 			.maxSets = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * 100 * 2),
-			.poolSizeCount = desc1_types_count.size(),
-			.pPoolSizes = desc1_types_count.data(),
+			.poolSizeCount = desc1TypesCount.size(),
+			.pPoolSizes = desc1TypesCount.data(),
 		};
 		//
-		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool1);
+		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool1);
 		assert(!err);
 	}
 
 	// create descriptor pool 2
 	{
-		const VkDescriptorPoolSize desc2_types_count = {
+		const VkDescriptorPoolSize desc2TypesCount = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			// 100 shaders * 2 stages * 8 image sampler
 			.descriptorCount = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2 * 8)
 		};
-		const VkDescriptorPoolCreateInfo descriptor_pool = {
+		const VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			// 100 shaders * 2 stages
 			.maxSets = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2),
 			.poolSizeCount = 1,
-			.pPoolSizes = &desc2_types_count,
+			.pPoolSizes = &desc2TypesCount,
 		};
 		//
-		err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool2);
+		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool2);
 		assert(!err);
 	}
 
@@ -1242,82 +1233,82 @@ void VKRenderer::initialize()
 		auto& context = contexts[contextIdx];
 		//
 		context.idx = contextIdx;
-		context.setup_cmd_inuse = VK_NULL_HANDLE;
-		context.command_buffer_current = 0;
+		context.setupCommandInUse = VK_NULL_HANDLE;
+		context.currentCommandBuffer = 0;
 		context.pipeline = VK_NULL_HANDLE;
-		context.render_pass_started = false;
-		context.buffer_vector.resize(BUFFERS_MAX);
-		context.texture_vector.resize(TEXTURES_MAX);
+		context.renderPassStarted = false;
+		context.bufferVector.resize(BUFFERS_MAX);
+		context.textureVector.resize(TEXTURES_MAX);
 
 		//
 		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-			context.command_buffers[i].draw_fence = VK_NULL_HANDLE;
-			context.command_buffers[i].draw_cmd_started = false;
+			context.commandBuffers[i].drawFence = VK_NULL_HANDLE;
+			context.commandBuffers[i].drawCmdStarted = false;
 		}
 
 		//
 		{
 			// command pool
-			const VkCommandPoolCreateInfo cmd_pool_info = {
+			const VkCommandPoolCreateInfo commandPoolCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-				.queueFamilyIndex = graphics_queue_node_index
+				.queueFamilyIndex = graphicsQueueNodeIndex
 			};
-			err = vkCreateCommandPool(device, &cmd_pool_info, nullptr, &context.cmd_setup_pool);
+			err = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &context.setupCommandPool);
 			assert(!err);
 
 			// command buffer
-			const VkCommandBufferAllocateInfo cmd = {
+			const VkCommandBufferAllocateInfo commandBufferAllocationInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 				.pNext = nullptr,
-				.commandPool = context.cmd_setup_pool,
+				.commandPool = context.setupCommandPool,
 				.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 				.commandBufferCount = 1
 			};
-			err = vkAllocateCommandBuffers(device, &cmd, &context.setup_cmd);
+			err = vkAllocateCommandBuffers(device, &commandBufferAllocationInfo, &context.setupCommand);
 			assert(!err);
 		}
 
 		{
 			// draw command pool
-			const VkCommandPoolCreateInfo cmd_pool_info = {
+			const VkCommandPoolCreateInfo commandPoolCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-				.queueFamilyIndex = graphics_queue_node_index
+				.queueFamilyIndex = graphicsQueueNodeIndex
 			};
-			err = vkCreateCommandPool(device, &cmd_pool_info, nullptr, &context.cmd_draw_pool);
+			err = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &context.drawCommandPool);
 			assert(!err);
 
 			// command buffer
-			const VkCommandBufferAllocateInfo cmd = {
+			const VkCommandBufferAllocateInfo commandBufferAllocationInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 				.pNext = nullptr,
-				.commandPool = context.cmd_draw_pool,
+				.commandPool = context.drawCommandPool,
 				.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 				.commandBufferCount = 1
 			};
 			for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-				err = vkAllocateCommandBuffers(device, &cmd, &context.command_buffers[i].draw_cmd);
+				err = vkAllocateCommandBuffers(device, &commandBufferAllocationInfo, &context.commandBuffers[i].drawCommand);
 				assert(!err);
 			}
 		}
 
 		{
-			VkFenceCreateInfo fence_create_info = {
+			VkFenceCreateInfo fenceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0
 			};
-			vkCreateFence(device, &fence_create_info, nullptr, &context.setup_fence);
+			vkCreateFence(device, &fenceCreateInfo, nullptr, &context.setupFence);
 		}
 
 		// set up lights
 		for (auto i = 0; i < context.lights.size(); i++) {
 			context.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
 		}
-		context.texture_matrix.identity();
+		context.textureMatrix.identity();
 
 		//
 		recreateContextFences(context.idx);
@@ -1325,12 +1316,12 @@ void VKRenderer::initialize()
 
 	// memory barrier fence
 	{
-		VkFenceCreateInfo fence_create_info = {
+		VkFenceCreateInfo fenceCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0
 		};
-		vkCreateFence(device, &fence_create_info, nullptr, &memorybarrier_fence);
+		vkCreateFence(device, &fenceCreateInfo, nullptr, &memoryBarrierFence);
 	}
 
 	//
@@ -1338,22 +1329,22 @@ void VKRenderer::initialize()
 	initializeFrameBuffers();
 
 	//
-	empty_vertex_buffer_id = createBufferObjects(1, true, true)[0];
-	empty_vertex_buffer = getBufferObjectInternal(-1, empty_vertex_buffer_id);
+	emptyVertexBufferId = createBufferObjects(1, true, true)[0];
+	emptyVertexBuffer = getBufferObjectInternal(-1, emptyVertexBufferId);
 	array<float, 16> bogusVertexBuffer = {{
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 	}};
-	uploadBufferObjectInternal(0, empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
+	uploadBufferObjectInternal(0, emptyVertexBuffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	// fall back texture white
-	white_texture_sampler2d_default_id = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
-	white_texture_sampler2d_default = textures.find(white_texture_sampler2d_default_id)->second;
+	whiteTextureSampler2dDefaultId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
+	whiteTextureSampler2dDefault = textures.find(whiteTextureSampler2dDefaultId)->second;
 
 	// fallback cube map texture white
-	white_texture_samplercube_default_id = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+	whiteTextureSamplercubeDefaultId = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
 		"cubemap-default-white",
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
@@ -1363,7 +1354,7 @@ void VKRenderer::initialize()
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		getDefaultContext()
 	);
-	white_texture_samplercube_default = textures.find(white_texture_samplercube_default_id)->second;
+	whiteTextureSamplercubeDefault = textures.find(whiteTextureSamplercubeDefaultId)->second;
 
 	//
 	for (auto& context: contexts) unbindBufferObjects(&context);
@@ -1373,17 +1364,17 @@ void VKRenderer::initializeRenderPass() {
 	VkResult err;
 
 	//
-	if (render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, render_pass, nullptr);
+	if (renderPass != VK_NULL_HANDLE) vkDestroyRenderPass(device, renderPass, nullptr);
 
 	// depth buffer
-	if (depth_buffer_default != ID_NONE) disposeTexture(depth_buffer_default);
-	depth_buffer_default = createDepthBufferTexture(width, height, ID_NONE, ID_NONE);
-	auto depth_buffer_texture = textures.find(depth_buffer_default)->second;
+	if (depthBufferDefault != ID_NONE) disposeTexture(depthBufferDefault);
+	depthBufferDefault = createDepthBufferTexture(width, height, ID_NONE, ID_NONE);
+	auto depthBufferTexture = textures.find(depthBufferDefault)->second;
 
 	//
 	setImageLayout(
 		0,
-		depth_buffer_texture,
+		depthBufferTexture,
 		{ THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ, THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE },
 		THSVS_IMAGE_LAYOUT_OPTIMAL,
 		false
@@ -1414,23 +1405,23 @@ void VKRenderer::initializeRenderPass() {
 			.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 		}
 	}};
-	const VkAttachmentReference color_reference = {
+	const VkAttachmentReference colorReference = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 	};
-	const VkAttachmentReference depth_reference = {
+	const VkAttachmentReference depthReference = {
 		.attachment = 1,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 	};
-	const VkSubpassDescription subpass = {
+	const VkSubpassDescription subPass = {
 		.flags = 0,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.inputAttachmentCount = 0,
 		.pInputAttachments = nullptr,
 		.colorAttachmentCount = 1,
-		.pColorAttachments = &color_reference,
+		.pColorAttachments = &colorReference,
 		.pResolveAttachments = nullptr,
-		.pDepthStencilAttachment = &depth_reference,
+		.pDepthStencilAttachment = &depthReference,
 		.preserveAttachmentCount = 0,
 		.pPreserveAttachments = nullptr
 	};
@@ -1441,65 +1432,65 @@ void VKRenderer::initializeRenderPass() {
 		.attachmentCount = 2,
 		.pAttachments = attachments.data(),
 		.subpassCount = 1,
-		.pSubpasses = &subpass,
+		.pSubpasses = &subPass,
 		.dependencyCount = 0,
 		.pDependencies = nullptr
 	};
-	err = vkCreateRenderPass(device, &rp_info, nullptr, &render_pass);
+	err = vkCreateRenderPass(device, &rp_info, nullptr, &renderPass);
 	assert(!err);
 }
 
 inline void VKRenderer::startRenderPass(int contextIdx) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
-	if (context.render_pass_started == true) return;
-	context.render_pass_started = true;
+	if (currentContext.renderPassStarted == true) return;
+	currentContext.renderPassStarted = true;
 
-	auto vkFrameBuffer = window_framebuffers[current_buffer];
-	auto vkRenderPass = render_pass;
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	auto usedFrameBuffer = windowFramebuffers[currentFrameBuffer];
+	auto vkRenderPass = renderPass;
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
 		} else {
-			vkFrameBuffer = frameBuffer->frame_buffer;
-			vkRenderPass = frameBuffer->render_pass;
+			usedFrameBuffer = frameBuffer->frameBuffer;
+			vkRenderPass = frameBuffer->renderPass;
 		}
 	}
 
-	const VkRenderPassBeginInfo rp_begin = {
+	const VkRenderPassBeginInfo renderPassBegin = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = nullptr,
 		.renderPass = vkRenderPass,
-		.framebuffer = vkFrameBuffer,
+		.framebuffer = usedFrameBuffer,
 		.renderArea = scissor,
 		.clearValueCount = 0,
 		.pClearValues = nullptr
 	};
-	vkCmdBeginRenderPass(context.command_buffers[context.command_buffer_current].draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand, &renderPassBegin, VK_SUBPASS_CONTENTS_INLINE);
 
 	//
 	AtomicOperations::increment(statistics.renderPasses);
 }
 
 inline void VKRenderer::endRenderPass(int contextIdx) {
-	auto& context = contexts[contextIdx];
-	if (context.render_pass_started == false) return;
-	context.render_pass_started = false;
-	vkCmdEndRenderPass(context.command_buffers[context.command_buffer_current].draw_cmd);
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.renderPassStarted == false) return;
+	currentContext.renderPassStarted = false;
+	vkCmdEndRenderPass(currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand);
 }
 
 void VKRenderer::initializeFrameBuffers() {
 	array<VkImageView, 2> attachments;
-	auto depthBufferIt = textures.find(depth_buffer_default);
+	auto depthBufferIt = textures.find(depthBufferDefault);
 	assert(depthBufferIt != textures.end());
 	attachments[1] = depthBufferIt->second->view;
 
-	const VkFramebufferCreateInfo fb_info = {
+	const VkFramebufferCreateInfo frameBufferCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.renderPass = render_pass,
+		.renderPass = renderPass,
 		.attachmentCount = 2,
 		.pAttachments = attachments.data(),
 		.width = width,
@@ -1507,11 +1498,11 @@ void VKRenderer::initializeFrameBuffers() {
 		.layers = 1
 	};
 
-	window_framebuffers.resize(swapchain_image_count);
+	windowFramebuffers.resize(swapchainImageCount);
 
-	for (auto i = 0; i < window_framebuffers.size(); i++) {
-		attachments[0] = swapchain_buffers[i].view;
-		auto err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
+	for (auto i = 0; i < windowFramebuffers.size(); i++) {
+		attachments[0] = swapchainBuffers[i].view;
+		auto err = vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &windowFramebuffers[i]);
 		assert(!err);
 	}
 }
@@ -1526,14 +1517,14 @@ void VKRenderer::reshape() {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + " x " + to_string(height));
 
 	// dispose old frame buffers
-	for (auto i = 0; i < window_framebuffers.size(); i++) vkDestroyFramebuffer(device, window_framebuffers[i], nullptr);
-	window_framebuffers.clear();
+	for (auto i = 0; i < windowFramebuffers.size(); i++) vkDestroyFramebuffer(device, windowFramebuffers[i], nullptr);
+	windowFramebuffers.clear();
 
 	// reinit swapchain, renderpass and framebuffers
 	initializeSwapChain();
 	initializeRenderPass();
 	initializeFrameBuffers();
-	current_buffer = 0;
+	currentFrameBuffer = 0;
 
 	//
 	Engine::getInstance()->reshape(width, height);
@@ -1563,14 +1554,14 @@ void VKRenderer::initializeFrame()
 		.flags = 0
 	};
 
-	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &image_acquired_semaphore);
+	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAcquiredSemaphore);
 	assert(!err);
 
-	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &draw_complete_semaphore);
+	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &drawCompleteSemaphore);
 	assert(!err);
 
 	// get the index of the next available swapchain image:
-	err = fpAcquireNextImageKHR(device, swapchain, UINT64_MAX, image_acquired_semaphore, (VkFence)0, &current_buffer);
+	err = fpAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAcquiredSemaphore, (VkFence)0, &currentFrameBuffer);
 
 	//
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -1578,17 +1569,17 @@ void VKRenderer::initializeFrame()
 		//
 		finishSetupCommandBuffers();
 		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
-		vkDestroySemaphore(device, image_acquired_semaphore, nullptr);
-		vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
+		vkDestroySemaphore(device, imageAcquiredSemaphore, nullptr);
+		vkDestroySemaphore(device, drawCompleteSemaphore, nullptr);
 
 		//
 		reshape();
 
 		// recreate semaphores
-		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &image_acquired_semaphore);
+		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAcquiredSemaphore);
 		assert(!err);
 
-		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &draw_complete_semaphore);
+		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &drawCompleteSemaphore);
 		assert(!err);
 	} else
 	if (err == VK_SUBOPTIMAL_KHR) {
@@ -1600,30 +1591,30 @@ void VKRenderer::initializeFrame()
 
 	//
 	for (auto i = 0; i < contexts.size(); i++) {
-		contexts[i].command_count = 0;
+		contexts[i].commandCount = 0;
 	}
 }
 
 void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 	// delete desc2 bound texture caches from programs with removed texture
 	for (auto& context: contexts) {
-		context.texture_vector[textureId] = nullptr;
-		for (auto program: programList) {
-			if (program == nullptr || program->contexts[context.idx].desc_sets2_cache_texture_ids.empty() == true) continue;
+		context.textureVector[textureId] = nullptr;
+		for (auto program: programVector) {
+			if (program == nullptr || program->contexts[context.idx].descriptorSets2CacheTextureIds.empty() == true) continue;
 			auto& programContext = program->contexts[context.idx];
-			auto& desc_sets2_cache_textureids = programContext.desc_sets2_cache_texture_ids;
-			auto desc_sets2_cache_textureids_it = desc_sets2_cache_textureids.find(textureId);
-			if (desc_sets2_cache_textureids_it != desc_sets2_cache_textureids.end()) {
-				auto& desc_sets2_cache = programContext.desc_sets2_cache;
-				for (auto& desc_sets2_cache_hash: desc_sets2_cache_textureids_it->second) {
-					auto desc_sets2_cache_hash_it = desc_sets2_cache.find(desc_sets2_cache_hash);
-					if (desc_sets2_cache_hash_it != desc_sets2_cache.end()) {
-						auto desc_sets2_idx = desc_sets2_cache_hash_it->second;
-						programContext.free_desc_sets2_ids.push_back(desc_sets2_idx);
-						desc_sets2_cache.erase(desc_sets2_cache_hash_it);
+			auto& descriptorSets2CacheTextureIds = programContext.descriptorSets2CacheTextureIds;
+			auto descriptorSets2CacheTextureIdsIt = descriptorSets2CacheTextureIds.find(textureId);
+			if (descriptorSets2CacheTextureIdsIt != descriptorSets2CacheTextureIds.end()) {
+				auto& descriptorSets2Cache = programContext.descriptorSets2Cache;
+				for (auto& descriptorSets2CacheHash: descriptorSets2CacheTextureIdsIt->second) {
+					auto descriptorSets2CacheHashIt = descriptorSets2Cache.find(descriptorSets2CacheHash);
+					if (descriptorSets2CacheHashIt != descriptorSets2Cache.end()) {
+						auto desc_sets2_idx = descriptorSets2CacheHashIt->second;
+						programContext.freeDescriptorSets2Ids.push_back(desc_sets2_idx);
+						descriptorSets2Cache.erase(descriptorSets2CacheHashIt);
 					}
 				}
-				desc_sets2_cache_textureids.erase(desc_sets2_cache_textureids_it);
+				descriptorSets2CacheTextureIds.erase(descriptorSets2CacheTextureIdsIt);
 			}
 		}
 	}
@@ -1640,26 +1631,26 @@ void VKRenderer::finishFrame()
 	for (auto& context: contexts) {
 		unsetPipeline(context.idx);
 		context.program = nullptr;
-		context.program_id = 0;
-		context.uniform_buffers.fill(nullptr);
+		context.programId = 0;
+		context.uniformBuffers.fill(nullptr);
 	}
 
 	array<ThsvsAccessType, 2> nextAccessTypes { THSVS_ACCESS_PRESENT, THSVS_ACCESS_NONE };
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout) {
+	if (swapchainBuffers[currentFrameBuffer].accessTypes != nextAccessTypes || swapchainBuffers[currentFrameBuffer].svsLayout != nextLayout) {
 		ThsvsImageBarrier svsImageBarrier = {
-			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
-			.pPrevAccesses = swapchain_buffers[current_buffer].access_types.data(),
+			.prevAccessCount = static_cast<uint32_t>(swapchainBuffers[currentFrameBuffer].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = swapchainBuffers[currentFrameBuffer].accessTypes.data(),
 			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 			.pNextAccesses = nextAccessTypes.data(),
-			.prevLayout = swapchain_buffers[current_buffer].svsLayout,
+			.prevLayout = swapchainBuffers[currentFrameBuffer].svsLayout,
 			.nextLayout = nextLayout,
 			.discardContents = false,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
-			.image = swapchain_buffers[current_buffer].image,
+			.image = swapchainBuffers[currentFrameBuffer].image,
 			.subresourceRange = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 				.baseMipLevel = 0,
@@ -1683,12 +1674,12 @@ void VKRenderer::finishFrame()
 
 		//
 		prepareSetupCommandBuffer(0);
-		vkCmdPipelineBarrier(contexts[0].setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
+		vkCmdPipelineBarrier(contexts[0].setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 		finishSetupCommandBuffer(0);
 
 		//
-		swapchain_buffers[current_buffer].access_types = nextAccessTypes;
-		swapchain_buffers[current_buffer].svsLayout = nextLayout;
+		swapchainBuffers[currentFrameBuffer].accessTypes = nextAccessTypes;
+		swapchainBuffers[currentFrameBuffer].svsLayout = nextLayout;
 	}
 
 	//
@@ -1699,7 +1690,7 @@ void VKRenderer::finishFrame()
 		.pWaitSemaphores = nullptr,
 		.swapchainCount = 1,
 		.pSwapchains = &swapchain,
-		.pImageIndices = &current_buffer
+		.pImageIndices = &currentFrameBuffer
 	};
 
 	VkResult err;
@@ -1717,19 +1708,19 @@ void VKRenderer::finishFrame()
 	}
 
 	//
-	vkDestroySemaphore(device, image_acquired_semaphore, nullptr);
-	vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
+	vkDestroySemaphore(device, imageAcquiredSemaphore, nullptr);
+	vkDestroySemaphore(device, drawCompleteSemaphore, nullptr);
 
 	// dispose renderer mapped resources
-	if (dispose_textures.empty() == false ||
-		dispose_buffers.empty() == false ||
-		delete_buffers.empty() == false ||
-		delete_images.empty() == false) {
-		delete_mutex.lock();
-		dispose_mutex.lock();
+	if (disposeTextures.empty() == false ||
+		disposeBuffers.empty() == false ||
+		deleteBuffers.empty() == false ||
+		deleteImages.empty() == false) {
+		deleteMutex.lock();
+		disposeMutex.lock();
 		// disposing textures
-		textures_rwlock.writeLock();
-		for (auto textureId: dispose_textures) {
+		texturesRWlock.writeLock();
+		for (auto textureId: disposeTextures) {
 			auto textureObjectIt = textures.find(textureId);
 			if (textureObjectIt == textures.end()) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
@@ -1737,31 +1728,31 @@ void VKRenderer::finishFrame()
 			}
 			auto texture = textureObjectIt->second;
 			// mark for deletion
-			delete_images.push_back(
+			deleteImages.push_back(
 				{
 					.image = texture->image,
 					.allocation = texture->allocation,
-					.image_view = texture->view,
+					.imageView = texture->view,
 					.sampler = texture->sampler
 				}
 			);
-			if (texture->cubemap_colorbuffer != nullptr) {
-				delete_images.push_back(
+			if (texture->cubemapColorBuffer != nullptr) {
+				deleteImages.push_back(
 					{
-						.image = texture->cubemap_colorbuffer->image,
-						.allocation = texture->cubemap_colorbuffer->allocation,
-						.image_view = texture->cubemap_colorbuffer->view,
-						.sampler = texture->cubemap_colorbuffer->sampler
+						.image = texture->cubemapColorBuffer->image,
+						.allocation = texture->cubemapColorBuffer->allocation,
+						.imageView = texture->cubemapColorBuffer->view,
+						.sampler = texture->cubemapColorBuffer->sampler
 					}
 				);
 			}
-			if (texture->cubemap_depthbuffer != nullptr) {
-				delete_images.push_back(
+			if (texture->cubemapDepthBuffer != nullptr) {
+				deleteImages.push_back(
 					{
-						.image = texture->cubemap_depthbuffer->image,
-						.allocation = texture->cubemap_depthbuffer->allocation,
-						.image_view = texture->cubemap_depthbuffer->view,
-						.sampler = texture->cubemap_depthbuffer->sampler
+						.image = texture->cubemapDepthBuffer->image,
+						.allocation = texture->cubemapDepthBuffer->allocation,
+						.imageView = texture->cubemapDepthBuffer->view,
+						.sampler = texture->cubemapDepthBuffer->sampler
 					}
 				);
 			}
@@ -1769,13 +1760,13 @@ void VKRenderer::finishFrame()
 			textures.erase(textureObjectIt);
 			delete texture;
 			removeTextureFromDescriptorCaches(textureId);
-			free_texture_ids.push_back(textureId);
+			freeTextureIds.push_back(textureId);
 		}
-		textures_rwlock.unlock();
-		dispose_textures.clear();
+		texturesRWlock.unlock();
+		disposeTextures.clear();
 		// disposing buffer objects
-		buffers_rwlock.writeLock();
-		for (auto bufferObjectId: dispose_buffers) {
+		buffersRWlock.writeLock();
+		for (auto bufferObjectId: disposeBuffers) {
 			auto bufferIt = buffers.find(bufferObjectId);
 			if (bufferIt == buffers.end()) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
@@ -1786,7 +1777,7 @@ void VKRenderer::finishFrame()
 				auto& reusableBuffer = reusableBufferIt;
 				if (reusableBuffer.size == 0) continue;
 				// mark staging buffer for deletion when finishing frame
-				delete_buffers.push_back(
+				deleteBuffers.push_back(
 					{
 						.buffer = reusableBuffer.buf,
 						.allocation = reusableBuffer.allocation
@@ -1795,41 +1786,41 @@ void VKRenderer::finishFrame()
 			}
 			buffers.erase(bufferIt);
 			delete buffer;
-			for (auto& context: contexts) context.buffer_vector[bufferObjectId] = nullptr;
-			free_buffer_ids.push_back(bufferObjectId);
+			for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
+			freeBufferIds.push_back(bufferObjectId);
 		}
-		buffers_rwlock.unlock();
-		dispose_buffers.clear();
-		dispose_mutex.unlock();
+		buffersRWlock.unlock();
+		disposeBuffers.clear();
+		disposeMutex.unlock();
 
 		// remove marked vulkan resources
 		//	buffers
-		for (auto& delete_buffer: delete_buffers) {
-			vmaUnmapMemory(allocator, delete_buffer.allocation);
-			vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
+		for (auto& deleteBuffer: deleteBuffers) {
+			vmaUnmapMemory(allocator, deleteBuffer.allocation);
+			vmaDestroyBuffer(allocator, deleteBuffer.buffer, deleteBuffer.allocation);
 		}
-		AtomicOperations::increment(statistics.disposedBuffers, delete_buffers.size());
-		delete_buffers.clear();
+		AtomicOperations::increment(statistics.disposedBuffers, deleteBuffers.size());
+		deleteBuffers.clear();
 		//	textures
-		for (auto& delete_image: delete_images) {
-			if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
-			if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
-			if (delete_image.image != VK_NULL_HANDLE) vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
+		for (auto& deleteImage: deleteImages) {
+			if (deleteImage.imageView != VK_NULL_HANDLE) vkDestroyImageView(device, deleteImage.imageView, nullptr);
+			if (deleteImage.sampler != VK_NULL_HANDLE) vkDestroySampler(device, deleteImage.sampler, nullptr);
+			if (deleteImage.image != VK_NULL_HANDLE) vmaDestroyImage(allocator, deleteImage.image, deleteImage.allocation);
 		}
-		AtomicOperations::increment(statistics.disposedTextures, delete_images.size());
-		delete_images.clear();
+		AtomicOperations::increment(statistics.disposedTextures, deleteImages.size());
+		deleteImages.clear();
 
 		//
-		delete_mutex.unlock();
+		deleteMutex.unlock();
 	}
 
 	// unbind bound resources
 	uint32_t bufferSize = 0;
 	for (auto& context: contexts) {
-		context.bound_indices_buffer = VK_NULL_HANDLE;
-		context.bound_buffers.fill(getBufferObjectInternal(empty_vertex_buffer, bufferSize));
-		context.bound_buffer_sizes.fill(bufferSize);
-		context.bound_textures.fill(context_type::bound_texture());
+		context.boundIndicesBuffer = VK_NULL_HANDLE;
+		context.boundBuffers.fill(getBufferObjectInternal(emptyVertexBuffer, bufferSize));
+		context.boundBufferSizes.fill(bufferSize);
+		context.boundTextures.fill(context_type::bound_texture());
 	}
 
 	//
@@ -1901,10 +1892,10 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
 
-	auto shaderPtr = new shader_type;
-	shaders[shader_idx] = shaderPtr;
+	auto shaderPtr = new shader_type();
+	shaders[shaderIdx] = shaderPtr;
 	auto& shader = *shaderPtr;
-	shader.id = shader_idx++;
+	shader.id = shaderIdx++;
 
 	//
 	VKGL3CoreShaderProgram::loadShader(shader, type, pathName, fileName, definitions, functions);
@@ -1914,79 +1905,79 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 }
 
 inline void VKRenderer::unsetPipeline(int contextIdx) {
-	auto& context = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 
 	//
-	context.pipeline_id = ID_NONE;
-	context.pipeline = VK_NULL_HANDLE;
+	currentContext.pipelineId = ID_NONE;
+	currentContext.pipeline = VK_NULL_HANDLE;
 }
 
-inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs) {
-	memset(&rs, 0, sizeof(rs));
-	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	rs.polygonMode = VK_POLYGON_MODE_FILL;
-	rs.cullMode = contexts[contextIdx].culling_enabled == true?cull_mode:VK_CULL_MODE_NONE;
-	rs.frontFace = (VkFrontFace)(contexts[contextIdx].front_face - 1);
-	rs.depthClampEnable = VK_FALSE;
-	rs.rasterizerDiscardEnable = VK_FALSE;
-	rs.depthBiasEnable = VK_FALSE;
-	rs.lineWidth = 1.0f;
+inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo) {
+	memset(&rasterizationStateCreateInfo, 0, sizeof(rasterizationStateCreateInfo));
+	rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizationStateCreateInfo.cullMode = contexts[contextIdx].cullingEnabled == true?cullMode:VK_CULL_MODE_NONE;
+	rasterizationStateCreateInfo.frontFace = (VkFrontFace)(contexts[contextIdx].frontFace - 1);
+	rasterizationStateCreateInfo.depthClampEnable = VK_FALSE;
+	rasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
+	rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
+	rasterizationStateCreateInfo.lineWidth = 1.0f;
 }
 
-inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blend_att_state) {
-	memset(&blend_att_state, 0, sizeof(blend_att_state));
-	blend_att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	blend_att_state.blendEnable = blending_mode != BLENDING_NONE?VK_TRUE:VK_FALSE;
-	blend_att_state.srcColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	blend_att_state.dstColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	blend_att_state.colorBlendOp = VK_BLEND_OP_ADD;
-	blend_att_state.srcAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
-	blend_att_state.dstAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
-	blend_att_state.alphaBlendOp = VK_BLEND_OP_ADD;
+inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blendAttachmentState) {
+	memset(&blendAttachmentState, 0, sizeof(blendAttachmentState));
+	blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	blendAttachmentState.blendEnable = blendingMode != BLENDING_NONE?VK_TRUE:VK_FALSE;
+	blendAttachmentState.srcColorBlendFactor = blendingMode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blendAttachmentState.dstColorBlendFactor = blendingMode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+	blendAttachmentState.srcAlphaBlendFactor = blendingMode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
+	blendAttachmentState.dstAlphaBlendFactor = blendingMode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 
-inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds) {
-	memset(&ds, 0, sizeof(ds));
-	ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	ds.depthTestEnable = depth_buffer_testing == true?VK_TRUE:VK_FALSE;
-	ds.depthWriteEnable = depth_buffer_writing == true?VK_TRUE:VK_FALSE;
-	ds.depthCompareOp = (VkCompareOp)depth_function;
-	ds.back.failOp = VK_STENCIL_OP_KEEP;
-	ds.back.passOp = VK_STENCIL_OP_KEEP;
-	ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
-	ds.stencilTestEnable = VK_FALSE;
-	ds.front = ds.back;
-	ds.depthBoundsTestEnable = VK_FALSE;
-	ds.minDepthBounds = 0.0f;
-	ds.maxDepthBounds = 1.0f;
+inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo) {
+	memset(&depthStencilStateCreateInfo, 0, sizeof(depthStencilStateCreateInfo));
+	depthStencilStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencilStateCreateInfo.depthTestEnable = depthBufferTesting == true?VK_TRUE:VK_FALSE;
+	depthStencilStateCreateInfo.depthWriteEnable = depthBufferWriting == true?VK_TRUE:VK_FALSE;
+	depthStencilStateCreateInfo.depthCompareOp = (VkCompareOp)depthFunction;
+	depthStencilStateCreateInfo.back.failOp = VK_STENCIL_OP_KEEP;
+	depthStencilStateCreateInfo.back.passOp = VK_STENCIL_OP_KEEP;
+	depthStencilStateCreateInfo.back.compareOp = VK_COMPARE_OP_ALWAYS;
+	depthStencilStateCreateInfo.stencilTestEnable = VK_FALSE;
+	depthStencilStateCreateInfo.front = depthStencilStateCreateInfo.back;
+	depthStencilStateCreateInfo.depthBoundsTestEnable = VK_FALSE;
+	depthStencilStateCreateInfo.minDepthBounds = 0.0f;
+	depthStencilStateCreateInfo.maxDepthBounds = 1.0f;
 }
 
 inline uint32_t VKRenderer::createPipelineId(program_type* program, int contextIdx) {
 	return
 		(program->id & 0xff) +
-		((bound_frame_buffer & 0xff) << 8) +
-		((contexts[contextIdx].front_face_index & 0x1) << 16) +
-		((cull_mode & 0x3) << 17) +
-		((blending_mode & 0x3) << 19) +
-		((depth_buffer_testing & 0x1) << 21) +
-		((depth_buffer_writing & 0x1) << 22) +
-		((depth_function & 0x7) << 23);
+		((boundFrameBuffer & 0xff) << 8) +
+		((contexts[contextIdx].frontFaceIndex & 0x1) << 16) +
+		((cullMode & 0x3) << 17) +
+		((blendingMode & 0x3) << 19) +
+		((depthBufferTesting & 0x1) << 21) +
+		((depthBufferWriting & 0x1) << 22) +
+		((depthFunction & 0x7) << 23);
 }
 
 void VKRenderer::createRenderProgram(program_type* program) {
 	VkResult err;
-	VkDescriptorSetLayoutBinding layout_bindings1[program->layout_bindings];
-	VkDescriptorSetLayoutBinding layout_bindings2[program->layout_bindings];
-	memset(layout_bindings1, 0, sizeof(layout_bindings1));
-	memset(layout_bindings2, 0, sizeof(layout_bindings2));
+	VkDescriptorSetLayoutBinding layoutBindings1[program->layoutBindings];
+	VkDescriptorSetLayoutBinding layoutBindings2[program->layoutBindings];
+	memset(layoutBindings1, 0, sizeof(layoutBindings1));
+	memset(layoutBindings2, 0, sizeof(layoutBindings2));
 
 	// ubos, samplers
 	auto samplerIdx = 0;
 	auto uboIdx = 0;
 	for (auto shader: program->shaders) {
-		if (shader->ubo_binding_idx != -1) {
-			layout_bindings1[uboIdx++] = {
-				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
+		if (shader->uboBindingIdx != -1) {
+			layoutBindings1[uboIdx++] = {
+				.binding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
@@ -1995,7 +1986,7 @@ void VKRenderer::createRenderProgram(program_type* program) {
 		}
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			layout_bindings2[samplerIdx++] = {
+			layoutBindings2[samplerIdx++] = {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				.descriptorCount = 1,
@@ -2006,119 +1997,119 @@ void VKRenderer::createRenderProgram(program_type* program) {
 	}
 
 	{
-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.bindingCount = static_cast<uint32_t>(uboIdx),
-			.pBindings = layout_bindings1,
+			.pBindings = layoutBindings1,
 		};
-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout1);
+		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->descriptorSetLayout1);
 		assert(!err);
 	}
 	{
-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.bindingCount = static_cast<uint32_t>(samplerIdx),
-			.pBindings = layout_bindings2,
+			.pBindings = layoutBindings2,
 		};
-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout2);
+		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->descriptorSetLayout2);
 		assert(!err);
 	}
 
 	//
-	array<VkDescriptorSetLayout, 2> desc_layouts { program->desc_layout1, program->desc_layout2 };
-	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+	array<VkDescriptorSetLayout, 2> descriptorSetLayouts { program->descriptorSetLayout1, program->descriptorSetLayout2 };
+	const VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.setLayoutCount = desc_layouts.size(),
-		.pSetLayouts = desc_layouts.data()
+		.setLayoutCount = descriptorSetLayouts.size(),
+		.pSetLayouts = descriptorSetLayouts.data()
 	};
 
 	//
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts1;
-		desc_layouts1.fill(program->desc_layout1);
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> descriptorSetLayouts1;
+		descriptorSetLayouts1.fill(program->descriptorSetLayout1);
 		//
-		VkDescriptorSetAllocateInfo alloc_info = {
+		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = desc_pool1,
+			.descriptorPool = descriptorPool1,
 			.descriptorSetCount = DESC_MAX_UNCACHED,
-			.pSetLayouts = desc_layouts1.data()
+			.pSetLayouts = descriptorSetLayouts1.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets1.data());
+			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].descriptorSets1.data());
 			assert(!err);
 		}
 	}
 
 	//
 	if (program->type == PROGRAM_OBJECTS) {
-		array<VkDescriptorSetLayout, DESC_MAX_CACHED> desc_layouts2;
-		desc_layouts2.fill(program->desc_layout2);
+		array<VkDescriptorSetLayout, DESC_MAX_CACHED> descriptorSetLayouts2;
+		descriptorSetLayouts2.fill(program->descriptorSetLayout2);
 		//
-		VkDescriptorSetAllocateInfo alloc_info = {
+		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = desc_pool2,
+			.descriptorPool = descriptorPool2,
 			.descriptorSetCount = DESC_MAX_CACHED,
-			.pSetLayouts = desc_layouts2.data()
+			.pSetLayouts = descriptorSetLayouts2.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].desc_sets2.data());
+			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].descriptorSets2.data());
 			assert(!err);
 		}
 	}
 
 	//
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts2;
-		desc_layouts2.fill(program->desc_layout2);
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> descriptorSetLayouts2;
+		descriptorSetLayouts2.fill(program->descriptorSetLayout2);
 		//
-		VkDescriptorSetAllocateInfo alloc_info = {
+		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = desc_pool2,
+			.descriptorPool = descriptorPool2,
 			.descriptorSetCount = DESC_MAX_UNCACHED,
-			.pSetLayouts = desc_layouts2.data()
+			.pSetLayouts = descriptorSetLayouts2.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets2_uncached.data());
+			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].descriptorSets2Uncached.data());
 			assert(!err);
 		}
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &program->pipelineLayout);
 	assert(!err);
 }
 
 VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	auto& currentContext = contexts[contextIdx];
+	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
 	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[context.pipeline_id] = programPipelinePtr;
+	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
-	programPipeline.id = context.pipeline_id;
+	programPipeline.id = currentContext.pipelineId;
 
-	VkRenderPass renderPass = render_pass;
+	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
-			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
+			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
-			renderPass = frameBuffer->render_pass;
+			usedRenderPass = frameBuffer->renderPass;
 		}
 	}
 
@@ -2141,8 +2132,8 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 2> dynamicStateEnables;
-	VkPipelineDynamicStateCreateInfo dynamicState;
+	array<VkDynamicState, 2> dse;
+	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
@@ -2160,166 +2151,166 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 		shaderIdx++;
 	}
 
-	memset(dynamicStateEnables.data(), 0, sizeof(VkDynamicState) * dynamicStateEnables.size());
-	memset(&dynamicState, 0, sizeof dynamicState);
-	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables.data();
+	memset(dse.data(), 0, sizeof(VkDynamicState) * dse.size());
+	memset(&dsc, 0, sizeof dsc);
+	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dsc.pDynamicStates = dse.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
-	pipeline.layout = program->pipeline_layout;
+	pipeline.layout = program->pipelineLayout;
 
 	memset(&ia, 0, sizeof(ia));
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
-	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	array<VkPipelineColorBlendAttachmentState, 8> bas;
 	if (haveColorBuffer == true) {
-		createColorBlendAttachmentState(blend_att_state[0]);
+		createColorBlendAttachmentState(bas[0]);
 	} else
 	if (haveGeometryBuffer == true) {
 		for (auto i = 0; i < 8; i++) {
-			createColorBlendAttachmentState(blend_att_state[i]);
+			createColorBlendAttachmentState(bas[i]);
 		}
 	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
 	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
-	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?bas.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
 	vp.scissorCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	array<VkVertexInputBindingDescription, 10> vi_bindings;
-	memset(vi_bindings.data(), 0, sizeof(VkVertexInputBindingDescription) * vi_bindings.size());
-	array<VkVertexInputAttributeDescription, 13> vi_attrs;
-	memset(vi_attrs.data(), 0, sizeof(VkVertexInputAttributeDescription) * vi_attrs.size());
+	array<VkVertexInputBindingDescription, 10> vb;
+	memset(vb.data(), 0, sizeof(VkVertexInputBindingDescription) * vb.size());
+	array<VkVertexInputAttributeDescription, 13> va;
+	memset(va.data(), 0, sizeof(VkVertexInputAttributeDescription) * va.size());
 
 	// vertices
-	vi_bindings[0].binding = 0;
-	vi_bindings[0].stride = sizeof(float) * 3;
-	vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[0].binding = 0;
-	vi_attrs[0].location = 0;
-	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[0].offset = 0;
+	vb[0].binding = 0;
+	vb[0].stride = sizeof(float) * 3;
+	vb[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[0].binding = 0;
+	va[0].location = 0;
+	va[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[0].offset = 0;
 
 	// normals
-	vi_bindings[1].binding = 1;
-	vi_bindings[1].stride = sizeof(float) * 3;
-	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[1].binding = 1;
-	vi_attrs[1].location = 1;
-	vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[1].offset = 0;
+	vb[1].binding = 1;
+	vb[1].stride = sizeof(float) * 3;
+	vb[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[1].binding = 1;
+	va[1].location = 1;
+	va[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[1].offset = 0;
 
 	// texture coordinates
-	vi_bindings[2].binding = 2;
-	vi_bindings[2].stride = sizeof(float) * 2;
-	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[2].binding = 2;
-	vi_attrs[2].location = 2;
-	vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
-	vi_attrs[2].offset = 0;
+	vb[2].binding = 2;
+	vb[2].stride = sizeof(float) * 2;
+	vb[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[2].binding = 2;
+	va[2].location = 2;
+	va[2].format = VK_FORMAT_R32G32_SFLOAT;
+	va[2].offset = 0;
 
 	// colors
-	vi_bindings[3].binding = 3;
-	vi_bindings[3].stride = sizeof(float) * 4;
-	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[3].binding = 3;
-	vi_attrs[3].location = 3;
-	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[3].offset = 0;
+	vb[3].binding = 3;
+	vb[3].stride = sizeof(float) * 4;
+	vb[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[3].binding = 3;
+	va[3].location = 3;
+	va[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[3].offset = 0;
 
 	// tangents
-	vi_bindings[4].binding = 4;
-	vi_bindings[4].stride = sizeof(float) * 3;
-	vi_bindings[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[4].binding = 4;
-	vi_attrs[4].location = 4;
-	vi_attrs[4].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[4].offset = 0;
+	vb[4].binding = 4;
+	vb[4].stride = sizeof(float) * 3;
+	vb[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[4].binding = 4;
+	va[4].location = 4;
+	va[4].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[4].offset = 0;
 
 	// bitangents
-	vi_bindings[5].binding = 5;
-	vi_bindings[5].stride = sizeof(float) * 3;
-	vi_bindings[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[5].binding = 5;
-	vi_attrs[5].location = 5;
-	vi_attrs[5].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[5].offset = 0;
+	vb[5].binding = 5;
+	vb[5].stride = sizeof(float) * 3;
+	vb[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[5].binding = 5;
+	va[5].location = 5;
+	va[5].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[5].offset = 0;
 
 	// model matrices 1
-	vi_bindings[6].binding = 6;
-	vi_bindings[6].stride = sizeof(float) * 4 * 4;
-	vi_bindings[6].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
-	vi_attrs[6].binding = 6;
-	vi_attrs[6].location = 6;
-	vi_attrs[6].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[6].offset = sizeof(float) * 4 * 0;
+	vb[6].binding = 6;
+	vb[6].stride = sizeof(float) * 4 * 4;
+	vb[6].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+	va[6].binding = 6;
+	va[6].location = 6;
+	va[6].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[6].offset = sizeof(float) * 4 * 0;
 
 	// model matrices 2
-	vi_attrs[7].binding = 6;
-	vi_attrs[7].location = 7;
-	vi_attrs[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[7].offset = sizeof(float) * 4 * 1;
+	va[7].binding = 6;
+	va[7].location = 7;
+	va[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[7].offset = sizeof(float) * 4 * 1;
 
 	// model matrices 3
-	vi_attrs[8].binding = 6;
-	vi_attrs[8].location = 8;
-	vi_attrs[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[8].offset = sizeof(float) * 4 * 2;
+	va[8].binding = 6;
+	va[8].location = 8;
+	va[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[8].offset = sizeof(float) * 4 * 2;
 
 	// model matrices 4
-	vi_attrs[9].binding = 6;
-	vi_attrs[9].location = 9;
-	vi_attrs[9].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[9].offset = sizeof(float) * 4 * 3;
+	va[9].binding = 6;
+	va[9].location = 9;
+	va[9].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[9].offset = sizeof(float) * 4 * 3;
 
 	// effect color mul
-	vi_bindings[7].binding = 7;
-	vi_bindings[7].stride = sizeof(float) * 4;
-	vi_bindings[7].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
-	vi_attrs[10].binding = 7;
-	vi_attrs[10].location = 10;
-	vi_attrs[10].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[10].offset = 0;
+	vb[7].binding = 7;
+	vb[7].stride = sizeof(float) * 4;
+	vb[7].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+	va[10].binding = 7;
+	va[10].location = 10;
+	va[10].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[10].offset = 0;
 
 	// effect color add
-	vi_bindings[8].binding = 8;
-	vi_bindings[8].stride = sizeof(float) * 4;
-	vi_bindings[8].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
-	vi_attrs[11].binding = 8;
-	vi_attrs[11].location = 11;
-	vi_attrs[11].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[11].offset = 0;
+	vb[8].binding = 8;
+	vb[8].stride = sizeof(float) * 4;
+	vb[8].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+	va[11].binding = 8;
+	va[11].location = 11;
+	va[11].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[11].offset = 0;
 
 	// origins
-	vi_bindings[9].binding = 9;
-	vi_bindings[9].stride = sizeof(float) * 3;
-	vi_bindings[9].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[12].binding = 9;
-	vi_attrs[12].location = 12;
-	vi_attrs[12].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[12].offset = 0;
+	vb[9].binding = 9;
+	vb[9].stride = sizeof(float) * 3;
+	vb[9].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[12].binding = 9;
+	va[12].location = 12;
+	va[12].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[12].offset = 0;
 
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = vi_bindings.size();
-	vi.pVertexBindingDescriptions = vi_bindings.data();
-	vi.vertexAttributeDescriptionCount = vi_attrs.size();
-	vi.pVertexAttributeDescriptions = vi_attrs.data();
+	vi.vertexBindingDescriptionCount = vb.size();
+	vi.pVertexBindingDescriptions = vb.data();
+	vi.vertexAttributeDescriptionCount = va.size();
+	vi.pVertexAttributeDescriptions = va.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -2329,8 +2320,8 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
-	pipeline.renderPass = renderPass;
-	pipeline.pDynamicState = &dynamicState;
+	pipeline.renderPass = usedRenderPass;
+	pipeline.pDynamicState = &dsc;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2350,48 +2341,48 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 
 inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
-	if (context.pipeline_id == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
-		if (context.pipeline_id == ID_NONE) context.pipeline_id = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, context.pipeline_id);
+	if (context.pipelineId == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
+		if (context.pipelineId == ID_NONE) context.pipelineId = createPipelineId(program, contextIdx);
+		auto pipeline = getPipelineInternal(contextIdx, program, context.pipelineId);
 		if (pipeline == nullptr) {
-			pipeline_rwlock.writeLock();
+			pipelineRWlock.writeLock();
 			pipeline = createObjectsRenderingPipeline(contextIdx, program);
-			pipeline_rwlock.unlock();
+			pipelineRWlock.unlock();
 		}
 
 		//
 		if (pipeline->pipeline != context.pipeline) {
-			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
-			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
+			auto& commandBuffer = context.commandBuffers[context.currentCommandBuffer];
+			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
 			context.pipeline = pipeline->pipeline;
 		}
 	}
 }
 
 VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	auto& currentContext = contexts[contextIdx];
+	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
 	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[context.pipeline_id] = programPipelinePtr;
+	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
-	programPipeline.id = context.pipeline_id;
+	programPipeline.id = currentContext.pipelineId;
 
-	VkRenderPass renderPass = render_pass;
+	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
-			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
+			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
-			renderPass = frameBuffer->render_pass;
+			usedRenderPass = frameBuffer->renderPass;
 		}
 	}
 
@@ -2428,146 +2419,146 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 2> dynamicStateEnables;
-	VkPipelineDynamicStateCreateInfo dynamicState;
+	array<VkDynamicState, 2> dse;
+	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
 
-	memset(dynamicStateEnables.data(), 0, sizeof(VkDynamicState) * dynamicStateEnables.size());
-	memset(&dynamicState, 0, sizeof dynamicState);
-	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables.data();
+	memset(dse.data(), 0, sizeof(VkDynamicState) * dse.size());
+	memset(&dsc, 0, sizeof dsc);
+	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dsc.pDynamicStates = dse.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
-	pipeline.layout = program->pipeline_layout;
+	pipeline.layout = program->pipelineLayout;
 
 	memset(&ia, 0, sizeof(ia));
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 
-	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	array<VkPipelineColorBlendAttachmentState, 8> bas;
 	if (haveColorBuffer == true) {
-		createColorBlendAttachmentState(blend_att_state[0]);
+		createColorBlendAttachmentState(bas[0]);
 	} else
 	if (haveGeometryBuffer == true) {
 		for (auto i = 0; i < 8; i++) {
-			createColorBlendAttachmentState(blend_att_state[i]);
+			createColorBlendAttachmentState(bas[i]);
 		}
 	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
 	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
-	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?bas.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
 	vp.scissorCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	array<VkVertexInputBindingDescription, 9> vi_bindings;
-	memset(vi_bindings.data(), 0, vi_bindings.size() * sizeof(VkVertexInputBindingDescription));
-	array<VkVertexInputAttributeDescription, 9> vi_attrs;
-	memset(vi_attrs.data(), 0, vi_attrs.size() * sizeof(VkVertexInputAttributeDescription));
+	array<VkVertexInputBindingDescription, 9> vb;
+	memset(vb.data(), 0, vb.size() * sizeof(VkVertexInputBindingDescription));
+	array<VkVertexInputAttributeDescription, 9> va;
+	memset(va.data(), 0, va.size() * sizeof(VkVertexInputAttributeDescription));
 
 	// vertices
-	vi_bindings[0].binding = 0;
-	vi_bindings[0].stride = sizeof(float) * 3;
-	vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[0].binding = 0;
-	vi_attrs[0].location = 0;
-	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[0].offset = 0;
+	vb[0].binding = 0;
+	vb[0].stride = sizeof(float) * 3;
+	vb[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[0].binding = 0;
+	va[0].location = 0;
+	va[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[0].offset = 0;
 
 	// texture + sprite indices
-	vi_bindings[1].binding = 1;
-	vi_bindings[1].stride = sizeof(uint16_t) * 2;
-	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[1].binding = 1;
-	vi_attrs[1].location = 1;
-	vi_attrs[1].format = VK_FORMAT_R16G16_UINT;
-	vi_attrs[1].offset = 0;
+	vb[1].binding = 1;
+	vb[1].stride = sizeof(uint16_t) * 2;
+	vb[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[1].binding = 1;
+	va[1].location = 1;
+	va[1].format = VK_FORMAT_R16G16_UINT;
+	va[1].offset = 0;
 
 	// not in use
-	vi_bindings[2].binding = 2;
-	vi_bindings[2].stride = sizeof(float);
-	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[2].binding = 2;
-	vi_attrs[2].location = 2;
-	vi_attrs[2].format = VK_FORMAT_R32_SFLOAT;
-	vi_attrs[2].offset = 0;
+	vb[2].binding = 2;
+	vb[2].stride = sizeof(float);
+	vb[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[2].binding = 2;
+	va[2].location = 2;
+	va[2].format = VK_FORMAT_R32_SFLOAT;
+	va[2].offset = 0;
 
 	// colors
-	vi_bindings[3].binding = 3;
-	vi_bindings[3].stride = sizeof(float) * 4;
-	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[3].binding = 3;
-	vi_attrs[3].location = 3;
-	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[3].offset = 0;
+	vb[3].binding = 3;
+	vb[3].stride = sizeof(float) * 4;
+	vb[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[3].binding = 3;
+	va[3].location = 3;
+	va[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[3].offset = 0;
 
 	// not in use
-	vi_bindings[4].binding = 4;
-	vi_bindings[4].stride = sizeof(float);
-	vi_bindings[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[4].binding = 4;
-	vi_attrs[4].location = 4;
-	vi_attrs[4].format = VK_FORMAT_R32_SFLOAT;
-	vi_attrs[4].offset = 0;
+	vb[4].binding = 4;
+	vb[4].stride = sizeof(float);
+	vb[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[4].binding = 4;
+	va[4].location = 4;
+	va[4].format = VK_FORMAT_R32_SFLOAT;
+	va[4].offset = 0;
 
 	// point size
-	vi_bindings[5].binding = 5;
-	vi_bindings[5].stride = sizeof(float);
-	vi_bindings[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[5].binding = 5;
-	vi_attrs[5].location = 5;
-	vi_attrs[5].format = VK_FORMAT_R32_SFLOAT;
-	vi_attrs[5].offset = 0;
+	vb[5].binding = 5;
+	vb[5].stride = sizeof(float);
+	vb[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[5].binding = 5;
+	va[5].location = 5;
+	va[5].format = VK_FORMAT_R32_SFLOAT;
+	va[5].offset = 0;
 
 	// sprite sheet dimension
-	vi_bindings[6].binding = 6;
-	vi_bindings[6].stride = sizeof(uint16_t) * 2;
-	vi_bindings[6].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[6].binding = 6;
-	vi_attrs[6].location = 6;
-	vi_attrs[6].format = VK_FORMAT_R16G16_UINT;
-	vi_attrs[6].offset = 0;
+	vb[6].binding = 6;
+	vb[6].stride = sizeof(uint16_t) * 2;
+	vb[6].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[6].binding = 6;
+	va[6].location = 6;
+	va[6].format = VK_FORMAT_R16G16_UINT;
+	va[6].offset = 0;
 
 	// effect color mul
-	vi_bindings[7].binding = 7;
-	vi_bindings[7].stride = sizeof(float) * 4;
-	vi_bindings[7].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[7].binding = 7;
-	vi_attrs[7].location = 10;
-	vi_attrs[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[7].offset = 0;
+	vb[7].binding = 7;
+	vb[7].stride = sizeof(float) * 4;
+	vb[7].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[7].binding = 7;
+	va[7].location = 10;
+	va[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[7].offset = 0;
 
 	// effect color add
-	vi_bindings[8].binding = 8;
-	vi_bindings[8].stride = sizeof(float) * 4;
-	vi_bindings[8].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[8].binding = 8;
-	vi_attrs[8].location = 11;
-	vi_attrs[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[8].offset = 0;
+	vb[8].binding = 8;
+	vb[8].stride = sizeof(float) * 4;
+	vb[8].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[8].binding = 8;
+	va[8].location = 11;
+	va[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[8].offset = 0;
 
 	//
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = vi_bindings.size();
-	vi.pVertexBindingDescriptions = vi_bindings.data();
-	vi.vertexAttributeDescriptionCount = vi_attrs.size();
-	vi.pVertexAttributeDescriptions = vi_attrs.data();
+	vi.vertexBindingDescriptionCount = vb.size();
+	vi.pVertexBindingDescriptions = vb.data();
+	vi.vertexAttributeDescriptionCount = va.size();
+	vi.pVertexAttributeDescriptions = va.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -2577,8 +2568,8 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
-	pipeline.renderPass = renderPass;
-	pipeline.pDynamicState = &dynamicState;
+	pipeline.renderPass = usedRenderPass;
+	pipeline.pDynamicState = &dsc;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2597,49 +2588,49 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 }
 
 inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	if (context.pipeline_id == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
-		if (context.pipeline_id == ID_NONE) context.pipeline_id = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, context.pipeline_id);
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
+		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
+		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
 		if (pipeline == nullptr) {
-			pipeline_rwlock.writeLock();
+			pipelineRWlock.writeLock();
 			pipeline = createPointsRenderingPipeline(contextIdx, program);
-			pipeline_rwlock.unlock();
+			pipelineRWlock.unlock();
 		}
 
 		//
-		if (pipeline->pipeline != context.pipeline) {
-			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
-			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
-			context.pipeline = pipeline->pipeline;
+		if (pipeline->pipeline != currentContext.pipeline) {
+			auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
+			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
+			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
 }
 
 VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	auto& currentContext = contexts[contextIdx];
+	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
 	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[context.pipeline_id] = programPipelinePtr;
+	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
-	programPipeline.id = context.pipeline_id;
+	programPipeline.id = currentContext.pipelineId;
 
-	VkRenderPass renderPass = render_pass;
+	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
-			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
+			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
+			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
-			renderPass = frameBuffer->render_pass;
+			usedRenderPass = frameBuffer->renderPass;
 		}
 	}
 
@@ -2675,103 +2666,103 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 3> dynamicStateEnables;
-	VkPipelineDynamicStateCreateInfo dynamicState;
+	array<VkDynamicState, 3> dse;
+	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
 
-	memset(dynamicStateEnables.data(), 0, dynamicStateEnables.size() * sizeof(VkDynamicState));
-	memset(&dynamicState, 0, sizeof dynamicState);
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_LINE_WIDTH;
-	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.pDynamicStates = dynamicStateEnables.data();
+	memset(dse.data(), 0, dse.size() * sizeof(VkDynamicState));
+	memset(&dsc, 0, sizeof dsc);
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_LINE_WIDTH;
+	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dsc.pDynamicStates = dse.data();
 
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
-	pipeline.layout = program->pipeline_layout;
+	pipeline.layout = program->pipelineLayout;
 
 	memset(&ia, 0, sizeof(ia));
 	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	ia.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 
-	array<VkPipelineColorBlendAttachmentState, 8> blend_att_state;
+	array<VkPipelineColorBlendAttachmentState, 8> bas;
 	if (haveColorBuffer == true) {
-		createColorBlendAttachmentState(blend_att_state[0]);
+		createColorBlendAttachmentState(bas[0]);
 	} else
 	if (haveGeometryBuffer == true) {
 		for (auto i = 0; i < 8; i++) {
-			createColorBlendAttachmentState(blend_att_state[i]);
+			createColorBlendAttachmentState(bas[i]);
 		}
 	}
 	memset(&cb, 0, sizeof(cb));
 	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	cb.logicOpEnable = VK_FALSE;
 	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
-	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?blend_att_state.data():nullptr;
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?bas.data():nullptr;
 
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
 	vp.scissorCount = 1;
-	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	ms.pSampleMask = nullptr;
 	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	array<VkVertexInputBindingDescription, 4> vi_bindings;
-	memset(vi_bindings.data(), 0, vi_bindings.size() * sizeof(VkVertexInputBindingDescription));
-	array<VkVertexInputAttributeDescription, 4> vi_attrs;
-	memset(vi_attrs.data(), 0, vi_attrs.size() * sizeof(VkVertexInputAttributeDescription));
+	array<VkVertexInputBindingDescription, 4> vb;
+	memset(vb.data(), 0, vb.size() * sizeof(VkVertexInputBindingDescription));
+	array<VkVertexInputAttributeDescription, 4> va;
+	memset(va.data(), 0, va.size() * sizeof(VkVertexInputAttributeDescription));
 
 	// vertices
-	vi_bindings[0].binding = 0;
-	vi_bindings[0].stride = sizeof(float) * 3;
-	vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[0].binding = 0;
-	vi_attrs[0].location = 0;
-	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[0].offset = 0;
+	vb[0].binding = 0;
+	vb[0].stride = sizeof(float) * 3;
+	vb[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[0].binding = 0;
+	va[0].location = 0;
+	va[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[0].offset = 0;
 
 	// normals
-	vi_bindings[1].binding = 1;
-	vi_bindings[1].stride = sizeof(float) * 3;
-	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[1].binding = 1;
-	vi_attrs[1].location = 1;
-	vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[1].offset = 0;
+	vb[1].binding = 1;
+	vb[1].stride = sizeof(float) * 3;
+	vb[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[1].binding = 1;
+	va[1].location = 1;
+	va[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[1].offset = 0;
 
 	// texture coordinates
-	vi_bindings[2].binding = 2;
-	vi_bindings[2].stride = sizeof(float) * 2;
-	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[2].binding = 2;
-	vi_attrs[2].location = 2;
-	vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
-	vi_attrs[2].offset = 0;
+	vb[2].binding = 2;
+	vb[2].stride = sizeof(float) * 2;
+	vb[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[2].binding = 2;
+	va[2].location = 2;
+	va[2].format = VK_FORMAT_R32G32_SFLOAT;
+	va[2].offset = 0;
 
 	// colors
-	vi_bindings[3].binding = 3;
-	vi_bindings[3].stride = sizeof(float) * 4;
-	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[3].binding = 3;
-	vi_attrs[3].location = 3;
-	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[3].offset = 0;
+	vb[3].binding = 3;
+	vb[3].stride = sizeof(float) * 4;
+	vb[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[3].binding = 3;
+	va[3].location = 3;
+	va[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[3].offset = 0;
 
 
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = nullptr;
-	vi.vertexBindingDescriptionCount = vi_bindings.size();
-	vi.pVertexBindingDescriptions = vi_bindings.data();
-	vi.vertexAttributeDescriptionCount = vi_attrs.size();
-	vi.pVertexAttributeDescriptions = vi_attrs.data();
+	vi.vertexBindingDescriptionCount = vb.size();
+	vi.pVertexBindingDescriptions = vb.data();
+	vi.vertexAttributeDescriptionCount = va.size();
+	vi.pVertexAttributeDescriptions = va.data();
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -2781,8 +2772,8 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	pipeline.pViewportState = &vp;
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
-	pipeline.renderPass = renderPass;
-	pipeline.pDynamicState = &dynamicState;
+	pipeline.renderPass = usedRenderPass;
+	pipeline.pDynamicState = &dsc;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2801,23 +2792,23 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 }
 
 inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	if (context.pipeline_id == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
-		if (context.pipeline_id == ID_NONE) context.pipeline_id = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, context.pipeline_id);
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
+		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
+		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
 		if (pipeline == nullptr) {
-			pipeline_rwlock.writeLock();
+			pipelineRWlock.writeLock();
 			pipeline = createLinesRenderingPipeline(contextIdx, program);
-			pipeline_rwlock.unlock();
+			pipelineRWlock.unlock();
 		}
 
 		//
-		if (pipeline->pipeline != context.pipeline) {
-			auto& commandBuffer = context.command_buffers[context.command_buffer_current];
-			vkCmdBindPipeline(commandBuffer.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.draw_cmd, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.draw_cmd, 0, 1, &scissor);
-			context.pipeline = pipeline->pipeline;
+		if (pipeline->pipeline != currentContext.pipeline) {
+			auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
+			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
+			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
+			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
 }
@@ -2831,8 +2822,8 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	programPipeline.id = 1;
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings1[program->layout_bindings];
-	memset(layout_bindings1, 0, sizeof(layout_bindings1));
+	VkDescriptorSetLayoutBinding layoutBindings1[program->layoutBindings];
+	memset(layoutBindings1, 0, sizeof(layoutBindings1));
 
 	// Stages
 	vector<VkPipelineShaderStageCreateInfo> shaderStages(program->shaders.size());
@@ -2845,8 +2836,8 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		shaderStages[shaderIdx].module = shader->module;
 		shaderStages[shaderIdx].pName = "main";
 
-		for (int i = 0; i <= shader->binding_max; i++) {
-			layout_bindings1[i] = {
+		for (int i = 0; i <= shader->maxBindings; i++) {
+			layoutBindings1[i] = {
 				.binding = static_cast<uint32_t>(i),
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = 1,
@@ -2855,9 +2846,9 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 			};
 		}
 
-		if (shader->ubo_binding_idx != -1) {
-			layout_bindings1[shader->ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
+		if (shader->uboBindingIdx != -1) {
+			layoutBindings1[shader->uboBindingIdx] = {
+				.binding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
@@ -2866,15 +2857,15 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		}
 		shaderIdx++;
 	}
-	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+	const VkDescriptorSetLayoutCreateInfo descriptorSetlayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.bindingCount = program->layout_bindings,
-		.pBindings = layout_bindings1,
+		.bindingCount = program->layoutBindings,
+		.pBindings = layoutBindings1,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout1);
+	err = vkCreateDescriptorSetLayout(device, &descriptorSetlayoutCreateInfo, nullptr, &program->descriptorSetLayout1);
 	assert(!err);
 
 	//
@@ -2883,29 +2874,29 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program->desc_layout1
+		.pSetLayouts = &program->descriptorSetLayout1
 	};
 
 	//
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> desc_layouts1;
-		desc_layouts1.fill(program->desc_layout1);
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> descriptorSetLayouts1;
+		descriptorSetLayouts1.fill(program->descriptorSetLayout1);
 		//
-		VkDescriptorSetAllocateInfo alloc_info = {
+		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = desc_pool1,
+			.descriptorPool = descriptorPool1,
 			.descriptorSetCount = DESC_MAX_UNCACHED,
-			.pSetLayouts = desc_layouts1.data()
+			.pSetLayouts = descriptorSetLayouts1.data()
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program->contexts[context.idx].command_buffers[i].desc_sets1.data());
+			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].descriptorSets1.data());
 			assert(!err);
 		}
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipelineLayout);
 	assert(!err);
 
 	// create pipepine
@@ -2927,7 +2918,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		.pNext = nullptr,
 		.flags = 0,
 		.stage = shaderStages[0],
-		.layout = program->pipeline_layout,
+		.layout = program->pipelineLayout,
 		.basePipelineHandle = nullptr,
 		.basePipelineIndex = 0
 	};
@@ -2945,35 +2936,35 @@ inline VKRenderer::pipeline_type* VKRenderer::createSkinningComputingPipeline(in
 }
 
 inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	if (context.pipeline_id == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
-		if (context.pipeline_id == ID_NONE) context.pipeline_id = 1;
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
+		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = 1;
 		auto pipeline = getPipelineInternal(contextIdx, program, 1);
 		if (pipeline == nullptr) {
-			pipeline_rwlock.writeLock();
+			pipelineRWlock.writeLock();
 			pipeline = createSkinningComputingPipeline(contextIdx, program);
-			pipeline_rwlock.unlock();
+			pipelineRWlock.unlock();
 		}
 
 		//
-		if (pipeline->pipeline != context.pipeline) {
-			vkCmdBindPipeline(context.command_buffers[context.command_buffer_current].draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
-			context.pipeline = pipeline->pipeline;
+		if (pipeline->pipeline != currentContext.pipeline) {
+			vkCmdBindPipeline(currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
 }
 
 inline void VKRenderer::finishPipeline(int contextIdx) {
-	auto& contextTyped = contexts[contextIdx];
+	auto& currentContext = contexts[contextIdx];
 	// if unsetting program flush command buffers
-	if (contextTyped.program_id != ID_NONE) {
-		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.command_buffer_current;
-		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
+	if (currentContext.programId != ID_NONE) {
+		endRenderPass(currentContext.idx);
+		auto currentBufferIdx = currentContext.currentCommandBuffer;
+		auto commandBuffer = endDrawCommandBuffer(currentContext.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
+			submitDrawCommandBuffers(1, &commandBuffer, currentContext.commandBuffers[currentBufferIdx].drawFence, false, false);
 		}
-		unsetPipeline(contextTyped.idx);
+		unsetPipeline(currentContext.idx);
 	}
 }
 
@@ -2985,32 +2976,32 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	finishPipeline(contextTyped.idx);
 
 	//
-	contextTyped.program_id = 0;
+	contextTyped.programId = 0;
 	contextTyped.program = nullptr;
-	contextTyped.uniform_buffers.fill(nullptr);
+	contextTyped.uniformBuffers.fill(nullptr);
 	if (programId == ID_NONE) return;
 
 	//
-	if (programId < ID_NONE || programId >= programList.size()) {
+	if (programId < ID_NONE || programId >= programVector.size()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
 		return;
 	}
 
 	//
-	auto program = programList[programId];
-	contextTyped.program_id = programId;
+	auto program = programVector[programId];
+	contextTyped.programId = programId;
 	contextTyped.program = program;
 
 	// set up program ubo
 	{
 		auto shaderIdx = 0;
 		for (auto shader: program->shaders) {
-			if (shader->ubo_binding_idx == -1) {
-				contextTyped.uniform_buffers[shaderIdx] = nullptr;
+			if (shader->uboBindingIdx == -1) {
+				contextTyped.uniformBuffers[shaderIdx] = nullptr;
 				shaderIdx++;
 				continue;
 			}
-			contextTyped.uniform_buffers[shaderIdx] = &shader->uniform_buffers[contextTyped.idx];
+			contextTyped.uniformBuffers[shaderIdx] = &shader->uniformBuffers[contextTyped.idx];
 			shaderIdx++;
 		}
 	}
@@ -3022,19 +3013,19 @@ int32_t VKRenderer::createProgram(int type)
 	auto programPtr = new program_type();
 	auto& program = *programPtr;
 	program.type = type;
-	program.id = programList.size();
+	program.id = programVector.size();
 	program.contexts.resize(Engine::getThreadCount());
 	for (auto& programContext: program.contexts) {
-		programContext.desc_sets2_idx = 0;
-		programContext.desc_sets2.fill(VK_NULL_HANDLE);
-		for (auto& programContextCommandBuffer: programContext.command_buffers) {
-			programContextCommandBuffer.desc_sets1_idx = 0;
-			programContextCommandBuffer.desc_sets2_idx_uncached = 0;
-			programContextCommandBuffer.desc_sets1.fill(VK_NULL_HANDLE);
-			programContextCommandBuffer.desc_sets2_uncached.fill(VK_NULL_HANDLE);
+		programContext.descriptorSets2Idx = 0;
+		programContext.descriptorSets2.fill(VK_NULL_HANDLE);
+		for (auto& programContextCommandBuffer: programContext.commandBuffers) {
+			programContextCommandBuffer.descriptorSets1Idx = 0;
+			programContextCommandBuffer.descriptorSets2IdxUncached = 0;
+			programContextCommandBuffer.descriptorSets1.fill(VK_NULL_HANDLE);
+			programContextCommandBuffer.descriptorSets2Uncached.fill(VK_NULL_HANDLE);
 		}
 	}
-	programList.push_back(programPtr);
+	programVector.push_back(programPtr);
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program id: " + to_string(program.id));
 	return program.id;
 }
@@ -3047,25 +3038,25 @@ void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
 		return;
 	}
-	if (programId < 0 || programId >= programList.size()) {
+	if (programId < 0 || programId >= programVector.size()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return;
 	}
-	auto program = programList[programId];
-	program->shader_ids.push_back(shaderId);
+	auto program = programVector[programId];
+	program->shaderIds.push_back(shaderId);
 	program->shaders.push_back(shaderIt->second);
 }
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
-	if (programId < 0 || programId >= programList.size()) {
+	if (programId < 0 || programId >= programVector.size()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return false;
 	}
 
 	//
-	auto& program = *programList[programId];
+	auto& program = *programVector[programId];
 
 	//
 	VKGL3CoreShaderProgram::linkProgram(program);
@@ -3074,24 +3065,24 @@ bool VKRenderer::linkProgram(int32_t programId)
 	auto uniformIdx = 1;
 	for (auto shader: program.shaders) {
 		// do we need a uniform buffer object for this shader stage?
-		if (shader->ubo_size > 0) {
-			shader->uniform_buffers.resize(Engine::getThreadCount());
+		if (shader->uboSize > 0) {
+			shader->uniformBuffers.resize(Engine::getThreadCount());
 			for (auto& context: contexts) {
-				auto& uniform_buffer = shader->uniform_buffers[context.idx];
-				uniform_buffer.size = shader->ubo_size;
-				for (auto& uniform_buffer_buffer: uniform_buffer.buffers) {
-					VmaAllocationInfo allocation_info = {};
+				auto& uniformBuffer = shader->uniformBuffers[context.idx];
+				uniformBuffer.size = shader->uboSize;
+				for (auto& uniformBufferBuffer: uniformBuffer.buffers) {
+					VmaAllocationInfo allocationInfo = {};
 					createBuffer(
-						uniform_buffer.size,
+						uniformBuffer.size,
 						VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 						VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-						uniform_buffer_buffer.buffer,
-						uniform_buffer_buffer.allocation,
-						allocation_info
+						uniformBufferBuffer.buffer,
+						uniformBufferBuffer.allocation,
+						allocationInfo
 					);
-					VkMemoryPropertyFlags mem_flags;
-					vmaGetMemoryTypeProperties(allocator, allocation_info.memoryType, &mem_flags);
-					auto memoryMapped = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+					VkMemoryPropertyFlags memoryFlags;
+					vmaGetMemoryTypeProperties(allocator, allocationInfo.memoryType, &memoryFlags);
+					auto memoryMapped = (memoryFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 					if (memoryMapped == false) {
 						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable uniform buffer");
 					}
@@ -3106,13 +3097,13 @@ bool VKRenderer::linkProgram(int32_t programId)
 		// create shader module
 		{
 			VkResult err;
-			VkShaderModuleCreateInfo moduleCreateInfo;
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.pNext = nullptr;
-			moduleCreateInfo.codeSize = shader->spirv.size() * sizeof(uint32_t);
-			moduleCreateInfo.pCode = shader->spirv.data();
-			moduleCreateInfo.flags = 0;
-			err = vkCreateShaderModule(device, &moduleCreateInfo, nullptr, &shader->module);
+			VkShaderModuleCreateInfo shaderModuleCreateInfo;
+			shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			shaderModuleCreateInfo.pNext = nullptr;
+			shaderModuleCreateInfo.codeSize = shader->spirv.size() * sizeof(uint32_t);
+			shaderModuleCreateInfo.pCode = shader->spirv.data();
+			shaderModuleCreateInfo.flags = 0;
+			err = vkCreateShaderModule(device, &shaderModuleCreateInfo, nullptr, &shader->module);
 			if (err == VK_SUCCESS) {
 				if (VERBOSE == true) {
 					Console::println(
@@ -3171,11 +3162,11 @@ bool VKRenderer::linkProgram(int32_t programId)
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + name);
-	if (programId < 0 || programId >= programList.size()) {
+	if (programId < 0 || programId >= programVector.size()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return -1;
 	}
-	auto program = programList[programId];
+	auto program = programVector[programId];
 	for (auto& uniformIt: program->uniforms) {
 		if (uniformIt.second == name) {
 			return uniformIt.first;
@@ -3199,14 +3190,14 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 				string(__FUNCTION__) +
 				"(): program: uniform id out of uniform list bounds: " +
 				to_string(contextTyped.idx) + ": " +
-				to_string(contextTyped.program_id) + ": " +
+				to_string(contextTyped.programId) + ": " +
 				to_string(uniformId) + " / " +
 				to_string(shader->uniformList.size())
 			);
 			Console::println(
 				string("\t") +
 				to_string(contextTyped.idx) + ": " +
-				to_string(contextTyped.program_id) + ": " +
+				to_string(contextTyped.programId) + ": " +
 				to_string(uniformId) + " / " +
 				contextTyped.program->uniforms[uniformId]
 			);
@@ -3219,18 +3210,18 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 		}
 		auto& shaderUniform = *shaderUniformPtr;
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
-			shaderUniform.texture_unit = *((int32_t*)data);
+			shaderUniform.textureUnit = *((int32_t*)data);
 		} else
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
-			shaderUniform.texture_unit = *((int32_t*)data);
+			shaderUniform.textureUnit = *((int32_t*)data);
 		} else {
-			if (contextTyped.uniform_buffers[shaderIdx] == nullptr) {
+			if (contextTyped.uniformBuffers[shaderIdx] == nullptr) {
 				Console::println(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
 					"(): shader: no shader uniform buffer in context: " +
 					to_string(contextTyped.idx) + ": " +
-					to_string(contextTyped.program_id) + ": " +
+					to_string(contextTyped.programId) + ": " +
 					to_string(uniformId) + "; " +
 					to_string(shaderIdx) + ": " +
 					shaderUniformPtr->name
@@ -3244,10 +3235,10 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 					string(__FUNCTION__) +
 					"(): program: uniform size != given size: " +
 					to_string(contextTyped.idx) + ": " +
-					to_string(contextTyped.program_id) + ": " +
+					to_string(contextTyped.programId) + ": " +
 					to_string(uniformId) + "; " +
 					to_string(shaderIdx) + "; " +
-					to_string(contextTyped.uniform_buffers[shaderIdx]->size) + "; " +
+					to_string(contextTyped.uniformBuffers[shaderIdx]->size) + "; " +
 					to_string(shaderUniform.position + size) + ": " +
 					shaderUniform.name + ": " +
 					to_string(size) + " / " +
@@ -3256,25 +3247,25 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 				shaderIdx++;
 				continue;
 			}
-			if (contextTyped.uniform_buffers[shaderIdx]->size < shaderUniform.position + size) {
+			if (contextTyped.uniformBuffers[shaderIdx]->size < shaderUniform.position + size) {
 				Console::println(
 					"VKRenderer::" +
 					string(__FUNCTION__) +
 					"(): program: uniform buffer is too small: " +
 					to_string(contextTyped.idx) + ": " +
-					to_string(contextTyped.program_id) + ": " +
+					to_string(contextTyped.programId) + ": " +
 					to_string(uniformId) + "; " +
 					to_string(shaderIdx) + "; " +
-					to_string(contextTyped.uniform_buffers[shaderIdx]->size) + "; " +
+					to_string(contextTyped.uniformBuffers[shaderIdx]->size) + "; " +
 					to_string(shaderUniform.position + size) + ": " +
 					shaderUniform.name + ": " +
 					to_string(shaderUniform.position + size) + " / " +
-					to_string(contextTyped.uniform_buffers[shaderIdx]->size)
+					to_string(contextTyped.uniformBuffers[shaderIdx]->size)
 				);
 				shaderIdx++;
 				continue;
 			}
-			vmaMemCpy(contextTyped.uniform_buffers[shaderIdx]->buffers[contextTyped.uniform_buffers[shaderIdx]->bufferIdx].allocation, data, size, shaderUniform.position);
+			vmaMemCpy(contextTyped.uniformBuffers[shaderIdx]->buffers[contextTyped.uniformBuffers[shaderIdx]->bufferIdx].allocation, data, size, shaderUniform.position);
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -3343,13 +3334,13 @@ void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location
 }
 
 int32_t VKRenderer::getLighting(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.lighting;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.lighting;
 }
 
 void VKRenderer::setLighting(void* context, int32_t lighting) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.lighting = lighting;
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.lighting = lighting;
 }
 
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -3386,108 +3377,108 @@ void VKRenderer::updateViewPort()
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 {
 	//
-	clear_red = red;
-	clear_green = green;
-	clear_blue = blue;
-	clear_alpha = alpha;
+	clearRed = red;
+	clearGreen = green;
+	clearBlue = blue;
+	clearAlpha = alpha;
 }
 
 void VKRenderer::enableCulling(void* context)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	if (contextTyped.culling_enabled == true) return;
-	finishPipeline(contextTyped.idx);
-	contextTyped.culling_enabled = true;
-	contextTyped.front_face_index = contextTyped.front_face;
+	auto& currentContext = *static_cast<context_type*>(context);
+	if (currentContext.cullingEnabled == true) return;
+	finishPipeline(currentContext.idx);
+	currentContext.cullingEnabled = true;
+	currentContext.frontFaceIndex = currentContext.frontFace;
 }
 
 void VKRenderer::disableCulling(void* context)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	if (contextTyped.culling_enabled == false) return;
-	finishPipeline(contextTyped.idx);
-	contextTyped.culling_enabled = false;
-	contextTyped.front_face_index = 0;
+	auto& currentContext = *static_cast<context_type*>(context);
+	if (currentContext.cullingEnabled == false) return;
+	finishPipeline(currentContext.idx);
+	currentContext.cullingEnabled = false;
+	currentContext.frontFaceIndex = 0;
 }
 
 void VKRenderer::setFrontFace(void* context, int32_t frontFace)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	if (contextTyped.front_face == frontFace) return;
-	finishPipeline(contextTyped.idx);
-	contextTyped.front_face = frontFace;
-	contextTyped.front_face_index = contextTyped.culling_enabled == true?frontFace:0;
+	auto& currentContext = *static_cast<context_type*>(context);
+	if (currentContext.frontFace == frontFace) return;
+	finishPipeline(currentContext.idx);
+	currentContext.frontFace = frontFace;
+	currentContext.frontFaceIndex = currentContext.cullingEnabled == true?frontFace:0;
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
 {
-	if (cull_mode == cullFace) return;
+	if (cullMode == cullFace) return;
 	endDrawCommandsAllContexts();
-	cull_mode = (VkCullModeFlagBits)cullFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	cullMode = (VkCullModeFlagBits)cullFace;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableBlending()
 {
-	if (blending_mode == BLENDING_NORMAL) return;
+	if (blendingMode == BLENDING_NORMAL) return;
 	endDrawCommandsAllContexts();
-	blending_mode = BLENDING_NORMAL;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	blendingMode = BLENDING_NORMAL;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableAdditionBlending() {
-	if (blending_mode == BLENDING_ADDITIVE) return;
+	if (blendingMode == BLENDING_ADDITIVE) return;
 	endDrawCommandsAllContexts();
-	blending_mode = BLENDING_ADDITIVE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	blendingMode = BLENDING_ADDITIVE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableBlending()
 {
-	if (blending_mode == BLENDING_NONE) return;
+	if (blendingMode == BLENDING_NONE) return;
 	endDrawCommandsAllContexts();
-	blending_mode = BLENDING_NONE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	blendingMode = BLENDING_NONE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableDepthBufferWriting()
 {
-	if (depth_buffer_writing == true) return;
+	if (depthBufferWriting == true) return;
 	endDrawCommandsAllContexts();
-	depth_buffer_writing = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	depthBufferWriting = true;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableDepthBufferWriting()
 {
-	if (depth_buffer_writing == false) return;
+	if (depthBufferWriting == false) return;
 	endDrawCommandsAllContexts();
-	depth_buffer_writing = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	depthBufferWriting = false;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableDepthBufferTest()
 {
-	if (depth_buffer_testing == false) return;
+	if (depthBufferTesting == false) return;
 	endDrawCommandsAllContexts();
-	depth_buffer_testing = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	depthBufferTesting = false;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableDepthBufferTest()
 {
-	if (depth_buffer_testing == true) return;
+	if (depthBufferTesting == true) return;
 	endDrawCommandsAllContexts();
-	depth_buffer_testing = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	depthBufferTesting = true;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
-void VKRenderer::setDepthFunction(int32_t depthFunction)
+void VKRenderer::setDepthFunction(int32_t depthFunctionXXX)
 {
-	if (depth_function == depthFunction) return;
+	if (depthFunction == depthFunctionXXX) return;
 	endDrawCommandsAllContexts();
-	depth_function = depthFunction;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id = ID_NONE;
+	depthFunction = depthFunctionXXX;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -3500,7 +3491,7 @@ void VKRenderer::clear(int32_t mask)
 	beginDrawCommandBuffer(0);
 	startRenderPass(0);
 	framebuffer_object_type* frameBuffer = nullptr;
-	if (bound_frame_buffer != ID_NONE) frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	if (boundFrameBuffer != ID_NONE) frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 	auto attachmentIdx = 0;
 	VkClearAttachment attachments[9];
 	if ((mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
@@ -3508,19 +3499,19 @@ void VKRenderer::clear(int32_t mask)
 			for (auto i = 0; i < 8; i++) {
 				attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 				attachments[attachmentIdx].colorAttachment = attachmentIdx;
-				attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
+				attachments[attachmentIdx].clearValue.color = { clearRed, clearGreen, clearBlue, clearAlpha };
 				attachmentIdx++;
 			}
 		} else
-		if (frameBuffer == nullptr || frameBuffer->color_texture_id != ID_NONE) {
+		if (frameBuffer == nullptr || frameBuffer->colorTextureId != ID_NONE) {
 			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 			attachments[attachmentIdx].colorAttachment = attachmentIdx;
-			attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
+			attachments[attachmentIdx].clearValue.color = { clearRed, clearGreen, clearBlue, clearAlpha };
 			attachmentIdx++;
 		}
 	}
 	if ((mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT &&
-		(frameBuffer == nullptr || frameBuffer->depth_texture_id != ID_NONE)) {
+		(frameBuffer == nullptr || frameBuffer->depthTextureId != ID_NONE)) {
 		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 		attachments[attachmentIdx].colorAttachment = attachmentIdx;
 		attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
@@ -3532,17 +3523,17 @@ void VKRenderer::clear(int32_t mask)
 		.layerCount = 1
 	};
 	vkCmdClearAttachments(
-		contexts[0].command_buffers[contexts[0].command_buffer_current].draw_cmd,
+		contexts[0].commandBuffers[contexts[0].currentCommandBuffer].drawCommand,
 		attachmentIdx,
 		attachments,
 		1,
 		&clearRect
 	);
 	endRenderPass(0);
-	auto currentBufferIdx = contexts[0].command_buffer_current;
+	auto currentBufferIdx = contexts[0].currentCommandBuffer;
 	auto commandBuffer = endDrawCommandBuffer(0, currentBufferIdx, true);
 	if (commandBuffer != VK_NULL_HANDLE) {
-		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].command_buffers[currentBufferIdx].draw_fence, false, false);
+		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].commandBuffers[currentBufferIdx].drawFence, false, false);
 	}
 	AtomicOperations::increment(statistics.clearCalls);
 }
@@ -3551,43 +3542,44 @@ int32_t VKRenderer::createTexture()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		auto free_texture_ids_idx = free_texture_ids.size() - 1;
-		reuseTextureId = free_texture_ids[free_texture_ids_idx];
-		free_texture_ids.erase(free_texture_ids.begin() + free_texture_ids_idx);
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 	return texture.id;
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 	createDepthBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex);
 	return texture.id;
 }
@@ -3599,11 +3591,11 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	depthBufferTexture.format = VK_FORMAT_D32_SFLOAT;
 	depthBufferTexture.width = width;
 	depthBufferTexture.height = height;
-	depthBufferTexture.cubemap_texture_index = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
+	depthBufferTexture.cubemapTextureIndex = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
 	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
-	depthBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer:nullptr;
+	depthBufferTexture.cubemapBufferTexture = cubeMapTexture != nullptr?cubeMapTexture->cubemapDepthBuffer:nullptr;
 
 	//
 	VkResult err;
@@ -3611,18 +3603,19 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	//
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
-		delete_mutex.lock();
-		delete_images.push_back(
+		deleteMutex.lock();
+		deleteImages.push_back(
 			{
 				.image = depthBufferTexture.image,
 				.allocation = depthBufferTexture.allocation,
-				.image_view = depthBufferTexture.view,
+				.imageView = depthBufferTexture.view,
 				.sampler = depthBufferTexture.sampler
-			});
-		delete_mutex.unlock();
+			}
+		);
+		deleteMutex.unlock();
 
 		//
-		const VkImageCreateInfo image_create_info = {
+		const VkImageCreateInfo imageCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
@@ -3644,23 +3637,23 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 		};
 
-		VmaAllocationCreateInfo image_alloc_create_info = {};
-		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		VmaAllocationCreateInfo allocationCreateInfo = {};
+		allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		VmaAllocationInfo allocation_info = {};
-		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &depthBufferTexture.image, &depthBufferTexture.allocation, &allocation_info);
+		VmaAllocationInfo allocationInfo = {};
+		err = vmaCreateImage(allocator, &imageCreateInfo, &allocationCreateInfo, &depthBufferTexture.image, &depthBufferTexture.allocation, &allocationInfo);
 		assert(!err);
 
 		// type
 		depthBufferTexture.type = texture_type::TYPE_DEPTHBUFFER;
-		depthBufferTexture.aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		depthBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		depthBufferTexture.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		depthBufferTexture.accessTypes = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
 		depthBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
 		depthBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	}
 
 	// create sampler
-	const VkSamplerCreateInfo sampler = {
+	const VkSamplerCreateInfo samplerCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -3680,15 +3673,15 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	err = vkCreateSampler(device, &sampler, nullptr, &depthBufferTexture.sampler);
+	err = vkCreateSampler(device, &samplerCreateInfo, nullptr, &depthBufferTexture.sampler);
 	assert(!err);
 
 	// create image view
-	VkImageViewCreateInfo view = {
+	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer->image:depthBufferTexture.image,
+		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemapDepthBuffer->image:depthBufferTexture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = depthBufferTexture.format,
 		.components = VkComponentMapping(),
@@ -3700,28 +3693,29 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 			.layerCount = 1
 		},
 	};
-	err = vkCreateImageView(device, &view, nullptr, &depthBufferTexture.view);
+	err = vkCreateImageView(device, &viewCreateInfo, nullptr, &depthBufferTexture.view);
 	assert(!err);
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 	createBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex, format);
 	return texture.id;
 }
@@ -3733,11 +3727,11 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
-	colorBufferTexture.cubemap_texture_index = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
+	colorBufferTexture.cubemapTextureIndex = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
 	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
-	colorBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer:nullptr;
+	colorBufferTexture.cubemapBufferTexture = cubeMapTexture != nullptr?cubeMapTexture->cubemapColorBuffer:nullptr;
 
 	//
 	VkResult err;
@@ -3745,18 +3739,18 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	// non cube map textures
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
-		delete_mutex.lock();
-		delete_images.push_back(
+		deleteMutex.lock();
+		deleteImages.push_back(
 			{
 				.image = colorBufferTexture.image,
 				.allocation = colorBufferTexture.allocation,
-				.image_view = colorBufferTexture.view,
+				.imageView = colorBufferTexture.view,
 				.sampler = colorBufferTexture.sampler
 			});
-		delete_mutex.unlock();
+		deleteMutex.unlock();
 
 		//
-		const VkImageCreateInfo image_create_info = {
+		const VkImageCreateInfo imageCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
@@ -3778,17 +3772,17 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 		};
 
-		VmaAllocationCreateInfo image_alloc_create_info = {};
-		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		VmaAllocationCreateInfo allocationCreateInfo = {};
+		allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		VmaAllocationInfo allocation_info = {};
-		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &colorBufferTexture.image, &colorBufferTexture.allocation, &allocation_info);
+		VmaAllocationInfo allocationInfo = {};
+		err = vmaCreateImage(allocator, &imageCreateInfo, &allocationCreateInfo, &colorBufferTexture.image, &colorBufferTexture.allocation, &allocationInfo);
 		assert(!err);
 
 		// type
 		colorBufferTexture.type = texture_type::TYPE_COLORBUFFER;
-		colorBufferTexture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
-		colorBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		colorBufferTexture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		colorBufferTexture.accessTypes = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
 		colorBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
 		colorBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	} else {
@@ -3796,7 +3790,7 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	}
 
 	// create sampler
-	const VkSamplerCreateInfo sampler = {
+	const VkSamplerCreateInfo samplerCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -3816,15 +3810,15 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	err = vkCreateSampler(device, &sampler, nullptr, &colorBufferTexture.sampler);
+	err = vkCreateSampler(device, &samplerCreateInfo, nullptr, &colorBufferTexture.sampler);
 	assert(!err);
 
 	// create image view
-	VkImageViewCreateInfo view = {
+	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer->image:colorBufferTexture.image,
+		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemapColorBuffer->image:colorBufferTexture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = colorBufferTexture.format,
 		.components = {
@@ -3841,28 +3835,29 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 			.layerCount = 1
 		}
 	};
-	err = vkCreateImageView(device, &view, nullptr, &colorBufferTexture.view);
+	err = vkCreateImageView(device, &viewCreateInfo, nullptr, &colorBufferTexture.view);
 	assert(!err);
 }
 
 int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
 	return texture.id;
 }
@@ -3870,21 +3865,22 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, format);
 	return texture.id;
 }
@@ -3903,14 +3899,14 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	}
 
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
-	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
+	texturesRWlock.writeLock(); // TODO: have a more fine grained locking here
 	auto textureObjectIt = textures.find(boundTexture.id);
 	if (textureObjectIt == textures.end()) {
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
@@ -3919,7 +3915,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	// already uploaded
 	if (texture.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return;
 	}
 
@@ -3927,13 +3923,13 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	texture.width = textureLeft->getTextureWidth();
 	texture.height = textureLeft->getTextureHeight();
 	texture.format = VK_FORMAT_R8G8B8A8_UNORM;
-	texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
-	texture.access_types = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
+	texture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	texture.accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
 	texture.vkLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
 	// create color buffer texture
 	//	TODO: no general
-	const VkImageCreateInfo image_create_info = {
+	const VkImageCreateInfo imageCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
@@ -3958,11 +3954,11 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	//
 	VkResult err;
 
-	VmaAllocationCreateInfo image_alloc_create_info = {};
-	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	VmaAllocationCreateInfo allocationCreateInfo = {};
+	allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	VmaAllocationInfo allocation_info = {};
-	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.image, &texture.allocation, &allocation_info);
+	VmaAllocationInfo allocationInfo = {};
+	err = vmaCreateImage(allocator, &imageCreateInfo, &allocationCreateInfo, &texture.image, &texture.allocation, &allocationInfo);
 	assert(!err);
 
 	//
@@ -3975,7 +3971,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 
 	//
 	setImageLayout2(
-		contextTyped.idx,
+		currentContext.idx,
 		&texture,
 		{ THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE },
 		{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
@@ -3987,7 +3983,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 		0,
 		6
 	);
-	texture.access_types =
+	texture.accessTypes =
 		{{
 			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
@@ -3999,7 +3995,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	texture.vkLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	// create sampler
-	const VkSamplerCreateInfo sampler = {
+	const VkSamplerCreateInfo samplerCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -4019,11 +4015,11 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	err = vkCreateSampler(device, &sampler, nullptr, &texture.sampler);
+	err = vkCreateSampler(device, &samplerCreateInfo, nullptr, &texture.sampler);
 	assert(!err);
 
 	// create image view
-	VkImageViewCreateInfo view = {
+	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -4044,7 +4040,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 			.layerCount = 6
 		}
 	};
-	err = vkCreateImageView(device, &view, nullptr, &texture.view);
+	err = vkCreateImageView(device, &viewCreateInfo, nullptr, &texture.view);
 	assert(!err);
 
 	//
@@ -4056,58 +4052,59 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	texture.uploaded = true;
 
 	//
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 }
 
 int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& currentContext = *static_cast<context_type*>(context);
 
 	//
 	auto texturePtr = new texture_type();
-	textures_rwlock.writeLock();
-	if (texture_idx - free_texture_ids.size() >= TEXTURES_MAX) {
+	texturesRWlock.writeLock();
+	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
-	if (free_texture_ids.empty() == false) {
-		reuseTextureId = free_texture_ids[0];
-		free_texture_ids.erase(free_texture_ids.begin());
+	if (freeTextureIds.empty() == false) {
+		auto freeTextureIdsIdx = freeTextureIds.size() - 1;
+		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
+		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
 	auto& texture = *texturePtr;
-	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	texture.type = texture_type::TYPE_CUBEMAP;
 	texture.format = format;
 	texture.width = width;
 	texture.height = height;
-	texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+	texture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	texture.vkLayout = VK_IMAGE_LAYOUT_GENERAL;
 	textures[texture.id] = texturePtr;
 
 	// create color buffer texture
 	//	TODO: only create on demand
 	{
-		texture.cubemap_colorbuffer = new texture_type();
-		texture.cubemap_colorbuffer->id = -1;
-		texture.cubemap_colorbuffer->type = texture_type::TYPE_COLORBUFFER;
-		texture.cubemap_colorbuffer->format = format;
-		texture.cubemap_colorbuffer->width = width;
-		texture.cubemap_colorbuffer->height = height;
-		texture.cubemap_colorbuffer->aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
-		texture.cubemap_colorbuffer->vkLayout = VK_IMAGE_LAYOUT_GENERAL;
-		const VkImageCreateInfo image_create_info = {
+		texture.cubemapColorBuffer = new texture_type();
+		texture.cubemapColorBuffer->id = -1;
+		texture.cubemapColorBuffer->type = texture_type::TYPE_COLORBUFFER;
+		texture.cubemapColorBuffer->format = format;
+		texture.cubemapColorBuffer->width = width;
+		texture.cubemapColorBuffer->height = height;
+		texture.cubemapColorBuffer->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		texture.cubemapColorBuffer->vkLayout = VK_IMAGE_LAYOUT_GENERAL;
+		const VkImageCreateInfo imageCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
 			.imageType = VK_IMAGE_TYPE_2D,
-			.format = texture.cubemap_colorbuffer->format,
+			.format = texture.cubemapColorBuffer->format,
 			.extent = {
-				.width = texture.cubemap_colorbuffer->width,
-				.height = texture.cubemap_colorbuffer->height,
+				.width = texture.cubemapColorBuffer->width,
+				.height = texture.cubemapColorBuffer->height,
 				.depth = 1
 			},
 			.mipLevels = 1,
@@ -4124,15 +4121,15 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 		//
 		VkResult err;
 
-		VmaAllocationCreateInfo image_alloc_create_info = {};
-		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		VmaAllocationCreateInfo allocationCreateInfo = {};
+		allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		VmaAllocationInfo allocation_info = {};
-		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.cubemap_colorbuffer->image, &texture.cubemap_colorbuffer->allocation, &allocation_info);
+		VmaAllocationInfo allocationInfo = {};
+		err = vmaCreateImage(allocator, &imageCreateInfo, &allocationCreateInfo, &texture.cubemapColorBuffer->image, &texture.cubemapColorBuffer->allocation, &allocationInfo);
 		assert(!err);
 
 		// create sampler
-		const VkSamplerCreateInfo sampler = {
+		const VkSamplerCreateInfo samplerCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
@@ -4152,17 +4149,17 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 			.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 			.unnormalizedCoordinates = VK_FALSE,
 		};
-		err = vkCreateSampler(device, &sampler, nullptr, &texture.sampler);
+		err = vkCreateSampler(device, &samplerCreateInfo, nullptr, &texture.sampler);
 		assert(!err);
 
 		// create image view
-		VkImageViewCreateInfo view = {
+		VkImageViewCreateInfo viewCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.image = texture.cubemap_colorbuffer->image,
+			.image = texture.cubemapColorBuffer->image,
 			.viewType = VK_IMAGE_VIEW_TYPE_CUBE,
-			.format = texture.cubemap_colorbuffer->format,
+			.format = texture.cubemapColorBuffer->format,
 			.components = {
 				.r = VK_COMPONENT_SWIZZLE_R,
 				.g = VK_COMPONENT_SWIZZLE_G,
@@ -4177,14 +4174,14 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 				.layerCount = 6
 			}
 		};
-		err = vkCreateImageView(device, &view, nullptr, &texture.view);
+		err = vkCreateImageView(device, &viewCreateInfo, nullptr, &texture.view);
 		assert(!err);
 	}
 
 	// general
 	setImageLayout2(
-		contextTyped.idx,
-		texture.cubemap_colorbuffer,
+		currentContext.idx,
+		texture.cubemapColorBuffer,
 		{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
 		{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
 		THSVS_IMAGE_LAYOUT_OPTIMAL,
@@ -4199,22 +4196,22 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	// create depth buffer texture
 	//	TODO: only create on demand
 	{
-		texture.cubemap_depthbuffer = new texture_type();
-		texture.cubemap_depthbuffer->id = -1;
-		texture.cubemap_depthbuffer->format = VK_FORMAT_D32_SFLOAT;
-		texture.cubemap_depthbuffer->width = width;
-		texture.cubemap_depthbuffer->height = height;
-		texture.cubemap_depthbuffer->type = texture_type::TYPE_DEPTHBUFFER;
-		texture.cubemap_depthbuffer->aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		const VkImageCreateInfo image_create_info = {
+		texture.cubemapDepthBuffer = new texture_type();
+		texture.cubemapDepthBuffer->id = -1;
+		texture.cubemapDepthBuffer->format = VK_FORMAT_D32_SFLOAT;
+		texture.cubemapDepthBuffer->width = width;
+		texture.cubemapDepthBuffer->height = height;
+		texture.cubemapDepthBuffer->type = texture_type::TYPE_DEPTHBUFFER;
+		texture.cubemapDepthBuffer->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		const VkImageCreateInfo imageCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
 			.imageType = VK_IMAGE_TYPE_2D,
-			.format = texture.cubemap_depthbuffer->format,
+			.format = texture.cubemapDepthBuffer->format,
 			.extent = {
-				.width = texture.cubemap_depthbuffer->width,
-				.height = texture.cubemap_depthbuffer->height,
+				.width = texture.cubemapDepthBuffer->width,
+				.height = texture.cubemapDepthBuffer->height,
 				.depth = 1
 			},
 			.mipLevels = 1,
@@ -4231,16 +4228,16 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 		//
 		VkResult err;
 
-		VmaAllocationCreateInfo image_alloc_create_info = {};
-		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		VmaAllocationCreateInfo allocationCreateInfo = {};
+		allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 		VmaAllocationInfo allocation_info = {};
-		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.cubemap_depthbuffer->image, &texture.cubemap_depthbuffer->allocation, &allocation_info);
+		err = vmaCreateImage(allocator, &imageCreateInfo, &allocationCreateInfo, &texture.cubemapDepthBuffer->image, &texture.cubemapDepthBuffer->allocation, &allocation_info);
 		assert(!err);
 	}
 
 	//
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 
 	//
 	return texture.id;
@@ -4249,14 +4246,14 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 void VKRenderer::uploadTexture(void* context, Texture* texture)
 {
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
-	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
+	texturesRWlock.writeLock(); // TODO: have a more fine grained locking here
 	auto textureObjectIt = textures.find(boundTexture.id);
 	if (textureObjectIt == textures.end()) {
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
@@ -4265,7 +4262,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	// already uploaded
 	if (textureType.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		return;
 	}
 
@@ -4274,7 +4271,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textureType.width = texture->getTextureWidth();
 	textureType.height = texture->getTextureHeight();
  	textureType.type = texture_type::TYPE_TEXTURE;
-	textureType.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+	textureType.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
 	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
@@ -4290,14 +4287,14 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		stagingTexture.width = texture->getTextureWidth();
 		stagingTexture.height = texture->getTextureHeight();
 		stagingTexture.type = texture_type::TYPE_TEXTURE;
-		stagingTexture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		stagingTexture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		//
 		mipLevels = texture->isUseMipMap() == true?getMipLevels(texture):1;
 
 		//
 		prepareTextureImage(
-			contextTyped.idx,
+			currentContext.idx,
 			&stagingTexture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
@@ -4307,7 +4304,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			THSVS_IMAGE_LAYOUT_OPTIMAL
 		);
 		prepareTextureImage(
-			contextTyped.idx,
+			currentContext.idx,
 			&textureType,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -4348,9 +4345,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 				.depth = 1
 			}
 		};
-		prepareSetupCommandBuffer(contextTyped.idx);
+		prepareSetupCommandBuffer(currentContext.idx);
 		vkCmdCopyImage(
-			contextTyped.setup_cmd_inuse,
+			currentContext.setupCommandInUse,
 			stagingTexture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			textureType.image,
@@ -4358,7 +4355,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			1,
 			&copy_region
 		);
-		finishSetupCommandBuffer(contextTyped.idx);
+		finishSetupCommandBuffer(currentContext.idx);
 		if (texture->isUseMipMap() == true) {
 			//
 			auto textureWidth = texture->getTextureWidth();
@@ -4402,9 +4399,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 						}
 					}
 				};
-				prepareSetupCommandBuffer(contextTyped.idx);
+				prepareSetupCommandBuffer(currentContext.idx);
 				vkCmdBlitImage(
-					contextTyped.setup_cmd_inuse,
+					currentContext.setupCommandInUse,
 					stagingTexture.image,
 					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 					textureType.image,
@@ -4413,12 +4410,12 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 					&imageBlit,
 					VK_FILTER_LINEAR
 				);
-				finishSetupCommandBuffer(contextTyped.idx);
+				finishSetupCommandBuffer(currentContext.idx);
 			}
 		}
 
 		setImageLayout(
-			contextTyped.idx,
+			currentContext.idx,
 			&textureType,
 			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 			THSVS_IMAGE_LAYOUT_OPTIMAL,
@@ -4429,22 +4426,22 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 
 		// mark for deletion
-		delete_mutex.lock();
-		delete_images.push_back(
+		deleteMutex.lock();
+		deleteImages.push_back(
 			{
 				.image = stagingTexture.image,
 				.allocation = stagingTexture.allocation,
-				.image_view = VK_NULL_HANDLE,
+				.imageView = VK_NULL_HANDLE,
 				.sampler = VK_NULL_HANDLE
 			}
 		);
-		delete_mutex.unlock();
+		deleteMutex.unlock();
 	} else
 	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// TODO: not sure if I should support this path
 		// Device can texture using linear textures
 		prepareTextureImage(
-			contextTyped.idx,
+			currentContext.idx,
 			&textureType,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -4455,7 +4452,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 	}
 
-	const VkSamplerCreateInfo sampler = {
+	const VkSamplerCreateInfo samplerCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -4475,7 +4472,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	VkImageViewCreateInfo view = {
+	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -4498,11 +4495,11 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	};
 
 	// create sampler
-	err = vkCreateSampler(device, &sampler, nullptr, &textureType.sampler);
+	err = vkCreateSampler(device, &samplerCreateInfo, nullptr, &textureType.sampler);
 	assert(!err);
 
 	// create image view
-	err = vkCreateImageView(device, &view, nullptr, &textureType.view);
+	err = vkCreateImageView(device, &viewCreateInfo, nullptr, &textureType.view);
 	assert(!err);
 
 	//
@@ -4515,7 +4512,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textureType.uploaded = true;
 
 	//
-	textures_rwlock.unlock();
+	texturesRWlock.unlock();
 
 	//
 	AtomicOperations::increment(statistics.textureUploads);
@@ -4526,8 +4523,8 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
 
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& cubemap_texture_type = *cubemapTextureType;
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
 	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
@@ -4541,11 +4538,11 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 		staging_texture.width = texture->getTextureWidth();
 		staging_texture.height = texture->getTextureHeight();
 		staging_texture.type = texture_type::TYPE_TEXTURE;
-		staging_texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		staging_texture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		//
 		prepareTextureImage(
-			contextTyped.idx,
+			currentContext.idx,
 			&staging_texture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
@@ -4557,8 +4554,8 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 
 		//
 		setImageLayout2(
-			contextTyped.idx,
-			&cubemap_texture_type,
+			currentContext.idx,
+			&cubemapTextureTypeRef,
 			{ THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE },
 			{ THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE },
 			THSVS_IMAGE_LAYOUT_OPTIMAL,
@@ -4571,7 +4568,7 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 		);
 
 		//
-		VkImageCopy copy_region = {
+		VkImageCopy copyRegion = {
 			.srcSubresource = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 				.mipLevel = 0,
@@ -4595,37 +4592,37 @@ void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemap
 				.z = 0
 			},
 			.extent = {
-				.width = cubemap_texture_type.width,
-				.height = cubemap_texture_type.height,
+				.width = cubemapTextureTypeRef.width,
+				.height = cubemapTextureTypeRef.height,
 				.depth = 1
 			}
 		};
 
 		//
-		prepareSetupCommandBuffer(contextTyped.idx);
+		prepareSetupCommandBuffer(currentContext.idx);
 		vkCmdCopyImage(
-			contextTyped.setup_cmd_inuse,
+			currentContext.setupCommandInUse,
 			staging_texture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			cubemap_texture_type.image,
+			cubemapTextureTypeRef.image,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1,
-			&copy_region
+			&copyRegion
 		);
 		//
-		finishSetupCommandBuffer(contextTyped.idx);
+		finishSetupCommandBuffer(currentContext.idx);
 
 		// mark for deletion
-		delete_mutex.lock();
-		delete_images.push_back(
+		deleteMutex.lock();
+		deleteImages.push_back(
 			{
 				.image = staging_texture.image,
 				.allocation = staging_texture.allocation,
-				.image_view = VK_NULL_HANDLE,
+				.imageView = VK_NULL_HANDLE,
 				.sampler = VK_NULL_HANDLE
 			}
 		);
-		delete_mutex.unlock();
+		deleteMutex.unlock();
 	} else
 	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// TODO: not sure if I should ever support this
@@ -4659,7 +4656,7 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
 	createDepthBufferTexture(textureId, width, height, ID_NONE, ID_NONE);
-	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
+	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -4686,7 +4683,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
-	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
+	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
 
 void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, int32_t height) {
@@ -4712,7 +4709,7 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
-	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
+	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
 
 void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int32_t height) {
@@ -4738,7 +4735,7 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
-	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
+	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
 
 void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
@@ -4748,8 +4745,8 @@ void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
 void VKRenderer::bindTexture(void* context, int32_t textureId)
 {
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& boundTexture = contextTyped.bound_textures[contextTyped.texture_unit_active];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
 	boundTexture.id = ID_NONE;
@@ -4758,7 +4755,7 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	boundTexture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 	// textures
-	auto textureObjectPtr = textureId != ID_NONE?getTextureInternal(contextTyped.idx, textureId):nullptr;
+	auto textureObjectPtr = textureId != ID_NONE?getTextureInternal(currentContext.idx, textureId):nullptr;
 	if (textureId != ID_NONE) {
 		if (textureObjectPtr == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4784,9 +4781,9 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 void VKRenderer::disposeTexture(int32_t textureId)
 {
 	// mark for deletion
-	dispose_mutex.lock();
-	dispose_textures.push_back(textureId);
-	dispose_mutex.unlock();
+	disposeMutex.lock();
+	disposeTextures.push_back(textureId);
+	disposeMutex.unlock();
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
@@ -4803,22 +4800,22 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		texture_type* depthBufferTexture = nullptr;
 		texture_type* colorBufferTexture = nullptr;
 
-		auto depthBufferTextureIt = textures.find(frameBufferStruct.depth_texture_id);
+		auto depthBufferTextureIt = textures.find(frameBufferStruct.depthTextureId);
 		if (depthBufferTextureIt == textures.end()) {
-			if (frameBufferStruct.depth_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
+			if (frameBufferStruct.depthTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depthTextureId));
 		} else {
 			depthBufferTexture = depthBufferTextureIt->second;
 		}
-		auto colorBufferTextureIt = textures.find(frameBufferStruct.color_texture_id);
+		auto colorBufferTextureIt = textures.find(frameBufferStruct.colorTextureId);
 		if (colorBufferTextureIt == textures.end()) {
-			if (frameBufferStruct.color_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
+			if (frameBufferStruct.colorTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.colorTextureId));
 		} else {
 			colorBufferTexture = colorBufferTextureIt->second;
 		}
 
 		//
-		if (depthBufferTexture != nullptr) depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
-		if (colorBufferTexture != nullptr) colorBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
+		if (depthBufferTexture != nullptr) depthBufferTexture->frameBufferObjectId = frameBufferStruct.id;
+		if (colorBufferTexture != nullptr) colorBufferTexture->frameBufferObjectId = frameBufferStruct.id;
 
 		//
 		if (depthBufferTexture != nullptr && colorBufferTexture != nullptr &&
@@ -4833,7 +4830,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 		//
 		{
-			if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
+			if (frameBufferStruct.renderPass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.renderPass, nullptr);
 
 			auto attachmentIdx = 0;
 			array<VkAttachmentDescription, 2> attachments;
@@ -4863,44 +4860,44 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 					.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 				};
 			}
-			const VkAttachmentReference color_reference = {
+			const VkAttachmentReference colorReference = {
 				.attachment = 0,
 				.layout = colorBufferTexture != nullptr?(colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL):VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			};
-			const VkAttachmentReference depth_reference = {
+			const VkAttachmentReference depthReference = {
 				.attachment = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
 				.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 			};
-			const VkSubpassDescription subpass = {
+			const VkSubpassDescription subpassDescription = {
 				.flags = 0,
 				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 				.inputAttachmentCount = 0,
 				.pInputAttachments = nullptr,
 				.colorAttachmentCount = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
-				.pColorAttachments = colorBufferTexture != nullptr?&color_reference:nullptr,
+				.pColorAttachments = colorBufferTexture != nullptr?&colorReference:nullptr,
 				.pResolveAttachments = nullptr,
-				.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:nullptr,
+				.pDepthStencilAttachment = depthBufferTexture != nullptr?&depthReference:nullptr,
 				.preserveAttachmentCount = 0,
 				.pPreserveAttachments = nullptr
 			};
-			const VkRenderPassCreateInfo rp_info = {
+			const VkRenderPassCreateInfo renderPasseCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
 				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 				.pAttachments = attachments.data(),
 				.subpassCount = 1,
-				.pSubpasses = &subpass,
+				.pSubpasses = &subpassDescription,
 				.dependencyCount = 0,
 				.pDependencies = nullptr
 			};
-			err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
+			err = vkCreateRenderPass(device, &renderPasseCreateInfo, nullptr, &frameBufferStruct.renderPass);
 			assert(!err);
 		}
 
 		//
 		{
-			if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
+			if (frameBufferStruct.frameBuffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frameBuffer, nullptr);
 			auto attachmentIdx = 0;
 			array<VkImageView,  2> attachments;
 			if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
@@ -4909,38 +4906,38 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
-				.renderPass = frameBufferStruct.render_pass,
+				.renderPass = frameBufferStruct.renderPass,
 				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 				.pAttachments = attachments.data(),
 				.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
 				.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
 				.layers = 1
 			};
-			err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
+			err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frameBuffer);
 			assert(!err);
 		}
 	} else
 	if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
-		auto depthBufferTexture = textures.find(frameBufferStruct.depth_texture_id)->second;
-		auto geometryBufferTexture1 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id1)->second;
-		auto geometryBufferTexture2 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id2)->second;
-		auto geometryBufferTexture3 = textures.find(frameBufferStruct.gbuffer_geometry_buffer_texture_id3)->second;
-		auto colorBufferTexture1 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id1)->second;
-		auto colorBufferTexture2 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id2)->second;
-		auto colorBufferTexture3 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id3)->second;
-		auto colorBufferTexture4 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id4)->second;
-		auto colorBufferTexture5 = textures.find(frameBufferStruct.gbuffer_color_buffer_texture_id5)->second;
+		auto depthBufferTexture = textures.find(frameBufferStruct.depthTextureId)->second;
+		auto geometryBufferTexture1 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId1)->second;
+		auto geometryBufferTexture2 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId2)->second;
+		auto geometryBufferTexture3 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId3)->second;
+		auto colorBufferTexture1 = textures.find(frameBufferStruct.gbufferColorBufferTextureId1)->second;
+		auto colorBufferTexture2 = textures.find(frameBufferStruct.gbufferColorBufferTextureId2)->second;
+		auto colorBufferTexture3 = textures.find(frameBufferStruct.gbufferColorBufferTextureId3)->second;
+		auto colorBufferTexture4 = textures.find(frameBufferStruct.gbufferColorBufferTextureId4)->second;
+		auto colorBufferTexture5 = textures.find(frameBufferStruct.gbufferColorBufferTextureId5)->second;
 
 		//
-		depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
-		geometryBufferTexture1->frame_buffer_object_id = frameBufferStruct.id;
-		geometryBufferTexture2->frame_buffer_object_id = frameBufferStruct.id;
-		geometryBufferTexture3->frame_buffer_object_id = frameBufferStruct.id;
-		colorBufferTexture1->frame_buffer_object_id = frameBufferStruct.id;
-		colorBufferTexture2->frame_buffer_object_id = frameBufferStruct.id;
-		colorBufferTexture3->frame_buffer_object_id = frameBufferStruct.id;
-		colorBufferTexture4->frame_buffer_object_id = frameBufferStruct.id;
-		colorBufferTexture5->frame_buffer_object_id = frameBufferStruct.id;
+		depthBufferTexture->frameBufferObjectId = frameBufferStruct.id;
+		geometryBufferTexture1->frameBufferObjectId = frameBufferStruct.id;
+		geometryBufferTexture2->frameBufferObjectId = frameBufferStruct.id;
+		geometryBufferTexture3->frameBufferObjectId = frameBufferStruct.id;
+		colorBufferTexture1->frameBufferObjectId = frameBufferStruct.id;
+		colorBufferTexture2->frameBufferObjectId = frameBufferStruct.id;
+		colorBufferTexture3->frameBufferObjectId = frameBufferStruct.id;
+		colorBufferTexture4->frameBufferObjectId = frameBufferStruct.id;
+		colorBufferTexture5->frameBufferObjectId = frameBufferStruct.id;
 
 		//
 		if (depthBufferTexture->width == 0 || depthBufferTexture->height == 0 ||
@@ -4973,7 +4970,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 		//
 		{
-			if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
+			if (frameBufferStruct.renderPass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.renderPass, nullptr);
 
 			//
 			auto attachmentIdx = 0;
@@ -5002,69 +4999,69 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 			};
-			array<VkAttachmentReference, 8> color_references;
+			array<VkAttachmentReference, 8> colorReferences;
 			{
 				auto i = 0;
 				for (auto colorBufferTexture: colorBufferTextures) {
-					color_references[i] = {
+					colorReferences[i] = {
 						.attachment = static_cast<uint32_t>(i),
 						.layout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 					};
 					i++;
 				}
 			}
-			const VkAttachmentReference depth_reference = {
+			const VkAttachmentReference depthReference = {
 				.attachment = 8,
 				.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 			};
-			const VkSubpassDescription subpass = {
+			const VkSubpassDescription subpassDescription = {
 				.flags = 0,
 				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 				.inputAttachmentCount = 0,
 				.pInputAttachments = nullptr,
 				.colorAttachmentCount = 8,
-				.pColorAttachments = color_references.data(),
+				.pColorAttachments = colorReferences.data(),
 				.pResolveAttachments = nullptr,
-				.pDepthStencilAttachment = &depth_reference,
+				.pDepthStencilAttachment = &depthReference,
 				.preserveAttachmentCount = 0,
 				.pPreserveAttachments = nullptr
 			};
-			const VkRenderPassCreateInfo rp_info = {
+			const VkRenderPassCreateInfo renderPassCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
 				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 				.pAttachments = attachments.data(),
 				.subpassCount = 1,
-				.pSubpasses = &subpass,
+				.pSubpasses = &subpassDescription,
 				.dependencyCount = 0,
 				.pDependencies = nullptr
 			};
-			err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
+			err = vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &frameBufferStruct.renderPass);
 			assert(!err);
 		}
 
 		//
 		{
-			if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
+			if (frameBufferStruct.frameBuffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frameBuffer, nullptr);
 			auto attachmentIdx = 0;
 			array<VkImageView,  9> attachments;
 			for (auto colorBufferTexture: colorBufferTextures) {
 				attachments[attachmentIdx++] = colorBufferTexture->view;
 			}
 			attachments[attachmentIdx++] = depthBufferTexture->view;
-			const VkFramebufferCreateInfo fb_info = {
+			const VkFramebufferCreateInfo frameBufferCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
-				.renderPass = frameBufferStruct.render_pass,
+				.renderPass = frameBufferStruct.renderPass,
 				.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 				.pAttachments = attachments.data(),
 				.width = depthBufferTexture->width,
 				.height = depthBufferTexture->height,
 				.layers = 1
 			};
-			err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
+			err = vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &frameBufferStruct.frameBuffer);
 			assert(!err);
 		}
 	}
@@ -5088,10 +5085,10 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_
 	auto& frameBuffer = *frameBufferPtr;
 	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
 	frameBuffer.type = framebuffer_object_type::TYPE_COLORBUFFER;
-	frameBuffer.depth_texture_id = depthBufferTextureId;
-	frameBuffer.color_texture_id = colorBufferTextureId;
-	frameBuffer.cubemap_texture_id = cubeMapTextureId;
-	frameBuffer.cubemap_texture_index = cubeMapTextureIndex;
+	frameBuffer.depthTextureId = depthBufferTextureId;
+	frameBuffer.colorTextureId = colorBufferTextureId;
+	frameBuffer.cubemapTextureId = cubeMapTextureId;
+	frameBuffer.cubemapTextureIndex = cubeMapTextureIndex;
 
 	//
 	if (reuseIndex != -1) {
@@ -5146,15 +5143,15 @@ int32_t VKRenderer::createGeometryBufferObject(
 	auto& frameBuffer = *frameBufferPtr;
 	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
 	frameBuffer.type = framebuffer_object_type::TYPE_GEOMETRYBUFFER;
-	frameBuffer.depth_texture_id = depthBufferTextureId;
-	frameBuffer.gbuffer_geometry_buffer_texture_id1 = geometryBufferTextureId1;
-	frameBuffer.gbuffer_geometry_buffer_texture_id2 = geometryBufferTextureId2;
-	frameBuffer.gbuffer_geometry_buffer_texture_id3 = geometryBufferTextureId3;
-	frameBuffer.gbuffer_color_buffer_texture_id1 = colorBufferTextureId1;
-	frameBuffer.gbuffer_color_buffer_texture_id2 = colorBufferTextureId2;
-	frameBuffer.gbuffer_color_buffer_texture_id3 = colorBufferTextureId3;
-	frameBuffer.gbuffer_color_buffer_texture_id4 = colorBufferTextureId4;
-	frameBuffer.gbuffer_color_buffer_texture_id5 = colorBufferTextureId5;
+	frameBuffer.depthTextureId = depthBufferTextureId;
+	frameBuffer.gbufferGeometryBufferTextureId1 = geometryBufferTextureId1;
+	frameBuffer.gbufferGeometryBufferTextureId2 = geometryBufferTextureId2;
+	frameBuffer.gbufferGeometryBufferTextureId3 = geometryBufferTextureId3;
+	frameBuffer.gbufferColorBufferTextureId1 = colorBufferTextureId1;
+	frameBuffer.gbufferColorBufferTextureId2 = colorBufferTextureId2;
+	frameBuffer.gbufferColorBufferTextureId3 = colorBufferTextureId3;
+	frameBuffer.gbufferColorBufferTextureId4 = colorBufferTextureId4;
+	frameBuffer.gbufferColorBufferTextureId5 = colorBufferTextureId5;
 
 	//
 	if (reuseIndex != -1) {
@@ -5172,25 +5169,25 @@ int32_t VKRenderer::createGeometryBufferObject(
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	//
-	if (frameBufferId == bound_frame_buffer) return;
+	if (frameBufferId == boundFrameBuffer) return;
 
 	// if unsetting program flush command buffers
 	endDrawCommandsAllContexts();
 
 	//
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
-				auto depthBufferTextureId = frameBuffer->depth_texture_id;
-				auto colorBufferTextureId = frameBuffer->color_texture_id;
+				auto depthBufferTextureId = frameBuffer->depthTextureId;
+				auto colorBufferTextureId = frameBuffer->colorTextureId;
 				if (depthBufferTextureId != ID_NONE) {
-					auto& depth_buffer_texture = *textures[depthBufferTextureId];
+					auto& depthBufferTexture = *textures[depthBufferTextureId];
 					setImageLayout(
 						0,
-						&depth_buffer_texture,
+						&depthBufferTexture,
 						{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 						THSVS_IMAGE_LAYOUT_OPTIMAL,
 						false,
@@ -5200,10 +5197,10 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					);
 				}
 				if (colorBufferTextureId != ID_NONE) {
-					auto& color_buffer_texture = *textures[colorBufferTextureId];
+					auto& colorBufferTexture = *textures[colorBufferTextureId];
 					setImageLayout(
 						0,
-						&color_buffer_texture,
+						&colorBufferTexture,
 						{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 						THSVS_IMAGE_LAYOUT_OPTIMAL,
 						false,
@@ -5215,15 +5212,15 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": color buffer: unbinding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 			} else
 			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
-				auto depthBufferTextureId = frameBuffer->depth_texture_id;
-				auto colorBufferTextureId1 = frameBuffer->gbuffer_color_buffer_texture_id1;
-				auto colorBufferTextureId2 = frameBuffer->gbuffer_color_buffer_texture_id2;
-				auto colorBufferTextureId3 = frameBuffer->gbuffer_color_buffer_texture_id3;
-				auto colorBufferTextureId4 = frameBuffer->gbuffer_color_buffer_texture_id4;
-				auto colorBufferTextureId5 = frameBuffer->gbuffer_color_buffer_texture_id5;
+				auto depthBufferTextureId = frameBuffer->depthTextureId;
+				auto colorBufferTextureId1 = frameBuffer->gbufferColorBufferTextureId1;
+				auto colorBufferTextureId2 = frameBuffer->gbufferColorBufferTextureId2;
+				auto colorBufferTextureId3 = frameBuffer->gbufferColorBufferTextureId3;
+				auto colorBufferTextureId4 = frameBuffer->gbufferColorBufferTextureId4;
+				auto colorBufferTextureId5 = frameBuffer->gbufferColorBufferTextureId5;
 				setImageLayout(
 					0,
-					textures[frameBuffer->depth_texture_id],
+					textures[frameBuffer->depthTextureId],
 					{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 					THSVS_IMAGE_LAYOUT_OPTIMAL,
 					false,
@@ -5232,14 +5229,14 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 				array<texture_type*, 8> colorBufferTextures = {
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id1],
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id2],
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id3],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id1],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id2],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id3],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id4],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id5]
+					textures[frameBuffer->gbufferGeometryBufferTextureId1],
+					textures[frameBuffer->gbufferGeometryBufferTextureId2],
+					textures[frameBuffer->gbufferGeometryBufferTextureId3],
+					textures[frameBuffer->gbufferColorBufferTextureId1],
+					textures[frameBuffer->gbufferColorBufferTextureId2],
+					textures[frameBuffer->gbufferColorBufferTextureId3],
+					textures[frameBuffer->gbufferColorBufferTextureId4],
+					textures[frameBuffer->gbufferColorBufferTextureId5]
 				};
 				for (auto colorBufferTexture: colorBufferTextures) {
 					setImageLayout(
@@ -5281,20 +5278,20 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	}
 
 	//
-	bound_frame_buffer = frameBufferId;
-	if (bound_frame_buffer != ID_NONE) {
-		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
+	boundFrameBuffer = frameBufferId;
+	if (boundFrameBuffer != ID_NONE) {
+		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
-				auto depthBufferTextureId = frameBuffer->depth_texture_id;
-				auto colorBufferTextureId = frameBuffer->color_texture_id;
+				auto depthBufferTextureId = frameBuffer->depthTextureId;
+				auto colorBufferTextureId = frameBuffer->colorTextureId;
 				if (depthBufferTextureId != ID_NONE) {
-					auto& depth_buffer_texture = *textures[depthBufferTextureId];
+					auto& depthBufferTexture = *textures[depthBufferTextureId];
 					setImageLayout(
 						0,
-						&depth_buffer_texture,
+						&depthBufferTexture,
 						{ THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ, THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE },
 						THSVS_IMAGE_LAYOUT_OPTIMAL,
 						false,
@@ -5304,10 +5301,10 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					);
 				}
 				if (colorBufferTextureId != ID_NONE) {
-					auto& color_buffer_texture = *textures[colorBufferTextureId];
+					auto& colorBufferTexture = *textures[colorBufferTextureId];
 					setImageLayout(
 						0,
-						&color_buffer_texture,
+						&colorBufferTexture,
 						{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE},
 						THSVS_IMAGE_LAYOUT_OPTIMAL,
 						false,
@@ -5319,15 +5316,15 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId) + ": binding: " + to_string(colorBufferTextureId) + " / " + to_string(depthBufferTextureId));
 			} else
 			if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
-				auto depthBufferTextureId = frameBuffer->depth_texture_id;
-				auto colorBufferTextureId1 = frameBuffer->gbuffer_color_buffer_texture_id1;
-				auto colorBufferTextureId2 = frameBuffer->gbuffer_color_buffer_texture_id2;
-				auto colorBufferTextureId3 = frameBuffer->gbuffer_color_buffer_texture_id3;
-				auto colorBufferTextureId4 = frameBuffer->gbuffer_color_buffer_texture_id4;
-				auto colorBufferTextureId5 = frameBuffer->gbuffer_color_buffer_texture_id5;
+				auto depthBufferTextureId = frameBuffer->depthTextureId;
+				auto colorBufferTextureId1 = frameBuffer->gbufferColorBufferTextureId1;
+				auto colorBufferTextureId2 = frameBuffer->gbufferColorBufferTextureId2;
+				auto colorBufferTextureId3 = frameBuffer->gbufferColorBufferTextureId3;
+				auto colorBufferTextureId4 = frameBuffer->gbufferColorBufferTextureId4;
+				auto colorBufferTextureId5 = frameBuffer->gbufferColorBufferTextureId5;
 				setImageLayout(
 					0,
-					textures[frameBuffer->depth_texture_id],
+					textures[frameBuffer->depthTextureId],
 					{ THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ, THSVS_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE },
 					THSVS_IMAGE_LAYOUT_OPTIMAL,
 					false,
@@ -5336,14 +5333,14 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 				array<texture_type*, 8> colorBufferTextures = {
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id1],
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id2],
-					textures[frameBuffer->gbuffer_geometry_buffer_texture_id3],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id1],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id2],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id3],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id4],
-					textures[frameBuffer->gbuffer_color_buffer_texture_id5]
+					textures[frameBuffer->gbufferGeometryBufferTextureId1],
+					textures[frameBuffer->gbufferGeometryBufferTextureId2],
+					textures[frameBuffer->gbufferGeometryBufferTextureId3],
+					textures[frameBuffer->gbufferColorBufferTextureId1],
+					textures[frameBuffer->gbufferColorBufferTextureId2],
+					textures[frameBuffer->gbufferColorBufferTextureId3],
+					textures[frameBuffer->gbufferColorBufferTextureId4],
+					textures[frameBuffer->gbufferColorBufferTextureId5]
 				};
 				for (auto colorBufferTexture: colorBufferTextures) {
 					setImageLayout(
@@ -5379,7 +5376,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	finishSetupCommandBuffer(0);
 
 	//
-	for (auto& context: contexts) context.bound_textures.fill(context_type::bound_texture());
+	for (auto& context: contexts) context.boundTextures.fill(context_type::bound_texture());
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -5390,8 +5387,8 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 		return;
 	}
-	vkDestroyRenderPass(device, frameBuffer->render_pass, nullptr);
-	vkDestroyFramebuffer(device, frameBuffer->frame_buffer, nullptr);
+	vkDestroyRenderPass(device, frameBuffer->renderPass, nullptr);
+	vkDestroyFramebuffer(device, frameBuffer->frameBuffer, nullptr);
 	delete frameBuffer;
 	framebuffers[frameBufferId] = nullptr;
 }
@@ -5400,33 +5397,33 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
-	buffers_rwlock.writeLock();
-	if (buffer_idx - free_buffer_ids.size() >= BUFFERS_MAX) {
+	buffersRWlock.writeLock();
+	if (bufferIdx - freeBufferIds.size() >= BUFFERS_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): coud not allocate buffer object, maximum is " + to_string(BUFFERS_MAX));
-		buffers_rwlock.unlock();
+		buffersRWlock.unlock();
 		return bufferIds;
 	}
 	for (auto i = 0; i < bufferCount; i++) {
 		auto bufferPtr = new buffer_object_type();
 		auto& buffer = *bufferPtr;
 		auto reuseBufferId = -1;
-		if (free_buffer_ids.empty() == false) {
-			auto reuseBufferIdIdx = free_buffer_ids.size() - 1;
-			reuseBufferId = free_buffer_ids[reuseBufferIdIdx];
-			free_buffer_ids.erase(free_buffer_ids.begin() + reuseBufferIdIdx);
+		if (freeBufferIds.empty() == false) {
+			auto reuseBufferIdIdx = freeBufferIds.size() - 1;
+			reuseBufferId = freeBufferIds[reuseBufferIdIdx];
+			freeBufferIds.erase(freeBufferIds.begin() + reuseBufferIdIdx);
 		}
-		buffer.id = reuseBufferId != -1?reuseBufferId:buffer_idx++;
+		buffer.id = reuseBufferId != -1?reuseBufferId:bufferIdx++;
 		buffer.useGPUMemory = useGPUMemory;
 		buffer.shared = shared;
 		buffers[buffer.id] = bufferPtr;
 		bufferIds.push_back(buffer.id);
 	}
-	buffers_rwlock.unlock();
+	buffersRWlock.unlock();
 	return bufferIds;
 }
 
 inline VkBuffer VKRenderer::getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size) {
-	auto buffer = bufferObject->current_buffer;
+	auto buffer = bufferObject->currentBuffer;
 	if (buffer == nullptr) {
 		size = 0;
 		return VK_NULL_HANDLE;
@@ -5437,7 +5434,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternal(buffer_object_type* bufferOb
 	}
 	//
 	size = buffer->size;
-	buffer->frame_used_last = frame;
+	buffer->frameUsedLast = frame;
 	return buffer->buf;
 }
 
@@ -5454,30 +5451,30 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 	// have our context typed
 	buffer_object_type* buffer = nullptr;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		buffer = contextTyped.buffer_vector[bufferObjectId];
+		auto& currentContext = contexts[contextIdx];
+		buffer = currentContext.bufferVector[bufferObjectId];
 		if (buffer != nullptr) {
 			while (buffer->uploading == true) {
-				// spin lock
+				// spin
 			}
 			return buffer;
 		}
 
 	}
-	buffers_rwlock.readLock();
+	buffersRWlock.readLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
-		buffers_rwlock.unlock();
+		buffersRWlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
 		return VK_NULL_HANDLE;
 	}
 	// we have a buffer, also place it in context
 	buffer = bufferIt->second;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		contextTyped.buffer_vector[bufferObjectId] = buffer;
+		auto& currentContext = contexts[contextIdx];
+		currentContext.bufferVector[bufferObjectId] = buffer;
 	}
-	buffers_rwlock.unlock();
+	buffersRWlock.unlock();
 
 	//
 	while (buffer->uploading == true) {
@@ -5492,7 +5489,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 	//
 	VkResult err;
 
-	const VkBufferCreateInfo buf_info = {
+	const VkBufferCreateInfo bufferCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -5503,13 +5500,13 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 		.pQueueFamilyIndices = nullptr
 	};
 
-	VmaAllocationCreateInfo alloc_info = {};
-	alloc_info.flags = (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_ALLOCATION_CREATE_MAPPED_BIT:0;
-	alloc_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
-	alloc_info.requiredFlags = properties;
+	VmaAllocationCreateInfo allocationCreateInfo = {};
+	allocationCreateInfo.flags = (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_ALLOCATION_CREATE_MAPPED_BIT:0;
+	allocationCreateInfo.usage = VMA_MEMORY_USAGE_UNKNOWN;
+	allocationCreateInfo.requiredFlags = properties;
 
 	//
-	err = vmaCreateBuffer(allocator, &buf_info, &alloc_info, &buffer, &allocation, &allocationInfo);
+	err = vmaCreateBuffer(allocator, &bufferCreateInfo, &allocationCreateInfo, &buffer, &allocation, &allocationInfo);
 	assert(!err);
 }
 
@@ -5520,31 +5517,32 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	if (buffer == nullptr) return;
 
 	//
-	if (buffer->shared == true) buffers_rwlock.writeLock();
+	if (buffer->shared == true) buffersRWlock.writeLock();
 
 	// do the work
 	uploadBufferObjectInternal(contextIdx, buffer, size, data, usage);
 
 	//
-	if (buffer->shared == true) buffers_rwlock.unlock();
+	if (buffer->shared == true) buffersRWlock.unlock();
 }
 
 inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, VmaAllocation allocationSrc, uint32_t size) {
-	vma_spinlock.lock();
+	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
 	VmaAllocationInfo srcAllocationInfo {};
 	vmaGetAllocationInfo(allocator, allocationSrc, &srcAllocationInfo);
 	memcpy(dstAllocationInfo.pMappedData, srcAllocationInfo.pMappedData, size);
-	vma_spinlock.unlock();
+	vmaSpinlock.unlock();
 }
+
 inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
 	// TODO: have uniforms on CPU mem and copy the final to mmapped memory
-	vma_spinlock.lock();
+	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(allocator, allocationDst, &dstAllocationInfo);
 	memcpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData) + offset, src, size);
-	vma_spinlock.unlock();
+	vmaSpinlock.unlock();
 }
 
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
@@ -5560,7 +5558,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	buffer_object_type::reusable_buffer* reusableBuffer = nullptr;
 	for (auto& reusableBufferCandidate: buffer->buffers) {
 		if (reusableBufferCandidate.size >= size &&
-			reusableBufferCandidate.frame_used_last < frame) {
+			reusableBufferCandidate.frameUsedLast < frame) {
 			reusableBuffer = &reusableBufferCandidate;
 			break;
 		}
@@ -5570,18 +5568,18 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	if (reusableBuffer == nullptr) {
 		buffer->buffers.push_back(buffer_object_type::reusable_buffer());
 		reusableBuffer = &buffer->buffers.back();
-		buffer->buffer_count++;
+		buffer->bufferCount++;
 	}
 
 	// create buffer if not yet done
 	if (reusableBuffer->size == 0) {
-		VmaAllocationInfo allocation_info = {};
-		createBuffer(size, usage, buffer->useGPUMemory == true?VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
+		VmaAllocationInfo allocationInfo = {};
+		createBuffer(size, usage, buffer->useGPUMemory == true?VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocationInfo);
 		reusableBuffer->size = size;
 
-		VkMemoryPropertyFlags mem_flags;
-		vmaGetMemoryTypeProperties(allocator, allocation_info.memoryType, &mem_flags);
-		reusableBuffer->memoryMappable = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		VkMemoryPropertyFlags memoryFlags;
+		vmaGetMemoryTypeProperties(allocator, allocationInfo.memoryType, &memoryFlags);
+		reusableBuffer->memoryMappable = (memoryFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 		if (reusableBuffer->memoryMappable == true) {
 			void* mmData;
 			vmaMapMemory(allocator, reusableBuffer->allocation, &mmData);
@@ -5602,14 +5600,14 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		VmaAllocationInfo stagingBufferAllocationInfo = {};
 		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
-		delete_mutex.lock();
-		delete_buffers.push_back(
+		deleteMutex.lock();
+		deleteBuffers.push_back(
 			{
 				.buffer = stagingBuffer,
 				.allocation = stagingBufferAllocation
 			}
 		);
-		delete_mutex.unlock();
+		deleteMutex.unlock();
 
 		void* mmData;
 		vmaMapMemory(allocator, stagingBufferAllocation, &mmData);
@@ -5623,23 +5621,23 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			.dstOffset = 0,
 			.size = static_cast<VkDeviceSize>(size)
 		};
-		vkCmdCopyBuffer(contexts[contextIdx].setup_cmd_inuse, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
+		vkCmdCopyBuffer(contexts[contextIdx].setupCommandInUse, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
 
 		//
 		finishSetupCommandBuffer(contextIdx);
 	}
 
 	// frame and current buffer
-	reusableBuffer->frame_used_last = frame;
-	buffer->current_buffer = reusableBuffer;
+	reusableBuffer->frameUsedLast = frame;
+	buffer->currentBuffer = reusableBuffer;
 
 	// clean up
 	vector<int> buffersToRemove;
-	if (buffer->buffer_count > 1 && frame >= buffer->frame_cleaned_last + 60) {
+	if (buffer->bufferCount > 1 && frame >= buffer->frameCleanedLast + 60) {
 		int i = 0;
 		vector<int32_t> buffersToRemove;
 		for (auto& reusableBufferCandidate: buffer->buffers) {
-			if (frame >= reusableBufferCandidate.frame_used_last + 60) {
+			if (frame >= reusableBufferCandidate.frameUsedLast + 60) {
 				vmaUnmapMemory(allocator, reusableBufferCandidate.allocation);
 				vmaDestroyBuffer(allocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
 				buffersToRemove.push_back(i - buffersToRemove.size());
@@ -5650,9 +5648,9 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			auto it = buffer->buffers.begin();
 			for (auto i = 0; i < bufferToRemove; i++) ++it;
 			buffer->buffers.erase(it);
-			buffer->buffer_count--;
+			buffer->bufferCount--;
 		}
-		buffer->frame_cleaned_last = frame;
+		buffer->frameCleanedLast = frame;
 		//
 		AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
 	}
@@ -5697,42 +5695,42 @@ void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId
 inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, int32_t textureId) {
 	// return default texture if no texture was requested
 	if (textureId == ID_NONE) {
-		return white_texture_sampler2d_default;
+		return whiteTextureSampler2dDefault;
 	}
 
 	// have our context typed
 	texture_type* texture = nullptr;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		texture = contextTyped.texture_vector[textureId];
+		auto& currentContext = contexts[contextIdx];
+		texture = currentContext.textureVector[textureId];
 		if (texture != nullptr) {
-			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return white_texture_sampler2d_default;
+			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
 			return texture;
 		}
 	}
-	textures_rwlock.readLock();
+	texturesRWlock.readLock();
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
-		textures_rwlock.unlock();
+		texturesRWlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture with id " + to_string(textureId) + " does not exist");
-		return white_texture_sampler2d_default;
+		return whiteTextureSampler2dDefault;
 	}
 	// we have a texture, also place it in context
 	texture = textureIt->second;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		contextTyped.texture_vector[textureId] = texture;
+		auto& currentContext = contexts[contextIdx];
+		currentContext.textureVector[textureId] = texture;
 	}
-	textures_rwlock.unlock();
-	return texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false?white_texture_sampler2d_default:texture;
+	texturesRWlock.unlock();
+	return texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false?whiteTextureSampler2dDefault:texture;
 }
 
 inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, const uint32_t pipelineId) {
 	// have our context typed
 	pipeline_type* pipeline = nullptr;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		for (auto pipelineCandidate: contextTyped.pipeline_vector) {
+		auto& currentContext = contexts[contextIdx];
+		for (auto pipelineCandidate: currentContext.pipelineVector) {
 			if (pipelineCandidate->id == pipelineId) {
 				pipeline = pipelineCandidate;
 				break;
@@ -5742,242 +5740,242 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 			return pipeline;
 		}
 	}
-	pipeline_rwlock.readLock();
+	pipelineRWlock.readLock();
 	auto pipelineIt = program->pipelines.find(pipelineId);
 	if (pipelineIt == program->pipelines.end()) {
-		pipeline_rwlock.unlock();
+		pipelineRWlock.unlock();
 		return nullptr;
 	}
 	// we have a pipeline, also place it in context
 	pipeline = pipelineIt->second;
 	if (contextIdx != -1) {
-		auto& contextTyped = contexts[contextIdx];
-		contextTyped.pipeline_vector.push_back(pipeline);
+		auto& currentContext = contexts[contextIdx];
+		currentContext.pipelineVector.push_back(pipeline);
 	}
-	pipeline_rwlock.unlock();
+	pipelineRWlock.unlock();
 	return pipeline;
 }
 
 void VKRenderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
+	auto& currentContext = (*static_cast<context_type*>(context));
 	uint32_t bufferSize = 0;
-	contextTyped.bound_indices_buffer =
+	currentContext.boundIndicesBuffer =
 		bufferObjectId == ID_NONE?
 			VK_NULL_HANDLE:
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, bufferSize);
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, bufferSize);
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[2] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[2]);
-	if (contextTyped.bound_buffers[2] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[2] = getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[2]);
+	if (currentContext.boundBuffers[2] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[2] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
 	}
 }
 
 void VKRenderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[0] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[0]);
-	if (contextTyped.bound_buffers[0] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[0] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[0]);
+	if (currentContext.boundBuffers[0] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[0] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
 	}
 }
 
 void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[1] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
-	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[1] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
 }
 
 void VKRenderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[3] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[3]);
-	if (contextTyped.bound_buffers[3] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[3] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[3]);
+	if (currentContext.boundBuffers[3] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[3] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
 	}
 }
 
 void VKRenderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[4] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[4]);
-	if (contextTyped.bound_buffers[4] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[4] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[4]);
+	if (currentContext.boundBuffers[4] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[4] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
 	}
 }
 
 void VKRenderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[5] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
-	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[5] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
 }
 
 void VKRenderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[6] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
-	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[6] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[6] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
 }
 
 void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[7] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[7]);
-	if (contextTyped.bound_buffers[7] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[7] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[7]);
+	if (currentContext.boundBuffers[7] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[7] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]);
 	}
 }
 
 void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
 {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[8] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[8] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[8]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[8]);
-	if (contextTyped.bound_buffers[8] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[8] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[8]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[8]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[8]);
+	if (currentContext.boundBuffers[8] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[8] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[8]);
 	}
 }
 
 void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[9] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[9] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[9]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[9]);
-	if (contextTyped.bound_buffers[9] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[9] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[9]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[9]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[9]);
+	if (currentContext.boundBuffers[9] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[9] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[9]);
 	}
 }
 
 void VKRenderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[1] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
-	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[1] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
 }
 
 void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[5] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
-	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[5] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
 }
 
 void VKRenderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = (*static_cast<context_type*>(context));
-	contextTyped.bound_buffers[6] =
+	auto& currentContext = (*static_cast<context_type*>(context));
+	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
-	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[6] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[6] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, (*static_cast<context_type*>(context)).bound_indices_buffer, instances);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, (*static_cast<context_type*>(context)).boundIndicesBuffer, instances);
 }
 
 inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& programContext = contextTyped.program->contexts[contextTyped.idx];
-	auto& programCommandBuffer = programContext.command_buffers[contextTyped.command_buffer_current];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& programContext = currentContext.program->contexts[currentContext.idx];
+	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
-	if (programCommandBuffer.desc_sets1_idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets1_idx));
+	if (programCommandBuffer.descriptorSets1Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
-	if (programCommandBuffer.desc_sets2_idx_uncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets2_idx_uncached));
+	if (programCommandBuffer.descriptorSets2IdxUncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets2IdxUncached));
 		return;
 	}
 	//
-	auto desc_set1 = programCommandBuffer.desc_sets1[programCommandBuffer.desc_sets1_idx];
-	auto desc_set2 = programCommandBuffer.desc_sets2_uncached[programCommandBuffer.desc_sets2_idx_uncached];
+	auto descriptorSet1 = programCommandBuffer.descriptorSets1[programCommandBuffer.descriptorSets1Idx];
+	auto descriptorSet2Uncached = programCommandBuffer.descriptorSets2Uncached[programCommandBuffer.descriptorSets2IdxUncached];
 
 	// start draw command buffer, it not yet done
-	beginDrawCommandBuffer(contextTyped.idx);
+	beginDrawCommandBuffer(currentContext.idx);
 
 	// start render pass
-	startRenderPass(contextTyped.idx);
+	startRenderPass(currentContext.idx);
 
 	// pipeline
-	setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
+	setupObjectsRenderingPipeline(currentContext.idx, currentContext.program);
 
 	//
 	auto uboIdx = 0;
-	SAMPLER_HASH_TYPE desc_set2_cache_id = 0LL;
+	SAMPLER_HASH_TYPE descriptorSet2CacheId = 0LL;
 	#if defined(CPU_64BIT)
-		array<int, 8> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE, ID_NONE , ID_NONE , ID_NONE , ID_NONE  };
+		array<int, 8> textureIds { ID_NONE, ID_NONE, ID_NONE, ID_NONE, ID_NONE , ID_NONE , ID_NONE , ID_NONE  };
 	#else
-		array<int, 4> texture_ids { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
+		array<int, 4> textureIds { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
 	#endif
 	// get texture set cache id
 	auto samplers = -1;
 	{
 		auto samplerIdx = 0;
-		for (auto shader: contextTyped.program->shaders) {
+		for (auto shader: currentContext.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
 				if (samplerIdx < SAMPLER_HASH_MAX) {
-					if (uniform->texture_unit == -1) {
-						texture_ids[samplerIdx] = ID_NONE;
+					if (uniform->textureUnit == -1) {
+						textureIds[samplerIdx] = ID_NONE;
 					} else {
-						auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+						auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
 						if (boundTexture.view == VK_NULL_HANDLE) {
-							texture_ids[samplerIdx] = ID_NONE;
+							textureIds[samplerIdx] = ID_NONE;
 						} else {
-							texture_ids[samplerIdx] = boundTexture.id;
-							desc_set2_cache_id+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
+							textureIds[samplerIdx] = boundTexture.id;
+							descriptorSet2CacheId+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
 						}
 					}
 				}
@@ -5985,34 +5983,34 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			}
 
 			// uniform buffer
-			if (shader->ubo_binding_idx == -1) {
+			if (shader->uboBindingIdx == -1) {
 				continue;
 			}
 
 			//
-			auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+			auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 			auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 			auto uboBuffer = src.buffer;
 			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 			auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 			vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
-			contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+			currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 				.buffer = uboBuffer,
 				.offset = 0,
-				.range = shader->ubo_size
+				.range = shader->uboSize
 			};
 
-			contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+			currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set1,
-				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+				.dstSet = descriptorSet1,
+				.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = nullptr,
-				.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+				.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 				.pTexelBufferView = nullptr
 			};
 
@@ -6022,43 +6020,43 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		samplers = samplerIdx;
 	}
 
-	auto& desc_set2_cache = programContext.desc_sets2_cache;
-	auto desc_set2_cache_it = samplers > SAMPLER_HASH_MAX?desc_set2_cache.end():desc_set2_cache.find(desc_set2_cache_id);
-	auto desc_set2_cache_hit = desc_set2_cache_it != desc_set2_cache.end();
-	if (desc_set2_cache_hit == false) {
+	auto& descriptorSet2Cache = programContext.descriptorSets2Cache;
+	auto descriptorSet2CacheIt = samplers > SAMPLER_HASH_MAX?descriptorSet2Cache.end():descriptorSet2Cache.find(descriptorSet2CacheId);
+	auto descriptorSet2CacheHit = descriptorSet2CacheIt != descriptorSet2Cache.end();
+	if (descriptorSet2CacheHit == false) {
 		if (samplers <= SAMPLER_HASH_MAX) {
-			auto desc_sets2_idx = -1;
-			if (programContext.free_desc_sets2_ids.empty() == false) {
-				auto free_desc_sets2_ids_idx = programContext.free_desc_sets2_ids.size() - 1;
-				desc_sets2_idx = programContext.free_desc_sets2_ids[free_desc_sets2_ids_idx];
-				programContext.free_desc_sets2_ids.erase(programContext.free_desc_sets2_ids.begin() + free_desc_sets2_ids_idx);
+			auto descriptorSets2Idx = -1;
+			if (programContext.freeDescriptorSets2Ids.empty() == false) {
+				auto freeDescriptorSets2IdsIdx = programContext.freeDescriptorSets2Ids.size() - 1;
+				descriptorSets2Idx = programContext.freeDescriptorSets2Ids[freeDescriptorSets2IdsIdx];
+				programContext.freeDescriptorSets2Ids.erase(programContext.freeDescriptorSets2Ids.begin() + freeDescriptorSets2IdsIdx);
 			} else {
-				desc_sets2_idx = programContext.desc_sets2_idx++;
+				descriptorSets2Idx = programContext.descriptorSets2Idx++;
 			}
-			desc_set2 = programContext.desc_sets2[desc_sets2_idx];
-			desc_set2_cache[desc_set2_cache_id] = desc_sets2_idx;
-			for (auto texture_id: texture_ids) programContext.desc_sets2_cache_texture_ids[texture_id].insert(desc_set2_cache_id);
+			descriptorSet2Uncached = programContext.descriptorSets2[descriptorSets2Idx];
+			descriptorSet2Cache[descriptorSet2CacheId] = descriptorSets2Idx;
+			for (auto textureId: textureIds) programContext.descriptorSets2CacheTextureIds[textureId].insert(descriptorSet2CacheId);
 		} else {
-			programCommandBuffer.desc_sets2_idx_uncached++;
+			programCommandBuffer.descriptorSets2IdxUncached++;
 		}
 		auto samplerIdx = 0;
-		for (auto shader: contextTyped.program->shaders) {
+		for (auto shader: currentContext.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->texture_unit == -1) {
+				if (uniform->textureUnit == -1) {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSampler2dDefault->sampler,
+								.imageView = whiteTextureSampler2dDefault->view,
+								.imageLayout = whiteTextureSampler2dDefault->vkLayout
 							};
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSamplercubeDefault->sampler,
+								.imageView = whiteTextureSamplercubeDefault->view,
+								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 							};
 							break;
 						default:
@@ -6066,21 +6064,21 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 							break;
 					}
 				} else {
-					auto& boundTexture = contextTyped.bound_textures[uniform->texture_unit];
+					auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
 					if (boundTexture.view == VK_NULL_HANDLE) {
 						switch(uniform->type) {
 							case shader_type::uniform_type::TYPE_SAMPLER2D:
-								contextTyped.descriptor_image_info[samplerIdx] = {
-									.sampler = white_texture_sampler2d_default->sampler,
-									.imageView = white_texture_sampler2d_default->view,
-									.imageLayout = white_texture_sampler2d_default->vkLayout
+								currentContext.descriptorImageInfos[samplerIdx] = {
+									.sampler = whiteTextureSampler2dDefault->sampler,
+									.imageView = whiteTextureSampler2dDefault->view,
+									.imageLayout = whiteTextureSampler2dDefault->vkLayout
 								};
 								break;
 							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-								contextTyped.descriptor_image_info[samplerIdx] = {
-									.sampler = white_texture_samplercube_default->sampler,
-									.imageView = white_texture_samplercube_default->view,
-									.imageLayout = white_texture_samplercube_default->vkLayout
+								currentContext.descriptorImageInfos[samplerIdx] = {
+									.sampler = whiteTextureSamplercubeDefault->sampler,
+									.imageView = whiteTextureSamplercubeDefault->view,
+									.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 								};
 								break;
 							default:
@@ -6088,22 +6086,22 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 								break;
 						}
 					} else {
-						contextTyped.descriptor_image_info[samplerIdx] = {
+						currentContext.descriptorImageInfos[samplerIdx] = {
 							.sampler = boundTexture.sampler,
 							.imageView = boundTexture.view,
 							.imageLayout = boundTexture.layout
 						};
 					}
 				}
-				contextTyped.descriptor_write_set[uniform->position] = {
+				currentContext.descriptorWriteSets[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = nullptr,
-					.dstSet = desc_set2,
+					.dstSet = descriptorSet2Uncached,
 					.dstBinding = static_cast<uint32_t>(uniform->position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+					.pImageInfo = &currentContext.descriptorImageInfos[samplerIdx],
 					.pBufferInfo = VK_NULL_HANDLE,
 					.pTexelBufferView = VK_NULL_HANDLE
 				};
@@ -6111,40 +6109,40 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			}
 		}
 	} else {
-		desc_set2 = programContext.desc_sets2[desc_set2_cache_it->second];
+		descriptorSet2Uncached = programContext.descriptorSets2[descriptorSet2CacheIt->second];
 	}
 
 	//
-	vkUpdateDescriptorSets(device, desc_set2_cache_hit == true?uboIdx:contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+	vkUpdateDescriptorSets(device, descriptorSet2CacheHit == true?uboIdx:currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	// descriptor sets
-	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
+	array<VkDescriptorSet, 2> descSets { descriptorSet1, descriptorSet2Uncached };
 
 	// draw cmd
-	auto& draw_cmd = contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd;
-	vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
+	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSets.size(), descSets.data(), 0, nullptr);
 
 	// index buffer
 	if (indicesBuffer != VK_NULL_HANDLE) {
-		vkCmdBindIndexBuffer(draw_cmd, indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(drawCommand, indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	// buffers
-	vkCmdBindVertexBuffers(draw_cmd, 0, OBJECTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
+	vkCmdBindVertexBuffers(drawCommand, 0, OBJECTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
 
 	// draw
 	if (indicesBuffer != VK_NULL_HANDLE) {
-		vkCmdDrawIndexed(draw_cmd, triangles * 3, instances, trianglesOffset * 3, 0, 0);
+		vkCmdDrawIndexed(drawCommand, triangles * 3, instances, trianglesOffset * 3, 0, 0);
 	} else {
-		vkCmdDraw(draw_cmd, triangles * 3, instances, trianglesOffset * 3, 0);
+		vkCmdDraw(drawCommand, triangles * 3, instances, trianglesOffset * 3, 0);
 	}
 
 	//
-	programCommandBuffer.desc_sets1_idx++;
-	contextTyped.command_count++;
+	programCommandBuffer.descriptorSets1Idx++;
+	currentContext.commandCount++;
 
 	//
-	requestSubmitDrawBuffers(contextTyped.idx);
+	requestSubmitDrawBuffers(currentContext.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -6167,10 +6165,10 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		auto& contextTyped = contexts[i];
 		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.command_buffer_current;
+		auto currentBufferIdx = contextTyped.currentCommandBuffer;
 		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
+			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.commandBuffers[currentBufferIdx].drawFence, false, false);
 		}
 		unsetPipeline(contextTyped.idx);
     }
@@ -6182,12 +6180,12 @@ inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 
 	//
 	auto commandsMax = COMMANDS_MAX_GRAPHICS;
-	if (contextTyped.command_count >= commandsMax) {
+	if (contextTyped.commandCount >= commandsMax) {
 		endRenderPass(contextTyped.idx);
-		auto currentBufferIdx = contextTyped.command_buffer_current;
+		auto currentBufferIdx = contextTyped.currentCommandBuffer;
 		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
-		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, contextTyped.command_buffers[currentBufferIdx].draw_fence, false, false);
-		contextTyped.command_count = 0;
+		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, contextTyped.commandBuffers[currentBufferIdx].drawFence, false, false);
+		contextTyped.commandCount = 0;
 	}
 }
 
@@ -6206,52 +6204,52 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& programContext = contextTyped.program->contexts[contextTyped.idx];
-	auto& programCommandBuffer = programContext.command_buffers[contextTyped.command_buffer_current];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& programContext = currentContext.program->contexts[currentContext.idx];
+	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
-	if (programCommandBuffer.desc_sets1_idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets1_idx));
+	if (programCommandBuffer.descriptorSets1Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
-	if (programCommandBuffer.desc_sets2_idx_uncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets2_idx_uncached));
+	if (programCommandBuffer.descriptorSets2IdxUncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets2IdxUncached));
 		return;
 	}
 	//
-	auto desc_set1 = programCommandBuffer.desc_sets1[programCommandBuffer.desc_sets1_idx];
-	auto desc_set2 = programCommandBuffer.desc_sets2_uncached[programCommandBuffer.desc_sets2_idx_uncached];
+	auto descriptorSet1 = programCommandBuffer.descriptorSets1[programCommandBuffer.descriptorSets1Idx];
+	auto descriptorSet2 = programCommandBuffer.descriptorSets2Uncached[programCommandBuffer.descriptorSets2IdxUncached];
 
 	// start draw command buffer, it not yet done
-	beginDrawCommandBuffer(contextTyped.idx);
+	beginDrawCommandBuffer(currentContext.idx);
 
 	// render pass
-	startRenderPass(contextTyped.idx);
+	startRenderPass(currentContext.idx);
 
 	// pipeline
-	setupPointsRenderingPipeline(contextTyped.idx, contextTyped.program);
+	setupPointsRenderingPipeline(currentContext.idx, currentContext.program);
 
 	// do points render command
 	auto samplerIdx = 0;
-	for (auto shader: contextTyped.program->shaders) {
+	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			if (uniform->texture_unit == -1) {
+			if (uniform->textureUnit == -1) {
 				switch(uniform->type) {
 					case shader_type::uniform_type::TYPE_SAMPLER2D:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_sampler2d_default->sampler,
-							.imageView = white_texture_sampler2d_default->view,
-							.imageLayout = white_texture_sampler2d_default->vkLayout
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSampler2dDefault->sampler,
+							.imageView = whiteTextureSampler2dDefault->view,
+							.imageLayout = whiteTextureSampler2dDefault->vkLayout
 						};
 						break;
 					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_samplercube_default->sampler,
-							.imageView = white_texture_samplercube_default->view,
-							.imageLayout = white_texture_samplercube_default->vkLayout
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSamplercubeDefault->sampler,
+							.imageView = whiteTextureSamplercubeDefault->view,
+							.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 						};
 						break;
 					default:
@@ -6259,21 +6257,21 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 						break;
 				}
 			} else {
-				auto& texture = contextTyped.bound_textures[uniform->texture_unit];
+				auto& texture = currentContext.boundTextures[uniform->textureUnit];
 				if (texture.view == VK_NULL_HANDLE) {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSampler2dDefault->sampler,
+								.imageView = whiteTextureSampler2dDefault->view,
+								.imageLayout = whiteTextureSampler2dDefault->vkLayout
 							};
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSamplercubeDefault->sampler,
+								.imageView = whiteTextureSamplercubeDefault->view,
+								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 							};
 							break;
 						default:
@@ -6281,22 +6279,22 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 							break;
 					}
 				} else {
-					contextTyped.descriptor_image_info[samplerIdx] = {
+					currentContext.descriptorImageInfos[samplerIdx] = {
 						.sampler = texture.sampler,
 						.imageView = texture.view,
 						.imageLayout = texture.layout
 					};
 				}
 			}
-			contextTyped.descriptor_write_set[uniform->position] = {
+			currentContext.descriptorWriteSets[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set2,
+				.dstSet = descriptorSet2,
 				.dstBinding = static_cast<uint32_t>(uniform->position),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+				.pImageInfo = &currentContext.descriptorImageInfos[samplerIdx],
 				.pBufferInfo = VK_NULL_HANDLE,
 				.pTexelBufferView = VK_NULL_HANDLE
 			};
@@ -6304,54 +6302,54 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		}
 
 		// uniform buffer
-		if (shader->ubo_binding_idx == -1) {
+		if (shader->uboBindingIdx == -1) {
 			continue;
 		}
 
-		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
-		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
-			.range = shader->ubo_size
+			.range = shader->uboSize
 		};
 
-		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = desc_set1,
-			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstSet = descriptorSet1,
+			.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.pImageInfo = nullptr,
-			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr
 		};
 	}
 
 	//
-	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+	vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	//
-	auto& draw_cmd = contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd;
-	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
-	vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
-	vkCmdBindVertexBuffers(draw_cmd, 0, POINTS_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
-	vkCmdDraw(draw_cmd, points, 1, pointsOffset, 0);
+	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
+	array<VkDescriptorSet, 2> descriptorSets { descriptorSet1, descriptorSet2 };
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+	vkCmdBindVertexBuffers(drawCommand, 0, POINTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
+	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
-	programCommandBuffer.desc_sets1_idx++;
-	programCommandBuffer.desc_sets2_idx_uncached++;
-	contextTyped.command_count++;
+	programCommandBuffer.descriptorSets1Idx++;
+	programCommandBuffer.descriptorSets2IdxUncached++;
+	currentContext.commandCount++;
 
 	//
-	requestSubmitDrawBuffers(contextTyped.idx);
+	requestSubmitDrawBuffers(currentContext.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -6360,7 +6358,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 void VKRenderer::setLineWidth(float lineWidth)
 {
-	line_width = lineWidth;
+	this->lineWidth = lineWidth;
 }
 
 void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
@@ -6368,51 +6366,51 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& programCommandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
-	if (programCommandBuffer.desc_sets1_idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets1_idx));
+	if (programCommandBuffer.descriptorSets1Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
-	if (programCommandBuffer.desc_sets2_idx_uncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets2_idx_uncached));
+	if (programCommandBuffer.descriptorSets2IdxUncached == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets2IdxUncached));
 		return;
 	}
 	//
-	auto desc_set1 = programCommandBuffer.desc_sets1[programCommandBuffer.desc_sets1_idx];
-	auto desc_set2 = programCommandBuffer.desc_sets2_uncached[programCommandBuffer.desc_sets2_idx_uncached];
+	auto descriptorSet1 = programCommandBuffer.descriptorSets1[programCommandBuffer.descriptorSets1Idx];
+	auto descriptorSet2 = programCommandBuffer.descriptorSets2Uncached[programCommandBuffer.descriptorSets2IdxUncached];
 
 	// start draw command buffer, it not yet done
-	beginDrawCommandBuffer(contextTyped.idx);
+	beginDrawCommandBuffer(currentContext.idx);
 
 	// render pass
-	startRenderPass(contextTyped.idx);
+	startRenderPass(currentContext.idx);
 
 	// lines
-	setupLinesRenderingPipeline(contextTyped.idx, contextTyped.program);
+	setupLinesRenderingPipeline(currentContext.idx, currentContext.program);
 
 	// do lines render command
 	auto samplerIdx = 0;
-	for (auto shader: contextTyped.program->shaders) {
+	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			if (uniform->texture_unit == -1) {
+			if (uniform->textureUnit == -1) {
 				switch(uniform->type) {
 					case shader_type::uniform_type::TYPE_SAMPLER2D:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_sampler2d_default->sampler,
-							.imageView = white_texture_sampler2d_default->view,
-							.imageLayout = white_texture_sampler2d_default->vkLayout
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSampler2dDefault->sampler,
+							.imageView = whiteTextureSampler2dDefault->view,
+							.imageLayout = whiteTextureSampler2dDefault->vkLayout
 						};
 						break;
 					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-						contextTyped.descriptor_image_info[samplerIdx] = {
-							.sampler = white_texture_samplercube_default->sampler,
-							.imageView = white_texture_samplercube_default->view,
-							.imageLayout = white_texture_samplercube_default->vkLayout
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSamplercubeDefault->sampler,
+							.imageView = whiteTextureSamplercubeDefault->view,
+							.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 						};
 						break;
 					default:
@@ -6420,21 +6418,21 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 						break;
 				}
 			} else {
-				auto& texture = contextTyped.bound_textures[uniform->texture_unit];
+				auto& texture = currentContext.boundTextures[uniform->textureUnit];
 				if (texture.view == VK_NULL_HANDLE) {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_sampler2d_default->sampler,
-								.imageView = white_texture_sampler2d_default->view,
-								.imageLayout = white_texture_sampler2d_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSampler2dDefault->sampler,
+								.imageView = whiteTextureSampler2dDefault->view,
+								.imageLayout = whiteTextureSampler2dDefault->vkLayout
 							};
 							break;
 						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							contextTyped.descriptor_image_info[samplerIdx] = {
-								.sampler = white_texture_samplercube_default->sampler,
-								.imageView = white_texture_samplercube_default->view,
-								.imageLayout = white_texture_samplercube_default->vkLayout
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSamplercubeDefault->sampler,
+								.imageView = whiteTextureSamplercubeDefault->view,
+								.imageLayout = whiteTextureSamplercubeDefault->vkLayout
 							};
 							break;
 						default:
@@ -6442,22 +6440,22 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 							break;
 					}
 				} else {
-					contextTyped.descriptor_image_info[samplerIdx] = {
+					currentContext.descriptorImageInfos[samplerIdx] = {
 						.sampler = texture.sampler,
 						.imageView = texture.view,
 						.imageLayout = texture.layout
 					};
 				}
 			}
-			contextTyped.descriptor_write_set[uniform->position] = {
+			currentContext.descriptorWriteSets[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set2,
+				.dstSet = descriptorSet2,
 				.dstBinding = static_cast<uint32_t>(uniform->position),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.pImageInfo = &contextTyped.descriptor_image_info[samplerIdx],
+				.pImageInfo = &currentContext.descriptorImageInfos[samplerIdx],
 				.pBufferInfo = VK_NULL_HANDLE,
 				.pTexelBufferView = VK_NULL_HANDLE
 			};
@@ -6465,55 +6463,55 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 		}
 
 		// uniform buffer
-		if (shader->ubo_binding_idx == -1) {
+		if (shader->uboBindingIdx == -1) {
 			continue;
 		}
 
-		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
-		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
-			.range = shader->ubo_size
+			.range = shader->uboSize
 		};
 
-		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = desc_set1,
-			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstSet = descriptorSet1,
+			.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.pImageInfo = nullptr,
-			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr
 		};
 	}
 
 	//
-	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+	vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	//
-	auto& draw_cmd = contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd;
-	array<VkDescriptorSet, 2> desc_sets { desc_set1, desc_set2 };
-	vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, desc_sets.size(), desc_sets.data(), 0, nullptr);
-	vkCmdBindVertexBuffers(draw_cmd, 0, LINES_VERTEX_BUFFER_COUNT, contextTyped.bound_buffers.data(), contextTyped.bound_buffer_offsets.data());
-	vkCmdSetLineWidth(draw_cmd, line_width);
-	vkCmdDraw(draw_cmd, points, 1, pointsOffset, 0);
+	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
+	array<VkDescriptorSet, 2> descriptorSets { descriptorSet1, descriptorSet2 };
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+	vkCmdBindVertexBuffers(drawCommand, 0, LINES_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
+	vkCmdSetLineWidth(drawCommand, lineWidth);
+	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
-	programCommandBuffer.desc_sets1_idx++;
-	programCommandBuffer.desc_sets2_idx_uncached++;
-	contextTyped.command_count++;
+	programCommandBuffer.descriptorSets1Idx++;
+	programCommandBuffer.descriptorSets2IdxUncached++;
+	currentContext.commandCount++;
 
 	//
-	requestSubmitDrawBuffers(contextTyped.idx);
+	requestSubmitDrawBuffers(currentContext.idx);
 
 	//
 	AtomicOperations::increment(statistics.renderCalls);
@@ -6522,31 +6520,31 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 void VKRenderer::unbindBufferObjects(void* context)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& currentContext = *static_cast<context_type*>(context);
 	uint32_t bufferSize = 0;
-	auto defaultBuffer = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
-	contextTyped.bound_indices_buffer = VK_NULL_HANDLE;
-	contextTyped.bound_buffers.fill(defaultBuffer);
-	contextTyped.bound_buffer_sizes.fill(bufferSize);
+	auto defaultBuffer = getBufferObjectInternal(emptyVertexBuffer, bufferSize);
+	currentContext.boundIndicesBuffer = VK_NULL_HANDLE;
+	currentContext.boundBuffers.fill(defaultBuffer);
+	currentContext.boundBufferSizes.fill(bufferSize);
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	dispose_mutex.lock();
+	disposeMutex.lock();
 	for (auto bufferObjectId: bufferObjectIds) {
-		dispose_buffers.push_back(bufferObjectId);
+		disposeBuffers.push_back(bufferObjectId);
 	}
-	dispose_mutex.unlock();
+	disposeMutex.unlock();
 }
 
 int32_t VKRenderer::getTextureUnit(void* context)
 {
-	return (*static_cast<context_type*>(context)).texture_unit_active;
+	return (*static_cast<context_type*>(context)).activeTextureUnit;
 }
 
 void VKRenderer::setTextureUnit(void* context, int32_t textureUnit)
 {
-	(*static_cast<context_type*>(context)).texture_unit_active = textureUnit;
+	(*static_cast<context_type*>(context)).activeTextureUnit = textureUnit;
 }
 
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
@@ -6579,92 +6577,92 @@ void VKRenderer::doneGuiMode()
 
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-	auto& programCommandBuffer = contextTyped.program->contexts[contextTyped.idx].command_buffers[contextTyped.command_buffer_current];
+	auto& currentContext = *static_cast<context_type*>(context);
+	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
-	if (programCommandBuffer.desc_sets1_idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.desc_sets1_idx));
+	if (programCommandBuffer.descriptorSets1Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.descriptorSets1Idx));
 		return;
 	}
 	//
-	auto desc_set = programCommandBuffer.desc_sets1[programCommandBuffer.desc_sets1_idx];
+	auto descriptorSet = programCommandBuffer.descriptorSets1[programCommandBuffer.descriptorSets1Idx];
 
 	// start draw command buffer, it not yet done
-	beginDrawCommandBuffer(contextTyped.idx);
+	beginDrawCommandBuffer(currentContext.idx);
 	// render pass
-	endRenderPass(contextTyped.idx);
+	endRenderPass(currentContext.idx);
 	// pipeline
-	setupSkinningComputingPipeline(contextTyped.idx, contextTyped.program);
+	setupSkinningComputingPipeline(currentContext.idx, currentContext.program);
 
 	// do compute command
-	for (auto shader: contextTyped.program->shaders) {
-		for (int i = 0; i <= shader->binding_max; i++) {
-			contextTyped.descriptor_buffer_infos[i] = {
-				.buffer = contextTyped.bound_buffers[i],
+	for (auto shader: currentContext.program->shaders) {
+		for (int i = 0; i <= shader->maxBindings; i++) {
+			currentContext.descriptorBufferInfos[i] = {
+				.buffer = currentContext.boundBuffers[i],
 				.offset = 0,
-				.range = contextTyped.bound_buffer_sizes[i]
+				.range = currentContext.boundBufferSizes[i]
 			};
-			contextTyped.descriptor_write_set[i] = {
+			currentContext.descriptorWriteSets[i] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = desc_set,
+				.dstSet = descriptorSet,
 				.dstBinding = static_cast<uint32_t>(i),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.pImageInfo = nullptr,
-				.pBufferInfo = &contextTyped.descriptor_buffer_infos[i],
+				.pBufferInfo = &currentContext.descriptorBufferInfos[i],
 				.pTexelBufferView = nullptr
 			};
 		}
 
 		// uniform buffer
-		if (shader->ubo_binding_idx == -1) {
+		if (shader->uboBindingIdx == -1) {
 			continue;
 		}
 
-		auto& uniformBuffer = shader->uniform_buffers[contextTyped.idx];
+		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src .buffer;
 		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& dst = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		vmaMemCpy(dst.allocation, src.allocation, uniformBuffer.size);
 
-		contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx] = {
+		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
 			.buffer = uboBuffer,
 			.offset = 0,
-			.range = shader->ubo_size
+			.range = shader->uboSize
 		};
 
-		contextTyped.descriptor_write_set[shader->ubo_binding_idx] = {
+		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = desc_set,
-			.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
+			.dstSet = descriptorSet,
+			.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.pImageInfo = nullptr,
-			.pBufferInfo = &contextTyped.descriptor_buffer_infos[shader->ubo_binding_idx],
+			.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
 			.pTexelBufferView = nullptr,
 		};
 	}
 
 	//
-	vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, contextTyped.descriptor_write_set.data(), 0, nullptr);
+	vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	//
-	auto& draw_cmd = contextTyped.command_buffers[contextTyped.command_buffer_current].draw_cmd;
-	vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &desc_set, 0, nullptr);
-	vkCmdDispatch(draw_cmd, numGroupsX, numGroupsY, numGroupsZ);
+	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_COMPUTE, currentContext.program->pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+	vkCmdDispatch(drawCommand, numGroupsX, numGroupsY, numGroupsZ);
 
 	//
-	programCommandBuffer.desc_sets1_idx++;
-	contextTyped.command_count++;
+	programCommandBuffer.descriptorSets1Idx++;
+	currentContext.commandCount++;
 
 	//
-	requestSubmitDrawBuffers(contextTyped.idx);
+	requestSubmitDrawBuffers(currentContext.idx);
 
 	//
 	AtomicOperations::increment(statistics.computeCalls);
@@ -6674,22 +6672,22 @@ void VKRenderer::finishRendering() {
 	VkResult err;
 
 	// end render passes
-	auto submitted_command_buffers_count = 0;
-	VkCommandBuffer submitted_command_buffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
+	auto submittedCommandBuffersCount = 0;
+	VkCommandBuffer submittedCommandBuffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
 		endRenderPass(i); // TODO: draw cmd cycling
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-			auto command_buffer = endDrawCommandBuffer(i, j, false);
-			if (command_buffer != VK_NULL_HANDLE) {
-				submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
+			auto commandBuffer = endDrawCommandBuffer(i, j, false);
+			if (commandBuffer != VK_NULL_HANDLE) {
+				submittedCommandBuffers[submittedCommandBuffersCount++] = commandBuffer;
 			}
 		}
 	}
 
 	//
-	if (submitted_command_buffers_count > 0) {
-		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, memorybarrier_fence, true, true);
+	if (submittedCommandBuffersCount > 0) {
+		submitDrawCommandBuffers(submittedCommandBuffersCount, submittedCommandBuffers, memoryBarrierFence, true, true);
 		for (auto i = 0; i < Engine::getThreadCount(); i++) {
 			recreateContextFences(i);
 		}
@@ -6697,10 +6695,12 @@ void VKRenderer::finishRendering() {
 
 	//
 	for (auto& context: contexts) {
-		for (auto i = 0; i < context.compute_render_barrier_buffer_count; i++) {
-			Console::println(to_string((uint64_t)context.compute_render_barrier_buffers[i]));
+		/*
+		for (auto i = 0; i < context.computeRenderBarrierBufferCount; i++) {
+			Console::println(to_string((uint64_t)context.computeRenderBarrierBuffers[i]));
 		}
-		context.compute_render_barrier_buffer_count = 0;
+		*/
+		context.computeRenderBarrierBufferCount = 0;
 	}
 
 	//
@@ -6715,7 +6715,7 @@ void VKRenderer::memoryBarrier() {
 	auto prevAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
 	auto nextAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	for (auto& context: contexts) {
-		for (auto i = 0; i < context.compute_render_barrier_buffer_count; i++) {
+		for (auto i = 0; i < context.computeRenderBarrierBufferCount; i++) {
 			ThsvsBufferBarrier svsbufferBarrier = {
 			    .prevAccessCount = 1,
 			    .pPrevAccesses = &prevAccesses,
@@ -6723,7 +6723,7 @@ void VKRenderer::memoryBarrier() {
 			    .pNextAccesses = &nextAccesses,
 			    .srcQueueFamilyIndex = 0,
 			    .dstQueueFamilyIndex = 0,
-			    .buffer = context.compute_render_barrier_buffers[i],
+			    .buffer = context.computeRenderBarrierBuffers[i],
 			    .offset = 0,
 			    .size = VK_WHOLE_SIZE
 			};
@@ -6737,92 +6737,92 @@ void VKRenderer::memoryBarrier() {
 				&vkBufferMemoryBarrier
 			);
 			prepareSetupCommandBuffer(context.idx);
-			vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
+			vkCmdPipelineBarrier(context.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
 			finishSetupCommandBuffer(context.idx);
 		}
-		context.compute_render_barrier_buffer_count = 0;
+		context.computeRenderBarrierBufferCount = 0;
 	}
 }
 
 void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	auto& currentContext = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	auto& currentContext = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[0] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[0]);
-	if (contextTyped.bound_buffers[0] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[0] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[0]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[0]);
+	if (currentContext.boundBuffers[0] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[0] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
 	}
 }
 
 void VKRenderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[1] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[1]);
-	if (contextTyped.bound_buffers[1] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[1] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[1]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[1] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
 }
 
 void VKRenderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[2] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[2]);
-	if (contextTyped.bound_buffers[2] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[2] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[2]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[2]);
+	if (currentContext.boundBuffers[2] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[2] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
 	}
 }
 
 void VKRenderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[3] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[3]);
-	if (contextTyped.bound_buffers[3] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[3] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[3]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[3]);
+	if (currentContext.boundBuffers[3] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[3] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
 	}
 }
 
 void VKRenderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[4] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[4]);
-	if (contextTyped.bound_buffers[4] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[4] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[4]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[4]);
+	if (currentContext.boundBuffers[4] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[4] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
 	}
 }
 
 void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[5] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[5]);
-	if (contextTyped.bound_buffers[5] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[5] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[5]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[5] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
-	if (contextTyped.compute_render_barrier_buffer_count >= contextTyped.compute_render_barrier_buffers.size()) {
+	if (currentContext.computeRenderBarrierBufferCount >= currentContext.computeRenderBarrierBuffers.size()) {
 		Console::println("VKRenderer::bindSkinningVerticesResultBufferObject(): too many compute render buffers");
 		return;
 	}
-	contextTyped.compute_render_barrier_buffers[contextTyped.compute_render_barrier_buffer_count++] = contextTyped.bound_buffers[5];
+	currentContext.computeRenderBarrierBuffers[currentContext.computeRenderBarrierBufferCount++] = currentContext.boundBuffers[5];
 	//
 	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
@@ -6833,7 +6833,7 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 		.pNextAccesses = &nextAccesses,
 		.srcQueueFamilyIndex = 0,
 		.dstQueueFamilyIndex = 0,
-		.buffer = contextTyped.bound_buffers[5],
+		.buffer = currentContext.boundBuffers[5],
 		.offset = 0,
 		.size = VK_WHOLE_SIZE
 	};
@@ -6846,26 +6846,26 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 		&dstStages,
 		&vkBufferMemoryBarrier
 	);
-	prepareSetupCommandBuffer(contextTyped.idx);
-	vkCmdPipelineBarrier(contextTyped.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
-	finishSetupCommandBuffer(contextTyped.idx);
+	prepareSetupCommandBuffer(currentContext.idx);
+	vkCmdPipelineBarrier(currentContext.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
+	finishSetupCommandBuffer(currentContext.idx);
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[6] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[6]);
-	if (contextTyped.bound_buffers[6] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[6] =
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[6]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[6] =
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
-	if (contextTyped.compute_render_barrier_buffer_count >= contextTyped.compute_render_barrier_buffers.size()) {
+	if (currentContext.computeRenderBarrierBufferCount >= currentContext.computeRenderBarrierBuffers.size()) {
 		Console::println("VKRenderer::bindSkinningNormalsResultBufferObject(): too many compute render buffers");
 		return;
 	}
-	contextTyped.compute_render_barrier_buffers[contextTyped.compute_render_barrier_buffer_count++] = contextTyped.bound_buffers[6];
+	currentContext.computeRenderBarrierBuffers[currentContext.computeRenderBarrierBufferCount++] = currentContext.boundBuffers[6];
 	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
 	ThsvsBufferBarrier svsbufferBarrier = {
@@ -6875,7 +6875,7 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 		.pNextAccesses = &nextAccesses,
 		.srcQueueFamilyIndex = 0,
 		.dstQueueFamilyIndex = 0,
-		.buffer = contextTyped.bound_buffers[6],
+		.buffer = currentContext.boundBuffers[6],
 		.offset = 0,
 		.size = VK_WHOLE_SIZE
 	};
@@ -6888,19 +6888,19 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 		&dstStages,
 		&vkBufferMemoryBarrier
 	);
-	prepareSetupCommandBuffer(contextTyped.idx);
-	vkCmdPipelineBarrier(contextTyped.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
-	finishSetupCommandBuffer(contextTyped.idx);
+	prepareSetupCommandBuffer(currentContext.idx);
+	vkCmdPipelineBarrier(currentContext.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
+	finishSetupCommandBuffer(currentContext.idx);
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.bound_buffers[7] =
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
-			getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]):
-			getBufferObjectInternal(contextTyped.idx, bufferObjectId, contextTyped.bound_buffer_sizes[7]);
-	if (contextTyped.bound_buffers[7] == VK_NULL_HANDLE) {
-		contextTyped.bound_buffers[7] =	getBufferObjectInternal(empty_vertex_buffer, contextTyped.bound_buffer_sizes[7]);
+			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
+			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[7]);
+	if (currentContext.boundBuffers[7] == VK_NULL_HANDLE) {
+		currentContext.boundBuffers[7] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]);
 	}
 }
 
@@ -6918,73 +6918,73 @@ void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
 }
 
 Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.texture_matrix;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.textureMatrix;
 }
 
 Renderer::Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.lights[lightId];
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.lights[lightId];
 }
 
 array<float, 4>& VKRenderer::getEffectColorMul(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.effect_color_mul;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.effectColorMul;
 }
 
 array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.effect_color_add;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.effectColorAdd;
 }
 
 Renderer::Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.specularMaterial;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.specularMaterial;
 }
 
 Renderer::Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.pbrMaterial;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.pbrMaterial;
 }
 
 const string& VKRenderer::getShader(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.shader;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.shader;
 }
 
 void VKRenderer::setShader(void* context, const string& id) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.shader = id;
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.shader = id;
 }
 
 const EntityShaderParameters& VKRenderer::getShaderParameters(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.shaderParameters;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.shaderParameters;
 }
 
 void VKRenderer::setShaderParameters(void* context, const EntityShaderParameters& parameters) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.shaderParameters = parameters;
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.shaderParameters = parameters;
 }
 
 float VKRenderer::getMaskMaxValue(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.maskMaxValue;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.maskMaxValue;
 }
 
 void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.maskMaxValue = maskMaxValue;
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.maskMaxValue = maskMaxValue;
 }
 
 array<float, 3>& VKRenderer::getEnvironmentMappingCubeMapPosition(void* context) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.environmentMappingCubeMapPosition;
+	auto& currentContext = *static_cast<context_type*>(context);
+	return currentContext.environmentMappingCubeMapPosition;
 }
 
 void VKRenderer::setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) {
-	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.environmentMappingCubeMapPosition = position;
+	auto& currentContext = *static_cast<context_type*>(context);
+	currentContext.environmentMappingCubeMapPosition = position;
 }
 
 void VKRenderer::setVSyncEnabled(bool vSync) {

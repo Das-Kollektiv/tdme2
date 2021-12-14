@@ -252,7 +252,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(int32_t);
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(int32_t));
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -260,9 +260,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "float") {
@@ -270,7 +270,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float);
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float));
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -278,9 +278,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "vec2") {
@@ -288,7 +288,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 2;
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 2);
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -296,9 +296,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "vec3") {
@@ -306,7 +306,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 3;
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -314,9 +314,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "vec4") {
@@ -324,7 +324,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 4;
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -332,9 +332,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "mat3") {
@@ -342,7 +342,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 12;
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -350,9 +350,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "mat4") {
@@ -360,7 +360,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float) * 16;
 				uint32_t alignment = Math::max(isArray == true?16:0, sizeof(float) * 4);
-				auto position = align(alignment, shader.ubo_size);
+				auto position = align(alignment, shader.uboSize);
 				shader.uniforms[prefix + uniformName + suffix] = new VKRenderer::shader_type::uniform_type
 					{
 						.name = prefix + uniformName + suffix,
@@ -368,9 +368,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_UNIFORM,
 						.position = position,
 						.size = size,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
-				shader.ubo_size = position + size;
+				shader.uboSize = position + size;
 			}
 		} else
 		if (uniformType == "sampler2D") {
@@ -384,7 +384,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D,
 						.position = -1,
 						.size = 0,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
 			}
 			continue;
@@ -400,7 +400,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 						.type = VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE,
 						.position = -1,
 						.size = 0,
-						.texture_unit = -1
+						.textureUnit = -1
 					};
 			}
 			continue;
@@ -410,9 +410,9 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 					auto structPrefix = prefix + uniformName + (isArray == true?"[" + to_string(i) + "]":"") + ".";
 					string uniformsBlockIgnore;
 					auto alignment = Math::max(16, determineAlignment(structs, structs.find(uniformType)->second));
-					shader.ubo_size = align(alignment, shader.ubo_size);
+					shader.uboSize = align(alignment, shader.uboSize);
 					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
-					shader.ubo_size = align(alignment, shader.ubo_size);
+					shader.uboSize = align(alignment, shader.uboSize);
 					if (success == false) return false;
 					if (isArray == false) uniformStructsArrays.insert(uniformName);
 				}
@@ -694,7 +694,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						auto token = t2.nextToken();
 						if (token == "binding" && t2.hasMoreTokens() == true) {
 							auto nextToken = t2.nextToken();
-							shader.binding_max = Math::max(Integer::parseInt(nextToken), shader.binding_max);
+							shader.maxBindings = Math::max(Integer::parseInt(nextToken), shader.maxBindings);
 							break;
 						}
 					}
@@ -720,7 +720,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			string uniformsBlockIgnore;
 			addToShaderUniformBufferObject(shader, definitionValues, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
-			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.ubo_size));
+			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.uboSize));
 		}
 
 		// construct new shader from vector and flip y, also inject uniforms
@@ -817,15 +817,15 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	auto bindingIdx = 0;
 	for (auto shader: program.shaders) {
 		//
-		bindingIdx = Math::max(shader->binding_max + 1, bindingIdx);
+		bindingIdx = Math::max(shader->maxBindings + 1, bindingIdx);
 	}
 
 	auto uniformIdx = 1;
 	for (auto shader: program.shaders) {
 		// do we need a uniform buffer object for this shader stage?
-		if (shader->ubo_size > 0) {
+		if (shader->uboSize > 0) {
 			// yep, inject UBO index
-			shader->ubo_binding_idx = bindingIdx;
+			shader->uboBindingIdx = bindingIdx;
 			shader->source = StringTools::replace(shader->source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
 			bindingIdx++;
 		}
@@ -968,7 +968,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	}
 
 	// total bindings of program
-	program.layout_bindings = bindingIdx;
+	program.layoutBindings = bindingIdx;
 
 	//
 	return true;

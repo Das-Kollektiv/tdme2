@@ -92,14 +92,14 @@ private:
 	struct delete_image_type {
 		VkImage image;
 		VmaAllocation allocation;
-		VkImageView image_view;
+		VkImageView imageView;
 		VkSampler sampler;
 	};
 
 	struct buffer_object_type {
 		struct reusable_buffer {
 			bool memoryMappable { false };
-			int64_t frame_used_last { -1 };
+			int64_t frameUsedLast { -1 };
 			VkBuffer buf { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 			uint32_t size { 0 };
@@ -108,9 +108,9 @@ private:
 		bool useGPUMemory { false };
 		bool shared { false };
 		list<reusable_buffer> buffers;
-		uint32_t buffer_count { 0 };
-		int64_t frame_cleaned_last { 0 };
-		reusable_buffer* current_buffer { nullptr };
+		uint32_t bufferCount { 0 };
+		int64_t frameCleanedLast { 0 };
+		reusable_buffer* currentBuffer { nullptr };
 		volatile bool uploading { false };
 	};
 
@@ -138,17 +138,17 @@ private:
 			uniform_type_enum type;
 			int32_t position;
 			uint32_t size;
-			int32_t texture_unit;
+			int32_t textureUnit;
 		};
 		vector<attribute_layout> attributeLayouts;
 		unordered_map<string, uniform_type*> uniforms;
 		vector<uniform_type*> uniformList;
 		vector<uniform_type*> samplerUniformList;
-		uint32_t ubo_size { 0 };
+		uint32_t uboSize { 0 };
 		uint32_t samplers { 0 };
-		int32_t binding_max { -1 };
-		vector<uniform_buffer_type> uniform_buffers;
-		int32_t ubo_binding_idx { -1 };
+		int32_t maxBindings { -1 };
+		vector<uniform_buffer_type> uniformBuffers;
+		int32_t uboBindingIdx { -1 };
 		string definitions;
  		string source;
  		string file;
@@ -165,28 +165,28 @@ private:
 
 	struct program_type {
 		struct command_buffer {
-			uint32_t desc_sets1_idx;
-			uint32_t desc_sets2_idx_uncached;
-			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets1;
-			array<VkDescriptorSet, DESC_MAX_UNCACHED> desc_sets2_uncached;
+			uint32_t descriptorSets1Idx;
+			uint32_t descriptorSets2IdxUncached;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> descriptorSets1;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> descriptorSets2Uncached;
 		};
 		struct context {
-			uint32_t desc_sets2_idx;
-			array<VkDescriptorSet, DESC_MAX_CACHED> desc_sets2;
-			unordered_map<SAMPLER_HASH_TYPE, int> desc_sets2_cache;
-			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> desc_sets2_cache_texture_ids;
-			vector<uint32_t> free_desc_sets2_ids;
-			array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
+			uint32_t descriptorSets2Idx;
+			array<VkDescriptorSet, DESC_MAX_CACHED> descriptorSets2;
+			unordered_map<SAMPLER_HASH_TYPE, int> descriptorSets2Cache;
+			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> descriptorSets2CacheTextureIds;
+			vector<uint32_t> freeDescriptorSets2Ids;
+			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
 		int type { 0 };
 		unordered_map<uint32_t, pipeline_type*> pipelines;
-		vector<int32_t> shader_ids;
+		vector<int32_t> shaderIds;
 		vector<shader_type*> shaders;
 		unordered_map<int32_t, string> uniforms;
-		uint32_t layout_bindings { 0 };
-		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		VkDescriptorSetLayout desc_layout1 { VK_NULL_HANDLE };
-		VkDescriptorSetLayout desc_layout2 { VK_NULL_HANDLE };
+		uint32_t layoutBindings { 0 };
+		VkPipelineLayout pipelineLayout { VK_NULL_HANDLE };
+		VkDescriptorSetLayout descriptorSetLayout1 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout descriptorSetLayout2 { VK_NULL_HANDLE };
 		int32_t id { 0 };
 		vector<context> contexts;
 	};
@@ -196,14 +196,14 @@ private:
 		volatile bool uploaded { false };
 		type type { TYPE_NONE };
 		int32_t id { 0 };
-		int32_t frame_buffer_object_id { 0 };
+		int32_t frameBufferObjectId { 0 };
 		uint32_t width { 0 };
 		uint32_t height { 0 };
 		VkFormat format { VK_FORMAT_UNDEFINED };
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
-		VkImageAspectFlags aspect_mask { 0 };
-		array<array<ThsvsAccessType, 2>, 6> access_types
+		VkImageAspectFlags aspectMask { 0 };
+		array<array<ThsvsAccessType, 2>, 6> accessTypes
 			{{
 				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
 				{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
@@ -217,36 +217,36 @@ private:
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 		// this texture points to a cube map color buffer/depth buffer texture
-		texture_type* cubemap_buffer_texture { nullptr };
-		int32_t cubemap_texture_index { 0 };
+		texture_type* cubemapBufferTexture { nullptr };
+		int32_t cubemapTextureIndex { 0 };
 		// the cube map itself has a attached color buffer and depth buffer
-		texture_type* cubemap_colorbuffer { nullptr };
-		texture_type* cubemap_depthbuffer { nullptr };
+		texture_type* cubemapColorBuffer { nullptr };
+		texture_type* cubemapDepthBuffer { nullptr };
 	};
 
 	struct framebuffer_object_type {
 		enum type { TYPE_NONE, TYPE_COLORBUFFER, TYPE_GEOMETRYBUFFER };
 		int32_t id { 0 };
 		type type { TYPE_NONE };
-		int32_t depth_texture_id { 0 };
-		int32_t color_texture_id { 0 };
-		int32_t cubemap_texture_id { 0 };
-		int32_t cubemap_texture_index { 0 };
+		int32_t depthTextureId { 0 };
+		int32_t colorTextureId { 0 };
+		int32_t cubemapTextureId { 0 };
+		int32_t cubemapTextureIndex { 0 };
 		int32_t depthBufferTextureId { 0 };
-		int32_t gbuffer_geometry_buffer_texture_id1 { 0 };
-		int32_t gbuffer_geometry_buffer_texture_id2 { 0 };
-		int32_t gbuffer_geometry_buffer_texture_id3 { 0 };
-		int32_t gbuffer_color_buffer_texture_id1 { 0 };
-		int32_t gbuffer_color_buffer_texture_id2 { 0 };
-		int32_t gbuffer_color_buffer_texture_id3 { 0 };
-		int32_t gbuffer_color_buffer_texture_id4 { 0 };
-		int32_t gbuffer_color_buffer_texture_id5 { 0 };
-		VkFramebuffer frame_buffer { VK_NULL_HANDLE };
-		VkRenderPass render_pass { VK_NULL_HANDLE };
+		int32_t gbufferGeometryBufferTextureId1 { 0 };
+		int32_t gbufferGeometryBufferTextureId2 { 0 };
+		int32_t gbufferGeometryBufferTextureId3 { 0 };
+		int32_t gbufferColorBufferTextureId1 { 0 };
+		int32_t gbufferColorBufferTextureId2 { 0 };
+		int32_t gbufferColorBufferTextureId3 { 0 };
+		int32_t gbufferColorBufferTextureId4 { 0 };
+		int32_t gbufferColorBufferTextureId5 { 0 };
+		VkFramebuffer frameBuffer { VK_NULL_HANDLE };
+		VkRenderPass renderPass { VK_NULL_HANDLE };
 	};
 
 	struct swapchain_buffer_type {
-		array<ThsvsAccessType, 2> access_types { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		array<ThsvsAccessType, 2> accessTypes { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
 		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
@@ -254,82 +254,82 @@ private:
 
 	struct context_type {
 		struct command_buffer {
-			VkCommandBuffer draw_cmd;
-			VkFence draw_fence;
-			bool draw_cmd_started;
+			VkCommandBuffer drawCommand;
+			VkFence drawFence;
+			bool drawCmdStarted;
 		};
 
 		int32_t idx { 0 };
 
-		vector<pipeline_type*> pipeline_vector;
-		vector<buffer_object_type*> buffer_vector;
-		vector<texture_type*> texture_vector;
+		vector<pipeline_type*> pipelineVector;
+		vector<buffer_object_type*> bufferVector;
+		vector<texture_type*> textureVector;
 
-		VkCommandPool cmd_setup_pool;
-		VkCommandBuffer setup_cmd_inuse;
-		VkCommandBuffer setup_cmd;
-		VkFence setup_fence;
+		VkCommandPool setupCommandPool;
+		VkCommandBuffer setupCommandInUse;
+		VkCommandBuffer setupCommand;
+		VkFence setupFence;
 
-		bool render_pass_started;
+		bool renderPassStarted;
 
-		VkCommandPool cmd_draw_pool;
-		uint32_t command_buffer_current;
+		VkCommandPool drawCommandPool;
+		uint32_t currentCommandBuffer;
 		VkFence draw_fence { VK_NULL_HANDLE };
 		program_type* program { nullptr };
 
-		uint32_t pipeline_id;
+		uint32_t pipelineId;
 		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		//
-		array<command_buffer, DRAW_COMMANDBUFFER_MAX> command_buffers;
+		array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 
 		//
-		array<VkDescriptorBufferInfo, 16 + 4> descriptor_buffer_infos;
-		array<VkWriteDescriptorSet, 16 + 4> descriptor_write_set;
-		array<VkDescriptorImageInfo, 16 + 4> descriptor_image_info;
+		array<VkDescriptorBufferInfo, 16 + 4> descriptorBufferInfos;
+		array<VkWriteDescriptorSet, 16 + 4> descriptorWriteSets;
+		array<VkDescriptorImageInfo, 16 + 4> descriptorImageInfos;
 
 		//
-		VkBuffer bound_indices_buffer { VK_NULL_HANDLE };
-		array<VkBuffer, 10> bound_buffers {
+		VkBuffer boundIndicesBuffer { VK_NULL_HANDLE };
+		array<VkBuffer, 10> boundBuffers {
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 			VK_NULL_HANDLE, VK_NULL_HANDLE
 		};
-		array<VkDeviceSize, 10> bound_buffer_offsets {
+		array<VkDeviceSize, 10> boundBufferOffsets {
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			0, 0
 		};
-		array<uint32_t, 10> bound_buffer_sizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		array<uniform_buffer_type*, 4> uniform_buffers;
-		int32_t texture_unit_active { 0 };
+		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<uniform_buffer_type*, 4> uniformBuffers;
+		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };
 			VkSampler sampler { VK_NULL_HANDLE };
 			VkImageView view { VK_NULL_HANDLE };
 			VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
 		};
-		array<bound_texture, 16> bound_textures;
+		array<bound_texture, 16> boundTextures;
 
-		int32_t compute_render_barrier_buffer_count { 0 };
-		array<VkBuffer, 1024> compute_render_barrier_buffers;
+		int32_t computeRenderBarrierBufferCount { 0 };
+		array<VkBuffer, 1024> computeRenderBarrierBuffers;
 
-		uint32_t command_count { 0 };
+		uint32_t commandCount { 0 };
 
 		string shader;
 		EntityShaderParameters shaderParameters;
-		array<float, 4> effect_color_mul { 1.0f, 1.0f, 1.0f, 1.0f };
-		array<float, 4> effect_color_add { 0.0f, 0.0f, 0.0f, 0.0f };
+		array<float, 4> effectColorMul { 1.0f, 1.0f, 1.0f, 1.0f };
+		array<float, 4> effectColorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
 		Renderer_PBRMaterial pbrMaterial;
 		Renderer_SpecularMaterial specularMaterial;
 		array<Renderer_Light, 8> lights;
-		Matrix2D3x3 texture_matrix;
+		Matrix2D3x3 textureMatrix;
 
-		bool culling_enabled { true };
-		int front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
-		int front_face_index { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
+		bool cullingEnabled { true };
+		int frontFace { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
+		int frontFaceIndex { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 
-		int32_t program_id { 0 };
+		int32_t programId { 0 };
 
 		float maskMaxValue { 1.0f };
 		array<float, 3> environmentMappingCubeMapPosition;
@@ -344,11 +344,11 @@ private:
 	VkDevice device { VK_NULL_HANDLE };
 	SpinLock queue_spinlock;
 	VkQueue queue { VK_NULL_HANDLE };
-	VkPhysicalDeviceProperties gpu_props;
-	VkPhysicalDeviceFeatures gpu_features;
-	VkQueueFamilyProperties *queue_props { nullptr };
-	VkPhysicalDeviceMemoryProperties memory_properties;
-	uint32_t graphics_queue_node_index { 0 };
+	VkPhysicalDeviceProperties gpuProperties;
+	VkPhysicalDeviceFeatures gpuFeatures;
+	VkQueueFamilyProperties *queueProperties { nullptr };
+	VkPhysicalDeviceMemoryProperties memoryProperties;
+	uint32_t graphicsQueueNodeIndex { 0 };
 
 	PFN_vkGetPhysicalDeviceSurfaceSupportKHR fpGetPhysicalDeviceSurfaceSupportKHR { nullptr };
 	PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR fpGetPhysicalDeviceSurfaceCapabilitiesKHR { nullptr };
@@ -360,86 +360,86 @@ private:
 	PFN_vkAcquireNextImageKHR fpAcquireNextImageKHR { nullptr };
 	PFN_vkQueuePresentKHR fpQueuePresentKHR { nullptr };
 
-	uint32_t swapchain_image_count { 0 };
+	uint32_t swapchainImageCount { 0 };
 	VkSwapchainKHR swapchain { VK_NULL_HANDLE };
-	vector<swapchain_buffer_type> swapchain_buffers;
-	vector<VkFramebuffer> window_framebuffers;
+	vector<swapchain_buffer_type> swapchainBuffers;
+	vector<VkFramebuffer> windowFramebuffers;
 
-	VkFence memorybarrier_fence { VK_NULL_HANDLE };
+	VkFence memoryBarrierFence { VK_NULL_HANDLE };
 
-	ReadWriteLock pipeline_rwlock;
+	ReadWriteLock pipelineRWlock;
 
-	VkRenderPass render_pass { VK_NULL_HANDLE };
+	VkRenderPass renderPass { VK_NULL_HANDLE };
 
-	int32_t shader_idx { 1 };
-	int32_t buffer_idx { 1 };
-	int32_t texture_idx { 1 };
-	vector<program_type*> programList { nullptr };
+	int32_t shaderIdx { 1 };
+	int32_t bufferIdx { 1 };
+	int32_t textureIdx { 1 };
+	vector<program_type*> programVector { nullptr };
 	unordered_map<int32_t, shader_type*> shaders;
 	unordered_map<int32_t, buffer_object_type*> buffers;
 	unordered_map<int32_t, texture_type*> textures;
-	vector<int32_t> free_texture_ids;
-	vector<int32_t> free_buffer_ids;
+	vector<int32_t> freeTextureIds;
+	vector<int32_t> freeBufferIds;
 	vector<framebuffer_object_type*> framebuffers { nullptr };
 
-	ReadWriteLock buffers_rwlock;
-	ReadWriteLock textures_rwlock;
+	ReadWriteLock buffersRWlock;
+	ReadWriteLock texturesRWlock;
 
 	uint32_t width { 0 };
 	uint32_t height { 0 };
 	VkFormat format { VK_FORMAT_UNDEFINED };
-	VkColorSpaceKHR color_space { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	VkColorSpaceKHR colorSpace { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
-	buffer_object_type* empty_vertex_buffer { nullptr };
-	int empty_vertex_buffer_id { 0 };
-	int depth_buffer_default { 0 };
-	int white_texture_sampler2d_default_id { 0 };
-	texture_type* white_texture_sampler2d_default { nullptr };
-	int white_texture_samplercube_default_id { 0 };
-	texture_type* white_texture_samplercube_default { nullptr };
+	buffer_object_type* emptyVertexBuffer { nullptr };
+	int emptyVertexBufferId { 0 };
+	int depthBufferDefault { 0 };
+	int whiteTextureSampler2dDefaultId { 0 };
+	texture_type* whiteTextureSampler2dDefault { nullptr };
+	int whiteTextureSamplercubeDefaultId { 0 };
+	texture_type* whiteTextureSamplercubeDefault { nullptr };
 
-	VkDescriptorPool desc_pool1 { VK_NULL_HANDLE };
-	VkDescriptorPool desc_pool2{ VK_NULL_HANDLE };
+	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
+	VkDescriptorPool descriptorPool2{ VK_NULL_HANDLE };
 
 	// enable/disable validation layers
 	bool validate { false };
 
-	uint32_t current_buffer { 0 };
-	uint32_t queue_count { 0 };
+	uint32_t currentFrameBuffer { 0 };
+	uint32_t queueCount { 0 };
 
-	VkSemaphore image_acquired_semaphore { VK_NULL_HANDLE };
-	VkSemaphore draw_complete_semaphore { VK_NULL_HANDLE };
+	VkSemaphore imageAcquiredSemaphore { VK_NULL_HANDLE };
+	VkSemaphore drawCompleteSemaphore { VK_NULL_HANDLE };
 
-	float clear_red { 0.0f };
-	float clear_green { 0.0f };
-	float clear_blue { 0.0f };
-	float clear_alpha { 1.0f };
+	float clearRed { 0.0f };
+	float clearGreen { 0.0f };
+	float clearBlue { 0.0f };
+	float clearAlpha { 1.0f };
 
 	VkViewport viewport;
 	VkRect2D scissor;
 
-	int32_t bound_frame_buffer { 0 };
+	int32_t boundFrameBuffer { 0 };
 
 	enum BlendingMode {BLENDING_NONE, BLENDING_NORMAL, BLENDING_ADDITIVE };
-	BlendingMode blending_mode { BLENDING_NONE };
-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT};
-	bool depth_buffer_writing { true };
-	bool depth_buffer_testing { true };
-	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
-	float line_width { 1.0f };
+	BlendingMode blendingMode { BLENDING_NONE };
+	VkCullModeFlagBits cullMode { VK_CULL_MODE_FRONT_BIT};
+	bool depthBufferWriting { true };
+	bool depthBufferTesting { true };
+	int depthFunction { VK_COMPARE_OP_LESS_OR_EQUAL };
+	float lineWidth { 1.0f };
 	int64_t frame { 0 };
 
-	Mutex delete_mutex;
-	vector<delete_buffer_type> delete_buffers;
-	vector<delete_image_type> delete_images;
+	Mutex deleteMutex;
+	vector<delete_buffer_type> deleteBuffers;
+	vector<delete_image_type> deleteImages;
 
-	Mutex dispose_mutex;
-	vector<int32_t> dispose_textures;
-	vector<int32_t> dispose_buffers;
+	Mutex disposeMutex;
+	vector<int32_t> disposeTextures;
+	vector<int32_t> disposeBuffers;
 
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
-	SpinLock vma_spinlock;
+	SpinLock vmaSpinlock;
 
 	string deviceName;
 
@@ -496,9 +496,9 @@ private:
 		unordered_set<string>& uniformStructsArrays,
 		string& uniformsBlock
 	);
-	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs);
-	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blend_att_state);
-	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
+	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo);
+	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blendAttachmentState);
+	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo);
 	uint32_t createPipelineId(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format);
