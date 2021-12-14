@@ -118,6 +118,12 @@ public:
 	void updateDetails(const string& outlinerNode);
 
 	/**
+	 * Update info text line
+	 * @param text text
+	 */
+	void updateInfoText(const MutableString& text);
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message
