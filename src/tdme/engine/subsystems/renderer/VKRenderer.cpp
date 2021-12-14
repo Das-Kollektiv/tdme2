@@ -353,11 +353,17 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	assert(!err);
 
 	//
-	if (currentContext.program != nullptr) {
-		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[bufferId];
+	if (currentContext.program != nullptr) currentContext.lastUnsubmittedPrograms.push_back(currentContext.program);
+
+	//
+	for (auto program: currentContext.lastUnsubmittedPrograms) {
+		auto& programContextCommandBuffer = program->contexts[contextIdx].commandBuffers[bufferId];
 		programContextCommandBuffer.descriptorSets1Idx = 0;
 		programContextCommandBuffer.descriptorSets2IdxUncached = 0;
 	}
+
+	//
+	currentContext.lastUnsubmittedPrograms.clear();
 
 	//
 	auto endedCommandBuffer = commandBuffer.drawCommand;
@@ -631,6 +637,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 }
 
 void VKRenderer::initializeSwapChain() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	VkResult err;
 	VkSwapchainKHR oldSwapchain = swapchain;
@@ -730,6 +737,7 @@ void VKRenderer::initializeSwapChain() {
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr);
 	assert(err == VK_SUCCESS);
 
+	// TODO: use proper C++ code
 	VkImage* swapchainImages = new VkImage[swapchainImageCount];
 	assert(swapchainImages != nullptr);
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages);
@@ -2954,31 +2962,24 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
 	}
 }
 
-inline void VKRenderer::finishPipeline(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	// if unsetting program flush command buffers
-	if (currentContext.programId != ID_NONE) {
-		endRenderPass(currentContext.idx);
-		auto currentBufferIdx = currentContext.currentCommandBuffer;
-		auto commandBuffer = endDrawCommandBuffer(currentContext.idx, -1, true);
-		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, currentContext.commandBuffers[currentBufferIdx].drawFence, false, false);
-		}
-		unsetPipeline(currentContext.idx);
-	}
-}
-
 void VKRenderer::useProgram(void* context, int32_t programId)
 {
-	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& currentContext = *static_cast<context_type*>(context);
 
 	//
-	finishPipeline(contextTyped.idx);
+	if (programId == currentContext.programId) return;
 
 	//
-	contextTyped.programId = 0;
-	contextTyped.program = nullptr;
-	contextTyped.uniformBuffers.fill(nullptr);
+	if (currentContext.program != nullptr) currentContext.lastUnsubmittedPrograms.push_back(currentContext.program);
+
+	//
+	unsetPipeline(currentContext.idx);
+
+	//
+	currentContext.programId = 0;
+	currentContext.program = nullptr;
+	currentContext.uniformBuffers.fill(nullptr);
+
 	if (programId == ID_NONE) return;
 
 	//
@@ -2989,19 +2990,19 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 
 	//
 	auto program = programVector[programId];
-	contextTyped.programId = programId;
-	contextTyped.program = program;
+	currentContext.programId = programId;
+	currentContext.program = program;
 
 	// set up program ubo
 	{
 		auto shaderIdx = 0;
 		for (auto shader: program->shaders) {
 			if (shader->uboBindingIdx == -1) {
-				contextTyped.uniformBuffers[shaderIdx] = nullptr;
+				currentContext.uniformBuffers[shaderIdx] = nullptr;
 				shaderIdx++;
 				continue;
 			}
-			contextTyped.uniformBuffers[shaderIdx] = &shader->uniformBuffers[contextTyped.idx];
+			currentContext.uniformBuffers[shaderIdx] = &shader->uniformBuffers[currentContext.idx];
 			shaderIdx++;
 		}
 	}
@@ -3387,7 +3388,7 @@ void VKRenderer::enableCulling(void* context)
 {
 	auto& currentContext = *static_cast<context_type*>(context);
 	if (currentContext.cullingEnabled == true) return;
-	finishPipeline(currentContext.idx);
+	unsetPipeline(currentContext.idx);
 	currentContext.cullingEnabled = true;
 	currentContext.frontFaceIndex = currentContext.frontFace;
 }
@@ -3396,7 +3397,7 @@ void VKRenderer::disableCulling(void* context)
 {
 	auto& currentContext = *static_cast<context_type*>(context);
 	if (currentContext.cullingEnabled == false) return;
-	finishPipeline(currentContext.idx);
+	unsetPipeline(currentContext.idx);
 	currentContext.cullingEnabled = false;
 	currentContext.frontFaceIndex = 0;
 }
@@ -3405,7 +3406,7 @@ void VKRenderer::setFrontFace(void* context, int32_t frontFace)
 {
 	auto& currentContext = *static_cast<context_type*>(context);
 	if (currentContext.frontFace == frontFace) return;
-	finishPipeline(currentContext.idx);
+	unsetPipeline(currentContext.idx);
 	currentContext.frontFace = frontFace;
 	currentContext.frontFaceIndex = currentContext.cullingEnabled == true?frontFace:0;
 }

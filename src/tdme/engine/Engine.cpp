@@ -984,7 +984,7 @@ void Engine::reshape(int32_t width, int32_t height)
 	}
 
 	// update GUI system
-	gui->reshape(_width, _height);
+	gui->reshape(width, height);
 }
 
 void Engine::scale(int32_t width, int32_t height)

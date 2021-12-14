@@ -276,6 +276,7 @@ private:
 		uint32_t currentCommandBuffer;
 		VkFence draw_fence { VK_NULL_HANDLE };
 		program_type* program { nullptr };
+		vector<program_type*> lastUnsubmittedPrograms;
 
 		uint32_t pipelineId;
 		VkPipeline pipeline { VK_NULL_HANDLE };
@@ -469,7 +470,6 @@ private:
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
-	void finishPipeline(int contextIdx);
 	void createRenderProgram(program_type* program);
 	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
