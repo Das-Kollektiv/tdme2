@@ -261,7 +261,7 @@ private:
 
 		int32_t idx { 0 };
 
-		vector<pipeline_type*> pipelineVector;
+		unordered_map<uint32_t, pipeline_type*> pipelines;
 		vector<buffer_object_type*> bufferVector;
 		vector<texture_type*> textureVector;
 

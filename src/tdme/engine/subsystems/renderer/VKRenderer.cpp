@@ -3415,7 +3415,6 @@ void VKRenderer::setCullFace(int32_t cullFace)
 	if (cullMode == cullFace) return;
 	endDrawCommandsAllContexts();
 	cullMode = (VkCullModeFlagBits)cullFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableBlending()
@@ -3423,14 +3422,12 @@ void VKRenderer::enableBlending()
 	if (blendingMode == BLENDING_NORMAL) return;
 	endDrawCommandsAllContexts();
 	blendingMode = BLENDING_NORMAL;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableAdditionBlending() {
 	if (blendingMode == BLENDING_ADDITIVE) return;
 	endDrawCommandsAllContexts();
 	blendingMode = BLENDING_ADDITIVE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableBlending()
@@ -3438,7 +3435,6 @@ void VKRenderer::disableBlending()
 	if (blendingMode == BLENDING_NONE) return;
 	endDrawCommandsAllContexts();
 	blendingMode = BLENDING_NONE;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableDepthBufferWriting()
@@ -3446,7 +3442,6 @@ void VKRenderer::enableDepthBufferWriting()
 	if (depthBufferWriting == true) return;
 	endDrawCommandsAllContexts();
 	depthBufferWriting = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableDepthBufferWriting()
@@ -3454,7 +3449,6 @@ void VKRenderer::disableDepthBufferWriting()
 	if (depthBufferWriting == false) return;
 	endDrawCommandsAllContexts();
 	depthBufferWriting = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::disableDepthBufferTest()
@@ -3462,7 +3456,6 @@ void VKRenderer::disableDepthBufferTest()
 	if (depthBufferTesting == false) return;
 	endDrawCommandsAllContexts();
 	depthBufferTesting = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::enableDepthBufferTest()
@@ -3470,7 +3463,6 @@ void VKRenderer::enableDepthBufferTest()
 	if (depthBufferTesting == true) return;
 	endDrawCommandsAllContexts();
 	depthBufferTesting = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunctionXXX)
@@ -3478,7 +3470,6 @@ void VKRenderer::setDepthFunction(int32_t depthFunctionXXX)
 	if (depthFunction == depthFunctionXXX) return;
 	endDrawCommandsAllContexts();
 	depthFunction = depthFunctionXXX;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipelineId = ID_NONE;
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -5449,10 +5440,9 @@ inline VkBuffer VKRenderer::getBufferObjectInternal(int contextIdx,  int32_t buf
 
 inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId) {
 	// have our context typed
-	buffer_object_type* buffer = nullptr;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		buffer = currentContext.bufferVector[bufferObjectId];
+		auto buffer = currentContext.bufferVector[bufferObjectId];
 		if (buffer != nullptr) {
 			while (buffer->uploading == true) {
 				// spin
@@ -5469,7 +5459,7 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 		return VK_NULL_HANDLE;
 	}
 	// we have a buffer, also place it in context
-	buffer = bufferIt->second;
+	auto buffer = bufferIt->second;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
 		currentContext.bufferVector[bufferObjectId] = buffer;
@@ -5699,10 +5689,9 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 	}
 
 	// have our context typed
-	texture_type* texture = nullptr;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		texture = currentContext.textureVector[textureId];
+		auto texture = currentContext.textureVector[textureId];
 		if (texture != nullptr) {
 			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
 			return texture;
@@ -5716,7 +5705,7 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 		return whiteTextureSampler2dDefault;
 	}
 	// we have a texture, also place it in context
-	texture = textureIt->second;
+	auto texture = textureIt->second;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
 		currentContext.textureVector[textureId] = texture;
@@ -5727,17 +5716,11 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 
 inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, const uint32_t pipelineId) {
 	// have our context typed
-	pipeline_type* pipeline = nullptr;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		for (auto pipelineCandidate: currentContext.pipelineVector) {
-			if (pipelineCandidate->id == pipelineId) {
-				pipeline = pipelineCandidate;
-				break;
-			}
-		}
-		if (pipeline != nullptr) {
-			return pipeline;
+		auto pipelineIt = currentContext.pipelines.find(pipelineId);
+		if (pipelineIt != currentContext.pipelines.end()) {
+			return pipelineIt->second;
 		}
 	}
 	pipelineRWlock.readLock();
@@ -5747,10 +5730,10 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 		return nullptr;
 	}
 	// we have a pipeline, also place it in context
-	pipeline = pipelineIt->second;
+	auto pipeline = pipelineIt->second;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		currentContext.pipelineVector.push_back(pipeline);
+		currentContext.pipelines[pipelineId] = pipeline;
 	}
 	pipelineRWlock.unlock();
 	return pipeline;
