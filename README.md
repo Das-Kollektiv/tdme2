@@ -278,8 +278,8 @@
         - OpenAL
         - glew
         - pthreads
-        - Vulkan(optional)
         - GLFW3
+        - Vulkan(optional)
     - included in TDME2 repository
         - FBXSDK
         - libpng
