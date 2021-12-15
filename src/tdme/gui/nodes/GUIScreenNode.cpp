@@ -242,17 +242,6 @@ void GUIScreenNode::invalidateLayouts() {
 	invalidateLayoutNodeIds.clear();
 }
 
-void GUIScreenNode::layout(GUINode* node)
-{
-	auto _node = forceInvalidateLayout(node);
-	if (_node == nullptr) {
-		return;
-	}
-
-	//
-	forceLayout(_node);
-}
-
 void GUIScreenNode::forceLayout(GUINode* node)
 {
 	// do the magic
