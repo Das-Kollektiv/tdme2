@@ -58,6 +58,7 @@
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
@@ -125,6 +126,7 @@ using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::Integer;
 using tdme::utilities::IntBuffer;
+using tdme::utilities::RTTI;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -1243,6 +1245,7 @@ void VKRenderer::initialize()
 		context.idx = contextIdx;
 		context.setupCommandInUse = VK_NULL_HANDLE;
 		context.currentCommandBuffer = 0;
+		context.pipelineId = ID_NONE;
 		context.pipeline = VK_NULL_HANDLE;
 		context.renderPassStarted = false;
 		context.bufferVector.resize(BUFFERS_MAX);
@@ -1528,6 +1531,9 @@ void VKRenderer::reshape() {
 	for (auto i = 0; i < windowFramebuffers.size(); i++) vkDestroyFramebuffer(device, windowFramebuffers[i], nullptr);
 	windowFramebuffers.clear();
 
+	//
+	invalidatePipelines();
+
 	// reinit swapchain, renderpass and framebuffers
 	initializeSwapChain();
 	initializeRenderPass();
@@ -1626,6 +1632,46 @@ void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 			}
 		}
 	}
+}
+
+void VKRenderer::invalidatePipelines() {
+	//
+	auto clearedCachedPipelines = 0;
+	auto clearedPipelinesParents = 0;
+	auto clearedPipelines = 0;
+
+	// caches
+	for (auto& context: contexts) {
+		clearedCachedPipelines+= context.pipelines.size();
+		context.pipelines.clear();
+	}
+
+	//
+	disposeMutex.lock();
+	for (auto program: programVector) {
+		if (program == nullptr) continue;
+		for (auto& pipelinesParentIt: program->pipelinesParents) {
+			auto pipelinesParent = pipelinesParentIt.second;
+			for (auto& pipelineIt: pipelinesParent->pipelines) {
+				auto& pipeline = pipelineIt.second;
+				disposePipelines.push_back(pipeline->pipeline);
+				delete pipeline;
+				clearedPipelines++;
+			}
+			delete pipelinesParent;
+			clearedPipelinesParents++;
+		}
+		program->pipelinesParents.clear();
+	}
+	disposeMutex.unlock();
+
+	//
+	Console::println(
+		"VKRenderer::" + string(__FUNCTION__) + "(): " +
+		"cleared cached pipelines: " + to_string(clearedCachedPipelines) + ", " +
+		"cleared pipelines parents: " + to_string(clearedPipelinesParents) + ", " +
+		"cleared pipelines: " + to_string(clearedPipelines)
+	);
 }
 
 void VKRenderer::finishFrame()
@@ -1801,6 +1847,11 @@ void VKRenderer::finishFrame()
 		}
 		buffersRWlock.unlock();
 		disposeBuffers.clear();
+		// disposing pipelines
+		for (auto pipeline: disposePipelines) {
+			vkDestroyPipeline(device, pipeline, nullptr);
+		}
+		disposePipelines.clear();
 		disposeMutex.unlock();
 
 		// remove marked vulkan resources
@@ -1962,6 +2013,12 @@ inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencil
 	depthStencilStateCreateInfo.maxDepthBounds = 1.0f;
 }
 
+inline uint32_t VKRenderer::createPipelineDimensionId() {
+	return
+		(viewPortWidth & 0xffff) +
+		((viewPortHeight & 0xffff) << 16);
+}
+
 inline uint32_t VKRenderer::createPipelineId(program_type* program, int contextIdx) {
 	return
 		(program->id & 0xff) +
@@ -2100,15 +2157,28 @@ void VKRenderer::createRenderProgram(program_type* program) {
 
 VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& currentContext = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
-	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
+	pipelines_parent_type* pipelinesParent = nullptr;
+	auto pipelinesParentsIt = program->pipelinesParents.find(pipelineDimensionId);
+	if (pipelinesParentsIt != program->pipelinesParents.end()) {
+		pipelinesParent = pipelinesParentsIt->second;
+	} else {
+		pipelinesParent = new pipelines_parent_type();
+		pipelinesParent->id = pipelineDimensionId;
+		pipelinesParent->width = viewPortWidth;
+		pipelinesParent->height = viewPortHeight;
+		pipelinesParent->frameUsedLast = -1LL;
+		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
+	}
+	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
+	if (pipelinesIt != pipelinesParent->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
+	pipelinesParent->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
 	programPipeline.id = currentContext.pipelineId;
 
+	//
 	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
@@ -2142,8 +2212,6 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 2> dse;
-	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
@@ -2160,11 +2228,6 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 		shaderStages[shaderIdx].pName = "main";
 		shaderIdx++;
 	}
-
-	memset(dse.data(), 0, sizeof(VkDynamicState) * dse.size());
-	memset(&dsc, 0, sizeof dsc);
-	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dsc.pDynamicStates = dse.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
@@ -2192,9 +2255,9 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	vp.pViewports = &viewport;
 	vp.scissorCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	vp.pScissors = &scissor;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -2331,7 +2394,7 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = usedRenderPass;
-	pipeline.pDynamicState = &dsc;
+	pipeline.pDynamicState = nullptr;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2350,10 +2413,10 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 }
 
 inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type* program) {
-	auto& context = contexts[contextIdx];
-	if (context.pipelineId == ID_NONE || context.pipeline == VK_NULL_HANDLE) {
-		if (context.pipelineId == ID_NONE) context.pipelineId = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, context.pipelineId);
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
+		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
+		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
 		if (pipeline == nullptr) {
 			pipelineRWlock.writeLock();
 			pipeline = createObjectsRenderingPipeline(contextIdx, program);
@@ -2361,27 +2424,38 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 		}
 
 		//
-		if (pipeline->pipeline != context.pipeline) {
-			auto& commandBuffer = context.commandBuffers[context.currentCommandBuffer];
+		if (pipeline->pipeline != currentContext.pipeline) {
+			auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
 			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
-			context.pipeline = pipeline->pipeline;
+			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
 }
 
 VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& currentContext = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
-	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
+	pipelines_parent_type* pipelinesParent = nullptr;
+	auto pipelinesParentsIt = program->pipelinesParents.find(pipelineDimensionId);
+	if (pipelinesParentsIt != program->pipelinesParents.end()) {
+		pipelinesParent = pipelinesParentsIt->second;
+	} else {
+		pipelinesParent = new pipelines_parent_type();
+		pipelinesParent->id = pipelineDimensionId;
+		pipelinesParent->width = viewPortWidth;
+		pipelinesParent->height = viewPortHeight;
+		pipelinesParent->frameUsedLast = -1LL;
+		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
+	}
+	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
+	if (pipelinesIt != pipelinesParent->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
+	pipelinesParent->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
 	programPipeline.id = currentContext.pipelineId;
 
+	//
 	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
@@ -2429,16 +2503,9 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 2> dse;
-	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
-
-	memset(dse.data(), 0, sizeof(VkDynamicState) * dse.size());
-	memset(&dsc, 0, sizeof dsc);
-	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dsc.pDynamicStates = dse.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
@@ -2466,9 +2533,9 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	vp.pViewports = &viewport;
 	vp.scissorCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	vp.pScissors = &scissor;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -2579,7 +2646,7 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = usedRenderPass;
-	pipeline.pDynamicState = &dsc;
+	pipeline.pDynamicState = nullptr;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2612,8 +2679,6 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 		if (pipeline->pipeline != currentContext.pipeline) {
 			auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
 			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
 			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
@@ -2621,15 +2686,28 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 
 VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* program) {
 	auto& currentContext = contexts[contextIdx];
-	auto pipelinesIt = program->pipelines.find(currentContext.pipelineId);
-	if (pipelinesIt != program->pipelines.end()) return pipelinesIt->second;
+	pipelines_parent_type* pipelinesParent = nullptr;
+	auto pipelinesParentsIt = program->pipelinesParents.find(pipelineDimensionId);
+	if (pipelinesParentsIt != program->pipelinesParents.end()) {
+		pipelinesParent = pipelinesParentsIt->second;
+	} else {
+		pipelinesParent = new pipelines_parent_type();
+		pipelinesParent->id = pipelineDimensionId;
+		pipelinesParent->width = viewPortWidth;
+		pipelinesParent->height = viewPortHeight;
+		pipelinesParent->frameUsedLast = -1LL;
+		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
+	}
+	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
+	if (pipelinesIt != pipelinesParent->pipelines.end()) return pipelinesIt->second;
 
 	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[currentContext.pipelineId] = programPipelinePtr;
+	pipelinesParent->pipelines[currentContext.pipelineId] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
 	programPipeline.id = currentContext.pipelineId;
 
+	//
 	VkRenderPass usedRenderPass = renderPass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
@@ -2676,18 +2754,9 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkPipelineDepthStencilStateCreateInfo ds;
 	VkPipelineViewportStateCreateInfo vp;
 	VkPipelineMultisampleStateCreateInfo ms;
-	array<VkDynamicState, 3> dse;
-	VkPipelineDynamicStateCreateInfo dsc;
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
-
-	memset(dse.data(), 0, dse.size() * sizeof(VkDynamicState));
-	memset(&dsc, 0, sizeof dsc);
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_LINE_WIDTH;
-	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dsc.pDynamicStates = dse.data();
-
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = program->shaders.size();
@@ -2715,9 +2784,9 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	memset(&vp, 0, sizeof(vp));
 	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	vp.viewportCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	vp.pViewports = &viewport;
 	vp.scissorCount = 1;
-	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+	vp.pScissors = &scissor;
 
 	memset(&ms, 0, sizeof(ms));
 	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -2783,7 +2852,7 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = usedRenderPass;
-	pipeline.pDynamicState = &dsc;
+	pipeline.pDynamicState = nullptr;
 
 	memset(&pipelineCacheCreateInfo, 0, sizeof(pipelineCacheCreateInfo));
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
@@ -2816,20 +2885,33 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 		if (pipeline->pipeline != currentContext.pipeline) {
 			auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
 			vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-			vkCmdSetViewport(commandBuffer.drawCommand, 0, 1, &viewport);
-			vkCmdSetScissor(commandBuffer.drawCommand, 0, 1, &scissor);
 			currentContext.pipeline = pipeline->pipeline;
 		}
 	}
 }
 
 inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
-	VkResult err;
+	pipelines_parent_type* pipelinesParent = nullptr;
+	auto pipelinesParentsIt = program->pipelinesParents.find(0);
+	if (pipelinesParentsIt != program->pipelinesParents.end()) {
+		pipelinesParent = pipelinesParentsIt->second;
+	} else {
+		pipelinesParent = new pipelines_parent_type();
+		pipelinesParent->id = pipelineDimensionId;
+		pipelinesParent->width = viewPortWidth;
+		pipelinesParent->height = viewPortHeight;
+		pipelinesParent->frameUsedLast = -1LL;
+		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
+	}
 
+	//
 	auto programPipelinePtr = new pipeline_type();
-	program->pipelines[1] = programPipelinePtr;
+	pipelinesParent->pipelines[1] = programPipelinePtr;
 	auto& programPipeline = *programPipelinePtr;
 	programPipeline.id = 1;
+
+	//
+	VkResult err;
 
 	//
 	VkDescriptorSetLayoutBinding layoutBindings1[program->layoutBindings];
@@ -2942,7 +3024,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 }
 
 inline VKRenderer::pipeline_type* VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
-	return program->pipelines[1];
+	return program->pipelinesParents[0]->pipelines[1];
 }
 
 inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type* program) {
@@ -2983,6 +3065,7 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	currentContext.uniformBuffers.fill(nullptr);
 	for (auto& uniformBufferData: currentContext.uniformBufferData) uniformBufferData.resize(0);
 
+	//
 	if (programId == ID_NONE) return;
 
 	//
@@ -3348,35 +3431,32 @@ void VKRenderer::setLighting(void* context, int32_t lighting) {
 	currentContext.lighting = lighting;
 }
 
-void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
+void VKRenderer::setViewPort(int32_t width, int32_t height)
 {
 	//
-	memset(&viewport, 0, sizeof(viewport));
-	viewport.width = static_cast<float>(width);
-	viewport.height = static_cast<float>(height);
-	viewport.x = static_cast<float>(x);
-	viewport.y = static_cast<float>(y);
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-
-	memset(&scissor, 0, sizeof(scissor));
-	scissor.extent.width = width;
-	scissor.extent.height = height;
-	scissor.offset.x = x;
-	scissor.offset.y = y;
-
-	//
-	this->viewPortX = x;
-	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
-
-	//
-	endDrawCommandsAllContexts();
 }
 
 void VKRenderer::updateViewPort()
 {
+	//
+	memset(&viewport, 0, sizeof(viewport));
+	viewport.width = static_cast<float>(viewPortWidth);
+	viewport.height = static_cast<float>(viewPortHeight);
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	memset(&scissor, 0, sizeof(scissor));
+	scissor.extent.width = viewPortWidth;
+	scissor.extent.height = viewPortHeight;
+	scissor.offset.x = 0;
+	scissor.offset.y = 0;
+
+	//
+	pipelineDimensionId = createPipelineDimensionId();
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
@@ -4645,12 +4725,16 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 	}
 
 	//
+	auto& texture = *textureIt->second;
+	if (texture.width == width && texture.height == height) return;
+
+	//
 	removeTextureFromDescriptorCaches(textureId);
 
 	//
-	auto& texture = *textureIt->second;
-	// TODO: Cube maps
-	if (texture.width == width && texture.height == height) return;
+	invalidatePipelines();
+
+	//
 	createDepthBufferTexture(textureId, width, height, ID_NONE, ID_NONE);
 	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
@@ -4672,12 +4756,16 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	}
 
 	//
+	auto& texture = *textureIt->second;
+	if (texture.width == width && texture.height == height) return;
+
+	//
 	removeTextureFromDescriptorCaches(textureId);
 
 	//
-	auto& texture = *textureIt->second;
-	// TODO: Cube maps
-	if (texture.width == width && texture.height == height) return;
+	invalidatePipelines();
+
+	//
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
 	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
@@ -4698,12 +4786,16 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 	}
 
 	//
+	auto& texture = *textureIt->second;
+	if (texture.width == width && texture.height == height) return;
+
+	//
 	removeTextureFromDescriptorCaches(textureId);
 
 	//
-	auto& texture = *textureIt->second;
-	// TODO: Cube maps
-	if (texture.width == width && texture.height == height) return;
+	invalidatePipelines();
+
+	//
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
 	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
@@ -4724,12 +4816,16 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	}
 
 	//
+	auto& texture = *textureIt->second;
+	if (texture.width == width && texture.height == height) return;
+
+	//
 	removeTextureFromDescriptorCaches(textureId);
 
 	//
-	auto& texture = *textureIt->second;
-	// TODO: Cube maps
-	if (texture.width == width && texture.height == height) return;
+	invalidatePipelines();
+
+	//
 	createBufferTexture(textureId, width, height, ID_NONE, ID_NONE, format);
 	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
@@ -5710,24 +5806,30 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 
 inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, const uint32_t pipelineId) {
 	// have our context typed
+	uint64_t contextPipelineId = static_cast<uint64_t>(pipelineDimensionId) + (static_cast<uint64_t>(pipelineId) << 32);
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		auto pipelineIt = currentContext.pipelines.find(pipelineId);
+		auto pipelineIt = currentContext.pipelines.find(contextPipelineId);
 		if (pipelineIt != currentContext.pipelines.end()) {
 			return pipelineIt->second;
 		}
 	}
 	pipelineRWlock.readLock();
-	auto pipelineIt = program->pipelines.find(pipelineId);
-	if (pipelineIt == program->pipelines.end()) {
+	pipeline_type* pipeline = nullptr;
+	auto pipelinesParentsIt = program->pipelinesParents.find(pipelineDimensionId);
+	if (pipelinesParentsIt != program->pipelinesParents.end()) {
+		auto& pipelines = pipelinesParentsIt->second->pipelines;
+		auto pipelineIt = pipelines.find(pipelineId);
+		if (pipelineIt != pipelines.end()) pipeline = pipelineIt->second;
+	}
+	if (pipeline == nullptr) {
 		pipelineRWlock.unlock();
 		return nullptr;
 	}
 	// we have a pipeline, also place it in context
-	auto pipeline = pipelineIt->second;
 	if (contextIdx != -1) {
 		auto& currentContext = contexts[contextIdx];
-		currentContext.pipelines[pipelineId] = pipeline;
+		currentContext.pipelines[contextPipelineId] = pipeline;
 	}
 	pipelineRWlock.unlock();
 	return pipeline;
@@ -6139,7 +6241,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 	drawInstancedIndexedTrianglesFromBufferObjects(context, triangles, trianglesOffset, 1);
 }
 
-inline void VKRenderer::endDrawCommandsAllContexts() {
+inline void VKRenderer::endDrawCommandsAllContexts(bool waitUntilSubmitted) {
 	VkResult err;
 
 	// end render passes
@@ -6149,7 +6251,7 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 		auto currentBufferIdx = context.currentCommandBuffer;
 		auto commandBuffer = endDrawCommandBuffer(context.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, context.commandBuffers[currentBufferIdx].drawFence, false, false);
+			submitDrawCommandBuffers(1, &commandBuffer, context.commandBuffers[currentBufferIdx].drawFence, waitUntilSubmitted, false);
 		}
 		unsetPipeline(context.idx);
     }
@@ -6675,7 +6777,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	AtomicOperations::increment(statistics.computeCalls);
 }
 
-void VKRenderer::finishRendering() {
+inline void VKRenderer::finishRendering() {
 	VkResult err;
 
 	// end render passes
@@ -6683,7 +6785,7 @@ void VKRenderer::finishRendering() {
 	VkCommandBuffer submittedCommandBuffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
-		endRenderPass(i); // TODO: draw cmd cycling
+		endRenderPass(i);
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
 			auto commandBuffer = endDrawCommandBuffer(i, j, false);
 			if (commandBuffer != VK_NULL_HANDLE) {
@@ -6701,14 +6803,7 @@ void VKRenderer::finishRendering() {
 	}
 
 	//
-	for (auto& context: contexts) {
-		/*
-		for (auto i = 0; i < context.computeRenderBarrierBufferCount; i++) {
-			Console::println(to_string((uint64_t)context.computeRenderBarrierBuffers[i]));
-		}
-		*/
-		context.computeRenderBarrierBufferCount = 0;
-	}
+	for (auto& context: contexts) context.computeRenderBarrierBuffers.clear();
 
 	//
 	bindFrameBuffer(ID_NONE);
@@ -6722,15 +6817,15 @@ void VKRenderer::memoryBarrier() {
 	auto prevAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
 	auto nextAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	for (auto& context: contexts) {
-		for (auto i = 0; i < context.computeRenderBarrierBufferCount; i++) {
-			ThsvsBufferBarrier svsbufferBarrier = {
+		for (auto buffer: context.computeRenderBarrierBuffers) {
+			ThsvsBufferBarrier svsBufferBarrier = {
 			    .prevAccessCount = 1,
 			    .pPrevAccesses = &prevAccesses,
 			    .nextAccessCount = 1,
 			    .pNextAccesses = &nextAccesses,
 			    .srcQueueFamilyIndex = 0,
 			    .dstQueueFamilyIndex = 0,
-			    .buffer = context.computeRenderBarrierBuffers[i],
+			    .buffer = buffer,
 			    .offset = 0,
 			    .size = VK_WHOLE_SIZE
 			};
@@ -6738,7 +6833,7 @@ void VKRenderer::memoryBarrier() {
 			VkPipelineStageFlags srcStages;
 			VkPipelineStageFlags dstStages;
 			thsvsGetVulkanBufferMemoryBarrier(
-				svsbufferBarrier,
+				svsBufferBarrier,
 				&srcStages,
 				&dstStages,
 				&vkBufferMemoryBarrier
@@ -6747,7 +6842,7 @@ void VKRenderer::memoryBarrier() {
 			vkCmdPipelineBarrier(context.setupCommandInUse, srcStages, dstStages, 0, 0, nullptr, 1, &vkBufferMemoryBarrier, 0, nullptr);
 			finishSetupCommandBuffer(context.idx);
 		}
-		context.computeRenderBarrierBufferCount = 0;
+		context.computeRenderBarrierBuffers.clear();
 	}
 }
 
@@ -6825,11 +6920,7 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[5] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
-	if (currentContext.computeRenderBarrierBufferCount >= currentContext.computeRenderBarrierBuffers.size()) {
-		Console::println("VKRenderer::bindSkinningVerticesResultBufferObject(): too many compute render buffers");
-		return;
-	}
-	currentContext.computeRenderBarrierBuffers[currentContext.computeRenderBarrierBufferCount++] = currentContext.boundBuffers[5];
+	currentContext.computeRenderBarrierBuffers.push_back(currentContext.boundBuffers[5]);
 	//
 	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
@@ -6868,11 +6959,7 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 		currentContext.boundBuffers[6] =
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
-	if (currentContext.computeRenderBarrierBufferCount >= currentContext.computeRenderBarrierBuffers.size()) {
-		Console::println("VKRenderer::bindSkinningNormalsResultBufferObject(): too many compute render buffers");
-		return;
-	}
-	currentContext.computeRenderBarrierBuffers[currentContext.computeRenderBarrierBufferCount++] = currentContext.boundBuffers[6];
+	currentContext.computeRenderBarrierBuffers.push_back(currentContext.boundBuffers[6]);
 	auto prevAccesses = THSVS_ACCESS_VERTEX_BUFFER;
 	auto nextAccesses = THSVS_ACCESS_COMPUTE_SHADER_WRITE;
 	ThsvsBufferBarrier svsbufferBarrier = {

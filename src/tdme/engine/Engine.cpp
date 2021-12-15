@@ -1498,11 +1498,13 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 {
 	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
 	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
+	auto _width = scaledWidth != -1?scaledWidth:width;
+	auto _height = scaledHeight != -1?scaledHeight:height;
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
 	auto worldCoordinate4 = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
-			(2.0f * (mouseX * scaleFactorWidth - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
-			1.0f - (2.0f * (mouseY * scaleFactorHeight - camera->getViewPortTop()) / camera->getViewPortHeight()),
+			(2.0f * (mouseX * scaleFactorWidth) / width) - 1.0f,
+			1.0f - (2.0f * (mouseY * scaleFactorHeight) / height),
 			2.0f * z - 1.0f,
 			1.0f
 		)

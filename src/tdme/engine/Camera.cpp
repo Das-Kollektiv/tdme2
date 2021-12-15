@@ -33,11 +33,6 @@ Camera::Camera(Renderer* renderer)
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
 	frustum = new Frustum(renderer);
-	viewPortEnabled = false;
-	viewPortLeft = 0;
-	viewPortTop = 0;
-	viewPortWidth = -1;
-	viewPortHeight = -1;
 }
 
 Camera::~Camera() {
@@ -161,13 +156,6 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	auto reshaped = false;
 	auto _width = width;
 	auto _height = height;
-	if (viewPortEnabled == true) {
-		_width = viewPortWidth;
-		_height = viewPortHeight;
-	} else {
-		viewPortWidth = width;
-		viewPortHeight = height;
-	}
 	if (this->width != _width || this->height != _height) {
 		reshaped = true;
 		if (_height <= 0)
@@ -209,11 +197,6 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	mvpMatrix.set(modelViewMatrix).multiply(projectionMatrix);
 
 	// viewport
-	#if defined(VULKAN)
-		renderer->setViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
-	#else
-		renderer->setViewPort(viewPortLeft, height - viewPortTop - viewPortHeight, viewPortWidth, viewPortHeight);
-	#endif
-
+	renderer->setViewPort(width, height);
 	renderer->updateViewPort();
 }

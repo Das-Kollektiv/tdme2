@@ -52,8 +52,6 @@ Renderer::Renderer()
 	UNIFORM_CL_SKINNING_VERTEX_COUNT = -1;
 	UNIFORM_CL_SKINNING_MATRIX_COUNT = -1;
 	UNIFORM_CL_SKINNING_INSTANCE_COUNT = -1;
-	viewPortX = 0;
-	viewPortY = 0;
 	viewPortWidth = 0;
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;

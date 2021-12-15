@@ -443,17 +443,15 @@ void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t locatio
 	glBindAttribLocation(programId, location, (name).c_str());
 }
 
-void GL3Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
+void GL3Renderer::setViewPort(int32_t width, int32_t height)
 {
-	this->viewPortX = x;
-	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
 }
 
 void GL3Renderer::updateViewPort()
 {
-	glViewport(viewPortX, viewPortY, viewPortWidth, viewPortHeight);
+	glViewport(0, 0, viewPortWidth, viewPortHeight);
 }
 
 void GL3Renderer::setClearColor(float red, float green, float blue, float alpha)

@@ -81,7 +81,7 @@ public:
 	void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) override;
 	void setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data) override;
 	void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) override;
-	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
+	void setViewPort(int32_t width, int32_t height) override;
 	void updateViewPort() override;
 	void setClearColor(float red, float green, float blue, float alpha) override;
 	void enableCulling(void* context) override;

@@ -148,8 +148,6 @@ public:
 	int32_t UNIFORM_CL_SKINNING_MATRIX_COUNT;
 	int32_t UNIFORM_CL_SKINNING_INSTANCE_COUNT;
 protected:
-	int32_t viewPortX;
-	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
 	Renderer_Statistics statistics;
@@ -476,12 +474,10 @@ public:
 
 	/**
 	 * Set up viewport parameter
-	 * @param x x
-	 * @param y y
 	 * @param width width
 	 * @param height height
 	 */
-	virtual void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
+	virtual void setViewPort(int32_t width, int32_t height) = 0;
 
 	/**
 	 * Update viewport

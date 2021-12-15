@@ -163,6 +163,14 @@ private:
 		VkPipeline pipeline { VK_NULL_HANDLE };
 	};
 
+	struct pipelines_parent_type {
+		uint32_t id;
+		uint16_t width;
+		uint16_t height;
+		int64_t frameUsedLast;
+		unordered_map<uint32_t, pipeline_type*> pipelines;
+	};
+
 	struct program_type {
 		struct command_buffer {
 			uint32_t descriptorSets1Idx;
@@ -179,7 +187,8 @@ private:
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
 		int type { 0 };
-		unordered_map<uint32_t, pipeline_type*> pipelines;
+		unordered_map<uint32_t, pipelines_parent_type*> pipelinesParents;
+		// TODO: clear on viewport dimension change
 		vector<int32_t> shaderIds;
 		vector<shader_type*> shaders;
 		unordered_map<int32_t, string> uniforms;
@@ -261,7 +270,7 @@ private:
 
 		int32_t idx { 0 };
 
-		unordered_map<uint32_t, pipeline_type*> pipelines;
+		unordered_map<uint64_t, pipeline_type*> pipelines;
 		vector<buffer_object_type*> bufferVector;
 		vector<texture_type*> textureVector;
 
@@ -313,8 +322,7 @@ private:
 		};
 		array<bound_texture, 16> boundTextures;
 
-		int32_t computeRenderBarrierBufferCount { 0 };
-		array<VkBuffer, 1024> computeRenderBarrierBuffers;
+		vector<VkBuffer> computeRenderBarrierBuffers;
 
 		uint32_t commandCount { 0 };
 
@@ -370,6 +378,7 @@ private:
 	VkFence memoryBarrierFence { VK_NULL_HANDLE };
 
 	ReadWriteLock pipelineRWlock;
+	uint32_t pipelineDimensionId { 0 };
 
 	VkRenderPass renderPass { VK_NULL_HANDLE };
 
@@ -438,6 +447,7 @@ private:
 	Mutex disposeMutex;
 	vector<int32_t> disposeTextures;
 	vector<int32_t> disposeBuffers;
+	vector<VkPipeline> disposePipelines;
 
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
@@ -445,10 +455,10 @@ private:
 
 	string deviceName;
 
-	VkPresentModeKHR swapchainPresentMode = { VK_PRESENT_MODE_IMMEDIATE_KHR };
+	VkPresentModeKHR swapchainPresentMode { VK_PRESENT_MODE_IMMEDIATE_KHR };
 
 	//
-	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
+	VkBool32 checkLayers(uint32_t checkCount, const char **checkNames, uint32_t layerCount, VkLayerProperties *layers);
 	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1, bool submit = true);
 	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
 	uint32_t getMipLevels(Texture* texture);
@@ -465,7 +475,7 @@ private:
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void endDrawCommandsAllContexts();
+	void endDrawCommandsAllContexts(bool waitUntilSubmitted = false);
 	void requestSubmitDrawBuffers(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
@@ -485,20 +495,10 @@ private:
 	void finishSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffers();
 	void reshape();
-	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
-	int align(int alignment, int offset);
-	bool addToShaderUniformBufferObject(
-		shader_type& shader,
-		const unordered_map<string, string>& definitionValues,
-		const unordered_map<string, vector<string>>& structs,
-		const vector<string>& uniforms,
-		const string& prefix,
-		unordered_set<string>& uniformStructsArrays,
-		string& uniformsBlock
-	);
 	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blendAttachmentState);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo);
+	uint32_t createPipelineDimensionId();
 	uint32_t createPipelineId(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format);
@@ -511,6 +511,7 @@ private:
 	void uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
 	void finishRendering();
 	void removeTextureFromDescriptorCaches(int textureId);
+	void invalidatePipelines();
 
 protected:
 	/**
@@ -561,7 +562,7 @@ public:
 	void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) override;
 	int32_t getLighting(void* context) override;
 	void setLighting(void* context, int32_t lighting) override;
-	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
+	void setViewPort(int32_t width, int32_t height) override;
 	void updateViewPort() override;
 	void setClearColor(float red, float green, float blue, float alpha) override;
 	void enableCulling(void* context) override;
