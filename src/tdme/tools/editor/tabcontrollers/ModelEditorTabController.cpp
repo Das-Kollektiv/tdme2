@@ -546,6 +546,10 @@ void ModelEditorTabController::onLODLoad(int lodLevel) {
 	);
 }
 
+void ModelEditorTabController::updateInfoText(const MutableString& text) {
+	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
+}
+
 void ModelEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);

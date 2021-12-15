@@ -8,6 +8,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -26,6 +27,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -35,6 +37,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -52,6 +55,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::MutableString;
 
 TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* view)
 {
@@ -193,6 +197,10 @@ void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
 	prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
+}
+
+void TriggerEditorTabController::updateInfoText(const MutableString& text) {
+	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
 void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)

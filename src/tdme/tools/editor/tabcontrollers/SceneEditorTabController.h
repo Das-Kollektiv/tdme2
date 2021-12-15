@@ -13,7 +13,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -279,6 +279,12 @@ public:
 	 * @param fileName file name
 	 */
 	void save(const string& pathName, const string& fileName);
+
+	/**
+	 * Update info text line
+	 * @param text text
+	 */
+	void updateInfoText(const MutableString& text);
 
 	/**
 	 * Shows the error pop up

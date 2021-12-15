@@ -16,6 +16,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Terrain2.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -38,6 +39,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
+using tdme::utilities::MutableString;
 using tdme::utilities::Terrain2;
 
 using tinyxml::TiXmlAttribute;
@@ -340,6 +342,12 @@ public:
 	 * @return UI foliage brush operation
 	 */
 	Terrain2::BrushOperation getUIFoliageBrushOperation();
+
+	/**
+	 * Update info text line
+	 * @param text text
+	 */
+	void updateInfoText(const MutableString& text);
 
 	/**
 	 * Shows the error pop up

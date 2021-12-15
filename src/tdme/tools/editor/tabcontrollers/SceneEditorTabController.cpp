@@ -21,6 +21,7 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
@@ -64,6 +65,7 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
@@ -181,6 +183,10 @@ void SceneEditorTabController::save(const string& pathName, const string& fileNa
 		Console::println(string("SceneEditorTabController::save(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void SceneEditorTabController::updateInfoText(const MutableString& text) {
+	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
 void SceneEditorTabController::showErrorPopUp(const string& caption, const string& message)

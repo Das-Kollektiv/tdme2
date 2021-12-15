@@ -6,6 +6,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -27,6 +28,7 @@ using tdme::tools::editor::tabviews::TriggerEditorTabView;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
@@ -71,6 +73,10 @@ void TriggerEditorTabView::handleInputEvents()
 
 void TriggerEditorTabView::display()
 {
+	//
+	triggerEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+
+	//
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
 	engine->display();

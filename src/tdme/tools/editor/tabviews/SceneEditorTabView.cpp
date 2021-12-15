@@ -17,6 +17,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -55,6 +56,7 @@ using tdme::engine::EntityPickingFilter;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::SceneConnector;
+using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
@@ -530,6 +532,10 @@ void SceneEditorTabView::display()
 	//
 	updateGrid();
 
+	//
+	sceneEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+
+	//
 	engine->display();
 }
 

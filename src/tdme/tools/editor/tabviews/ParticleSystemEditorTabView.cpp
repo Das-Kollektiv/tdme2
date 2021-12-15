@@ -20,6 +20,7 @@
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -66,6 +67,7 @@ using tdme::engine::Engine;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::SceneConnector;
+using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
@@ -231,6 +233,9 @@ void ParticleSystemEditorTabView::display()
 		if (sound != nullptr) sound->play();
 		audioOffset = -1LL;
 	}
+
+	//
+	particleSystemEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
 
 	// rendering
 	prototypeDisplayView->display(prototype);

@@ -40,7 +40,7 @@ char MutableString::charAt(int32_t idx) const
 
 MutableString& MutableString::reset()
 {
-	data = "";
+	data.clear();
 	return *this;
 }
 

@@ -19,6 +19,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -40,6 +41,7 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain2.h>
 
@@ -64,6 +66,7 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
@@ -85,6 +88,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 using tdme::utilities::Terrain2;
 
@@ -187,6 +191,10 @@ void TerrainEditorTabController::saveAs()
 		false,
 		new OnModelSave(this)
 	);
+}
+
+void TerrainEditorTabController::updateInfoText(const MutableString& text) {
+	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
 void TerrainEditorTabController::showErrorPopUp(const string& caption, const string& message)

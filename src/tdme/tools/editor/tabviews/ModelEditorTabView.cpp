@@ -21,6 +21,7 @@
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
@@ -68,6 +69,7 @@ using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Object3D;
 using tdme::engine::SimplePartition;
+using tdme::engine::Timing;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
@@ -429,6 +431,9 @@ void ModelEditorTabView::display()
 		// finally update
 		attachment1->update();
 	}
+
+	//
+	modelEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
 
 	// rendering
 	prototypeDisplayView->display(prototype);

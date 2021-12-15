@@ -6,6 +6,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -21,6 +22,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -28,6 +30,7 @@ using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
@@ -42,6 +45,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::MutableString;
 
 EmptyEditorTabController::EmptyEditorTabController(EmptyEditorTabView* view)
 {
@@ -165,6 +169,10 @@ void EmptyEditorTabController::setOutlinerAddDropDownContent() {
 void EmptyEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+}
+
+void EmptyEditorTabController::updateInfoText(const MutableString& text) {
+	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
 void EmptyEditorTabController::showErrorPopUp(const string& caption, const string& message)

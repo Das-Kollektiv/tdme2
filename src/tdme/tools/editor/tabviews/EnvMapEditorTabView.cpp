@@ -15,6 +15,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -38,6 +39,7 @@ using tdme::engine::EnvironmentMapping;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::SceneConnector;
+using tdme::engine::Timing;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::EnvMapEditorTabController;
 using tdme::tools::editor::views::EditorView;
@@ -66,8 +68,8 @@ void EnvMapEditorTabView::handleInputEvents()
 void EnvMapEditorTabView::display()
 {
 	updateSky();
-	engine->display();
 	envMapEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	engine->display();
 }
 
 void EnvMapEditorTabView::initialize()

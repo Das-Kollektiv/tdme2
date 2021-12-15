@@ -11,7 +11,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -109,6 +109,12 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * Update info text line
+	 * @param text text
+	 */
+	void updateInfoText(const MutableString& text);
 
 	/**
 	 * Shows the error pop up

@@ -18,7 +18,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::array;
 using std::map;
@@ -47,6 +47,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
+using tdme::utilities::MutableString;
 
 /**
  * Model editor tab controller
@@ -453,6 +454,12 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+
+	/**
+	 * Update info text line
+	 * @param text text
+	 */
+	void updateInfoText(const MutableString& text);
 
 	/**
 	 * Shows the error pop up
