@@ -100,7 +100,7 @@ const string GL3Renderer::getVendor() {
 
 const string GL3Renderer::getRenderer() {
 	auto renderer = (char*)glGetString(GL_RENDERER);
-	return string(renderer) + " [GL3CORE+]";
+	return string(renderer) + " [GL3+/CORE]";
 }
 
 const string GL3Renderer::getShaderVersion()
