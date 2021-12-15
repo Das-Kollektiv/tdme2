@@ -74,7 +74,7 @@ PopUps* EditorView::getPopUps()
 void EditorView::handleInputEvents()
 {
 	auto tabView = editorScreenController->getSelectedTab();
-	if (tabView != nullptr){
+	if (tabView != nullptr) {
 		auto xScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
