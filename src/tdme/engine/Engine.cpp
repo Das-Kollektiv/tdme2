@@ -94,7 +94,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/os/threading/RealtimeQueue.h>
+#include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -176,7 +176,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::os::threading::RealtimeQueue;
+using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -218,10 +218,10 @@ map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
-RealtimeQueue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+Queue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
 Engine::EngineThreadQueueElementPool Engine::engineThreadQueueElementPool;
 
-Engine::EngineThread::EngineThread(int idx, RealtimeQueue<EngineThreadQueueElement>* queue):
+Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* queue):
 	Thread("enginethread"),
 	idx(idx),
 	queue(queue) {
@@ -904,7 +904,7 @@ void Engine::initialize()
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreadsQueue = new RealtimeQueue<Engine::EngineThreadQueueElement>(1000000);
+		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(0);
 		engineThreads.resize(threadCount - 1);
 		for (auto i = 0; i < threadCount - 1; i++) {
 			engineThreads[i] = new EngineThread(

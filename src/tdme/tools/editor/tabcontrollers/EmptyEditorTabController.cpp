@@ -6,8 +6,8 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
@@ -30,8 +30,8 @@ using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
-using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;

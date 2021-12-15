@@ -165,9 +165,6 @@ private:
 
 	struct pipelines_parent_type {
 		uint32_t id;
-		uint16_t width;
-		uint16_t height;
-		int64_t frameUsedLast;
 		unordered_map<uint32_t, pipeline_type*> pipelines;
 	};
 
@@ -471,7 +468,7 @@ private:
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int contextIdx, int32_t textureId);
-	pipeline_type* getPipelineInternal(int contextIdx, program_type* program, uint32_t pipelineId);
+	pipeline_type* getPipelineInternal(int contextIdx, program_type* programm, uint32_t pipelineDimensionId, uint32_t pipelineId);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void initializeSwapChain();
 	void initializeFrameBuffers();

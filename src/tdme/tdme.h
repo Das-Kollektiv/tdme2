@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <climits>
+#include <cstdint>
 
 #if INTPTR_MAX == INT64_MAX
 	#define CPU_64BIT

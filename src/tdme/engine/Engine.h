@@ -39,7 +39,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/os/threading/RealtimeQueue.h>
+#include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
@@ -106,7 +106,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::os::threading::RealtimeQueue;
+using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
@@ -313,7 +313,7 @@ private:
 		friend class tdme::engine::subsystems::rendering::EntityRenderer;
 	private:
 		int idx;
-		RealtimeQueue<EngineThreadQueueElement>* queue { nullptr };
+		Queue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 		unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
 		volatile int elementsProcessed { 0 };
@@ -324,7 +324,7 @@ private:
 		 * @param idx thread index
 		 * @param queue queue
 		 */
-		EngineThread(int idx, RealtimeQueue<EngineThreadQueueElement>* queue);
+		EngineThread(int idx, Queue<EngineThreadQueueElement>* queue);
 
 		/**
 		 * Run
@@ -373,7 +373,7 @@ private:
 	};
 
 	static vector<EngineThread*> engineThreads;
-	static RealtimeQueue<EngineThreadQueueElement>* engineThreadsQueue;
+	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
 	static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**

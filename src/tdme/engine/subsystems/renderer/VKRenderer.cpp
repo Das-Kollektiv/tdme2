@@ -1649,7 +1649,7 @@ void VKRenderer::invalidatePipelines() {
 	//
 	disposeMutex.lock();
 	for (auto program: programVector) {
-		if (program == nullptr) continue;
+		if (program == nullptr || program->type == PROGRAM_COMPUTE) continue;
 		for (auto& pipelinesParentIt: program->pipelinesParents) {
 			auto pipelinesParent = pipelinesParentIt.second;
 			for (auto& pipelineIt: pipelinesParent->pipelines) {
@@ -2164,9 +2164,6 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	} else {
 		pipelinesParent = new pipelines_parent_type();
 		pipelinesParent->id = pipelineDimensionId;
-		pipelinesParent->width = viewPortWidth;
-		pipelinesParent->height = viewPortHeight;
-		pipelinesParent->frameUsedLast = -1LL;
 		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
 	}
 	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
@@ -2416,7 +2413,7 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 	auto& currentContext = contexts[contextIdx];
 	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
 		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
+		auto pipeline = getPipelineInternal(contextIdx, program, pipelineDimensionId, currentContext.pipelineId);
 		if (pipeline == nullptr) {
 			pipelineRWlock.writeLock();
 			pipeline = createObjectsRenderingPipeline(contextIdx, program);
@@ -2441,9 +2438,6 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	} else {
 		pipelinesParent = new pipelines_parent_type();
 		pipelinesParent->id = pipelineDimensionId;
-		pipelinesParent->width = viewPortWidth;
-		pipelinesParent->height = viewPortHeight;
-		pipelinesParent->frameUsedLast = -1LL;
 		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
 	}
 	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
@@ -2668,7 +2662,7 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 	auto& currentContext = contexts[contextIdx];
 	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
 		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
+		auto pipeline = getPipelineInternal(contextIdx, program, pipelineDimensionId, currentContext.pipelineId);
 		if (pipeline == nullptr) {
 			pipelineRWlock.writeLock();
 			pipeline = createPointsRenderingPipeline(contextIdx, program);
@@ -2693,9 +2687,6 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	} else {
 		pipelinesParent = new pipelines_parent_type();
 		pipelinesParent->id = pipelineDimensionId;
-		pipelinesParent->width = viewPortWidth;
-		pipelinesParent->height = viewPortHeight;
-		pipelinesParent->frameUsedLast = -1LL;
 		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
 	}
 	auto pipelinesIt = pipelinesParent->pipelines.find(currentContext.pipelineId);
@@ -2874,7 +2865,7 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 	auto& currentContext = contexts[contextIdx];
 	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
 		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = createPipelineId(program, contextIdx);
-		auto pipeline = getPipelineInternal(contextIdx, program, currentContext.pipelineId);
+		auto pipeline = getPipelineInternal(contextIdx, program, pipelineDimensionId, currentContext.pipelineId);
 		if (pipeline == nullptr) {
 			pipelineRWlock.writeLock();
 			pipeline = createLinesRenderingPipeline(contextIdx, program);
@@ -2897,10 +2888,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		pipelinesParent = pipelinesParentsIt->second;
 	} else {
 		pipelinesParent = new pipelines_parent_type();
-		pipelinesParent->id = pipelineDimensionId;
-		pipelinesParent->width = viewPortWidth;
-		pipelinesParent->height = viewPortHeight;
-		pipelinesParent->frameUsedLast = -1LL;
+		pipelinesParent->id = 0;
 		program->pipelinesParents[pipelineDimensionId] = pipelinesParent;
 	}
 
@@ -3031,7 +3019,7 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
 	auto& currentContext = contexts[contextIdx];
 	if (currentContext.pipelineId == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
 		if (currentContext.pipelineId == ID_NONE) currentContext.pipelineId = 1;
-		auto pipeline = getPipelineInternal(contextIdx, program, 1);
+		auto pipeline = getPipelineInternal(contextIdx, program, 0, 1);
 		if (pipeline == nullptr) {
 			pipelineRWlock.writeLock();
 			pipeline = createSkinningComputingPipeline(contextIdx, program);
@@ -5804,7 +5792,7 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 	return texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false?whiteTextureSampler2dDefault:texture;
 }
 
-inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, const uint32_t pipelineId) {
+inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, uint32_t pipelineDimensionId, uint32_t pipelineId) {
 	// have our context typed
 	uint64_t contextPipelineId = static_cast<uint64_t>(pipelineDimensionId) + (static_cast<uint64_t>(pipelineId) << 32);
 	if (contextIdx != -1) {
