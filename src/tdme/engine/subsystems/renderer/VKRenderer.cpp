@@ -4972,7 +4972,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.preserveAttachmentCount = 0,
 				.pPreserveAttachments = nullptr
 			};
-			const VkRenderPassCreateInfo renderPasseCreateInfo = {
+			const VkRenderPassCreateInfo renderPassCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
@@ -4983,7 +4983,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.dependencyCount = 0,
 				.pDependencies = nullptr
 			};
-			err = vkCreateRenderPass(device, &renderPasseCreateInfo, nullptr, &frameBufferStruct.renderPass);
+			err = vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &frameBufferStruct.renderPass);
 			assert(!err);
 		}
 
@@ -5718,7 +5718,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		vector<int32_t> buffersToRemove;
 		for (auto& reusableBufferCandidate: buffer->buffers) {
 			if (frame >= reusableBufferCandidate.frameUsedLast + 60) {
-				vmaUnmapMemory(allocator, reusableBufferCandidate.allocation);
+				if (reusableBuffer->memoryMappable == true) vmaUnmapMemory(allocator, reusableBufferCandidate.allocation);
 				vmaDestroyBuffer(allocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
 				buffersToRemove.push_back(i - buffersToRemove.size());
 			}
