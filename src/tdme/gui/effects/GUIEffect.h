@@ -2,12 +2,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
+#include <tdme/gui/effects/GUIEffectState.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using tdme::gui::effects::GUIEffectState;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Action;
 
@@ -19,18 +22,11 @@ using tdme::utilities::Action;
 class tdme::gui::effects::GUIEffect
 {
 public:
+	enum EffectType { EFFECTTYPE_NONE, EFFECTTYPE_COLOR, EFFECTTYPE_POSITION };
 	static constexpr int REPEAT_UNLIMITED { -1 };
 
-	struct EffectState {
-		enum Type { TYPE_RESET, TYPE_COLOR, TYPE_POSITION };
-		Type type { TYPE_RESET };
-		float positionX { 0.0f };
-		float positionY { 0.0f };
-		GUIColor colorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
-		GUIColor colorMul { 1.0f, 1.0f, 1.0f, 1.0f };
-	};
-
 protected:
+	EffectType type { EFFECTTYPE_NONE };
 	bool active { false };
 	int64_t timeLast { -1LL };
 	float timeTotal { 0.0 };
@@ -42,22 +38,31 @@ protected:
 	int yoyoLeft { 0 };
 	bool persistant { false };
 	Action* action { nullptr };
-	EffectState originalStartState;
-	EffectState originalEndState;
-	EffectState startState;
-	EffectState endState;
-	EffectState effectState;
+	GUINode* node { nullptr };
+	GUIEffectState originalStartState;
+	GUIEffectState originalEndState;
+	GUIEffectState startState;
+	GUIEffectState endState;
 
 public:
 	/**
 	 * Public constructor
+	 * @param type type
+	 * @param GUINode GUI node
 	 */
-	GUIEffect();
+	GUIEffect(EffectType type, GUINode* guiNode);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~GUIEffect();
+
+	/**
+	 * @return type
+	 */
+	inline EffectType getType() const {
+		return type;
+	}
 
 	/**
 	 * @return active
@@ -159,21 +164,9 @@ public:
 	virtual bool update(GUIRenderer* guiRenderer);
 
 	/**
-	 * @return effect state
-	 */
-	inline const EffectState& getState() {
-		return effectState;
-	}
-
-	/**
-	 * Apply state
-	 * @param state state
-	 */
-	virtual void applyState(const EffectState& state) = 0;
-
-	/**
 	 * Apply effect
 	 * @param guiRenderer GUI renderer
+	 * @param guiNode GUI node
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;
 

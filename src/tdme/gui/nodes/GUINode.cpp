@@ -10,7 +10,9 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIEffect.h>
+#include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -50,7 +52,9 @@ using tdme::gui::nodes::GUINode;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
+using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -138,6 +142,7 @@ GUINode::~GUINode() {
 	for (auto effectToRemoveId: effectsToRemove) {
 		removeEffect(effectToRemoveId);
 	}
+	if (effectState != nullptr) delete effectState;
 }
 
 int GUINode::getAutoWidth()
@@ -1322,6 +1327,7 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 void GUINode::addEffect(const string& id, GUIEffect* effect)
 {
 	removeEffect(id);
+	if (effectState == nullptr && effects.empty() == true) effectState = new GUIEffectState();
 	effects[id] = effect;
 }
 
@@ -1338,6 +1344,10 @@ void GUINode::removeEffect(const string& id)
 	if (effectIt == effects.end()) return;
 	delete effectIt->second;
 	effects.erase(effectIt);
+	if (effectState != nullptr && effects.empty() == true) {
+		delete effectState;
+		effectState = nullptr;
+	}
 }
 
 void GUINode::onSetConditions(const vector<string>& conditions) {
@@ -1351,28 +1361,12 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	auto haveInEffect = false;
 	auto issuedOutEffect = false;
 
-	// store old effect states
-	vector<GUIEffect::EffectState> effectStates;
-	GUIEffect::EffectState resetEffectState;
-	effectStates.push_back(resetEffectState);
-	if (defaultEffect != nullptr) {
-		effectStates.push_back(defaultEffect->getState());
-		defaultEffect->stop();
-	}
-
 	//
-	for (auto& effectIt: effects) {
-		auto effect = effectIt.second;
-		if (effect->isActive() == true) {
-			effectStates.push_back(effect->getState());
-		}
-	}
 	for (auto& condition: conditions) {
 		{
 			auto effect = getEffect("tdme.xmleffect.in.color.on." + condition);
 			if (effect != nullptr && effect->isActive() == false) {
 				haveInEffect = true;
-				for (auto& effectState: effectStates) effect->applyState(effectState);
 				effect->start();
 			}
 		}
@@ -1380,15 +1374,16 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			auto effect = getEffect("tdme.xmleffect.in.position.on." + condition);
 			if (effect != nullptr && effect->isActive() == false) {
 				haveInEffect = true;
-				for (auto& effectState: effectStates) effect->applyState(effectState);
 				effect->start();
 			}
 		}
 	}
 	if (haveInEffect == true) {
+		if (defaultEffect != nullptr) defaultEffect->stop();
 		for (auto& effectIt: effects) {
-			if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.out.") == true) {
-				effectIt.second->stop();
+			auto effect = effectIt.second;
+			if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.out.") == true && effect->isActive() == true) {
+				effect->stop();
 			}
 		}
 	} else {
@@ -1399,7 +1394,6 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 				if (effect != nullptr && effect->isActive() == false) {
 					issuedOutEffect = true;
 					haveOutEffect = true;
-					for (auto& effectState: effectStates) effect->applyState(effectState);
 					effect->start();
 				}
 			}
@@ -1408,15 +1402,15 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 				if (effect != nullptr && effect->isActive() == false) {
 					issuedOutEffect = true;
 					haveOutEffect = true;
-					for (auto& effectState: effectStates) effect->applyState(effectState);
 					effect->start();
 				}
 			}
 		}
 		if (issuedOutEffect == true) {
+			if (defaultEffect != nullptr && defaultEffect->isActive() == true) defaultEffect->stop();
 			for (auto& effectIt: effects) {
 				auto effect = effectIt.second;
-				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true) {
+				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true && effect->isActive() == true) {
 					effect->stop();
 				}
 			}
@@ -1425,17 +1419,42 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	lastConditions = conditions;
 
 	// check if we need to start default effect
-	if (defaultEffect != nullptr) {
-		auto haveEffect = false;
-		for (auto& effectIt: effects) {
-			auto effect = effectIt.second;
-			if (effect->isActive() == true) {
-				haveEffect = true;
-				break;
+	auto haveColorEffect = false;
+	auto havePositionEffect = false;
+	for (auto& effectIt: effects) {
+		auto effect = effectIt.second;
+		if (effect->isActive() == true) {
+			switch (effect->getType()) {
+				case GUIEffect::EFFECTTYPE_COLOR:
+					haveColorEffect = true;
+					break;
+				case GUIEffect::EFFECTTYPE_POSITION:
+					havePositionEffect = true;
+					break;
 			}
 		}
-		if (haveEffect == false) {
-			for (auto& effectState: effectStates) defaultEffect->applyState(effectState);
+	}
+	if (haveColorEffect == false || havePositionEffect == false) {
+		if (defaultEffect != nullptr) {
+			switch (defaultEffect->getType()) {
+				case GUIEffect::EFFECTTYPE_COLOR:
+					haveColorEffect = true;
+					break;
+				case GUIEffect::EFFECTTYPE_POSITION:
+					havePositionEffect = true;
+					break;
+			}
+		}
+		// also reset color effect if not applied
+		if (haveColorEffect == false) {
+			GUIColorEffect::resetEffectState(effectState);
+		} else
+		// also position effect if not applied
+		if (havePositionEffect == false) {
+			GUIPositionEffect::resetEffectState(effectState);
+		}
+		// finally start default effect if we have none
+		if (defaultEffect != nullptr && haveColorEffect == false && havePositionEffect == false) {
 			defaultEffect->start();
 		}
 	}

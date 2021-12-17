@@ -3,12 +3,15 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/effects/GUIEffect.h>
+#include <tdme/gui/effects/GUIEffectState.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::effects::GUIEffectState;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::renderer::GUIRenderer;
 
 /**
@@ -20,9 +23,19 @@ class tdme::gui::effects::GUIColorEffect final: public GUIEffect
 {
 public:
 	/**
-	 * Public constructor
+	 * Reset effect state regarding color effect
+	 * @param effectState effect state
 	 */
-	GUIColorEffect();
+	inline static void resetEffectState(GUIEffectState* effectState) {
+		effectState->colorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+		effectState->colorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	/**
+	 * Public constructor
+	 * @param guiNode GUI node
+	 */
+	GUIColorEffect(GUINode* guiNode);
 
 	/**
 	 * @return color add
@@ -85,7 +98,6 @@ public:
 	}
 
 	// overridden methods
-	void applyState(const EffectState& state) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
 };

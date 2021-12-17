@@ -3,7 +3,7 @@
 		<space height="*"/>
 		<element id="aaa">
 			<text font="resources/engine/fonts/Roboto_20.fnt" text="aaa" color="#000000" />
-			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" repeat="2" yoyo="true" />
+			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" repeat="-1" yoyo="true" />
 			<effect-out type="position" effect-position-x="0" time="1.0" on="mouseover" />
 		</element>
 		<space height="10"/>
@@ -15,7 +15,7 @@
 		<space height="10"/>
 		<element id="ccc">
 			<text font="resources/engine/fonts/Roboto_20.fnt" text="ccc" color="#000000" />
-			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true" yoyo="true" />
+			<effect-in type="position" effect-position-x="25" time="1.0" on="mouseover" persistant="true"/>
 			<effect-out type="position" effect-position-x="0" time="1.0" on="mouseover" />
 		</element>
 		<space height="10"/>

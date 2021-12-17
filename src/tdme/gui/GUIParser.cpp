@@ -302,7 +302,7 @@ void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool r
 	GUIEffect* effect = nullptr;
 	auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
 	if (type == "color") {
-		effect = new GUIColorEffect();
+		effect = new GUIColorEffect(guiNode);
 		static_cast<GUIColorEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
 		static_cast<GUIColorEffect*>(effect)->setColorMul(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))));
 		static_cast<GUIColorEffect*>(effect)->setColorAdd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))));
@@ -317,7 +317,7 @@ void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool r
 		);
 	} else
 	if (type == "position") {
-		effect = new GUIPositionEffect();
+		effect = new GUIPositionEffect(guiNode);
 		static_cast<GUIPositionEffect*>(effect)->setPersistant(StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("persistant")))), "true"));
 		static_cast<GUIPositionEffect*>(effect)->setPositionX(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x"))));
 		static_cast<GUIPositionEffect*>(effect)->setPositionY(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y"))));

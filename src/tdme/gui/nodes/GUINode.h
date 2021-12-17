@@ -33,6 +33,7 @@ using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::effects::GUIEffectState;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -166,6 +167,7 @@ protected:
 	bool layouted;
 	bool haveOutEffect;
 	vector<string> lastConditions;
+	GUIEffectState* effectState { nullptr };
 
 	/**
 	 * Public constructor
@@ -635,11 +637,11 @@ public:
 	}
 
 	/**
-	 * Add effect, effect already registered with the is will be removed
-	 * @param id id
-	 * @param effect effect
+	 * @return effect state
 	 */
-	void addEffect(const string& id, GUIEffect* effect);
+	inline GUIEffectState* getEffectState() {
+		return effectState;
+	}
 
 	/**
 	 * Get effect
@@ -647,6 +649,13 @@ public:
 	 * @return effect or null
 	 */
 	GUIEffect* getEffect(const string& id);
+
+	/**
+	 * Add effect, effect already registered with the is will be removed
+	 * @param id id
+	 * @param effect effect
+	 */
+	void addEffect(const string& id, GUIEffect* effect);
 
 	/**
 	 * Remove effect

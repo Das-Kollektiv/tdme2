@@ -3,9 +3,13 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/effects/GUIEffect.h>
+#include <tdme/gui/effects/GUIEffectState.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::effects::GUIEffectState;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::renderer::GUIRenderer;
 
 /**
@@ -18,9 +22,19 @@ class tdme::gui::effects::GUIPositionEffect final: public GUIEffect
 
 public:
 	/**
-	 *  Public constructor
+	 * Reset effect state regarding position effect
+	 * @param effectState effect state
 	 */
-	GUIPositionEffect();
+	inline static void resetEffectState(GUIEffectState* effectState) {
+		effectState->positionX = 0.0f;
+		effectState->positionY = 0.0f;
+	}
+
+	/**
+	 *  Public constructor
+	 *  @param guiNode GUI node
+	 */
+	GUIPositionEffect(GUINode* guiNode);
 
 	/**
 	 * @return position X
@@ -83,7 +97,6 @@ public:
 	}
 
 	// override methods
-	void applyState(const EffectState& state) override;
 	void apply(GUIRenderer* guiRenderer) override;
 
 };

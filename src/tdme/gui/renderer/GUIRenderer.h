@@ -22,6 +22,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;

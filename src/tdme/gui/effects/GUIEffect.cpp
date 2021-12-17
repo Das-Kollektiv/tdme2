@@ -3,14 +3,16 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/utilities/Action.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::nodes::GUINode;
 using tdme::utilities::Action;
 
-GUIEffect::GUIEffect()
+GUIEffect::GUIEffect(EffectType type, GUINode* guiNode): type(type), node(guiNode)
 {
 }
 
@@ -20,7 +22,7 @@ GUIEffect::~GUIEffect() {
 
 void GUIEffect::start()
 {
-	startState = effectState;
+	startState = *node->getEffectState();
 	endState = originalEndState;
 	timeLeft = timeTotal;
 	timePassed = 0.0f;
@@ -33,7 +35,6 @@ void GUIEffect::start()
 void GUIEffect::stop()
 {
 	active = false;
-	effectState = originalStartState;
 }
 
 bool GUIEffect::update(GUIRenderer* guiRenderer)
