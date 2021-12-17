@@ -140,7 +140,7 @@ void Installer::initializeScreens() {
 		popUps->initialize();
 
 		installerProperties.load("resources/installer", "installer.properties");
-		if (installerProperties.get("version", "") != "1.9.109") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
+		if (installerProperties.get("installer_version", "") != "1.9.109") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
@@ -664,8 +664,8 @@ void Installer::performScreenAction() {
 														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
 														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
 													);
-													auto startMenuName = installer->installerProperties.get("startmenu_" + StringTools::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
-													if (startMenuName.empty() == false) {
+													auto launcherName = installer->installerProperties.get("launcher_" + StringTools::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
+													if (launcherName.empty() == false) {
 														Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
@@ -688,17 +688,17 @@ void Installer::performScreenAction() {
 															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installer->homeFolder + "/" + ".local/share/applications",
-															startMenuName + ".desktop",
+															launcherName + ".desktop",
 															string() +
 															"[Desktop Entry]\n" +
-															"Name="  + startMenuName + "\n" +
+															"Name="  + launcherName + "\n" +
 															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
 															"Terminal=false\n" +
 															"Type=Application\n" +
 															"Icon=" + installFolder + "/resources/platforms/icons/" + iconFileName + "\n"
 														);
 														log.push_back(generatedFileName + ".sh");
-														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + startMenuName + ".desktop");
+														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + launcherName + ".desktop");
 													}
 												#elif defined(_WIN32)
 													FileSystem::getStandardFileSystem()->setContent(
@@ -708,8 +708,8 @@ void Installer::performScreenAction() {
 													);
 													log.push_back(generatedFileName);
 													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
-													auto startMenuName = installer->installerProperties.get(
-														"startmenu_" +
+													auto launcherName = installer->installerProperties.get(
+														"launcher_" +
 														StringTools::substring(
 															StringTools::toLowerCase(executable),
 															0,
@@ -717,7 +717,7 @@ void Installer::performScreenAction() {
 														),
 														""
 													);
-													if (startMenuName.empty() == false) {
+													if (launcherName.empty() == false) {
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installFolder,
 															"windows-create-shortcut.bat",
@@ -725,7 +725,7 @@ void Installer::performScreenAction() {
 														);
 														auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
 														Installer::createPathRecursively(startMenuFolder);
-														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
+														auto linkFile = startMenuFolder + "/" + launcherName + ".lnk";
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
 														auto iconFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
