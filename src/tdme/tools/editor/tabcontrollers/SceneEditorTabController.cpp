@@ -125,7 +125,6 @@ void SceneEditorTabController::save()
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
 
-
 	//
 	save(Tools::getPathName(scene->getFileName()), Tools::getFileName(scene->getFileName()));
 }
@@ -172,11 +171,13 @@ void SceneEditorTabController::save(const string& pathName, const string& fileNa
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
 
+	Console::println("SceneEditorTabController::save(): " + Tools::getPathName(pathName) + "/" + Tools::getFileName(fileName));
+
 	//
 	try {
 		SceneWriter::write(
-			Tools::getPathName(pathName),
-			Tools::getFileName(fileName),
+			pathName,
+			fileName,
 			scene
 		);
 	} catch (Exception& exception) {

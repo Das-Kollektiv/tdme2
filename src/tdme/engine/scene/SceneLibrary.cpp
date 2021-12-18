@@ -75,11 +75,6 @@ void SceneLibrary::addPrototype(Prototype* prototype)
 
 }
 
-Prototype* SceneLibrary::getPrototypeAt(int idx)
-{
-	return prototypes[idx];
-}
-
 Prototype* SceneLibrary::getPrototype(int id)
 {
 	auto prototypeByIdIt = prototypesById.find(id);
@@ -112,9 +107,4 @@ void SceneLibrary::removePrototype(int id)
 		delete prototypeByIdIt->second;
 		prototypesById.erase(prototypeByIdIt);
 	}
-}
-
-int SceneLibrary::getPrototypeCount()
-{
-	return prototypes.size();
 }

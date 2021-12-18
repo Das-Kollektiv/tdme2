@@ -197,7 +197,8 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 		fileNameButtonXMLMapping.clear();
 		for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
 		fileNameTextureMapping.clear();
-		scanProjectPathFiles(node->getController()->getValue().getString());
+		relativeProjectPath = node->getController()->getValue().getString();
+		scanProjectPathFiles();
 		listProjectPathFiles(xml);
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
@@ -507,7 +508,7 @@ void EditorScreenController::clearProjectPathFiles() {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
 }
 
-void EditorScreenController::scanProjectPathFiles(const string& relativeProjectPath) {
+void EditorScreenController::scanProjectPathFiles() {
 	auto pathName = projectPath + "/" + relativeProjectPath;
 	class ListFilter : public virtual FileNameFilter {
 		public:
@@ -706,7 +707,7 @@ void EditorScreenController::onAddFile(const string& type) {
 	};
 
 	view->getPopUps()->getFileDialogScreenController()->show(
-		projectPath + "/" + required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_projectpaths"))->getController()->getValue().getString(),
+		projectPath + "/" + relativeProjectPath,
 		string("Add ") + type + " to project: ",
 		{ string("t") + type },
 		string("Untitled") + "." + "t" + type,

@@ -163,6 +163,7 @@ private:
 	GUIParentNode* detailsScrollarea { nullptr };
 	GUIElementNode* outlinerAddDropDown { nullptr };
 	string projectPath;
+	string relativeProjectPath;
 	unordered_map<string, EditorTabView> tabViews;
 	unordered_map<string, Texture*> fileNameTextureMapping;
 	map<string, string> fileNameButtonXMLMapping;
@@ -243,10 +244,8 @@ public:
 
 	/**
 	 * Scan project path files
-	 * @param relativeProjectPath relative project path
-	 * @param xml xml
 	 */
-	void scanProjectPathFiles(const string& relativeProjectPath);
+	void scanProjectPathFiles();
 
 	/**
 	 * List project path files

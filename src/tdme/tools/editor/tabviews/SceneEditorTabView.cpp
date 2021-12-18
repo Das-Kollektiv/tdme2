@@ -1394,7 +1394,27 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 	try {
 		prototype->setEmbedded(false);
 		auto sceneLibrary = scene->getLibrary();
-		sceneLibrary->addPrototype(prototype);
+		if (prototype->getType() == Prototype_Type::TERRAIN) {
+			while (sceneLibrary->getTerrainPrototype() != nullptr) {
+				for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+					auto prototype = sceneLibrary->getPrototypeAt(i);
+					if (prototype->getType() == Prototype_Type::TERRAIN) {
+						sceneLibrary->removePrototype(prototype->getId());
+						break;
+					}
+				}
+			}
+			sceneLibrary->addPrototype(prototype);
+			SceneConnector::resetEngine(engine, scene);
+			SceneConnector::setLights(engine, scene, Vector3());
+			SceneConnector::addScene(engine, scene, true, true, true, true);
+			updateSky();
+			scene->update();
+			cameraInputHandler->setSceneCenter(scene->getCenter());
+			cameraInputHandler->reset();
+		} else {
+			sceneLibrary->addPrototype(prototype);
+		}
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabView::addPrototype(): An error occurred: ") + exception.what());;
 		sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));

@@ -94,9 +94,15 @@ void Scene::computeBoundingBox()
 	Vector3 bbMin;
 	Vector3 bbMax;
 	for (auto sceneEntity: entities) {
-		if (sceneEntity->getPrototype()->getType() != Prototype_Type::MODEL) continue;
 		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransformations());
+		// TODO: Implement me 100%
+		if (sceneEntity->getPrototype()->getType() == Prototype_Type::MODEL) {
+			cbv.fromBoundingVolumeWithTransformations(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransformations());
+		} else {
+			continue;
+		}
+
+		//
 		bbDimension.set(
 			cbv.getDimensions().getX(),
 			cbv.getDimensions().getY(),

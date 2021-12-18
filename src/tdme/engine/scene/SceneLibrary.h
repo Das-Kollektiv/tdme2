@@ -70,7 +70,9 @@ public:
 	 * @param idx index
 	 * @return prototype
 	 */
-	Prototype* getPrototypeAt(int idx);
+	inline Prototype* getPrototypeAt(int idx) {
+		return prototypes[idx];
+	}
 
 	/**
 	 * Get a prototype by given id
@@ -101,6 +103,8 @@ public:
 	/**
 	 * @return prototype count
 	 */
-	int getPrototypeCount();
+	inline int getPrototypeCount() {
+		return prototypes.size();
+	}
 
 };
