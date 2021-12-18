@@ -227,21 +227,6 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
-		// determine objects by shaders to avoid too much shader changes
-		auto camera = engine->getCamera();
-		Vector3 objectCamFromAxis;
-		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-			auto object = objects[objectIdx];
-			if (object->enabledInstances == 0) continue;
-			if (object->renderPass != renderPass) continue;
-			auto objectUniqueShaderId = object->getDistanceShader().empty() == true?
-				object->getUniqueShaderId():
-				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
-					object->getUniqueShaderId():
-					object->getUniqueDistanceShaderId();
-			objectsByShaderMap[objectUniqueShaderId].push_back(object);
-		}
-
 		auto elementsIssued = 0;
 		auto queueElement = Engine::engineThreadQueueElementPool.allocate();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
@@ -249,21 +234,18 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 		queueElement->rendering.renderPass = renderPass;
 		queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
 		queueElement->rendering.renderTypes = renderTypes;
-		for (auto& objectsByShaderIt: objectsByShaderMap) {
-			auto& objectsByShader = objectsByShaderIt.second;
-			for (auto i = 0; i < objectsByShader.size(); i++) {
-				queueElement->objects.push_back(objectsByShader[i]);
-				if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT) {
-					auto queueElementToSubmit = queueElement;
-					queueElement = Engine::engineThreadQueueElementPool.allocate();
-					queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
-					queueElement->engine = engine;
-					queueElement->rendering.renderPass = renderPass;
-					queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
-					queueElement->rendering.renderTypes = renderTypes;
-					elementsIssued++;
-					engine->engineThreadsQueue->addElement(queueElementToSubmit, false);
-				}
+		for (auto i = 0; i < objects.size(); i++) {
+			queueElement->objects.push_back(objects[i]);
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT) {
+				auto queueElementToSubmit = queueElement;
+				queueElement = Engine::engineThreadQueueElementPool.allocate();
+				queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
+				queueElement->engine = engine;
+				queueElement->rendering.renderPass = renderPass;
+				queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
+				queueElement->rendering.renderTypes = renderTypes;
+				elementsIssued++;
+				engine->engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
 		if (queueElement->objects.empty() == false) {
@@ -290,9 +272,6 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 			engineThread->transparentRenderFacesPool->reset();
 		}
 	}
-
-	//
-	objectsByShaderMap.clear();
 }
 
 void EntityRenderer::renderTransparentFaces() {

@@ -6250,7 +6250,7 @@ inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 	auto& currentContext = contexts[contextIdx];
 
 	//
-	auto commandsMax = COMMANDS_MAX_GRAPHICS;
+	auto commandsMax = COMMANDS_MAX_GRAPHICS; // TODO: could also be compute, ...
 	if (currentContext.commandCount >= commandsMax) {
 		endRenderPass(currentContext.idx);
 		auto currentBufferIdx = currentContext.currentCommandBuffer;
@@ -6862,7 +6862,7 @@ void VKRenderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferOb
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
 	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[1] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
+		currentContext.boundBuffers[1] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
 }
 
@@ -6873,7 +6873,7 @@ void VKRenderer::bindSkinningVertexJointsBufferObject(void* context, int32_t buf
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[2]);
 	if (currentContext.boundBuffers[2] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[2] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
+		currentContext.boundBuffers[2] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
 	}
 }
 
@@ -6884,7 +6884,7 @@ void VKRenderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t 
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[3]);
 	if (currentContext.boundBuffers[3] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[3] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
+		currentContext.boundBuffers[3] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
 	}
 }
 
@@ -6895,7 +6895,7 @@ void VKRenderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[4]);
 	if (currentContext.boundBuffers[4] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[4] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
+		currentContext.boundBuffers[4] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
 	}
 }
 
@@ -6906,7 +6906,7 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
 	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[5] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
+		currentContext.boundBuffers[5] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
 	currentContext.computeRenderBarrierBuffers.push_back(currentContext.boundBuffers[5]);
 	//
