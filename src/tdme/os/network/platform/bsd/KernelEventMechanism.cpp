@@ -1,5 +1,5 @@
 // kqueue
-	#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__)
 	#include <sys/types.h>
 #endif
 #include <sys/event.h>
