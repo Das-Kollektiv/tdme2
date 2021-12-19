@@ -275,7 +275,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D
 }
 
 void EntityRenderer::renderTransparentFaces() {
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	// render transparent render faces if any exist
 	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
@@ -420,7 +420,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
 
-	// use default contextIdx
+	// use default context
 	auto& object3DRenderContext = contexts[0];
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
@@ -1319,7 +1319,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	};
 	unordered_map<void*, PseParameters> rendererPseParameters;
 
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	// store model view matrix
@@ -1447,7 +1447,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObj
 	// TODO: check me performance wise again
 	if (objects.size() == 0) return;
 
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back

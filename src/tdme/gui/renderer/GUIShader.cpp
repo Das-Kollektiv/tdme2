@@ -140,7 +140,7 @@ void GUIShader::updateEffect()
 {
 	if (isRunning == false) return;
 
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
@@ -152,7 +152,7 @@ void GUIShader::updateEffect()
 void GUIShader::updateTextureMatrix() {
 	if (isRunning == false) return;
 
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
@@ -160,7 +160,7 @@ void GUIShader::updateTextureMatrix() {
 }
 
 void GUIShader::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
@@ -174,7 +174,7 @@ void GUIShader::setGradient(int count, array<GUIColor, 10>& colors, array<float,
 }
 
 void GUIShader::unsetGradient() {
-	// use default contextIdx
+	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//

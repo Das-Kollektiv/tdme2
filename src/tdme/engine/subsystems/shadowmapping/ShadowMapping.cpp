@@ -138,7 +138,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		// setup depth textures to contexts
 		for (auto j = 0; j < contextCount; j++) {
-			// use default contextIdx
+			// use default context
 			auto contextIdx = j;
 			// set up light shader uniforms
 			shadowMap->updateDepthBiasMVPMatrix(contextIdx);
@@ -174,7 +174,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 	// restore depth textures of contexts
 	for (auto j = 0; j < contextCount; j++) {
-		// use default contextIdx
+		// use default context
 		auto contextIdx = j;
 		auto textureUnit = renderer->getTextureUnit(contextIdx);
 		renderer->setTextureUnit(contextIdx, ShadowMap::TEXTUREUNIT);

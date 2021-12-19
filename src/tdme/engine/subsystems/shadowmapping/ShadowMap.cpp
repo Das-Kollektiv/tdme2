@@ -112,7 +112,7 @@ Camera* ShadowMap::getCamera()
 
 void ShadowMap::createShadowMap(Light* light)
 {
-	// use default contextIdx
+	// use default context
 	auto contextIdx = shadowMapping->renderer->CONTEXTINDEX_DEFAULT;
 
 	//
